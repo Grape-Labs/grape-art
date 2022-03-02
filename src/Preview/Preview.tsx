@@ -3536,7 +3536,6 @@ function GalleryItemMeta(props: any) {
                                                                         <Tooltip title={`Set this NFT as your avatar`}>
                                                                             <Button 
                                                                                 variant="text" 
-                                                                                title="Set Avatar"
                                                                                 onClick={HandleSetAvatar}
                                                                                 size="small"
                                                                                 className="profileAvatarIcon"
