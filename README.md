@@ -1,5 +1,5 @@
 # Getting Started 
-Grape Art Interface
+Grape Art
 
 - This is the Grape Art Dex | A Social. Stateless. Marketplace. powered by Solana!
 
