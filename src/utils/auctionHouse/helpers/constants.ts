@@ -74,5 +74,4 @@ export const EXTENSION_PNG = '.png';
 export const EXTENSION_JSON = '.json';
 
 export const ENV_AH = "mainnet-beta";
-export const AUCTION_HOUSE_ADDRESS = "Do4qYYqgdxgcRWWvXNEuZD2Wkj8YzLMwiNq5NFXnxHgS";
-// export const AUCTION_HOUSE_ADDRESS = "4w2BVBfV86NBm3ytL1AuHxToBV7Kx5YahdMRgyyYFoRj";
+export const AUCTION_HOUSE_ADDRESS = "4w2BVBfV86NBm3ytL1AuHxToBV7Kx5YahdMRgyyYFoRj";
