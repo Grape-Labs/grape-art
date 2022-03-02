@@ -25,13 +25,13 @@ CONSTANTS:
 -   export const TOKEN_VERIFICATION_AMOUNT = 1000;
 -   export const TOKEN_REALM_ID = 'By2sVGZXwfQq6rAiAM3rNPJ9iQfb5e2QhnF4YjJ4Bip';
 -   IMPORTANT:
--       * Given the volume of RPC calls it is important to use your own RPC provider which can handle them this too can be edited in the constants.tsx file
--       ** For your own instance consider building your own AH
+-  * Given the volume of RPC calls it is important to use your own RPC provider which can handle them this too can be edited in the constants.tsx file
+-  ** For your own instance consider building your own AH
 
 
 For DAOs:
 -   Have a DAO and want to run an instance of grape.art
--       Reach out to the Grape Team at https://discord.gg/greatape
+-   Reach out to the Grape Team at https://discord.gg/greatape
 
 Try it out:
 - http://grape.art
