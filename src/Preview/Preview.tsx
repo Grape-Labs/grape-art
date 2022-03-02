@@ -2143,6 +2143,7 @@ function SocialLikes(props: any){
         if (publicKey){
             if (mint){
                 setLoadingLikedState(true);
+                setIsLiked(false);
                 let socialconnection = await fetchSearchAddrInfo(publicKey.toBase58(), mint);
                 if (socialconnection){
                     //if (socialconnection?.identity){
