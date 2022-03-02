@@ -2148,7 +2148,8 @@ function SocialLikes(props: any){
                 if (socialconnection){
                     //if (socialconnection?.identity){
                     if (socialconnection?.connections[0]?.followStatus) {  
-                        if (socialconnection?.connections[0].type.toString() === "LIKE")
+                        if ((socialconnection?.connections[0].type.toString() === "LIKE")||
+                            (socialconnection?.connections[0].type.toString() === "FOLLOW"))
                             setIsLiked(socialconnection?.connections[0].followStatus.isFollowing);
                     }
                 }
@@ -2263,7 +2264,8 @@ function SocialFlags(props: any){
                 if (socialconnection){
                     //if (socialconnection?.identity){
                     if (socialconnection?.connections[0]?.followStatus) { 
-                        if (socialconnection?.connections[0].type.toString() === "REPORT") 
+                        if ((socialconnection?.connections[0].type.toString() === "REPORT")||
+                            (socialconnection?.connections[0].type.toString() === "FOLLOW"))
                             setIsFlagged(socialconnection?.connections[0].followStatus.isFollowing);
                     }
                 }
