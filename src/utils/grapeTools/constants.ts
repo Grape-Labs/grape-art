@@ -1,5 +1,11 @@
-export const FREE_RPC_ENDPOINT = 'https://api.mainnet-beta.solana.com';
-export const GRAPE_RPC_ENDPOINT = 'https://api.mainnet-beta.solana.com';
+//export const FREE_RPC_ENDPOINT = 'https://grape.genesysgo.net/';
+//export const FREE_RPC_ENDPOINT = 'https://api.mainnet-beta.solana.com';
+//export const FREE_RPC_ENDPOINT = 'https://free.rpcpool.com';
+export const FREE_RPC_ENDPOINT = 'https://solana-api.projectserum.com/';
+export const GRAPE_RPC_ENDPOINT = 'https://grape.genesysgo.net/';
+
+//export const FREE_RPC_ENDPOINT = 'https://api.mainnet-beta.solana.com';
+//export const GRAPE_RPC_ENDPOINT = 'https://api.mainnet-beta.solana.com';
 
 export const GRAPE_RPC_REFRESH = 25000;
 export const GRAPE_TREASURY = 'GrapevviL94JZRiZwn2LjpWtmDacXU8QhAJvzpUMMFdL';
