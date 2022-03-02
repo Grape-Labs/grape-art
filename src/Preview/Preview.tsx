@@ -2246,9 +2246,11 @@ function SocialLikes(props: any){
                             sx={{borderRadius:'24px', color:'white'}}
                             >
                             <FavoriteIcon sx={{fontSize:'20px', color:'red'}} /> 
-                            <Typography variant="caption" sx={{ml:1}}>
-                                {followListInfo?.liked && followListInfo?.liked}
-                            </Typography>
+                            {followListInfo?.liked && +followListInfo?.liked > 0 ?
+                                <Typography variant="caption" sx={{ml:1}}>
+                                    {followListInfo?.liked}
+                                </Typography>
+                            :<></>}
                         </Button>
                     </Tooltip>
                 :
@@ -2261,9 +2263,11 @@ function SocialLikes(props: any){
                             sx={{borderRadius:'24px', color:'white'}}
                             >
                             <FavoriteBorderIcon sx={{fontSize:'20px'}} /> 
-                            <Typography variant="caption" sx={{ml:1}}>
-                                {followListInfo?.liked && followListInfo?.liked}
-                            </Typography>
+                            {followListInfo?.liked && +followListInfo?.liked > 0 ?
+                                <Typography variant="caption" sx={{ml:1}}>
+                                    {followListInfo?.liked}
+                                </Typography>
+                            :<></>}
                         </Button>
                     </Tooltip>
             }
@@ -2399,9 +2403,11 @@ function SocialFlags(props: any){
                             sx={{borderRadius:'24px', color:'yellow'}}
                             >
                             <FlagIcon sx={{fontSize:'20px'}} />
-                            <Typography variant="caption" sx={{ml:1}}>
-                                {followListInfo?.liked && followListInfo?.liked}
-                            </Typography>
+                            {followListInfo?.reported && +followListInfo?.reported > 0 ?
+                                <Typography variant="caption" sx={{ml:1}}>
+                                    {followListInfo?.reported}
+                                </Typography>
+                            :<></>}
                         </Button>
                     </Tooltip>
                 :
@@ -2414,9 +2420,11 @@ function SocialFlags(props: any){
                             sx={{borderRadius:'24px', color:'white'}}
                             >
                             <EmojiFlagsIcon sx={{fontSize:'20px'}} />
-                            <Typography variant="caption" sx={{ml:1}}>
-                                {followListInfo?.liked && followListInfo?.liked}
-                            </Typography>
+                            {followListInfo?.reported && +followListInfo?.reported > 0 ?
+                                <Typography variant="caption" sx={{ml:1}}>
+                                    {followListInfo?.reported}
+                                </Typography>
+                            :<></>}
                         </Button>
                     </Tooltip>
             }
