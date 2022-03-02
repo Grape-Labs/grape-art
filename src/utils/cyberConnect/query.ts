@@ -22,6 +22,10 @@ export const followListInfoSchema = ({
       identity(address: $address, network: $network) {
         followingCount(namespace: $namespace)
         followerCount(namespace: $namespace)
+        like: followingCount(namespace: $namespace, type: LIKE)
+        liked: followerCount(namespace: $namespace, type: LIKE)
+        report: followingCount(namespace: $namespace, type: REPORT)
+        reported: followerCount(namespace: $namespace, type: REPORT)
         followings(namespace: $namespace, first: $followingFirst, after: $followingAfter) {
           pageInfo {
             endCursor

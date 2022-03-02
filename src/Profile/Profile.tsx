@@ -2603,7 +2603,7 @@ const GroupGalleryList = (props: any) => {
     const FIRST = 10; // The number of users in followings/followers list for each fetch
 
     const cyberConnect = new CyberConnect({
-        namespace: 'Grape',
+        namespace: NAME_SPACE,
         env: Env.PRODUCTION,
         chain: Blockchain.SOLANA,
         provider: solanaProvider,

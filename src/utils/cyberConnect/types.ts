@@ -36,6 +36,10 @@ export interface FollowListInfoArgs {
     followerCount: number;
     followings: FollowListInfo;
     followers: FollowListInfo;
+    like?: string,
+    liked?: string,
+    report?: string,
+    reported?: string, 
   }
   
   export interface SearchUserInfoResp {

@@ -2124,19 +2124,46 @@ function SocialLikes(props: any){
     const [solanaDomain, setSolanaDomain] = React.useState(null);
     const [isLiked, setIsLiked] = React.useState(false);
     const [loadingLikedState, setLoadingLikedState] = React.useState(false);
+    const [loading, setLoading] = React.useState(false);
     const [searchAddrInfo, setSearchAddrInfo] = useState<SearchUserInfoResp | null>(null);
+    const [followListInfo, setFollowListInfo] = useState<FollowListInfoResp | null>(null);
     const {publicKey} = useWallet();
     const solanaProvider = useWallet();
     const mint = props.mint;
     
+    const NAME_SPACE = 'Grape';
+    const NETWORK = Network.SOLANA;
+    const FIRST = 10; // The number of users in followings/followers list for each fetch
+
+
     const cyberConnect = new CyberConnect({
-        namespace: 'Grape',
+        namespace: NAME_SPACE,
         env: Env.PRODUCTION,
         chain: Blockchain.SOLANA,
         provider: solanaProvider,
         chainRef: solana.SOLANA_MAINNET_CHAIN_REF,
         signingMessageEntity: 'Grape' || 'CyberConnect',
     });
+
+    // Get the current user followings and followers list
+  const initFollowListInfo = async () => {
+    if (!mint) {
+      return;
+    }
+    
+    setLoading(true);
+    const resp = await followListInfoQuery({
+        address:mint,
+        namespace: '',
+        network: NETWORK,
+        followingFirst: FIRST,
+        followerFirst: FIRST,
+    });
+    if (resp) {
+      setFollowListInfo(resp);
+    }
+    setLoading(false);
+  };
 
     const getLikeStatus = async () => {
         
@@ -2181,6 +2208,7 @@ function SocialLikes(props: any){
         .catch(function (error) {
             console.log(error);
         });
+        initFollowListInfo();
         getLikeStatus();
     };
     const likeWalletDisconnect = async (followAddress:string) => {
@@ -2189,10 +2217,12 @@ function SocialLikes(props: any){
         .catch(function (error) {
             console.log(error);
         });
+        initFollowListInfo();
         getLikeStatus();
     };
     
     React.useEffect(() => {
+        initFollowListInfo();
         getLikeStatus();
     },[]);
 
@@ -2215,7 +2245,10 @@ function SocialLikes(props: any){
                             className="profileAvatarIcon"
                             sx={{borderRadius:'24px', color:'white'}}
                             >
-                            <FavoriteIcon sx={{fontSize:'20px', color:'red'}} />
+                            <FavoriteIcon sx={{fontSize:'20px', color:'red'}} /> 
+                            <Typography variant="caption" sx={{ml:1}}>
+                                {followListInfo?.liked && followListInfo?.liked}
+                            </Typography>
                         </Button>
                     </Tooltip>
                 :
@@ -2227,7 +2260,10 @@ function SocialLikes(props: any){
                             className="profileAvatarIcon"
                             sx={{borderRadius:'24px', color:'white'}}
                             >
-                            <FavoriteBorderIcon sx={{fontSize:'20px'}} />
+                            <FavoriteBorderIcon sx={{fontSize:'20px'}} /> 
+                            <Typography variant="caption" sx={{ml:1}}>
+                                {followListInfo?.liked && followListInfo?.liked}
+                            </Typography>
                         </Button>
                     </Tooltip>
             }
@@ -2240,12 +2276,19 @@ function SocialLikes(props: any){
 function SocialFlags(props: any){
     const [solanaDomain, setSolanaDomain] = React.useState(null);
     const [isFlagged, setIsFlagged] = React.useState(false);
+    const [loading, setLoading] = React.useState(false);
     const [loadingFlaggedState, setLoadingFlaggedState] = React.useState(false);
     const [searchAddrInfo, setSearchAddrInfo] = useState<SearchUserInfoResp | null>(null);
+    const [followListInfo, setFollowListInfo] = useState<FollowListInfoResp | null>(null);
     const {publicKey} = useWallet();
     const solanaProvider = useWallet();
     const mint = props.mint;
-
+    
+    const NAME_SPACE = 'Grape';
+    const NETWORK = Network.SOLANA;
+    const FIRST = 10; // The number of users in followings/followers list for each fetch
+    
+    
     const cyberConnect = new CyberConnect({
         namespace: 'Grape',
         env: Env.PRODUCTION,
@@ -2290,6 +2333,26 @@ function SocialFlags(props: any){
         return resp;
     };
 
+    // Get the current user followings and followers list
+    const initFollowListInfo = async () => {
+        if (!mint) {
+        return;
+        }
+        
+        setLoading(true);
+        const resp = await followListInfoQuery({
+            address:mint,
+            namespace: '',
+            network: NETWORK,
+            followingFirst: FIRST,
+            followerFirst: FIRST,
+        });
+        if (resp) {
+        setFollowListInfo(resp);
+        }
+        setLoading(false);
+    };
+
     const flagWalletConnect = async (followAddress:string) => {
         // address:string, alias:string
         let tofollow = followAddress;   
@@ -2298,6 +2361,7 @@ function SocialFlags(props: any){
         .catch(function (error) {
             console.log(error);
         });
+        initFollowListInfo();
         getFlagStatus();
     };
     const flagWalletDisconnect = async (followAddress:string) => {
@@ -2306,10 +2370,12 @@ function SocialFlags(props: any){
         .catch(function (error) {
             console.log(error);
         });
+        initFollowListInfo();
         getFlagStatus();
     };
 
     React.useEffect(() => {
+        initFollowListInfo();
         getFlagStatus();
     },[]);
     
@@ -2333,6 +2399,9 @@ function SocialFlags(props: any){
                             sx={{borderRadius:'24px', color:'yellow'}}
                             >
                             <FlagIcon sx={{fontSize:'20px'}} />
+                            <Typography variant="caption" sx={{ml:1}}>
+                                {followListInfo?.liked && followListInfo?.liked}
+                            </Typography>
                         </Button>
                     </Tooltip>
                 :
@@ -2345,6 +2414,9 @@ function SocialFlags(props: any){
                             sx={{borderRadius:'24px', color:'white'}}
                             >
                             <EmojiFlagsIcon sx={{fontSize:'20px'}} />
+                            <Typography variant="caption" sx={{ml:1}}>
+                                {followListInfo?.liked && followListInfo?.liked}
+                            </Typography>
                         </Button>
                     </Tooltip>
             }
