@@ -1,5 +1,4 @@
-# Getting Started 
-Grape Art
+# Grape Art | Getting Started 
 
 - This is the Grape Art Dex | A Social. Stateless. Marketplace. powered by Solana!
 
