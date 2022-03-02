@@ -1220,7 +1220,7 @@ const ItemOffers = (props: any) => {
                                                                 {ValidateCurve(mintOwner) ?
                                                                     <OfferPrompt mint={mint} mintOwner={mintOwner} setRefreshOffers={setRefreshOffers} solBalance={sol_portfolio_balance} highestOffer={highestOffer} />
                                                                 :
-                                                                    <SellNowInstructionPrompt mint={mint} mintOwner={mintOwner} salePrice={salePrice} grapeWeightedScore={grape_weighted_score} RefreshOffers={setRefreshOffers} />
+                                                                    <SellNowVotePrompt mint={mint} mintOwner={mintOwner} salePrice={salePrice} grapeWeightedScore={grape_weighted_score} RefreshOffers={setRefreshOffers} />
                                                                 }
                                                             </Grid>
                                                         ) : (
@@ -1747,7 +1747,7 @@ function GrapeVerified(props:any){
     }
 }
 
-function SellNowInstructionPrompt(props:any){
+function SellNowVotePrompt(props:any){
     const [open_dialog, setOpenSPDialog] = React.useState(false);
     const [sell_now_amount, setSellNowAmount] = React.useState('');
     const mint = props.mint;  
@@ -1755,6 +1755,7 @@ function SellNowInstructionPrompt(props:any){
     const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
     const { connection } = useConnection();
     const { publicKey, wallet, sendTransaction } = useWallet();
+    const [daoPublicKey, setDaoPublicKey] = React.useState(null);
     const salePrice = props.salePrice || null;
     const weightedScore = props.grapeWeightedScore || 0;
     //const salePrice = React.useState(props.salePrice);
@@ -1785,16 +1786,6 @@ function SellNowInstructionPrompt(props:any){
             handleCloseDialog();
             //const setSellNowPrice = async () => {
             try {
-                let daoPublicKey = null;
-                for (var featured of FEATURED_DAO_ARRAY){
-                    if (featured.address === mintOwner){
-                        daoPublicKey = featured.address;
-                    }
-                } 
-                // static grape test (remove after testing)
-                if (mintOwner === 'JAbgQLj9MoJ2Kvie8t8Y6z6as3Epf7rDp87Po3wFwrNK')
-                    daoPublicKey = featured.address;
-                
                 const transaction = new Transaction();
                 const transactionInstr = await sellNowListing(+sell_now_amount, mint, publicKey.toString(), mintOwner, weightedScore, daoPublicKey);
                 
@@ -1853,84 +1844,114 @@ function SellNowInstructionPrompt(props:any){
             console.log("INVALID AMOUNT");
         }
     }
+
+    React.useEffect(() => {
+        for (var featured of FEATURED_DAO_ARRAY){
+            if (featured.address === mintOwner){
+                setDaoPublicKey(featured.address);
+            }
+        } 
+        // static grape test (remove after testing)
+        if (mintOwner === 'JAbgQLj9MoJ2Kvie8t8Y6z6as3Epf7rDp87Po3wFwrNK')
+            setDaoPublicKey(featured.address);
+    },[]);
+
     return (
         <React.Fragment>
-            <Button 
-                size="large" 
-                variant="outlined" 
-                sx={{
-                    borderRadius: '10px',
-                }}
-                value="Sell Now Instructions" onClick={handleClickOpenDialog}>
-                <HowToVoteIcon sx={{mr:1}}/> VOTE TO LIST
-            </Button>            
-            <BootstrapDialog 
-                fullWidth={true}
-                maxWidth={"sm"}
-                open={open_dialog} onClose={handleCloseDialog}
-                PaperProps={{
-                    style: {
-                        background: '#13151C',
-                        border: '1px solid rgba(255,255,255,0.05)',
-                        borderTop: '1px solid rgba(255,255,255,0.1)',
-                        borderRadius: '20px'
-                    }
-                }}
-            >
-                <DialogTitle>
-                    SET SELL NOW PRICE
-                </DialogTitle>
-                <form onSubmit={handleSellNow}>
-                <DialogContent>
-                    <RegexTextField
-                        regex={/[^0-9]+\.?[^0-9]/gi}
-                        autoFocus
-                        autoComplete='off'
-                        margin="dense"
-                        id="preview_sell_now_id"
-                        label="Set your sale price"
-                        type="text"
-                        fullWidth
-                        variant="standard"
-                        value={sell_now_amount}
-                        onChange={(e: any) => {
-                            setSellNowAmount(e.target.value)}
-                        }
-                        inputProps={{
-                            style: { 
-                                textAlign:'center', 
-                                fontSize: '34px'
+            
+            {daoPublicKey ?
+               <> 
+        
+                    <Button 
+                        size="large" 
+                        variant="outlined" 
+                        sx={{
+                            borderRadius: '10px',
+                        }}
+                        value="Sell Now Instructions" onClick={handleClickOpenDialog}>
+                        <HowToVoteIcon sx={{mr:1}}/> VOTE TO LIST
+                    </Button>            
+                    <BootstrapDialog 
+                        fullWidth={true}
+                        maxWidth={"sm"}
+                        open={open_dialog} onClose={handleCloseDialog}
+                        PaperProps={{
+                            style: {
+                                background: '#13151C',
+                                border: '1px solid rgba(255,255,255,0.05)',
+                                borderTop: '1px solid rgba(255,255,255,0.1)',
+                                borderRadius: '20px'
                             }
                         }}
-                    />
-                    <Grid 
-                        container
-                        alignContent='flex-end'
-                        justifyContent='flex-end'
                     >
-                        <Grid item
-                            sx={{textAlign:'right'}}
-                        >
-                            <Typography
-                                variant="caption"
+                        <DialogTitle>
+                            PROPOSE A SELL NOW PRICE
+                        </DialogTitle>
+                        <form onSubmit={handleSellNow}>
+                        <DialogContent>
+                            <RegexTextField
+                                regex={/[^0-9]+\.?[^0-9]/gi}
+                                autoFocus
+                                autoComplete='off'
+                                margin="dense"
+                                id="preview_sell_now_id"
+                                label="Set your sale price"
+                                type="text"
+                                fullWidth
+                                variant="standard"
+                                value={sell_now_amount}
+                                onChange={(e: any) => {
+                                    setSellNowAmount(e.target.value)}
+                                }
+                                inputProps={{
+                                    style: { 
+                                        textAlign:'center', 
+                                        fontSize: '34px'
+                                    }
+                                }}
+                            />
+                            <Grid 
+                                container
+                                alignContent='flex-end'
+                                justifyContent='flex-end'
                             >
-                                Price set in SOL <SolCurrencyIcon sx={{fontSize:"12px"}} />
-                            </Typography>
-                        </Grid>
-                    </Grid>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleCloseDialog}>Cancel</Button>
-                    <Button 
-                        type="submit"
-                        variant="text" 
-                        disabled={+sell_now_amount < 0.001}
-                        title="Submit">
-                            SUBMIT
-                    </Button>
-                </DialogActions>
-                </form>
-            </BootstrapDialog>   
+                                <Grid item
+                                    sx={{textAlign:'right'}}
+                                >
+                                    <Typography
+                                        variant="caption"
+                                    >
+                                        Price set in SOL <SolCurrencyIcon sx={{fontSize:"12px"}} />
+                                    </Typography>
+                                </Grid>
+                            </Grid>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={handleCloseDialog}>Cancel</Button>
+                            <Button 
+                                type="submit"
+                                variant="text" 
+                                disabled={+sell_now_amount < 0.001}
+                                title="Submit">
+                                    SUBMIT
+                            </Button>
+                        </DialogActions>
+                        </form>
+                    </BootstrapDialog> 
+                </>
+            :
+            <>
+                <Grid item>
+                    <Tooltip title={`This NFT is currently owned by a program and may be listed at a marketplace`}>
+                        <Button sx={{borderRadius:'10px'}}>
+                            <Alert severity="warning" sx={{borderRadius:'10px'}}>
+                            LISTED/PROGRAM OWNED NFT
+                            </Alert>
+                        </Button>
+                    </Tooltip>
+                </Grid>  
+            </>
+            }  
         </React.Fragment>
     );
 }
