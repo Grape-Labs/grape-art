@@ -1,7 +1,7 @@
 # Getting Started 
 Grape Art Interface
 
-- This is the Grape Art Dex / Social Network
+- This is the Grape Art Dex | A Social. Stateless. Marketplace. powered by Solana!
 
 References:
 - Metaplex Auction House (https://github.com/metaplex-foundation/metaplex)
