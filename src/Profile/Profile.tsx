@@ -3009,7 +3009,6 @@ const GroupGalleryList = (props: any) => {
                                                                             <Tooltip title={`Follow`}>
                                                                                 <Button 
                                                                                     variant="text" 
-                                                                                    title="Follow"
                                                                                     onClick={() => followWalletConnect(pubkey)}
                                                                                     size="small"
                                                                                     className="profileAvatarIcon"
