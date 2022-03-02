@@ -7,7 +7,6 @@ References:
 - Metaplex Auction House (https://github.com/metaplex-foundation/metaplex)
 - Realms/Governance (https://github.com/solana-labs/oyster/)
 
-
 Wallet Adapter:
 - Solana Wallet Adapter (https://github.com/solana-labs/wallet-adapter)
 
