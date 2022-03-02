@@ -2206,9 +2206,9 @@ function SocialLikes(props: any){
         :
             <>
             {isLiked ?  
+                    <Tooltip title="Unlike">
                         <Button 
                             variant="text" 
-                            title="Unlike"
                             onClick={() => likeWalletDisconnect(mint)}
                             size="small"
                             className="profileAvatarIcon"
@@ -2216,10 +2216,11 @@ function SocialLikes(props: any){
                             >
                             <FavoriteIcon sx={{fontSize:'20px', color:'red'}} />
                         </Button>
+                    </Tooltip>
                 :
+                    <Tooltip title="Like">
                         <Button 
                             variant="text" 
-                            title="Like"
                             onClick={() => likeWalletConnect(mint)}
                             size="small"
                             className="profileAvatarIcon"
@@ -2227,6 +2228,7 @@ function SocialLikes(props: any){
                             >
                             <FavoriteBorderIcon sx={{fontSize:'20px'}} />
                         </Button>
+                    </Tooltip>
             }
             </>
         }
@@ -2320,9 +2322,9 @@ function SocialFlags(props: any){
         :
             <>
             {isFlagged ?  
+                    <Tooltip title="Unflag">
                         <Button 
                             variant="text" 
-                            title="Unflag"
                             onClick={() => flagWalletDisconnect(mint)}
                             size="small"
                             className="profileAvatarIcon"
@@ -2330,10 +2332,11 @@ function SocialFlags(props: any){
                             >
                             <FlagIcon sx={{fontSize:'20px'}} />
                         </Button>
+                    </Tooltip>
                 :
+                    <Tooltip title="Flag">
                         <Button 
                             variant="text" 
-                            title="Flag"
                             onClick={() => flagWalletConnect(mint)}
                             size="small"
                             className="profileAvatarIcon"
@@ -2341,6 +2344,7 @@ function SocialFlags(props: any){
                             >
                             <EmojiFlagsIcon sx={{fontSize:'20px'}} />
                         </Button>
+                    </Tooltip>
             }
             </>
         }
