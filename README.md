@@ -28,9 +28,13 @@ CONSTANTS:
 -       * Given the volume of RPC calls it is important to use your own RPC provider which can handle them this too can be edited in the constants.tsx file
 -       ** For your own instance consider building your own AH
 
-Try it out:
-- http://localhost:3000
 
-Component Preview: (https://grape.art)
+For DAOs:
+-   Have a DAO and want to run an instance of grape.art
+-       Reach out to the Grape Team at https://discord.gg/greatape
+
+Try it out:
+- http://grape.art
+
 
 <img width="1219" alt="Screen Shot 2022-02-21 at 2 38 32 AM" src="https://user-images.githubusercontent.com/13381905/154965216-e03620b9-d783-4f7d-9b55-c4e21ec90879.png">
