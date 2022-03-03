@@ -17,19 +17,35 @@ import {
   createInstructionData,
   withInsertTransaction,
   InstructionData,
+  AccountMetaData,
 } from '@solana/spl-governance';
 
 import { 
   TOKEN_REALM_PROGRAM_ID,
 } from '../grapeTools/constants';
+import { AnyMxRecord } from 'dns';
+
+// Converts TransactionInstruction to InstructionData format
+/*export const createInstructionData2 = (instruction: TransactionInstruction) => {
+  return new InstructionData({
+    programId: instruction.programId,
+    data: instruction.data,
+    accounts: instruction.keys.map(
+      k =>
+        new AccountMetaData({
+          pubkey: k.pubkey,
+          isSigner: k.isSigner,
+          //isSigner: false,
+          isWritable: k.isWritable,
+          //isWritable: false,
+        }),
+    ),
+  });
+};*/
 
   export async function createDAOProposal(offerAmount: number, mint: string, walletPublicKey: string, mintOwner: any, weightedScore: any, daoPublicKey: string, connection: any, transactionInstr: InstructionsAndSignersSet, sendTransaction: any): Promise<InstructionsAndSignersSet> {
-    const programVersion = await getGovernanceProgramVersion(
-        connection,
-        new PublicKey(daoPublicKey),
-        ""
-      );
-
+    
+    //console.log('inDAOProposal instructionArray before adding DAO Instructions:'+JSON.stringify(transactionInstr));
     let instructions: TransactionInstruction[] = [];
     //let initialInstructions: TransactionInstruction[] = [];
     const signers: any[] = [];
@@ -45,6 +61,12 @@ import {
     const governingTokenMint = new PublicKey('9Z7SQ1WMiDNaHu2cX823sZxD2SQpscoLGkyeLAHEqy9r');
     const governanceAuthority = new PublicKey(walletPublicKey);
     const proposalIndex = 0;
+    const programVersion = await getGovernanceProgramVersion(
+      connection,
+      //new PublicKey(daoPublicKey),
+      programId,
+    );
+    console.log('programVersion:',programVersion);
 
     const tokenOwnerRecordPk = await getTokenOwnerRecordAddress(
       programId,
@@ -52,9 +74,11 @@ import {
       governingTokenMint,
       governancePk
     );
+    console.log('tokenOwnerRecordPK:', tokenOwnerRecordPk.toBase58());
     const proposalPk = await withCreateProposal(
       instructions,
-      new PublicKey(daoPublicKey), 
+      //new PublicKey(daoPublicKey), 
+      programId,
       programVersion,
       realmPk,
       governancePk,
@@ -67,24 +91,36 @@ import {
       voteType,
       options,
       useDenyOption,
-      new PublicKey(walletPublicKey),
+      governanceAuthority,
   );
   
-  const instructionData: InstructionData[]=[]; //createInstructionData([transactionInstr.instructions]);
+  let instructionData: InstructionData[]=[]; //createInstructionData([transactionInstr.instructions]);
   
+  //to add all 5 instructions from sellNowListing
+  let j = 0;
   for (var instruction of transactionInstr.instructions){
-    instructionData.push(createInstructionData(instruction));
+    //instructionData.push(instruction);
+    
+    if (j < 2){
+      //instructionData.push(createInstructionData2(instruction));
+      instructionData.push(createInstructionData(instruction));
+      console.log("instructionData: "+JSON.stringify(instructionData));
+    }
+    j++;
   }
 
+  //console.log('instruction in position 0'+JSON.stringify(instructionData[0]));
   //const instructionData2 = createInstructionData(instruction);
   //instructionData.push(instructionData2);
 
-  console.log("instructionData: "+JSON.stringify(instructionData));
-  console.log("wallet: "+walletPublicKey);
+  //just adding the first instruction instead 
+  //const instructionData2 = createInstructionData(transactionInstr.instructions[0]);
+  
 
   const wit = await withInsertTransaction(
     instructions,
-    new PublicKey(daoPublicKey),
+    //new PublicKey(daoPublicKey),
+    programId,
     programVersion,
     governancePk,
     proposalPk,
@@ -94,10 +130,11 @@ import {
     0,
     0,
     instructionData,
-    new PublicKey(walletPublicKey),
+    //[instructionData2],
+    governanceAuthority,
   );
   
-  console.log("instructions: "+JSON.stringify(instructions));
+    //console.log("instructions: "+JSON.stringify(instructions));
 
   return {
     signers: signers,
