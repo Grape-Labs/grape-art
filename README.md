@@ -33,7 +33,7 @@ HELP SETTING UP?
 -   Reach out to the Grape Team at https://discord.gg/greatape
 
 Try it out:
-- http://grape.art
+- https://grape.art
 
 
 <img width="1219" alt="Screen Shot 2022-02-21 at 2 38 32 AM" src="https://user-images.githubusercontent.com/13381905/154965216-e03620b9-d783-4f7d-9b55-c4e21ec90879.png">
