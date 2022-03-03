@@ -1,5 +1,5 @@
 
 node_modules
-src/utils/grapeTools/constants.ts
-src/utils/auctionHouse/helpers/constants.ts
 yarn.lock
+src/utils/auctionHouse/helpers/constants.ts
+src/utils/grapeTools/constants.ts

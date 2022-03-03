@@ -137,7 +137,6 @@ import { AnchorWallet, useAnchorWallet } from "@solana/wallet-adapter-react";
 import { WalletError } from '@solana/wallet-adapter-base';
 
 import { UPDATE_AUTHORITIES } from '../utils/grapeTools/mintverification';
-import { GRAPE_WHITELIST } from '../utils/grapeTools/whitelist';
 import { 
     TOKEN_REALM_PROGRAM_ID,
     TOKEN_REALM_ID,
@@ -2717,7 +2716,7 @@ function GalleryItemMeta(props: any) {
     const fetchTokenAccountOwnerHoldings = async () => {
         if (publicKey){ 
             let [sol_rsp, portfolio_rsp, governance_rsp] = await Promise.all([fetchSOLBalance(), fetchBalances(), getGovernanceBalance()]);
-            setGrapeWhitelisted(GRAPE_WHITELIST.indexOf(publicKey.toString()));
+            //setGrapeWhitelisted(GRAPE_WHITELIST.indexOf(publicKey.toString()));
             if (sol_rsp){ // use sol calc for balance
                 setSolPortfolioBalance(parseFloat(new TokenAmount(sol_rsp, 9).format()));
             }
