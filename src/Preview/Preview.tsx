@@ -284,8 +284,8 @@ function getParam(param: string) {
 }
 
 function convertSolVal(sol: any){
-    let sol_precision = 6;
-    return +sol/1000000000;
+    sol = parseFloat(new TokenAmount(sol, 9).format());
+    return sol;
 }
 
 function formatBlockTime(date: string, epoch: boolean, time: boolean){
