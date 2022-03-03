@@ -2,3 +2,4 @@
 node_modules
 src/utils/grapeTools/constants.ts
 src/utils/auctionHouse/helpers/constants.ts
+yarn.lock
