@@ -1,0 +1,27 @@
+{
+  "files": {
+    "main.css": "./static/css/main.773c890d.chunk.css",
+    "main.js": "./static/js/main.62e362a6.chunk.js",
+    "main.js.map": "./static/js/main.62e362a6.chunk.js.map",
+    "runtime-main.js": "./static/js/runtime-main.864c106e.js",
+    "runtime-main.js.map": "./static/js/runtime-main.864c106e.js.map",
+    "static/css/2.e91b11d9.chunk.css": "./static/css/2.e91b11d9.chunk.css",
+    "static/js/2.6b91db25.chunk.js": "./static/js/2.6b91db25.chunk.js",
+    "static/js/2.6b91db25.chunk.js.map": "./static/js/2.6b91db25.chunk.js.map",
+    "static/js/3.5e5c4918.chunk.js": "./static/js/3.5e5c4918.chunk.js",
+    "static/js/3.5e5c4918.chunk.js.map": "./static/js/3.5e5c4918.chunk.js.map",
+    "index.html": "./index.html",
+    "static/css/2.e91b11d9.chunk.css.map": "./static/css/2.e91b11d9.chunk.css.map",
+    "static/css/main.773c890d.chunk.css.map": "./static/css/main.773c890d.chunk.css.map",
+    "static/js/2.6b91db25.chunk.js.LICENSE.txt": "./static/js/2.6b91db25.chunk.js.LICENSE.txt",
+    "static/media/App.less": "./static/media/App.91f250be.less",
+    "static/media/index.css": "./static/media/Gilroy-Light.46496110.ttf"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.864c106e.js",
+    "static/css/2.e91b11d9.chunk.css",
+    "static/js/2.6b91db25.chunk.js",
+    "static/css/main.773c890d.chunk.css",
+    "static/js/main.62e362a6.chunk.js"
+  ]
+}
