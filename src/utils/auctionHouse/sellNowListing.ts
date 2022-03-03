@@ -16,6 +16,7 @@ import {
     getMetadata,
   } from './helpers/accounts';
 import { getPriceWithMantissa } from './helpers/various';
+import { ConstructionOutlined } from '@mui/icons-material';
 
   export async function sellNowListing(offerAmount: number, mint: string, walletPublicKey: string, mintOwner: any, weightedScore: any, daoPublicKey: string): Promise<InstructionsAndSignersSet> {
 
@@ -103,6 +104,7 @@ import { getPriceWithMantissa } from './helpers/various';
     ); 
 
     const instructions = [instruction];
+    console.log("sellerWalletKey: "+sellerWalletKey.toBase58());
     
     let derivedMintPDA = await web3.PublicKey.findProgramAddress([Buffer.from((mintKey).toBuffer())], auctionHouseKey);
     let derivedBuyerPDA = await web3.PublicKey.findProgramAddress([Buffer.from((sellerWalletKey).toBuffer())], auctionHouseKey);

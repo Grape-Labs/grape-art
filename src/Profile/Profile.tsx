@@ -2462,7 +2462,8 @@ const MainPanel = (props: any) => {
                         p:0,
                     }} 
                 >
-                    <Box sx={{ m:0,p:0 }}>
+                    
+                    
                         <Tabs 
                             variant="scrollable"
                             scrollButtons="auto"
@@ -2474,15 +2475,15 @@ const MainPanel = (props: any) => {
                                 mb:1,
                             }} 
                             >
-                            <Tab icon={<Hidden smUp><CollectionsOutlinedIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>Collection</Hidden>} sx={{color:'white'}} {...a11yProps(0)} />
-                            <Tab icon={<Hidden smUp><RssFeedOutlinedIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>Feed</Hidden>} sx={{color:'white'}} {...a11yProps(1)} />
-                            <Tab icon={<Hidden smUp><ArrowCircleLeftOutlinedIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>Followers</Hidden>} sx={{color:'white'}} {...a11yProps(2)} />
-                            <Tab icon={<Hidden smUp><ArrowCircleRightOutlinedIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>Following</Hidden>} sx={{color:'white'}} {...a11yProps(3)} />
+                            <Tab icon={<Hidden smUp><CollectionsOutlinedIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>Collection</Hidden>} sx={{color:'white',minWidth:'60px'}} {...a11yProps(0)} />
+                            <Tab icon={<Hidden smUp><RssFeedOutlinedIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>Feed</Hidden>} sx={{color:'white',minWidth:'60px'}} {...a11yProps(1)} />
+                            <Tab icon={<Hidden smUp><ArrowCircleLeftOutlinedIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>Followers</Hidden>} sx={{color:'white',minWidth:'60px'}} {...a11yProps(2)} />
+                            <Tab icon={<Hidden smUp><ArrowCircleRightOutlinedIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>Following</Hidden>} sx={{color:'white',minWidth:'60px'}} {...a11yProps(3)} />
                             {/*<Tab label="Bids" sx={{color:'white'}} {...a11yProps(4)} />*/}
-                            <Tab icon={<Hidden smUp><GavelOutlinedIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>Offers</Hidden>} sx={{color:'white'}} {...a11yProps(5)} />
-                            <Tab icon={<Hidden smUp><SolCurrencyIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>Selling</Hidden>} sx={{color:'white'}} {...a11yProps(6)} />
+                            <Tab icon={<Hidden smUp><GavelOutlinedIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>Offers</Hidden>} sx={{color:'white',minWidth:'60px'}} {...a11yProps(5)} />
+                            <Tab icon={<Hidden smUp><SolCurrencyIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>Selling</Hidden>} sx={{color:'white',minWidth:'60px'}} {...a11yProps(6)} />
                         </Tabs>
-                    </Box>
+                    
                     
                     <TabPanel value={tabvalue} index={1}>
                         <Box
