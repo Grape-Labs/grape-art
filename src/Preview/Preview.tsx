@@ -2687,7 +2687,6 @@ function GalleryItemMeta(props: any) {
                 //if (tokenOwners.data.parsed.info.owner){
                     setLoadingFollowState(true);
                     let socialconnection = await fetchSearchAddrInfo(publicKey.toBase58(), towner);
-                    console.log("socialconnection: "+JSON.stringify(socialconnection));
                     if (socialconnection){
                         //if (socialconnection?.identity){
                         if (socialconnection?.connections[0]?.followStatus) {  
@@ -2997,7 +2996,7 @@ function GalleryItemMeta(props: any) {
                                                         elevation={4}
                                                         alt={collectionitem.name}
                                                         src={collectionitem.image}
-                                                        sx={{ width: 30, height: 30, bgcolor: "#222", ml:1}}
+                                                        sx={{ width: 30, height: 30, bgcolor: "#222", ml:1,mr:0.5}}
                                                     ></Avatar>
                                                 </Grid>
                                                 <Grid item>        
