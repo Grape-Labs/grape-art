@@ -2243,7 +2243,7 @@ function SocialLikes(props: any){
                             className="profileAvatarIcon"
                             sx={{borderRadius:'24px', color:'white'}}
                             >
-                            <FavoriteIcon sx={{fontSize:'20px', color:'red'}} /> 
+                            <FavoriteIcon sx={{fontSize:'24px', color:'red'}} /> 
                             {followListInfo?.liked && +followListInfo?.liked > 0 ?
                                 <Typography variant="caption" sx={{ml:1}}>
                                     {followListInfo?.liked}
@@ -2260,7 +2260,7 @@ function SocialLikes(props: any){
                             className="profileAvatarIcon"
                             sx={{borderRadius:'24px', color:'white'}}
                             >
-                            <FavoriteBorderIcon sx={{fontSize:'20px'}} /> 
+                            <FavoriteBorderIcon sx={{fontSize:'24px'}} /> 
                             {followListInfo?.liked && +followListInfo?.liked > 0 ?
                                 <Typography variant="caption" sx={{ml:1}}>
                                     {followListInfo?.liked}
@@ -2400,7 +2400,7 @@ function SocialFlags(props: any){
                             className="profileAvatarIcon"
                             sx={{borderRadius:'24px', color:'yellow'}}
                             >
-                            <FlagIcon sx={{fontSize:'20px'}} />
+                            <FlagIcon sx={{fontSize:'24px'}} />
                             {followListInfo?.reported && +followListInfo?.reported > 0 ?
                                 <Typography variant="caption" sx={{ml:1}}>
                                     {followListInfo?.reported}
@@ -2417,7 +2417,7 @@ function SocialFlags(props: any){
                             className="profileAvatarIcon"
                             sx={{borderRadius:'24px', color:'white'}}
                             >
-                            <EmojiFlagsIcon sx={{fontSize:'20px'}} />
+                            <EmojiFlagsIcon sx={{fontSize:'24px'}} />
                             {followListInfo?.reported && +followListInfo?.reported > 0 ?
                                 <Typography variant="caption" sx={{ml:1}}>
                                     {followListInfo?.reported}
@@ -2986,22 +2986,25 @@ function GalleryItemMeta(props: any) {
                                 </Grid>
                                 <Grid item  xs={6} md={4}>
                                     <Box display="flex" justifyContent="flex-end">
-                                        
-                                        <SocialLikes mint={mint} />
-                                        <SocialFlags mint={mint} />
-                                        
-                                        <Button sx={{borderRadius:'24px',background:'none'}}>
-                                            <Avatar 
-                                                component={Paper} 
-                                                elevation={4}
-                                                alt={collectionitem.name}
-                                                src={collectionitem.image}
-                                                sx={{ width: 26, height: 26, bgcolor: "#222", ml:1}}
-                                            >
+                                        <ButtonGroup variant="text">
+                                            <SocialLikes mint={mint} />
+                                            <SocialFlags mint={mint} />
+                                            
                                                 
-                                            </Avatar>
-                                            <ShareSocialURL fontSize={'20px'} url={'https://grape.art'+GRAPE_PREVIEW+mint} title={'Grape DEX | '+trimAddress(mint,4)} />
-                                        </Button>
+                                                <Grid item sx={{borderRadius:'24px',background:'none'}}>
+                                                    <Avatar 
+                                                        component={Paper} 
+                                                        elevation={4}
+                                                        alt={collectionitem.name}
+                                                        src={collectionitem.image}
+                                                        sx={{ width: 30, height: 30, bgcolor: "#222", ml:1}}
+                                                    ></Avatar>
+                                                </Grid>
+                                                <Grid item>        
+                                                    <ShareSocialURL fontSize={'24px'} url={'https://grape.art'+GRAPE_PREVIEW+mint} title={'Grape DEX | '+trimAddress(mint,4)} />
+                                                </Grid>
+
+                                        </ButtonGroup>
                                     </Box>
                                 </Grid>
                             </Grid> 
