@@ -2944,7 +2944,7 @@ const GroupGalleryList = (props: any) => {
                                             pr:4
                                         }} 
                                     >
-                                    {featuredObj && (  
+                                    {featuredObj ? (  
                                         <img
                                             src={featuredObj.img}
                                             alt=""
@@ -2959,7 +2959,29 @@ const GroupGalleryList = (props: any) => {
                                                 height:'110%'
                                             }}
                                         />
-                                    )}
+                                    )
+                                    :(
+                                        <>
+                                            {(hasProfilePicture && profilePictureUrl) &&
+                                                <img
+                                                    src={profilePictureUrl}
+                                                    alt=""
+                                                    style={{
+                                                        opacity: '0.05',
+                                                        position: 'absolute',
+                                                        marginTop:2,
+                                                        marginBottom:2,
+                                                        padding:1,
+                                                        top:'-5%',
+                                                        left:'-45%',
+                                                        height:'150%'
+                                                    }}
+                                                />
+                                            }
+                                        </>
+                                        )
+                                    }
+                                    
                                         
                                         <List
                                             sx={{ 
