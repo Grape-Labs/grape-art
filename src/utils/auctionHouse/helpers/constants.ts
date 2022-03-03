@@ -1,4 +1,6 @@
 import { PublicKey } from '@solana/web3.js';
+import 'dotenv/config.js';
+
 export const CANDY_MACHINE = 'candy_machine';
 export const AUCTION_HOUSE = 'auction_house';
 export const TOKEN_ENTANGLER = 'token_entangler';
@@ -74,4 +76,5 @@ export const EXTENSION_PNG = '.png';
 export const EXTENSION_JSON = '.json';
 
 export const ENV_AH = "mainnet-beta";
-export const AUCTION_HOUSE_ADDRESS = "4w2BVBfV86NBm3ytL1AuHxToBV7Kx5YahdMRgyyYFoRj";
+
+export const AUCTION_HOUSE_ADDRESS = process.env.REACT_APP_API_AUCTION_HOUSE_ADDRESS || "4w2BVBfV86NBm3ytL1AuHxToBV7Kx5YahdMRgyyYFoRj";
