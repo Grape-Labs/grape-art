@@ -2501,7 +2501,8 @@ function GalleryItemMeta(props: any) {
         .catch(function (error) {
             console.log(error);
         });
-        getFollowStatus();
+        if (tokenOwners)
+            getFollowStatus(tokenOwners);
     };
     const followWalletDisconnect = async (followAddress:string) => {
         // address:string, alias:string
@@ -2509,7 +2510,8 @@ function GalleryItemMeta(props: any) {
         .catch(function (error) {
             console.log(error);
         });
-        getFollowStatus();
+        if (tokenOwners)
+            getFollowStatus(tokenOwners);
     };
     
     const onError = useCallback(
@@ -2678,13 +2680,14 @@ function GalleryItemMeta(props: any) {
         return resultValues;
     };
 
-    const getFollowStatus = async () => {
+    const getFollowStatus = async (towner:string) => {
         
         if (publicKey){
-            if (tokenOwners){
-                if (tokenOwners.data.parsed.info.owner){
+            if (towner){
+                //if (tokenOwners.data.parsed.info.owner){
                     setLoadingFollowState(true);
-                    let socialconnection = await fetchSearchAddrInfo(publicKey.toBase58(), tokenOwners?.data.parsed.info.owner);
+                    let socialconnection = await fetchSearchAddrInfo(publicKey.toBase58(), towner);
+                    console.log("socialconnection: "+JSON.stringify(socialconnection));
                     if (socialconnection){
                         //if (socialconnection?.identity){
                         if (socialconnection?.connections[0]?.followStatus) {  
@@ -2692,7 +2695,7 @@ function GalleryItemMeta(props: any) {
                         }
                     }
                     setLoadingFollowState(false);
-                }
+                //}
             }
         }
     }
@@ -2702,14 +2705,13 @@ function GalleryItemMeta(props: any) {
         let [tokenowner] = await Promise.all([GetTokenOwner(mintAta)]);
         setTokenOwners(tokenowner);
         fetchSolanaDomain(tokenowner?.data.parsed.info.owner);
-        getFollowStatus();
+        getFollowStatus(tokenowner?.data.parsed.info.owner);
         setLoadingOwner(false);
     }
 
     React.useEffect(() => {
-        if (publicKey){
-            console.log("pkey: "+publicKey.toBase58());
-            getFollowStatus();
+        if ((publicKey)&&(tokenOwners)){
+            getFollowStatus(tokenOwners?.data.parsed.info.owner);
         }
     }, [publicKey]);
 
@@ -2989,8 +2991,6 @@ function GalleryItemMeta(props: any) {
                                         <ButtonGroup variant="text">
                                             <SocialLikes mint={mint} />
                                             <SocialFlags mint={mint} />
-                                            
-                                                
                                                 <Grid item sx={{borderRadius:'24px',background:'none'}}>
                                                     <Avatar 
                                                         component={Paper} 
