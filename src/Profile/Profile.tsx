@@ -2967,13 +2967,13 @@ const GroupGalleryList = (props: any) => {
                                                     src={profilePictureUrl}
                                                     alt=""
                                                     style={{
-                                                        opacity: '0.05',
+                                                        opacity: '0.025',
                                                         position: 'absolute',
                                                         marginTop:2,
                                                         marginBottom:2,
                                                         padding:1,
                                                         top:'-5%',
-                                                        left:'-45%',
+                                                        left:'-47.5%',
                                                         height:'150%'
                                                     }}
                                                 />
