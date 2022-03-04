@@ -1803,8 +1803,7 @@ function GrapeVerified(props:any){
         return (
             <Tooltip title={`Update Authority/Creator Verified on Metaplex`} placement="top">
                 <Button 
-                    component={Link} 
-                    to={`${GRAPE_PREVIEW}${verifiedPK}`}
+                    href={`${GRAPE_PREVIEW}${verifiedPK}`}
                     sx={{color:'white', borderRadius:'24px'}}>
                     {symbol}
                     <Avatar 
