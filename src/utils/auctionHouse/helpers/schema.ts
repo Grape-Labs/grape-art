@@ -213,7 +213,7 @@ export const METADATA_SCHEMA = new Map<any, any>([
     {
       kind: 'struct',
       fields: [
-        ['verified', 'u8'],
+        ['verified', 'u8'], // bool
         ['key', 'pubkeyAsString'],
       ],
     },
@@ -242,8 +242,8 @@ export const METADATA_SCHEMA = new Map<any, any>([
         ['primarySaleHappened', 'u8'], // bool
         ['isMutable', 'u8'], // bool
         ['editionNonce', { kind: 'option', type: 'u8' }],
-        ['tokenStandard', TokenStandard],
-        ['collection', Collection],
+        ['tokenStandard', { kind: 'option', type: TokenStandard }],
+        ['collection', { kind: 'option', type: Collection }],
       ],
     },
   ],

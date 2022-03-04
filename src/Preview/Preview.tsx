@@ -1730,14 +1730,15 @@ function OfferPrompt(props: any) {
 function GrapeVerified(props:any){
     const [loading, setLoading] = React.useState(false);
     const [verifiedState, setVerifiedState] = React.useState(false);
+    const [verifiedPK, setVerificationPK] = React.useState(null);
     const [collectionImage, setCollectionIamge] = React.useState(null);
     const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
     let updateAuthority = props?.updateAuthority;
+    let symbol = props?.symbol;
     
 
     const MD_PUBKEY = new PublicKey("metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s");
         const getCollectionData = async (collectionAddress:string) => {
-            console.log("TESTING: "+collectionAddress)
             try {
                 let mint_address = new PublicKey(collectionAddress)
                 let [pda, bump] = await PublicKey.findProgramAddress([
@@ -1749,17 +1750,12 @@ function GrapeVerified(props:any){
                 
                 const meta_response = await ggoconnection.getAccountInfo(pda);
 
-                console.log("META: "+JSON.stringify(meta_response));
-
                 let meta_final = decodeMetadata(meta_response.data);
-                
-                //setCollectionRaw({meta_final,meta_response});
                 
                 const metadata = await fetch(meta_final.data.uri).then(
                     (res: any) => res.json());
                 
-                console.log("META: "+JSON.stringify(metadata));
-                //collectionImage(metadata.) 
+                setCollectionIamge(metadata.image) 
 
                 return null;
             } catch (e) { // Handle errors from invalid calls
@@ -1772,26 +1768,26 @@ function GrapeVerified(props:any){
         if (updateAuthority && !loading){
             let verified = false;
             let verified_creator = false;
-            
+
             // first stage verification
             for (var item of updateAuthority.data.creators){
                 if (item.address === updateAuthority.updateAuthority)
                     if (item.verified === 1){
                         // now validate verify_collection in the collection results
                         verified_creator = true;
-                        setVerifiedState(true);
                     }
             }
 
             // second stage verification
             if (verified_creator){
                 if (updateAuthority?.collection?.verified){
-                    console.log("Collection PK: "+JSON.stringify(updateAuthority.collection.key));
                     if (updateAuthority.collection.verified === 1){
-                        setVerifiedState(true);
-                        if (!collectionImage){
-                            
-                            //getCollectionData(updateAuthority.updateAuthority)
+                        if (ValidateAddress(updateAuthority.collection.key)){
+                            setVerifiedState(true);
+                            if (!collectionImage){
+                                setVerificationPK(updateAuthority.collection.key)
+                                getCollectionData(updateAuthority.collection.key);
+                            }
                         }
                     }
                 }
@@ -1806,13 +1802,17 @@ function GrapeVerified(props:any){
         //if (grape_verified > -1){
         return (
             <Tooltip title={`Update Authority/Creator Verified on Metaplex`} placement="top">
-                <Button sx={{color:'white', borderRadius:'24px',m:0,p:0}}>
+                <Button 
+                    component={Link} 
+                    to={`${GRAPE_PREVIEW}${verifiedPK}`}
+                    sx={{color:'white', borderRadius:'24px'}}>
+                    {symbol}
                     <Avatar 
                         component={Paper} 
                         elevation={4}
                         alt={updateAuthority.data.symbol}
                         src={collectionImage}
-                        sx={{ width: 20, height: 20, bgcolor: "#222", m:0}}
+                        sx={{ width: 20, height: 20, bgcolor: "#222",ml:1}}
                     ></Avatar>
                     {grape_verified > -1 &&
                         <VerifiedIcon sx={{fontSize:"12px"}} />
@@ -1822,7 +1822,7 @@ function GrapeVerified(props:any){
         );
     
     } else{
-        return <></>
+        return <>{symbol}</>
     } 
 }
 
@@ -3505,7 +3505,7 @@ function GalleryItemMeta(props: any) {
 
                                         <Box>
                                             <Typography component="div" variant="subtitle1">
-                                                {collectionitem.symbol} <GrapeVerified updateAuthority={collectionrawdata} />
+                                               <GrapeVerified updateAuthority={collectionrawdata} symbol={collectionitem.symbol} />
                                             </Typography>
                                             <Typography component="div" variant="h4" sx={{fontWeight:'800'}}>
                                                 <strong>
