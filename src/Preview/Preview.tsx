@@ -1735,7 +1735,7 @@ function GrapeVerified(props:any){
     const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
     let updateAuthority = props?.updateAuthority;
     let symbol = props?.symbol;
-    let grape_verified = null;
+    let grape_verified = -1;
 
     const MD_PUBKEY = new PublicKey("metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s");
         const getCollectionData = async (collectionAddress:string) => {
@@ -1792,11 +1792,10 @@ function GrapeVerified(props:any){
                     }
                 }
             }
-
-
+            
             // third stage verification (coming soon)
-            //grape_verified = UPDATE_AUTHORITIES.indexOf(updateAuthority);
-            grape_verified = 1;
+            grape_verified = UPDATE_AUTHORITIES.indexOf(updateAuthority);
+            //grape_verified = 1;
             if (grape_verified > -1){
 
             }
