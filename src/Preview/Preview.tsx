@@ -1731,10 +1731,10 @@ function GrapeVerified(props:any){
     const [loading, setLoading] = React.useState(false);
     const [verifiedState, setVerifiedState] = React.useState(false);
     const [verifiedPK, setVerificationPK] = React.useState(null);
-    const [collectionImage, setCollectionIamge] = React.useState(null);
+    const [collectionImage, setCollectionImage] = React.useState(null);
+    const [collectionName, setCollectionName] = React.useState(props.symbol);
     const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
     let updateAuthority = props?.updateAuthority;
-    let symbol = props?.symbol;
     let grape_verified = -1;
 
     const MD_PUBKEY = new PublicKey("metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s");
@@ -1755,7 +1755,9 @@ function GrapeVerified(props:any){
                 const metadata = await fetch(meta_final.data.uri).then(
                     (res: any) => res.json());
                 
-                setCollectionIamge(metadata.image) 
+                console.log("metadata"+JSON.stringify(metadata));
+                setCollectionName(metadata.name);
+                setCollectionImage(metadata.image) 
 
                 return null;
             } catch (e) { // Handle errors from invalid calls
@@ -1792,7 +1794,7 @@ function GrapeVerified(props:any){
                     }
                 }
             }
-            
+
             // third stage verification (coming soon)
             grape_verified = UPDATE_AUTHORITIES.indexOf(updateAuthority);
             //grape_verified = 1;
@@ -1809,7 +1811,7 @@ function GrapeVerified(props:any){
                 <Button 
                     href={`${GRAPE_PREVIEW}${verifiedPK}`}
                     sx={{color:'white', borderRadius:'24px'}}>
-                    {symbol}
+                    {collectionName}
                     <Avatar 
                         component={Paper} 
                         elevation={4}
@@ -1825,7 +1827,7 @@ function GrapeVerified(props:any){
         );
     
     } else{
-        return <>{symbol}</>
+        return <>{collectionName}</>
     } 
 }
 
