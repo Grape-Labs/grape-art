@@ -1735,7 +1735,7 @@ function GrapeVerified(props:any){
     const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
     let updateAuthority = props?.updateAuthority;
     let symbol = props?.symbol;
-    
+    let grape_verified = null;
 
     const MD_PUBKEY = new PublicKey("metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s");
         const getCollectionData = async (collectionAddress:string) => {
@@ -1793,13 +1793,18 @@ function GrapeVerified(props:any){
                 }
             }
 
+
             // third stage verification (coming soon)
+            //grape_verified = UPDATE_AUTHORITIES.indexOf(updateAuthority);
+            grape_verified = 1;
+            if (grape_verified > -1){
+
+            }
         }
     }, [updateAuthority]);
 
     if (verifiedState){
-        let grape_verified = UPDATE_AUTHORITIES.indexOf(updateAuthority);
-        //if (grape_verified > -1){
+        
         return (
             <Tooltip title={`Update Authority/Creator Verified on Metaplex`} placement="top">
                 <Button 
@@ -1812,9 +1817,9 @@ function GrapeVerified(props:any){
                         alt={updateAuthority.data.symbol}
                         src={collectionImage}
                         sx={{ width: 20, height: 20, bgcolor: "#222",ml:1}}
-                    ></Avatar>
+                    />
                     {grape_verified > -1 &&
-                        <VerifiedIcon sx={{fontSize:"12px"}} />
+                        <VerifiedIcon sx={{fontSize:"20px",ml:1}} />
                     }
                 </Button>
             </Tooltip>
