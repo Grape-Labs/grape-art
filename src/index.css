@@ -76,3 +76,15 @@ code {
   90% {background: linear-gradient(234deg, #00F0DD 0%, #DC1FFF 100%);}
   100% {background: linear-gradient(270deg, #00F0DD 0%, #DC1FFF 100%);}
 }
+
+@media screen and (max-width: 550px) {
+
+  /* Overriding MUI Stylings for mobile screens */
+  .wallet-adapter-button {
+    line-height: 20px !important;
+  }
+
+  .header-logo {
+    width: 120px !important;
+  }
+}
