@@ -1807,7 +1807,7 @@ function GrapeVerified(props:any){
     if (verifiedState){
         
         return (
-            <Tooltip title={`Update Authority/Creator Verified on Metaplex`} placement="top">
+            <Tooltip title={`${props.symbol}: Update Authority/Creator Verified on Metaplex`} placement="top">
                 <Button 
                     href={`${GRAPE_PREVIEW}${verifiedPK}`}
                     sx={{color:'white', borderRadius:'24px'}}>
