@@ -1,13 +1,11 @@
-import React, { useCallback, memo } from "react";
+import React, { useCallback } from "react";
 import { Link } from "react-router-dom";
 
-import {CopyToClipboard} from 'react-copy-to-clipboard';
 import { Connection, PublicKey, Transaction } from '@solana/web3.js'
-import { u128, u64 } from '@project-serum/borsh'
 // @ts-ignore
 import fetch from 'node-fetch'
 
-import { TokenAmount, lt } from '../utils/grapeTools/safe-math';
+import { TokenAmount } from '../utils/grapeTools/safe-math';
 import { styled } from '@mui/material/styles';
 import { Button } from '@mui/material';
 import { useSnackbar } from 'notistack';
