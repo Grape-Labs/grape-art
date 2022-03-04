@@ -2180,8 +2180,8 @@ const OffersView = (props:any) => {
                                                     </Tooltip>
                                                 </Typography>
                                             </TableCell>
-                                            <TableCell align="center">
-                                                {(publicKey == item.buyeraddress) && (
+                                            <TableCell align="center"> 
+                                                {(publicKey.toBase58() === item.buyeraddress) && (
                                                     <Tooltip title={`Cancel Offer`}>
                                                         <Button 
                                                             color="error"
@@ -2696,10 +2696,10 @@ const GroupGalleryList = (props: any) => {
         return resp;
     };
 
-    const followWalletConnect = async (followAddress:string) => {
+    const followWalletConnect = async (followAddress:string, solanaDomain:string) => {
         // address:string, alias:string
         let tofollow = followAddress;   
-        let promise = await cyberConnect.connect(followAddress.toString())
+        let promise = await cyberConnect.connect(followAddress, solanaDomain)
         .catch(function (error) {
             console.log(error);
         });
@@ -2708,7 +2708,7 @@ const GroupGalleryList = (props: any) => {
     const followWalletDisconnect = async (followAddress:string) => {
         // address:string, alias:string
 
-        let promise = await cyberConnect.disconnect(followAddress.toString())
+        let promise = await cyberConnect.disconnect(followAddress)
         .catch(function (error) {
             console.log(error);
         });
@@ -3032,7 +3032,7 @@ const GroupGalleryList = (props: any) => {
                                                                             <Tooltip title={`Follow`}>
                                                                                 <Button 
                                                                                     variant="text" 
-                                                                                    onClick={() => followWalletConnect(pubkey)}
+                                                                                    onClick={() => followWalletConnect(pubkey, solanaDomain)}
                                                                                     size="small"
                                                                                     className="profileAvatarIcon"
                                                                                     sx={{borderRadius:'24px', color:'white'}}

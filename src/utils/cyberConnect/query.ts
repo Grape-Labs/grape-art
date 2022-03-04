@@ -36,6 +36,7 @@ export const followListInfoSchema = ({
             ens
             avatar
             namespace
+            alias
           }
         }
         followers(namespace: $namespace, first: $followerFirst, after: $followerAfter) {
@@ -48,6 +49,7 @@ export const followListInfoSchema = ({
             ens
             avatar
             namespace
+            alias
           }
         }
       }

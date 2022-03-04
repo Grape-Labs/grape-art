@@ -3,6 +3,7 @@ export interface FollowListInfoArgs {
     namespace?: string;
     network?: string;
     type?: string,
+    alias?: string,
     followingFirst?: number;
     followingAfter?: string;
     followerFirst?: number;
