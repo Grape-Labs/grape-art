@@ -238,7 +238,6 @@ function GrapeVerified(props:any){
                 const metadata = await fetch(meta_final.data.uri).then(
                     (res: any) => res.json());
                 
-                console.log("metadata"+JSON.stringify(metadata));
                 setCollectionName(metadata.name);
                 setCollectionImage(metadata.image) 
 
