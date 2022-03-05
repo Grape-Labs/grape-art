@@ -279,7 +279,8 @@ export function Header(props: any) {
             <Box display='flex' flexGrow={1}>
                 <Button
                     variant="text"
-                    component={NavLink} color="inherit" to="/"
+                    color="inherit" 
+                    href='/'
                 >
                     <Typography
                         component="h1"
