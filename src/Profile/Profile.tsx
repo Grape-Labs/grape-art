@@ -1345,8 +1345,7 @@ export function ProfileView(this: any, props: any) {
     const navigate = useNavigate();
     //const location = useLocation();
     
-    const fetchWalletCollection = async () => {
-        
+    const fetchWalletCollection = async () => { 
         /*
         TokenAccountsFilter
         const response = await connection.getTokenAccountsByOwner(

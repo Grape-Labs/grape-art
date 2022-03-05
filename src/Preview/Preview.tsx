@@ -249,41 +249,43 @@ function GrapeVerified(props:any){
         }
 
     React.useEffect(() => { 
-        if (updateAuthority && !loading){
-            let verified = false;
-            let verified_creator = false;
+        try{
+            if (updateAuthority && !loading){
+                let verified = false;
+                let verified_creator = false;
 
-            // first stage verification
-            for (var item of updateAuthority.data.creators){
-                if (item.address === updateAuthority.updateAuthority)
-                    if (item.verified === 1){
-                        // now validate verify_collection in the collection results
-                        verified_creator = true;
-                    }
-            }
+                // first stage verification
+                for (var item of updateAuthority.data.creators){
+                    if (item.address === updateAuthority.updateAuthority)
+                        if (item.verified === 1){
+                            // now validate verify_collection in the collection results
+                            verified_creator = true;
+                        }
+                }
 
-            // second stage verification
-            if (verified_creator){
-                if (updateAuthority?.collection?.verified){
-                    if (updateAuthority.collection.verified === 1){
-                        if (ValidateAddress(updateAuthority.collection.key)){
-                            setVerifiedState(true);
-                            if (!collectionImage){
-                                setVerificationPK(updateAuthority.collection.key)
-                                getCollectionData(updateAuthority.collection.key);
+                // second stage verification
+                if (verified_creator){
+                    if (updateAuthority?.collection?.verified){
+                        if (updateAuthority.collection.verified === 1){
+                            if (ValidateAddress(updateAuthority.collection.key)){
+                                setVerifiedState(true);
+                                if (!collectionImage){
+                                    setVerificationPK(updateAuthority.collection.key)
+                                    getCollectionData(updateAuthority.collection.key);
+                                }
                             }
                         }
                     }
                 }
-            }
 
-            // third stage verification (coming soon)
-            grape_verified = UPDATE_AUTHORITIES.indexOf(updateAuthority);
-            //grape_verified = 1;
-            if (grape_verified > -1){
+                // third stage verification (coming soon)
+                grape_verified = UPDATE_AUTHORITIES.indexOf(updateAuthority);
+                //grape_verified = 1;
+                if (grape_verified > -1){
 
+                }
             }
-        }
+        }catch(e){console.log("ERR: "+e)}
     }, [updateAuthority]);
 
     if (verifiedState){
