@@ -520,6 +520,24 @@ const MainMenu = (props:any) => {
     */
 }
 
+export const TabActiveContext = React.createContext({
+    activeTab: 0,
+    setActiveTab: (at:number) => {}
+});
+
+export const TabActiveProvider = ({ children, initialActiveKey }) => {
+    const [activeTab, setActiveTab] = useState(initialActiveKey);
+    return (
+      <TabActiveContext.Provider
+        value={{
+          activeTab,
+          setActiveTab
+        }}
+      >
+        {children}
+      </TabActiveContext.Provider>
+    );
+};
 
 const MainPanel = (props: any) => {
     const [loading, setLoading] = React.useState(false);
@@ -530,19 +548,25 @@ const MainPanel = (props: any) => {
     const finalCollection = props.final_collection || null;
     const [page, setPage] = React.useState(1);
     const rowsperpage = 1500;
-
-    const [tabvalue, setTabValue] = React.useState(0);
-
+    //const { activeTab, setActiveTab } = React.useContext(TabActiveContext);
+    const [tabvalue, setTabValue] = React.useState(props?.activeTab || 0);
+    
     const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
         setTabValue(newValue);
     };
 
     function a11yProps(index: number) {
         return {
-            id: `simple-tab-${index}`,
-            'aria-controls': `simple-tabpanel-${index}`,
+            id: `grapeart-tab-${index}`,
+            'aria-controls': `grapeart-tabpanel-${index}`,
         };
     }
+
+    React.useEffect(() => { 
+        if (tabvalue!=props?.activeTab){
+            setTabValue(props?.activeTab);
+        }
+    }, [props?.activeTab]);
     
     if(loading){
         return (
@@ -567,8 +591,7 @@ const MainPanel = (props: any) => {
                         p:0,
                     }} 
                 >
-                    
-                    
+                    <TabActiveProvider initialActiveKey="0">   
                         <Tabs 
                             variant="scrollable"
                             scrollButtons="auto"
@@ -579,7 +602,7 @@ const MainPanel = (props: any) => {
                                 borderRadius: '17px',
                                 mb:1,
                             }} 
-                            >
+                        >
                             <Tab icon={<Hidden smUp><CollectionsOutlinedIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>Collection</Hidden>} sx={{color:'white',minWidth:'60px'}} {...a11yProps(0)} />
                             <Tab icon={<Hidden smUp><RssFeedOutlinedIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>Feed</Hidden>} sx={{color:'white',minWidth:'60px'}} {...a11yProps(1)} />
                             <Tab icon={<Hidden smUp><ArrowCircleLeftOutlinedIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>Followers</Hidden>} sx={{color:'white',minWidth:'60px'}} {...a11yProps(2)} />
@@ -590,88 +613,89 @@ const MainPanel = (props: any) => {
                         </Tabs>
                     
                     
-                    <TabPanel value={tabvalue} index={1}>
-                        <Box
-                            sx={{
-                                borderRadius: '17px',
-                            }} 
-                            > 
-                            <FeedView />
-                        </Box>
-                    </TabPanel>
-
-                    <TabPanel value={tabvalue} index={0}>
-                        {finalCollection && finalCollection.length > 0 && (
+                        <TabPanel value={tabvalue} index={1}>
                             <Box
                                 sx={{
-                                    background: 'rgba(0, 0, 0, 0.6)',
                                     borderRadius: '17px',
-                                    p:4
                                 }} 
-                            > 
-                                <Grid container 
-                                    spacing={{ xs: 2, md: 3 }} 
-                                    justifyContent="center"
-                                    alignItems="center">
-                                    
-                                    { (finalCollection.length > 0 ? finalCollection
-                                        .slice((page - 1) * rowsperpage, page * rowsperpage):finalCollection)
-                                        .map((collectionInfo: any, key: any) => {
-                                            return(
-                                                <Grid item xs={12} sm={12} md={4} lg={3} key={key}>
-                                                    <Box
-                                                        sx={{
-                                                            background: 'rgba(0, 0, 0, 0.6)',
-                                                            borderRadius: '26px',
-                                                            minWidth: '175px'
-                                                        }} 
-                                                    >
-                                                    <GalleryItem collectionitem={collectionInfo} listed={true} count={key} />
-                                                    
-                                                    </Box>
-                                                </Grid>
-                                                    
-                                            )
-                                        }
-                                    )}
-                                </Grid>
-                                
-                                { walletCollection.length > rowsperpage && 
-                                    <Grid container justifyContent="flex-end" sx={{ mt: 2 }}>
-                                        <Stack spacing={2}>
-                                            <Pagination
-                                                count={(Math.ceil(walletCollection.length / rowsperpage))}
-                                                page={page}
-                                                //onChange={handlePageChange}
-                                                defaultPage={1}
-                                                color="primary"
-                                                size="small"
-                                                showFirstButton
-                                                showLastButton
-                                                //classes={{ ul: classes.paginator }}
-                                                />
-                                        </Stack>
-                                    </Grid>
-                                }
+                                > 
+                                <FeedView />
                             </Box>
-                            
-                        )}
-                    </TabPanel>
-                    
-                    <TabPanel value={tabvalue} index={2}>
-                        <SocialView pubkey={thisPublicKey} type={0} />
-                    </TabPanel>
-                    
-                    <TabPanel value={tabvalue} index={3}>
-                        <SocialView pubkey={thisPublicKey} type={1} />
-                    </TabPanel>
+                        </TabPanel>
 
-                    <TabPanel value={tabvalue} index={4}>
-                        <OffersView selectedstate={1} pubkey={thisPublicKey} wallet_collection={walletCollection} wallet_collection_meta={walletCollectionMeta} />
-                    </TabPanel>
-                    <TabPanel value={tabvalue} index={5}>
-                        <OffersView selectedstate={2} pubkey={thisPublicKey} wallet_collection={walletCollection} wallet_collection_meta={walletCollectionMeta} />
-                    </TabPanel>
+                        <TabPanel value={tabvalue} index={0}>
+                            {finalCollection && finalCollection.length > 0 && (
+                                <Box
+                                    sx={{
+                                        background: 'rgba(0, 0, 0, 0.6)',
+                                        borderRadius: '17px',
+                                        p:4
+                                    }} 
+                                > 
+                                    <Grid container 
+                                        spacing={{ xs: 2, md: 3 }} 
+                                        justifyContent="center"
+                                        alignItems="center">
+                                        
+                                        { (finalCollection.length > 0 ? finalCollection
+                                            .slice((page - 1) * rowsperpage, page * rowsperpage):finalCollection)
+                                            .map((collectionInfo: any, key: any) => {
+                                                return(
+                                                    <Grid item xs={12} sm={12} md={4} lg={3} key={key}>
+                                                        <Box
+                                                            sx={{
+                                                                background: 'rgba(0, 0, 0, 0.6)',
+                                                                borderRadius: '26px',
+                                                                minWidth: '175px'
+                                                            }} 
+                                                        >
+                                                        <GalleryItem collectionitem={collectionInfo} listed={true} count={key} />
+                                                        
+                                                        </Box>
+                                                    </Grid>
+                                                        
+                                                )
+                                            }
+                                        )}
+                                    </Grid>
+                                    
+                                    { walletCollection.length > rowsperpage && 
+                                        <Grid container justifyContent="flex-end" sx={{ mt: 2 }}>
+                                            <Stack spacing={2}>
+                                                <Pagination
+                                                    count={(Math.ceil(walletCollection.length / rowsperpage))}
+                                                    page={page}
+                                                    //onChange={handlePageChange}
+                                                    defaultPage={1}
+                                                    color="primary"
+                                                    size="small"
+                                                    showFirstButton
+                                                    showLastButton
+                                                    //classes={{ ul: classes.paginator }}
+                                                    />
+                                            </Stack>
+                                        </Grid>
+                                    }
+                                </Box>
+                                
+                            )}
+                        </TabPanel>
+                        
+                        <TabPanel value={tabvalue} index={2}>
+                            <SocialView pubkey={thisPublicKey} type={0} />
+                        </TabPanel>
+                        
+                        <TabPanel value={tabvalue} index={3}>
+                            <SocialView pubkey={thisPublicKey} type={1} />
+                        </TabPanel>
+
+                        <TabPanel value={tabvalue} index={4}>
+                            <OffersView selectedstate={1} pubkey={thisPublicKey} wallet_collection={walletCollection} wallet_collection_meta={walletCollectionMeta} />
+                        </TabPanel>
+                        <TabPanel value={tabvalue} index={5}>
+                            <OffersView selectedstate={2} pubkey={thisPublicKey} wallet_collection={walletCollection} wallet_collection_meta={walletCollectionMeta} />
+                        </TabPanel>
+                    </TabActiveProvider>
                 </Container>
             </Grid>
         );
@@ -703,7 +727,11 @@ const GroupGalleryList = (props: any) => {
     const [searchAddrInfo, setSearchAddrInfo] = useState<SearchUserInfoResp | null>(null);
     const solanaProvider = useWallet();
     const { publicKey } = useWallet();
-    
+    //const { setActiveTab } = React.useContext(TabActiveContext);
+    const [activeTab, setActiveTab] = React.useState(0);
+
+    let ref = React.createRef()
+
     const NAME_SPACE = 'Grape';
     const NETWORK = Network.SOLANA;
     const FIRST = 10; // The number of users in followings/followers list for each fetch
@@ -1175,23 +1203,22 @@ const GroupGalleryList = (props: any) => {
                                                 >
                                                     <Typography gutterBottom variant="body1" component="div" sx={{ flexGrow: 1, color:'white' }}>
                                                         {solanaDomain && solanaDomain.length > 0 ?
-                                                        <Grid 
-                                                            container 
-                                                            direction="column"
-                                                            alignItems="center"
-                                                            justifyContent="center"
-                                                        >
-                                                            <Grid item>
-                                                                <Button size="small" variant="text" component="a" href={`https://explorer.solana.com/address/${pubkey}`} target="_blank">
-                                                                    <Typography gutterBottom variant="body1" component="div" sx={{ flexGrow: 1, color:'white' }}><strong>{solanaDomain}</strong></Typography>
-                                                                </Button>
-                                                            </Grid>
-                                                            <Grid item sx={{mt:-1.5}}>
-                                                                <Button size="small" variant="text" component="a" href={`https://explorer.solana.com/address/${pubkey}`} target="_blank">
-                                                                    <Typography gutterBottom variant="caption" component="div" sx={{ flexGrow: 1, color:'white' }}>{trimAddress(pubkey,4)}</Typography>
-                                                                </Button>
-                                                            </Grid>
-                                                        </Grid>
+                                                        
+                                                            <Button sx={{borderRadius:'17px'}} size="small" variant="text" component="a" href={`https://explorer.solana.com/address/${pubkey}`} target="_blank">
+                                                                <Grid 
+                                                                container 
+                                                                direction="column"
+                                                                alignItems="center"
+                                                                justifyContent="center"
+                                                                >
+                                                                    <Grid item>
+                                                                        <Typography gutterBottom variant="body1" component="div" sx={{ flexGrow: 1, color:'white' }}><strong>{solanaDomain}</strong></Typography>
+                                                                    </Grid>
+                                                                    <Grid item sx={{mt:-1.5}}>
+                                                                        <Typography gutterBottom variant="caption" component="div" sx={{ flexGrow: 1, color:'white' }}>{trimAddress(pubkey,4)}</Typography>
+                                                                    </Grid>
+                                                                </Grid>
+                                                            </Button>
                                                         :
                                                             <MakeLinkableAddress addr={pubkey} trim={5} hasextlink={true} hascopy={false} permalink={false} fontsize={14} />
                                                         }
@@ -1203,18 +1230,20 @@ const GroupGalleryList = (props: any) => {
                                                         <>
                                                             
                                                             <Typography component="div" variant="caption" align="center" sx={{ flexGrow: 1 }}>
-                                                                <Box
-                                                                    sx={{border:'1px solid #fff', borderRadius:'17px',pl:5,pr:5, m:1}}
+                                                                <Button
+                                                                    onClick={() => setActiveTab(2)}
+                                                                    sx={{fontSize:'12px',textTransform:'none',color:'white',border:'1px solid #fff', borderRadius:'17px',pl:5,pr:5,pt:0,pb:0, m:1}}
                                                                 >
                                                                     <strong>{followListInfo.followingCount}</strong>&nbsp;  
                                                                     <Typography component="span" color="#aaa" variant="caption" align="center" sx={{ flexGrow: 1 }}>Following</Typography>&nbsp; 
-                                                                </Box>
-                                                                <Box
-                                                                    sx={{border:'1px solid #fff', borderRadius:'17px',pl:5,pr:5, m:1}}
+                                                                </Button>
+                                                                <Button
+                                                                    onClick={() => setActiveTab(3)}
+                                                                    sx={{fontSize:'12px',textTransform:'none',color:'white',border:'1px solid #fff', borderRadius:'17px',pl:5,pr:5,pt:0,pb:0, m:1}}
                                                                 >
                                                                     <strong>{followListInfo.followerCount}</strong>&nbsp;
                                                                     <Typography component="span" color="#aaa" variant="caption" align="center" sx={{ flexGrow: 1 }}>Followers</Typography>
-                                                                </Box>
+                                                                </Button>
                                                             </Typography>
                                                         </>
                                                     }
@@ -1237,7 +1266,7 @@ const GroupGalleryList = (props: any) => {
                                     <MainMenu pubkey={pubkey} />
                                 </Grid>
                                 
-                                <MainPanel thisPublicKey={pubkey} final_collection={final_collection} wallet_collection={wallet_collection} wallet_collection_meta={wallet_collection_meta} />
+                                <MainPanel activeTab={activeTab} thisPublicKey={pubkey} final_collection={final_collection} wallet_collection={wallet_collection} wallet_collection_meta={wallet_collection_meta} />
                             </Grid>
                         </Box>
                         

@@ -301,7 +301,7 @@ export default function SocialView(props: any){
                             {followListInfo &&
                                 <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
                                     {followListInfo?.followers && followListInfo.followers.list.map((item: any, key: number) => (
-                                    <SocialItem followitem={item} followitemkey={key} />
+                                    <SocialItem followitem={item} followitemkey={key} key={key} />
                                     ))}
                                 </Grid>
                             }
@@ -315,7 +315,7 @@ export default function SocialView(props: any){
                             {followListInfo &&
                                 <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
                                     {followListInfo?.followings && followListInfo.followings.list.map((item: any, key: number) => (
-                                    <SocialItem followitem={item} followitemkey={key} />
+                                    <SocialItem followitem={item} followitemkey={key} key={key} />
                                     ))}
                                 </Grid>
                             }
