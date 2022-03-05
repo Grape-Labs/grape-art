@@ -1126,13 +1126,13 @@ function GalleryItemMeta(props: any) {
         return (
             <Grid>
                 <Helmet>
-                    <title>{`${collectionitem.name} Grape Social. Stateless. Marketplace.`}</title>
+                    <title>{`${collectionitem.name} | Grape Social. Stateless. Marketplace.`}</title>
                     <meta property="og:title" content={`${collectionitem.name} @Grape`} />
                     <meta property="og:type" content="website" />
                     <meta property="og:url" content={window.location.href} />
                     <meta property="og:image" content={collectionitem.image} />
                     <meta property="og:description" content={collectionitem.name} />
-                    <meta name="theme-color" content="#FF0000" />
+                    <meta name="theme-color" content="#000000" />
 
                     <meta name="twitter:card" content="summary_large_image" />
                     <meta name="twitter:site" content={`${collectionitem.name} @Grape`} />
