@@ -1133,7 +1133,7 @@ function GalleryItemMeta(props: any) {
                     <meta property="og:image" content={collectionitem.image} />
                     <meta property="og:description" content={collectionitem.name} />
                     <meta name="theme-color" content="#000000" />
-
+                    
                     <meta name="twitter:card" content="summary_large_image" />
                     <meta name="twitter:site" content={`${collectionitem.name} @Grape`} />
                     <meta name="twitter:title" content={collectionitem.name} />
