@@ -262,11 +262,11 @@ function GrapeVerified(props:any){
                             verified_creator = true;
                         }
                 }
-
                 // second stage verification
                 if (verified_creator){
                     if (updateAuthority?.collection?.verified){
                         if (updateAuthority.collection.verified === 1){
+                            //console.log("updateAuthority: "+JSON.stringify(updateAuthority));
                             if (ValidateAddress(updateAuthority.collection.key)){
                                 setVerifiedState(true);
                                 if (!collectionImage){
@@ -691,7 +691,7 @@ function GalleryItemMeta(props: any) {
         return resp;
     };
 
-    const followWalletConnect = async (followAddress:string) => {
+    const followWalletConnect = async (followAddress:string, solanaAddress: string) => {
         // address:string, alias:string
         let tofollow = followAddress;   
         let promise = await cyberConnect.connect(tofollow)
@@ -1133,7 +1133,7 @@ function GalleryItemMeta(props: any) {
                     <meta property="og:image" content={collectionitem.image} />
                     <meta property="og:description" content={collectionitem.name} />
                     <meta name="theme-color" content="#000000" />
-                    
+
                     <meta name="twitter:card" content="summary_large_image" />
                     <meta name="twitter:site" content={`${collectionitem.name} @Grape`} />
                     <meta name="twitter:title" content={collectionitem.name} />
@@ -1770,7 +1770,7 @@ function GalleryItemMeta(props: any) {
                                                                                     <Button 
                                                                                         variant="text" 
                                                                                         title="Follow"
-                                                                                        onClick={() => followWalletConnect(tokenOwners?.data.parsed.info.owner)}
+                                                                                        onClick={() => followWalletConnect(tokenOwners?.data.parsed.info.owner, solanaDomain || '')}
                                                                                         size="small"
                                                                                         className="profileAvatarIcon"
                                                                                         sx={{borderRadius:'24px', color:'white'}}

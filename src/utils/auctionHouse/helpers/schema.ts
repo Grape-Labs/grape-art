@@ -135,7 +135,7 @@ export class Metadata {
     primarySaleHappened: boolean;
     isMutable: boolean;
     editionNonce: number | null;
-    //tokenStandard: TokenStandard | null;
+    tokenStandard: TokenStandard | null;
     collection: Collection | null;
   }) {
     this.key = MetadataKey.MetadataV1;
@@ -145,7 +145,7 @@ export class Metadata {
     this.primarySaleHappened = args.primarySaleHappened;
     this.isMutable = args.isMutable;
     this.editionNonce = args.editionNonce ?? null;
-    //this.tokenStandard = args.tokenStandard ?? null;
+    this.tokenStandard = args.tokenStandard ?? null;
     this.collection = args.collection ?? null;
   }
 }
@@ -242,7 +242,7 @@ export const METADATA_SCHEMA = new Map<any, any>([
         ['primarySaleHappened', 'u8'], // bool
         ['isMutable', 'u8'], // bool
         ['editionNonce', { kind: 'option', type: 'u8' }],
-        ['tokenStandard', { kind: 'option', type: TokenStandard }],
+        ['tokenStandard', { kind: 'option', type: 'u8' }],
         ['collection', { kind: 'option', type: Collection }],
       ],
     },

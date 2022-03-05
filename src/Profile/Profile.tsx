@@ -6,7 +6,7 @@ import fetch from 'node-fetch'
 
 import { findDisplayName } from '../utils/name-service';
 
-import CyberConnect, { Env, Blockchain, solana } from '@cyberlab/cyberconnect';
+import CyberConnect, { Env, Blockchain, solana, ConnectionType } from '@cyberlab/cyberconnect';
 import { FollowListInfoResp, SearchUserInfoResp, Network } from '../utils/cyberConnect/types';
 import { formatAddress, removeDuplicate, isValidAddr } from '../utils/cyberConnect/helper';
 import { followListInfoQuery, searchUserInfoQuery } from '../utils/cyberConnect/query';
@@ -829,10 +829,10 @@ const GroupGalleryList = (props: any) => {
         return resp;
     };
 
-    const followWalletConnect = async (followAddress:string, solanaDomain:string) => {
+    const followWalletConnect = async (followAddress:string, solanaAddress:string) => {
         // address:string, alias:string
         let tofollow = followAddress;   
-        let promise = await cyberConnect.connect(followAddress, solanaDomain)
+        let promise = await cyberConnect.connect(followAddress)
         .catch(function (error) {
             console.log(error);
         });
@@ -974,7 +974,7 @@ const GroupGalleryList = (props: any) => {
                 
             }
             
-            console.log(collectionmeta.length + ' vs '+wallet_collection.length);
+            //console.log(collectionmeta.length + ' vs '+wallet_collection.length);
 
             setLoadCount(loadCount+1);
             setCollectionMeta({collectionmeta});
