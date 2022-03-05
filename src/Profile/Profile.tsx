@@ -82,6 +82,7 @@ import ShareSocialURL from '../utils/grapeTools/ShareUrl';
 import FeedView from './FeedView';
 import OffersView from './OffersView';
 import SocialView from './SocialView';
+import GalleryView from './GalleryView';
 import { MakeLinkableAddress, ValidateAddress, trimAddress, timeAgo } from '../utils/grapeTools/WalletAddress'; // global key handling
 
 const StyledTable = styled(Table)(({ theme }) => ({
@@ -622,63 +623,9 @@ const MainPanel = (props: any) => {
                                 <FeedView />
                             </Box>
                         </TabPanel>
-
+                        
                         <TabPanel value={tabvalue} index={0}>
-                            {finalCollection && finalCollection.length > 0 && (
-                                <Box
-                                    sx={{
-                                        background: 'rgba(0, 0, 0, 0.6)',
-                                        borderRadius: '17px',
-                                        p:4
-                                    }} 
-                                > 
-                                    <Grid container 
-                                        spacing={{ xs: 2, md: 3 }} 
-                                        justifyContent="center"
-                                        alignItems="center">
-                                        
-                                        { (finalCollection.length > 0 ? finalCollection
-                                            .slice((page - 1) * rowsperpage, page * rowsperpage):finalCollection)
-                                            .map((collectionInfo: any, key: any) => {
-                                                return(
-                                                    <Grid item xs={12} sm={12} md={4} lg={3} key={key}>
-                                                        <Box
-                                                            sx={{
-                                                                background: 'rgba(0, 0, 0, 0.6)',
-                                                                borderRadius: '26px',
-                                                                minWidth: '175px'
-                                                            }} 
-                                                        >
-                                                        <GalleryItem collectionitem={collectionInfo} listed={true} count={key} />
-                                                        
-                                                        </Box>
-                                                    </Grid>
-                                                        
-                                                )
-                                            }
-                                        )}
-                                    </Grid>
-                                    
-                                    { walletCollection.length > rowsperpage && 
-                                        <Grid container justifyContent="flex-end" sx={{ mt: 2 }}>
-                                            <Stack spacing={2}>
-                                                <Pagination
-                                                    count={(Math.ceil(walletCollection.length / rowsperpage))}
-                                                    page={page}
-                                                    //onChange={handlePageChange}
-                                                    defaultPage={1}
-                                                    color="primary"
-                                                    size="small"
-                                                    showFirstButton
-                                                    showLastButton
-                                                    //classes={{ ul: classes.paginator }}
-                                                    />
-                                            </Stack>
-                                        </Grid>
-                                    }
-                                </Box>
-                                
-                            )}
+                            <GalleryView finalCollection={finalCollection} walletCollection={walletCollection} />
                         </TabPanel>
                         
                         <TabPanel value={tabvalue} index={2}>
@@ -702,7 +649,7 @@ const MainPanel = (props: any) => {
     }
 }
 
-const GroupGalleryList = (props: any) => {
+const IdentityView = (props: any) => {
     const [expanded_collection, setExpandedCollection] = React.useState(true);
     const [pubkey, setPubKey] = React.useState<string>(props.pubkey || null);
     const [loading, setLoading] = React.useState(false);
@@ -1437,7 +1384,7 @@ export function ProfileView(this: any, props: any) {
                             display="flex-grow"
                             justifyContent="center"
                         >
-                            <GroupGalleryList gallery={gallery} collection={collection} pubkey={pubkey} setPubkey={setPubkey} />
+                            <IdentityView gallery={gallery} collection={collection} pubkey={pubkey} setPubkey={setPubkey} />
                         </Box>
                     </Grid>
                 </Grid>
