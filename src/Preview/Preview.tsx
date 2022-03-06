@@ -3,7 +3,8 @@ import { Link, useParams, useSearchParams } from "react-router-dom";
 
 import CyberConnect, { Env, Blockchain, solana, ConnectionType } from '@cyberlab/cyberconnect';
 
-import { Connection, PublicKey, } from '@solana/web3.js'
+import { Connection, PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js'
+import { Token, TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID } from "@solana/spl-token";
 // @ts-ignore
 import fetch from 'node-fetch'
 import ImageViewer from 'react-simple-image-viewer';
@@ -12,7 +13,7 @@ import { Helmet } from 'react-helmet';
 import { findDisplayName } from '../utils/name-service';
 import { createSetProfilePictureTransaction } from '@solflare-wallet/pfp';
 
-import { TokenAmount, lt } from '../utils/grapeTools/safe-math';
+import { TokenAmount } from '../utils/grapeTools/safe-math';
 import { 
     getTokenOwnerRecordForRealm, 
 } from '@solana/spl-governance';
@@ -45,6 +46,7 @@ import {
     Dialog,
     DialogActions,
     DialogContent,
+    DialogContentText,
     DialogTitle,
     List,
     ListItemButton,
@@ -92,11 +94,13 @@ import {
     TOKEN_VERIFICATION_AMOUNT,
     TOKEN_VERIFICATION_ADDRESS,
     GRAPE_RPC_ENDPOINT, 
-    OTHER_MARKETPLACES, 
+    OTHER_MARKETPLACES,
+    FREE_RPC_ENDPOINT, 
     GRAPE_RPC_REFRESH, 
     GRAPE_PREVIEW, 
     GRAPE_PROFILE,
-    FEATURED_DAO_ARRAY
+    FEATURED_DAO_ARRAY,
+    GRAPE_TREASURY
 } from '../utils/grapeTools/constants';
 
 import ItemOffers from './ItemOffers';
@@ -107,6 +111,7 @@ import "../App.less";
 
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { decodeMetadata } from '../utils/auctionHouse/helpers/schema';
+import GrapeIcon from "../components/static/GrapeIcon";
 
 const StyledTable = styled(Table)(({ theme }) => ({
     '& .MuiTableCell-root': {
@@ -330,7 +335,6 @@ function SocialLikes(props: any){
     const NETWORK = Network.SOLANA;
     const FIRST = 10; // The number of users in followings/followers list for each fetch
 
-
     const cyberConnect = new CyberConnect({
         namespace: NAME_SPACE,
         env: Env.PRODUCTION,
@@ -478,8 +482,14 @@ function SocialFlags(props: any){
     const [loading, setLoading] = React.useState(false);
     const [loadingFlaggedState, setLoadingFlaggedState] = React.useState(false);
     const [searchAddrInfo, setSearchAddrInfo] = useState<SearchUserInfoResp | null>(null);
+    const [reportalertopen, setReportAlertOpen] = React.useState(false);
+    
+    const { publicKey, sendTransaction } = useWallet();
+
+    const freeconnection = new Connection(FREE_RPC_ENDPOINT);
+    const { connection } = useConnection();
+    
     const [followListInfo, setFollowListInfo] = useState<FollowListInfoResp | null>(null);
-    const {publicKey} = useWallet();
     const solanaProvider = useWallet();
     const mint = props.mint;
     
@@ -487,6 +497,14 @@ function SocialFlags(props: any){
     const NETWORK = Network.SOLANA;
     const FIRST = 10; // The number of users in followings/followers list for each fetch
     
+    const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+    const onError = useCallback(
+        (error: WalletError) => {
+            enqueueSnackbar(error.message ? `${error.name}: ${error.message}` : error.name, { variant: 'error' });
+            console.error(error);
+        },
+        [enqueueSnackbar]
+    );
     
     const cyberConnect = new CyberConnect({
         namespace: 'Grape',
@@ -496,6 +514,10 @@ function SocialFlags(props: any){
         chainRef: solana.SOLANA_MAINNET_CHAIN_REF,
         signingMessageEntity: 'Grape' || 'CyberConnect',
     });
+
+    const handleAlertReportClose = () => {
+        setReportAlertOpen(false);
+    };
 
     const getFlagStatus = async () => {
         
@@ -552,16 +574,201 @@ function SocialFlags(props: any){
         setLoading(false);
     };
 
+    function handleFlagMintTransaction(mint:string){
+        const tokenMintAddress = TOKEN_VERIFICATION_ADDRESS;
+        const tokenMintName = 'GRAPE';
+        const to = GRAPE_TREASURY;
+        const amount = 100;
+        const notes = mint;
+        flatMintTransaction(tokenMintAddress, tokenMintName, to, amount, notes)
+    }
+
+    async function flatMintTransaction(tokenMintAddress: string, tokenMintName: string, to: string, amount: number, notes:string) {
+        const fromWallet = publicKey;
+        const toaddress = to;
+        const toWallet = new PublicKey(to);
+        const mintPubkey = new PublicKey(tokenMintAddress);
+        const amountToSend = +amount;
+        const tokenAccount = new PublicKey(mintPubkey);
+        
+        handleAlertReportClose();
+
+        let GRAPE_TT_MEMO = {
+            state:1, // status
+            type:'REPORT', // AMA - SETUP 
+            ref:'GRAPE.ART', // SOURCE
+            notes:notes
+        };
+        
+        
+        if (tokenMintAddress == "So11111111111111111111111111111111111111112"){ // Check if SOL
+            const decimals = 9;
+            const adjustedAmountToSend = amountToSend * Math.pow(10, decimals);
+            const transaction = new Transaction()
+            .add(
+                SystemProgram.transfer({
+                    fromPubkey: fromWallet,
+                    toPubkey: toWallet,
+                    lamports: adjustedAmountToSend,
+                })
+            ).add(
+                new TransactionInstruction({
+                    keys: [{ pubkey: fromWallet, isSigner: true, isWritable: true }],
+                    data: Buffer.from(JSON.stringify(GRAPE_TT_MEMO), 'utf-8'),
+                    programId: new PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr"),
+                })
+            );
+            try{
+                enqueueSnackbar(`Preparing to send ${amountToSend} ${tokenMintName} to ${toaddress}`,{ variant: 'info' });
+                const signature = await sendTransaction(transaction, freeconnection);
+                const snackprogress = (key:any) => (
+                    <CircularProgress sx={{padding:'10px'}} />
+                );
+                const cnfrmkey = enqueueSnackbar(`Confirming transaction`,{ variant: 'info', action:snackprogress, persist: true });
+                await connection.confirmTransaction(signature, 'processed');
+                closeSnackbar(cnfrmkey);
+                const action = (key:any) => (
+                        <Button href={`https://explorer.solana.com/tx/${signature}`} target='_blank'  sx={{color:'white'}}>
+                            Signature: {signature}
+                        </Button>
+                );
+
+                flagWalletConnect(mint);
+
+                enqueueSnackbar(`Sent ${amountToSend} ${tokenMintName} to ${toaddress}`,{ variant: 'success', action });
+            }catch(e){
+                enqueueSnackbar(`Error: ${(e)}`,{ variant: 'error' });
+            } 
+        } else{
+            const accountInfo = await connection.getParsedAccountInfo(tokenAccount);
+            const accountParsed = JSON.parse(JSON.stringify(accountInfo.value.data));
+            const decimals = accountParsed.parsed.info.decimals;
+
+            let fromAta = await Token.getAssociatedTokenAddress( // calculate from ATA
+                ASSOCIATED_TOKEN_PROGRAM_ID, // always ASSOCIATED_TOKEN_PROGRAM_ID
+                TOKEN_PROGRAM_ID, // always TOKEN_PROGRAM_ID
+                mintPubkey, // mint
+                fromWallet // from owner
+            );
+            
+            let toAta = await Token.getAssociatedTokenAddress( // calculate to ATA
+                ASSOCIATED_TOKEN_PROGRAM_ID, // always ASSOCIATED_TOKEN_PROGRAM_ID
+                TOKEN_PROGRAM_ID, // always TOKEN_PROGRAM_ID
+                mintPubkey, // mint
+                toWallet // to owner
+            );
+            
+            const adjustedAmountToSend = amountToSend * Math.pow(10, decimals);
+            const receiverAccount = await connection.getAccountInfo(toAta);
+            
+            if (receiverAccount === null) { // initialize token
+                const transaction = new Transaction()
+                .add(
+                    Token.createAssociatedTokenAccountInstruction(
+                        ASSOCIATED_TOKEN_PROGRAM_ID, // always ASSOCIATED_TOKEN_PROGRAM_ID
+                        TOKEN_PROGRAM_ID, // always TOKEN_PROGRAM_ID
+                        mintPubkey, // mint
+                        toAta, // ata
+                        toWallet, // owner of token account
+                        fromWallet // fee payer
+                    )
+                )
+                .add(
+                    Token.createTransferInstruction(
+                        TOKEN_PROGRAM_ID,
+                        fromAta,
+                        toAta,
+                        publicKey,
+                        [],
+                        adjustedAmountToSend,
+                    )
+                ).add(
+                    new TransactionInstruction({
+                        keys: [{ pubkey: fromWallet, isSigner: true, isWritable: true }],
+                        data: Buffer.from(JSON.stringify(GRAPE_TT_MEMO), 'utf-8'),
+                        programId: new PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr"),
+                    })
+                );
+                
+                try{
+                    enqueueSnackbar(`Preparing to send ${amountToSend} ${tokenMintName} to ${toaddress}`,{ variant: 'info' });
+                    const signature = await sendTransaction(transaction, freeconnection);
+                    const snackprogress = (key:any) => (
+                        <CircularProgress sx={{padding:'10px'}} />
+                    );
+                    const cnfrmkey = enqueueSnackbar(`Confirming transaction`,{ variant: 'info', action:snackprogress, persist: true });
+                    await connection.confirmTransaction(signature, 'processed');
+                    closeSnackbar(cnfrmkey);
+                    const action = (key:any) => (
+                        <Button href={`https://explorer.solana.com/tx/${signature}`} target='_blank' sx={{color:'white'}} >
+                            Signature: {signature}
+                        </Button>
+                    );
+
+                    flagWalletConnect(mint);
+
+                    enqueueSnackbar(`Sent ${amountToSend} ${tokenMintName} to ${toaddress}`,{ variant: 'success', action });
+                }catch(e){
+                    closeSnackbar();
+                    enqueueSnackbar(`Error: ${(e)}`,{ variant: 'error' });
+                } 
+            } else{ // token already in wallet
+                const transaction = new Transaction()
+                .add(
+                    Token.createTransferInstruction(
+                    TOKEN_PROGRAM_ID,
+                    fromAta,
+                    toAta,
+                    publicKey,
+                    [],
+                    adjustedAmountToSend,
+                    )
+                )
+                .add(
+                    new TransactionInstruction({
+                        keys: [{ pubkey: fromWallet, isSigner: true, isWritable: true }],
+                        data: Buffer.from(JSON.stringify(GRAPE_TT_MEMO), 'utf-8'),
+                        programId: new PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr"),
+                    })
+                );
+                
+                try{
+                    enqueueSnackbar(`Preparing to send ${amountToSend} ${tokenMintName} to ${toaddress}`,{ variant: 'info' });
+                    const signature = await sendTransaction(transaction, freeconnection);
+                    const snackprogress = (key:any) => (
+                        <CircularProgress sx={{padding:'10px'}} />
+                    );
+                    const cnfrmkey = enqueueSnackbar(`Confirming transaction`,{ variant: 'info', action:snackprogress, persist: true });
+                    await connection.confirmTransaction(signature, 'processed');
+                    closeSnackbar(cnfrmkey);
+                    const action = (key:any) => (
+                        <Button href={`https://explorer.solana.com/tx/${signature}`} target='_blank' sx={{color:'white'}} >
+                            Signature: {signature}
+                        </Button>
+                    );
+
+                    flagWalletConnect(mint);
+
+                    enqueueSnackbar(`Sent ${amountToSend} ${tokenMintName} to ${toaddress}`,{ variant: 'success', action });
+                }catch(e){
+                    closeSnackbar();
+                    enqueueSnackbar(`Error: ${(e)}`,{ variant: 'error' });
+                } 
+            }
+        }
+    }
+
     const flagWalletConnect = async (followAddress:string) => {
         // address:string, alias:string
         let tofollow = followAddress;   
+        // Show a prompt here in order to flag
 
-        let promise = await cyberConnect.connect(tofollow,'', ConnectionType.REPORT)
-        .catch(function (error) {
-            console.log(error);
-        });
-        initFollowListInfo();
-        getFlagStatus();
+            let promise = await cyberConnect.connect(tofollow,'', ConnectionType.REPORT)
+            .catch(function (error) {
+                console.log(error);
+            });
+            initFollowListInfo();
+            getFlagStatus();
     };
     const flagWalletDisconnect = async (followAddress:string) => {
         // address:string, alias:string
@@ -606,22 +813,71 @@ function SocialFlags(props: any){
                         </Button>
                     </Tooltip>
                 :
-                    <Tooltip title="Flag">
-                        <Button 
-                            variant="text" 
-                            onClick={() => flagWalletConnect(mint)}
-                            size="small"
-                            className="profileAvatarIcon"
-                            sx={{borderRadius:'24px', color:'white'}}
+                    <>
+                        <BootstrapDialog 
+                            fullWidth={true}
+                            maxWidth={"sm"}
+                            PaperProps={{
+                                style: {
+                                    background: '#13151C',
+                                    border: '1px solid rgba(255,255,255,0.05)',
+                                    borderTop: '1px solid rgba(255,255,255,0.1)',
+                                    borderRadius: '20px'
+                                }
+                            }}
+                            open={reportalertopen}
+                            onClose={handleAlertReportClose}
+                            aria-labelledby="alert-bn-dialog-title"
+                            aria-describedby="alert-bn-dialog-description"
                             >
-                            <EmojiFlagsIcon sx={{fontSize:'24px'}} />
-                            {followListInfo?.reported && +followListInfo?.reported > 0 ?
-                                <Typography variant="caption" sx={{ml:1}}>
-                                    {followListInfo?.reported}
+                            <DialogTitle id="alert-bn-dialog-title">
+                                <Typography>
+                                    REPORT
                                 </Typography>
-                            :<></>}
-                        </Button>
-                    </Tooltip>
+                            </DialogTitle>
+                            <DialogContent>
+                                <DialogContentText id="alert-bn-dialog-description">
+                                <br />
+                                <Alert 
+                                    severity="info" variant="outlined"
+                                    sx={{backgroundColor:'black'}}
+                                    >
+                                    Mint: <MakeLinkableAddress addr={mint} trim={0} hasextlink={true} hascopy={false} fontsize={16} /> <br/>
+                                    <Typography sx={{textAlign:'center'}}>
+                                        You are about to report this mint, in order to minimize unecessary reporting there is a <GrapeIcon sx={{fontSize:'12px'}} />100 fee to process this request
+                                    </Typography>
+                                </Alert>
+                                
+                                </DialogContentText>
+                            </DialogContent>
+                            <DialogActions>
+                                <Button onClick={handleAlertReportClose}>Cancel</Button>
+                                <Button 
+                                    onClick={() => handleFlagMintTransaction(mint)}
+                                    autoFocus>
+                                Accept
+                                </Button>
+                            </DialogActions>
+                        </BootstrapDialog>
+
+                        <Tooltip title="Flag">
+            
+                            <Button 
+                                variant="text" 
+                                onClick={() => setReportAlertOpen(true)}
+                                size="small"
+                                className="profileAvatarIcon"
+                                sx={{borderRadius:'24px', color:'white'}}
+                                >
+                                <EmojiFlagsIcon sx={{fontSize:'24px'}} />
+                                {followListInfo?.reported && +followListInfo?.reported > 0 ?
+                                    <Typography variant="caption" sx={{ml:1}}>
+                                        {followListInfo?.reported}
+                                    </Typography>
+                                :<></>}
+                            </Button>
+                        </Tooltip>
+                    </>
             }
             </>
         }
@@ -694,7 +950,7 @@ function GalleryItemMeta(props: any) {
     const followWalletConnect = async (followAddress:string, solanaAddress: string) => {
         // address:string, alias:string
         let tofollow = followAddress;   
-        let promise = await cyberConnect.connect(tofollow)
+        let promise = await cyberConnect.connect(tofollow, solanaAddress)
         .catch(function (error) {
             console.log(error);
         });

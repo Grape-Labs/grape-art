@@ -787,7 +787,7 @@ const IdentityView = (props: any) => {
     const followWalletConnect = async (followAddress:string, solanaAddress:string) => {
         // address:string, alias:string
         let tofollow = followAddress;   
-        let promise = await cyberConnect.connect(followAddress)
+        let promise = await cyberConnect.connect(followAddress, solanaAddress)
         .catch(function (error) {
             console.log(error);
         });
@@ -1179,7 +1179,22 @@ const IdentityView = (props: any) => {
                                                                 </Grid>
                                                             </Button>
                                                         :
-                                                            <MakeLinkableAddress addr={pubkey} trim={5} hasextlink={true} hascopy={false} permalink={false} fontsize={14} />
+                                                            <Button 
+                                                                sx={{borderRadius:'17px'}} 
+                                                                size="small" variant="text" 
+                                                                component={Link} 
+                                                                to={`${GRAPE_IDENTITY}${pubkey}`}>
+                                                                <Grid 
+                                                                container 
+                                                                direction="column"
+                                                                alignItems="center"
+                                                                justifyContent="center"
+                                                                >
+                                                                    <Grid item>
+                                                                        <Typography gutterBottom variant="body1" component="div" sx={{ flexGrow: 1, color:'white' }}>{trimAddress(pubkey,4)}</Typography>
+                                                                    </Grid>
+                                                                </Grid>
+                                                            </Button>
                                                         }
                                                     </Typography>
                                                 </Grid>

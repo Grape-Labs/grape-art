@@ -7,7 +7,7 @@ import { PublicKey, Connection, Commitment } from '@solana/web3.js';
 
 import { findDisplayName } from '../utils/name-service';
 import { getProfilePicture } from '@solflare-wallet/pfp';
-
+import { TokenAmount } from '../utils/grapeTools/safe-math';
 import { useWallet } from '@solana/wallet-adapter-react';
 
 import {
@@ -26,10 +26,14 @@ import {
     ListItemButton,
 } from '@mui/material';
 
+
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import PublicIcon from '@mui/icons-material/Public';
 import FolderIcon from '@mui/icons-material/Folder';
 import QrCode2Icon from '@mui/icons-material/QrCode2';
+
+import SolIcon from '../components/static/SolIcon';
+import SolCurrencyIcon from '../components/static/SolCurrencyIcon';
 
 import { ValidateAddress, trimAddress } from '../utils/grapeTools/WalletAddress'; // global key handling
 import { GRAPE_RPC_ENDPOINT, GRAPE_PROFILE } from '../utils/grapeTools/constants';
@@ -38,6 +42,7 @@ export function IdentityView(props: any){
     const [profilePictureUrl, setProfilePictureUrl] = React.useState(null);
     const [solanaDomain, setSolanaDomain] = React.useState(null);
     const [solanaHoldings, setSolanaHoldings] = React.useState(null);
+    const [solanaBalance, setSolanaBalance] = React.useState(null);
     const [loading, setLoading] = React.useState(false);
     const { publicKey } = useWallet();
     const [pubkey, setPubkey] = React.useState(props.pubkey || null);
@@ -46,7 +51,12 @@ export function IdentityView(props: any){
     const [searchParams, setSearchParams] = useSearchParams();
     const urlParams = searchParams.get("pkey") || searchParams.get("address") || handlekey;
 
-    const fetchSolanaHoldings = async () => {
+    const fetchSolanaBalance = async () => {
+        const response = await ggoconnection.getBalance(new PublicKey(pubkey));
+        setSolanaBalance(response);
+    }
+
+    const fetchSolanaTokens = async () => {
         const response = await ggoconnection.getTokenAccountsByOwner(new PublicKey(pubkey), {programId: new PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA")});
         
         let holdings: any[] = [];
@@ -107,7 +117,8 @@ export function IdentityView(props: any){
             setLoading(true);
                 fetchProfilePicture();
                 fetchSolanaDomain();
-                fetchSolanaHoldings();
+                fetchSolanaTokens();
+                fetchSolanaBalance();
             setLoading(false);
         }
     }, [pubkey]);
@@ -164,11 +175,11 @@ export function IdentityView(props: any){
                                         alignItems="center"
                                     > 
                                         <Typography
-                                            variant="h6"
+                                            variant="h5"
                                             color="inherit"
                                             display='flex'
                                             sx={{mb:3}}
-                                        >SOLANA IDENTITY</Typography>
+                                        ><SolIcon sx={{fontSize:'20px',mr:1}} /> SOLANA IDENTITY</Typography>
 
                                     </Grid>
                             </Grid>
@@ -187,11 +198,13 @@ export function IdentityView(props: any){
                                                 component="a" 
                                                 href={`https://explorer.solana.com/address/${pubkey}`}
                                                 target="_blank"
+                                                sx={{borderRadius:'24px'}}
                                             >
                                                 <ListItemAvatar>
                                                     <Avatar
+                                                        sx={{backgroundColor:'#222'}}
                                                     >
-                                                        <AccountBalanceWalletIcon />
+                                                        <AccountBalanceWalletIcon sx={{color:'white'}} />
                                                     </Avatar>
                                                 </ListItemAvatar>
                                                 <ListItemText
@@ -212,6 +225,7 @@ export function IdentityView(props: any){
                                                 
                                             <ListItemAvatar>
                                                 <Avatar
+                                                    sx={{backgroundColor:'#222'}}
                                                     src={profilePictureUrl}
                                                     alt='PFP'
                                                 />
@@ -239,18 +253,43 @@ export function IdentityView(props: any){
                                         {solanaDomain && solanaDomain?.map((item: any) => (
                                             <ListItem>
                                                 <ListItemAvatar>
-                                                    <Avatar>
-                                                        <PublicIcon />
+                                                    <Avatar
+                                                        sx={{backgroundColor:'#222'}}
+                                                    >
+                                                        <PublicIcon sx={{color:'white'}} />
                                                     </Avatar>
                                                 </ListItemAvatar>
                                                 <ListItemText
                                                     primary={JSON.stringify(item)}
-                                                    secondary="Solana Domain"
+                                                    secondary={(item.toLocaleUpperCase().indexOf(".SOL") > -1) ? <>Solana Domain</> : <>{(item.slice(0,1) === '@') && <>Twitter Handle</>}</>}
+                                                    
                                                 />
                                             </ListItem>
                                         ))}
                                 </List>
                                 
+                                <Typography
+                                    variant="h6"
+                                >
+                                    SOL:
+                                </Typography>   
+                                 
+                                    <List dense={true}>
+                                        <ListItem>
+                                            <ListItemAvatar>
+                                                <Avatar
+                                                    sx={{backgroundColor:'#222'}}
+                                                >
+                                                    <SolCurrencyIcon sx={{color:'white'}} />
+                                                </Avatar>
+                                            </ListItemAvatar>
+                                            <ListItemText
+                                                primary={(parseFloat(new TokenAmount(solanaBalance, 9).format()))}
+                                                secondary="Solana"
+                                            />
+                                        </ListItem>
+                                    </List>
+
                                 <Typography
                                     variant="h6"
                                 >
@@ -266,8 +305,10 @@ export function IdentityView(props: any){
                                         {solanaHoldings.length > 0 ? solanaHoldings.map((item: any) => (
                                             <ListItem>
                                             <ListItemAvatar>
-                                                <Avatar>
-                                                    <QrCode2Icon />
+                                                <Avatar
+                                                    sx={{backgroundColor:'#222'}}
+                                                >
+                                                    <QrCode2Icon sx={{color:'white'}} />
                                                 </Avatar>
                                             </ListItemAvatar>
                                             <ListItemText
