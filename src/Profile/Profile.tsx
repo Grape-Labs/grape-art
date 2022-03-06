@@ -674,7 +674,7 @@ const IdentityView = (props: any) => {
     const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
     const { connection } = useConnection();
     const [featuredObj, setFeaturedObj] = React.useState(null);
-    const [profilePictureUrl, setProfilePicutureUrl] = React.useState(null);
+    const [profilePictureUrl, setProfilePictureUrl] = React.useState(null);
     const [hasProfilePicture, setHasProfilePicture] = React.useState(false);
     const [solanaDomain, setSolanaDomain] = React.useState(null);
     const [isFollowing, setIsFollowing] = React.useState(false);
@@ -821,7 +821,7 @@ const IdentityView = (props: any) => {
         let img_url = url;
         if (url)
             img_url = url.replace(/width=100/g, 'width=256');
-        setProfilePicutureUrl(img_url);
+        setProfilePictureUrl(img_url);
         setHasProfilePicture(isAvailable);
     }
 
@@ -1425,7 +1425,7 @@ export function ProfileView(this: any, props: any) {
         event.preventDefault();
 
         if ((newinputpkvalue && newinputpkvalue.length>0 && ValidateAddress(newinputpkvalue))||
-            ((urlParams.toLocaleUpperCase().indexOf(".SOL") > -1) || (urlParams.slice(0,1) === '@'))){
+            ((newinputpkvalue.toLocaleUpperCase().indexOf(".SOL") > -1) || (newinputpkvalue.slice(0,1) === '@'))){
             navigate({
                 pathname: GRAPE_PROFILE+newinputpkvalue
             },
@@ -1559,28 +1559,53 @@ export function ProfileView(this: any, props: any) {
                                         >
                                             
                                             <Grid 
-                                                item xs={12}
-                                            >
-                                                <Paper
-                                                    component="form"
-                                                    onSubmit={handlePublicKeySubmit}
-                                                    sx={{ m:2, p: 1, display: 'flex', alignItems: 'center', borderRadius: '24px' }}
-                                                >
-                                                    <InputBase
-                                                        fullWidth
-                                                        sx={{ ml: 1, flex: 1 }}
-                                                        placeholder="Enter a solana address"
-                                                        inputProps={{ 'aria-label': 'solana address' }}
-                                                        value={newinputpkvalue}
-                                                        onChange={(e) => setNewInputPKValue(e.target.value)}
-                                                    />
-                                                    <IconButton type="submit" sx={{ p: '10px' }} aria-label="search">
-                                                        <SearchIcon />
-                                                    </IconButton>
-                                                </Paper>
-                                            </Grid>
+                                        item xs={12}
+                                        alignItems="center"
+                                    >
+                                        <Typography
+                                            variant="h3"
+                                            color="inherit"
+                                            display='flex'
+                                            sx={{mt:2}}
+                                        >
+                                            <img src="/grape_white_logo.svg" width="300px" className="header-logo" alt="Grape" />
+                                            .art
+                                            </Typography>
                                         </Grid>
-                                    </Box>
+                                        <Grid 
+                                            item xs={12}
+                                            alignItems="center"
+                                        > 
+                                            <Typography
+                                                variant="h6"
+                                                color="inherit"
+                                                display='flex'
+                                                sx={{mb:3}}
+                                            >Social. Stateless. Marketplace.</Typography>
+
+                                        </Grid>
+                                            
+                                        <Grid>
+                                            <Paper
+                                                component="form"
+                                                onSubmit={handlePublicKeySubmit}
+                                                sx={{ m:2, p: 1, display: 'flex', alignItems: 'center', borderRadius: '24px' }}
+                                            >
+                                                <InputBase
+                                                    fullWidth
+                                                    sx={{ ml: 1, flex: 1 }}
+                                                    placeholder="Enter a solana address"
+                                                    inputProps={{ 'aria-label': 'solana address' }}
+                                                    value={newinputpkvalue}
+                                                    onChange={(e) => setNewInputPKValue(e.target.value)}
+                                                />
+                                                <IconButton type="submit" sx={{ p: '10px' }} aria-label="search">
+                                                    <SearchIcon />
+                                                </IconButton>
+                                            </Paper>
+                                        </Grid>
+                                    </Grid>
+                                </Box>
                             </React.Fragment>
                         </>
                         }

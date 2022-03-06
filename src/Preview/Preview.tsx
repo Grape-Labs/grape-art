@@ -2090,20 +2090,56 @@ export function PreviewView(this: any, props: any) {
                 { mint && ValidateAddress(mint) ?
                     <PreviewItem mint={mint} />
                 : 
-                    <Paper className="grape-paper-background">
-                        <Grid 
-                            className="grape-paper" 
-                            container
-                            spacing={0}>
-                            <Grid item>
-                                <Typography 
-                                    align="center"
-                                    variant="h3">
-                                    {'Invalid Mint'}
-                                </Typography>
-                            </Grid>
-                        </Grid>
-                    </Paper>
+                <>
+                    <React.Fragment>
+                        <Box
+                            sx={{ 
+                                p: 1, 
+                                mb: 3, 
+                                width: '100%',
+                                background: '#13151C',
+                                borderRadius: '24px'
+                            }}
+                        > 
+                                <Grid 
+                                    container 
+                                    direction="column" 
+                                    spacing={2} 
+                                    alignItems="center"
+                                    justifyContent={'center'}
+                                    rowSpacing={8}
+                                >
+                                    
+                                    <Grid 
+                                        item xs={12}
+                                        alignItems="center"
+                                    >
+                                        <Typography
+                                            variant="h3"
+                                            color="inherit"
+                                            display='flex'
+                                            sx={{mt:2,mb:3}}
+                                        >
+                                            <img src="/grape_white_logo.svg" width="300px" className="header-logo" alt="Grape" />
+                                            .art
+                                        </Typography>
+                                    </Grid>
+                                    <Grid 
+                                        item xs={12}
+                                        alignItems="center"
+                                    > 
+                                        <Typography
+                                            variant="h3"
+                                            color="inherit"
+                                            display='flex'
+                                            sx={{mb:3}}
+                                        >ooops... you entered an invalid address!</Typography>
+
+                                    </Grid>
+                                </Grid>
+                            </Box>
+                    </React.Fragment>
+                </>
                 }
                 
         </React.Fragment>

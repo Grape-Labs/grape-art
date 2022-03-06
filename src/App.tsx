@@ -5,6 +5,7 @@ import { HashRouter, BrowserRouter as Router, Route, Routes } from "react-router
 import { ProfileView } from "./Profile/Profile";
 import { PreviewView } from "./Preview/Preview";
 import { FeaturedView } from "./Featured/Featured";
+import { IdentityView } from "./Identity/Identity";
 import CssBaseline from '@mui/material/CssBaseline';
 import MuiDrawer from '@mui/material/Drawer';
 
@@ -178,6 +179,8 @@ function DashboardContent() {
                                   <Route path="preview/*" element={<PreviewView />}>
                                       <Route path=":handlekey" element={<PreviewView />} />
                                   </Route>
+
+                                  <Route path="identity" element={<IdentityView />} />
 
                                   <Route path="*" element={<NotFound />} />
                                 </Routes>
