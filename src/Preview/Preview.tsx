@@ -1197,7 +1197,7 @@ function GalleryItemMeta(props: any) {
                                                     ></Avatar>
                                                 </Grid>
                                                 <Grid item>        
-                                                    <ShareSocialURL fontSize={'24px'} url={'https://grape.art'+GRAPE_PREVIEW+mint} title={'Grape DEX | '+trimAddress(mint,4)} />
+                                                    <ShareSocialURL fontSize={'24px'} url={window.location.href} title={'Grape DEX | '+trimAddress(mint,4)} />
                                                 </Grid>
 
                                         </ButtonGroup>
@@ -1935,7 +1935,7 @@ export function PreviewView(this: any, props: any) {
     const {handlekey} = useParams<{ handlekey: string }>();
     const [searchParams, setSearchParams] = useSearchParams();
 
-    const urlParams = searchParams.get("pkey") || handlekey;
+    const urlParams = searchParams.get("pkey") || searchParams.get("mint") || handlekey;
 
     //const [pubkey, setPubkey] = React.useState(null);
     const [walletPKId, setInputPKValue] = React.useState(null);

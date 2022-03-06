@@ -1,10 +1,19 @@
 import React, { useEffect, useState, useCallback, memo } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
-import { decodeMetadata } from '../utils/grapeTools/utils'
+import { decodeMetadata } from '../utils/grapeTools/utils';
 // @ts-ignore
-import fetch from 'node-fetch'
+import fetch from 'node-fetch';
+import BN from "bn.js";
 
 import { findDisplayName } from '../utils/name-service';
+//import { performReverseLookup } from '../utils/web3/naming';
+import {
+    getHashedName,
+    getNameAccountKey,
+    NameRegistryState,
+    performReverseLookup,
+    getTwitterRegistry,
+  } from "@bonfida/spl-name-service";
 
 import CyberConnect, { Env, Blockchain, solana, ConnectionType } from '@cyberlab/cyberconnect';
 import { FollowListInfoResp, SearchUserInfoResp, Network } from '../utils/cyberConnect/types';
@@ -84,6 +93,7 @@ import OffersView from './OffersView';
 import SocialView from './SocialView';
 import GalleryView from './GalleryView';
 import { MakeLinkableAddress, ValidateAddress, trimAddress, timeAgo } from '../utils/grapeTools/WalletAddress'; // global key handling
+import { ConstructionOutlined } from "@mui/icons-material";
 
 const StyledTable = styled(Table)(({ theme }) => ({
     '& .MuiTableCell-root': {
@@ -1086,7 +1096,7 @@ const IdentityView = (props: any) => {
                                                         <Typography component="div" variant="caption" alignItems="flex-end" justifyContent="flex-end">
 
                                                             <ButtonGroup variant="text">
-                                                            <ShareSocialURL url={'https://grape.art'+GRAPE_PROFILE+pubkey} title={'Grape Profile | '+trimAddress(pubkey,4)} />
+                                                            <ShareSocialURL url={window.location.href} title={'Grape Profile | '+trimAddress(pubkey,4)} />
 
                                                             {publicKey && publicKey.toBase58() !== pubkey &&
                                                                 <Typography component="div" variant="caption" align="center" sx={{ flexGrow: 1 }}>
@@ -1224,29 +1234,6 @@ const IdentityView = (props: any) => {
     
 }
 
-/*
-export async function performReverseLookup(
-    connection: Connection,
-    nameAccount: PublicKey
-  ): Promise<string> {
-    const hashedReverseLookup = await getHashedName(nameAccount.toBase58());
-    const reverseLookupAccount = await getNameAccountKey(
-      hashedReverseLookup,
-      centralState
-    );
-  
-    const name = await NameRegistryState.retrieve(
-      connection,
-      reverseLookupAccount
-    );
-    if (!name.data) {
-      throw new Error("Could not retrieve name data");
-    }
-    const nameLength = new BN(name.data.slice(0, 4), "le").toNumber();
-    return name.data.slice(4, 4 + nameLength).toString();
-  }
-*/
-
 export async function findOwnedNameAccountsForUser(
     connection: Connection,
     userAccount: PublicKey
@@ -1274,10 +1261,14 @@ export function ProfileView(this: any, props: any) {
     const [collection, setCollection] = React.useState(null);
     //const isConnected = session && session.isConnected;
     const [loading, setLoading] = React.useState(false);
+    const [rdloading, setRDLoading] = React.useState(false);
     const [loadCount, setLoadCount] = React.useState(0);
     //const [success, setSuccess] = React.useState(false);
+    const [withPubKey, setWithPubKey] = React.useState(null);
     const [pubkey, setPubkey] = React.useState(null);
     const [newinputpkvalue, setNewInputPKValue] = React.useState(null);
+    const [solWebUrl, setSolWebUrl] = React.useState(null);
+    const { connection } = useConnection();
     const { publicKey } = useWallet();
     //const { handlekey } = useParams() as { 
     //    handlekey: string;
@@ -1285,10 +1276,8 @@ export function ProfileView(this: any, props: any) {
     const {handlekey} = useParams<{ handlekey: string }>();
     const [searchParams, setSearchParams] = useSearchParams();
 
-    const urlParams = searchParams.get("pkey") || handlekey;
-
-    // console.log("SP: "+searchParams.get("pkey") + " vs "+ urlParams);
-
+    const urlParams = searchParams.get("pkey") || searchParams.get("address") || handlekey;
+    
     const navigate = useNavigate();
     //const location = useLocation();
     
@@ -1367,6 +1356,47 @@ export function ProfileView(this: any, props: any) {
         }
     }
 
+    const getReverseDomainLookup = async (url:string) => {
+        if (!rdloading){
+            setRDLoading(true);
+            
+            const SOL_TLD_AUTHORITY = new PublicKey("58PwtjSDuFHuUkYjH9BYnnQKHfwo9reZhC2zMJv9JPkx");
+            const ROOT_TLD_AUTHORITY = new PublicKey("ZoAhWEqTVqHVqupYmEanDobY7dee5YKbQox9BNASZzU");
+            const PROGRAM_ID = new PublicKey("jCebN34bUfdeUYJT13J1yG16XWQpt5PDx6Mse9GUqhR");
+            const centralState = new PublicKey("33m47vH6Eav6jr5Ry86XjhRft2jRBLDnDgPSHoquXi2Z");
+            
+            const domainName = url.slice(0, url.indexOf('.'));
+            const hashedName = await getHashedName(domainName);
+            const domainKey = await getNameAccountKey(
+                hashedName,
+                undefined,
+                SOL_TLD_AUTHORITY
+            );
+            const registry = await NameRegistryState.retrieve(connection, new PublicKey(domainKey));
+            
+            if (!registry.data) {
+                throw new Error("Could not retrieve name data");
+            }
+
+            setPubkey(registry.owner.toBase58());
+            setRDLoading(false);
+        }
+    }
+    const getTwitterLookup = async (url:string) => {
+        if ((!rdloading)&&(!pubkey)){
+            setRDLoading(true);
+            
+            //const domainName = url.slice(url.indexOf('@'), url.length);
+            const twitterHandle = "";
+            //console.log("checking: "+twitterHandle);
+            const registry = await getTwitterRegistry(connection, twitterHandle);
+            
+            // verify that this is working and then push live...
+            //setPubkey(registry.owner.toBase58());
+            setRDLoading(false);
+        }
+    }
+
     const CollectionProfile = (props: any) => {
         return (
                 <Grid 
@@ -1394,10 +1424,8 @@ export function ProfileView(this: any, props: any) {
     function handlePublicKeySubmit(event: any) {
         event.preventDefault();
 
-        if (newinputpkvalue && newinputpkvalue.length>0 && ValidateAddress(newinputpkvalue)){
-            //console.log("SETTER MANUAL: "+newinputpkvalue);
-            //setNewInputPKValue(null);
-
+        if ((newinputpkvalue && newinputpkvalue.length>0 && ValidateAddress(newinputpkvalue))||
+            ((urlParams.toLocaleUpperCase().indexOf(".SOL") > -1) || (urlParams.slice(0,1) === '@'))){
             navigate({
                 pathname: GRAPE_PROFILE+newinputpkvalue
             },
@@ -1411,67 +1439,54 @@ export function ProfileView(this: any, props: any) {
 
     React.useEffect(() => { 
         if (pubkey){
+            console.log("pubkey: "+pubkey);
             if (ValidateAddress(pubkey)){
-                //props.history.push({
-                navigate({
-                    pathname: GRAPE_PROFILE+pubkey
-                },
-                    { replace: true }
-                );
-                console.log(loadCount);
+                console.log("getWalletGallery()");
                 getWalletGallery();
-            } else {
-                navigate({
-                    pathname: '/profile'
-                },
-                    { replace: true }
-                );
-            } 
+            }
         }
     }, [pubkey]);
-    
-    /*
-    if (urlParams)
-        console.log("urlParams: "+urlParams+ " v: "+ValidateAddress(urlParams));
-    if (pubkey)
-        console.log("pubkey: "+pubkey);
-    if (publicKey)
-        console.log("publicKey: "+publicKey.toBase58());
-    */
 
-    if ((urlParams) && (pubkey)){
-        //console.log("SETTER 1: "+urlParams + " vs "+ pubkey);
-        if (urlParams != pubkey){
-            if (ValidateAddress(urlParams))
-                setPubkey(urlParams);
-        }
-    } else if ((publicKey)&&(!pubkey)&&(!urlParams)){
-        //console.log("SETTER 3: "+urlParams + " vs "+ pubkey);
-        if (ValidateAddress(publicKey.toBase58()))
-            setPubkey(publicKey.toBase58());
-    }
-
-    if (!pubkey){
-        if (urlParams?.length > 0){
-            //console.log("SETTER 2: "+urlParams);
-            if (ValidateAddress(urlParams))
-                setPubkey(urlParams);
-        } else{
-            // should we set the pubkey here based on if you are logged in?
-            if (publicKey){
-                if (ValidateAddress(publicKey.toBase58())){
-                    if (publicKey !== pubkey){
-                        if (!urlParams){
-                            navigate({
-                                pathname: GRAPE_PROFILE+publicKey.toBase58()
-                            },
-                                { replace: true }
-                            );
-                        }
+    React.useEffect(() => { 
+        if (withPubKey){
+            if (ValidateAddress(withPubKey)){
+                setPubkey(withPubKey);
+                navigate({
+                    pathname: GRAPE_PROFILE+withPubKey
+                },
+                    { replace: true }
+                );
+            } else {
+                if ((withPubKey.toLocaleUpperCase().indexOf(".SOL") > -1) || (withPubKey.slice(0,1) === '@')){
+                    if (withPubKey.toLocaleUpperCase().endsWith(".SOL")){ // Solana Domain
+                        getReverseDomainLookup(withPubKey);
+                    } else if (withPubKey.toLocaleUpperCase().startsWith("@")){ // Twitter Handle
+                        getTwitterLookup(withPubKey);
                     }
+                } else{
+                    console.log("Nothing send reverting to default profile");
+                    navigate({
+                        pathname: '/profile'
+                    },
+                        { replace: true }
+                    );
                 }
             }
         }
+    }, [withPubKey]);
+
+    React.useEffect(() => { 
+        if (urlParams){
+            setWithPubKey(urlParams);
+        } else if (pubkey){
+        } else if (publicKey){
+            setWithPubKey(publicKey.toBase58());
+        }
+    }, [publicKey, urlParams]);
+
+    
+    if (!pubkey){ 
+        // ...
     } else {
         if(((!gallery) && (!collection))||
             (loading)){
@@ -1554,8 +1569,8 @@ export function ProfileView(this: any, props: any) {
                                                     <InputBase
                                                         fullWidth
                                                         sx={{ ml: 1, flex: 1 }}
-                                                        placeholder="Enter a wallet address"
-                                                        inputProps={{ 'aria-label': 'wallet address' }}
+                                                        placeholder="Enter a solana address"
+                                                        inputProps={{ 'aria-label': 'solana address' }}
                                                         value={newinputpkvalue}
                                                         onChange={(e) => setNewInputPKValue(e.target.value)}
                                                     />

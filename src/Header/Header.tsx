@@ -35,10 +35,8 @@ import {
 
 
 import SearchIcon from '@mui/icons-material/Search';
-import IconButton from '@mui/material/IconButton';
 
-import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined';
-
+import { GRAPE_PROFILE } from '../utils/grapeTools/constants';
 import { ValidateAddress } from '../utils/grapeTools/WalletAddress'; // global key handling
 
 require('@solana/wallet-adapter-react-ui/styles.css');
@@ -244,30 +242,20 @@ export function Header(props: any) {
 
     function handlePublicKeySubmit(event: any) {
         event.preventDefault();
-
-        if (newinputpkvalue && newinputpkvalue.length>0 && ValidateAddress(newinputpkvalue)){
+        if ((newinputpkvalue && newinputpkvalue.length>0 && ValidateAddress(newinputpkvalue))||
+            ((newinputpkvalue.toLocaleUpperCase().indexOf(".SOL") > -1) || (newinputpkvalue.slice(0,1) === '@'))){
             navigate({
-                pathname: '/profile/'+newinputpkvalue
+                pathname: GRAPE_PROFILE+newinputpkvalue
             },
                 { replace: true }
             );
-            
+            setNewInputPKValue('');
         } else{
             setNewInputPKValue('');
         }
     }
 
-
-    const handleCloseSnackbar = (event?: React.SyntheticEvent, reason?: string) => {
-        if (reason === 'clickaway') {
-            return;
-        }
-        setSnackbarState(false);
-    };
-
-
     return (
-
         <Toolbar
             color="inherit"
             sx={{
@@ -304,8 +292,9 @@ export function Header(props: any) {
                             </SearchIconWrapper>
                             <StyledInputBase
                                 sx={{height:'40px', width:'100%'}}
-                                placeholder="Search Wallet"
+                                placeholder="Search Solana Address"
                                 inputProps={{ 'aria-label': 'search' }}
+                                value={newinputpkvalue}
                                 onChange={(e) => setNewInputPKValue(e.target.value)}
                             />
                         </Search>
