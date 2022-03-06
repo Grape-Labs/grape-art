@@ -86,7 +86,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import CircularProgress from '@mui/material/CircularProgress';
 
-import { GRAPE_RPC_ENDPOINT, GRAPE_RPC_REFRESH, GRAPE_PREVIEW, GRAPE_PROFILE, FEATURED_DAO_ARRAY } from '../utils/grapeTools/constants';
+import { GRAPE_RPC_ENDPOINT, GRAPE_RPC_REFRESH, GRAPE_PREVIEW, GRAPE_PROFILE, GRAPE_IDENTITY, FEATURED_DAO_ARRAY } from '../utils/grapeTools/constants';
 import ShareSocialURL from '../utils/grapeTools/ShareUrl';
 import FeedView from './FeedView';
 import OffersView from './OffersView';
@@ -768,8 +768,6 @@ const IdentityView = (props: any) => {
     }
   };
   
-
-
     const fetchSearchAddrInfo = async (fromAddr:string, toAddr: string) => {
 
         const resp = await searchUserInfoQuery({
@@ -1161,7 +1159,11 @@ const IdentityView = (props: any) => {
                                                     <Typography gutterBottom variant="body1" component="div" sx={{ flexGrow: 1, color:'white' }}>
                                                         {solanaDomain && solanaDomain.length > 0 ?
                                                         
-                                                            <Button sx={{borderRadius:'17px'}} size="small" variant="text" component="a" href={`https://explorer.solana.com/address/${pubkey}`} target="_blank">
+                                                            <Button 
+                                                                sx={{borderRadius:'17px'}} 
+                                                                size="small" variant="text" 
+                                                                component={Link} 
+                                                                to={`${GRAPE_IDENTITY}${pubkey}`}>
                                                                 <Grid 
                                                                 container 
                                                                 direction="column"

@@ -7,7 +7,6 @@ import { PreviewView } from "./Preview/Preview";
 import { FeaturedView } from "./Featured/Featured";
 import { IdentityView } from "./Identity/Identity";
 import CssBaseline from '@mui/material/CssBaseline';
-import MuiDrawer from '@mui/material/Drawer';
 
 import {
   Box,
@@ -180,7 +179,9 @@ function DashboardContent() {
                                       <Route path=":handlekey" element={<PreviewView />} />
                                   </Route>
 
-                                  <Route path="identity" element={<IdentityView />} />
+                                  <Route path="identity/*" element={<IdentityView />}>
+                                      <Route path=":handlekey" element={<IdentityView />} />
+                                  </Route>
 
                                   <Route path="*" element={<NotFound />} />
                                 </Routes>

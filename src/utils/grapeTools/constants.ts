@@ -4,9 +4,11 @@ export const GRAPE_RPC_ENDPOINT = process.env.REACT_APP_API_GRAPE_RPC_ENDPOINT |
 
 //export const GRAPE_PREVIEW = '/preview/';
 //export const GRAPE_PROFILE = '/profile/';
+//export const GRAPE_IDENTITY = '/identity/';
 
 export const GRAPE_PREVIEW = '/preview?pkey=';
 export const GRAPE_PROFILE = '/profile?pkey=';
+export const GRAPE_IDENTITY = '/identity?pkey=';
 
 export const GRAPE_RPC_REFRESH = 25000;
 export const GRAPE_TREASURY = 'GrapevviL94JZRiZwn2LjpWtmDacXU8QhAJvzpUMMFdL';
