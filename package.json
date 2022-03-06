@@ -1,6 +1,6 @@
 {
   "name": "grape-marketplace",
-  "version": "1.1.111",
+  "version": "1.1.112",
   "private": true,
   "proxy": "http://localhost:3000/",
   "dependencies": {

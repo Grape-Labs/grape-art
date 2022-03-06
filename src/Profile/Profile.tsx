@@ -1188,14 +1188,14 @@ const IdentityView = (props: any) => {
                                                             
                                                             <Typography component="div" variant="caption" align="center" sx={{ flexGrow: 1 }}>
                                                                 <Button
-                                                                    onClick={() => setActiveTab(2)}
+                                                                    onClick={() => setActiveTab(3)}
                                                                     sx={{fontSize:'12px',textTransform:'none',color:'white',border:'1px solid #fff', borderRadius:'17px',pl:5,pr:5,pt:0,pb:0, m:1}}
                                                                 >
                                                                     <strong>{followListInfo.followingCount}</strong>&nbsp;  
                                                                     <Typography component="span" color="#aaa" variant="caption" align="center" sx={{ flexGrow: 1 }}>Following</Typography>&nbsp; 
                                                                 </Button>
                                                                 <Button
-                                                                    onClick={() => setActiveTab(3)}
+                                                                    onClick={() => setActiveTab(2)}
                                                                     sx={{fontSize:'12px',textTransform:'none',color:'white',border:'1px solid #fff', borderRadius:'17px',pl:5,pr:5,pt:0,pb:0, m:1}}
                                                                 >
                                                                     <strong>{followListInfo.followerCount}</strong>&nbsp;
