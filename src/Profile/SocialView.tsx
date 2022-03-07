@@ -244,9 +244,10 @@ export default function SocialView(props: any){
                             <ListItemAvatar>
                                 <ProfilePicture followitem={followitem} />
                             </ListItemAvatar>
+                            {/*primary={followitem.alias || followitem.ens || trimAddress(followitem.address,4)}*/}
                             <ListItemText
                                 sx={{ml:1}}
-                                primary={followitem.alias || followitem.ens || trimAddress(followitem.address,4)}  
+                                primary={followitem.ens || trimAddress(followitem.address,4)}  
                                 secondary={<Typography variant="caption" color="#777">From {followitem.namespace}</Typography>}
                             />
                         </ListItemButton>
