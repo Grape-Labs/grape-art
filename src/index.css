@@ -89,6 +89,13 @@ code {
   animation-iteration-count: 1;
 }
 
+.wallet-adapter-button-trigger {
+  line-height: 20px !important;
+  background:none!important;
+  border:1px solid #fff!important;
+  border-radius: 24px!important;
+}
+
 @keyframes avataranimation {
   0%   {background: linear-gradient(270deg, #00F0DD 0%, #DC1FFF 100%);}
   10%  {background: linear-gradient(306deg, #00F0DD 0%, #DC1FFF 100%);}
@@ -109,13 +116,7 @@ code {
   .wallet-adapter-button {
     line-height: 20px !important;
   }
-  .wallet-adapter-button-trigger {
-    line-height: 20px !important;
-    background:none!important;
-    border:1px solid #fff!important;
-    border-radius: 24px!important;
-  }
-
+  
   .header-logo {
     width: 120px !important;
   }
