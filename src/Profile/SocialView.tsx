@@ -246,7 +246,7 @@ export default function SocialView(props: any){
                             </ListItemAvatar>
                             <ListItemText
                                 sx={{ml:1}}
-                                primary={followitem.ens || trimAddress(followitem.address,4)}  
+                                primary={followitem.alias || followitem.ens || trimAddress(followitem.address,4)}  
                                 secondary={<Typography variant="caption" color="#777">From {followitem.namespace}</Typography>}
                             />
                         </ListItemButton>
