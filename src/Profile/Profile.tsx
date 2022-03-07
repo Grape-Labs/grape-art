@@ -828,16 +828,6 @@ const IdentityView = (props: any) => {
         if (domain){
             if (domain[0] !== pubkey){
                 setSolanaDomain(domain[0]);
-                
-                if (publicKey){
-                    if (pubkey === publicKey.toBase58())
-                        if (domain[0]){
-                            try{
-                                document.getElementsByClassName("wallet-adapter-button")[0].innerHTML = domain[0]
-                            }catch(e){console.log("ERR: "+e)}
-                        }
-                }
-            
             }
         }
     }
@@ -982,6 +972,19 @@ const IdentityView = (props: any) => {
             }
         }
     }, [pubkey]);
+
+    React.useEffect(() => {
+        if (publicKey){
+            if (pubkey === publicKey.toBase58()){
+                if (solanaDomain){
+                    let sppicon = '';
+                    if (profilePictureUrl)
+                        sppicon = '<i class="wallet-adapter-button-start-icon"><img style="border-radius:24px" src="'+profilePictureUrl+'" alt="Solana Profile Icon"></i>';
+                    document.getElementsByClassName("wallet-adapter-button")[0].innerHTML = sppicon+solanaDomain;
+                }
+            }
+        }
+    }, [solanaDomain, profilePictureUrl])
 
     if (loading){
         return <>Loading...</>
@@ -1468,9 +1471,8 @@ export function ProfileView(this: any, props: any) {
 
     React.useEffect(() => { 
         if (pubkey){
-            console.log("pubkey: "+pubkey);
+            console.log("with address: "+pubkey);
             if (ValidateAddress(pubkey)){
-                console.log("getWalletGallery()");
                 getWalletGallery();
             }
         }

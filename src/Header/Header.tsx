@@ -239,7 +239,7 @@ export function Header(props: any) {
         handleMenuClose();
         //setSnackbarState(true);
     };
-
+    
     function handlePublicKeySubmit(event: any) {
         event.preventDefault();
         if ((newinputpkvalue && newinputpkvalue.length>0 && ValidateAddress(newinputpkvalue))||

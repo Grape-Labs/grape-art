@@ -32,18 +32,26 @@ const GalleryItem = (props: any) => {
 
         const MD_PUBKEY = new PublicKey("metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s");
         const getCollectionData = async () => {
-            try {
-                let meta_primer = collectionitem;
-                let buf = Buffer.from(meta_primer.data, 'base64');
-                let meta_final = decodeMetadata(buf);
-                
-                const metadata = await fetch(meta_final.data.uri).then(
-                    (res: any) => res.json());
-                
-                return metadata;
-            } catch (e) { // Handle errors from invalid calls
-                console.log(e);
-                return null;
+            if (collectionitem){
+                try {
+                    let meta_primer = collectionitem;
+                    let buf = Buffer.from(meta_primer.data, 'base64');
+                    let meta_final = decodeMetadata(buf);
+                    try{
+                        const metadata = await fetch(meta_final.data.uri)
+                        .then(
+                            (res: any) => res.json()
+                        );
+                        return metadata;
+                    }catch(ie){
+                        // not on Arweave:
+                        //console.log("ERR: "+JSON.stringify(meta_final));
+                        return null;
+                    }
+                } catch (e) { // Handle errors from invalid calls
+                    console.log(e);
+                    return null;
+                }
             }
         }
 
@@ -90,61 +98,65 @@ const GalleryItem = (props: any) => {
         } //else{
         {   
             let image = collectionmeta.collectionmeta?.image || null;
-            
             try{
-                if ((image.toLocaleUpperCase().indexOf('?EXT=PNG') > -1) ||
-                    (image.toLocaleUpperCase().indexOf('?EXT=JPEG') > -1)){
-                        image = image.slice(0, image.indexOf('?'));
-                        image = 'https://solana-cdn.com/cdn-cgi/image/width=256/'+image;
+                if (image){
+                    if ((image?.toLocaleUpperCase().indexOf('?EXT=PNG') > -1) ||
+                        (image?.toLocaleUpperCase().indexOf('?EXT=JPEG') > -1)){
+                            //image = image.slice(0, image.indexOf('?'));
+                            image = 'https://solana-cdn.com/cdn-cgi/image/width=256/'+image;
+                    }
                 }
             }catch(e){console.log("ERR: "+e)}
             
             if (!image){
-                console.log("ERR: " + JSON.stringify(collectionmeta));
+                //console.log("!image ERR: " + JSON.stringify(collectionmeta));
                 return null;
-            }else{
+            } else {
             //console.log("Mint: "+mint);
             //if ((collectionmeta)&&(!loading)){
             //if (image){
                 return (
-                    
-                        <Grid 
-                            container 
-                            alignItems="center"
-                            justifyContent="center">
-                            <Grid item sx={{display:'flex',justifyContent:'center',alignItems:'center'}}>
-                                <ListItemButton
-                                    component={Link} to={`${GRAPE_PREVIEW}${mint}`}
-                                    sx={{
-                                        width:'100%',
-                                        borderRadius:'25px',
-                                        p: '2px'
-                                    }}
-                                >
-                                    <img
-                                        src={`${image}`}
-                                        srcSet={`${image}`}
-                                        alt={collectionmeta.collectionmeta?.name}
-                                        //onClick={ () => openImageViewer(0) }
-                                        loading="lazy"
-                                        height="auto"
-                                        style={{
-                                            width:'100%',
-                                            borderRadius:'24px'
-                                        }}
-                                    />
-                                </ListItemButton>
-                            </Grid>
-                            <Grid item sx={{display:'flex'}}>
-                                <Box
-                                    sx={{p:1}}
-                                >
-                                    <Typography variant="caption">
-                                        {collectionmeta.collectionmeta?.name}
-                                    </Typography>
-                                </Box>
-                            </Grid>
-                        </Grid>
+                        <>
+                            {collectionmeta &&
+                                <Grid 
+                                    container 
+                                    alignItems="center"
+                                    justifyContent="center">
+                                    <Grid item sx={{display:'flex',justifyContent:'center',alignItems:'center'}}>
+                                        <ListItemButton
+                                            component={Link} to={`${GRAPE_PREVIEW}${mint}`}
+                                            sx={{
+                                                width:'100%',
+                                                borderRadius:'25px',
+                                                p: '2px'
+                                            }}
+                                        >
+                                            <img
+                                                src={`${image}`}
+                                                srcSet={`${image}`}
+                                                alt={collectionmeta.collectionmeta?.name}
+                                                //onClick={ () => openImageViewer(0) }
+                                                loading="lazy"
+                                                height="auto"
+                                                style={{
+                                                    width:'100%',
+                                                    borderRadius:'24px'
+                                                }}
+                                            />
+                                        </ListItemButton>
+                                    </Grid>
+                                    <Grid item sx={{display:'flex'}}>
+                                        <Box
+                                            sx={{p:1}}
+                                        >
+                                            <Typography variant="caption">
+                                                {collectionmeta.collectionmeta?.name}
+                                            </Typography>
+                                        </Box>
+                                    </Grid>
+                                </Grid>
+                            }
+                        </>
                 );
             }
             //}

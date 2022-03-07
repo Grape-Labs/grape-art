@@ -1,6 +1,6 @@
 {
   "name": "grape-marketplace",
-  "version": "1.1.127",
+  "version": "1.1.134",
   "private": true,
   "proxy": "http://localhost:3000/",
   "dependencies": {
@@ -79,7 +79,7 @@
     "react-jazzicon": "^1.0.3",
     "react-player": "^2.9.0",
     "react-router-dom": "^6.2.1",
-    "react-scripts": "4.0.1",
+    "react-scripts": "^4.0.3",
     "react-share": "^4.4.0",
     "react-simple-image-viewer": "^1.1.1",
     "react-solana-jazzicon": "^0.1.5",

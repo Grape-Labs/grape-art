@@ -40,6 +40,15 @@ function convertSolVal(sol: any){
     return parseFloat(new TokenAmount(sol, 9).format());
 }
 
+function solanaCDN(image:string){
+    if ((image?.toLocaleUpperCase().indexOf('?EXT=PNG') > -1) ||
+        (image?.toLocaleUpperCase().indexOf('?EXT=JPEG') > -1)){
+            //image = image.slice(0, image.indexOf('?'));
+            image = 'https://solana-cdn.com/cdn-cgi/image/width=500/'+image;
+    }
+    return image;
+}
+
 export default function FeedView(props: any){
     const [loading, setLoading] = React.useState(false);
     const [limit, setLimit] = React.useState(25);
@@ -115,7 +124,7 @@ export default function FeedView(props: any){
                         }} 
                     >
                     <img
-                        src={finalMeta?.image}
+                        src={solanaCDN(finalMeta?.image)}
                         alt=""
                         style={{
                             opacity: '0.1',
@@ -156,8 +165,8 @@ export default function FeedView(props: any){
                                                 }}
                                             >
                                                 <img
-                                                    src={`${finalMeta?.image}`}
-                                                    srcSet={`${finalMeta?.image}`}
+                                                    src={`${solanaCDN(finalMeta?.image)}`}
+                                                    srcSet={`${solanaCDN(finalMeta?.image)}`}
                                                     alt={finalMeta?.name}
                                                     //onClick={ () => openImageViewer(0) }
                                                     loading="lazy"
