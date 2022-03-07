@@ -24,9 +24,10 @@ import {
     ListItemIcon,
     ListItemText,
     ListItemButton,
+    Tooltip,
 } from '@mui/material';
 
-
+import PortraitIcon from '@mui/icons-material/Portrait';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import PublicIcon from '@mui/icons-material/Public';
 import FolderIcon from '@mui/icons-material/Folder';
@@ -36,7 +37,7 @@ import SolIcon from '../components/static/SolIcon';
 import SolCurrencyIcon from '../components/static/SolCurrencyIcon';
 
 import { ValidateAddress, trimAddress } from '../utils/grapeTools/WalletAddress'; // global key handling
-import { GRAPE_RPC_ENDPOINT, GRAPE_PROFILE } from '../utils/grapeTools/constants';
+import { GRAPE_RPC_ENDPOINT, GRAPE_PROFILE, GRAPE_PREVIEW } from '../utils/grapeTools/constants';
 
 export function IdentityView(props: any){
     const [profilePictureUrl, setProfilePictureUrl] = React.useState(null);
@@ -57,32 +58,49 @@ export function IdentityView(props: any){
     }
 
     const fetchSolanaTokens = async () => {
-        const response = await ggoconnection.getTokenAccountsByOwner(new PublicKey(pubkey), {programId: new PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA")});
-        
+        //const response = await ggoconnection.getTokenAccountsByOwner(new PublicKey(pubkey), {programId: new PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA")});
+        /*
+            let meta_final = JSON.parse(item.account.data);
+            let buf = Buffer.from(JSON.stringify(item.account.data), 'base64');
+        */
+        // Use JSONParse for now until we decode 
+        const body = {
+            method: "getTokenAccountsByOwner",
+            jsonrpc: "2.0",
+            params: [
+              pubkey,
+              { programId: "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA" },
+              { encoding: "jsonParsed", commitment: "processed" },
+            ],
+            id: "35f0036a-3801-4485-b573-2bf29a7c77d2",
+          };
+      
+          
+        const resp = await fetch(GRAPE_RPC_ENDPOINT, {
+            method: "POST",
+            body: JSON.stringify(body),
+            headers: { "Content-Type": "application/json" },
+        })
+        const json = await resp.json();
+        const resultValues = json.result.value
+        //return resultValues;
+
         let holdings: any[] = [];
-        for (var item of response.value){
+        for (var item of resultValues){
 
             //let buf = Buffer.from(item.account, 'base64');
-            holdings.push({pubkey:item.pubkey});
+            console.log("item: "+JSON.stringify(item));
+            if (item.account.data.parsed.info.tokenAmount.amount > 0)
+                holdings.push(item);
             
-            /*
-            let buf = Buffer.from(item.account.data);
-            
-            let meta_final = JSON.parse(buf);
-            //let meta_final = decodeMetadata(buf);
-            console.log("meta_final: "+meta_final);
-            */
-            /*
-            let buf = Buffer.from(JSON.stringify(item.account.data), 'base64');
-            console.log("buf: "+JSON.stringify(buf));
-            let meta_final = JSON.parse(JSON.stringify(buf));
+            // consider using https://raw.githubusercontent.com/solana-labs/token-list/main/src/tokens/solana.tokenlist.json to view more details on the tokens held
 
-            console.log("final: "+JSON.stringify(meta_final));
-            let parsedData = meta_final;//JSON.parse(buf);
-            */
         }
-        console.log(JSON.stringify(holdings));
-        setSolanaHoldings(holdings);
+
+        let sortedholdings = JSON.parse(JSON.stringify(holdings));
+        sortedholdings.sort((a:any,b:any) => (b.account.data.parsed.info.tokenAmount.amount - a.account.data.parsed.info.tokenAmount.amount));
+
+        setSolanaHoldings(sortedholdings);
     } 
 
     const fetchProfilePicture = async () => {
@@ -304,17 +322,43 @@ export function IdentityView(props: any){
                                     <List dense={true}>
                                         {solanaHoldings.length > 0 ? solanaHoldings.map((item: any) => (
                                             <ListItem>
-                                            <ListItemAvatar>
-                                                <Avatar
-                                                    sx={{backgroundColor:'#222'}}
-                                                >
-                                                    <QrCode2Icon sx={{color:'white'}} />
-                                                </Avatar>
-                                            </ListItemAvatar>
-                                            <ListItemText
-                                                primary={JSON.stringify(item.pubkey)}
-                                                secondary="token"
-                                            />
+                                                {item.account.data.parsed.info.tokenAmount.decimals === 0 ?
+                                                <>
+                                                    <Tooltip title="NFT">
+                                                        <ListItemButton 
+                                                            component={Link} to={`${GRAPE_PREVIEW}${item.account.data.parsed.info.mint}`}
+                                                            sx={{borderRadius:'24px'}}
+                                                        >
+                                                            <ListItemAvatar>
+                                                                <Avatar
+                                                                    sx={{backgroundColor:'#222'}}
+                                                                >
+                                                                    <PortraitIcon sx={{color:'white'}} />
+                                                                </Avatar>
+                                                            </ListItemAvatar>
+                                                            <ListItemText
+                                                                primary={item.account.data.parsed.info.mint}
+                                                                secondary={`x${item.account.data.parsed.info.tokenAmount.amount}`}
+                                                                
+                                                            />
+                                                        </ListItemButton>
+                                                    </Tooltip>
+                                                </>
+                                                :
+                                                <>
+                                                        <ListItemAvatar>
+                                                        <Avatar
+                                                            sx={{backgroundColor:'#222'}}
+                                                        >
+                                                            <QrCode2Icon sx={{color:'white'}} />
+                                                        </Avatar>
+                                                    </ListItemAvatar>
+                                                    <ListItemText
+                                                        primary={((new TokenAmount(item.account.data.parsed.info.tokenAmount.amount, item.account.data.parsed.info.tokenAmount.decimals).format()))}
+                                                        secondary={item.account.data.parsed.info.mint}
+                                                    />
+                                                </>
+                                                }
                                             </ListItem>
                                         ))
                                         :
