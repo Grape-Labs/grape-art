@@ -1559,13 +1559,7 @@ export function ProfileView(this: any, props: any) {
                         <>
                             <React.Fragment>
                                 <Box
-                                    sx={{ 
-                                        p: 1, 
-                                        mb: 3, 
-                                        width: '100%',
-                                        background: '#13151C',
-                                        borderRadius: '24px'
-                                    }}
+                                    className="grape-art-generic-placeholder-container"
                                 > 
                                         <Grid 
                                             container 

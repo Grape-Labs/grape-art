@@ -844,7 +844,7 @@ function SocialFlags(props: any){
                                     >
                                     Mint: <MakeLinkableAddress addr={mint} trim={0} hasextlink={true} hascopy={false} fontsize={16} /> <br/>
                                     <Typography sx={{textAlign:'center'}}>
-                                        You are about to report this mint, in order to minimize unecessary reporting there is a <GrapeIcon sx={{fontSize:'12px'}} />100 fee to process this request
+                                        You are about to report this mint, in order to minimize unnecessary reporting there is a <GrapeIcon sx={{fontSize:'12px'}} />100 fee to process this request
                                     </Typography>
                                 </Alert>
                                 
@@ -1581,7 +1581,7 @@ function GalleryItemMeta(props: any) {
                                             {open_meta ? <ExpandLess /> : <ExpandMoreIcon />}
                                         </ListItemButton>
                                         <Collapse in={open_meta} timeout="auto" unmountOnExit>
-                                            <List component="div" sx={{ pl: 4 }}>
+                                            <List component="div" sx={{ pl: 0 }}>
                                                 <ListItemText>
 
                                                 <TableContainer component={Paper}

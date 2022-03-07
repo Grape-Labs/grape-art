@@ -16,6 +16,7 @@ import {
     Typography,
     Grid,
     Box,
+    Container,
     Skeleton,
     Avatar,
     List,
@@ -73,9 +74,7 @@ export function IdentityView(props: any){
               { encoding: "jsonParsed", commitment: "processed" },
             ],
             id: "35f0036a-3801-4485-b573-2bf29a7c77d2",
-          };
-      
-          
+        };
         const resp = await fetch(GRAPE_RPC_ENDPOINT, {
             method: "POST",
             body: JSON.stringify(body),
@@ -87,14 +86,11 @@ export function IdentityView(props: any){
 
         let holdings: any[] = [];
         for (var item of resultValues){
-
             //let buf = Buffer.from(item.account, 'base64');
-            console.log("item: "+JSON.stringify(item));
+            //console.log("item: "+JSON.stringify(item));
             if (item.account.data.parsed.info.tokenAmount.amount > 0)
                 holdings.push(item);
-            
             // consider using https://raw.githubusercontent.com/solana-labs/token-list/main/src/tokens/solana.tokenlist.json to view more details on the tokens held
-
         }
 
         let sortedholdings = JSON.parse(JSON.stringify(holdings));
@@ -151,15 +147,9 @@ export function IdentityView(props: any){
         );
     } else{
         return (
-                <React.Fragment>
+                <Container>
                     <Box
-                        sx={{ 
-                            p: 1, 
-                            mb: 3, 
-                            width: '100%',
-                            background: '#13151C',
-                            borderRadius: '24px'
-                        }}
+                        className="grape-art-generic-placeholder-container"
                     > 
                             <Grid 
                                 container 
@@ -372,7 +362,7 @@ export function IdentityView(props: any){
                             </>
                         
                     </Box>
-                </React.Fragment>
+                </Container>
         );
     }
 }

@@ -194,14 +194,7 @@ export default function FeedView(props: any){
                                         </Typography>
                                         
                                         <Box
-                                            sx={{
-                                                background: 'rgba(0, 0, 0, 0.9)',
-                                                minWidth: '100%',
-                                                minHeight:'100%',
-                                                p:1.5,
-                                                mt:1,
-                                                borderRadius:'24px',
-                                            }} 
+                                            className='grape-art-generic-dark-box'
                                         >
                                             <Typography sx={{fontSize:'30px'}}>
                                                 {statestruct[itemraw.memo.state]} <strong>{itemraw.memo.amount}</strong> <SolCurrencyIcon sx={{fontSize:"18px", mr:0.5 }}/>

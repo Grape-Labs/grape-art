@@ -258,10 +258,7 @@ export function Header(props: any) {
     return (
         <Toolbar
             color="inherit"
-            sx={{
-                pr: '24px', // keep right padding when drawer closed
-                background: 'none'
-            }}
+            className="grape-art-header"
             >
 
             <Box display='flex' flexGrow={1}>
@@ -269,12 +266,14 @@ export function Header(props: any) {
                     variant="text"
                     color="inherit" 
                     href='/'
+                    sx={{borderRadius:'17px',pl:1,pr:1}}
                 >
                     <Typography
                         component="h1"
                         variant="h6"
                         color="inherit"
                         display='flex'
+                        sx={{ml:1,mr:1}}
                     >
                         <img src="/grape_white_logo.svg" height="40px" width="137px" className="header-logo" alt="Grape" />
                     </Typography>
