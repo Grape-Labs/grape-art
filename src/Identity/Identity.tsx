@@ -104,6 +104,12 @@ export function IdentityView(props: any){
         let img_url = url;
         if (url)
             img_url = url.replace(/width=100/g, 'width=256');
+
+        const solcdn = 'https://solana-cdn.com/cdn-cgi/image/width=256/';
+        if (img_url.indexOf(solcdn) > -1){
+                img_url = img_url.slice(solcdn.length, img_url.length);
+        }
+
         setProfilePictureUrl(img_url);
     }
     

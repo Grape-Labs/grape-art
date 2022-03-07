@@ -90,6 +90,13 @@ const GalleryItem = (props: any) => {
         } //else{
         {   
             let image = collectionmeta.collectionmeta?.image || null;
+            
+            if ((image.toLocaleUpperCase().indexOf('?EXT=PNG') > -1) ||
+                (image.toLocaleUpperCase().indexOf('?EXT=JPEG') > -1)){
+                    image = image.slice(0, image.indexOf('?'));
+                    image = 'https://solana-cdn.com/cdn-cgi/image/width=256/'+image;
+            }
+            
             if (!image){
                 console.log("ERR: " + JSON.stringify(collectionmeta));
                 return null;

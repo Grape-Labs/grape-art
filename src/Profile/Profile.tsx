@@ -826,8 +826,16 @@ const IdentityView = (props: any) => {
     const fetchSolanaDomain = async () => {
         const domain = await findDisplayName(ggoconnection, pubkey);
         if (domain){
-            if (domain[0] !== pubkey)
+            if (domain[0] !== pubkey){
                 setSolanaDomain(domain[0]);
+                
+                if (publicKey){
+                    if (pubkey === publicKey.toBase58())
+                        if (domain[0])
+                            document.getElementsByClassName("wallet-adapter-button")[0].innerHTML = domain[0]
+                }
+            
+            }
         }
     }
 
@@ -1158,26 +1166,27 @@ const IdentityView = (props: any) => {
                                                 >
                                                     <Typography gutterBottom variant="body1" component="div" sx={{ flexGrow: 1, color:'white' }}>
                                                         {solanaDomain && solanaDomain.length > 0 ?
-                                                        
-                                                            <Button 
-                                                                sx={{borderRadius:'17px'}} 
-                                                                size="small" variant="text" 
-                                                                component={Link} 
-                                                                to={`${GRAPE_IDENTITY}${pubkey}`}>
-                                                                <Grid 
-                                                                container 
-                                                                direction="column"
-                                                                alignItems="center"
-                                                                justifyContent="center"
-                                                                >
-                                                                    <Grid item>
-                                                                        <Typography gutterBottom variant="body1" component="div" sx={{ flexGrow: 1, color:'white' }}><strong>{solanaDomain}</strong></Typography>
+                                                            <>
+                                                                <Button 
+                                                                    sx={{borderRadius:'17px'}} 
+                                                                    size="small" variant="text" 
+                                                                    component={Link} 
+                                                                    to={`${GRAPE_IDENTITY}${pubkey}`}>
+                                                                    <Grid 
+                                                                    container 
+                                                                    direction="column"
+                                                                    alignItems="center"
+                                                                    justifyContent="center"
+                                                                    >
+                                                                        <Grid item>
+                                                                            <Typography gutterBottom variant="body1" component="div" sx={{ flexGrow: 1, color:'white' }}><strong>{solanaDomain}</strong></Typography>
+                                                                        </Grid>
+                                                                        <Grid item sx={{mt:-1.5}}>
+                                                                            <Typography gutterBottom variant="caption" component="div" sx={{ flexGrow: 1, color:'white' }}>{trimAddress(pubkey,4)}</Typography>
+                                                                        </Grid>
                                                                     </Grid>
-                                                                    <Grid item sx={{mt:-1.5}}>
-                                                                        <Typography gutterBottom variant="caption" component="div" sx={{ flexGrow: 1, color:'white' }}>{trimAddress(pubkey,4)}</Typography>
-                                                                    </Grid>
-                                                                </Grid>
-                                                            </Button>
+                                                                </Button>
+                                                            </>
                                                         :
                                                             <Button 
                                                                 sx={{borderRadius:'17px'}} 
