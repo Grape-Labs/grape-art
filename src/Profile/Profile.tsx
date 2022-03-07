@@ -831,8 +831,11 @@ const IdentityView = (props: any) => {
                 
                 if (publicKey){
                     if (pubkey === publicKey.toBase58())
-                        if (domain[0])
-                            document.getElementsByClassName("wallet-adapter-button")[0].innerHTML = domain[0]
+                        if (domain[0]){
+                            try{
+                                document.getElementsByClassName("wallet-adapter-button")[0].innerHTML = domain[0]
+                            }catch(e){console.log("ERR: "+e)}
+                        }
                 }
             
             }
