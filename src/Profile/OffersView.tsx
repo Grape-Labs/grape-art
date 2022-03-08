@@ -891,9 +891,11 @@ export default function OffersView(props:any){
         if (!ahloading){
             setAHLoading(true);
             let cntr = 0;
-            
-            const escrow = ( await getAuctionHouseBuyerEscrow(auctionHouseKey, publicKey,))[0];
-            let amount = await getTokenAmount(anchorProgram, escrow, auctionHouseObj.treasuryMint,);
+            let amount = 0;
+            if (publicKey){
+                const escrow = ( await getAuctionHouseBuyerEscrow(auctionHouseKey, publicKey,))[0];
+                let amount = await getTokenAmount(anchorProgram, escrow, auctionHouseObj.treasuryMint,);
+            }
             setAHBalance(amount);
 
             setAHLoading(false);
@@ -1079,7 +1081,9 @@ export default function OffersView(props:any){
                                                 </Typography>
                                             </TableCell>
                                             <TableCell align="center"> 
-                                                {(publicKey.toBase58() === item.buyeraddress) && (
+                                                {publicKey &&
+                                                <>
+                                                    {(publicKey.toBase58() === item.buyeraddress) && (
                                                     <Tooltip title={`Cancel Offer`}>
                                                         <Button 
                                                             color="error"
@@ -1095,6 +1099,8 @@ export default function OffersView(props:any){
                                                         </Button>
                                                     </Tooltip>
                                                     )}
+                                                </>
+                                                }
                                             </TableCell>
                                         </TableRow>
                                         </>

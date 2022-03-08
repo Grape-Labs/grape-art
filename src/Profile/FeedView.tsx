@@ -172,7 +172,6 @@ export default function FeedView(props: any){
                                                     loading="lazy"
                                                     height="auto"
                                                     style={{
-                                                        width:'100%',
                                                         borderRadius:'24px',
                                                         padding:0
                                                     }}
