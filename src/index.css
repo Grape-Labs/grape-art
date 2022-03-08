@@ -116,6 +116,12 @@ code {
   .wallet-adapter-button {
     line-height: 20px !important;
   }
+  .wallet-adapter-button-start-icon{
+    margin-right:0!important;
+  }
+  .wallet-adapter-solana-domain{
+    display:none;
+  }
   
   .header-logo {
     width: 120px !important;

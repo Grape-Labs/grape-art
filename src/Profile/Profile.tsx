@@ -981,7 +981,7 @@ const IdentityView = (props: any) => {
                     let sppicon = '';
                     if (profilePictureUrl)
                         sppicon = '<i class="wallet-adapter-button-start-icon"><img style="border-radius:24px" src="'+profilePictureUrl+'" alt="Solana Profile Icon"></i>';
-                    document.getElementsByClassName("wallet-adapter-button")[0].innerHTML = sppicon+solanaDomain;
+                    document.getElementsByClassName("wallet-adapter-button")[0].innerHTML = sppicon+'<span class="wallet-adapter-solana-domain">'+solanaDomain+'</span>';
                 }
             }
         }

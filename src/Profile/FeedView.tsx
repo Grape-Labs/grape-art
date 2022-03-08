@@ -160,6 +160,7 @@ export default function FeedView(props: any){
                                             <ListItemButton
                                                 component={Link} to={`${GRAPE_PREVIEW}${itemraw.memo.mint}`}
                                                 sx={{
+                                                    position:'relative',
                                                     borderRadius:'25px',
                                                     p: 0
                                                 }}
@@ -172,6 +173,7 @@ export default function FeedView(props: any){
                                                     loading="lazy"
                                                     height="auto"
                                                     style={{
+                                                        width:'100%',
                                                         borderRadius:'24px',
                                                         padding:0
                                                     }}
