@@ -1069,7 +1069,7 @@ const IdentityView = (props: any) => {
                                                 justifyContent="flex-end"
                                             >
                                                 <Grid item>
-                                                    <Box sx={{ mt:-1.5,mr:-6 }}>
+                                                    <Box sx={{ mt:-1.5,mr:-2 }}>
                                                         
                                                         <Typography component="div" variant="caption" alignItems="flex-end" justifyContent="flex-end">
 

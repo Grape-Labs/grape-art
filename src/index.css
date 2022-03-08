@@ -39,14 +39,12 @@ code {
 
 .grape-profile-background{
   background: linear-gradient(to bottom, #36325d 0%, #251A3A 48.6%, #251A3A 90.62%, #251A3A 10%);
-  position:relative;
   border-radius: 17px;
   min-height: 225px;
   min-width:250px;
   overflow:hidden;
-  padding-bottom:3em;
-  padding-left:4em;
-  padding-right:4em;
+  padding-bottom:2em;
+  position:relative;
 }
 
 .grape-art-header{
