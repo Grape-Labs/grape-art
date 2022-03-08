@@ -1,7 +1,7 @@
 
 import React, { useEffect } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
-import { decodeMetadata } from '../utils/grapeTools/utils'
+import { decodeMetadata } from '../utils/grapeTools/utils';
 // @ts-ignore
 import { PublicKey, Connection, Commitment } from '@solana/web3.js';
 
@@ -31,7 +31,6 @@ import {
 import PortraitIcon from '@mui/icons-material/Portrait';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import PublicIcon from '@mui/icons-material/Public';
-import FolderIcon from '@mui/icons-material/Folder';
 import QrCode2Icon from '@mui/icons-material/QrCode2';
 
 import SolIcon from '../components/static/SolIcon';
