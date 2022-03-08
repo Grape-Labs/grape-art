@@ -594,7 +594,7 @@ const MainPanel = (props: any) => {
         )
     } else{
         return (
-            <Grid item xs={12} sm={6} md={8} lg={9} xl={9}>
+            <Grid item xs={12} sm={7} md={9} lg={9} xl={9}>
                 <Container
                     sx={{
                         minHeight: '225px',
@@ -1022,7 +1022,7 @@ const IdentityView = (props: any) => {
                                     spacing={2}
                                     rowSpacing={3}
                                     >    
-                                    <Grid item xs={12} sm={6} md={4} lg={3} xl={3}
+                                    <Grid item xs={12} sm={5} md={3} lg={3} xl={3}
                                     sx={{
                                     }}
                                     >

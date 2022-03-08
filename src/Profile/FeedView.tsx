@@ -25,6 +25,7 @@ import {
     Typography,
     Grid,
     Box,
+    Stack,
     ListItemButton,
     Container,
 } from '@mui/material';
@@ -125,11 +126,17 @@ export default function FeedView(props: any){
                             >
                             <Grid item xs={12} sm={12} md={6}>
                                 <Grid 
-                                    container 
+                                    component={Stack} 
+                                    direction="column"
                                     alignItems="center"
-                                    justifyContent="center">
-                                    <Grid item sx={{display:'column',justifyContent:'center',alignItems:'center', p:0}}>
+                                    justifyContent="center"
+                                    sx={{
+                                        display: "flex",
+                                        flexDirection: "column",}}
+                                    >
+                                    <Grid item sx={{p:0}}>
                                         <Box
+                                            
                                             sx={{
                                                 background: 'rgba(0, 0, 0, 0.6)',
                                                 borderRadius: '26px',
@@ -137,6 +144,7 @@ export default function FeedView(props: any){
                                                 p:'2px',
                                             }} 
                                         >
+
                                             <ListItemButton
                                                 component={Link} to={`${GRAPE_PREVIEW}${itemraw.memo.mint}`}
                                                 sx={{
