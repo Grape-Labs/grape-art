@@ -950,7 +950,7 @@ function GalleryItemMeta(props: any) {
     const followWalletConnect = async (followAddress:string, solanaAddress: string) => {
         // address:string, alias:string
         let tofollow = followAddress;   
-        let promise = await cyberConnect.connect(tofollow, '')
+        let promise = await cyberConnect.connect(tofollow, solanaAddress)
         .catch(function (error) {
             console.log(error);
         });

@@ -221,7 +221,8 @@ export default function SocialView(props: any){
     const SocialItem = (props: any) => {
         const [followitem, setFollowItem] = React.useState(props.followitem);
         const [followitemkey, setFollowItemKey] = React.useState(props.followitemkey);
-        
+        const following = props.following;
+
         if (loading){
             return <Grid item xs={12} sm={6} md={4}><CircularProgress /></Grid>
         } else{
@@ -244,12 +245,19 @@ export default function SocialView(props: any){
                             <ListItemAvatar>
                                 <ProfilePicture followitem={followitem} />
                             </ListItemAvatar>
-                            {/*primary={followitem.alias || followitem.ens || trimAddress(followitem.address,4)}*/}
+                            {following ?
+                                <ListItemText
+                                    sx={{ml:1}}
+                                    primary={followitem.alias || followitem.ens || trimAddress(followitem.address,4)}  
+                                    secondary={<Typography variant="caption" color="#777">From {followitem.namespace}</Typography>}
+                                />
+                            :
                             <ListItemText
                                 sx={{ml:1}}
                                 primary={followitem.ens || trimAddress(followitem.address,4)}  
                                 secondary={<Typography variant="caption" color="#777">From {followitem.namespace}</Typography>}
                             />
+                            }
                         </ListItemButton>
                     </ListItem>
                 </Grid>
@@ -302,7 +310,7 @@ export default function SocialView(props: any){
                             {followListInfo &&
                                 <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
                                     {followListInfo?.followers && followListInfo.followers.list.map((item: any, key: number) => (
-                                    <SocialItem followitem={item} followitemkey={key} key={key} />
+                                    <SocialItem followitem={item} followitemkey={key} key={key} following={false} />
                                     ))}
                                 </Grid>
                             }
@@ -316,7 +324,7 @@ export default function SocialView(props: any){
                             {followListInfo &&
                                 <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
                                     {followListInfo?.followings && followListInfo.followings.list.map((item: any, key: number) => (
-                                    <SocialItem followitem={item} followitemkey={key} key={key} />
+                                    <SocialItem followitem={item} followitemkey={key} key={key} following={true} />
                                     ))}
                                 </Grid>
                             }

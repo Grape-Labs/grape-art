@@ -781,8 +781,8 @@ const IdentityView = (props: any) => {
     const followWalletConnect = async (followAddress:string, solanaAddress:string) => {
         // address:string, alias:string
         let tofollow = followAddress;  
-        console.log(followAddress+": "+solanaAddress);
-        let promise = await cyberConnect.connect(followAddress, '')
+        //console.log(followAddress+": "+solanaAddress);
+        let promise = await cyberConnect.connect(followAddress, solanaAddress)
         .catch(function (error) {
             console.log(error);
         });
