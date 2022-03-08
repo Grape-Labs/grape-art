@@ -788,7 +788,7 @@ const IdentityView = (props: any) => {
         // address:string, alias:string
         let tofollow = followAddress;  
         console.log(followAddress+": "+solanaAddress);
-        let promise = await cyberConnect.connect(followAddress, solanaAddress)
+        let promise = await cyberConnect.connect(followAddress, '')
         .catch(function (error) {
             console.log(error);
         });

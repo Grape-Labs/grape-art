@@ -189,7 +189,7 @@ export default function FeedView(props: any){
                                     sx={{
                                         minWidth: '100%',
                                         minHeight:'100%',
-                                        m:1,
+                                        m:0.5,
                                         p:0
                                     }} 
                                 >

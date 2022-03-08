@@ -104,7 +104,7 @@ export function IdentityView(props: any){
         let img_url = url;
         if (url)
             img_url = url.replace(/width=100/g, 'width=256');
-            
+
         const solcdn = 'https://solana-cdn.com/cdn-cgi/image/width=256/';
         if (img_url.indexOf(solcdn) > -1){
                 img_url = img_url.slice(solcdn.length, img_url.length);
@@ -235,20 +235,45 @@ export function IdentityView(props: any){
                                     PROFILE:
                                 </Typography>   
                                     <List dense={true}>
-                                        <ListItem>
-                                                
-                                            <ListItemAvatar>
-                                                <Avatar
-                                                    sx={{backgroundColor:'#222'}}
-                                                    src={profilePictureUrl}
-                                                    alt='PFP'
-                                                />
-                                            </ListItemAvatar>
-                                            <ListItemText
-                                                primary={profilePictureUrl}
-                                                secondary="Solana Profile Picture"
-                                            />
-                                        </ListItem>
+                                        {profilePictureUrl &&
+                                            <ListItem>
+                                                {(profilePictureUrl.toLocaleUpperCase().indexOf("HTTPS://") > -1) ? (
+                                                    <ListItemButton
+                                                        component="a" 
+                                                        href={profilePictureUrl}
+                                                        target="_blank"
+                                                        sx={{borderRadius:'24px'}}                                           
+                                                    >
+                                                        <ListItemAvatar>
+                                                            <Avatar
+                                                                sx={{backgroundColor:'#222'}}
+                                                                src={profilePictureUrl}
+                                                                alt='PFP'
+                                                            />
+                                                        </ListItemAvatar>
+                                                        <ListItemText
+                                                            primary={profilePictureUrl}
+                                                            secondary="Solana Profile Picture"
+                                                        />
+                                                    </ListItemButton>
+                                                )
+                                                :(
+                                                    <>
+                                                        <ListItemAvatar>
+                                                            <Avatar
+                                                                sx={{backgroundColor:'#222'}}
+                                                                src={profilePictureUrl}
+                                                                alt='PFP'
+                                                            />
+                                                        </ListItemAvatar>
+                                                        <ListItemText
+                                                            primary={profilePictureUrl}
+                                                            secondary="Solana Profile Picture"
+                                                        />
+                                                    </>
+                                                )}
+                                            </ListItem>
+                                        }
                                     </List>
                                 
                                 
@@ -266,18 +291,42 @@ export function IdentityView(props: any){
                                 <List dense={true}>
                                         {solanaDomain && solanaDomain?.map((item: any) => (
                                             <ListItem>
-                                                <ListItemAvatar>
-                                                    <Avatar
-                                                        sx={{backgroundColor:'#222'}}
+                                                {(item.toLocaleUpperCase().indexOf(".SOL") > -1) ? (
+                                                    <ListItemButton
+                                                        component="a" 
+                                                        href={`https://naming.bonfida.org/#/domain/${item.slice(0,item.indexOf(".sol"))}`}
+                                                        target="_blank"
+                                                        sx={{borderRadius:'24px'}}                                           
                                                     >
-                                                        <PublicIcon sx={{color:'white'}} />
-                                                    </Avatar>
-                                                </ListItemAvatar>
-                                                <ListItemText
-                                                    primary={JSON.stringify(item)}
-                                                    secondary={(item.toLocaleUpperCase().indexOf(".SOL") > -1) ? <>Solana Domain</> : <>{(item.slice(0,1) === '@') && <>Twitter Handle</>}</>}
-                                                    
-                                                />
+                                                        <ListItemAvatar>
+                                                            <Avatar
+                                                                sx={{backgroundColor:'#222'}}
+                                                            >
+                                                                <PublicIcon sx={{color:'white'}} />
+                                                            </Avatar>
+                                                        </ListItemAvatar>
+                                                        <ListItemText
+                                                            primary={JSON.stringify(item)}
+                                                            secondary='Solana Domain'
+                                                            
+                                                        />
+                                                    </ListItemButton>
+                                                ):(
+                                                    <>
+                                                        <ListItemAvatar>
+                                                            <Avatar
+                                                                sx={{backgroundColor:'#222'}}
+                                                            >
+                                                                <PublicIcon sx={{color:'white'}} />
+                                                            </Avatar>
+                                                        </ListItemAvatar>
+                                                        <ListItemText
+                                                            primary={JSON.stringify(item)}
+                                                            secondary={(item.slice(0,1) === '@') && <>Twitter Handle</>}
+                                                            
+                                                        />
+                                                    </>
+                                                )}
                                             </ListItem>
                                         ))}
                                 </List>
