@@ -39,11 +39,28 @@ code {
 
 .grape-profile-background{
   background: linear-gradient(to bottom, #36325d 0%, #251A3A 48.6%, #251A3A 90.62%, #251A3A 10%);
+  position:relative;
+  border-radius: 17px;
+  min-height: 225px;
+  min-width:250px;
+  overflow:hidden;
+  padding-bottom:3em;
+  padding-left:4em;
+  padding-right:4em;
 }
 
 .grape-art-header{
   background: none;
   backdrop-filter: blur(12.5px);
+}
+
+.grape-art-profile-img{
+  opacity: 0.1;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 200%;
+  height: auto;
 }
 
 .grape-art-generic-placeholder-container{
@@ -57,14 +74,41 @@ code {
 
 }
 
+.grape-art-feed-outer-container{
+  position: relative;
+  margin:0;
+  padding:0;
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+.grape-art-feed-inner-container{
+  overflow: hidden;
+  position: relative;
+  border-radius: 24px;
+}
+
+.grape-art-feed-inner-img{
+  opacity: 0.2;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: auto;
+}
+
+.grape-art-feed-overlay{
+  position:relative;
+}
+
 .grape-art-generic-dark-box{
-  background: rgba(0, 0, 0, 0.9);
+  background: #13151C;
   min-width: 100%;
   min-height: 100%;
   padding: 1em;
   margin-top: 1em;
   border-radius: 24px; 
-  z-index: 999;
+  z-index: 9999;
 }
 
 @keyframes avataranimation {

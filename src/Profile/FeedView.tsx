@@ -107,42 +107,22 @@ export default function FeedView(props: any){
         } else{
             return (
                 <Container
-                    style={{overflow:'hidden', position:'relative', margin:0, padding:0}}
+                    className="grape-art-feed-outer-container"
                 >
                     <Container
-                        sx={{
-                            position:'relative',
-                            background: 'rgba(0, 0, 0, 0.1)',
-                            borderRadius: '26px',
-                            overflow:'hidden',
-                            mt:2,
-                            mb:2,
-                            ml:0,
-                            mr:0,
-                            p:0,
-                            backgroundSize: "cover",
-                        }} 
+                        className="grape-art-feed-inner-container"
                     >
                     <img
                         src={solanaCDN(finalMeta?.image)}
                         alt=""
-                        style={{
-                            opacity: '0.1',
-                            position: 'absolute',
-                            borderRadius: '26px',
-                            marginTop:2,
-                            marginBottom:2,
-                            padding:1,
-                            top:'-20%',
-                            left:'-20%',
-                            width:'150%'
-                        }}
+                        className="grape-art-feed-inner-img"
                     />
                     
-                    <Grid 
-                        container 
-                        direction='row'
-                        >
+                        <Grid 
+                            container 
+                            direction='row'
+                            className="grape-art-feed-overlay"
+                            >
                             <Grid item xs={12} sm={12} md={6}>
                                 <Grid 
                                     container 
@@ -190,7 +170,7 @@ export default function FeedView(props: any){
                                         minWidth: '100%',
                                         minHeight:'100%',
                                         m:0.5,
-                                        p:0
+                                        p:0,
                                     }} 
                                 >
                                     <Container>

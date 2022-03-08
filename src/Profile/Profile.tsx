@@ -625,13 +625,7 @@ const MainPanel = (props: any) => {
                     
                     
                         <TabPanel value={tabvalue} index={1}>
-                            <Box
-                                sx={{
-                                    borderRadius: '17px',
-                                }} 
-                                > 
-                                <FeedView />
-                            </Box>
+                            <FeedView />
                         </TabPanel>
                         
                         <TabPanel value={tabvalue} index={0}>
@@ -1035,32 +1029,12 @@ const IdentityView = (props: any) => {
                                     
                                     <Box
                                         className='grape-profile-background'
-                                        sx={{
-                                            //background: 'rgba(0, 0, 0, 0.6)',
-                                            position:'relative',
-                                            borderRadius: '17px',
-                                            minHeight: '225px',
-                                            minWidth:'250px',
-                                            overflow:'hidden',
-                                            pb:3,
-                                            pl:4,
-                                            pr:4
-                                        }} 
                                     >
                                     {featuredObj ? (  
                                         <img
                                             src={featuredObj.img}
                                             alt=""
-                                            style={{
-                                                opacity: '0.21',
-                                                position: 'absolute',
-                                                marginTop:2,
-                                                marginBottom:2,
-                                                padding:1,
-                                                top:'-5%',
-                                                right:'-5%',
-                                                height:'110%'
-                                            }}
+                                            className="grape-art-profile-img"
                                         />
                                     )
                                     :(
@@ -1069,16 +1043,7 @@ const IdentityView = (props: any) => {
                                                 <img
                                                     src={profilePictureUrl}
                                                     alt=""
-                                                    style={{
-                                                        opacity: '0.03',
-                                                        position: 'absolute',
-                                                        marginTop:2,
-                                                        marginBottom:2,
-                                                        padding:1,
-                                                        top:'-5%',
-                                                        left:'-50%',
-                                                        height:'200%'
-                                                    }}
+                                                    className="grape-art-profile-img"
                                                 />
                                             }
                                         </>
