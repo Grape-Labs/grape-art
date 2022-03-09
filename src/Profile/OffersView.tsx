@@ -71,6 +71,8 @@ import { cancelWithdrawOffer } from '../utils/auctionHouse/cancelWithdrawOffer';
 import { cancelOffer } from '../utils/auctionHouse/cancelOffer';
 import { withdrawOffer } from '../utils/auctionHouse/withdrawOffer';
 
+import { useTranslation } from 'react-i18next';
+
 const StyledTable = styled(Table)(({ theme }) => ({
     '& .MuiTableCell-root': {
         borderBottom: '1px solid rgba(255,255,255,0.05)'
@@ -901,6 +903,8 @@ export default function OffersView(props:any){
         }
     }
 
+    const { t, i18n } = useTranslation();
+
     React.useEffect(() => { 
         if (thisPublicKey){
             if (!loading){
@@ -1031,7 +1035,7 @@ export default function OffersView(props:any){
                                     <>
                                         <TableRow sx={{p:1}} key={key}>
                                             <TableCell>
-                                                <Tooltip title={`Visit profile`}>
+                                                <Tooltip title={t('Visit Profile')}>
                                                     <Button
                                                         component={Link} to={`${GRAPE_PROFILE}${item.buyeraddress}`}
                                                         sx={{borderRadius:'24px'}}

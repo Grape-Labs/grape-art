@@ -1,5 +1,5 @@
 
-import React, { useEffect } from "react";
+import React, { useEffect, Suspense } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import { decodeMetadata } from '../utils/grapeTools/utils'
 // @ts-ignore
@@ -40,6 +40,8 @@ import SolCurrencyIcon from '../components/static/SolCurrencyIcon';
 import { ValidateAddress, trimAddress } from '../utils/grapeTools/WalletAddress'; // global key handling
 import { GRAPE_RPC_ENDPOINT, GRAPE_PROFILE, GRAPE_PREVIEW } from '../utils/grapeTools/constants';
 
+import { useTranslation } from 'react-i18next';
+
 export function IdentityView(props: any){
     const [profilePictureUrl, setProfilePictureUrl] = React.useState(null);
     const [solanaDomain, setSolanaDomain] = React.useState(null);
@@ -52,6 +54,8 @@ export function IdentityView(props: any){
     const {handlekey} = useParams<{ handlekey: string }>();
     const [searchParams, setSearchParams] = useSearchParams();
     const urlParams = searchParams.get("pkey") || searchParams.get("address") || handlekey;
+
+    const { t, i18n } = useTranslation();
 
     const fetchSolanaBalance = async () => {
         const response = await ggoconnection.getBalance(new PublicKey(pubkey));
@@ -148,12 +152,12 @@ export function IdentityView(props: any){
     if (loading){
         return (
             <>
-                Loading your solana profile
+                {t('Loading your solana profile')}
             </>
         );
     } else{
         return (
-                <Container>
+            <Container>
                     <Box
                         className="grape-art-generic-placeholder-container"
                     > 
@@ -193,7 +197,7 @@ export function IdentityView(props: any){
                                             color="inherit"
                                             display='flex'
                                             sx={{mb:3}}
-                                        ><SolIcon sx={{fontSize:'20px',mr:1}} /> SOLANA IDENTITY</Typography>
+                                        ><SolIcon sx={{fontSize:'20px',mr:1}} /> {t('SOLANA IDENTITY')}</Typography>
 
                                     </Grid>
                             </Grid>
@@ -204,7 +208,7 @@ export function IdentityView(props: any){
                                 <Typography
                                     variant="h6"
                                 >
-                                    ADDRESS:
+                                    {t('ADDRESS')}:
                                 </Typography>   
                                     <List dense={true}>
                                         <ListItem>
@@ -223,7 +227,7 @@ export function IdentityView(props: any){
                                                 </ListItemAvatar>
                                                 <ListItemText
                                                     primary={pubkey}
-                                                    secondary="Solana Address"
+                                                    secondary={t('Solana Address')}
                                                 />
                                             </ListItemButton>
                                         </ListItem>
@@ -232,7 +236,7 @@ export function IdentityView(props: any){
                                 <Typography
                                     variant="h6"
                                 >
-                                    PROFILE:
+                                    {t('PROFILE')}:
                                 </Typography>   
                                     <List dense={true}>
                                         <ListItem>
@@ -246,7 +250,7 @@ export function IdentityView(props: any){
                                             </ListItemAvatar>
                                             <ListItemText
                                                 primary={profilePictureUrl}
-                                                secondary="Solana Profile Picture"
+                                                secondary={t('Solana Profile Picture')}
                                             />
                                         </ListItem>
                                     </List>
@@ -255,7 +259,7 @@ export function IdentityView(props: any){
                                 <Typography
                                     variant="h6"
                                 >
-                                    DOMAINS/REGISTRATIONS: 
+                                    {t('DOMAINS/REGISTRATIONS')}: 
                                     <Typography
                                         variant="body2"
                                         sx={{ml:2}}
