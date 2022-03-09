@@ -234,23 +234,24 @@ function SellNowVotePrompt(props:any){
                 
                 const instructionsArray = [transactionInstr.instructions].flat();        
                 
-                // we need to pass the transactions to realms not to the wallet, and then with the instructoin set we pass to the wallet only the ones from realms
+                // we need to pass the transactions to realms not to the wallet, and then with the instruction set we pass to the wallet only the ones from realms
                 if (daoPublicKey){
                     const transactionInstr2 = await createDAOProposal(+sell_now_amount, mint, publicKey.toString(), mintOwner, weightedScore, daoPublicKey, connection, transactionInstr, sendTransaction);
-                    
-                    console.log("transactionInstr2: "+JSON.stringify(transactionInstr2));
+                    //console.log("transactionInstr2: "+JSON.stringify(transactionInstr2));
                     const instructionsArray2 = [transactionInstr2.instructions].flat();
-                    console.log("instructionsArray2: "+ JSON.stringify(instructionsArray2));
+                    //console.log("instructionsArray2: "+ JSON.stringify(instructionsArray2));
                     transaction.add(...instructionsArray2);
                 } else {
                     transaction.add(
                         ...instructionsArray
                     );
                 }
-                
-                enqueueSnackbar(`Preparing to set Sell Now Price to ${sell_now_amount} SOL`,{ variant: 'info' });
-                const signedTransaction = await sendTransaction(transaction, connection);
-                
+                if (daoPublicKey){
+                    enqueueSnackbar(`Preparing to create a Proposal for Listing Price to ${sell_now_amount} SOL`,{ variant: 'info' });
+                } else {
+                    enqueueSnackbar(`Preparing to set Sell Now Price to ${sell_now_amount} SOL`,{ variant: 'info' });
+                }
+                const signedTransaction = await sendTransaction(transaction, connection);                    
                 const snackprogress = (key:any) => (
                     <CircularProgress sx={{padding:'10px'}} />
                 );
@@ -262,8 +263,11 @@ function SellNowVotePrompt(props:any){
                         {signedTransaction}
                     </Button>
                 );
-                enqueueSnackbar(`Sell Now Price Set to ${sell_now_amount} SOL`,{ variant: 'success', action:snackaction });
-                
+                if (daoPublicKey){
+                    enqueueSnackbar(`Proposal Created for Listing Price Set to ${sell_now_amount} SOL`,{ variant: 'success', action:snackaction });
+                } else {
+                    enqueueSnackbar(`Sell Now Price Set to ${sell_now_amount} SOL`,{ variant: 'success', action:snackaction });
+                }
                 const eskey = enqueueSnackbar(`Metadata will be refreshed in a few seconds`, {
                     anchorOrigin: {
                         vertical: 'top',
