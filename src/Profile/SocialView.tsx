@@ -268,7 +268,7 @@ export default function SocialView(props: any){
     }
 
     React.useEffect(() => { 
-        if (publicKey){
+        if (pubkey){
             initFollowListInfo();
         }
     }, []);
