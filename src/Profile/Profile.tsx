@@ -1139,6 +1139,30 @@ const IdentityView = (props: any) => {
                                                     <Typography gutterBottom variant="body1" component="div" sx={{ flexGrow: 1, color:'white' }}>
                                                         {solanaDomain && solanaDomain.length > 0 ?
                                                             <>
+                                                                <Tooltip title="View Solana ID">
+                                                                    <Button 
+                                                                        sx={{borderRadius:'17px'}} 
+                                                                        size="small" variant="text" 
+                                                                        component={Link} 
+                                                                        to={`${GRAPE_IDENTITY}${pubkey}`}>
+                                                                        <Grid 
+                                                                        container 
+                                                                        direction="column"
+                                                                        alignItems="center"
+                                                                        justifyContent="center"
+                                                                        >
+                                                                            <Grid item>
+                                                                                <Typography gutterBottom variant="body1" component="div" sx={{ flexGrow: 1, color:'white' }}><strong>{solanaDomain}</strong></Typography>
+                                                                            </Grid>
+                                                                            <Grid item sx={{mt:-1.5}}>
+                                                                                <Typography gutterBottom variant="caption" component="div" sx={{ flexGrow: 1, color:'white' }}>{trimAddress(pubkey,4)}</Typography>
+                                                                            </Grid>
+                                                                        </Grid>
+                                                                    </Button>
+                                                                </Tooltip>
+                                                            </>
+                                                        :
+                                                            <Tooltip title="View Solana ID">
                                                                 <Button 
                                                                     sx={{borderRadius:'17px'}} 
                                                                     size="small" variant="text" 
@@ -1151,31 +1175,11 @@ const IdentityView = (props: any) => {
                                                                     justifyContent="center"
                                                                     >
                                                                         <Grid item>
-                                                                            <Typography gutterBottom variant="body1" component="div" sx={{ flexGrow: 1, color:'white' }}><strong>{solanaDomain}</strong></Typography>
-                                                                        </Grid>
-                                                                        <Grid item sx={{mt:-1.5}}>
-                                                                            <Typography gutterBottom variant="caption" component="div" sx={{ flexGrow: 1, color:'white' }}>{trimAddress(pubkey,4)}</Typography>
+                                                                            <Typography gutterBottom variant="body1" component="div" sx={{ flexGrow: 1, color:'white' }}>{trimAddress(pubkey,4)}</Typography>
                                                                         </Grid>
                                                                     </Grid>
                                                                 </Button>
-                                                            </>
-                                                        :
-                                                            <Button 
-                                                                sx={{borderRadius:'17px'}} 
-                                                                size="small" variant="text" 
-                                                                component={Link} 
-                                                                to={`${GRAPE_IDENTITY}${pubkey}`}>
-                                                                <Grid 
-                                                                container 
-                                                                direction="column"
-                                                                alignItems="center"
-                                                                justifyContent="center"
-                                                                >
-                                                                    <Grid item>
-                                                                        <Typography gutterBottom variant="body1" component="div" sx={{ flexGrow: 1, color:'white' }}>{trimAddress(pubkey,4)}</Typography>
-                                                                    </Grid>
-                                                                </Grid>
-                                                            </Button>
+                                                            </Tooltip>
                                                         }
                                                     </Typography>
                                                 </Grid>
