@@ -167,21 +167,23 @@ export function IdentityView(props: any){
                                 <Grid 
                                     item xs={12}
                                 >
-                                    <Button
-                                        component={Link} 
-                                        to={`${GRAPE_PROFILE}${pubkey}`}
-                                        sx={{borderRadius:'24px',textTransform:'none',color:'white'}}
-                                        >
-                                        <Typography
-                                            variant="h3"
-                                            color="inherit"
-                                            display='flex'
-                                            sx={{mt:2}}
-                                        >
-                                            <img src="/grape_white_logo.svg" width="300px" className="header-logo" alt="Grape" />
-                                            .art
-                                            </Typography>
-                                    </Button>
+                                    <Tooltip title="Back go Profile">
+                                        <Button
+                                            component={Link} 
+                                            to={`${GRAPE_PROFILE}${pubkey}`}
+                                            sx={{borderRadius:'24px',textTransform:'none',color:'white'}}
+                                            >
+                                            <Typography
+                                                variant="h3"
+                                                color="inherit"
+                                                display='flex'
+                                                sx={{mt:2}}
+                                            >
+                                                <img src="/grape_white_logo.svg" width="300px" className="header-logo" alt="Grape" />
+                                                .art
+                                                </Typography>
+                                        </Button>
+                                    </Tooltip>
                                     </Grid>
                                     <Grid 
                                         item xs={12}
@@ -207,24 +209,26 @@ export function IdentityView(props: any){
                                 </Typography>   
                                     <List dense={true}>
                                         <ListItem>
-                                            <ListItemButton 
-                                                component="a" 
-                                                href={`https://explorer.solana.com/address/${pubkey}`}
-                                                target="_blank"
-                                                sx={{borderRadius:'24px'}}
-                                            >
-                                                <ListItemAvatar>
-                                                    <Avatar
-                                                        sx={{backgroundColor:'#222'}}
-                                                    >
-                                                        <AccountBalanceWalletIcon sx={{color:'white'}} />
-                                                    </Avatar>
-                                                </ListItemAvatar>
-                                                <ListItemText
-                                                    primary={pubkey}
-                                                    secondary="Solana Address"
-                                                />
-                                            </ListItemButton>
+                                            <Tooltip title="View on Solana Explorer">
+                                                <ListItemButton 
+                                                    component="a" 
+                                                    href={`https://explorer.solana.com/address/${pubkey}`}
+                                                    target="_blank"
+                                                    sx={{borderRadius:'24px'}}
+                                                >
+                                                    <ListItemAvatar>
+                                                        <Avatar
+                                                            sx={{backgroundColor:'#222'}}
+                                                        >
+                                                            <AccountBalanceWalletIcon sx={{color:'white'}} />
+                                                        </Avatar>
+                                                    </ListItemAvatar>
+                                                    <ListItemText
+                                                        primary={pubkey}
+                                                        secondary="Solana Address"
+                                                    />
+                                                </ListItemButton>
+                                            </Tooltip>
                                         </ListItem>
                                     </List>
 
@@ -237,24 +241,26 @@ export function IdentityView(props: any){
                                         {profilePictureUrl &&
                                             <ListItem>
                                                 {(profilePictureUrl.toLocaleUpperCase().indexOf("HTTPS://") > -1) ? (
-                                                    <ListItemButton
-                                                        component="a" 
-                                                        href={profilePictureUrl}
-                                                        target="_blank"
-                                                        sx={{borderRadius:'24px'}}                                           
-                                                    >
-                                                        <ListItemAvatar>
-                                                            <Avatar
-                                                                sx={{backgroundColor:'#222'}}
-                                                                src={profilePictureUrl}
-                                                                alt='PFP'
+                                                    <Tooltip title="View Image">
+                                                        <ListItemButton
+                                                            component="a" 
+                                                            href={profilePictureUrl}
+                                                            target="_blank"
+                                                            sx={{borderRadius:'24px'}}                                           
+                                                        >
+                                                            <ListItemAvatar>
+                                                                <Avatar
+                                                                    sx={{backgroundColor:'#222'}}
+                                                                    src={profilePictureUrl}
+                                                                    alt='PFP'
+                                                                />
+                                                            </ListItemAvatar>
+                                                            <ListItemText
+                                                                primary={profilePictureUrl}
+                                                                secondary="Solana Profile Picture"
                                                             />
-                                                        </ListItemAvatar>
-                                                        <ListItemText
-                                                            primary={profilePictureUrl}
-                                                            secondary="Solana Profile Picture"
-                                                        />
-                                                    </ListItemButton>
+                                                        </ListItemButton>
+                                                    </Tooltip>
                                                 )
                                                 :(
                                                     <>
@@ -291,25 +297,27 @@ export function IdentityView(props: any){
                                         {solanaDomain && solanaDomain?.map((item: any) => (
                                             <ListItem>
                                                 {(item.toLocaleUpperCase().indexOf(".SOL") > -1) ? (
-                                                    <ListItemButton
-                                                        component="a" 
-                                                        href={`https://naming.bonfida.org/#/domain/${item.slice(0,item.indexOf(".sol"))}`}
-                                                        target="_blank"
-                                                        sx={{borderRadius:'24px'}}                                           
-                                                    >
-                                                        <ListItemAvatar>
-                                                            <Avatar
-                                                                sx={{backgroundColor:'#222'}}
-                                                            >
-                                                                <PublicIcon sx={{color:'white'}} />
-                                                            </Avatar>
-                                                        </ListItemAvatar>
-                                                        <ListItemText
-                                                            primary={JSON.stringify(item)}
-                                                            secondary='Solana Domain'
-                                                            
-                                                        />
-                                                    </ListItemButton>
+                                                    <Tooltip title="View registration">
+                                                        <ListItemButton
+                                                            component="a" 
+                                                            href={`https://naming.bonfida.org/#/domain/${item.slice(0,item.indexOf(".sol"))}`}
+                                                            target="_blank"
+                                                            sx={{borderRadius:'24px'}}                                           
+                                                        >
+                                                            <ListItemAvatar>
+                                                                <Avatar
+                                                                    sx={{backgroundColor:'#222'}}
+                                                                >
+                                                                    <PublicIcon sx={{color:'white'}} />
+                                                                </Avatar>
+                                                            </ListItemAvatar>
+                                                            <ListItemText
+                                                                primary={JSON.stringify(item)}
+                                                                secondary='Solana Domain'
+                                                                
+                                                            />
+                                                        </ListItemButton>
+                                                    </Tooltip>
                                                 ):(
                                                     <>
                                                         <ListItemAvatar>
