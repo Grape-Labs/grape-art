@@ -1429,8 +1429,20 @@ export function ProfileView(this: any, props: any) {
             },
                 { replace: true }
             );
-            
-        } else{
+            setNewInputPKValue('');
+        } else if (newinputpkvalue && newinputpkvalue.length>0){
+            if (newinputpkvalue.toLocaleUpperCase().indexOf("MINT:") > -1){
+                let mint = newinputpkvalue.slice(5,newinputpkvalue.length);
+                if (ValidateAddress(mint)){
+                    navigate({
+                        pathname: GRAPE_PREVIEW+mint
+                    },
+                        { replace: true }
+                    );
+                    setNewInputPKValue('');
+                }
+            }
+        }else{
             setNewInputPKValue('');
         }
     }
@@ -1577,23 +1589,26 @@ export function ProfileView(this: any, props: any) {
                                         </Grid>
                                             
                                         <Grid>
-                                            <Paper
-                                                component="form"
-                                                onSubmit={handlePublicKeySubmit}
-                                                sx={{ m:2, p: 1, display: 'flex', alignItems: 'center', borderRadius: '24px' }}
-                                            >
-                                                <InputBase
-                                                    fullWidth
-                                                    sx={{ ml: 1, flex: 1 }}
-                                                    placeholder="Enter a solana address"
-                                                    inputProps={{ 'aria-label': 'solana address' }}
-                                                    value={newinputpkvalue}
-                                                    onChange={(e) => setNewInputPKValue(e.target.value)}
-                                                />
-                                                <IconButton type="submit" sx={{ p: '10px' }} aria-label="search">
-                                                    <SearchIcon />
-                                                </IconButton>
-                                            </Paper>
+                                            <Tooltip title='You can also search by mint address be entering "mint:address"'>
+                                                <Paper
+                                                    component="form"
+                                                    onSubmit={handlePublicKeySubmit}
+                                                    sx={{ m:2, p: 1, display: 'flex', alignItems: 'center', borderRadius: '24px' }}
+                                                >    
+                                                        <InputBase
+                                                            fullWidth
+                                                            sx={{ ml: 1, flex: 1 }}
+                                                            placeholder="Enter a solana address"
+                                                            inputProps={{ 'aria-label': 'solana address' }}
+                                                            value={newinputpkvalue}
+                                                            onChange={(e) => setNewInputPKValue(e.target.value)}
+                                                        />
+                                                        <IconButton type="submit" sx={{ p: '10px' }} aria-label="search">
+                                                            <SearchIcon />
+                                                        </IconButton>
+                                                
+                                                </Paper>
+                                            </Tooltip>
                                         </Grid>
                                     </Grid>
                                 </Box>

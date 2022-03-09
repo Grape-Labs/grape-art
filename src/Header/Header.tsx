@@ -36,7 +36,7 @@ import {
 
 import SearchIcon from '@mui/icons-material/Search';
 
-import { GRAPE_PROFILE } from '../utils/grapeTools/constants';
+import { GRAPE_PROFILE, GRAPE_PREVIEW } from '../utils/grapeTools/constants';
 import { ValidateAddress } from '../utils/grapeTools/WalletAddress'; // global key handling
 
 require('@solana/wallet-adapter-react-ui/styles.css');
@@ -239,9 +239,10 @@ export function Header(props: any) {
         handleMenuClose();
         //setSnackbarState(true);
     };
-    
+
     function handlePublicKeySubmit(event: any) {
         event.preventDefault();
+        
         if ((newinputpkvalue && newinputpkvalue.length>0 && ValidateAddress(newinputpkvalue))||
             ((newinputpkvalue.toLocaleUpperCase().indexOf(".SOL") > -1) || (newinputpkvalue.slice(0,1) === '@'))){
             navigate({
@@ -250,7 +251,19 @@ export function Header(props: any) {
                 { replace: true }
             );
             setNewInputPKValue('');
-        } else{
+        } else if (newinputpkvalue && newinputpkvalue.length>0){
+            if (newinputpkvalue.toLocaleUpperCase().indexOf("MINT:") > -1){
+                let mint = newinputpkvalue.slice(5,newinputpkvalue.length);
+                if (ValidateAddress(mint)){
+                    navigate({
+                        pathname: GRAPE_PREVIEW+mint
+                    },
+                        { replace: true }
+                    );
+                    setNewInputPKValue('');
+                }
+            }
+        }else{
             setNewInputPKValue('');
         }
     }
@@ -283,20 +296,22 @@ export function Header(props: any) {
                         onSubmit={handlePublicKeySubmit}
                         sx={{background:'none'}}
                         >
-                        <Search
-                            sx={{height:'40px'}}
-                        >
-                            <SearchIconWrapper>
-                                <SearchIcon />
-                            </SearchIconWrapper>
-                            <StyledInputBase
-                                sx={{height:'40px', width:'100%'}}
-                                placeholder="Search Solana Address"
-                                inputProps={{ 'aria-label': 'search' }}
-                                value={newinputpkvalue}
-                                onChange={(e) => setNewInputPKValue(e.target.value)}
-                            />
-                        </Search>
+                        <Tooltip title='You can also search by mint address be entering "mint:address"'>
+                            <Search
+                                sx={{height:'40px'}}
+                            >
+                                <SearchIconWrapper>
+                                    <SearchIcon />
+                                </SearchIconWrapper>
+                                <StyledInputBase
+                                    sx={{height:'40px', width:'100%'}}
+                                    placeholder="Search Solana Address"
+                                    inputProps={{ 'aria-label': 'search' }}
+                                    value={newinputpkvalue}
+                                    onChange={(e) => setNewInputPKValue(e.target.value)}
+                                />
+                            </Search>
+                        </Tooltip>
                     </Container>
 
 
