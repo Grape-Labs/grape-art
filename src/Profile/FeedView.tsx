@@ -124,7 +124,7 @@ export default function FeedView(props: any){
                             direction='row'
                             className="grape-art-feed-overlay"
                             >
-                            <Grid item xs={12} sm={12} md={6}>
+                            <Grid component={Stack} item xs={12} sm={12} md={6}>
                                 <Grid 
                                     component={Stack} 
                                     direction="column"
@@ -132,9 +132,11 @@ export default function FeedView(props: any){
                                     justifyContent="center"
                                     sx={{
                                         display: "flex",
-                                        flexDirection: "column",}}
+                                        flexDirection: "column"}}
                                     >
-                                    <Grid item sx={{p:0}}>
+                                    <Grid 
+                                        item 
+                                        sx={{p:0}}>
                                         <Box
                                             
                                             sx={{
