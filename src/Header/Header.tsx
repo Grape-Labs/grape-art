@@ -296,7 +296,7 @@ export function Header(props: any) {
                         onSubmit={handlePublicKeySubmit}
                         sx={{background:'none'}}
                         >
-                        <Tooltip title='You can also search by mint address be entering "mint:address"'>
+                        <Tooltip title='Search by mint address by entering "mint:address"'>
                             <Search
                                 sx={{height:'40px'}}
                             >

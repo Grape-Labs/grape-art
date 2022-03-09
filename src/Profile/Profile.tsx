@@ -1593,7 +1593,7 @@ export function ProfileView(this: any, props: any) {
                                         </Grid>
                                             
                                         <Grid>
-                                            <Tooltip title='You can also search by mint address be entering "mint:address"'>
+                                            <Tooltip title='Search by mint address by entering "mint:address"'>
                                                 <Paper
                                                     component="form"
                                                     onSubmit={handlePublicKeySubmit}
