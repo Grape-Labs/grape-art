@@ -39,6 +39,8 @@ import SearchIcon from '@mui/icons-material/Search';
 import { GRAPE_PROFILE, GRAPE_PREVIEW } from '../utils/grapeTools/constants';
 import { ValidateAddress } from '../utils/grapeTools/WalletAddress'; // global key handling
 
+import { useTranslation } from 'react-i18next';
+
 require('@solana/wallet-adapter-react-ui/styles.css');
 
 export interface State extends SnackbarOrigin {
@@ -221,7 +223,7 @@ export function Header(props: any) {
 
         return (
             <Dialog onClose={handleCloseWallet} aria-labelledby="simple-dialog-title" open={open_wallet}>
-                <DialogTitle id="simple-dialog-title">Select Wallet</DialogTitle>
+                <DialogTitle id="simple-dialog-title">{t('Select Wallet')}</DialogTitle>
                 <List>
                     {providers.map((provider) => (
                         <ListItem button onClick={() => handleListItemClick(provider)} key={provider}>
@@ -239,6 +241,8 @@ export function Header(props: any) {
         handleMenuClose();
         //setSnackbarState(true);
     };
+
+    const { t, i18n } = useTranslation();
 
     function handlePublicKeySubmit(event: any) {
         event.preventDefault();
@@ -305,7 +309,7 @@ export function Header(props: any) {
                                 </SearchIconWrapper>
                                 <StyledInputBase
                                     sx={{height:'40px', width:'100%'}}
-                                    placeholder="Search Solana Address"
+                                    placeholder={t('Search Solana Address')}
                                     inputProps={{ 'aria-label': 'search' }}
                                     value={newinputpkvalue}
                                     onChange={(e) => setNewInputPKValue(e.target.value)}

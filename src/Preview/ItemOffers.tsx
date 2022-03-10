@@ -102,6 +102,7 @@ import { getPriceWithMantissa } from '../utils/auctionHouse/helpers/various';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { WalletConnectButton } from "@solana/wallet-adapter-react-ui";
 
+import { useTranslation } from 'react-i18next';
 
 const StyledTable = styled(Table)(({ theme }) => ({
     '& .MuiTableCell-root': {
@@ -485,6 +486,9 @@ function SellNowPrompt(props:any){
             console.log("INVALID AMOUNT");
         }
     }
+
+    const { t, i18n } = useTranslation();
+
     return (
         <React.Fragment>
             <Button 
@@ -494,7 +498,7 @@ function SellNowPrompt(props:any){
                     borderRadius: '10px',
                 }}
                 value="Sell Now" onClick={handleClickOpenDialog}>
-                <AccountBalanceWalletIcon sx={{mr:1}}/> Sell Now
+                <AccountBalanceWalletIcon sx={{mr:1}}/> {t('Sell Now')}
             </Button>            
             <BootstrapDialog 
                 fullWidth={true}
@@ -1519,7 +1523,9 @@ export default function ItemOffers(props: any) {
         return 
 
     }
-    
+
+    const { t, i18n } = useTranslation();
+
     const ItemTools = (props: any) => {
         
         return (
@@ -1554,14 +1560,14 @@ export default function ItemOffers(props: any) {
                                         }}
                                     >
                                         <Typography component="div" variant="caption">
-                                            Selling now: 
+                                        {t('Selling now')}: 
                                             
                                             {salePrice <= 0 ? 
-                                                <>&nbsp;not listed for sale</>
+                                                <>&nbsp;{t('not listed for sale')}</>
                                             :
                                                 <>
                                                 {( (saleTimeAgo) ? 
-                                                    <small>&nbsp;listed {saleTimeAgo}</small>
+                                                    <small>&nbsp;{t('listed')} {saleTimeAgo}</small>
                                                 :
                                                     (saleDate) && <>&nbsp;listed on {saleDate}</>
                                                 )}
@@ -1833,7 +1839,7 @@ export default function ItemOffers(props: any) {
                         <BallotIcon />
                         </ListItemIcon>
                         <ListItemText 
-                            primary='Offers'
+                            primary={t('Offers')}
                         />
                             <Typography variant="caption"><strong>{openOffers}</strong></Typography>
                             {open_offers_collapse ? <ExpandLess /> : <ExpandMoreIcon />}
@@ -1850,9 +1856,9 @@ export default function ItemOffers(props: any) {
                                         <Table size="small" aria-label="purchases">
                                             <TableHead>
                                                 <TableRow>
-                                                    <TableCell><Typography variant="caption">Address</Typography></TableCell>
-                                                    <TableCell align="center"><Typography variant="caption">Offer</Typography></TableCell>
-                                                    <TableCell align="center"><Typography variant="caption">Date</Typography></TableCell>
+                                                    <TableCell><Typography variant="caption">{t('Address')}</Typography></TableCell>
+                                                    <TableCell align="center"><Typography variant="caption">{t('Offer')}</Typography></TableCell>
+                                                    <TableCell align="center"><Typography variant="caption">{t('Date')}</Typography></TableCell>
                                                     <TableCell></TableCell>
                                                 </TableRow>
                                             </TableHead>

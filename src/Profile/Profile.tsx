@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, memo } from "react";
+import React, { useEffect, useState, useCallback, memo, Suspense } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import { decodeMetadata } from '../utils/grapeTools/utils';
 // @ts-ignore
@@ -94,6 +94,8 @@ import SocialView from './SocialView';
 import GalleryView from './GalleryView';
 import { MakeLinkableAddress, ValidateAddress, trimAddress, timeAgo } from '../utils/grapeTools/WalletAddress'; // global key handling
 import { ConstructionOutlined } from "@mui/icons-material";
+
+import { useTranslation } from 'react-i18next';
 
 const StyledTable = styled(Table)(({ theme }) => ({
     '& .MuiTableCell-root': {
@@ -566,6 +568,8 @@ const MainPanel = (props: any) => {
         setTabValue(newValue);
     };
 
+    const { t, i18n } = useTranslation();
+
     function a11yProps(index: number) {
         return {
             id: `grapeart-tab-${index}`,
@@ -614,13 +618,13 @@ const MainPanel = (props: any) => {
                                 mb:1,
                             }} 
                         >
-                            <Tab icon={<Hidden smUp><CollectionsOutlinedIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>Collection</Hidden>} sx={{color:'white',minWidth:'60px'}} {...a11yProps(0)} />
-                            <Tab icon={<Hidden smUp><RssFeedOutlinedIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>Feed</Hidden>} sx={{color:'white',minWidth:'60px'}} {...a11yProps(1)} />
-                            <Tab icon={<Hidden smUp><ArrowCircleLeftOutlinedIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>Followers</Hidden>} sx={{color:'white',minWidth:'60px'}} {...a11yProps(2)} />
-                            <Tab icon={<Hidden smUp><ArrowCircleRightOutlinedIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>Following</Hidden>} sx={{color:'white',minWidth:'60px'}} {...a11yProps(3)} />
+                            <Tab icon={<Hidden smUp><CollectionsOutlinedIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>{t('Collection')}</Hidden>} sx={{color:'white',minWidth:'60px'}} {...a11yProps(0)} />
+                            <Tab icon={<Hidden smUp><RssFeedOutlinedIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>{t('Feed')}</Hidden>} sx={{color:'white',minWidth:'60px'}} {...a11yProps(1)} />
+                            <Tab icon={<Hidden smUp><ArrowCircleLeftOutlinedIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>{t('Followers')}</Hidden>} sx={{color:'white',minWidth:'60px'}} {...a11yProps(2)} />
+                            <Tab icon={<Hidden smUp><ArrowCircleRightOutlinedIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>{t('Following')}</Hidden>} sx={{color:'white',minWidth:'60px'}} {...a11yProps(3)} />
                             {/*<Tab label="Bids" sx={{color:'white'}} {...a11yProps(4)} />*/}
-                            <Tab icon={<Hidden smUp><GavelOutlinedIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>Offers</Hidden>} sx={{color:'white',minWidth:'60px'}} {...a11yProps(5)} />
-                            <Tab icon={<Hidden smUp><SolCurrencyIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>Selling</Hidden>} sx={{color:'white',minWidth:'60px'}} {...a11yProps(6)} />
+                            <Tab icon={<Hidden smUp><GavelOutlinedIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>{t('Offers')}</Hidden>} sx={{color:'white',minWidth:'60px'}} {...a11yProps(5)} />
+                            <Tab icon={<Hidden smUp><SolCurrencyIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>{t('Selling')}</Hidden>} sx={{color:'white',minWidth:'60px'}} {...a11yProps(6)} />
                         </Tabs>
                     
                     
@@ -946,7 +950,8 @@ const IdentityView = (props: any) => {
             setLoading(false);
         }
     }
-
+    const { t, i18n } = useTranslation();
+    
     React.useEffect(() => { 
         if (pubkey){
             if (ValidateAddress(pubkey)){
@@ -1194,14 +1199,14 @@ const IdentityView = (props: any) => {
                                                                     sx={{fontSize:'12px',textTransform:'none',color:'white',border:'1px solid #fff', borderRadius:'17px',pl:5,pr:5,pt:0,pb:0, m:1}}
                                                                 >
                                                                     <strong>{followListInfo.followingCount}</strong>&nbsp;  
-                                                                    <Typography component="span" color="#aaa" variant="caption" align="center" sx={{ flexGrow: 1 }}>Following</Typography>&nbsp; 
+                                                                    <Typography component="span" color="#aaa" variant="caption" align="center" sx={{ flexGrow: 1 }}>{t('Following')}</Typography>&nbsp; 
                                                                 </Button>
                                                                 <Button
                                                                     onClick={() => setActiveTab(2)}
                                                                     sx={{fontSize:'12px',textTransform:'none',color:'white',border:'1px solid #fff', borderRadius:'17px',pl:5,pr:5,pt:0,pb:0, m:1}}
                                                                 >
                                                                     <strong>{followListInfo.followerCount}</strong>&nbsp;
-                                                                    <Typography component="span" color="#aaa" variant="caption" align="center" sx={{ flexGrow: 1 }}>Followers</Typography>
+                                                                    <Typography component="span" color="#aaa" variant="caption" align="center" sx={{ flexGrow: 1 }}>{t('Followers')}</Typography>
                                                                 </Button>
                                                             </Typography>
                                                         </>
@@ -1210,7 +1215,7 @@ const IdentityView = (props: any) => {
                                                     { final_collection && final_collection.length > 0 && (
                                                         <>
                                                             <Typography component="div" variant="caption" align="center" color="#aaa"  sx={{ flexGrow: 1, mt:3 }}>
-                                                                <strong>{final_collection.length}</strong> items collected
+                                                                <strong>{final_collection.length}</strong> {t('items collected')}
                                                             </Typography>
                                                         </>
                                                     )}
@@ -1282,6 +1287,8 @@ export function ProfileView(this: any, props: any) {
     
     const navigate = useNavigate();
     //const location = useLocation();
+
+    const { t, i18n } = useTranslation();
     
     const fetchWalletCollection = async () => { 
         /*
@@ -1588,7 +1595,7 @@ export function ProfileView(this: any, props: any) {
                                                 color="inherit"
                                                 display='flex'
                                                 sx={{mb:3}}
-                                            >Social. Stateless. Marketplace.</Typography>
+                                            >{t('Social. Stateless. Marketplace.')}</Typography>
 
                                         </Grid>
                                             
@@ -1602,7 +1609,7 @@ export function ProfileView(this: any, props: any) {
                                                         <InputBase
                                                             fullWidth
                                                             sx={{ ml: 1, flex: 1 }}
-                                                            placeholder="Enter a solana address"
+                                                            placeholder={t('Enter a solana address')}
                                                             inputProps={{ 'aria-label': 'solana address' }}
                                                             value={newinputpkvalue}
                                                             onChange={(e) => setNewInputPKValue(e.target.value)}

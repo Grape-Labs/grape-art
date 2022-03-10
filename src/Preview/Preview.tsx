@@ -113,6 +113,8 @@ import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { decodeMetadata } from '../utils/auctionHouse/helpers/schema';
 import GrapeIcon from "../components/static/GrapeIcon";
 
+import { useTranslation } from 'react-i18next';
+
 const StyledTable = styled(Table)(({ theme }) => ({
     '& .MuiTableCell-root': {
         borderBottom: '1px solid rgba(255,255,255,0.05)'
@@ -424,7 +426,9 @@ function SocialLikes(props: any){
         initFollowListInfo();
         getLikeStatus();
     },[]);
-
+    
+    const { t, i18n } = useTranslation();
+    
     return ( 
         <>
         {loadingLikedState ?
@@ -436,7 +440,7 @@ function SocialLikes(props: any){
         :
             <>
             {isLiked ?  
-                    <Tooltip title="Unlike">
+                    <Tooltip title={t('Unlike')}>
                         <Button 
                             variant="text" 
                             onClick={() => likeWalletDisconnect(mint)}
@@ -453,7 +457,7 @@ function SocialLikes(props: any){
                         </Button>
                     </Tooltip>
                 :
-                    <Tooltip title="Like">
+                    <Tooltip title={t('Like')}>
                         <Button 
                             variant="text" 
                             onClick={() => likeWalletConnect(mint)}
@@ -785,6 +789,8 @@ function SocialFlags(props: any){
         getFlagStatus();
     },[]);
     
+    const { t, i18n } = useTranslation();
+
     return ( 
         <>
         {loadingFlaggedState ?
@@ -832,7 +838,7 @@ function SocialFlags(props: any){
                             >
                             <DialogTitle id="alert-bn-dialog-title">
                                 <Typography>
-                                    REPORT
+                                    {t('REPORT')}
                                 </Typography>
                             </DialogTitle>
                             <DialogContent>
@@ -842,25 +848,25 @@ function SocialFlags(props: any){
                                     severity="info" variant="outlined"
                                     sx={{backgroundColor:'black'}}
                                     >
-                                    Mint: <MakeLinkableAddress addr={mint} trim={0} hasextlink={true} hascopy={false} fontsize={16} /> <br/>
+                                    {t('Mint')}: <MakeLinkableAddress addr={mint} trim={0} hasextlink={true} hascopy={false} fontsize={16} /> <br/>
                                     <Typography sx={{textAlign:'center'}}>
-                                        You are about to report this mint, in order to minimize unnecessary reporting there is a <GrapeIcon sx={{fontSize:'12px'}} />100 fee to process this request
+                                    {t('You are about to report this mint, in order to minimize unnecessary reporting there is a')} <GrapeIcon sx={{fontSize:'12px'}} />{t('100 fee to process this request')}
                                     </Typography>
                                 </Alert>
                                 
                                 </DialogContentText>
                             </DialogContent>
                             <DialogActions>
-                                <Button onClick={handleAlertReportClose}>Cancel</Button>
+                                <Button onClick={handleAlertReportClose}>{t('Cancel')}</Button>
                                 <Button 
                                     onClick={() => handleFlagMintTransaction(mint)}
                                     autoFocus>
-                                Accept
+                                {t('Accept')}
                                 </Button>
                             </DialogActions>
                         </BootstrapDialog>
 
-                        <Tooltip title="Flag">
+                        <Tooltip title={t('Flag')}>
             
                             <Button 
                                 variant="text" 
@@ -1378,6 +1384,8 @@ function GalleryItemMeta(props: any) {
         }
     }, [mint]);
 
+    const { t, i18n } = useTranslation();
+
     try{
         return (
             <Grid>
@@ -1433,7 +1441,7 @@ function GalleryItemMeta(props: any) {
                                             sx={{color:'white',borderRadius:'24px'}}
                                         >
                                             <ArrowBackIosIcon />
-                                            Back
+                                            {t('Back')}
                                         </Button>
                                         <SearchForMint setMintPubkey={props.setMintPubkey} />
                                     </ButtonGroup>
@@ -1520,7 +1528,7 @@ function GalleryItemMeta(props: any) {
                                                                 onClick={ () => openImageViewer(0) }
                                                                 sx={{color:'white',borderRadius:'24px'}}
                                                             >
-                                                                Preview <OpenInFullIcon sx={{ fontSize:'16px', ml:1 }}/></Button>
+                                                                {t('Preview')} <OpenInFullIcon sx={{ fontSize:'16px', ml:1 }}/></Button>
                                                         </Grid>
                                                     </Grid>
                                                 
@@ -1552,7 +1560,7 @@ function GalleryItemMeta(props: any) {
                                                 <ListItemIcon>
                                                 <SegmentIcon />
                                                 </ListItemIcon>
-                                                <ListItemText primary="Description" />
+                                                <ListItemText primary={t('Description')} />
                                                 {open_description ? <ExpandLess /> : <ExpandMoreIcon />}
                                             </ListItemButton>
                                             <Collapse in={open_description} timeout="auto" unmountOnExit>
@@ -1577,7 +1585,7 @@ function GalleryItemMeta(props: any) {
                                             <ListItemIcon>
                                             <FormatListBulletedIcon />
                                             </ListItemIcon>
-                                            <ListItemText primary="Details" />
+                                            <ListItemText primary={t('Details')} />
                                             {open_meta ? <ExpandLess /> : <ExpandMoreIcon />}
                                         </ListItemButton>
                                         <Collapse in={open_meta} timeout="auto" unmountOnExit>
@@ -1684,14 +1692,14 @@ function GalleryItemMeta(props: any) {
                                                         : null }
 
                                                         <TableRow>
-                                                            <TableCell>Mint:</TableCell>
+                                                            <TableCell>{t('Mint')}:</TableCell>
                                                             <TableCell>
                                                                 <MakeLinkableAddress addr={mint} trim={5} hasextlink={true} hascopy={true} fontsize={14} />
                                                             </TableCell>
                                                         </TableRow>
                                                         
                                                         <TableRow>
-                                                            <TableCell>Owner:</TableCell>
+                                                            <TableCell>{t('Owner')}:</TableCell>
                                                             <TableCell>
                                                                 
                                                             {tokenOwners && (
@@ -1702,13 +1710,13 @@ function GalleryItemMeta(props: any) {
                                                         
                                                         {collectionitem?.symbol ? 
                                                             <TableRow>
-                                                                <TableCell>Symbol:</TableCell>
+                                                                <TableCell>{t('Symbol')}:</TableCell>
                                                                 <TableCell>{collectionitem.symbol}</TableCell>
                                                             </TableRow>
                                                         : null }
                                                         {collectionitem.seller_fee_basis_points > 0 ?
                                                             <TableRow>
-                                                                <TableCell>Royalty:</TableCell>
+                                                                <TableCell>{t('Royalty')}:</TableCell>
                                                                 <TableCell>
                                                                 {(+collectionitem.seller_fee_basis_points/100).toFixed(2)}%
                                                                 <Tooltip title={`This is the rate at which royalties are shared with creators if this asset is sold using the Metaplex Auction program`}><HelpOutlineIcon sx={{ fontSize:16, ml: 1  }}/></Tooltip>
@@ -1721,7 +1729,7 @@ function GalleryItemMeta(props: any) {
                                                                 <TableRow
                                                                     onClick={() => setOpenCreatorCollapse(!open_creator_collapse)}
                                                                 >
-                                                                    <TableCell>Creators:</TableCell>
+                                                                    <TableCell>{t('Creators')}:</TableCell>
                                                                     <TableCell>
                                                                         {collectionitem.properties.creators.length}
                                                                         <IconButton
@@ -1741,15 +1749,15 @@ function GalleryItemMeta(props: any) {
                                                                                 <Table size="small" aria-label="purchases">
                                                                                     <TableHead>
                                                                                         <TableRow>
-                                                                                            <TableCell><Typography variant="caption">Creator Address</Typography></TableCell>
-                                                                                            <TableCell align="right"><Typography variant="caption">% Royalty</Typography></TableCell>
+                                                                                            <TableCell><Typography variant="caption">{t('Creator Address')}</Typography></TableCell>
+                                                                                            <TableCell align="right"><Typography variant="caption">% {t('Royalty')}</Typography></TableCell>
                                                                                         </TableRow>
                                                                                     </TableHead>
                                                                                     {collectionitem.properties.creators.length > 0 && collectionitem.properties.creators.map((item: any) => (
                                                                                         <TableRow>
                                                                                             <TableCell>
                                                                                             <Button
-                                                                                                title="Visit Profile"
+                                                                                                title={t('Visit Profile')}
                                                                                                 component={Link} 
                                                                                                 to={`${GRAPE_PROFILE}${item.address}`}
                                                                                             >
@@ -1771,7 +1779,7 @@ function GalleryItemMeta(props: any) {
 
                                                         {collectionitem?.edition ?
                                                             <TableRow>
-                                                                <TableCell>Edition:</TableCell>
+                                                                <TableCell>{t('Edition')}:</TableCell>
                                                                 <TableCell>{collectionitem.edition}</TableCell>
                                                             </TableRow>
                                                         : null }
@@ -1784,7 +1792,7 @@ function GalleryItemMeta(props: any) {
 
                                                         {collectionrawdata?.updateAuthority ?
                                                             <TableRow>
-                                                                <TableCell>Update Authority:</TableCell>
+                                                                <TableCell>{t('Update Authority')}:</TableCell>
                                                                 <TableCell>
                                                                     <MakeLinkableAddress addr={collectionrawdata.updateAuthority} trim={5} hasextlink={true} hascopy={false} fontsize={14} />
                                                                 </TableCell>
@@ -1802,12 +1810,12 @@ function GalleryItemMeta(props: any) {
                                                             </TableRow> }
                                                         {collectionrawdata?.primarySaleHappened ? 
                                                             <TableRow>
-                                                                <TableCell>Primary Sale:</TableCell>
+                                                                <TableCell>{t('Primary Sale')}:</TableCell>
                                                                 <TableCell><CheckCircleIcon /></TableCell>
                                                             </TableRow>
                                                         : 
                                                         <TableRow>
-                                                            <TableCell>Primary Sale:</TableCell>
+                                                            <TableCell>{t('Primary Sale')}:</TableCell>
                                                             <TableCell><Tooltip title={`Primary sale has not occured as of this fetch`}><BlockIcon /></Tooltip></TableCell>
                                                         </TableRow>
                                                         }
@@ -1834,10 +1842,10 @@ function GalleryItemMeta(props: any) {
                                                         {collectionitem.image ?
                                                             
                                                             <TableRow>
-                                                                <TableCell>Image:</TableCell>
+                                                                <TableCell>{t('Image')}:</TableCell>
                                                                 <TableCell>
                                                                     <Button size="small" variant="text" component="a" href={`${collectionitem.image}`} target="_blank">
-                                                                        View Original <OpenInNewIcon sx={{fontSize:12, ml:1}} />
+                                                                    {t('View Original')} <OpenInNewIcon sx={{fontSize:12, ml:1}} />
                                                                     </Button>
                                                                 </TableCell>
                                                             </TableRow>
@@ -1945,8 +1953,8 @@ function GalleryItemMeta(props: any) {
                                                                 <Grid item>
                                                                 {solanaDomain && solanaDomain.length > 0 ?
                                                                 <>
-                                                                    Owned by 
-                                                                    <Tooltip title={`Visit profile`}>
+                                                                    {t('Owned by')} 
+                                                                    <Tooltip title={t('Visit Profile')}>
                                                                         <Button
                                                                             component={Link} 
                                                                             to={`${GRAPE_PROFILE}${tokenOwners?.data.parsed.info.owner}`}
@@ -1960,8 +1968,8 @@ function GalleryItemMeta(props: any) {
                                                                 </>
                                                                 :
                                                                 <>
-                                                                    Owned by 
-                                                                    <Tooltip title={`Visit profile`}>
+                                                                    {t('Owned by')} 
+                                                                    <Tooltip title={t('Visit Profile')}>
                                                                         <Button
                                                                             component={Link} 
                                                                             to={`${GRAPE_PROFILE}${tokenOwners?.data.parsed.info.owner}`}
@@ -1986,7 +1994,7 @@ function GalleryItemMeta(props: any) {
                                                                         <Button size="small" variant="text" component="a" href={`https://explorer.solana.com/address/${tokenOwners?.data.parsed.info.owner}`} target="_blank" sx={{borderRadius:'24px', color:'white', pl:0, pr:0}}> <OpenInNewIcon sx={{fontSize:'14px'}} /></Button>
                                                                     </Tooltip>
                                                                     {publicKey && publicKey.toBase58() === tokenOwners?.data.parsed.info.owner ?
-                                                                        <Tooltip title={`Set this NFT as your avatar`}>
+                                                                        <Tooltip title={t('Set this NFT as your avatar')}>
                                                                             <Button 
                                                                                 variant="text" 
                                                                                 onClick={HandleSetAvatar}
@@ -2014,7 +2022,7 @@ function GalleryItemMeta(props: any) {
                                                                             {isFollowing ?  
                                                                                     <Button 
                                                                                         variant="text" 
-                                                                                        title="Unfollow"
+                                                                                        title={t('Unfollow')}
                                                                                         onClick={() => followWalletDisconnect(tokenOwners?.data.parsed.info.owner)}
                                                                                         size="small"
                                                                                         className="profileAvatarIcon"
@@ -2025,7 +2033,7 @@ function GalleryItemMeta(props: any) {
                                                                                 :
                                                                                     <Button 
                                                                                         variant="text" 
-                                                                                        title="Follow"
+                                                                                        title={t('Follow')}
                                                                                         onClick={() => followWalletConnect(tokenOwners?.data.parsed.info.owner, solanaDomain || '')}
                                                                                         size="small"
                                                                                         className="profileAvatarIcon"
@@ -2087,7 +2095,7 @@ function GalleryItemMeta(props: any) {
                                             <ListItemIcon>
                                             <FormatListBulletedIcon />
                                             </ListItemIcon>
-                                            <ListItemText primary="Traits" />
+                                            <ListItemText primary={t('Traits')} />
                                             {open_traits ? <ExpandLess /> : <ExpandMoreIcon />}
                                         </ListItemButton>
                                         <Collapse in={open_traits} timeout="auto" unmountOnExit>
