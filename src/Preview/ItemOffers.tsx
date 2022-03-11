@@ -1,9 +1,9 @@
 import React, { useCallback } from "react";
 import { Link } from "react-router-dom";
 
-import { Connection, PublicKey, Transaction } from '@solana/web3.js'
+import { Connection, PublicKey, Transaction } from '@solana/web3.js';
 // @ts-ignore
-import fetch from 'node-fetch'
+import fetch from 'node-fetch';
 
 import { TokenAmount } from '../utils/grapeTools/safe-math';
 import { styled } from '@mui/material/styles';
@@ -176,7 +176,6 @@ function convertSolVal(sol: any){
 
 function formatBlockTime(date: string, epoch: boolean, time: boolean){
     // TODO: make a clickable date to change from epoch, to time from, to UTC, to local date
-
     let date_str = new Date(date).toLocaleDateString(); //.toUTCString();
     if (time)
         date_str = new Date(date).toLocaleString();
