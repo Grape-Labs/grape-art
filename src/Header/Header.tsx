@@ -242,7 +242,7 @@ export function Header(props: any) {
 
     function handlePublicKeySubmit(event: any) {
         event.preventDefault();
-        
+        //console.log(""+newinputpkvalue+" ("+newinputpkvalue.length+"): " +ValidateAddress(newinputpkvalue));
         if ((newinputpkvalue && newinputpkvalue.length>0 && ValidateAddress(newinputpkvalue))||
             ((newinputpkvalue.toLocaleUpperCase().indexOf(".SOL") > -1) || (newinputpkvalue.slice(0,1) === '@'))){
             navigate({
@@ -252,6 +252,7 @@ export function Header(props: any) {
             );
             setNewInputPKValue('');
         } else if (newinputpkvalue && newinputpkvalue.length>0){
+            
             if (newinputpkvalue.toLocaleUpperCase().indexOf("MINT:") > -1){
                 let mint = newinputpkvalue.slice(5,newinputpkvalue.length);
                 if (ValidateAddress(mint)){
