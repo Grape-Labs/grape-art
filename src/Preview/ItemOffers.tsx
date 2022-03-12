@@ -41,7 +41,7 @@ import MuiAlert, { AlertProps } from '@mui/material/Alert';
 import HowToVoteIcon from '@mui/icons-material/HowToVote';
 import SolCurrencyIcon from '../components/static/SolCurrencyIcon';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
-import BallotIcon from '@mui/icons-material/Ballot';
+import BallotOutlinedIcon from '@mui/icons-material/BallotOutlined';
 import SellIcon from '@mui/icons-material/Sell';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLess from '@mui/icons-material/ExpandLess';
@@ -1367,7 +1367,7 @@ export default function ItemOffers(props: any) {
             setLoading(false);
         }
     }
-
+    
     const handleBuyNow =  async (salePrice: number) => {
 
         const buyerPublicKey = publicKey;
@@ -1829,7 +1829,7 @@ export default function ItemOffers(props: any) {
                         sx={{borderRadius:'20px'}}
                     >
                         <ListItemIcon>
-                        <BallotIcon />
+                        <BallotOutlinedIcon />
                         </ListItemIcon>
                         <ListItemText 
                             primary='Offers'

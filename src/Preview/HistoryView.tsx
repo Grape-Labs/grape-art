@@ -11,11 +11,13 @@ import {
     Typography,
     Grid,
     Box,
+    Button,
     ButtonGroup,
     Skeleton,
     Collapse,
     Table,
     TableHead,
+    TableBody,
     TableCell,
     TableContainer,
     TableRow,
@@ -42,8 +44,12 @@ import {
 
 import { 
     GRAPE_RPC_ENDPOINT,
+    GRAPE_PROFILE,
 } from '../utils/grapeTools/constants';
 
+import { MakeLinkableAddress, ValidateCurve, trimAddress, timeAgo, formatBlockTime } from '../utils/grapeTools/WalletAddress'; // global key handling
+
+import BarChartOutlinedIcon from '@mui/icons-material/BarChartOutlined';
 import HowToVoteIcon from '@mui/icons-material/HowToVote';
 import SolCurrencyIcon from '../components/static/SolCurrencyIcon';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
@@ -58,6 +64,7 @@ import { ConstructionOutlined } from "@mui/icons-material";
 
 export default function HistoryView(props: any){
     const [history, setHistory] = React.useState(null);
+    const [historyME, setMEHistory] = React.useState(null);
     const [loading, setLoading] = React.useState(false);
     const [open_history_collapse, setOpenHistoryCollapse] = React.useState(false);
     const [openHistory, setOpenHistory] = React.useState(0);
@@ -67,6 +74,37 @@ export default function HistoryView(props: any){
 
     const handleClick = () => {
         setOpenHistoryCollapse(!open_history_collapse);
+    }
+
+    const getMEHistory = async (mint:string) => {
+        setLoading(true);
+        
+        if (mint){
+
+            var requestOptions = {
+                method: 'GET',
+                //redirect: 'follow'
+            };
+
+            //let response = null;
+            const url = "https://api-mainnet.magiceden.dev/v2/tokens/"+mint+"/activities?offset=0&limit=100";
+            const response = await fetch(url, requestOptions);
+            
+            //  const json = await response.json();
+            /*
+            fetch(url, requestOptions)
+                .then(response => response.text())
+                .then(result => console.log(result))
+                .catch(error => console.log('error', error));
+            */
+
+            try{
+                const json = await response.json();
+                setMEHistory(json);
+                setOpenHistory(json.length);
+            }catch(e){return null;}
+        }
+        setLoading(false);
     }
 
     const getHistory = async () => {
@@ -105,7 +143,8 @@ export default function HistoryView(props: any){
     React.useEffect(() => {
         if (mint){
             //if (!history){
-                getHistory();
+                //getHistory();
+                getMEHistory(mint);
             //}
         }
     }, [mint]);
@@ -145,7 +184,7 @@ export default function HistoryView(props: any){
                         sx={{borderRadius:'20px'}}
                     >
                         <ListItemIcon>
-                        <BallotIcon />
+                        <BarChartOutlinedIcon />
                         </ListItemIcon>
                         <ListItemText 
                             primary='History'
@@ -165,13 +204,59 @@ export default function HistoryView(props: any){
                                         <Table size="small" aria-label="purchases">
                                             <TableHead>
                                                 <TableRow>
-                                                    <TableCell><Typography variant="caption">Address</Typography></TableCell>
+                                                    <TableCell><Typography variant="caption">Seller</Typography></TableCell>
+                                                    <TableCell><Typography variant="caption">Buyer</Typography></TableCell>
                                                     <TableCell align="center"><Typography variant="caption">Amount</Typography></TableCell>
                                                     <TableCell align="center"><Typography variant="caption">Date</Typography></TableCell>
-                                                    <TableCell></TableCell>
+                                                    <TableCell>Signature</TableCell>
                                                 </TableRow>
+
                                             </TableHead>
 
+                                            <TableBody>
+                                                {historyME && historyME.map((item: any) => (
+                                                    <TableRow>
+                                                        
+                                                        
+                                                        <TableCell>
+                                                            <Button size="small" variant="text" component={Link} to={`${GRAPE_PROFILE}${item.seller}`} target="_blank" sx={{ml:1,color:'white',borderRadius:'24px'}}>
+                                                                {trimAddress(item.seller,3)}
+                                                            </Button>    
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            {item.buyer ?
+                                                            <Button size="small" variant="text" component={Link} to={`${GRAPE_PROFILE}${item.buyer}`} target="_blank" sx={{ml:1,color:'white',borderRadius:'24px'}}>
+                                                                {trimAddress(item.buyer,3)}
+                                                            </Button>
+                                                            :    
+                                                                <Typography variant="body2" sx={{textAlign:'center'}}>
+                                                                    {item.type.toLocaleUpperCase()}
+                                                                </Typography>
+                                                            
+                                                            }    
+                                                        </TableCell>
+                                                        <TableCell  align="right">
+                                                                <Typography variant="body2">
+                                                                    {item.price} <SolCurrencyIcon sx={{fontSize:"10.5px"}} />
+                                                                </Typography>
+                                                            </TableCell>
+                                                        <TableCell align="right">
+                                                            <Typography variant="caption">
+                                                                <Tooltip
+                                                                    title={formatBlockTime(item.blockTime, true, true)}
+                                                                >
+                                                                    <Button size="small">{timeAgo(item.blockTime)}</Button>
+                                                                </Tooltip>
+                                                            </Typography>
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            <Button size="small" variant="text" component="a" href={`https://explorer.solana.com/signature/${item.signature}`} target="_blank" sx={{ml:1,color:'white',borderRadius:'24px'}}>
+                                                                {trimAddress(item.signature,3)}
+                                                            </Button>
+                                                        </TableCell>
+                                                    </TableRow>
+                                                ))}
+                                            </TableBody>
                                         </Table>
                                     </TableContainer>
                                 </Box>

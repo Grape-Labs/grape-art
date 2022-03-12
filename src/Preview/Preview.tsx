@@ -100,7 +100,8 @@ import {
     GRAPE_PREVIEW, 
     GRAPE_PROFILE,
     FEATURED_DAO_ARRAY,
-    GRAPE_TREASURY
+    GRAPE_TREASURY,
+    TOKEN_REPORT_AMOUNT,
 } from '../utils/grapeTools/constants';
 
 import HistoryView from './HistoryView';
@@ -579,7 +580,7 @@ function SocialFlags(props: any){
         const tokenMintAddress = TOKEN_VERIFICATION_ADDRESS;
         const tokenMintName = 'GRAPE';
         const to = GRAPE_TREASURY;
-        const amount = 100;
+        const amount = TOKEN_REPORT_AMOUNT;
         const notes = mint;
         flatMintTransaction(tokenMintAddress, tokenMintName, to, amount, notes)
     }
@@ -845,7 +846,7 @@ function SocialFlags(props: any){
                                     >
                                     Mint: <MakeLinkableAddress addr={mint} trim={0} hasextlink={true} hascopy={false} fontsize={16} /> <br/>
                                     <Typography sx={{textAlign:'center'}}>
-                                        You are about to report this mint, in order to minimize unnecessary reporting there is a <GrapeIcon sx={{fontSize:'12px'}} />100 fee to process this request
+                                        You are about to report this mint, in order to minimize unnecessary reporting there is a <GrapeIcon sx={{fontSize:'12px'}} />{TOKEN_REPORT_AMOUNT} fee to process this request
                                     </Typography>
                                 </Alert>
                                 
