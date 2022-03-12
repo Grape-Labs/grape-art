@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { Connection, PublicKey, Transaction } from '@solana/web3.js'
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { BN, web3 } from '@project-serum/anchor';
+import axios from "axios";
 
 import moment from 'moment';
 
@@ -76,43 +77,41 @@ export default function HistoryView(props: any){
         setOpenHistoryCollapse(!open_history_collapse);
     }
 
-    const getMEHistory = async (mint:string) => {
+    const getMEHistory = async () => {
+        
         setLoading(true);
         
         if (mint){
+            let response = null;
 
-            var requestOptions = {
+            const apiUrl = "https://api-mainnet.magiceden.dev/v2/tokens/"+mint+"/activities?offset=0&limit=100";
+            
+            const resp = await fetch(apiUrl, {
                 method: 'GET',
-                //redirect: 'follow'
-            };
+                //mode:'no-cors',
+                redirect: 'follow',
+                //body: JSON.stringify(body),
+                //headers: { "Content-Type": "application/json" },
+            })
 
-            //let response = null;
-            const url = "https://api-mainnet.magiceden.dev/v2/tokens/"+mint+"/activities?offset=0&limit=100";
-            const response = await fetch(url, requestOptions);
-            
-            //  const json = await response.json();
-            /*
-            fetch(url, requestOptions)
-                .then(response => response.text())
-                .then(result => console.log(result))
-                .catch(error => console.log('error', error));
-            */
-
-            
-            const json = await response.json();
+            const json = await resp.json();
+            //console.log("json: "+JSON.stringify(json));
             try{
                 // here get the last sale and show it:
                 // grape-art-last-sale
                 
+                let found = false;
                 for (var item of json){
-                    console.log(item.type + ' ' + item.price + ' '+formatBlockTime(item.blockTime, true, true));
+                    //console.log(item.type + ' ' + item.price + ' '+formatBlockTime(item.blockTime, true, true));
                     if (item.type === "buyNow"){
-                        //document.getElementsByClassName("grape-art-last-sale")[0].innerHTML = 'Last sold on '+formatBlockTime(item.blockTime, true, true)+' for '+item.price+' <SolCurrencyIcon sx={{fontSize:"10.5px"}} />';
-                        
-                        //document.getElementsByClassName("grape-art-last-sale")[0].innerHTML = 'Last sale '+item.price+'sol <SolCurrencyIcon sx={{fontSize:"10.5px"}} />';
+                        let elements = document.getElementById("grape-art-last-sale");
+                        if (!found){
+                            elements.innerHTML = 'Last sale '+item.price+'sol on '+formatBlockTime(item.blockTime, true, false);
+                        }
+                        found = true;
                     }
                 }
-            }catch(e){return null;}
+            }catch(e){console.log("ERR: "+e);return null;}
 
             setMEHistory(json);
             setOpenHistory(json.length);
@@ -128,7 +127,7 @@ export default function HistoryView(props: any){
 
             const confirmedsignatures = await ggoconnection.getConfirmedSignaturesForAddress2(new PublicKey(mint), {"limit":25});
             // then get parsed txs
-            //console.log("Signatures: "+JSON.stringify(confirmedsignatures));
+            console.log("Signatures: "+JSON.stringify(confirmedsignatures));
             // with signatures get txs
             let signatures: any[] = [];
             for (var value of confirmedsignatures){
@@ -156,15 +155,15 @@ export default function HistoryView(props: any){
     React.useEffect(() => {
         if (mint){
             //if (!history){
-                //getHistory();
-                getMEHistory(mint);
+                getHistory();
+                getMEHistory();
             //}
         }
     }, [mint]);
 
-    if ((!history)&&(loading)){
-        return <></>
-        /*
+    if (loading){
+        /*return <></>*/
+        
         return (
             <Box
                 sx={{ 
@@ -182,7 +181,7 @@ export default function HistoryView(props: any){
                     }}
                 />
             </Box>
-        )*/
+        )
     } else{      
         return ( 
             <>

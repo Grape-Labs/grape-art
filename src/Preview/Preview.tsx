@@ -104,7 +104,6 @@ import {
     TOKEN_REPORT_AMOUNT,
 } from '../utils/grapeTools/constants';
 
-import HistoryView from './HistoryView';
 import ItemOffers from './ItemOffers';
 import ShareSocialURL from '../utils/grapeTools/ShareUrl';
 import { MakeLinkableAddress, ValidateAddress, ValidateCurve, trimAddress, timeAgo } from '../utils/grapeTools/WalletAddress'; // global key handling
@@ -2072,11 +2071,7 @@ function GalleryItemMeta(props: any) {
                                         sol_portfolio_balance={sol_portfolio_balance}
                                         />
                                 }
-                                {mint &&
-                                    <HistoryView mint={mint} />
-                                }
                                 
-
                                 {collectionitem.attributes?.length && collectionitem.attributes.length > 0 ? (
                                     <Box
                                         sx={{ 

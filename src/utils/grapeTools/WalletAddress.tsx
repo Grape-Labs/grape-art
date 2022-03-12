@@ -61,9 +61,8 @@ export function formatBlockTime(date: string, epoch: boolean, time: boolean){
         if (time)
             date_str = new Date(+date * 1000).toLocaleString(); //.toUTCString();
     }
-    return (
-        <>{date_str}</>
-    );
+    return date_str
+    
 }
 
 export function trimAddress(addr: string, trim:any) {

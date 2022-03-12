@@ -49,6 +49,8 @@ import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import CircularProgress from '@mui/material/CircularProgress';
 import CancelIcon from '@mui/icons-material/Cancel';
 
+import HistoryView from './HistoryView';
+
 import { useAnchorWallet } from "@solana/wallet-adapter-react";
 import { WalletError } from '@solana/wallet-adapter-base';
 
@@ -1545,6 +1547,7 @@ export default function ItemOffers(props: any) {
                         
                         
                             <>
+                                
                                 {publicKey && publicKey.toString() === mintOwner ? (
                                     <Box
                                         sx={{
@@ -1566,7 +1569,7 @@ export default function ItemOffers(props: any) {
                                                 )}
                                                 </>
                                             }
-                                            <Typography component="div" variant="caption" className="grape-art-last-sale"></Typography>
+                                            <Typography component="div" variant="caption" id="grape-art-last-sale"></Typography>
                                         </Typography>
                                         {( (salePrice > 0) ?
                                             <Typography component="div" variant="h4" sx={{fontWeight:'800'}}>
@@ -1595,7 +1598,7 @@ export default function ItemOffers(props: any) {
                                                 )}
                                                 </>
                                             }
-                                            <Typography component="div" variant="caption" className="grape-art-last-sale"></Typography>
+                                            <Typography component="div" variant="caption" id="grape-art-last-sale"></Typography>
                                         </Typography>
                                         {( (salePrice > 0) ?
                                             <Typography component="div" variant="h4" sx={{fontWeight:'800'}}>
@@ -1988,6 +1991,9 @@ export default function ItemOffers(props: any) {
                         </List>
                     </Collapse>
                 </Box>
+                {mint &&
+                    <HistoryView mint={mint} />
+                }
             </>
         )
     }
