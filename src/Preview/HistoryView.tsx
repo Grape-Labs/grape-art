@@ -98,11 +98,24 @@ export default function HistoryView(props: any){
                 .catch(error => console.log('error', error));
             */
 
+            
+            const json = await response.json();
             try{
-                const json = await response.json();
-                setMEHistory(json);
-                setOpenHistory(json.length);
+                // here get the last sale and show it:
+                // grape-art-last-sale
+                
+                for (var item of json){
+                    console.log(item.type + ' ' + item.price + ' '+formatBlockTime(item.blockTime, true, true));
+                    if (item.type === "buyNow"){
+                        //document.getElementsByClassName("grape-art-last-sale")[0].innerHTML = 'Last sold on '+formatBlockTime(item.blockTime, true, true)+' for '+item.price+' <SolCurrencyIcon sx={{fontSize:"10.5px"}} />';
+                        
+                        //document.getElementsByClassName("grape-art-last-sale")[0].innerHTML = 'Last sale '+item.price+'sol <SolCurrencyIcon sx={{fontSize:"10.5px"}} />';
+                    }
+                }
             }catch(e){return null;}
+
+            setMEHistory(json);
+            setOpenHistory(json.length);
         }
         setLoading(false);
     }
@@ -150,6 +163,8 @@ export default function HistoryView(props: any){
     }, [mint]);
 
     if ((!history)&&(loading)){
+        return <></>
+        /*
         return (
             <Box
                 sx={{ 
@@ -167,7 +182,7 @@ export default function HistoryView(props: any){
                     }}
                 />
             </Box>
-        )
+        )*/
     } else{      
         return ( 
             <>

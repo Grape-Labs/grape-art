@@ -1367,7 +1367,7 @@ export default function ItemOffers(props: any) {
             setLoading(false);
         }
     }
-    
+
     const handleBuyNow =  async (salePrice: number) => {
 
         const buyerPublicKey = publicKey;
@@ -1566,6 +1566,7 @@ export default function ItemOffers(props: any) {
                                                 )}
                                                 </>
                                             }
+                                            <Typography component="div" variant="caption" className="grape-art-last-sale"></Typography>
                                         </Typography>
                                         {( (salePrice > 0) ?
                                             <Typography component="div" variant="h4" sx={{fontWeight:'800'}}>
@@ -1588,12 +1589,13 @@ export default function ItemOffers(props: any) {
                                             :
                                                 <>
                                                 {( (saleTimeAgo) ? 
-                                                    <small>&nbsp;listed {saleTimeAgo}</small>
+                                                    <>&nbsp;listed {saleTimeAgo}</>
                                                 :
                                                     (saleDate) && <>&nbsp;listed on {saleDate}</>
                                                 )}
                                                 </>
                                             }
+                                            <Typography component="div" variant="caption" className="grape-art-last-sale"></Typography>
                                         </Typography>
                                         {( (salePrice > 0) ?
                                             <Typography component="div" variant="h4" sx={{fontWeight:'800'}}>
@@ -1603,7 +1605,7 @@ export default function ItemOffers(props: any) {
                                         )}
                                     </Box>
                                 )}
-    
+
                                 <Grid 
                                     container 
                                     spacing={2}
