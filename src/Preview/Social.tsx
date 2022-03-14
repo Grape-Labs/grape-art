@@ -327,7 +327,6 @@ export function SocialFlags(props: any){
         });
         if (resp) {
             setFollowListInfo(resp);
-            console.log("RESP: "+JSON.stringify(resp));
             if (+resp?.reported >= REPORT_ALERT_THRESHOLD)
                 setWarningReportOpen(true);
         }
@@ -586,7 +585,7 @@ export function SocialFlags(props: any){
                             >
                             Mint: <MakeLinkableAddress addr={mint} trim={0} hasextlink={true} hascopy={false} fontsize={16} /> <br/>
                             <Typography sx={{textAlign:'center'}}>
-                                This mint/collection has been flagged by the community {followListInfo?.reported && +followListInfo?.reported} time(s) as being either offensive, a scam, or a potential IP infringement. Please do your own research before trading. 
+                                This mint/collection has been flagged by the community {followListInfo?.reported && +followListInfo?.reported} time(s) as being either offensive, a scam, or a potential IP infringement. Please do your own research before transacting. 
                             </Typography>
                         </Alert>
                         
@@ -639,19 +638,19 @@ export function SocialFlags(props: any){
                             >
                             <DialogTitle id="alert-bn-dialog-title">
                                 <Typography>
-                                    REPORT
+                                    REPORT THIS MINT
                                 </Typography>
                             </DialogTitle>
                             <DialogContent>
                                 <DialogContentText id="alert-bn-dialog-description">
                                 <br />
                                 <Alert 
-                                    severity="info" variant="outlined"
+                                    severity="warning" variant="outlined"
                                     sx={{backgroundColor:'black'}}
                                     >
                                     Mint: <MakeLinkableAddress addr={mint} trim={0} hasextlink={true} hascopy={false} fontsize={16} /> <br/>
                                     <Typography sx={{textAlign:'center'}}>
-                                        You are about to report this mint, in order to minimize unnecessary reporting there is a <GrapeIcon sx={{fontSize:'12px'}} />{TOKEN_REPORT_AMOUNT} fee to process this request
+                                        You are about to report this mint because it is offensive, a scam, or a potential IP infringement, in order to minimize unnecessary reporting there is a <GrapeIcon sx={{fontSize:'12px'}} />{TOKEN_REPORT_AMOUNT} fee to report
                                     </Typography>
                                 </Alert>
                                 
@@ -662,7 +661,7 @@ export function SocialFlags(props: any){
                                 <Button 
                                     onClick={() => handleFlagMintTransaction(mint)}
                                     autoFocus>
-                                Accept
+                                Accept &amp; Report
                                 </Button>
                             </DialogActions>
                         </BootstrapDialog>
