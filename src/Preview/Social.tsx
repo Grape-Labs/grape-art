@@ -46,6 +46,7 @@ import {
     FEATURED_DAO_ARRAY,
     GRAPE_TREASURY,
     TOKEN_REPORT_AMOUNT,
+    REPORT_ALERT_THRESHOLD,
 } from '../utils/grapeTools/constants';
 
 import { MakeLinkableAddress, ValidateAddress, ValidateCurve, trimAddress, timeAgo } from '../utils/grapeTools/WalletAddress'; // global key handling
@@ -96,9 +97,9 @@ export function SocialLikes(props: any){
     });
 
     // Get the current user followings and followers list
-  const initFollowListInfo = async () => {
-    if (!mint) {
-      return;
+    const initFollowListInfo = async () => {
+        if (!mint) {
+            return;
     }
     
     setLoading(true);
@@ -327,7 +328,7 @@ export function SocialFlags(props: any){
         if (resp) {
             setFollowListInfo(resp);
             console.log("RESP: "+JSON.stringify(resp));
-            if (+resp?.reported > 0)
+            if (+resp?.reported >= REPORT_ALERT_THRESHOLD)
                 setWarningReportOpen(true);
         }
         setLoading(false);
