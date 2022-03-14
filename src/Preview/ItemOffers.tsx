@@ -1992,7 +1992,11 @@ export default function ItemOffers(props: any) {
                     </Collapse>
                 </Box>
                 {mint &&
+                    <></>
+                    /*
                     <HistoryView mint={mint} />
+                    */
+
                 }
             </>
         )
