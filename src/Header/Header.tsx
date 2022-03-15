@@ -236,7 +236,7 @@ export function Header(props: any) {
     }
 
     const handleClickSnackbar = () => {
-        enqueueSnackbar(`Copied...`,{ variant: 'success' });
+        enqueueSnackbar(`${t('Copied...')}`,{ variant: 'success' });
         
         handleMenuClose();
         //setSnackbarState(true);
@@ -300,7 +300,7 @@ export function Header(props: any) {
                         onSubmit={handlePublicKeySubmit}
                         sx={{background:'none'}}
                         >
-                        <Tooltip title='Search by mint address by entering "mint:address"'>
+                        <Tooltip title={t('Search by mint address by entering: mint:address')}>
                             <Search
                                 sx={{height:'40px'}}
                             >

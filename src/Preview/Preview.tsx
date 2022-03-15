@@ -295,10 +295,12 @@ function GrapeVerified(props:any){
         }catch(e){console.log("ERR: "+e)}
     }, [updateAuthority]);
 
+    const { t, i18n } = useTranslation();
+
     if (verifiedState){
         
         return (
-            <Tooltip title={`${props.symbol}: Update Authority/Creator Verified on Metaplex`} placement="top">
+            <Tooltip title={`${props.symbol}: ${t('Update Authority/Creator Verified on Metaplex')}`} placement="top">
                 <Button 
                     href={`${GRAPE_PREVIEW}${verifiedPK}`}
                     sx={{color:'white', borderRadius:'24px'}}>
@@ -623,25 +625,25 @@ function SocialFlags(props: any){
                 })
             );
             try{
-                enqueueSnackbar(`Preparing to send ${amountToSend} ${tokenMintName} to ${toaddress}`,{ variant: 'info' });
+                enqueueSnackbar(`${t('Preparing to send')} ${amountToSend} ${tokenMintName} ${t('to')} ${toaddress}`,{ variant: 'info' });
                 const signature = await sendTransaction(transaction, freeconnection);
                 const snackprogress = (key:any) => (
                     <CircularProgress sx={{padding:'10px'}} />
                 );
-                const cnfrmkey = enqueueSnackbar(`Confirming transaction`,{ variant: 'info', action:snackprogress, persist: true });
+                const cnfrmkey = enqueueSnackbar(`${t('Confirming transaction')}`,{ variant: 'info', action:snackprogress, persist: true });
                 await connection.confirmTransaction(signature, 'processed');
                 closeSnackbar(cnfrmkey);
                 const action = (key:any) => (
                         <Button href={`https://explorer.solana.com/tx/${signature}`} target='_blank'  sx={{color:'white'}}>
-                            Signature: {signature}
+                            {t('Signature')}: {signature}
                         </Button>
                 );
 
                 flagWalletConnect(mint);
 
-                enqueueSnackbar(`Sent ${amountToSend} ${tokenMintName} to ${toaddress}`,{ variant: 'success', action });
+                enqueueSnackbar(`${t('Sent')} ${amountToSend} ${tokenMintName} ${t('to')} ${toaddress}`,{ variant: 'success', action });
             }catch(e){
-                enqueueSnackbar(`Error: ${(e)}`,{ variant: 'error' });
+                enqueueSnackbar(`${t('Error')}: ${(e)}`,{ variant: 'error' });
             } 
         } else{
             const accountInfo = await connection.getParsedAccountInfo(tokenAccount);
@@ -695,26 +697,26 @@ function SocialFlags(props: any){
                 );
                 
                 try{
-                    enqueueSnackbar(`Preparing to send ${amountToSend} ${tokenMintName} to ${toaddress}`,{ variant: 'info' });
+                    enqueueSnackbar(`${t('Preparing to send')} ${amountToSend} ${tokenMintName} ${t('to')} ${toaddress}`,{ variant: 'info' });
                     const signature = await sendTransaction(transaction, freeconnection);
                     const snackprogress = (key:any) => (
                         <CircularProgress sx={{padding:'10px'}} />
                     );
-                    const cnfrmkey = enqueueSnackbar(`Confirming transaction`,{ variant: 'info', action:snackprogress, persist: true });
+                    const cnfrmkey = enqueueSnackbar(`${t('Confirming transaction')}`,{ variant: 'info', action:snackprogress, persist: true });
                     await connection.confirmTransaction(signature, 'processed');
                     closeSnackbar(cnfrmkey);
                     const action = (key:any) => (
                         <Button href={`https://explorer.solana.com/tx/${signature}`} target='_blank' sx={{color:'white'}} >
-                            Signature: {signature}
+                            {t('Signature')}: {signature}
                         </Button>
                     );
 
                     flagWalletConnect(mint);
 
-                    enqueueSnackbar(`Sent ${amountToSend} ${tokenMintName} to ${toaddress}`,{ variant: 'success', action });
+                    enqueueSnackbar(`${t('Sent')} ${amountToSend} ${tokenMintName} ${t('to')} ${toaddress}`,{ variant: 'success', action });
                 }catch(e){
                     closeSnackbar();
-                    enqueueSnackbar(`Error: ${(e)}`,{ variant: 'error' });
+                    enqueueSnackbar(`${t('Error')}: ${(e)}`,{ variant: 'error' });
                 } 
             } else{ // token already in wallet
                 const transaction = new Transaction()
@@ -737,26 +739,26 @@ function SocialFlags(props: any){
                 );
                 
                 try{
-                    enqueueSnackbar(`Preparing to send ${amountToSend} ${tokenMintName} to ${toaddress}`,{ variant: 'info' });
+                    enqueueSnackbar(`${t('Preparing to send')} ${amountToSend} ${tokenMintName} ${t('to')} ${toaddress}`,{ variant: 'info' });
                     const signature = await sendTransaction(transaction, freeconnection);
                     const snackprogress = (key:any) => (
                         <CircularProgress sx={{padding:'10px'}} />
                     );
-                    const cnfrmkey = enqueueSnackbar(`Confirming transaction`,{ variant: 'info', action:snackprogress, persist: true });
+                    const cnfrmkey = enqueueSnackbar(`${t('Confirming transaction')}`,{ variant: 'info', action:snackprogress, persist: true });
                     await connection.confirmTransaction(signature, 'processed');
                     closeSnackbar(cnfrmkey);
                     const action = (key:any) => (
                         <Button href={`https://explorer.solana.com/tx/${signature}`} target='_blank' sx={{color:'white'}} >
-                            Signature: {signature}
+                            {t('Signature')}: {signature}
                         </Button>
                     );
 
                     flagWalletConnect(mint);
 
-                    enqueueSnackbar(`Sent ${amountToSend} ${tokenMintName} to ${toaddress}`,{ variant: 'success', action });
+                    enqueueSnackbar(`${t('Sent')} ${amountToSend} ${tokenMintName} ${t('to')} ${toaddress}`,{ variant: 'success', action });
                 }catch(e){
                     closeSnackbar();
-                    enqueueSnackbar(`Error: ${(e)}`,{ variant: 'error' });
+                    enqueueSnackbar(`${t('Error')}: ${(e)}`,{ variant: 'error' });
                 } 
             }
         }
@@ -1244,13 +1246,13 @@ function GalleryItemMeta(props: any) {
         try{
             const transaction = await createSetProfilePictureTransaction(publicKey, new PublicKey(mint), new PublicKey(mintAta));
             //console.log("Transaction: "+JSON.stringify(transaction));
-            enqueueSnackbar(`Preparing set your avatar with ${mint} mint`,{ variant: 'info' });
+            enqueueSnackbar(`${t('Preparing set your avatar with')} ${mint} ${t('mint')}`,{ variant: 'info' });
             const signedTransaction = await sendTransaction(transaction, connection);
             
             const snackprogress = (key:any) => (
                 <CircularProgress sx={{padding:'10px'}} />
             );
-            const cnfrmkey = enqueueSnackbar(`Confirming transaction`,{ variant: 'info', action:snackprogress, persist: true });
+            const cnfrmkey = enqueueSnackbar(`${t('Confirming transaction')}`,{ variant: 'info', action:snackprogress, persist: true });
             await ggoconnection.confirmTransaction(signedTransaction, 'processed');
             closeSnackbar(cnfrmkey);
             const snackaction = (key:any) => (
@@ -1258,10 +1260,10 @@ function GalleryItemMeta(props: any) {
                     {signedTransaction}
                 </Button>
             );
-            enqueueSnackbar(`Your avatar has been set `,{ variant: 'success', action:snackaction });
+            enqueueSnackbar(`${t('Your avatar has been set')} `,{ variant: 'success', action:snackaction });
         } catch(e){
             closeSnackbar();
-            enqueueSnackbar(`Error: ${e}`,{ variant: 'error' });
+            enqueueSnackbar(`${t('Error')}: ${e}`,{ variant: 'error' });
             console.log("Error: "+e);
         } 
     }
@@ -1313,7 +1315,7 @@ function GalleryItemMeta(props: any) {
                     }}
                 >
                 <DialogTitle>
-                    Mint
+                    {t('Mint')}
                 </DialogTitle>
                 <form onSubmit={HandleMintAddressSubmit}>
                     <DialogContent>
@@ -1322,7 +1324,7 @@ function GalleryItemMeta(props: any) {
                             autoComplete='off'
                             margin="dense"
                             id="preview_mint_key"
-                            label="Paste a mint address"
+                            label={t('Paste a mint address')}
                             type="text"
                             fullWidth
                             variant="standard"
@@ -1336,7 +1338,7 @@ function GalleryItemMeta(props: any) {
                             type="submit"
                             variant="text" 
                             title="GO">
-                                Go
+                                {t('Go')}
                         </Button>
                     </DialogActions>
                 </form>
@@ -1390,7 +1392,7 @@ function GalleryItemMeta(props: any) {
         return (
             <Grid>
                 <Helmet>
-                    <title>{`${collectionitem.name} | Grape Social. Stateless. Marketplace.`}</title>
+                    <title>{`${collectionitem.name} | ${t('Grape Social. Stateless. Marketplace.')}`}</title>
                     <meta property="og:title" content={`${collectionitem.name} @Grape`} />
                     <meta property="og:type" content="website" />
                     <meta property="og:url" content={window.location.href} />
@@ -1616,7 +1618,7 @@ function GalleryItemMeta(props: any) {
                                                                         onClick={() => setOpenAttributeCollapse(!open_attribute_collapse)}
                                                                     >
                                                                         <TableCell>
-                                                                        Attributes:
+                                                                        {t('Attributes')}:
                                                                         </TableCell>
                                                                         <TableCell>
                                                                             {collectionitem.attributes.length}
@@ -1638,8 +1640,8 @@ function GalleryItemMeta(props: any) {
                                                                                         {collectionitem.attributes.length > 0 &&
                                                                                         <TableHead>
                                                                                             <TableRow>
-                                                                                                <TableCell><Typography variant="subtitle1">Attribute</Typography></TableCell>
-                                                                                                <TableCell><Typography variant="subtitle1" >Type</Typography></TableCell>
+                                                                                                <TableCell><Typography variant="subtitle1">{t('Attribute')}</Typography></TableCell>
+                                                                                                <TableCell><Typography variant="subtitle1" >{t('Type')}</Typography></TableCell>
                                                                                             </TableRow>
                                                                                         </TableHead>
                                                                                         }
@@ -1651,30 +1653,30 @@ function GalleryItemMeta(props: any) {
                                                                                         ))  
                                                                                         :
                                                                                         <TableRow>
-                                                                                            <TableCell>Attributes:</TableCell>
+                                                                                            <TableCell>{t('Attributes')}:</TableCell>
                                                                                             <TableCell>
                                                                                             {collectionitem.attributes.itemType?.length > 0 &&
-                                                                                                <Tooltip title={`Type`}>
+                                                                                                <Tooltip title={t('Type')}>
                                                                                                 <Chip label={collectionitem.attributes?.itemType} variant="outlined" />
                                                                                                 </Tooltip>
                                                                                             }
                                                                                             {collectionitem.attributes.category?.length > 0 &&
-                                                                                                <Tooltip title={`Category`}>
+                                                                                                <Tooltip title={t('Category')}>
                                                                                                 <Chip label={collectionitem.attributes?.category} variant="outlined" />
                                                                                                 </Tooltip>
                                                                                             }
                                                                                             {collectionitem.attributes.rarity?.length > 0 &&
-                                                                                                <Tooltip title={`Rarity`}>
+                                                                                                <Tooltip title={t('Rarity')}>
                                                                                                 <Chip label={collectionitem.attributes?.rarity} variant="outlined" />
                                                                                                 </Tooltip>
                                                                                             }
                                                                                             {collectionitem.attributes.spec?.length > 0 &&
-                                                                                                <Tooltip title={`Spec`}>
+                                                                                                <Tooltip title={t('Spec')}>
                                                                                                 <Chip label={collectionitem.attributes?.spec} variant="outlined" />
                                                                                                 </Tooltip>
                                                                                             }
                                                                                             {collectionitem.attributes.class?.length > 0 &&
-                                                                                                <Tooltip title={`Class`}>
+                                                                                                <Tooltip title={t('Class')}>
                                                                                                 <Chip label={collectionitem.attributes?.class} variant="outlined" />
                                                                                                 </Tooltip>
                                                                                             }
@@ -1719,7 +1721,7 @@ function GalleryItemMeta(props: any) {
                                                                 <TableCell>{t('Royalty')}:</TableCell>
                                                                 <TableCell>
                                                                 {(+collectionitem.seller_fee_basis_points/100).toFixed(2)}%
-                                                                <Tooltip title={`This is the rate at which royalties are shared with creators if this asset is sold using the Metaplex Auction program`}><HelpOutlineIcon sx={{ fontSize:16, ml: 1  }}/></Tooltip>
+                                                                <Tooltip title={t('This is the rate at which royalties are shared with creators if this asset is sold using the Metaplex Auction program')}><HelpOutlineIcon sx={{ fontSize:16, ml: 1  }}/></Tooltip>
                                                                 </TableCell>
                                                             </TableRow>
                                                         : null }
@@ -1785,7 +1787,7 @@ function GalleryItemMeta(props: any) {
                                                         : null }
                                                         {collectionitem?.background_color ?
                                                             <TableRow>
-                                                                <TableCell>Background:</TableCell>
+                                                                <TableCell>{t('Background')}:</TableCell>
                                                                 <TableCell>#{collectionitem.background_color}</TableCell>
                                                             </TableRow>
                                                         : null }
@@ -1800,13 +1802,13 @@ function GalleryItemMeta(props: any) {
                                                         : null }
                                                         {collectionrawdata?.isMutable == 1 ?
                                                             <TableRow>
-                                                                <TableCell>Mutable:</TableCell>
+                                                                <TableCell>{t('Mutable')}:</TableCell>
                                                                 <TableCell><LockOpenIcon /></TableCell>
                                                             </TableRow>
                                                         : 
                                                             <TableRow>
-                                                                <TableCell>Mutable:</TableCell>
-                                                                <TableCell><Tooltip title={`This is immutable`}><LockIcon /></Tooltip></TableCell>
+                                                                <TableCell>{t('Mutable')}:</TableCell>
+                                                                <TableCell><Tooltip title={t('This is immutable')}><LockIcon /></Tooltip></TableCell>
                                                             </TableRow> }
                                                         {collectionrawdata?.primarySaleHappened ? 
                                                             <TableRow>
@@ -1816,26 +1818,26 @@ function GalleryItemMeta(props: any) {
                                                         : 
                                                         <TableRow>
                                                             <TableCell>{t('Primary Sale')}:</TableCell>
-                                                            <TableCell><Tooltip title={`Primary sale has not occured as of this fetch`}><BlockIcon /></Tooltip></TableCell>
+                                                            <TableCell><Tooltip title={t('Primary sale has not occured as of this fetch')}><BlockIcon /></Tooltip></TableCell>
                                                         </TableRow>
                                                         }
 
                                                         {collectionitem?.createdAt ?
                                                             <TableRow>
-                                                                <TableCell>Created At:</TableCell>
+                                                                <TableCell>{t('Created At')}:</TableCell>
                                                                 <TableCell>{formatBlockTime(collectionitem.createdAt, false, false)}</TableCell>
                                                             </TableRow>
                                                         : null }
                                                         {collectionitem?.updatedAt ?
                                                             <TableRow>
-                                                                <TableCell>Updated At:</TableCell>
+                                                                <TableCell>{t('Updated At')}:</TableCell>
                                                                 <TableCell>{formatBlockTime(collectionitem.updatedAt, false, false)}</TableCell>
                                                             </TableRow>
                                                         : null }
                                                         {collectionitem?.deactivated ?
                                                             <TableRow>
-                                                                <TableCell>Deactivated:</TableCell>
-                                                                <TableCell><Tooltip title={`This is deactivated`}><CheckCircleIcon /></Tooltip></TableCell>
+                                                                <TableCell>{t('Deactivated')}:</TableCell>
+                                                                <TableCell><Tooltip title={t('This is deactivated')}><CheckCircleIcon /></Tooltip></TableCell>
                                                             </TableRow>
                                                         : null }
 
@@ -1899,7 +1901,7 @@ function GalleryItemMeta(props: any) {
                                                             <>
                                                                 {(OTHER_MARKETPLACES.filter(e => e.address === tokenOwners?.data.parsed.info.owner)).map(filteredMarket => (
                                                                 <>
-                                                                Listed on 
+                                                                {t('Listed on')}
                                                                     {(filteredMarket.name.length > 0) ? (
                                                                         <>  
                                                                             
@@ -1990,7 +1992,7 @@ function GalleryItemMeta(props: any) {
                                                                         display: "flex",
                                                                         justifyContent: 'flex-end'
                                                                     }}>
-                                                                    <Tooltip title={`Explorer`}>
+                                                                    <Tooltip title={t('Explorer')}>
                                                                         <Button size="small" variant="text" component="a" href={`https://explorer.solana.com/address/${tokenOwners?.data.parsed.info.owner}`} target="_blank" sx={{borderRadius:'24px', color:'white', pl:0, pr:0}}> <OpenInNewIcon sx={{fontSize:'14px'}} /></Button>
                                                                     </Tooltip>
                                                                     {publicKey && publicKey.toBase58() === tokenOwners?.data.parsed.info.owner ?
@@ -2050,7 +2052,7 @@ function GalleryItemMeta(props: any) {
                                                                 </Grid>
                                                                 
                                                             </Grid>
-                                                            :<>Loading owner</>}
+                                                            :<>{t('Loading owner')}</>}
                                                             </>
                                                         )
                                                     }
@@ -2349,6 +2351,8 @@ export function PreviewView(this: any, props: any) {
         }
     }
 
+    const { t, i18n } = useTranslation();
+
     return (
         <React.Fragment>
                 { mint && ValidateAddress(mint) ?
@@ -2397,7 +2401,7 @@ export function PreviewView(this: any, props: any) {
                                             color="inherit"
                                             display='flex'
                                             sx={{mb:3}}
-                                        >ooops... you entered an invalid address!</Typography>
+                                        >{t('ooops... you entered an invalid address!')}</Typography>
 
                                     </Grid>
                                 </Grid>

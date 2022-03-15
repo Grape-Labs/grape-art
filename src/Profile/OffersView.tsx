@@ -161,14 +161,14 @@ export default function OffersView(props:any){
                 ...instructionsArray
             );
 
-            enqueueSnackbar(`Preparing to Cancel Offer for ${offerAmount} SOL`,{ variant: 'info' });
+            enqueueSnackbar(`${t('Preparing to Cancel Offer for')} ${offerAmount} SOL`,{ variant: 'info' });
             //console.log('TransactionInstr:', TransactionInstr);
             const signedTransaction = await sendTransaction(transaction, connection);
             
             const snackprogress = (key:any) => (
                 <CircularProgress sx={{padding:'10px'}} />
             );
-            const cnfrmkey = enqueueSnackbar(`Confirming transaction`,{ variant: 'info', action:snackprogress, persist: true });
+            const cnfrmkey = enqueueSnackbar(`${t('Confirming transaction')}`,{ variant: 'info', action:snackprogress, persist: true });
             await connection.confirmTransaction(signedTransaction, 'processed');
             closeSnackbar(cnfrmkey);
             const snackaction = (key:any) => (
@@ -176,9 +176,9 @@ export default function OffersView(props:any){
                     {signedTransaction}
                 </Button>
             );
-            enqueueSnackbar(`Offer has been canceled `,{ variant: 'success', action:snackaction });
+            enqueueSnackbar(`${t('Offer has been canceled')} `,{ variant: 'success', action:snackaction });
             
-            const eskey = enqueueSnackbar(`Metadata will be refreshed in a few seconds`, {
+            const eskey = enqueueSnackbar(`${t('Metadata will be refreshed in a few seconds')}`, {
                 anchorOrigin: {
                     vertical: 'top',
                     horizontal: 'center',
@@ -191,7 +191,7 @@ export default function OffersView(props:any){
             }, GRAPE_RPC_REFRESH);
         }catch(e){
             closeSnackbar();
-            enqueueSnackbar(`Error: ${(e)}`,{ variant: 'error' });
+            enqueueSnackbar(`${t('Error')}: ${(e)}`,{ variant: 'error' });
             console.log("Error: "+e);
             //console.log("Error: "+JSON.stringify(e));
         }  
@@ -216,7 +216,7 @@ export default function OffersView(props:any){
             const snackprogress = (key:any) => (
                 <CircularProgress sx={{padding:'10px'}} />
             );
-            const cnfrmkey = enqueueSnackbar(`Confirming transaction`,{ variant: 'info', action:snackprogress, persist: true });
+            const cnfrmkey = enqueueSnackbar(`${t('Confirming transaction')}`,{ variant: 'info', action:snackprogress, persist: true });
             await ggoconnection.confirmTransaction(signedTransaction, 'processed');
             closeSnackbar(cnfrmkey);
             const snackaction = (key:any) => (
@@ -224,9 +224,9 @@ export default function OffersView(props:any){
                     {signedTransaction}
                 </Button>
             );
-            enqueueSnackbar(`Offer Cancel and Withdrawal completed `,{ variant: 'success', action:snackaction });
+            enqueueSnackbar(`${t('Offer Cancel and Withdrawal completed')} `,{ variant: 'success', action:snackaction });
             
-            const eskey = enqueueSnackbar(`Metadata will be refreshed in a few seconds`, {
+            const eskey = enqueueSnackbar(`${t('Metadata will be refreshed in a few seconds')}`, {
                 anchorOrigin: {
                     vertical: 'top',
                     horizontal: 'center',
@@ -276,13 +276,13 @@ export default function OffersView(props:any){
                         .add(
                             ...instructionsArray
                         );
-                        enqueueSnackbar(`Preparing to withdraw offer for ${offerAmount} SOL`,{ variant: 'info' });
+                        enqueueSnackbar(`${t('Preparing to withdraw offer for')} ${offerAmount} SOL`,{ variant: 'info' });
                         
                         const signedTransaction = await sendTransaction(transaction, connection)
                         const snackprogress = (key:any) => (
                             <CircularProgress sx={{padding:'10px'}} />
                         );
-                        const cnfrmkey = enqueueSnackbar(`Confirming transaction`,{ variant: 'info', action:snackprogress, persist: true });
+                        const cnfrmkey = enqueueSnackbar(`${t('Confirming transaction')}`,{ variant: 'info', action:snackprogress, persist: true });
                         await ggoconnection.confirmTransaction(signedTransaction, 'processed');
                         closeSnackbar(cnfrmkey);
                         const snackaction = (key:any) => (
@@ -290,9 +290,9 @@ export default function OffersView(props:any){
                                 {signedTransaction}
                             </Button>
                         );
-                        enqueueSnackbar(`Offer Cancel and Withdrawal completed `,{ variant: 'success', action:snackaction });
+                        enqueueSnackbar(`${t('Offer Cancel and Withdrawal completed')} `,{ variant: 'success', action:snackaction });
                         
-                        const eskey = enqueueSnackbar(`Metadata will be refreshed in a few seconds`, {
+                        const eskey = enqueueSnackbar(`${t('Metadata will be refreshed in a few seconds')}`, {
                             anchorOrigin: {
                                 vertical: 'top',
                                 horizontal: 'center',
@@ -305,7 +305,7 @@ export default function OffersView(props:any){
                         }, GRAPE_RPC_REFRESH);
                     } catch(e){
                         closeSnackbar();
-                        enqueueSnackbar(`Error: ${(e)}`,{ variant: 'error' });
+                        enqueueSnackbar(`${t('Error')}: ${(e)}`,{ variant: 'error' });
                         console.log("Error: "+e);
                     } 
                 } else{ // no mint then just withdraw
@@ -316,13 +316,13 @@ export default function OffersView(props:any){
                         .add(
                             ...instructionsArray
                         );
-                        enqueueSnackbar(`Preparing to withdraw offer for ${offerAmount} SOL`,{ variant: 'info' });
+                        enqueueSnackbar(`${t('Preparing to withdraw offer for')} ${offerAmount} SOL`,{ variant: 'info' });
                         const signedTransaction = await sendTransaction(transaction, connection)
                         
                         const snackprogress = (key:any) => (
                             <CircularProgress sx={{padding:'10px'}} />
                         );
-                        const cnfrmkey = enqueueSnackbar(`Confirming transaction`,{ variant: 'info', action:snackprogress, persist: true });
+                        const cnfrmkey = enqueueSnackbar(`${t('Confirming transaction')}`,{ variant: 'info', action:snackprogress, persist: true });
                         await ggoconnection.confirmTransaction(signedTransaction, 'processed');
                         closeSnackbar(cnfrmkey);
                         const snackaction = (key:any) => (
@@ -330,9 +330,9 @@ export default function OffersView(props:any){
                                 {signedTransaction}
                             </Button>
                         );
-                        enqueueSnackbar(`Withdrawal from Grapevine completed `,{ variant: 'success', action:snackaction });
+                        enqueueSnackbar(`${t('Withdrawal from Grapevine completed')} `,{ variant: 'success', action:snackaction });
                         
-                        const eskey = enqueueSnackbar(`Metadata will be refreshed in a few seconds`, {
+                        const eskey = enqueueSnackbar(`${t('Metadata will be refreshed in a few seconds')}`, {
                             anchorOrigin: {
                                 vertical: 'top',
                                 horizontal: 'center',
@@ -345,7 +345,7 @@ export default function OffersView(props:any){
                         }, GRAPE_RPC_REFRESH);
                     } catch(e){
                         closeSnackbar();
-                        enqueueSnackbar(`Error: ${(e)}`,{ variant: 'error' });
+                        enqueueSnackbar(`${t('Error')}: ${(e)}`,{ variant: 'error' });
                         console.log("Error: "+e);
                     }
                 }
@@ -373,13 +373,13 @@ export default function OffersView(props:any){
                                     ...instructionsArray
                                 );
                             
-                                enqueueSnackbar(`Preparing to cancel offer for ${item.offerAmount} SOL on mint ${item.mint}`,{ variant: 'info' });
+                                enqueueSnackbar(`${t('Preparing to cancel offer for')} ${item.offerAmount} SOL ${t('on')} ${t('mint')} ${item.mint}`,{ variant: 'info' });
                                 const signedTransaction = await sendTransaction(transaction, connection)
                                 
                                 const snackprogress = (key:any) => (
                                     <CircularProgress sx={{padding:'10px'}} />
                                 );
-                                const cnfrmkey = enqueueSnackbar(`Confirming transaction`,{ variant: 'info', action:snackprogress, persist: true });
+                                const cnfrmkey = enqueueSnackbar(`${t('Confirming transaction')}`,{ variant: 'info', action:snackprogress, persist: true });
                                 await ggoconnection.confirmTransaction(signedTransaction, 'processed');
                                 closeSnackbar(cnfrmkey);
                                 const snackaction = (key:any) => (
@@ -387,11 +387,11 @@ export default function OffersView(props:any){
                                         {signedTransaction}
                                     </Button>
                                 );
-                                enqueueSnackbar(`Offer cancel complete `,{ variant: 'success', action:snackaction });                 
+                                enqueueSnackbar(`${t('Offer cancel complete')} `,{ variant: 'success', action:snackaction });                 
                             }
                         } catch(e){
                             closeSnackbar();
-                            enqueueSnackbar(`Error: ${(e)}`,{ variant: 'error' });
+                            enqueueSnackbar(`${t('Error')}: ${(e)}`,{ variant: 'error' });
                             console.log("Error: "+e);
                         }
 
@@ -403,13 +403,13 @@ export default function OffersView(props:any){
                                 .add(
                                     ...instructionsArray
                                 );
-                                enqueueSnackbar(`Preparing to withdraw offer for ${offerAmount} SOL`,{ variant: 'info' });
+                                enqueueSnackbar(`${t('Preparing to withdraw offer for')} ${offerAmount} SOL`,{ variant: 'info' });
                                 const signedTransaction = await sendTransaction(transaction, connection)
                                 
                                 const snackprogress = (key:any) => (
                                     <CircularProgress sx={{padding:'10px'}} />
                                 );
-                                const cnfrmkey = enqueueSnackbar(`Confirming transaction`,{ variant: 'info', action:snackprogress, persist: true });
+                                const cnfrmkey = enqueueSnackbar(`${t('Confirming transaction')}`,{ variant: 'info', action:snackprogress, persist: true });
                                 await ggoconnection.confirmTransaction(signedTransaction, 'processed');
                                 closeSnackbar(cnfrmkey);
                                 const snackaction = (key:any) => (
@@ -417,17 +417,17 @@ export default function OffersView(props:any){
                                         {signedTransaction}
                                     </Button>
                                 );
-                                enqueueSnackbar(`Grapevine Withdrawal complete `,{ variant: 'success', action:snackaction });                     
+                                enqueueSnackbar(`${t('Grapevine Withdrawal complete')} `,{ variant: 'success', action:snackaction });                     
                             }
                         } catch(e){
                             closeSnackbar();
-                            enqueueSnackbar(`Error: ${(e)}`,{ variant: 'error' });
+                            enqueueSnackbar(`${t('Error')}: ${(e)}`,{ variant: 'error' });
                             console.log("Error: "+e);
                         }    
 
                         cnt++;
                     }
-                    const eskey = enqueueSnackbar(`Metadata will be refreshed in a few seconds`, {
+                    const eskey = enqueueSnackbar(`${t('Metadata will be refreshed in a few seconds')}`, {
                         anchorOrigin: {
                             vertical: 'top',
                             horizontal: 'center',
@@ -444,7 +444,7 @@ export default function OffersView(props:any){
             
         } catch(e){
             closeSnackbar();
-            enqueueSnackbar(`Error: ${e}`,{ variant: 'error' });
+            enqueueSnackbar(`${t('Error')}: ${e}`,{ variant: 'error' });
             console.log("Error: "+e);
             //console.log("Error: "+JSON.stringify(e));
         }  
@@ -966,7 +966,7 @@ export default function OffersView(props:any){
                                 >
                                 <DialogTitle id="alert-bn-dialog-title">
                                     <Typography>
-                                        CONFIRMATION
+                                        {t('CONFIRMATION')}
                                     </Typography>
                                 </DialogTitle>
                                 <DialogContent>
@@ -976,18 +976,18 @@ export default function OffersView(props:any){
                                         severity="warning" variant="outlined"
                                         sx={{backgroundColor:'black'}}
                                         >
-                                            You currently have <strong>{myoffers}</strong> standing offer{(myoffers > 1 && <>s</>)}, it is recommended that you cancel all standing offers and then attempt to withdraw. If you are unable to cancel then click Withdraw to force cancel from the Grape Auction House
+                                            {t('You currently have')} <strong>{myoffers}</strong> {t('standing offer')}{(myoffers > 1 && <>s</>)}, {t('it is recommended that you cancel all standing offers and then attempt to withdraw. If you are unable to cancel then click Withdraw to force cancel from the Grape Auction House')}
                                             <br/><br/>
-                                            NOTE: By pressing Withdraw you will have to Accept <strong>{myoffers}</strong> additional transaction{(myoffers > 1 && <>s</>)} with your wallet
+                                            {t('NOTE: By pressing Withdraw you will have to Accept')} <strong>{myoffers}</strong> {t('additional transaction')}{(myoffers > 1 && <>s</>)} {t('with your wallet')}
                                     </Alert>
                                     </DialogContentText>
                                 </DialogContent>
                                 <DialogActions>
-                                    <Button onClick={handleAlertWithdrawClose}>Cancel</Button>
+                                    <Button onClick={handleAlertWithdrawClose}>{t('Cancel')}</Button>
                                     <Button 
                                         onClick={() => handleWithdrawOffer(convertSolVal(ahbalance), null)}
                                         autoFocus>
-                                    Withdraw
+                                    {t('Withdraw')}
                                     </Button>
                                 </DialogActions>
                             </BootstrapDialog>
@@ -1003,7 +1003,7 @@ export default function OffersView(props:any){
                             >
                                 <Typography variant="caption">
                                     <Button
-                                            title="Withdraw from the Grape Auction House"
+                                            title={t('Withdraw from the Grape Auction House')}
                                             size="small"
                                             variant="text"
                                             onClick={() => (myoffers > 0 ? setAlertWithdrawOpen(true) : handleWithdrawOffer(convertSolVal(ahbalance), null))}
@@ -1051,13 +1051,13 @@ export default function OffersView(props:any){
                                             </TableCell>
                                             <TableCell  align="center"><Typography variant="h6">
                                                 {item.isowner ? (
-                                                    <Tooltip title={`Offer made`}>
+                                                    <Tooltip title={t('Offer made')}>
                                                         <IconButton>
                                                             <ArrowForwardIcon color="success" />
                                                         </IconButton>
                                                     </Tooltip>
                                                     ):(
-                                                    <Tooltip title={`Offer received`}>
+                                                    <Tooltip title={t('Offer received')}>
                                                         <IconButton>
                                                             <ArrowBackIcon sx={{ color: red[500] }} />
                                                         </IconButton>
@@ -1065,7 +1065,7 @@ export default function OffersView(props:any){
                                                     {convertSolVal(item.offeramount)} <SolCurrencyIcon sx={{fontSize:"10.5px"}} />
                                             </Typography></TableCell>
                                             <TableCell align="right">
-                                                <Tooltip title={`View NFT`}>
+                                                <Tooltip title={t('View NFT')}>
                                                     <Button
                                                         component={Link} to={`${GRAPE_PREVIEW}${item.mint}`}
                                                         sx={{borderRadius:'24px'}}
@@ -1088,7 +1088,7 @@ export default function OffersView(props:any){
                                                 {publicKey &&
                                                 <>
                                                     {(publicKey.toBase58() === item.buyeraddress) && (
-                                                    <Tooltip title={`Cancel Offer`}>
+                                                    <Tooltip title={t('Cancel Offer')}>
                                                         <Button 
                                                             color="error"
                                                             variant="text"
@@ -1140,7 +1140,7 @@ export default function OffersView(props:any){
                             >
                                 <Typography variant="caption">
                                     <Button
-                                            title="Withdraw from the Grape Auction House"
+                                            title={t('Withdraw from the Grape Auction House')}
                                             size="small"
                                             variant="text"
                                             onClick={() => handleWithdrawOffer(convertSolVal(ahbalance), null)}
@@ -1179,7 +1179,7 @@ export default function OffersView(props:any){
                                                 {convertSolVal(item.offeramount)} <SolCurrencyIcon sx={{fontSize:"10.5px"}} />
                                             </Typography></TableCell>
                                             <TableCell align="right">
-                                                <Tooltip title={`View NFT`}>
+                                                <Tooltip title={t('View NFT')}>
                                                     <Button
                                                         component={Link} to={`${GRAPE_PREVIEW}${item.mint}`}
                                                         sx={{borderRadius:'24px'}}

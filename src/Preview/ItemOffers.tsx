@@ -222,6 +222,8 @@ function SellNowVotePrompt(props:any){
         },
         [enqueueSnackbar]
     );
+
+    const { t, i18n } = useTranslation();
     
     async function handleSellNow(event: any) {
         event.preventDefault();
@@ -248,15 +250,15 @@ function SellNowVotePrompt(props:any){
                     );
                 }
                 if (daoPublicKey){
-                    enqueueSnackbar(`Preparing to create a Proposal for Listing Price to ${sell_now_amount} SOL`,{ variant: 'info' });
+                    enqueueSnackbar(`${t('Preparing to create a Proposal for Listing Price to')} ${sell_now_amount} SOL`,{ variant: 'info' });
                 } else {
-                    enqueueSnackbar(`Preparing to set Sell Now Price to ${sell_now_amount} SOL`,{ variant: 'info' });
+                    enqueueSnackbar(`${t('Preparing to set Sell Now Price to')} ${sell_now_amount} SOL`,{ variant: 'info' });
                 }
                 const signedTransaction = await sendTransaction(transaction, connection);                    
                 const snackprogress = (key:any) => (
                     <CircularProgress sx={{padding:'10px'}} />
                 );
-                const cnfrmkey = enqueueSnackbar(`Confirming transaction`,{ variant: 'info', action:snackprogress, persist: true });
+                const cnfrmkey = enqueueSnackbar(`${t('Confirming transaction')}`,{ variant: 'info', action:snackprogress, persist: true });
                 await connection.confirmTransaction(signedTransaction, 'processed');
                 closeSnackbar(cnfrmkey);
                 const snackaction = (key:any) => (
@@ -265,11 +267,11 @@ function SellNowVotePrompt(props:any){
                     </Button>
                 );
                 if (daoPublicKey){
-                    enqueueSnackbar(`Proposal Created for Listing Price Set to ${sell_now_amount} SOL`,{ variant: 'success', action:snackaction });
+                    enqueueSnackbar(`${t('Proposal Created for Listing Price Set to')} ${sell_now_amount} SOL`,{ variant: 'success', action:snackaction });
                 } else {
-                    enqueueSnackbar(`Sell Now Price Set to ${sell_now_amount} SOL`,{ variant: 'success', action:snackaction });
+                    enqueueSnackbar(`${t('Sell Now Price Set to')} ${sell_now_amount} SOL`,{ variant: 'success', action:snackaction });
                 }
-                const eskey = enqueueSnackbar(`Metadata will be refreshed in a few seconds`, {
+                const eskey = enqueueSnackbar(`${t('Metadata will be refreshed in a few seconds')}`, {
                     anchorOrigin: {
                         vertical: 'top',
                         horizontal: 'center',
@@ -333,7 +335,7 @@ function SellNowVotePrompt(props:any){
                         }}
                     >
                         <DialogTitle>
-                            PROPOSE A SELL NOW PRICE
+                        {t('PROPOSE A SELL NOW PRICE')}
                         </DialogTitle>
                         <form onSubmit={handleSellNow}>
                         <DialogContent>
@@ -343,7 +345,7 @@ function SellNowVotePrompt(props:any){
                                 autoComplete='off'
                                 margin="dense"
                                 id="preview_sell_now_id"
-                                label="Set your sale price"
+                                label={t('Set your sale price')}
                                 type="text"
                                 fullWidth
                                 variant="standard"
@@ -369,19 +371,19 @@ function SellNowVotePrompt(props:any){
                                     <Typography
                                         variant="caption"
                                     >
-                                        Price set in SOL <SolCurrencyIcon sx={{fontSize:"12px"}} />
+                                        {t('Price set in SOL')} <SolCurrencyIcon sx={{fontSize:"12px"}} />
                                     </Typography>
                                 </Grid>
                             </Grid>
                         </DialogContent>
                         <DialogActions>
-                            <Button onClick={handleCloseDialog}>Cancel</Button>
+                            <Button onClick={handleCloseDialog}>{t('Cancel')}</Button>
                             <Button 
                                 type="submit"
                                 variant="text" 
                                 disabled={+sell_now_amount < 0.001}
                                 title="Submit">
-                                    SUBMIT
+                                    {t('SUBMIT')}
                             </Button>
                         </DialogActions>
                         </form>
@@ -390,10 +392,10 @@ function SellNowVotePrompt(props:any){
             :
             <>
                 <Grid item>
-                    <Tooltip title={`This NFT is currently owned by a program and may be listed on a marketplace`}>
+                    <Tooltip title={t('This NFT is currently owned by a program and may be listed on a marketplace')}>
                         <Button sx={{borderRadius:'10px'}}>
                             <Alert severity="warning" sx={{borderRadius:'10px'}}>
-                            LISTED/PROGRAM OWNED NFT
+                            {t('LISTED/PROGRAM OWNED NFT')}
                             </Alert>
                         </Button>
                     </Tooltip>
@@ -449,13 +451,13 @@ function SellNowPrompt(props:any){
                 .add(
                     ...instructionsArray
                 );
-                enqueueSnackbar(`Preparing to set Sell Now Price to ${sell_now_amount} SOL`,{ variant: 'info' });
+                enqueueSnackbar(`${t('Preparing to set Sell Now Price to')} ${sell_now_amount} SOL`,{ variant: 'info' });
                 const signedTransaction = await sendTransaction(transaction, connection);
                 
                 const snackprogress = (key:any) => (
                     <CircularProgress sx={{padding:'10px'}} />
                 );
-                const cnfrmkey = enqueueSnackbar(`Confirming transaction`,{ variant: 'info', action:snackprogress, persist: true });
+                const cnfrmkey = enqueueSnackbar(`${t('Confirming transaction')}`,{ variant: 'info', action:snackprogress, persist: true });
                 await ggoconnection.confirmTransaction(signedTransaction, 'processed');
                 closeSnackbar(cnfrmkey);
                 const snackaction = (key:any) => (
@@ -463,9 +465,9 @@ function SellNowPrompt(props:any){
                         {signedTransaction}
                     </Button>
                 );
-                enqueueSnackbar(`Sell Now Price Set to ${sell_now_amount} SOL`,{ variant: 'success', action:snackaction });
+                enqueueSnackbar(`${t('Sell Now Price Set to')} ${sell_now_amount} SOL`,{ variant: 'success', action:snackaction });
                 
-                const eskey = enqueueSnackbar(`Metadata will be refreshed in a few seconds`, {
+                const eskey = enqueueSnackbar(`${t('Metadata will be refreshed in a few seconds')}`, {
                     anchorOrigin: {
                         vertical: 'top',
                         horizontal: 'center',
@@ -514,7 +516,7 @@ function SellNowPrompt(props:any){
                 }}
             >
                 <DialogTitle>
-                    SET SELL NOW PRICE
+                    {t('SET SELL NOW PRICE')}
                 </DialogTitle>
                 <form onSubmit={handleSellNow}>
                 <DialogContent>
@@ -524,7 +526,7 @@ function SellNowPrompt(props:any){
                         autoComplete='off'
                         margin="dense"
                         id="preview_sell_now_id"
-                        label="Set your sale price"
+                        label={t('Set your sale price')}
                         type="text"
                         fullWidth
                         variant="standard"
@@ -550,19 +552,19 @@ function SellNowPrompt(props:any){
                             <Typography
                                 variant="caption"
                             >
-                                Price set in SOL <SolCurrencyIcon sx={{fontSize:"12px"}} />
+                                {t('Price set in SOL')} <SolCurrencyIcon sx={{fontSize:"12px"}} />
                             </Typography>
                         </Grid>
                     </Grid>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleCloseDialog}>Cancel</Button>
+                    <Button onClick={handleCloseDialog}>{t('Cancel')}</Button>
                     <Button 
                         type="submit"
                         variant="text" 
                         disabled={+sell_now_amount < 0.001}
                         title="Submit">
-                            SUBMIT
+                            {t('SUBMIT')}
                     </Button>
                 </DialogActions>
                 </form>
@@ -603,6 +605,8 @@ export function OfferPrompt(props: any) {
         [enqueueSnackbar]
     );
 
+    const { t, i18n } = useTranslation();
+
     async function HandleOfferSubmit(event: any) {
         event.preventDefault();
         if (+offer_amount > 0) {
@@ -624,12 +628,12 @@ export function OfferPrompt(props: any) {
                         ...instructionsArray
                     );
 
-                    enqueueSnackbar(`Preparing to make an offer for ${+offer_amount} SOL`,{ variant: 'info' });
+                    enqueueSnackbar(`${t('Preparing to make an offer for')} ${+offer_amount} SOL`,{ variant: 'info' });
                     const signedTransaction = await sendTransaction(transaction, connection)
                     const snackprogress = (key:any) => (
                         <CircularProgress sx={{padding:'10px'}} />
                     );
-                    const cnfrmkey = enqueueSnackbar(`Confirming transaction`,{ variant: 'info', action:snackprogress, persist: true });
+                    const cnfrmkey = enqueueSnackbar(`${t('Confirming transaction')}`,{ variant: 'info', action:snackprogress, persist: true });
                     await ggoconnection.confirmTransaction(signedTransaction, 'processed');
                     closeSnackbar(cnfrmkey);
                     const snackaction = (key:any) => (
@@ -637,9 +641,9 @@ export function OfferPrompt(props: any) {
                             {signedTransaction}
                         </Button>
                     );
-                    enqueueSnackbar(`Offer sent `,{ variant: 'success', action:snackaction });
+                    enqueueSnackbar(`${t('Offer sent')} `,{ variant: 'success', action:snackaction });
                     
-                    const eskey = enqueueSnackbar(`Metadata will be refreshed in a few seconds`, {
+                    const eskey = enqueueSnackbar(`${t('Metadata will be refreshed in a few seconds')}`, {
                             anchorOrigin: {
                                 vertical: 'top',
                                 horizontal: 'center',
@@ -680,7 +684,7 @@ export function OfferPrompt(props: any) {
                     borderRadius: '10px',
                 }}
             >
-                <SellIcon sx={{mr:1}}/> Make offer
+                <SellIcon sx={{mr:1}}/> {t('Make offer')}
             </Button> 
             
             <BootstrapDialog 
@@ -707,7 +711,7 @@ export function OfferPrompt(props: any) {
                     }}
                 >
                 <DialogTitle>
-                    MAKE AN OFFER
+                    {t('MAKE AN OFFER')}
                 </DialogTitle>
                 <form onSubmit={HandleOfferSubmit}>
                 <DialogContent>
@@ -719,7 +723,7 @@ export function OfferPrompt(props: any) {
                         autoComplete='off'
                         margin="dense"
                         id="preview_offer_id"
-                        label={`Set your offer`}
+                        label={t('Set your offer')}
                         type="text"
                         fullWidth
                         variant="standard"
@@ -745,24 +749,24 @@ export function OfferPrompt(props: any) {
                             <Typography
                                 variant="caption"
                             >
-                                Available Balance: {sol_balance} <SolCurrencyIcon sx={{fontSize:"10px"}} />
+                                {t('Available Balance')}: {sol_balance} <SolCurrencyIcon sx={{fontSize:"10px"}} />
                                 <ButtonGroup variant="text" size="small" aria-label="outlined primary button group" sx={{ml:1}}>
                                     <Button 
                                         onClick={() => {
                                             setOfferAmount((String)(sol_balance))}}
                                     > 
-                                        Max 
+                                        {t('Max')}
                                     </Button>
                                     <Button  
                                         onClick={() => {
                                             setOfferAmount((String)(+sol_balance/2))}}
                                     > 
-                                        Half
+                                        {t('Half')}
                                     </Button>
                                 </ButtonGroup>
                                 {(props.highestOffer > 0) && (
                                     <>
-                                    <br/>Highest Offer: 
+                                    <br/>{t('Highest Offer')}: 
                                         {(props.highestOffer < sol_balance+0.001) ?
                                             <Button 
                                                 onClick={() => {
@@ -788,7 +792,7 @@ export function OfferPrompt(props: any) {
                         variant="text" 
                         disabled={((+offer_amount > sol_balance) || (+offer_amount < 0.001) || (+offer_amount < props.highestOffer))}
                         title="Submit">
-                            SUBMIT
+                            {t('SUBMIT')}
                     </Button>
                 </DialogActions>
                 </form>
@@ -866,13 +870,13 @@ export default function ItemOffers(props: any) {
             const transaction = new Transaction()
             .add(...instructionsArray);
 
-            enqueueSnackbar(`Preparing to accept offer of: ${offerAmount} SOL from: ${buyerAddress.toString()}`,{ variant: 'info' });
+            enqueueSnackbar(`${t('Preparing to accept offer of')}: ${offerAmount} SOL ${t('from')}: ${buyerAddress.toString()}`,{ variant: 'info' });
             const signedTransaction2 = await sendTransaction(transaction, connection);
             
             const snackprogress = (key:any) => (
                 <CircularProgress sx={{padding:'10px'}} />
             );
-            const cnfrmkey = enqueueSnackbar(`Confirming transaction`,{ variant: 'info', action:snackprogress, persist: true });
+            const cnfrmkey = enqueueSnackbar(`${t('Confirming transaction')}`,{ variant: 'info', action:snackprogress, persist: true });
             await ggoconnection.confirmTransaction(signedTransaction2, 'processed');
             closeSnackbar(cnfrmkey);
             const snackaction = (key:any) => (
@@ -880,9 +884,9 @@ export default function ItemOffers(props: any) {
                     {signedTransaction2}
                 </Button>
             );
-            enqueueSnackbar(`NFT transaction completed `,{ variant: 'success', action:snackaction });
+            enqueueSnackbar(`{t('NFT transaction completed')} `,{ variant: 'success', action:snackaction });
             
-            const eskey = enqueueSnackbar(`Metadata will be refreshed in a few seconds`, {
+            const eskey = enqueueSnackbar(`${t('Metadata will be refreshed in a few seconds')}`, {
                     anchorOrigin: {
                         vertical: 'top',
                         horizontal: 'center',
@@ -915,13 +919,13 @@ export default function ItemOffers(props: any) {
                 ...instructionsArray
             );
 
-            enqueueSnackbar(`Canceling Sell Now Price for ${salePrice} SOL`,{ variant: 'info' });
+            enqueueSnackbar(`${t('Canceling Sell Now Price for')} ${salePrice} SOL`,{ variant: 'info' });
             const signedTransaction = await sendTransaction(transaction, connection);
             
             const snackprogress = (key:any) => (
                 <CircularProgress sx={{padding:'10px'}} />
             );
-            const cnfrmkey = enqueueSnackbar(`Confirming transaction`,{ variant: 'info', action:snackprogress, persist: true });
+            const cnfrmkey = enqueueSnackbar(`${t('Confirming transaction')}`,{ variant: 'info', action:snackprogress, persist: true });
             await ggoconnection.confirmTransaction(signedTransaction, 'processed');
             closeSnackbar(cnfrmkey);
             const snackaction = (key:any) => (
@@ -929,10 +933,10 @@ export default function ItemOffers(props: any) {
                     {signedTransaction}
                 </Button>
             );
-            enqueueSnackbar(`Sell Now Price Removed `,{ variant: 'success', action:snackaction });
+            enqueueSnackbar(`${t('Sell Now Price Removed')} `,{ variant: 'success', action:snackaction });
             //END CANCEL LISTING
             
-            const eskey = enqueueSnackbar(`Metadata will be refreshed in a few seconds`, {
+            const eskey = enqueueSnackbar(`${t('Metadata will be refreshed in a few seconds')}`, {
                 anchorOrigin: {
                     vertical: 'top',
                     horizontal: 'center',
@@ -963,13 +967,13 @@ export default function ItemOffers(props: any) {
             );
 
 
-            enqueueSnackbar(`Preparing to withdraw offer for ${offerAmount} SOL`,{ variant: 'info' });
+            enqueueSnackbar(`${t('Preparing to withdraw offer for')} ${offerAmount} SOL`,{ variant: 'info' });
             const signedTransaction = await sendTransaction(transaction, connection)
            
             const snackprogress = (key:any) => (
                 <CircularProgress sx={{padding:'10px'}} />
             );
-            const cnfrmkey = enqueueSnackbar(`Confirming transaction`,{ variant: 'info', action:snackprogress, persist: true });
+            const cnfrmkey = enqueueSnackbar(`${t('Confirming transaction')}`,{ variant: 'info', action:snackprogress, persist: true });
             await ggoconnection.confirmTransaction(signedTransaction, 'processed');
             closeSnackbar(cnfrmkey);
             const snackaction = (key:any) => (
@@ -977,8 +981,8 @@ export default function ItemOffers(props: any) {
                     {signedTransaction}
                 </Button>
             );
-            enqueueSnackbar(`Offer Withdrawal complete `,{ variant: 'success', action:snackaction });
-            const eskey = enqueueSnackbar(`Metadata will be refreshed in a few seconds`, {
+            enqueueSnackbar(`${t('Offer Withdrawal complete')} `,{ variant: 'success', action:snackaction });
+            const eskey = enqueueSnackbar(`${t('Metadata will be refreshed in a few seconds')}`, {
                 anchorOrigin: {
                     vertical: 'top',
                     horizontal: 'center',
@@ -1010,14 +1014,14 @@ export default function ItemOffers(props: any) {
                 ...instructionsArray
             );
 
-            enqueueSnackbar(`Preparing to Cancel Offer for ${offerAmount} SOL`,{ variant: 'info' });
+            enqueueSnackbar(`${t('Preparing to Cancel Offer for')} ${offerAmount} SOL`,{ variant: 'info' });
             //console.log('TransactionInstr:', TransactionInstr);
             const signedTransaction = await sendTransaction(transaction, connection);
             
             const snackprogress = (key:any) => (
                 <CircularProgress sx={{padding:'10px'}} />
             );
-            const cnfrmkey = enqueueSnackbar(`Confirming transaction`,{ variant: 'info', action:snackprogress, persist: true });
+            const cnfrmkey = enqueueSnackbar(`${t('Confirming transaction')}`,{ variant: 'info', action:snackprogress, persist: true });
             await ggoconnection.confirmTransaction(signedTransaction, 'processed');
             closeSnackbar(cnfrmkey);
             const snackaction = (key:any) => (
@@ -1025,9 +1029,9 @@ export default function ItemOffers(props: any) {
                     {signedTransaction}
                 </Button>
             );
-            enqueueSnackbar(`Offer has been cancelled `,{ variant: 'success', action:snackaction });
+            enqueueSnackbar(`${t('Offer has been cancelled')} `,{ variant: 'success', action:snackaction });
                 
-            const eskey = enqueueSnackbar(`Metadata will be refreshed in a few seconds`, {
+            const eskey = enqueueSnackbar(`${t('Metadata will be refreshed in a few seconds')}`, {
               anchorOrigin: {
                   vertical: 'top',
                   horizontal: 'center',
@@ -1394,16 +1398,16 @@ export default function ItemOffers(props: any) {
                     ...instructionsArray
                 );
                 
-                enqueueSnackbar(`Preparing to BUY NOW: ${salePrice} SOL from: ${buyerPublicKey.toBase58()}`,{ variant: 'info' });
+                enqueueSnackbar(`${t('Preparing to BUY NOW')}: ${salePrice} SOL ${t('from')}: ${buyerPublicKey.toBase58()}`,{ variant: 'info' });
                 //const signedTransaction = await sendTransaction(transaction, connection);
                 //await connection.confirmTransaction(signedTransaction, 'processed');
-                enqueueSnackbar(`Executing transfer for: ${mint.toString()}`,{ variant: 'info' });
+                enqueueSnackbar(`${t('Executing transfer for')}: ${mint.toString()}`,{ variant: 'info' });
                 const signedTransaction2 = await sendTransaction(transaction, connection);
                 
                 const snackprogress = (key:any) => (
                     <CircularProgress sx={{padding:'10px'}} />
                 );
-                const cnfrmkey = enqueueSnackbar(`Confirming transaction`,{ variant: 'info', action:snackprogress, persist: true });
+                const cnfrmkey = enqueueSnackbar(`${t('Confirming transaction')}`,{ variant: 'info', action:snackprogress, persist: true });
                 await ggoconnection.confirmTransaction(signedTransaction2, 'processed');
                 closeSnackbar(cnfrmkey);
                 const snackaction = (key:any) => (
@@ -1411,7 +1415,7 @@ export default function ItemOffers(props: any) {
                         {signedTransaction2}
                     </Button>
                 );
-                enqueueSnackbar(`NFT transaction complete `,{ variant: 'success', action:snackaction });
+                enqueueSnackbar(`${t('NFT transaction complete')} `,{ variant: 'success', action:snackaction });
                 
                 if (escrowAmount > 0){
                     //check the amount to redeposit 
@@ -1428,13 +1432,13 @@ export default function ItemOffers(props: any) {
                         ...instructionsArray
                     );
                     
-                    enqueueSnackbar(`Preparing to Deposit amount back in GrapeVine: ${depositAmount} SOL to: ${buyerPublicKey.toBase58()}`,{ variant: 'info' });
+                    enqueueSnackbar(`${t('Preparing to Deposit amount back in GrapeVine')}: ${depositAmount} SOL ${t('to')}: ${buyerPublicKey.toBase58()}`,{ variant: 'info' });
                     const signedTransaction = await sendTransaction(transaction, connection);
                     
                     const snackprogress = (key:any) => (
                         <CircularProgress sx={{padding:'10px'}} />
                     );
-                    const cnfrmkey = enqueueSnackbar(`Confirming transaction`,{ variant: 'info', action:snackprogress, persist: true });
+                    const cnfrmkey = enqueueSnackbar(`${t('Confirming transaction')}`,{ variant: 'info', action:snackprogress, persist: true });
                     await ggoconnection.confirmTransaction(signedTransaction, 'processed');
                     closeSnackbar(cnfrmkey);
                     const snackaction = (key:any) => (
@@ -1442,9 +1446,9 @@ export default function ItemOffers(props: any) {
                             {signedTransaction}
                         </Button>
                     );
-                    enqueueSnackbar(`Deposit back to GrapeVine completed`,{ variant: 'success', action:snackaction });
+                    enqueueSnackbar(`${t('Deposit back to GrapeVine completed')}`,{ variant: 'success', action:snackaction });
                 }
-                const eskey = enqueueSnackbar(`Metadata will be refreshed in a few seconds`, {
+                const eskey = enqueueSnackbar(`${t('Metadata will be refreshed in a few seconds')}`, {
                         anchorOrigin: {
                             vertical: 'top',
                             horizontal: 'center',
@@ -1569,7 +1573,7 @@ export default function ItemOffers(props: any) {
                                                 {( (saleTimeAgo) ? 
                                                     <small>&nbsp;{t('listed')} {saleTimeAgo}</small>
                                                 :
-                                                    (saleDate) && <>&nbsp;listed on {saleDate}</>
+                                                    (saleDate) && <>&nbsp;{t('listed on')} {saleDate}</>
                                                 )}
                                                 </>
                                             }
@@ -1589,15 +1593,15 @@ export default function ItemOffers(props: any) {
                                         }}
                                     >
                                         <Typography component="div" variant="caption">
-                                            Buy now: 
+                                            {t('Buy now')}: 
                                             {salePrice <= 0 ? 
-                                                <>&nbsp;not listed for sale</>
+                                                <>&nbsp;{t('not listed for sale')}</>
                                             :
                                                 <>
                                                 {( (saleTimeAgo) ? 
-                                                    <small>&nbsp;listed {saleTimeAgo}</small>
+                                                    <small>&nbsp;{t('listed')} {saleTimeAgo}</small>
                                                 :
-                                                    (saleDate) && <>&nbsp;listed on {saleDate}</>
+                                                    (saleDate) && <>&nbsp;{t('listed on')} {saleDate}</>
                                                 )}
                                                 </>
                                             }
@@ -1645,7 +1649,7 @@ export default function ItemOffers(props: any) {
                                                                     >
                                                                     <DialogTitle id="alert-bn-dialog-title">
                                                                         <Typography>
-                                                                            BUY NOW CONFIRMATION
+                                                                            {t('BUY NOW CONFIRMATION')}
                                                                         </Typography>
                                                                     </DialogTitle>
                                                                     <DialogContent>
@@ -1655,11 +1659,11 @@ export default function ItemOffers(props: any) {
                                                                             severity="info" variant="outlined"
                                                                             sx={{backgroundColor:'black'}}
                                                                             >
-                                                                            Amount: {salePrice}<SolCurrencyIcon sx={{fontSize:"12px"}} /><br/>
-                                                                            Mint: <MakeLinkableAddress addr={mint} trim={0} hasextlink={true} hascopy={false} fontsize={16} /> <br/>
-                                                                            Owner: <MakeLinkableAddress addr={mintOwner} trim={0} hasextlink={true} hascopy={false} fontsize={16} /><br/>
+                                                                            {t('Amount')}: {salePrice}<SolCurrencyIcon sx={{fontSize:"12px"}} /><br/>
+                                                                            {t('Mint')}: <MakeLinkableAddress addr={mint} trim={0} hasextlink={true} hascopy={false} fontsize={16} /> <br/>
+                                                                            {t('Owner')}: <MakeLinkableAddress addr={mintOwner} trim={0} hasextlink={true} hascopy={false} fontsize={16} /><br/>
                                                                             <Typography sx={{textAlign:'center'}}>
-                                                                            Make sure the above is correct<br/>press Accept to proceed
+                                                                            {t('Make sure the above is correct')}<br/>{t('press Accept to proceed')}
                                                                             </Typography>
                                                                         </Alert>
                                                                         
@@ -1670,7 +1674,7 @@ export default function ItemOffers(props: any) {
                                                                         <Button 
                                                                             onClick={() => handleBuyNow(salePrice)}
                                                                             autoFocus>
-                                                                        Accept
+                                                                        {t('Accept')}
                                                                         </Button>
                                                                     </DialogActions>
                                                                 </BootstrapDialog>
@@ -1704,7 +1708,8 @@ export default function ItemOffers(props: any) {
                                                                                     
                                                                                 }}
                                                                             >
-                                                                                <AccountBalanceWalletIcon sx={{mr:1}}/> Buy Now
+                                                                                <AccountBalanceWalletIcon sx={{mr:1}}/> {t('Buy Now')}
+
                                                                             </Button>
                                                                         </>
                                                                     :<></>)}
@@ -1721,10 +1726,10 @@ export default function ItemOffers(props: any) {
                                                                 </Grid>
                                                             ) : (
                                                                 <Grid item>
-                                                                    <Tooltip title={`The Marketplace requires ${TOKEN_VERIFICATION_AMOUNT} ${TOKEN_VERIFICATION_NAME} to make an offer`}>
+                                                                    <Tooltip title={`${t('The Marketplace requires')} ${TOKEN_VERIFICATION_AMOUNT} ${TOKEN_VERIFICATION_NAME} ${t('to make an offer')}`}>
                                                                         <Button sx={{borderRadius:'10px'}}>
                                                                             <Alert severity="warning" sx={{borderRadius:'10px'}}>
-                                                                            Offers limited to {TOKEN_VERIFICATION_NAME} holders
+                                                                            {t('Offers limited to')} {TOKEN_VERIFICATION_NAME} {t('holders')}
                                                                             </Alert>
                                                                         </Button>
                                                                     </Tooltip>
@@ -1752,7 +1757,7 @@ export default function ItemOffers(props: any) {
                                                                     borderRadius: '10px',
                                                                 }}
                                                             >
-                                                                <CancelIcon sx={{mr:1}}/> Cancel Listing
+                                                                <CancelIcon sx={{mr:1}}/> {t('Cancel Listing')}
                                                             </Button>   
                                                         </>
                                                         : 
@@ -1892,29 +1897,29 @@ export default function ItemOffers(props: any) {
                                                     >
                                                     <DialogTitle id="alert-dialog-title">
                                                         <Typography>
-                                                            CONFIRMATION
+                                                            {t('CONFIRMATION')}
                                                         </Typography>
                                                     </DialogTitle>
                                                     <DialogContent>
                                                         <DialogContentText id="alert-dialog-description">
                                                         <br />
                                                         <Alert severity="info" variant="outlined" sx={{backgroundColor:'black'}} >
-                                                            Amount: {final_offeramount}<SolCurrencyIcon sx={{fontSize:"12px"}} /><br/>
-                                                            Mint: <MakeLinkableAddress addr={mint} trim={0} hasextlink={true} hascopy={false} fontsize={16} /> <br/>
-                                                            From: <MakeLinkableAddress addr={final_offerfrom} trim={0} hasextlink={true} hascopy={false} fontsize={16} /><br/>
+                                                            {t('Amount')}: {final_offeramount}<SolCurrencyIcon sx={{fontSize:"12px"}} /><br/>
+                                                            {t('Mint')}: <MakeLinkableAddress addr={mint} trim={0} hasextlink={true} hascopy={false} fontsize={16} /> <br/>
+                                                            {t('From')}: <MakeLinkableAddress addr={final_offerfrom} trim={0} hasextlink={true} hascopy={false} fontsize={16} /><br/>
                                                             <Typography sx={{textAlign:'center'}}>
-                                                            Make sure the above is correct<br/>press Accept to proceed
+                                                            {t('Make sure the above is correct')}<br/>{t('press Accept to proceed')}
                                                             </Typography><br/>
                                                         </Alert>
                                                         
                                                         </DialogContentText>
                                                     </DialogContent>
                                                     <DialogActions>
-                                                        <Button onClick={handleAlertClose}>Cancel</Button>
+                                                        <Button onClick={handleAlertClose}>{t('Cancel')}</Button>
                                                         <Button 
                                                             onClick={() => handleAcceptOffer(final_offeramount, final_offerfrom)}
                                                             autoFocus>
-                                                        Accept
+                                                        {t('Accept')}
                                                         </Button>
                                                     </DialogActions>
                                                 </BootstrapDialog>
@@ -1925,12 +1930,12 @@ export default function ItemOffers(props: any) {
                                                     {(item.state === 1) ? (
                                                         <TableRow>
                                                             <TableCell><Typography variant="body2">
-                                                                <Tooltip title='View Profile'>
+                                                                <Tooltip title={t('View Profile')}>
                                                                     <Button size="small" variant="text" component={Link} to={`${GRAPE_PROFILE}${item.buyeraddress}`} target="_blank" sx={{ml:1,color:'white',borderRadius:'24px'}}>
                                                                         {trimAddress(item.buyeraddress,4)}
                                                                     </Button>
                                                                 </Tooltip>
-                                                                <Tooltip title='Visit Explorer'>
+                                                                <Tooltip title={t('Visit Explorer')}>
                                                                     <Button size="small" variant="text" component="a" href={`https://explorer.solana.com/address/${item.buyeraddress}`} target="_blank" sx={{ml:1,color:'white',borderRadius:'24px'}}>
                                                                         <OpenInNewIcon sx={{fontSize:'14px'}} />
                                                                     </Button>
@@ -1961,7 +1966,7 @@ export default function ItemOffers(props: any) {
                                                                         sx={{
                                                                         }}
                                                                     >
-                                                                        ACCEPT
+                                                                        {t('ACCEPT')}
                                                                     </Button>
                                                                 </div>
                                                                 )}

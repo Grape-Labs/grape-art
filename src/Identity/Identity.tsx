@@ -171,7 +171,7 @@ export function IdentityView(props: any){
                                 <Grid 
                                     item xs={12}
                                 >
-                                    <Tooltip title="Back go Profile">
+                                    <Tooltip title={t('Back go Profile')}>
                                         <Button
                                             component={Link} 
                                             to={`${GRAPE_PROFILE}${pubkey}`}
@@ -213,7 +213,7 @@ export function IdentityView(props: any){
                                 </Typography>   
                                     <List dense={true}>
                                         <ListItem>
-                                            <Tooltip title="View on Solana Explorer">
+                                            <Tooltip title={t('View on Solana Explorer')}>
                                                 <ListItemButton 
                                                     component="a" 
                                                     href={`https://explorer.solana.com/address/${pubkey}`}
@@ -245,7 +245,7 @@ export function IdentityView(props: any){
                                         {profilePictureUrl &&
                                             <ListItem>
                                                 {(profilePictureUrl.toLocaleUpperCase().indexOf("HTTPS://") > -1) ? (
-                                                    <Tooltip title="View Image">
+                                                    <Tooltip title={t('View Image')}>
                                                         <ListItemButton
                                                             component="a" 
                                                             href={profilePictureUrl}
@@ -301,7 +301,7 @@ export function IdentityView(props: any){
                                         {solanaDomain && solanaDomain?.map((item: any) => (
                                             <ListItem>
                                                 {(item.toLocaleUpperCase().indexOf(".SOL") > -1) ? (
-                                                    <Tooltip title="View registration">
+                                                    <Tooltip title={t('View registration')}>
                                                         <ListItemButton
                                                             component="a" 
                                                             href={`https://naming.bonfida.org/#/domain/${item.slice(0,item.indexOf(".sol"))}`}
@@ -317,7 +317,7 @@ export function IdentityView(props: any){
                                                             </ListItemAvatar>
                                                             <ListItemText
                                                                 primary={JSON.stringify(item)}
-                                                                secondary='Solana Domain'
+                                                                secondary={t('Solana Domain')}
                                                                 
                                                             />
                                                         </ListItemButton>
@@ -333,7 +333,7 @@ export function IdentityView(props: any){
                                                         </ListItemAvatar>
                                                         <ListItemText
                                                             primary={JSON.stringify(item)}
-                                                            secondary={(item.slice(0,1) === '@') && <>Twitter Handle</>}
+                                                            secondary={(item.slice(0,1) === '@') && <>{t('Twitter Handle')}</>}
                                                             
                                                         />
                                                     </>
@@ -422,7 +422,7 @@ export function IdentityView(props: any){
                                     </List>
                                 :
                                 <List dense={true}>
-                                    <ListItem key={0}>No tokens on this address!</ListItem>    
+                                    <ListItem key={0}>{t('No tokens on this address!')}</ListItem>    
                                 </List>
                                 }
                             </>

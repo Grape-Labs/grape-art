@@ -37,6 +37,8 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { GRAPE_RPC_ENDPOINT, GRAPE_PREVIEW } from '../utils/grapeTools/constants';
 import { trimAddress, timeAgo } from '../utils/grapeTools/WalletAddress'; // global key handling
 
+import { useTranslation } from 'react-i18next';
+
 function convertSolVal(sol: any){
     return parseFloat(new TokenAmount(sol, 9).format());
 }
@@ -102,6 +104,8 @@ export default function FeedView(props: any){
 
 
         //console.log("HERE: "+JSON.stringify(item));
+
+        const { t, i18n } = useTranslation();
 
         if (!finalMeta){
             return <><CircularProgress /></>
@@ -214,7 +218,7 @@ export default function FeedView(props: any){
                                                 component={Link} 
                                                 to={`${GRAPE_PREVIEW}${itemraw.memo.mint}`}
                                             >
-                                                View
+                                                {t('View')}
                                             </Button>
                                         </Box>
                                     </Container>

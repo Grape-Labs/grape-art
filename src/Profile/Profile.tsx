@@ -183,6 +183,8 @@ const PubKeyDialog = (props: any) => {
             console.log("INVALID WALLET ID");
         }
     }
+
+    const { t, i18n } = useTranslation();
     
     return (
       <React.Fragment>
@@ -206,7 +208,7 @@ const PubKeyDialog = (props: any) => {
                 }}
             >
             <DialogTitle>
-                Public Key
+                {t('Public Key')}
             </DialogTitle>
             <form onSubmit={HandlePKSubmit}>
             <DialogContent>
@@ -215,7 +217,7 @@ const PubKeyDialog = (props: any) => {
                     autoComplete='off'
                     margin="dense"
                     id="collection_wallet_id"
-                    label="Paste a public key"
+                    label={t('Paste a public key')}
                     type="text"
                     fullWidth
                     variant="standard"
@@ -224,12 +226,12 @@ const PubKeyDialog = (props: any) => {
                 />
             </DialogContent>
             <DialogActions>
-                <Button onClick={handleCloseDialog}>Cancel</Button>
+                <Button onClick={handleCloseDialog}>{t('Cancel')}</Button>
                 <Button 
                     type="submit"
                     variant="text" 
                     title="GO">
-                        Go
+                        {t('Go')}
                 </Button>
             </DialogActions>
             </form>
@@ -442,6 +444,8 @@ const MainMenu = (props:any) => {
     const pubkey = props.pubkey;
     const { publicKey } = useWallet();
 
+    const { t, i18n } = useTranslation();
+
     if ((publicKey) && (publicKey.toBase58() != pubkey)){
         return (
         
@@ -450,7 +454,7 @@ const MainMenu = (props:any) => {
             >
                 <ListItem disablePadding>
                     <ListItemButton
-                        title="Back Home"
+                        title={t('Back Home')}
                         component={Link} to={`${GRAPE_PROFILE}${publicKey.toBase58()}`}
                         sx={{
                             width:'100%',
@@ -467,7 +471,7 @@ const MainMenu = (props:any) => {
     
                 <ListItem disablePadding>
                     <ListItemButton
-                        title="Visit Solana Explorer"
+                        title={t('Visit Solana Explorer')}
                         component="a" href={`https://explorer.solana.com/address/${publicKey.toBase58()}`} target="_blank"
                         sx={{
                             width:'100%',
@@ -987,7 +991,7 @@ const IdentityView = (props: any) => {
     }, [solanaDomain, profilePictureUrl])
 
     if (loading){
-        return <>Loading...</>
+        return <>{t('Loading...')}</>
     } else {
 
         return (
@@ -1090,7 +1094,7 @@ const IdentityView = (props: any) => {
                                                                 :
                                                                     <>
                                                                         {isFollowing ?  
-                                                                            <Tooltip title={`Unfollow`}>
+                                                                            <Tooltip title={t('Unfollow')}>
                                                                                 <Button 
                                                                                     variant="text" 
                                                                                     onClick={() => followWalletDisconnect(pubkey)}
@@ -1102,7 +1106,7 @@ const IdentityView = (props: any) => {
                                                                                 </Button>
                                                                             </Tooltip>
                                                                             :
-                                                                            <Tooltip title={`Follow`}>
+                                                                            <Tooltip title={t('Follow')}>
                                                                                 <Button 
                                                                                     variant="text" 
                                                                                     onClick={() => followWalletConnect(pubkey, solanaDomain)}
@@ -1144,7 +1148,7 @@ const IdentityView = (props: any) => {
                                                     <Typography gutterBottom variant="body1" component="div" sx={{ flexGrow: 1, color:'white' }}>
                                                         {solanaDomain && solanaDomain.length > 0 ?
                                                             <>
-                                                                <Tooltip title="View Solana ID">
+                                                                <Tooltip title={t('View Solana ID')}>
                                                                     <Button 
                                                                         sx={{borderRadius:'17px'}} 
                                                                         size="small" variant="text" 
@@ -1167,7 +1171,7 @@ const IdentityView = (props: any) => {
                                                                 </Tooltip>
                                                             </>
                                                         :
-                                                            <Tooltip title="View Solana ID">
+                                                            <Tooltip title={t('View Solana ID')}>
                                                                 <Button 
                                                                     sx={{borderRadius:'17px'}} 
                                                                     size="small" variant="text" 
@@ -1600,7 +1604,7 @@ export function ProfileView(this: any, props: any) {
                                         </Grid>
                                             
                                         <Grid>
-                                            <Tooltip title='Search by mint address by entering "mint:address"'>
+                                            <Tooltip title={t('Search by mint address by entering: mint:address')}>
                                                 <Paper
                                                     component="form"
                                                     onSubmit={handlePublicKeySubmit}
