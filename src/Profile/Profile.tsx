@@ -69,7 +69,7 @@ import {
 
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
 
-
+import ArtTrackOutlinedIcon from '@mui/icons-material/ArtTrackOutlined';
 import CollectionsOutlinedIcon from '@mui/icons-material/CollectionsOutlined';
 import RssFeedOutlinedIcon from '@mui/icons-material/RssFeedOutlined';
 import GavelOutlinedIcon from '@mui/icons-material/GavelOutlined';
@@ -92,6 +92,7 @@ import FeedView from './FeedView';
 import OffersView from './OffersView';
 import SocialView from './SocialView';
 import GalleryView from './GalleryView';
+import CurationView from './CurationView';
 import { MakeLinkableAddress, ValidateAddress, trimAddress, timeAgo } from '../utils/grapeTools/WalletAddress'; // global key handling
 import { ConstructionOutlined } from "@mui/icons-material";
 
@@ -466,7 +467,7 @@ const MainMenu = (props:any) => {
                 <ListItem disablePadding>
                     <ListItemButton
                         title="Visit Solana Explorer"
-                        component="a" href={`https://explorer.solana.com/address/${publicKey.toBase58()}`} target="_blank"
+                        component="a" href={`https://explorer.solana.com/address/${pubkey}`} target="_blank"
                         sx={{
                             width:'100%',
                             borderRadius:'25px',
@@ -621,21 +622,20 @@ const MainPanel = (props: any) => {
                             {/*<Tab label="Bids" sx={{color:'white'}} {...a11yProps(4)} />*/}
                             <Tab icon={<Hidden smUp><GavelOutlinedIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>Offers</Hidden>} sx={{color:'white',minWidth:'60px'}} {...a11yProps(5)} />
                             <Tab icon={<Hidden smUp><SolCurrencyIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>Selling</Hidden>} sx={{color:'white',minWidth:'60px'}} {...a11yProps(6)} />
+                            <Tab icon={<Hidden smUp><ArtTrackOutlinedIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>Curation</Hidden>} sx={{color:'white',minWidth:'60px'}} {...a11yProps(7)} />
+                            
                         </Tabs>
                     
                     
-                        <TabPanel value={tabvalue} index={1}>
-                            <FeedView />
-                        </TabPanel>
-                        
                         <TabPanel value={tabvalue} index={0}>
                             <GalleryView finalCollection={finalCollection} walletCollection={walletCollection} />
                         </TabPanel>
-                        
+                        <TabPanel value={tabvalue} index={1}>
+                            <FeedView />
+                        </TabPanel>
                         <TabPanel value={tabvalue} index={2}>
                             <SocialView pubkey={thisPublicKey} type={0} />
                         </TabPanel>
-                        
                         <TabPanel value={tabvalue} index={3}>
                             <SocialView pubkey={thisPublicKey} type={1} />
                         </TabPanel>
@@ -645,6 +645,10 @@ const MainPanel = (props: any) => {
                         </TabPanel>
                         <TabPanel value={tabvalue} index={5}>
                             <OffersView selectedstate={2} pubkey={thisPublicKey} wallet_collection={walletCollection} wallet_collection_meta={walletCollectionMeta} />
+                        </TabPanel>
+                        
+                        <TabPanel value={tabvalue} index={6}>
+                            <CurationView pubkey={thisPublicKey} type={1} />
                         </TabPanel>
                     </TabActiveProvider>
                 </Container>

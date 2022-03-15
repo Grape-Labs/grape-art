@@ -2,12 +2,12 @@ export interface FollowListInfoArgs {
     address: string;
     namespace?: string;
     network?: string;
-    type?: string,
     alias?: string,
     followingFirst?: number;
     followingAfter?: string;
     followerFirst?: number;
     followerAfter?: string;
+    type?: string,
   }
   
   export interface SearchUserInfoArgs {
@@ -41,6 +41,7 @@ export interface FollowListInfoArgs {
     liked?: string,
     report?: string,
     reported?: string, 
+    type?: ConnectionType,
   }
   
   export interface SearchUserInfoResp {
