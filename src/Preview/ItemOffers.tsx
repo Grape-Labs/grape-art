@@ -1,9 +1,9 @@
 import React, { useCallback } from "react";
 import { Link } from "react-router-dom";
 
-import { Connection, PublicKey, Transaction } from '@solana/web3.js'
+import { Connection, PublicKey, Transaction } from '@solana/web3.js';
 // @ts-ignore
-import fetch from 'node-fetch'
+import fetch from 'node-fetch';
 
 import { TokenAmount } from '../utils/grapeTools/safe-math';
 import { styled } from '@mui/material/styles';
@@ -41,13 +41,15 @@ import MuiAlert, { AlertProps } from '@mui/material/Alert';
 import HowToVoteIcon from '@mui/icons-material/HowToVote';
 import SolCurrencyIcon from '../components/static/SolCurrencyIcon';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
-import BallotIcon from '@mui/icons-material/Ballot';
+import BallotOutlinedIcon from '@mui/icons-material/BallotOutlined';
 import SellIcon from '@mui/icons-material/Sell';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import CircularProgress from '@mui/material/CircularProgress';
 import CancelIcon from '@mui/icons-material/Cancel';
+
+import HistoryView from './HistoryView';
 
 import { useAnchorWallet } from "@solana/wallet-adapter-react";
 import { WalletError } from '@solana/wallet-adapter-base';
@@ -177,7 +179,6 @@ function convertSolVal(sol: any){
 
 function formatBlockTime(date: string, epoch: boolean, time: boolean){
     // TODO: make a clickable date to change from epoch, to time from, to UTC, to local date
-
     let date_str = new Date(date).toLocaleDateString(); //.toUTCString();
     if (time)
         date_str = new Date(date).toLocaleString();
@@ -1556,6 +1557,7 @@ export default function ItemOffers(props: any) {
                         
                         
                             <>
+                                
                                 {publicKey && publicKey.toString() === mintOwner ? (
                                     <Box
                                         sx={{
@@ -1577,6 +1579,7 @@ export default function ItemOffers(props: any) {
                                                 )}
                                                 </>
                                             }
+                                            <Typography component="div" variant="caption" id="grape-art-last-sale"></Typography>
                                         </Typography>
                                         {( (salePrice > 0) ?
                                             <Typography component="div" variant="h4" sx={{fontWeight:'800'}}>
@@ -1599,12 +1602,13 @@ export default function ItemOffers(props: any) {
                                             :
                                                 <>
                                                 {( (saleTimeAgo) ? 
-                                                    <small>&nbsp;{t('listed')} {saleTimeAgo}</small>
+                                                    <>&nbsp;{t('listed')} {saleTimeAgo}</>
                                                 :
                                                     (saleDate) && <>&nbsp;{t('listed on')} {saleDate}</>
                                                 )}
                                                 </>
                                             }
+                                            <Typography component="div" variant="caption" id="grape-art-last-sale"></Typography>
                                         </Typography>
                                         {( (salePrice > 0) ?
                                             <Typography component="div" variant="h4" sx={{fontWeight:'800'}}>
@@ -1614,7 +1618,7 @@ export default function ItemOffers(props: any) {
                                         )}
                                     </Box>
                                 )}
-    
+
                                 <Grid 
                                     container 
                                     spacing={2}
@@ -1841,7 +1845,7 @@ export default function ItemOffers(props: any) {
                         sx={{borderRadius:'20px'}}
                     >
                         <ListItemIcon>
-                        <BallotIcon />
+                        <BallotOutlinedIcon />
                         </ListItemIcon>
                         <ListItemText 
                             primary={t('Offers')}
@@ -1998,6 +2002,13 @@ export default function ItemOffers(props: any) {
                         </List>
                     </Collapse>
                 </Box>
+                {mint &&
+                    <></>
+                    /*
+                    <HistoryView mint={mint} />
+                    */
+
+                }
             </>
         )
     }

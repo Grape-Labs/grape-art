@@ -15,11 +15,12 @@ export const followListInfoSchema = ({
   followingAfter,
   followerFirst,
   followerAfter,
+  type,
 }: FollowListInfoArgs) => {
   return {
     operationName: "followListInfo",
-    query: `query followListInfo($address: String!, $namespace: String, $network: Network, $followingFirst: Int, $followingAfter: String, $followerFirst: Int, $followerAfter: String) {
-      identity(address: $address, network: $network) {
+    query: `query followListInfo($address: String!, $namespace: String, $network: Network, $followingFirst: Int, $followingAfter: String, $followerFirst: Int, $followerAfter: String, $type: String!) {
+      identity(address: $address, network: $network, type: $type) {
         followingCount(namespace: $namespace)
         followerCount(namespace: $namespace)
         like: followingCount(namespace: $namespace, type: LIKE)
@@ -62,6 +63,7 @@ export const followListInfoSchema = ({
       followingAfter,
       followerFirst,
       followerAfter,
+      type,
     },
   };
 };
@@ -135,6 +137,7 @@ export const followListInfoQuery = async ({
   followingAfter,
   followerFirst,
   followerAfter,
+  type,
 }: FollowListInfoArgs) => {
   const schema = querySchemas["followListInfo"]({
     address,
@@ -144,6 +147,7 @@ export const followListInfoQuery = async ({
     followingAfter,
     followerFirst,
     followerAfter,
+    type,
   });
   const resp = await handleQuery(schema, endPoint);
 

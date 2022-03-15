@@ -20,9 +20,11 @@ import {
 import { getPriceWithMantissa } from './helpers/various';
 import { ASSOCIATED_TOKEN_PROGRAM_ID, Token } from '@solana/spl-token';
 
+import { TokenAmount } from '../../utils/grapeTools/safe-math';
+
 function convertSolVal(sol: any){
-  let sol_precision = 6;
-  return +sol/1000000000;
+    sol = parseFloat(new TokenAmount(sol, 9).format());
+    return sol;
 }
 
   export async function submitOffer(offerAmount: number, mint: string, walletPublicKey: string, mintOwner: any): Promise<InstructionsAndSignersSet> {

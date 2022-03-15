@@ -52,6 +52,11 @@ function solanaCDN(image:string){
     return image;
 }
 
+// TAKE INTO ACCOUNT:
+// 1. is the nft still on curve? if not on curve this will not show up in our feed any longer
+// 2. check if it is has a sell state (note that offers take it off sale state for the feed)
+// 3. consider showing a new place for recent offers 
+
 export default function FeedView(props: any){
     const [loading, setLoading] = React.useState(false);
     const [limit, setLimit] = React.useState(25);
@@ -256,16 +261,18 @@ export default function FeedView(props: any){
             const metadata = await ggoconnection.getMultipleAccountsInfo(mintsPDAs);
             
             // LOOP ALL METADATA WE HAVE
+            /*
             for (var metavalue of metadata){
                 
                 try{
+                    
                     let meta_primer = metavalue;
                     let buf = Buffer.from(metavalue.data);
                     let meta_final = decodeMetadata(buf);
                     
                 }catch(etfm){console.log("ERR: "+etfm + " for "+ JSON.stringify(metavalue));}
             }
-
+            */
             return metadata;
             
         } catch (e) { // Handle errors from invalid calls
@@ -337,7 +344,7 @@ export default function FeedView(props: any){
                                     for (var mx=0;mx<memo_instances;mx++){
                                         let init = submemo.indexOf('{');
                                         let fin = submemo.indexOf('}');
-                                        memo_str = submemo.substr(init,fin-(init-1)); // include brackets
+                                        memo_str = submemo.slice(init,fin+1); // include brackets
                                         memo_arr.push(memo_str);
                                         submemo = submemo.replace(memo_str, "");
                                         //console.log("pushed ("+mx+"):: "+memo_str + " init: "+init+" fin: "+fin);
@@ -346,13 +353,14 @@ export default function FeedView(props: any){
                                 } else{
                                     let init = memo_str.indexOf('{');
                                     let fin = memo_str.indexOf('}');
-                                    memo_str = memo_str.substr(init,fin); // include brackets
+                                    memo_str = memo_str.slice(init,fin+1); // include brackets
                                     memo_arr.push(memo_str);
                                 }
                                 
 
                                 for (var memo_item of memo_arr){
                                     try{
+
                                         const memo_json = JSON.parse(memo_item);
 
                                         //console.log('OFFER:: '+feePayer.toBase58() + '('+memo_json?.amount+' v '+amount_on_escrow+'): ' +memo_str);
@@ -377,12 +385,14 @@ export default function FeedView(props: any){
                                                 let offer = 0;
                                                 if (memo_json.state === 1)
                                                     offer = 1;
+                                                // 1. score will need to be decayed according to time
+                                                // 2. score will need to be decayed if reported and if reported > threshhold dont show
                                                 ahListings.push({amount: solvalue, mint: memo_json?.mint, timestamp: forSaleDate, blockTime:value.blockTime, state: memo_json?.state || memo_json?.status, offers: offer, score: memo_json?.score || 0});  
                                                 ahListingsMints.push(memo_json.mint);
                                                 
                                             }
                                         }
-                                    }catch(merr){console.log("ERR: "+merr)}
+                                    }catch(merr){console.log("ERR: "+merr + " - "+memo_item)}
                                 }
                             }
                         }
