@@ -1,11 +1,68 @@
 import {
+  LikeListInfoArgs,
   FollowListInfoArgs,
   SearchUserInfoArgs,
+  LikeListInfoResp,
   FollowListInfoResp,
   SearchUserInfoResp,
 } from "./types";
 
 const endPoint = "https://api.cybertino.io/connect/";
+
+export const likeListInfoSchema = ({
+  address,
+  namespace,
+  network,
+  likeFirst,
+  likeAfter,
+  likedFirst,
+  likedAfter,
+}: LikeListInfoArgs) => {
+  return {
+    operationName: "likeListInfo",
+    query: `query likeListInfo($address: String!, $namespace: String, $network: Network, $likeFirst: Int, $likeAfter: String, $likedFirst: Int, $likedAfter: String) {
+      identity(address: $address, network: $network) {
+        like: followingCount(namespace: $namespace, type: LIKE)
+        liked: followerCount(namespace: $namespace, type: LIKE)
+        likes: followings(namespace: $namespace, first: $likeFirst, after: $likeAfter, type: LIKE) {
+          pageInfo {
+            endCursor
+            hasNextPage
+          }
+          list {
+            address
+            ens
+            avatar
+            namespace
+            alias
+          }
+        }
+        likeds: followers(namespace: $namespace, first: $likedFirst, after: $likedAfter, type: LIKE) {
+          pageInfo {
+            endCursor
+            hasNextPage
+          }
+          list {
+            address
+            ens
+            avatar
+            namespace
+            alias
+          }
+        }
+      }
+    },`,
+    variables: {
+      address,
+      namespace,
+      network,
+      likeFirst,
+      likeAfter,
+      likedFirst,
+      likedAfter,
+    },
+  };
+};
 
 export const followListInfoSchema = ({
   address,
@@ -15,12 +72,11 @@ export const followListInfoSchema = ({
   followingAfter,
   followerFirst,
   followerAfter,
-  type,
 }: FollowListInfoArgs) => {
   return {
     operationName: "followListInfo",
-    query: `query followListInfo($address: String!, $namespace: String, $network: Network, $followingFirst: Int, $followingAfter: String, $followerFirst: Int, $followerAfter: String, $type: String!) {
-      identity(address: $address, network: $network, type: $type) {
+    query: `query followListInfo($address: String!, $namespace: String, $network: Network, $followingFirst: Int, $followingAfter: String, $followerFirst: Int, $followerAfter: String) {
+      identity(address: $address, network: $network) {
         followingCount(namespace: $namespace)
         followerCount(namespace: $namespace)
         like: followingCount(namespace: $namespace, type: LIKE)
@@ -63,7 +119,6 @@ export const followListInfoSchema = ({
       followingAfter,
       followerFirst,
       followerAfter,
-      type,
     },
   };
 };
@@ -98,6 +153,7 @@ export const searchUserInfoSchema = ({
 };
 
 export const querySchemas = {
+  likeListInfo: likeListInfoSchema,
   followListInfo: followListInfoSchema,
   searchUserInfo: searchUserInfoSchema,
 };
@@ -129,6 +185,31 @@ export const handleQuery = (
   return request(url, data);
 };
 
+export const likeListInfoQuery = async ({
+  address,
+  namespace,
+  network,
+  likeFirst,
+  likeAfter,
+  likedFirst,
+  likedAfter,
+  type,
+}: LikeListInfoArgs) => {
+  const schema = querySchemas["likeListInfo"]({
+    address,
+    namespace,
+    network,
+    likeFirst,
+    likeAfter,
+    likedFirst,
+    likedAfter,
+    type,
+  });
+  const resp = await handleQuery(schema, endPoint);
+
+  return (resp?.data?.identity as LikeListInfoResp) || null;
+};
+
 export const followListInfoQuery = async ({
   address,
   namespace,
@@ -137,7 +218,6 @@ export const followListInfoQuery = async ({
   followingAfter,
   followerFirst,
   followerAfter,
-  type,
 }: FollowListInfoArgs) => {
   const schema = querySchemas["followListInfo"]({
     address,
@@ -147,7 +227,6 @@ export const followListInfoQuery = async ({
     followingAfter,
     followerFirst,
     followerAfter,
-    type,
   });
   const resp = await handleQuery(schema, endPoint);
 

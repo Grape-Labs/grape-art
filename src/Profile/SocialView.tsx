@@ -74,7 +74,7 @@ export default function SocialView(props: any){
             namespace: GLOBAL_NAME_SPACE,
             network: NETWORK,
             followingFirst: FIRST,
-            followerFirst: FIRST
+            followerFirst: FIRST,
         });
         if (resp) {
             setFollowListInfo(resp);

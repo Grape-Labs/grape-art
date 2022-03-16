@@ -1,9 +1,13 @@
 
 import React, { useEffect } from "react";
+import { Global } from '@emotion/react';
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import { decodeMetadata } from '../utils/grapeTools/utils';
 // @ts-ignore
 import { PublicKey, Connection, Commitment } from '@solana/web3.js';
+
+import { styled } from '@mui/material/styles';
+import { grey } from '@mui/material/colors';
 
 import { findDisplayName } from '../utils/name-service';
 import { getProfilePicture } from '@solflare-wallet/pfp';
@@ -26,6 +30,8 @@ import {
     ListItemText,
     ListItemButton,
     Tooltip,
+    SwipeableDrawer,
+    CssBaseline,
 } from '@mui/material';
 
 import PortraitIcon from '@mui/icons-material/Portrait';
@@ -36,7 +42,7 @@ import QrCode2Icon from '@mui/icons-material/QrCode2';
 import SolIcon from '../components/static/SolIcon';
 import SolCurrencyIcon from '../components/static/SolCurrencyIcon';
 
-import { ValidateAddress, trimAddress } from '../utils/grapeTools/WalletAddress'; // global key handling
+import { ValidateAddress, trimAddress, timeAgo, formatBlockTime } from '../utils/grapeTools/WalletAddress'; // global key handling
 import { GRAPE_RPC_ENDPOINT, GRAPE_PROFILE, GRAPE_PREVIEW } from '../utils/grapeTools/constants';
 
 export function IdentityView(props: any){
@@ -44,6 +50,7 @@ export function IdentityView(props: any){
     const [solanaDomain, setSolanaDomain] = React.useState(null);
     const [solanaHoldings, setSolanaHoldings] = React.useState(null);
     const [solanaBalance, setSolanaBalance] = React.useState(null);
+    const [solanaTransactions, setSolanaTransactions] = React.useState(null);
     const [loading, setLoading] = React.useState(false);
     const { publicKey } = useWallet();
     const [pubkey, setPubkey] = React.useState(props.pubkey || null);
@@ -55,6 +62,11 @@ export function IdentityView(props: any){
     const fetchSolanaBalance = async () => {
         const response = await ggoconnection.getBalance(new PublicKey(pubkey));
         setSolanaBalance(response);
+    }
+
+    const fetchSolanaTransactions = async () => {
+        const response = await ggoconnection.getSignaturesForAddress(new PublicKey(pubkey));
+        setSolanaTransactions(response);
     }
 
     const fetchSolanaTokens = async () => {
@@ -115,7 +127,8 @@ export function IdentityView(props: any){
     const fetchSolanaDomain = async () => {
         const domain = await findDisplayName(ggoconnection, pubkey);
         if (domain){
-            setSolanaDomain(domain)
+            if (domain.toString()!==pubkey)
+                setSolanaDomain(domain)
         }
     }
 
@@ -138,6 +151,7 @@ export function IdentityView(props: any){
                 fetchSolanaDomain();
                 fetchSolanaTokens();
                 fetchSolanaBalance();
+                //fetchSolanaTransactions();
             setLoading(false);
         }
     }, [pubkey]);
@@ -282,61 +296,65 @@ export function IdentityView(props: any){
                                     </List>
                                 
                                 
-                                <Typography
-                                    variant="h6"
-                                >
-                                    DOMAINS/REGISTRATIONS: 
-                                    <Typography
-                                        variant="body2"
-                                        sx={{ml:2}}
-                                    >{solanaDomain && <>{solanaDomain.length}</>}
-                                    </Typography>
-                                </Typography> 
-                                
-                                <List dense={true}>
-                                        {solanaDomain && solanaDomain?.map((item: any) => (
-                                            <ListItem>
-                                                {(item.toLocaleUpperCase().indexOf(".SOL") > -1) ? (
-                                                    <Tooltip title="View registration">
-                                                        <ListItemButton
-                                                            component="a" 
-                                                            href={`https://naming.bonfida.org/#/domain/${item.slice(0,item.indexOf(".sol"))}`}
-                                                            target="_blank"
-                                                            sx={{borderRadius:'24px'}}                                           
-                                                        >
-                                                            <ListItemAvatar>
-                                                                <Avatar
-                                                                    sx={{backgroundColor:'#222'}}
+                                {solanaDomain &&
+                                    <>
+                                        <Typography
+                                            variant="h6"
+                                        >
+                                            DOMAINS/REGISTRATIONS: 
+                                            <Typography
+                                                variant="body2"
+                                                sx={{ml:2}}
+                                            >{solanaDomain && <>{solanaDomain.length}</>}
+                                            </Typography>
+                                        </Typography> 
+                                    
+                                        <List dense={true}>
+                                                {solanaDomain && solanaDomain?.map((item: any) => (
+                                                    <ListItem>
+                                                        {(item.toLocaleUpperCase().indexOf(".SOL") > -1) ? (
+                                                            <Tooltip title="View registration">
+                                                                <ListItemButton
+                                                                    component="a" 
+                                                                    href={`https://naming.bonfida.org/#/domain/${item.slice(0,item.indexOf(".sol"))}`}
+                                                                    target="_blank"
+                                                                    sx={{borderRadius:'24px'}}                                           
                                                                 >
-                                                                    <PublicIcon sx={{color:'white'}} />
-                                                                </Avatar>
-                                                            </ListItemAvatar>
-                                                            <ListItemText
-                                                                primary={JSON.stringify(item)}
-                                                                secondary='Solana Domain'
-                                                                
-                                                            />
-                                                        </ListItemButton>
-                                                    </Tooltip>
-                                                ):(
-                                                    <>
-                                                        <ListItemAvatar>
-                                                            <Avatar
-                                                                sx={{backgroundColor:'#222'}}
-                                                            >
-                                                                <PublicIcon sx={{color:'white'}} />
-                                                            </Avatar>
-                                                        </ListItemAvatar>
-                                                        <ListItemText
-                                                            primary={JSON.stringify(item)}
-                                                            secondary={(item.slice(0,1) === '@') && <>Twitter Handle</>}
-                                                            
-                                                        />
-                                                    </>
-                                                )}
-                                            </ListItem>
-                                        ))}
-                                </List>
+                                                                    <ListItemAvatar>
+                                                                        <Avatar
+                                                                            sx={{backgroundColor:'#222'}}
+                                                                        >
+                                                                            <PublicIcon sx={{color:'white'}} />
+                                                                        </Avatar>
+                                                                    </ListItemAvatar>
+                                                                    <ListItemText
+                                                                        primary={JSON.stringify(item)}
+                                                                        secondary='Solana Domain'
+                                                                        
+                                                                    />
+                                                                </ListItemButton>
+                                                            </Tooltip>
+                                                        ):(
+                                                            <>
+                                                                <ListItemAvatar>
+                                                                    <Avatar
+                                                                        sx={{backgroundColor:'#222'}}
+                                                                    >
+                                                                        <PublicIcon sx={{color:'white'}} />
+                                                                    </Avatar>
+                                                                </ListItemAvatar>
+                                                                <ListItemText
+                                                                    primary={JSON.stringify(item)}
+                                                                    secondary={(item.slice(0,1) === '@') && <>Twitter Handle</>}
+                                                                    
+                                                                />
+                                                            </>
+                                                        )}
+                                                    </ListItem>
+                                                ))}
+                                        </List>
+                                    </>
+                                }
                                 
                                 <Typography
                                     variant="h6"
@@ -421,8 +439,51 @@ export function IdentityView(props: any){
                                     <ListItem key={0}>No tokens on this address!</ListItem>    
                                 </List>
                                 }
+
+                                {solanaTransactions &&
+                                    <>
+                                        <Typography
+                                            variant="h6"
+                                        >
+                                            RECENT TX: 
+                                            <Typography
+                                                variant="body2"
+                                                sx={{ml:2}}
+                                            >{solanaTransactions && <>{solanaTransactions.length}</>}
+                                            </Typography>
+                                        </Typography> 
+                                        {solanaTransactions ?
+                                            <List dense={true}>
+                                                {solanaTransactions.length > 0 ? solanaTransactions.map((item: any) => (
+                                                    <ListItem>
+                                                        <>
+                                                            <ListItemText
+                                                                primary={item.signature}
+                                                                secondary={
+                                                                    <>
+                                                                        <Tooltip title={formatBlockTime(item.blockTime,true,true)}>
+                                                                            <Button>
+                                                                            {timeAgo(item.blockTime)}{item?.memo && <> | {item?.memo}</>}
+                                                                            </Button>
+                                                                        </Tooltip>
+                                                                    </>
+                                                                }
+                                                            />
+                                                        </>
+                                                    </ListItem>
+                                                ))
+                                                :
+                                                <></>}
+                                            </List>
+                                        :
+                                        <List dense={true}>
+                                            <ListItem key={0}>No transactions for this address!</ListItem>    
+                                        </List>
+                                        }
+                                    </>
+                                }
                             </>
-                        
+                            
                     </Box>
                 </Container>
         );

@@ -566,7 +566,7 @@ export default function OffersView(props:any){
                                                 for (var mx=0;mx<memo_instances;mx++){
                                                     let init = submemo.indexOf('{');
                                                     let fin = submemo.indexOf('}');
-                                                    memo_str = submemo.substr(init,fin-(init-1)); // include brackets
+                                                    memo_str = submemo.substring(init,fin-(init-1)); // include brackets
                                                     memo_arr.push(memo_str);
                                                     submemo = submemo.replace(memo_str, "");
                                                     //console.log("pushed ("+mx+"):: "+memo_str + " init: "+init+" fin: "+fin);
@@ -575,7 +575,7 @@ export default function OffersView(props:any){
                                             } else{
                                                 let init = memo_str.indexOf('{');
                                                 let fin = memo_str.indexOf('}');
-                                                memo_str = memo_str.substr(init,fin); // include brackets
+                                                memo_str = memo_str.substring(init,fin); // include brackets
                                                 memo_arr.push(memo_str);
                                             }
                                             
