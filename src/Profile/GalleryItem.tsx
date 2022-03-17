@@ -25,7 +25,7 @@ import { GRAPE_PREVIEW } from '../utils/grapeTools/constants';
 export default function GalleryItem(props: any){
     const MD_PUBKEY = METAPLEX_PROGRAM_ID;
     const collectionitem = props.collectionitem || [];
-    const mint = collectionitem?.wallet?.account.data.parsed.info.mint || null;
+    const mint = collectionitem?.wallet?.account?.data.parsed.info.mint || collectionitem?.wallet?.address || null;
     const [expanded, setExpanded] = React.useState(false);
     const [loading, setLoading] = React.useState(false);
     const [collectionmeta, setCollectionMeta] = React.useState(null);

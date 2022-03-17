@@ -18,13 +18,14 @@ import {
 
 import GalleryItem from './GalleryItem';
 import { GRAPE_PREVIEW } from '../utils/grapeTools/constants';
+import { ConstructionOutlined } from "@mui/icons-material";
 
 export default function GalleryView(props: any){
     const [page, setPage] = React.useState(1);
     const rowsperpage = 1500;
     const finalCollection = props.finalCollection;
     const walletCollection = props.walletCollection;
-    
+
     return (
         <>
         {finalCollection && finalCollection.length > 0 && (

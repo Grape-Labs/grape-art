@@ -69,6 +69,7 @@ import {
 
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
 
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import ArtTrackOutlinedIcon from '@mui/icons-material/ArtTrackOutlined';
 import CollectionsOutlinedIcon from '@mui/icons-material/CollectionsOutlined';
 import RssFeedOutlinedIcon from '@mui/icons-material/RssFeedOutlined';
@@ -622,12 +623,9 @@ const MainPanel = (props: any) => {
                             {/*<Tab label="Bids" sx={{color:'white'}} {...a11yProps(4)} />*/}
                             <Tab icon={<Hidden smUp><GavelOutlinedIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>Offers</Hidden>} sx={{color:'white',minWidth:'60px'}} {...a11yProps(5)} />
                             <Tab icon={<Hidden smUp><SolCurrencyIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>Selling</Hidden>} sx={{color:'white',minWidth:'60px'}} {...a11yProps(6)} />
-                            {/*
-                            <Tab icon={<Hidden smUp><ArtTrackOutlinedIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>Curation</Hidden>} sx={{color:'white',minWidth:'60px'}} {...a11yProps(7)} />
-                            */}
+                            <Tab icon={<Hidden smUp><FavoriteBorderIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>Likes</Hidden>} sx={{color:'white',minWidth:'60px'}} {...a11yProps(7)} />
                         </Tabs>
-                    
-                    
+
                         <TabPanel value={tabvalue} index={0}>
                             <GalleryView finalCollection={finalCollection} walletCollection={walletCollection} />
                         </TabPanel>
@@ -647,7 +645,6 @@ const MainPanel = (props: any) => {
                         <TabPanel value={tabvalue} index={5}>
                             <OffersView selectedstate={2} pubkey={thisPublicKey} wallet_collection={walletCollection} wallet_collection_meta={walletCollectionMeta} />
                         </TabPanel>
-                        
                         <TabPanel value={tabvalue} index={6}>
                             <CurationView pubkey={thisPublicKey} type={1} />
                         </TabPanel>
@@ -920,7 +917,6 @@ const IdentityView = (props: any) => {
                 //}, 200);
                 
             }
-            
             //console.log(collectionmeta.length + ' vs '+wallet_collection.length);
 
             setLoadCount(loadCount+1);
