@@ -857,15 +857,12 @@ const IdentityView = (props: any) => {
                         //console.log("pda: "+pda.toString());
                         mintsPDAs.push(pda);
                     }
-                    
                 }
             }
 
             //console.log("pushed pdas: "+JSON.stringify(mintsPDAs));
             const metadata = await ggoconnection.getMultipleAccountsInfo(mintsPDAs);
             //console.log("returned: "+JSON.stringify(metadata));
-
-            
             // LOOP ALL METADATA WE HAVE
             for (var metavalue of metadata){
                 //console.log("Metaplex val: "+JSON.stringify(metavalue));
@@ -879,12 +876,6 @@ const IdentityView = (props: any) => {
                 } else{
                     console.log("Something not right...");
                 }
-                //setCollectionRaw({meta_final,meta_primer});
-                
-                /*
-                const finalmetadata = await fetch(meta_final.data.uri).then(
-                    (res: any) => res.json());
-                */
             }
 
             return metadata;

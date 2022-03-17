@@ -45,8 +45,8 @@ export interface FollowListInfoArgs {
   export interface LikeListInfoResp {
     likeCount: number;
     likedCount: number;
-    like?: FollowListInfo,
-    liked?: FollowListInfo,
+    likes?: FollowListInfo,
+    likeds?: FollowListInfo,
     type?: ConnectionType,
   }
 

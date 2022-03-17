@@ -7,6 +7,8 @@ import { LikeListInfoResp, FollowListInfoResp, SearchUserInfoResp, Network } fro
 import { removeDuplicate } from '../utils/cyberConnect/helper';
 import { followListInfoQuery, likeListInfoQuery } from '../utils/cyberConnect/query';
 
+import { decodeMetadata } from '../utils/grapeTools/utils';
+
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { getProfilePicture } from '@solflare-wallet/pfp';
 
@@ -41,11 +43,7 @@ export default function CurationView(props: any){
     const rpclimit = 100;
     const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
     const { connection } = useConnection();
-    const [solanaDomain, setSolanaDomain] = React.useState(null);
-    const [isFollowing, setIsFollowing] = React.useState(false);
     const [likeListInfo, setLikeListInfo] = useState<LikeListInfoResp | null>(null);
-    const [followListInfo, setFollowListInfo] = useState<FollowListInfoResp | null>(null);
-    const [searchAddrInfo, setSearchAddrInfo] = useState<SearchUserInfoResp | null>(null);
     const solanaProvider = useWallet();
     const { publicKey } = useWallet();
 
@@ -95,14 +93,14 @@ export default function CurationView(props: any){
             namespace: GLOBAL_NAME_SPACE,
             network: NETWORK,
             followerFirst: FIRST,
-            followerAfter: likeListInfo.liked.pageInfo.endCursor,
+            followerAfter: likeListInfo.likeds.pageInfo.endCursor,
           }
         : {
             address:pubkey,
             namespace: GLOBAL_NAME_SPACE,
             network: NETWORK,
             followingFirst: FIRST,
-            followingAfter: likeListInfo.like.pageInfo.endCursor,
+            followingAfter: likeListInfo.likes.pageInfo.endCursor,
           };
 
     const resp = await likeListInfoQuery(params);
@@ -110,24 +108,84 @@ export default function CurationView(props: any){
       type === 'likes'
         ? setLikeListInfo({
             ...likeListInfo,
-            like: {
-              pageInfo: resp.like.pageInfo,
+            likes: {
+              pageInfo: resp.likes.pageInfo,
               list: removeDuplicate(
-                likeListInfo.like.list.concat(resp.like.list)
+                likeListInfo.likes.list.concat(resp.likes.list)
               ),
             },
           })
         : setLikeListInfo({
             ...likeListInfo,
-            liked: {
-              pageInfo: resp.liked.pageInfo,
+            likeds: {
+              pageInfo: resp.likeds.pageInfo,
               list: removeDuplicate(
-                likeListInfo.liked.list.concat(resp.liked.list)
+                likeListInfo.likeds.list.concat(resp.likeds.list)
               ),
             },
           });
     }
   };
+
+  const MD_PUBKEY = new PublicKey("metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s");
+  const getCollectionData = async (start:number) => {
+      const wallet_collection = likeListInfo.likes.list;
+
+      try {
+          let mintsPDAs = new Array();
+          //console.log("RPClim: "+rpclimit);
+          //console.log("Paging "+(rpclimit*(start))+" - "+(rpclimit*(start+1)));
+          
+          let mintarr = wallet_collection.slice(rpclimit*(start), rpclimit*(start+1)).map((value:any, index:number) => {
+              //console.log("mint: "+JSON.stringify(value.account.data.parsed.info.mint));
+              return value.account.data.parsed.info.mint;
+          });
+
+          for (var value of mintarr){
+              if (value){
+                  let mint_address = new PublicKey(value);
+                  let [pda, bump] = await PublicKey.findProgramAddress([
+                      Buffer.from("metadata"),
+                      MD_PUBKEY.toBuffer(),
+                      new PublicKey(mint_address).toBuffer(),
+                  ], MD_PUBKEY)
+
+                  if (pda){
+                      //console.log("pda: "+pda.toString());
+                      mintsPDAs.push(pda);
+                  }
+              }
+          }
+
+          //console.log("pushed pdas: "+JSON.stringify(mintsPDAs));
+          const metadata = await ggoconnection.getMultipleAccountsInfo(mintsPDAs);
+          //console.log("returned: "+JSON.stringify(metadata));
+          // LOOP ALL METADATA WE HAVE
+          for (var metavalue of metadata){
+              //console.log("Metaplex val: "+JSON.stringify(metavalue));
+              if (metavalue?.data){
+                  try{
+                      let meta_primer = metavalue;
+                      let buf = Buffer.from(metavalue.data);
+                      let meta_final = decodeMetadata(buf);
+                      //console.log("meta_final: "+JSON.stringify(meta_final));
+                  }catch(etfm){console.log("ERR: "+etfm + " for "+ JSON.stringify(metavalue));}
+              } else{
+                  console.log("Something not right...");
+              }
+          }
+          
+          return metadata;
+          
+      } catch (e) { // Handle errors from invalid calls
+          console.log(e);
+          return null;
+      }
+  }
+
+  // if likeListInfo set
+  // iterate all and use a batch rpc call
+
 
     React.useEffect(() => { 
         if (pubkey){
@@ -171,7 +229,7 @@ export default function CurationView(props: any){
                         <>
                             {likeListInfo &&
                                 <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
-                                    {likeListInfo?.liked && likeListInfo.liked.list?.map((item: any, key: number) => (
+                                    {likeListInfo?.likeds && likeListInfo.likeds.list?.map((item: any, key: number) => (
                                         <>
                                         {JSON.stringify(item)}
                                         {/*
@@ -183,7 +241,7 @@ export default function CurationView(props: any){
                                 </Grid>
                             }
                             
-                            {likeListInfo?.liked.pageInfo.hasNextPage &&
+                            {likeListInfo?.likeds.pageInfo.hasNextPage &&
                                 <Button onClick={() => fetchMore('likeds')}>more</Button>
                             }
                         </>
@@ -191,7 +249,7 @@ export default function CurationView(props: any){
                         <>
                             {likeListInfo &&
                                 <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
-                                    {likeListInfo?.like && likeListInfo.like.list?.map((item: any, key: number) => (
+                                    {likeListInfo?.likes && likeListInfo.likes.list?.map((item: any, key: number) => (
                                         <>
                                         {JSON.stringify(item)}
                                         {/*
@@ -201,7 +259,7 @@ export default function CurationView(props: any){
                                     ))}
                                 </Grid>
                             }
-                            {likeListInfo?.like.pageInfo?.hasNextPage &&
+                            {likeListInfo?.likes.pageInfo?.hasNextPage &&
                                 <Button onClick={() => fetchMore('likes')}>more</Button>
                             }
                         </>
