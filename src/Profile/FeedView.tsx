@@ -107,10 +107,28 @@ export default function FeedView(props: any){
         }, [itemraw]);
 
 
-        //console.log("HERE: "+JSON.stringify(item));
+        // IMPORTANT FIX:
+        // We need to get the mint owner
+        // Check if owner is on curve otherwise this is program owned and probably no longer lists on grape.art
 
         if (!finalMeta){
-            return <><CircularProgress /></>
+            return (
+                <Container
+                    className="grape-art-feed-outer-container"
+                >
+                    <Container
+                        className="grape-art-feed-inner-container"
+                    >
+                        <Grid 
+                            container 
+                            direction='row'
+                            className="grape-art-feed-overlay"
+                            >
+                            <CircularProgress />
+                        </Grid>
+                    </Container>
+                </Container>
+            )
         } else{
             return (
                 <Container

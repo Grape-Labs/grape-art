@@ -494,7 +494,7 @@ export default function OffersView(props:any){
             const getTransactionAccountInputs2 = await ggoconnection.getParsedTransactions(signatures, 'confirmed');
             for (var value of result){
                 if (value.err === null){
-                  
+                    
                     try{
                         //console.log('value: '+JSON.stringify(value));
                         const getTransactionAccountInputs = getTransactionAccountInputs2[cnt];
@@ -584,7 +584,6 @@ export default function OffersView(props:any){
                                                     const memo_json = JSON.parse(memo_item);
                                                     
                                                     //console.log('OFFER:: '+feePayer.toBase58() + '('+memo_json?.amount+' v '+amount_on_escrow+'): ' +memo_item);
-                                                
                                                     //console.log(memo_json);
                                                     if ((memo_json?.status === 0) || // withdraw
                                                         (memo_json?.status === 1) || // offer

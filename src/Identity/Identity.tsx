@@ -32,7 +32,14 @@ import {
     Tooltip,
     SwipeableDrawer,
     CssBaseline,
+    Tab,
 } from '@mui/material';
+
+import {
+    TabContext,
+    TabList,
+    TabPanel,
+} from '@mui/lab';
 
 import PortraitIcon from '@mui/icons-material/Portrait';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
@@ -44,6 +51,7 @@ import SolCurrencyIcon from '../components/static/SolCurrencyIcon';
 
 import { ValidateAddress, trimAddress, timeAgo, formatBlockTime } from '../utils/grapeTools/WalletAddress'; // global key handling
 import { GRAPE_RPC_ENDPOINT, GRAPE_PROFILE, GRAPE_PREVIEW } from '../utils/grapeTools/constants';
+import { ConstructionOutlined, JavascriptRounded } from "@mui/icons-material";
 
 export function IdentityView(props: any){
     const [profilePictureUrl, setProfilePictureUrl] = React.useState(null);
@@ -52,21 +60,77 @@ export function IdentityView(props: any){
     const [solanaBalance, setSolanaBalance] = React.useState(null);
     const [solanaTransactions, setSolanaTransactions] = React.useState(null);
     const [loading, setLoading] = React.useState(false);
+    const [loadingTransactions, setLoadingTransactions] = React.useState(false);
     const { publicKey } = useWallet();
     const [pubkey, setPubkey] = React.useState(props.pubkey || null);
     const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
     const {handlekey} = useParams<{ handlekey: string }>();
     const [searchParams, setSearchParams] = useSearchParams();
     const urlParams = searchParams.get("pkey") || searchParams.get("address") || handlekey;
+    const [value, setValue] = React.useState('1');
 
+    const handleChange = (event, newValue) => {
+        setValue(newValue);
+    };
+    
     const fetchSolanaBalance = async () => {
         const response = await ggoconnection.getBalance(new PublicKey(pubkey));
         setSolanaBalance(response);
     }
 
     const fetchSolanaTransactions = async () => {
+        setLoadingTransactions(true);
         const response = await ggoconnection.getSignaturesForAddress(new PublicKey(pubkey));
-        setSolanaTransactions(response);
+
+        let memos: any[] = [];
+        let signatures: any[] = [];
+        let counter = 0;
+        // get last 100
+        for (var value of response){
+            if (counter<100){
+                signatures.push(value.signature);
+                memos.push(value.memo);
+            }
+            counter++;
+        }
+        const getTransactionAccountInputs2 = await ggoconnection.getParsedTransactions(signatures, 'confirmed');
+
+        let cnt=0;
+        let tx: any[] = [];
+        for (var tvalue of getTransactionAccountInputs2){
+
+            //if (cnt===0)
+            //    console.log(signatures[cnt]+': '+JSON.stringify(tvalue));
+            
+            let txtype = "";
+            if (tvalue.meta?.logMessages){
+                for (var logvalue of tvalue.meta.logMessages){
+                    //console.log("txvalue: "+JSON.stringify(logvalue));
+                    if (logvalue.includes("Program log: Instruction: ")){
+                        if (txtype.length > 0)
+                            txtype += ", ";
+                        txtype += logvalue.substring(26,logvalue.length);
+                        
+                    }
+                }
+            }
+
+            tx.push({
+                signature:signatures[cnt],
+                blockTime:tvalue.blockTime,
+                //amount:tx_cost,
+                //owner:owner,
+                memo:memos[cnt],
+                source:null,
+                type:txtype,
+            });
+            
+            cnt++;
+        }
+
+        //setSolanaTransactions(response);
+        setSolanaTransactions(tx);
+        setLoadingTransactions(false);
     }
 
     const fetchSolanaTokens = async () => {
@@ -151,7 +215,7 @@ export function IdentityView(props: any){
                 fetchSolanaDomain();
                 fetchSolanaTokens();
                 fetchSolanaBalance();
-                //fetchSolanaTransactions();
+                fetchSolanaTransactions();
             setLoading(false);
         }
     }, [pubkey]);
@@ -378,110 +442,123 @@ export function IdentityView(props: any){
                                         </ListItem>
                                     </List>
 
-                                <Typography
-                                    variant="h6"
-                                >
-                                    TOKENS: 
-                                    <Typography
-                                        variant="body2"
-                                        sx={{ml:2}}
-                                    >{solanaHoldings && <>{solanaHoldings.length}</>}
-                                    </Typography>
-                                </Typography> 
-                                {solanaHoldings ?
-                                    <List dense={true}>
-                                        {solanaHoldings.length > 0 ? solanaHoldings.map((item: any) => (
-                                            <ListItem>
-                                                {item.account.data.parsed.info.tokenAmount.decimals === 0 ?
-                                                <>
-                                                    <Tooltip title="NFT">
-                                                        <ListItemButton 
-                                                            component={Link} to={`${GRAPE_PREVIEW}${item.account.data.parsed.info.mint}`}
-                                                            sx={{borderRadius:'24px'}}
-                                                        >
-                                                            <ListItemAvatar>
-                                                                <Avatar
-                                                                    sx={{backgroundColor:'#222'}}
-                                                                >
-                                                                    <PortraitIcon sx={{color:'white'}} />
-                                                                </Avatar>
-                                                            </ListItemAvatar>
-                                                            <ListItemText
-                                                                primary={item.account.data.parsed.info.mint}
-                                                                secondary={`x${item.account.data.parsed.info.tokenAmount.amount}`}
-                                                                
-                                                            />
-                                                        </ListItemButton>
-                                                    </Tooltip>
-                                                </>
-                                                :
-                                                <>
-                                                        <ListItemAvatar>
-                                                        <Avatar
-                                                            sx={{backgroundColor:'#222'}}
-                                                        >
-                                                            <QrCode2Icon sx={{color:'white'}} />
-                                                        </Avatar>
-                                                    </ListItemAvatar>
-                                                    <ListItemText
-                                                        primary={((new TokenAmount(item.account.data.parsed.info.tokenAmount.amount, item.account.data.parsed.info.tokenAmount.decimals).format()))}
-                                                        secondary={item.account.data.parsed.info.mint}
-                                                    />
-                                                </>
-                                                }
-                                            </ListItem>
-                                        ))
-                                        :
-                                        <></>}
-                                    </List>
-                                :
-                                <List dense={true}>
-                                    <ListItem key={0}>No tokens on this address!</ListItem>    
-                                </List>
-                                }
+                                    {solanaHoldings &&
 
-                                {solanaTransactions &&
-                                    <>
-                                        <Typography
-                                            variant="h6"
-                                        >
-                                            RECENT TX: 
-                                            <Typography
-                                                variant="body2"
-                                                sx={{ml:2}}
-                                            >{solanaTransactions && <>{solanaTransactions.length}</>}
-                                            </Typography>
-                                        </Typography> 
-                                        {solanaTransactions ?
-                                            <List dense={true}>
-                                                {solanaTransactions.length > 0 ? solanaTransactions.map((item: any) => (
-                                                    <ListItem>
-                                                        <>
-                                                            <ListItemText
-                                                                primary={item.signature}
-                                                                secondary={
-                                                                    <>
-                                                                        <Tooltip title={formatBlockTime(item.blockTime,true,true)}>
-                                                                            <Button>
-                                                                            {timeAgo(item.blockTime)}{item?.memo && <> | {item?.memo}</>}
-                                                                            </Button>
-                                                                        </Tooltip>
-                                                                    </>
+                                        <Box sx={{ width: '100%', typography: 'body1' }}>
+                                            <TabContext value={value}>
+                                                <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                                                <TabList onChange={handleChange} aria-label="lab API tabs example">
+                                                    <Tab sx={{color:'white'}} label={
+                                                        <Typography variant="h6">Tokens {solanaHoldings.length}</Typography>
+                                                    } value="1" />
+                                                    <Tab sx={{color:'white'}} label={
+                                                        <Typography variant="h6">Transactions</Typography>
+                                                    } value="2" />
+                                                </TabList>
+                                                </Box>
+                                                <TabPanel value="1">
+                                                    
+                                                {solanaHoldings ?
+                                                    <List dense={true}>
+                                                        {solanaHoldings.length > 0 ? solanaHoldings.map((item: any) => (
+                                                            <ListItem>
+                                                                {item.account.data.parsed.info.tokenAmount.decimals === 0 ?
+                                                                <>
+                                                                    <Tooltip title="NFT">
+                                                                        <ListItemButton 
+                                                                            component={Link} to={`${GRAPE_PREVIEW}${item.account.data.parsed.info.mint}`}
+                                                                            sx={{borderRadius:'24px'}}
+                                                                        >
+                                                                            <ListItemAvatar>
+                                                                                <Avatar
+                                                                                    sx={{backgroundColor:'#222'}}
+                                                                                >
+                                                                                    <PortraitIcon sx={{color:'white'}} />
+                                                                                </Avatar>
+                                                                            </ListItemAvatar>
+                                                                            <ListItemText
+                                                                                primary={item.account.data.parsed.info.mint}
+                                                                                secondary={`x${item.account.data.parsed.info.tokenAmount.amount}`}
+                                                                                
+                                                                            />
+                                                                        </ListItemButton>
+                                                                    </Tooltip>
+                                                                </>
+                                                                :
+                                                                <>
+                                                                        <ListItemAvatar>
+                                                                        <Avatar
+                                                                            sx={{backgroundColor:'#222'}}
+                                                                        >
+                                                                            <QrCode2Icon sx={{color:'white'}} />
+                                                                        </Avatar>
+                                                                    </ListItemAvatar>
+                                                                    <ListItemText
+                                                                        primary={((new TokenAmount(item.account.data.parsed.info.tokenAmount.amount, item.account.data.parsed.info.tokenAmount.decimals).format()))}
+                                                                        secondary={item.account.data.parsed.info.mint}
+                                                                    />
+                                                                </>
                                                                 }
-                                                            />
-                                                        </>
-                                                    </ListItem>
-                                                ))
+                                                            </ListItem>
+                                                        ))
+                                                        :
+                                                        <></>}
+                                                    </List>
                                                 :
-                                                <></>}
-                                            </List>
-                                        :
-                                        <List dense={true}>
-                                            <ListItem key={0}>No transactions for this address!</ListItem>    
-                                        </List>
-                                        }
-                                    </>
-                                }
+                                                <List dense={true}>
+                                                    <ListItem key={0}>No tokens on this address!</ListItem>    
+                                                </List>
+                                                }
+                                                </TabPanel>
+                                                <TabPanel value="2">
+                                                {solanaTransactions ?
+                                                    <List dense={true}>
+                                                        {solanaTransactions.length > 0 ? solanaTransactions.map((item: any) => (
+                                                            <ListItem>
+                                                                <>
+                                                                    <ListItemText
+                                                                        primary={
+                                                                            <>
+                                                                                <Tooltip title={formatBlockTime(item.blockTime,true,true)}>
+                                                                                    <Button>
+                                                                                    {timeAgo(item.blockTime)}
+                                                                                    </Button>
+                                                                                </Tooltip> - {item.type}<br/> 
+                                                                                <ListItemButton 
+                                                                                    component="a" 
+                                                                                    href={`https://explorer.solana.com/address/${item.signature}`}
+                                                                                    target="_blank"
+                                                                                    sx={{borderRadius:'24px'}}
+                                                                                >
+                                                                                    {item.signature}
+                                                                                </ListItemButton>
+                                                                            </>}
+                                                                        secondary={
+                                                                            <>
+                                                                                {item?.memo && <Typography variant="caption">{item?.memo}</Typography>}
+                                                                            </>
+                                                                        }
+                                                                    />
+                                                                </>
+                                                            </ListItem>
+                                                        ))
+                                                        :
+                                                        <></>}
+                                                    </List>
+                                                    :
+                                                    <List dense={true}>
+                                                        {loadingTransactions ?
+                                                            <ListItem key={0}>Loading transactions...</ListItem>    
+                                                        :
+                                                            <ListItem key={0}>No transactions for this address!</ListItem>    
+                                                        }
+                                                    </List>
+                                                }
+
+                                                </TabPanel>
+                                            </TabContext>
+                                        </Box>
+                                    }
                             </>
                             
                     </Box>
