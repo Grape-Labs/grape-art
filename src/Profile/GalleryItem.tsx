@@ -16,9 +16,14 @@ import {
     ListItemButton,
 } from '@mui/material';
 
+import {
+    METAPLEX_PROGRAM_ID,
+  } from '../utils/auctionHouse/helpers/constants';
+
 import { GRAPE_PREVIEW } from '../utils/grapeTools/constants';
 
 export default function GalleryItem(props: any){
+    const MD_PUBKEY = METAPLEX_PROGRAM_ID;
     const collectionitem = props.collectionitem || [];
     const mint = collectionitem?.wallet?.account.data.parsed.info.mint || null;
     const [expanded, setExpanded] = React.useState(false);
@@ -29,8 +34,7 @@ export default function GalleryItem(props: any){
         const handleExpandClick = () => {
             setExpanded(!expanded);
         };
-
-        const MD_PUBKEY = new PublicKey("metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s");
+        
         const getCollectionData = async () => {
             if (collectionitem){
                 try {

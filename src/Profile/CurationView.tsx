@@ -14,10 +14,13 @@ import { getProfilePicture } from '@solflare-wallet/pfp';
 
 import { Connection, PublicKey} from '@solana/web3.js';
 
+import {
+    METAPLEX_PROGRAM_ID,
+  } from '../utils/auctionHouse/helpers/constants';
+
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon'
 
 import { Button } from '@mui/material';
-
 
 import {
     Typography,
@@ -36,6 +39,7 @@ import { GRAPE_RPC_ENDPOINT, GRAPE_RPC_REFRESH, GRAPE_PREVIEW, GRAPE_PROFILE, FE
 import { trimAddress } from '../utils/grapeTools/WalletAddress'; // global key handling
 
 export default function CurationView(props: any){
+    const MD_PUBKEY = METAPLEX_PROGRAM_ID;
     const [pubkey, setPubKey] = React.useState<string>(props.pubkey || null);
     const [type, setType] = React.useState<number>(props.type || 0);
     const [loading, setLoading] = React.useState(false);
@@ -126,8 +130,7 @@ export default function CurationView(props: any){
           });
     }
   };
-
-  const MD_PUBKEY = new PublicKey("metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s");
+  
   const getCollectionData = async (start:number) => {
       const wallet_collection = likeListInfo.likes.list;
 
@@ -174,7 +177,7 @@ export default function CurationView(props: any){
                   console.log("Something not right...");
               }
           }
-          
+
           return metadata;
           
       } catch (e) { // Handle errors from invalid calls

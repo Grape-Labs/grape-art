@@ -104,6 +104,10 @@ import {
     TOKEN_REPORT_AMOUNT,
 } from '../utils/grapeTools/constants';
 
+import {
+    METAPLEX_PROGRAM_ID,
+  } from '../utils/auctionHouse/helpers/constants';
+
 import ItemOffers from './ItemOffers';
 import { SocialLikes, SocialFlags } from './Social';
 import ShareSocialURL from '../utils/grapeTools/ShareUrl';
@@ -227,33 +231,34 @@ function GrapeVerified(props:any){
     let updateAuthority = props?.updateAuthority;
     let grape_verified = -1;
 
-    const MD_PUBKEY = new PublicKey("metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s");
-        const getCollectionData = async (collectionAddress:string) => {
-            try {
-                let mint_address = new PublicKey(collectionAddress)
-                let [pda, bump] = await PublicKey.findProgramAddress([
-                    Buffer.from("metadata"),
-                    MD_PUBKEY.toBuffer(),
-                    new PublicKey(mint_address).toBuffer(),
-                ], MD_PUBKEY)
-                
-                
-                const meta_response = await ggoconnection.getAccountInfo(pda);
+    const MD_PUBKEY = METAPLEX_PROGRAM_ID;
+    
+    const getCollectionData = async (collectionAddress:string) => {
+        try {
+            let mint_address = new PublicKey(collectionAddress)
+            let [pda, bump] = await PublicKey.findProgramAddress([
+                Buffer.from("metadata"),
+                MD_PUBKEY.toBuffer(),
+                new PublicKey(mint_address).toBuffer(),
+            ], MD_PUBKEY)
+            
+            
+            const meta_response = await ggoconnection.getAccountInfo(pda);
 
-                let meta_final = decodeMetadata(meta_response.data);
-                
-                const metadata = await fetch(meta_final.data.uri).then(
-                    (res: any) => res.json());
-                
-                setCollectionName(metadata.name);
-                setCollectionImage(metadata.image) 
+            let meta_final = decodeMetadata(meta_response.data);
+            
+            const metadata = await fetch(meta_final.data.uri).then(
+                (res: any) => res.json());
+            
+            setCollectionName(metadata.name);
+            setCollectionImage(metadata.image) 
 
-                return null;
-            } catch (e) { // Handle errors from invalid calls
-                console.log(e);
-                return null;
-            }
+            return null;
+        } catch (e) { // Handle errors from invalid calls
+            console.log(e);
+            return null;
         }
+    }
 
     React.useEffect(() => { 
         try{
@@ -1666,12 +1671,12 @@ export function PreviewView(this: any, props: any) {
         const [collectionrawdata, setCollectionRaw] = React.useState(null);
         const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
         const { connection } = useConnection();
+        const MD_PUBKEY = METAPLEX_PROGRAM_ID;
         
         const handleExpandClick = () => {
             setExpanded(!expanded);
         };
         
-        const MD_PUBKEY = new PublicKey("metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s");
         const getCollectionData = async () => {
             try {
                 let mint_address = new PublicKey(mint)

@@ -24,7 +24,7 @@ export default function GalleryView(props: any){
     const rowsperpage = 1500;
     const finalCollection = props.finalCollection;
     const walletCollection = props.walletCollection;
-
+    
     return (
         <>
         {finalCollection && finalCollection.length > 0 && (

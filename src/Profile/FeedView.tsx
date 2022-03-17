@@ -12,6 +12,7 @@ import { Connection, PublicKey } from '@solana/web3.js';
 import { Button } from '@mui/material';
 
 import {
+    METAPLEX_PROGRAM_ID,
     ENV_AH,
     AUCTION_HOUSE_ADDRESS,
   } from '../utils/auctionHouse/helpers/constants';
@@ -67,7 +68,7 @@ export default function FeedView(props: any){
     const { connection } = useConnection();
 
     const [saleTimeAgo, setSaleTimeAgo] = React.useState(null);
-    const MD_PUBKEY = new PublicKey("metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s");
+    const MD_PUBKEY = METAPLEX_PROGRAM_ID;
     
     const statestruct = ['Withdraw', 'Offer', 'Sale', 'Accepted from listing', 'Buy Now', 'Cancel', ''];
 
