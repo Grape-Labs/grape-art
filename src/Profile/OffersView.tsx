@@ -496,7 +496,7 @@ export default function OffersView(props:any){
             const getTransactionAccountInputs2 = await ggoconnection.getParsedTransactions(signatures, 'confirmed');
             for (var value of result){
                 if (value.err === null){
-                  
+                    
                     try{
                         //console.log('value: '+JSON.stringify(value));
                         const getTransactionAccountInputs = getTransactionAccountInputs2[cnt];
@@ -568,7 +568,7 @@ export default function OffersView(props:any){
                                                 for (var mx=0;mx<memo_instances;mx++){
                                                     let init = submemo.indexOf('{');
                                                     let fin = submemo.indexOf('}');
-                                                    memo_str = submemo.substring(init,fin-(init-1)); // include brackets
+                                                    memo_str = submemo.substring(init,fin+1); // include brackets
                                                     memo_arr.push(memo_str);
                                                     submemo = submemo.replace(memo_str, "");
                                                     //console.log("pushed ("+mx+"):: "+memo_str + " init: "+init+" fin: "+fin);
@@ -586,7 +586,6 @@ export default function OffersView(props:any){
                                                     const memo_json = JSON.parse(memo_item);
                                                     
                                                     //console.log('OFFER:: '+feePayer.toBase58() + '('+memo_json?.amount+' v '+amount_on_escrow+'): ' +memo_item);
-                                                
                                                     //console.log(memo_json);
                                                     if ((memo_json?.status === 0) || // withdraw
                                                         (memo_json?.status === 1) || // offer

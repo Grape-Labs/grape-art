@@ -69,6 +69,7 @@ import {
 
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
 
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import ArtTrackOutlinedIcon from '@mui/icons-material/ArtTrackOutlined';
 import CollectionsOutlinedIcon from '@mui/icons-material/CollectionsOutlined';
 import RssFeedOutlinedIcon from '@mui/icons-material/RssFeedOutlined';
@@ -628,14 +629,20 @@ const MainPanel = (props: any) => {
                             <Tab icon={<Hidden smUp><ArrowCircleLeftOutlinedIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>{t('Followers')}</Hidden>} sx={{color:'white',minWidth:'60px'}} {...a11yProps(2)} />
                             <Tab icon={<Hidden smUp><ArrowCircleRightOutlinedIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>{t('Following')}</Hidden>} sx={{color:'white',minWidth:'60px'}} {...a11yProps(3)} />
                             {/*<Tab label="Bids" sx={{color:'white'}} {...a11yProps(4)} />*/}
+<<<<<<< HEAD
                             <Tab icon={<Hidden smUp><GavelOutlinedIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>{t('Offers')}</Hidden>} sx={{color:'white',minWidth:'60px'}} {...a11yProps(5)} />
                             <Tab icon={<Hidden smUp><SolCurrencyIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>{t('Selling')}</Hidden>} sx={{color:'white',minWidth:'60px'}} {...a11yProps(6)} />
                             {/*
                             <Tab icon={<Hidden smUp><ArtTrackOutlinedIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>Curation</Hidden>} sx={{color:'white',minWidth:'60px'}} {...a11yProps(7)} />
                             */}
+=======
+                            <Tab icon={<Hidden smUp><GavelOutlinedIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>Offers</Hidden>} sx={{color:'white',minWidth:'60px'}} {...a11yProps(5)} />
+                            <Tab icon={<Hidden smUp><SolCurrencyIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>Selling</Hidden>} sx={{color:'white',minWidth:'60px'}} {...a11yProps(6)} />
+                            <Tab label={<Hidden smDown>Likes</Hidden>} sx={{color:'white',minWidth:'60px'}} {...a11yProps(7)} />
+                            {/*<Tab icon={<Hidden smUp><FavoriteBorderIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>Likes</Hidden>} sx={{color:'white',minWidth:'60px'}} {...a11yProps(7)} />*/}
+>>>>>>> fba08de01a8260b82595faee86f3af230423961f
                         </Tabs>
-                    
-                    
+
                         <TabPanel value={tabvalue} index={0}>
                             <GalleryView finalCollection={finalCollection} walletCollection={walletCollection} />
                         </TabPanel>
@@ -655,7 +662,6 @@ const MainPanel = (props: any) => {
                         <TabPanel value={tabvalue} index={5}>
                             <OffersView selectedstate={2} pubkey={thisPublicKey} wallet_collection={walletCollection} wallet_collection_meta={walletCollectionMeta} />
                         </TabPanel>
-                        
                         <TabPanel value={tabvalue} index={6}>
                             <CurationView pubkey={thisPublicKey} type={1} />
                         </TabPanel>
@@ -865,15 +871,12 @@ const IdentityView = (props: any) => {
                         //console.log("pda: "+pda.toString());
                         mintsPDAs.push(pda);
                     }
-                    
                 }
             }
 
             //console.log("pushed pdas: "+JSON.stringify(mintsPDAs));
             const metadata = await ggoconnection.getMultipleAccountsInfo(mintsPDAs);
             //console.log("returned: "+JSON.stringify(metadata));
-
-            
             // LOOP ALL METADATA WE HAVE
             for (var metavalue of metadata){
                 //console.log("Metaplex val: "+JSON.stringify(metavalue));
@@ -887,12 +890,6 @@ const IdentityView = (props: any) => {
                 } else{
                     console.log("Something not right...");
                 }
-                //setCollectionRaw({meta_final,meta_primer});
-                
-                /*
-                const finalmetadata = await fetch(meta_final.data.uri).then(
-                    (res: any) => res.json());
-                */
             }
 
             return metadata;
@@ -937,7 +934,6 @@ const IdentityView = (props: any) => {
                 //}, 200);
                 
             }
-            
             //console.log(collectionmeta.length + ' vs '+wallet_collection.length);
 
             setLoadCount(loadCount+1);

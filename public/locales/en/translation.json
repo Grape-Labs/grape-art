@@ -174,5 +174,8 @@
       "Visit Solana Explorer" : "Visit Solana Explorer",
       "Loading..." : "Loading...",
       "View Solana ID" : "View Solana ID",
-      "more" : "more"
+      "more" : "more",
+      "Transactions" : "Transactions",
+      "Loading transactions..." : "Loading transactions..."
+      
   }
