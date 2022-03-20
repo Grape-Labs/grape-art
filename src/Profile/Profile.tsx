@@ -631,8 +631,9 @@ const MainPanel = (props: any) => {
                             {/*<Tab label="Bids" sx={{color:'white'}} {...a11yProps(4)} />*/}
                             <Tab icon={<Hidden smUp><GavelOutlinedIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>{t('Offers')}</Hidden>} sx={{color:'white',minWidth:'60px'}} {...a11yProps(5)} />
                             <Tab icon={<Hidden smUp><SolCurrencyIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>{t('Selling')}</Hidden>} sx={{color:'white',minWidth:'60px'}} {...a11yProps(6)} />
-                            <Tab label={<Hidden smDown>{t('Likes')}</Hidden>} sx={{color:'white',minWidth:'60px'}} {...a11yProps(7)} />
-                            {/*<Tab icon={<Hidden smUp><FavoriteBorderIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>Likes</Hidden>} sx={{color:'white',minWidth:'60px'}} {...a11yProps(7)} />*/}
+                            <Hidden smDown>
+                                <Tab icon={<Hidden smUp><FavoriteBorderIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>{t('Likes')}</Hidden>} sx={{color:'white',minWidth:'60px'}} {...a11yProps(7)} />
+                            </Hidden>
                         </Tabs>
 
                         <TabPanel value={tabvalue} index={0}>
