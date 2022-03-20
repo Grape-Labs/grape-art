@@ -71,6 +71,8 @@ typings/
 
 # dotenv environment variables file
 .env
+node_modules
+.vercel
 .env.test
 .env.staging
 .env.development

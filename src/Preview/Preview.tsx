@@ -119,6 +119,8 @@ import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { decodeMetadata } from '../utils/auctionHouse/helpers/schema';
 import GrapeIcon from "../components/static/GrapeIcon";
 
+import { useTranslation } from 'react-i18next';
+
 const StyledTable = styled(Table)(({ theme }) => ({
     '& .MuiTableCell-root': {
         borderBottom: '1px solid rgba(255,255,255,0.05)'
@@ -300,10 +302,12 @@ function GrapeVerified(props:any){
         }catch(e){console.log("ERR: "+e)}
     }, [updateAuthority]);
 
+    const { t, i18n } = useTranslation();
+
     if (verifiedState){
         
         return (
-            <Tooltip title={`${props.symbol}: Update Authority/Creator Verified on Metaplex`} placement="top">
+            <Tooltip title={`${props.symbol}: ${t('Update Authority/Creator Verified on Metaplex')}`} placement="top">
                 <Button 
                     href={`${GRAPE_PREVIEW}${verifiedPK}`}
                     sx={{color:'white', borderRadius:'24px'}}>
@@ -680,13 +684,13 @@ function GalleryItemMeta(props: any) {
         try{
             const transaction = await createSetProfilePictureTransaction(publicKey, new PublicKey(mint), new PublicKey(mintAta));
             //console.log("Transaction: "+JSON.stringify(transaction));
-            enqueueSnackbar(`Preparing set your avatar with ${mint} mint`,{ variant: 'info' });
+            enqueueSnackbar(`${t('Preparing set your avatar with')} ${mint} ${t('mint')}`,{ variant: 'info' });
             const signedTransaction = await sendTransaction(transaction, connection);
             
             const snackprogress = (key:any) => (
                 <CircularProgress sx={{padding:'10px'}} />
             );
-            const cnfrmkey = enqueueSnackbar(`Confirming transaction`,{ variant: 'info', action:snackprogress, persist: true });
+            const cnfrmkey = enqueueSnackbar(`${t('Confirming transaction')}`,{ variant: 'info', action:snackprogress, persist: true });
             await ggoconnection.confirmTransaction(signedTransaction, 'processed');
             closeSnackbar(cnfrmkey);
             const snackaction = (key:any) => (
@@ -694,10 +698,10 @@ function GalleryItemMeta(props: any) {
                     {signedTransaction}
                 </Button>
             );
-            enqueueSnackbar(`Your avatar has been set `,{ variant: 'success', action:snackaction });
+            enqueueSnackbar(`${t('Your avatar has been set')} `,{ variant: 'success', action:snackaction });
         } catch(e){
             closeSnackbar();
-            enqueueSnackbar(`Error: ${e}`,{ variant: 'error' });
+            enqueueSnackbar(`${t('Error')}: ${e}`,{ variant: 'error' });
             console.log("Error: "+e);
         } 
     }
@@ -749,7 +753,7 @@ function GalleryItemMeta(props: any) {
                     }}
                 >
                 <DialogTitle>
-                    Mint
+                    {t('Mint')}
                 </DialogTitle>
                 <form onSubmit={HandleMintAddressSubmit}>
                     <DialogContent>
@@ -758,7 +762,7 @@ function GalleryItemMeta(props: any) {
                             autoComplete='off'
                             margin="dense"
                             id="preview_mint_key"
-                            label="Paste a mint address"
+                            label={t('Paste a mint address')}
                             type="text"
                             fullWidth
                             variant="standard"
@@ -772,7 +776,7 @@ function GalleryItemMeta(props: any) {
                             type="submit"
                             variant="text" 
                             title="GO">
-                                Go
+                                {t('Go')}
                         </Button>
                     </DialogActions>
                 </form>
@@ -820,11 +824,13 @@ function GalleryItemMeta(props: any) {
         }
     }, [mint]);
 
+    const { t, i18n } = useTranslation();
+
     try{
         return (
             <Grid>
                 <Helmet>
-                    <title>{`${collectionitem.name} | Grape Social. Stateless. Marketplace.`}</title>
+                    <title>{`${collectionitem.name} | ${t('Grape Social. Stateless. Marketplace.')}`}</title>
                     <meta property="og:title" content={`${collectionitem.name} @Grape`} />
                     <meta property="og:type" content="website" />
                     <meta property="og:url" content={window.location.href} />
@@ -875,7 +881,7 @@ function GalleryItemMeta(props: any) {
                                             sx={{color:'white',borderRadius:'24px'}}
                                         >
                                             <ArrowBackIosIcon />
-                                            Back
+                                            {t('Back')}
                                         </Button>
                                         <SearchForMint setMintPubkey={props.setMintPubkey} />
                                     </ButtonGroup>
@@ -962,7 +968,7 @@ function GalleryItemMeta(props: any) {
                                                                 onClick={ () => openImageViewer(0) }
                                                                 sx={{color:'white',borderRadius:'24px'}}
                                                             >
-                                                                Preview <OpenInFullIcon sx={{ fontSize:'16px', ml:1 }}/></Button>
+                                                                {t('Preview')} <OpenInFullIcon sx={{ fontSize:'16px', ml:1 }}/></Button>
                                                         </Grid>
                                                     </Grid>
                                                 
@@ -994,7 +1000,7 @@ function GalleryItemMeta(props: any) {
                                                 <ListItemIcon>
                                                 <SegmentIcon />
                                                 </ListItemIcon>
-                                                <ListItemText primary="Description" />
+                                                <ListItemText primary={t('Description')} />
                                                 {open_description ? <ExpandLess /> : <ExpandMoreIcon />}
                                             </ListItemButton>
                                             <Collapse in={open_description} timeout="auto" unmountOnExit>
@@ -1019,7 +1025,7 @@ function GalleryItemMeta(props: any) {
                                             <ListItemIcon>
                                             <FormatListBulletedIcon />
                                             </ListItemIcon>
-                                            <ListItemText primary="Details" />
+                                            <ListItemText primary={t('Details')} />
                                             {open_meta ? <ExpandLess /> : <ExpandMoreIcon />}
                                         </ListItemButton>
                                         <Collapse in={open_meta} timeout="auto" unmountOnExit>
@@ -1050,7 +1056,7 @@ function GalleryItemMeta(props: any) {
                                                                         onClick={() => setOpenAttributeCollapse(!open_attribute_collapse)}
                                                                     >
                                                                         <TableCell>
-                                                                        Attributes:
+                                                                        {t('Attributes')}:
                                                                         </TableCell>
                                                                         <TableCell>
                                                                             {collectionitem.attributes.length}
@@ -1072,8 +1078,8 @@ function GalleryItemMeta(props: any) {
                                                                                         {collectionitem.attributes.length > 0 &&
                                                                                         <TableHead>
                                                                                             <TableRow>
-                                                                                                <TableCell><Typography variant="subtitle1">Attribute</Typography></TableCell>
-                                                                                                <TableCell><Typography variant="subtitle1" >Type</Typography></TableCell>
+                                                                                                <TableCell><Typography variant="subtitle1">{t('Attribute')}</Typography></TableCell>
+                                                                                                <TableCell><Typography variant="subtitle1" >{t('Type')}</Typography></TableCell>
                                                                                             </TableRow>
                                                                                         </TableHead>
                                                                                         }
@@ -1085,30 +1091,30 @@ function GalleryItemMeta(props: any) {
                                                                                         ))  
                                                                                         :
                                                                                         <TableRow>
-                                                                                            <TableCell>Attributes:</TableCell>
+                                                                                            <TableCell>{t('Attributes')}:</TableCell>
                                                                                             <TableCell>
                                                                                             {collectionitem.attributes.itemType?.length > 0 &&
-                                                                                                <Tooltip title={`Type`}>
+                                                                                                <Tooltip title={t('Type')}>
                                                                                                 <Chip label={collectionitem.attributes?.itemType} variant="outlined" />
                                                                                                 </Tooltip>
                                                                                             }
                                                                                             {collectionitem.attributes.category?.length > 0 &&
-                                                                                                <Tooltip title={`Category`}>
+                                                                                                <Tooltip title={t('Category')}>
                                                                                                 <Chip label={collectionitem.attributes?.category} variant="outlined" />
                                                                                                 </Tooltip>
                                                                                             }
                                                                                             {collectionitem.attributes.rarity?.length > 0 &&
-                                                                                                <Tooltip title={`Rarity`}>
+                                                                                                <Tooltip title={t('Rarity')}>
                                                                                                 <Chip label={collectionitem.attributes?.rarity} variant="outlined" />
                                                                                                 </Tooltip>
                                                                                             }
                                                                                             {collectionitem.attributes.spec?.length > 0 &&
-                                                                                                <Tooltip title={`Spec`}>
+                                                                                                <Tooltip title={t('Spec')}>
                                                                                                 <Chip label={collectionitem.attributes?.spec} variant="outlined" />
                                                                                                 </Tooltip>
                                                                                             }
                                                                                             {collectionitem.attributes.class?.length > 0 &&
-                                                                                                <Tooltip title={`Class`}>
+                                                                                                <Tooltip title={t('Class')}>
                                                                                                 <Chip label={collectionitem.attributes?.class} variant="outlined" />
                                                                                                 </Tooltip>
                                                                                             }
@@ -1126,14 +1132,14 @@ function GalleryItemMeta(props: any) {
                                                         : null }
 
                                                         <TableRow>
-                                                            <TableCell>Mint:</TableCell>
+                                                            <TableCell>{t('Mint')}:</TableCell>
                                                             <TableCell>
                                                                 <MakeLinkableAddress addr={mint} trim={5} hasextlink={true} hascopy={true} fontsize={14} />
                                                             </TableCell>
                                                         </TableRow>
                                                         
                                                         <TableRow>
-                                                            <TableCell>Owner:</TableCell>
+                                                            <TableCell>{t('Owner')}:</TableCell>
                                                             <TableCell>
                                                                 
                                                             {tokenOwners && (
@@ -1144,16 +1150,16 @@ function GalleryItemMeta(props: any) {
                                                         
                                                         {collectionitem?.symbol ? 
                                                             <TableRow>
-                                                                <TableCell>Symbol:</TableCell>
+                                                                <TableCell>{t('Symbol')}:</TableCell>
                                                                 <TableCell>{collectionitem.symbol}</TableCell>
                                                             </TableRow>
                                                         : null }
                                                         {collectionitem.seller_fee_basis_points > 0 ?
                                                             <TableRow>
-                                                                <TableCell>Royalty:</TableCell>
+                                                                <TableCell>{t('Royalty')}:</TableCell>
                                                                 <TableCell>
                                                                 {(+collectionitem.seller_fee_basis_points/100).toFixed(2)}%
-                                                                <Tooltip title={`This is the rate at which royalties are shared with creators if this asset is sold using the Metaplex Auction program`}><HelpOutlineIcon sx={{ fontSize:16, ml: 1  }}/></Tooltip>
+                                                                <Tooltip title={t('This is the rate at which royalties are shared with creators if this asset is sold using the Metaplex Auction program')}><HelpOutlineIcon sx={{ fontSize:16, ml: 1  }}/></Tooltip>
                                                                 </TableCell>
                                                             </TableRow>
                                                         : null }
@@ -1163,7 +1169,7 @@ function GalleryItemMeta(props: any) {
                                                                 <TableRow
                                                                     onClick={() => setOpenCreatorCollapse(!open_creator_collapse)}
                                                                 >
-                                                                    <TableCell>Creators:</TableCell>
+                                                                    <TableCell>{t('Creators')}:</TableCell>
                                                                     <TableCell>
                                                                         {collectionitem.properties.creators.length}
                                                                         <IconButton
@@ -1183,15 +1189,15 @@ function GalleryItemMeta(props: any) {
                                                                                 <Table size="small" aria-label="purchases">
                                                                                     <TableHead>
                                                                                         <TableRow>
-                                                                                            <TableCell><Typography variant="caption">Creator Address</Typography></TableCell>
-                                                                                            <TableCell align="right"><Typography variant="caption">% Royalty</Typography></TableCell>
+                                                                                            <TableCell><Typography variant="caption">{t('Creator Address')}</Typography></TableCell>
+                                                                                            <TableCell align="right"><Typography variant="caption">% {t('Royalty')}</Typography></TableCell>
                                                                                         </TableRow>
                                                                                     </TableHead>
                                                                                     {collectionitem.properties.creators.length > 0 && collectionitem.properties.creators.map((item: any) => (
                                                                                         <TableRow>
                                                                                             <TableCell>
                                                                                             <Button
-                                                                                                title="Visit Profile"
+                                                                                                title={t('Visit Profile')}
                                                                                                 component={Link} 
                                                                                                 to={`${GRAPE_PROFILE}${item.address}`}
                                                                                             >
@@ -1213,20 +1219,20 @@ function GalleryItemMeta(props: any) {
 
                                                         {collectionitem?.edition ?
                                                             <TableRow>
-                                                                <TableCell>Edition:</TableCell>
+                                                                <TableCell>{t('Edition')}:</TableCell>
                                                                 <TableCell>{collectionitem.edition}</TableCell>
                                                             </TableRow>
                                                         : null }
                                                         {collectionitem?.background_color ?
                                                             <TableRow>
-                                                                <TableCell>Background:</TableCell>
+                                                                <TableCell>{t('Background')}:</TableCell>
                                                                 <TableCell>#{collectionitem.background_color}</TableCell>
                                                             </TableRow>
                                                         : null }
 
                                                         {collectionrawdata?.updateAuthority ?
                                                             <TableRow>
-                                                                <TableCell>Update Authority:</TableCell>
+                                                                <TableCell>{t('Update Authority')}:</TableCell>
                                                                 <TableCell>
                                                                     <MakeLinkableAddress addr={collectionrawdata.updateAuthority} trim={5} hasextlink={true} hascopy={false} fontsize={14} />
                                                                 </TableCell>
@@ -1234,52 +1240,52 @@ function GalleryItemMeta(props: any) {
                                                         : null }
                                                         {collectionrawdata?.isMutable == 1 ?
                                                             <TableRow>
-                                                                <TableCell>Mutable:</TableCell>
+                                                                <TableCell>{t('Mutable')}:</TableCell>
                                                                 <TableCell><LockOpenIcon /></TableCell>
                                                             </TableRow>
                                                         : 
                                                             <TableRow>
-                                                                <TableCell>Mutable:</TableCell>
-                                                                <TableCell><Tooltip title={`This is immutable`}><LockIcon /></Tooltip></TableCell>
+                                                                <TableCell>{t('Mutable')}:</TableCell>
+                                                                <TableCell><Tooltip title={t('This is immutable')}><LockIcon /></Tooltip></TableCell>
                                                             </TableRow> }
                                                         {collectionrawdata?.primarySaleHappened ? 
                                                             <TableRow>
-                                                                <TableCell>Primary Sale:</TableCell>
+                                                                <TableCell>{t('Primary Sale')}:</TableCell>
                                                                 <TableCell><CheckCircleIcon /></TableCell>
                                                             </TableRow>
                                                         : 
                                                         <TableRow>
-                                                            <TableCell>Primary Sale:</TableCell>
-                                                            <TableCell><Tooltip title={`Primary sale has not occured as of this fetch`}><BlockIcon /></Tooltip></TableCell>
+                                                            <TableCell>{t('Primary Sale')}:</TableCell>
+                                                            <TableCell><Tooltip title={t('Primary sale has not occured as of this fetch')}><BlockIcon /></Tooltip></TableCell>
                                                         </TableRow>
                                                         }
 
                                                         {collectionitem?.createdAt ?
                                                             <TableRow>
-                                                                <TableCell>Created At:</TableCell>
+                                                                <TableCell>{t('Created At')}:</TableCell>
                                                                 <TableCell>{formatBlockTime(collectionitem.createdAt, false, false)}</TableCell>
                                                             </TableRow>
                                                         : null }
                                                         {collectionitem?.updatedAt ?
                                                             <TableRow>
-                                                                <TableCell>Updated At:</TableCell>
+                                                                <TableCell>{t('Updated At')}:</TableCell>
                                                                 <TableCell>{formatBlockTime(collectionitem.updatedAt, false, false)}</TableCell>
                                                             </TableRow>
                                                         : null }
                                                         {collectionitem?.deactivated ?
                                                             <TableRow>
-                                                                <TableCell>Deactivated:</TableCell>
-                                                                <TableCell><Tooltip title={`This is deactivated`}><CheckCircleIcon /></Tooltip></TableCell>
+                                                                <TableCell>{t('Deactivated')}:</TableCell>
+                                                                <TableCell><Tooltip title={t('This is deactivated')}><CheckCircleIcon /></Tooltip></TableCell>
                                                             </TableRow>
                                                         : null }
 
                                                         {collectionitem.image ?
                                                             
                                                             <TableRow>
-                                                                <TableCell>Image:</TableCell>
+                                                                <TableCell>{t('Image')}:</TableCell>
                                                                 <TableCell>
                                                                     <Button size="small" variant="text" component="a" href={`${collectionitem.image}`} target="_blank">
-                                                                        View Original <OpenInNewIcon sx={{fontSize:12, ml:1}} />
+                                                                    {t('View Original')} <OpenInNewIcon sx={{fontSize:12, ml:1}} />
                                                                     </Button>
                                                                 </TableCell>
                                                             </TableRow>
@@ -1333,7 +1339,7 @@ function GalleryItemMeta(props: any) {
                                                             <>
                                                                 {(OTHER_MARKETPLACES.filter(e => e.address === tokenOwners?.data.parsed.info.owner)).map(filteredMarket => (
                                                                 <>
-                                                                Listed on 
+                                                                {t('Listed on')}
                                                                     {(filteredMarket.name.length > 0) ? (
                                                                         <>  
                                                                             
@@ -1387,8 +1393,8 @@ function GalleryItemMeta(props: any) {
                                                                 <Grid item>
                                                                 {solanaDomain && solanaDomain.length > 0 ?
                                                                 <>
-                                                                    Owned by 
-                                                                    <Tooltip title={`Visit profile`}>
+                                                                    {t('Owned by')} 
+                                                                    <Tooltip title={t('Visit Profile')}>
                                                                         <Button
                                                                             component={Link} 
                                                                             to={`${GRAPE_PROFILE}${tokenOwners?.data.parsed.info.owner}`}
@@ -1402,8 +1408,8 @@ function GalleryItemMeta(props: any) {
                                                                 </>
                                                                 :
                                                                 <>
-                                                                    Owned by 
-                                                                    <Tooltip title={`Visit profile`}>
+                                                                    {t('Owned by')} 
+                                                                    <Tooltip title={t('Visit Profile')}>
                                                                         <Button
                                                                             component={Link} 
                                                                             to={`${GRAPE_PROFILE}${tokenOwners?.data.parsed.info.owner}`}
@@ -1424,11 +1430,11 @@ function GalleryItemMeta(props: any) {
                                                                         display: "flex",
                                                                         justifyContent: 'flex-end'
                                                                     }}>
-                                                                    <Tooltip title={`Explorer`}>
+                                                                    <Tooltip title={t('Explorer')}>
                                                                         <Button size="small" variant="text" component="a" href={`https://explorer.solana.com/address/${tokenOwners?.data.parsed.info.owner}`} target="_blank" sx={{borderRadius:'24px', color:'white', pl:0, pr:0}}> <OpenInNewIcon sx={{fontSize:'14px'}} /></Button>
                                                                     </Tooltip>
                                                                     {publicKey && publicKey.toBase58() === tokenOwners?.data.parsed.info.owner ?
-                                                                        <Tooltip title={`Set this NFT as your avatar`}>
+                                                                        <Tooltip title={t('Set this NFT as your avatar')}>
                                                                             <Button 
                                                                                 variant="text" 
                                                                                 onClick={HandleSetAvatar}
@@ -1456,7 +1462,7 @@ function GalleryItemMeta(props: any) {
                                                                             {isFollowing ?  
                                                                                     <Button 
                                                                                         variant="text" 
-                                                                                        title="Unfollow"
+                                                                                        title={t('Unfollow')}
                                                                                         onClick={() => followWalletDisconnect(tokenOwners?.data.parsed.info.owner)}
                                                                                         size="small"
                                                                                         className="profileAvatarIcon"
@@ -1467,7 +1473,7 @@ function GalleryItemMeta(props: any) {
                                                                                 :
                                                                                     <Button 
                                                                                         variant="text" 
-                                                                                        title="Follow"
+                                                                                        title={t('Follow')}
                                                                                         onClick={() => followWalletConnect(tokenOwners?.data.parsed.info.owner, solanaDomain || '')}
                                                                                         size="small"
                                                                                         className="profileAvatarIcon"
@@ -1484,7 +1490,7 @@ function GalleryItemMeta(props: any) {
                                                                 </Grid>
                                                                 
                                                             </Grid>
-                                                            :<>Loading owner</>}
+                                                            :<>{t('Loading owner')}</>}
                                                             </>
                                                         )
                                                     }
@@ -1528,7 +1534,7 @@ function GalleryItemMeta(props: any) {
                                             <ListItemIcon>
                                             <FormatListBulletedIcon />
                                             </ListItemIcon>
-                                            <ListItemText primary="Traits" />
+                                            <ListItemText primary={t('Traits')} />
                                             {open_traits ? <ExpandLess /> : <ExpandMoreIcon />}
                                         </ListItemButton>
                                         <Collapse in={open_traits} timeout="auto" unmountOnExit>
@@ -1782,6 +1788,8 @@ export function PreviewView(this: any, props: any) {
         }
     }
 
+    const { t, i18n } = useTranslation();
+
     return (
         <React.Fragment>
                 { mint && ValidateAddress(mint) ?
@@ -1830,7 +1838,7 @@ export function PreviewView(this: any, props: any) {
                                             color="inherit"
                                             display='flex'
                                             sx={{mb:3}}
-                                        >ooops... you entered an invalid address!</Typography>
+                                        >{t('ooops... you entered an invalid address!')}</Typography>
 
                                     </Grid>
                                 </Grid>

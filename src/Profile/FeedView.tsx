@@ -38,6 +38,8 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { GRAPE_RPC_ENDPOINT, GRAPE_PREVIEW } from '../utils/grapeTools/constants';
 import { trimAddress, timeAgo } from '../utils/grapeTools/WalletAddress'; // global key handling
 
+import { useTranslation } from 'react-i18next';
+
 function convertSolVal(sol: any){
     return parseFloat(new TokenAmount(sol, 9).format());
 }
@@ -110,6 +112,8 @@ export default function FeedView(props: any){
         // IMPORTANT FIX:
         // We need to get the mint owner
         // Check if owner is on curve otherwise this is program owned and probably no longer lists on grape.art
+
+        const { t, i18n } = useTranslation();
 
         if (!finalMeta){
             return (
@@ -238,7 +242,7 @@ export default function FeedView(props: any){
                                                 component={Link} 
                                                 to={`${GRAPE_PREVIEW}${itemraw.memo.mint}`}
                                             >
-                                                View
+                                                {t('View')}
                                             </Button>
                                         </Box>
                                     </Container>

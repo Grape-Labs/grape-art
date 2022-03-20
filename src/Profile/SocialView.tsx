@@ -33,6 +33,8 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { GRAPE_RPC_ENDPOINT, GRAPE_RPC_REFRESH, GRAPE_PREVIEW, GRAPE_PROFILE, FEATURED_DAO_ARRAY } from '../utils/grapeTools/constants';
 import { trimAddress } from '../utils/grapeTools/WalletAddress'; // global key handling
 
+import { useTranslation } from 'react-i18next';
+
 export default function SocialView(props: any){
     const [pubkey, setPubKey] = React.useState<string>(props.pubkey || null);
     const [type, setType] = React.useState<number>(props.type || 0);
@@ -222,6 +224,8 @@ export default function SocialView(props: any){
         const [followitem, setFollowItem] = React.useState(props.followitem);
         const [followitemkey, setFollowItemKey] = React.useState(props.followitemkey);
         const following = props.following;
+    
+        const { t, i18n } = useTranslation();
 
         if (loading){
             return <Grid item xs={12} sm={6} md={4}><CircularProgress /></Grid>
@@ -249,13 +253,13 @@ export default function SocialView(props: any){
                                 <ListItemText
                                     sx={{ml:1}}
                                     primary={followitem.alias || followitem.ens || trimAddress(followitem.address,4)}  
-                                    secondary={<Typography variant="caption" color="#777">From {followitem.namespace}</Typography>}
+                                    secondary={<Typography variant="caption" color="#777">{t('From')} {followitem.namespace}</Typography>}
                                 />
                             :
                             <ListItemText
                                 sx={{ml:1}}
                                 primary={followitem.ens || trimAddress(followitem.address,4)}  
-                                secondary={<Typography variant="caption" color="#777">From {followitem.namespace}</Typography>}
+                                secondary={<Typography variant="caption" color="#777">{t('From')} {followitem.namespace}</Typography>}
                             />
                             }
                         </ListItemButton>
@@ -273,6 +277,7 @@ export default function SocialView(props: any){
         }
     }, []);
     
+    const { t, i18n } = useTranslation();
 
     if (loading){
         return (
@@ -316,7 +321,7 @@ export default function SocialView(props: any){
                             }
                             
                             {followListInfo?.followers.pageInfo.hasNextPage &&
-                                <Button onClick={() => fetchMore('followers')}>more</Button>
+                                <Button onClick={() => fetchMore('followers')}>{t('more')}</Button>
                             }
                         </>
                         :
@@ -329,7 +334,7 @@ export default function SocialView(props: any){
                                 </Grid>
                             }
                             {followListInfo?.followings.pageInfo.hasNextPage &&
-                                <Button onClick={() => fetchMore('followings')}>more</Button>
+                                <Button onClick={() => fetchMore('followings')}>{t('more')}</Button>
                             }
                         </>
                         }

@@ -1,5 +1,5 @@
 
-import React, { useEffect } from "react";
+import React, { useEffect, Suspense } from "react";
 import { Global } from '@emotion/react';
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import { decodeMetadata } from '../utils/grapeTools/utils';
@@ -53,6 +53,8 @@ import { ValidateAddress, trimAddress, timeAgo, formatBlockTime } from '../utils
 import { GRAPE_RPC_ENDPOINT, GRAPE_PROFILE, GRAPE_PREVIEW } from '../utils/grapeTools/constants';
 import { ConstructionOutlined, JavascriptRounded } from "@mui/icons-material";
 
+import { useTranslation } from 'react-i18next';
+
 export function IdentityView(props: any){
     const [profilePictureUrl, setProfilePictureUrl] = React.useState(null);
     const [solanaDomain, setSolanaDomain] = React.useState(null);
@@ -69,10 +71,12 @@ export function IdentityView(props: any){
     const urlParams = searchParams.get("pkey") || searchParams.get("address") || handlekey;
     const [value, setValue] = React.useState('1');
 
+    const { t, i18n } = useTranslation();
+
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
-    
+
     const fetchSolanaBalance = async () => {
         const response = await ggoconnection.getBalance(new PublicKey(pubkey));
         setSolanaBalance(response);
@@ -225,12 +229,12 @@ export function IdentityView(props: any){
     if (loading){
         return (
             <>
-                Loading your solana profile
+                {t('Loading your solana profile')}
             </>
         );
     } else{
         return (
-                <Container>
+            <Container>
                     <Box
                         className="grape-art-generic-placeholder-container"
                     > 
@@ -245,7 +249,7 @@ export function IdentityView(props: any){
                                 <Grid 
                                     item xs={12}
                                 >
-                                    <Tooltip title="Back go Profile">
+                                    <Tooltip title={t('Back go Profile')}>
                                         <Button
                                             component={Link} 
                                             to={`${GRAPE_PROFILE}${pubkey}`}
@@ -272,7 +276,7 @@ export function IdentityView(props: any){
                                             color="inherit"
                                             display='flex'
                                             sx={{mb:3}}
-                                        ><SolIcon sx={{fontSize:'20px',mr:1}} /> SOLANA IDENTITY</Typography>
+                                        ><SolIcon sx={{fontSize:'20px',mr:1}} /> {t('SOLANA IDENTITY')}</Typography>
 
                                     </Grid>
                             </Grid>
@@ -283,11 +287,11 @@ export function IdentityView(props: any){
                                 <Typography
                                     variant="h6"
                                 >
-                                    ADDRESS:
+                                    {t('ADDRESS')}:
                                 </Typography>   
                                     <List dense={true}>
                                         <ListItem>
-                                            <Tooltip title="View on Solana Explorer">
+                                            <Tooltip title={t('View on Solana Explorer')}>
                                                 <ListItemButton 
                                                     component="a" 
                                                     href={`https://explorer.solana.com/address/${pubkey}`}
@@ -303,7 +307,7 @@ export function IdentityView(props: any){
                                                     </ListItemAvatar>
                                                     <ListItemText
                                                         primary={pubkey}
-                                                        secondary="Solana Address"
+                                                        secondary={t('Solana Address')}
                                                     />
                                                 </ListItemButton>
                                             </Tooltip>
@@ -313,13 +317,13 @@ export function IdentityView(props: any){
                                 <Typography
                                     variant="h6"
                                 >
-                                    PROFILE:
+                                    {t('PROFILE')}:
                                 </Typography>   
                                     <List dense={true}>
                                         {profilePictureUrl &&
                                             <ListItem>
                                                 {(profilePictureUrl.toLocaleUpperCase().indexOf("HTTPS://") > -1) ? (
-                                                    <Tooltip title="View Image">
+                                                    <Tooltip title={t('View Image')}>
                                                         <ListItemButton
                                                             component="a" 
                                                             href={profilePictureUrl}
@@ -335,7 +339,7 @@ export function IdentityView(props: any){
                                                             </ListItemAvatar>
                                                             <ListItemText
                                                                 primary={profilePictureUrl}
-                                                                secondary="Solana Profile Picture"
+                                                                secondary={t('Solana Profile Picture')}
                                                             />
                                                         </ListItemButton>
                                                     </Tooltip>
@@ -351,7 +355,7 @@ export function IdentityView(props: any){
                                                         </ListItemAvatar>
                                                         <ListItemText
                                                             primary={profilePictureUrl}
-                                                            secondary="Solana Profile Picture"
+                                                            secondary={t('Solana Profile Picture')}
                                                         />
                                                     </>
                                                 )}
@@ -365,7 +369,7 @@ export function IdentityView(props: any){
                                         <Typography
                                             variant="h6"
                                         >
-                                            DOMAINS/REGISTRATIONS: 
+                                            {t('DOMAINS/REGISTRATIONS')}: 
                                             <Typography
                                                 variant="body2"
                                                 sx={{ml:2}}
@@ -377,7 +381,7 @@ export function IdentityView(props: any){
                                                 {solanaDomain && solanaDomain?.map((item: any) => (
                                                     <ListItem>
                                                         {(item.toLocaleUpperCase().indexOf(".SOL") > -1) ? (
-                                                            <Tooltip title="View registration">
+                                                            <Tooltip title={t('View registration')}>
                                                                 <ListItemButton
                                                                     component="a" 
                                                                     href={`https://naming.bonfida.org/#/domain/${item.slice(0,item.indexOf(".sol"))}`}
@@ -393,7 +397,7 @@ export function IdentityView(props: any){
                                                                     </ListItemAvatar>
                                                                     <ListItemText
                                                                         primary={JSON.stringify(item)}
-                                                                        secondary='Solana Domain'
+                                                                        secondary={t('Solana Domain')}
                                                                         
                                                                     />
                                                                 </ListItemButton>
@@ -409,7 +413,7 @@ export function IdentityView(props: any){
                                                                 </ListItemAvatar>
                                                                 <ListItemText
                                                                     primary={JSON.stringify(item)}
-                                                                    secondary={(item.slice(0,1) === '@') && <>Twitter Handle</>}
+                                                                    secondary={(item.slice(0,1) === '@') && <>{t('Twitter Handle')}</>}
                                                                     
                                                                 />
                                                             </>
@@ -449,10 +453,10 @@ export function IdentityView(props: any){
                                                 <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                                                 <TabList onChange={handleChange} aria-label="lab API tabs example">
                                                     <Tab sx={{color:'white'}} label={
-                                                        <Typography variant="h6">Tokens {solanaHoldings.length}</Typography>
+                                                        <Typography variant="h6">{t('Tokens')} {solanaHoldings.length}</Typography>
                                                     } value="1" />
                                                     <Tab sx={{color:'white'}} label={
-                                                        <Typography variant="h6">Transactions</Typography>
+                                                        <Typography variant="h6">{t('Transactions')}</Typography>
                                                     } value="2" />
                                                 </TabList>
                                                 </Box>
@@ -506,7 +510,7 @@ export function IdentityView(props: any){
                                                     </List>
                                                 :
                                                 <List dense={true}>
-                                                    <ListItem key={0}>No tokens on this address!</ListItem>    
+                                                    <ListItem key={0}>{t('No tokens on this address!')}</ListItem>    
                                                 </List>
                                                 }
                                                 </TabPanel>
@@ -548,9 +552,9 @@ export function IdentityView(props: any){
                                                     :
                                                     <List dense={true}>
                                                         {loadingTransactions ?
-                                                            <ListItem key={0}>Loading transactions...</ListItem>    
+                                                            <ListItem key={0}>{t('Loading transactions...')}</ListItem>    
                                                         :
-                                                            <ListItem key={0}>No transactions for this address!</ListItem>    
+                                                            <ListItem key={0}>{t('No transactions for this address!')}</ListItem>    
                                                         }
                                                     </List>
                                                 }
