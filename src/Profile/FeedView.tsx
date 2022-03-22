@@ -11,6 +11,10 @@ import { Connection, PublicKey } from '@solana/web3.js';
 
 import { Button } from '@mui/material';
 
+import CyberConnect, { Env, Blockchain, solana, ConnectionType } from '@cyberlab/cyberconnect';
+import { FollowListInfoResp, SearchUserInfoResp, Network } from '../utils/cyberConnect/types';
+import { followListInfoQuery, searchUserInfoQuery } from '../utils/cyberConnect/query';
+
 import {
     METAPLEX_PROGRAM_ID,
     ENV_AH,
@@ -29,13 +33,20 @@ import {
     Stack,
     ListItemButton,
     Container,
+    Tooltip,
 } from '@mui/material';
 
 import SolCurrencyIcon from '../components/static/SolCurrencyIcon';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import CircularProgress from '@mui/material/CircularProgress';
+import WarningIcon from '@mui/icons-material/Warning';
 
-import { GRAPE_RPC_ENDPOINT, GRAPE_PREVIEW } from '../utils/grapeTools/constants';
+import { 
+    GRAPE_RPC_ENDPOINT, 
+    GRAPE_PREVIEW,
+    REPORT_ALERT_THRESHOLD,
+    FREE_RPC_ENDPOINT, 
+} from '../utils/grapeTools/constants';
 import { trimAddress, timeAgo } from '../utils/grapeTools/WalletAddress'; // global key handling
 
 import { useTranslation } from 'react-i18next';
@@ -57,6 +68,131 @@ function solanaCDN(image:string){
 // 1. is the nft still on curve? if not on curve this will not show up in our feed any longer
 // 2. check if it is has a sell state (note that offers take it off sale state for the feed)
 // 3. consider showing a new place for recent offers 
+
+export function MintFlagState(props: any){
+    const [isFlagged, setIsFlagged] = React.useState(false);
+    const [loading, setLoading] = React.useState(false);
+    const [loadingFlaggedState, setLoadingFlaggedState] = React.useState(false);
+    const [searchAddrInfo, setSearchAddrInfo] = useState<SearchUserInfoResp | null>(null);
+    const [reportalertopen, setReportAlertOpen] = React.useState(false);
+    const [warningreportopen, setWarningReportOpen] = React.useState(false);
+    
+    const { publicKey, sendTransaction } = useWallet();
+
+    const [followListInfo, setFollowListInfo] = useState<FollowListInfoResp | null>(null);
+    const solanaProvider = useWallet();
+    const mint = props.mint;
+    
+    const NAME_SPACE = 'Grape';
+    const NETWORK = Network.SOLANA;
+    const FIRST = 10; // The number of users in followings/followers list for each fetch
+    
+    const cyberConnect = new CyberConnect({
+        namespace: 'Grape',
+        env: Env.PRODUCTION,
+        chain: Blockchain.SOLANA,
+        provider: solanaProvider,
+        chainRef: solana.SOLANA_MAINNET_CHAIN_REF,
+        signingMessageEntity: 'Grape' || 'CyberConnect',
+    });
+
+    const handleAlertReportClose = () => {
+        setReportAlertOpen(false);
+    };
+
+    const handleWarningReportClose = () => {
+        setWarningReportOpen(false);
+    };
+
+    const getFlagStatus = async () => {
+        if (mint){
+            setLoadingFlaggedState(true);
+            let socialconnection = await fetchSearchAddrInfo(publicKey.toBase58(), mint);
+            if (socialconnection){
+                //if (socialconnection?.identity){
+                if (socialconnection?.connections[0]?.followStatus) { 
+                    if ((socialconnection?.connections[0].type.toString() === "REPORT")||
+                        (socialconnection?.connections[0].type.toString() === "FOLLOW"))
+                        setIsFlagged(socialconnection?.connections[0].followStatus.isFollowing);
+                }
+            }
+            setLoadingFlaggedState(false);
+        } 
+    }
+
+    const fetchSearchAddrInfo = async (fromAddr:string, toAddr: string) => {
+        const resp = await searchUserInfoQuery({
+            fromAddr:fromAddr,
+            toAddr,
+            namespace: 'Grape',
+            network: Network.SOLANA,
+            type: 'REPORT',
+        });
+        if (resp) {
+            setSearchAddrInfo(resp);
+        }
+
+        return resp;
+    };
+
+    // Get the current user followings and followers list
+    const initFollowListInfo = async () => {
+        if (!mint) {
+        return;
+        }
+        
+        setLoading(true);
+        const resp = await followListInfoQuery({
+            address:mint,
+            namespace: '',
+            network: NETWORK,
+            followingFirst: FIRST,
+            followerFirst: FIRST,
+        });
+        if (resp) {
+            setFollowListInfo(resp);
+            if (+resp?.reported >= REPORT_ALERT_THRESHOLD)
+                setWarningReportOpen(true);
+        }
+        setLoading(false);
+    };
+
+    React.useEffect(() => {
+        initFollowListInfo();
+        getFlagStatus();
+    },[]);
+    
+    return ( 
+        <>
+        {loadingFlaggedState ?
+            <Button 
+                sx={{borderRadius:'24px'}}
+            >
+                <CircularProgress sx={{p:'14px',m:-2}} />
+            </Button>
+        :
+            <>
+            {isFlagged ?  
+                    <>
+                    {followListInfo?.reported && +followListInfo?.reported > 0 ?
+                        <Typography variant="caption" sx={{ml:1}}>
+                            <Tooltip title="WARNING: This mint has been reported by the community">
+                                <Button>
+                                    <WarningIcon sx={{mr:1, fontSize:'20px', color:'yellow'}} /> {followListInfo?.reported}
+                                </Button>
+                            </Tooltip>
+                        </Typography>
+                    :<></>}
+                    </>
+                :
+                    <>
+                    </>
+            }
+            </>
+        }
+        </>
+    );
+}
 
 export default function FeedView(props: any){
     const [loading, setLoading] = React.useState(false);
@@ -107,7 +243,6 @@ export default function FeedView(props: any){
                 getMeta();
             }
         }, [itemraw]);
-
 
         // IMPORTANT FIX:
         // We need to get the mint owner
@@ -213,9 +348,14 @@ export default function FeedView(props: any){
                                 >
                                     <Container>
                                     {finalMeta?.symbol &&
-                                        <Typography variant="caption">
-                                            {finalMeta?.symbol}
-                                        </Typography>
+                                        <>
+                                            <>
+                                                <MintFlagState mint={itemraw.memo.mint} />
+                                            </>
+                                            <Typography variant="caption">
+                                                {finalMeta?.symbol}
+                                            </Typography>
+                                        </>
                                         }
                                         <Typography variant="h4">
                                             {finalMeta?.name}
