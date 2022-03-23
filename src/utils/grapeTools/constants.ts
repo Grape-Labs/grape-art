@@ -18,7 +18,7 @@ export const TOKEN_VERIFICATION_NAME = 'Grape';
 export const TOKEN_VERIFICATION_AMOUNT = 1000;
 export const TOKEN_REALM_ID = 'By2sVGZXwfQq6rAiAM3rNPJ9iQfb5e2QhnF4YjJ4Bip';
 export const TOKEN_REALM_PROGRAM_ID = 'GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw';
-
+export const COLLABORATION_DAO = 'JAbgQLj9MoJ2Kvie8t8Y6z6as3Epf7rDp87Po3wFwrNK';
 export const FEATURED_DAO_ARRAY = [{
     address:'66pJhhESDjdeBBDdkKmxYYd7q6GUggYPWjxpMKNX39KV',
     daourl:'https://realms.today/dao/Ukraine',
