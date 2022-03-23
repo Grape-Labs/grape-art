@@ -1,6 +1,10 @@
 {
   "name": "grape-marketplace",
+<<<<<<< HEAD
   "version": "1.1.173",
+=======
+  "version": "1.1.155",
+>>>>>>> parent of 541030f (Merge branch 'main' into DAOCollaboration)
   "private": true,
   "proxy": "http://localhost:3000/",
   "dependencies": {
@@ -45,7 +49,7 @@
     "@react-three/drei": "^7.14.2",
     "@react-three/fiber": "^7.0.15",
     "@solana/pay": "^0.1.0-alpha.7",
-    "@solana/spl-governance": "^0.0.29",
+    "@solana/spl-governance": "^0.0.28",
     "@solana/spl-name-service": "^0.1.3",
     "@solana/spl-token": "0.1.8",
     "@solana/spl-token-registry": "^0.2.1280",
@@ -78,9 +82,6 @@
     "eventemitter3": "^4.0.7",
     "fs": "^0.0.1-security",
     "fs.promises": "^0.1.2",
-    "i18next": "^21.6.13",
-    "i18next-browser-languagedetector": "^6.1.3",
-    "i18next-http-backend": "^1.3.2",
     "lodash-es": "^4.17.21",
     "material-ui-player": "^0.2.5",
     "material-ui-popup-state": "^2.0.0",
@@ -96,7 +97,6 @@
     "react-copy-to-clipboard": "^5.0.4",
     "react-dom": "^17.0.2",
     "react-helmet": "^6.1.0",
-    "react-i18next": "^11.15.6",
     "react-infinite-scroll-component": "^6.1.0",
     "react-jazzicon": "^1.0.3",
     "react-player": "^2.9.0",

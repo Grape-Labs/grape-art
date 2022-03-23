@@ -51,32 +51,13 @@ export function timeAgo(blockTime:string){
     }
 }
 
-export function formatBlockTime(date: string, epoch: boolean, time: boolean){
-    // TODO: make a clickable date to change from epoch, to time from, to UTC, to local date
-    let date_str = new Date(date).toLocaleDateString(); //.toUTCString();
-    if (time)
-        date_str = new Date(date).toLocaleString();
-    if (epoch){
-        date_str = new Date(+date * 1000).toLocaleDateString(); //.toUTCString();
-        if (time)
-            date_str = new Date(+date * 1000).toLocaleString(); //.toUTCString();
-    }
-    return date_str
-    
-}
-
-export function trimAddress(addr: string, trim:any) {
-    if ((addr) && (addr.length > trim)){
-        let start = addr.substring(0, trim);
-        let end = addr.substring(addr.length - trim);
-        return `${start}...${end}`;
-    } else{
-        return addr;
-    }
+export function trimAddress(addr: any, trim:any) {
+    let start = addr.substring(0, trim);
+    let end = addr.substring(addr.length - trim);
+    return `${start}...${end}`;
 }
 
 export function ValidateCurve(address:string){
-    //console.log("On Curve: "+PublicKey.isOnCurve(new PublicKey(address).toBuffer()));
     return PublicKey.isOnCurve(new PublicKey(address).toBuffer());
 }
 
@@ -98,6 +79,7 @@ export function ValidateAddress(address:any){
             return false;
         }
     } catch(e){console.log("ERR: "+e)};
+    
     return false;
     
 }

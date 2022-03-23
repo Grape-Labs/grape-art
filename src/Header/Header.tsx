@@ -39,8 +39,6 @@ import SearchIcon from '@mui/icons-material/Search';
 import { GRAPE_PROFILE, GRAPE_PREVIEW } from '../utils/grapeTools/constants';
 import { ValidateAddress } from '../utils/grapeTools/WalletAddress'; // global key handling
 
-import { useTranslation } from 'react-i18next';
-
 require('@solana/wallet-adapter-react-ui/styles.css');
 
 export interface State extends SnackbarOrigin {
@@ -223,7 +221,7 @@ export function Header(props: any) {
 
         return (
             <Dialog onClose={handleCloseWallet} aria-labelledby="simple-dialog-title" open={open_wallet}>
-                <DialogTitle id="simple-dialog-title">{t('Select Wallet')}</DialogTitle>
+                <DialogTitle id="simple-dialog-title">Select Wallet</DialogTitle>
                 <List>
                     {providers.map((provider) => (
                         <ListItem button onClick={() => handleListItemClick(provider)} key={provider}>
@@ -236,17 +234,15 @@ export function Header(props: any) {
     }
 
     const handleClickSnackbar = () => {
-        enqueueSnackbar(`${t('Copied...')}`,{ variant: 'success' });
+        enqueueSnackbar(`Copied...`,{ variant: 'success' });
         
         handleMenuClose();
         //setSnackbarState(true);
     };
 
-    const { t, i18n } = useTranslation();
-
     function handlePublicKeySubmit(event: any) {
         event.preventDefault();
-        //console.log(""+newinputpkvalue+" ("+newinputpkvalue.length+"): " +ValidateAddress(newinputpkvalue));
+        
         if ((newinputpkvalue && newinputpkvalue.length>0 && ValidateAddress(newinputpkvalue))||
             ((newinputpkvalue.toLocaleUpperCase().indexOf(".SOL") > -1) || (newinputpkvalue.slice(0,1) === '@'))){
             navigate({
@@ -256,7 +252,6 @@ export function Header(props: any) {
             );
             setNewInputPKValue('');
         } else if (newinputpkvalue && newinputpkvalue.length>0){
-            
             if (newinputpkvalue.toLocaleUpperCase().indexOf("MINT:") > -1){
                 let mint = newinputpkvalue.slice(5,newinputpkvalue.length);
                 if (ValidateAddress(mint)){
@@ -301,7 +296,7 @@ export function Header(props: any) {
                         onSubmit={handlePublicKeySubmit}
                         sx={{background:'none'}}
                         >
-                        <Tooltip title={t('Search by mint address by entering: mint:address')}>
+                        <Tooltip title='Search by mint address by entering "mint:address"'>
                             <Search
                                 sx={{height:'40px'}}
                             >
@@ -310,7 +305,7 @@ export function Header(props: any) {
                                 </SearchIconWrapper>
                                 <StyledInputBase
                                     sx={{height:'40px', width:'100%'}}
-                                    placeholder={t('Search Solana Address')}
+                                    placeholder="Search Solana Address"
                                     inputProps={{ 'aria-label': 'search' }}
                                     value={newinputpkvalue}
                                     onChange={(e) => setNewInputPKValue(e.target.value)}

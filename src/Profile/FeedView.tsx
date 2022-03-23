@@ -12,7 +12,6 @@ import { Connection, PublicKey } from '@solana/web3.js';
 import { Button } from '@mui/material';
 
 import {
-    METAPLEX_PROGRAM_ID,
     ENV_AH,
     AUCTION_HOUSE_ADDRESS,
   } from '../utils/auctionHouse/helpers/constants';
@@ -34,11 +33,15 @@ import {
 import SolCurrencyIcon from '../components/static/SolCurrencyIcon';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import CircularProgress from '@mui/material/CircularProgress';
+<<<<<<< HEAD
 
 import { GRAPE_RPC_ENDPOINT, GRAPE_PREVIEW } from '../utils/grapeTools/constants';
 import { trimAddress, timeAgo } from '../utils/grapeTools/WalletAddress'; // global key handling
+=======
+>>>>>>> parent of 541030f (Merge branch 'main' into DAOCollaboration)
 
-import { useTranslation } from 'react-i18next';
+import { GRAPE_RPC_ENDPOINT, GRAPE_PREVIEW } from '../utils/grapeTools/constants';
+import { trimAddress, timeAgo } from '../utils/grapeTools/WalletAddress'; // global key handling
 
 function convertSolVal(sol: any){
     return parseFloat(new TokenAmount(sol, 9).format());
@@ -53,11 +56,14 @@ function solanaCDN(image:string){
     return image;
 }
 
+<<<<<<< HEAD
 // TAKE INTO ACCOUNT:
 // 1. is the nft still on curve? if not on curve this will not show up in our feed any longer
 // 2. check if it is has a sell state (note that offers take it off sale state for the feed)
 // 3. consider showing a new place for recent offers 
 
+=======
+>>>>>>> parent of 541030f (Merge branch 'main' into DAOCollaboration)
 export default function FeedView(props: any){
     const [loading, setLoading] = React.useState(false);
     const [limit, setLimit] = React.useState(25);
@@ -70,7 +76,7 @@ export default function FeedView(props: any){
     const { connection } = useConnection();
 
     const [saleTimeAgo, setSaleTimeAgo] = React.useState(null);
-    const MD_PUBKEY = METAPLEX_PROGRAM_ID;
+    const MD_PUBKEY = new PublicKey("metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s");
     
     const statestruct = ['Withdraw', 'Offer', 'Sale', 'Accepted from listing', 'Buy Now', 'Cancel', ''];
 
@@ -108,31 +114,18 @@ export default function FeedView(props: any){
             }
         }, [itemraw]);
 
+<<<<<<< HEAD
 
         // IMPORTANT FIX:
         // We need to get the mint owner
         // Check if owner is on curve otherwise this is program owned and probably no longer lists on grape.art
+=======
+>>>>>>> parent of 541030f (Merge branch 'main' into DAOCollaboration)
 
-        const { t, i18n } = useTranslation();
+        //console.log("HERE: "+JSON.stringify(item));
 
         if (!finalMeta){
-            return (
-                <Container
-                    className="grape-art-feed-outer-container"
-                >
-                    <Container
-                        className="grape-art-feed-inner-container"
-                    >
-                        <Grid 
-                            container 
-                            direction='row'
-                            className="grape-art-feed-overlay"
-                            >
-                            <CircularProgress />
-                        </Grid>
-                    </Container>
-                </Container>
-            )
+            return <><CircularProgress /></>
         } else{
             return (
                 <Container
@@ -242,7 +235,7 @@ export default function FeedView(props: any){
                                                 component={Link} 
                                                 to={`${GRAPE_PREVIEW}${itemraw.memo.mint}`}
                                             >
-                                                {t('View')}
+                                                View
                                             </Button>
                                         </Box>
                                     </Container>
@@ -280,18 +273,16 @@ export default function FeedView(props: any){
             const metadata = await ggoconnection.getMultipleAccountsInfo(mintsPDAs);
             
             // LOOP ALL METADATA WE HAVE
-            /*
             for (var metavalue of metadata){
                 
                 try{
-                    
                     let meta_primer = metavalue;
                     let buf = Buffer.from(metavalue.data);
                     let meta_final = decodeMetadata(buf);
                     
                 }catch(etfm){console.log("ERR: "+etfm + " for "+ JSON.stringify(metavalue));}
             }
-            */
+
             return metadata;
             
         } catch (e) { // Handle errors from invalid calls
@@ -363,7 +354,7 @@ export default function FeedView(props: any){
                                     for (var mx=0;mx<memo_instances;mx++){
                                         let init = submemo.indexOf('{');
                                         let fin = submemo.indexOf('}');
-                                        memo_str = submemo.slice(init,fin+1); // include brackets
+                                        memo_str = submemo.substr(init,fin-(init-1)); // include brackets
                                         memo_arr.push(memo_str);
                                         submemo = submemo.replace(memo_str, "");
                                         //console.log("pushed ("+mx+"):: "+memo_str + " init: "+init+" fin: "+fin);
@@ -372,14 +363,13 @@ export default function FeedView(props: any){
                                 } else{
                                     let init = memo_str.indexOf('{');
                                     let fin = memo_str.indexOf('}');
-                                    memo_str = memo_str.slice(init,fin+1); // include brackets
+                                    memo_str = memo_str.substr(init,fin); // include brackets
                                     memo_arr.push(memo_str);
                                 }
                                 
 
                                 for (var memo_item of memo_arr){
                                     try{
-
                                         const memo_json = JSON.parse(memo_item);
 
                                         //console.log('OFFER:: '+feePayer.toBase58() + '('+memo_json?.amount+' v '+amount_on_escrow+'): ' +memo_str);
@@ -404,14 +394,12 @@ export default function FeedView(props: any){
                                                 let offer = 0;
                                                 if (memo_json.state === 1)
                                                     offer = 1;
-                                                // 1. score will need to be decayed according to time
-                                                // 2. score will need to be decayed if reported and if reported > threshhold dont show
                                                 ahListings.push({amount: solvalue, mint: memo_json?.mint, timestamp: forSaleDate, blockTime:value.blockTime, state: memo_json?.state || memo_json?.status, offers: offer, score: memo_json?.score || 0});  
                                                 ahListingsMints.push(memo_json.mint);
                                                 
                                             }
                                         }
-                                    }catch(merr){console.log("ERR: "+merr + " - "+memo_item)}
+                                    }catch(merr){console.log("ERR: "+merr)}
                                 }
                             }
                         }

@@ -2,7 +2,7 @@ import { BasicUserInfo } from './types';
 
 export const formatAddress = (address: string) => {
   const len = address.length;
-  return address.substring(0, 5) + '...' + address.substring(len - 4, len);
+  return address.substr(0, 5) + '...' + address.substring(len - 4, len);
 };
 
 export const isValidAddr = (address: string) => {

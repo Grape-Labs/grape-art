@@ -1,19 +1,9 @@
-export interface LikeListInfoArgs {
-  address: string;
-  namespace?: string;
-  network?: string;
-  likeFirst?: number;
-  likeAfter?: string;
-  likedFirst?: number;
-  likedAfter?: string;
-  type?: string;
-}
-
 export interface FollowListInfoArgs {
     address: string;
     namespace?: string;
     network?: string;
-    alias?: string;
+    type?: string,
+    alias?: string,
     followingFirst?: number;
     followingAfter?: string;
     followerFirst?: number;
@@ -25,7 +15,7 @@ export interface FollowListInfoArgs {
     toAddr: string;
     namespace?: string;
     network?: string;
-    type?: string;
+    type?: string,
   }
   
   export interface BasicUserInfo {
@@ -42,14 +32,6 @@ export interface FollowListInfoArgs {
     list: BasicUserInfo[];
   }
   
-  export interface LikeListInfoResp {
-    likeCount: number;
-    likedCount: number;
-    likes?: FollowListInfo,
-    likeds?: FollowListInfo,
-    type?: ConnectionType,
-  }
-
   export interface FollowListInfoResp {
     followingCount: number;
     followerCount: number;
@@ -59,7 +41,6 @@ export interface FollowListInfoArgs {
     liked?: string,
     report?: string,
     reported?: string, 
-    type?: ConnectionType,
   }
   
   export interface SearchUserInfoResp {

@@ -20,11 +20,7 @@ import { MakeLinkableAddress, ValidateAddress, trimAddress, timeAgo } from '../u
 
 import { CardActionArea } from '@mui/material';
 
-import { useTranslation } from 'react-i18next';
-
 export function FeaturedView(props: any) {
-
-const { t, i18n } = useTranslation();
     
   return (
         <>
@@ -84,11 +80,11 @@ const { t, i18n } = useTranslation();
                             <Button size="small" 
                                 component="a" href={`${featured.daourl}`} target="_blank"
                                 sx={{borderRadius:'24px', color:'white'}}>
-                                {t('View DAO')}</Button>
+                                View DAO</Button>
                             <Button size="small"    
                                 component={Link} to={`${GRAPE_PROFILE}${featured.address}`}
                                 sx={{borderRadius:'24px', color:'white'}}
-                            >{t('View Collection')}</Button>
+                            >View Collection</Button>
                             <ShareSocialURL url={'https://grape.art'+GRAPE_PROFILE+featured.address} title={'Grape Profile | '+trimAddress(featured.address,4)} />
                         </ButtonGroup>
                     </Grid>

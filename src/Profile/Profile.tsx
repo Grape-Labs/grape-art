@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, memo, Suspense } from "react";
+import React, { useEffect, useState, useCallback, memo } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import { decodeMetadata } from '../utils/grapeTools/utils';
 // @ts-ignore
@@ -69,8 +69,7 @@ import {
 
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
 
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import ArtTrackOutlinedIcon from '@mui/icons-material/ArtTrackOutlined';
+
 import CollectionsOutlinedIcon from '@mui/icons-material/CollectionsOutlined';
 import RssFeedOutlinedIcon from '@mui/icons-material/RssFeedOutlined';
 import GavelOutlinedIcon from '@mui/icons-material/GavelOutlined';
@@ -93,11 +92,8 @@ import FeedView from './FeedView';
 import OffersView from './OffersView';
 import SocialView from './SocialView';
 import GalleryView from './GalleryView';
-import CurationView from './CurationView';
 import { MakeLinkableAddress, ValidateAddress, trimAddress, timeAgo } from '../utils/grapeTools/WalletAddress'; // global key handling
 import { ConstructionOutlined } from "@mui/icons-material";
-
-import { useTranslation } from 'react-i18next';
 
 const StyledTable = styled(Table)(({ theme }) => ({
     '& .MuiTableCell-root': {
@@ -185,8 +181,6 @@ const PubKeyDialog = (props: any) => {
             console.log("INVALID WALLET ID");
         }
     }
-
-    const { t, i18n } = useTranslation();
     
     return (
       <React.Fragment>
@@ -210,7 +204,7 @@ const PubKeyDialog = (props: any) => {
                 }}
             >
             <DialogTitle>
-                {t('Public Key')}
+                Public Key
             </DialogTitle>
             <form onSubmit={HandlePKSubmit}>
             <DialogContent>
@@ -219,7 +213,7 @@ const PubKeyDialog = (props: any) => {
                     autoComplete='off'
                     margin="dense"
                     id="collection_wallet_id"
-                    label={t('Paste a public key')}
+                    label="Paste a public key"
                     type="text"
                     fullWidth
                     variant="standard"
@@ -228,12 +222,12 @@ const PubKeyDialog = (props: any) => {
                 />
             </DialogContent>
             <DialogActions>
-                <Button onClick={handleCloseDialog}>{t('Cancel')}</Button>
+                <Button onClick={handleCloseDialog}>Cancel</Button>
                 <Button 
                     type="submit"
                     variant="text" 
                     title="GO">
-                        {t('Go')}
+                        Go
                 </Button>
             </DialogActions>
             </form>
@@ -446,8 +440,6 @@ const MainMenu = (props:any) => {
     const pubkey = props.pubkey;
     const { publicKey } = useWallet();
 
-    const { t, i18n } = useTranslation();
-
     if ((publicKey) && (publicKey.toBase58() != pubkey)){
         return (
         
@@ -456,7 +448,7 @@ const MainMenu = (props:any) => {
             >
                 <ListItem disablePadding>
                     <ListItemButton
-                        title={t('Back Home')}
+                        title="Back Home"
                         component={Link} to={`${GRAPE_PROFILE}${publicKey.toBase58()}`}
                         sx={{
                             width:'100%',
@@ -473,8 +465,8 @@ const MainMenu = (props:any) => {
     
                 <ListItem disablePadding>
                     <ListItemButton
-                        title={t('Visit Solana Explorer')}
-                        component="a" href={`https://explorer.solana.com/address/${pubkey}`} target="_blank"
+                        title="Visit Solana Explorer"
+                        component="a" href={`https://explorer.solana.com/address/${publicKey.toBase58()}`} target="_blank"
                         sx={{
                             width:'100%',
                             borderRadius:'25px',
@@ -574,8 +566,6 @@ const MainPanel = (props: any) => {
         setTabValue(newValue);
     };
 
-    const { t, i18n } = useTranslation();
-
     function a11yProps(index: number) {
         return {
             id: `grapeart-tab-${index}`,
@@ -624,25 +614,28 @@ const MainPanel = (props: any) => {
                                 mb:1,
                             }} 
                         >
-                            <Tab icon={<Hidden smUp><CollectionsOutlinedIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>{t('Collection')}</Hidden>} sx={{color:'white',minWidth:'25px'}} {...a11yProps(0)} />
-                            <Tab icon={<Hidden smUp><RssFeedOutlinedIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>{t('Feed')}</Hidden>} sx={{color:'white',minWidth:'25px'}} {...a11yProps(1)} />
-                            <Tab icon={<Hidden smUp><ArrowCircleLeftOutlinedIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>{t('Followers')}</Hidden>} sx={{color:'white',minWidth:'25px'}} {...a11yProps(2)} />
-                            <Tab icon={<Hidden smUp><ArrowCircleRightOutlinedIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>{t('Following')}</Hidden>} sx={{color:'white',minWidth:'25px'}} {...a11yProps(3)} />
+                            <Tab icon={<Hidden smUp><CollectionsOutlinedIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>Collection</Hidden>} sx={{color:'white',minWidth:'60px'}} {...a11yProps(0)} />
+                            <Tab icon={<Hidden smUp><RssFeedOutlinedIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>Feed</Hidden>} sx={{color:'white',minWidth:'60px'}} {...a11yProps(1)} />
+                            <Tab icon={<Hidden smUp><ArrowCircleLeftOutlinedIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>Followers</Hidden>} sx={{color:'white',minWidth:'60px'}} {...a11yProps(2)} />
+                            <Tab icon={<Hidden smUp><ArrowCircleRightOutlinedIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>Following</Hidden>} sx={{color:'white',minWidth:'60px'}} {...a11yProps(3)} />
                             {/*<Tab label="Bids" sx={{color:'white'}} {...a11yProps(4)} />*/}
-                            <Tab icon={<Hidden smUp><GavelOutlinedIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>{t('Offers')}</Hidden>} sx={{color:'white',minWidth:'25px'}} {...a11yProps(5)} />
-                            <Tab icon={<Hidden smUp><SolCurrencyIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>{t('Selling')}</Hidden>} sx={{color:'white',minWidth:'25px'}} {...a11yProps(6)} />
-                            <Tab icon={<Hidden smUp><FavoriteBorderIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>{t('Likes')}</Hidden>} sx={{color:'white',minWidth:'25px'}} {...a11yProps(7)} />
+                            <Tab icon={<Hidden smUp><GavelOutlinedIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>Offers</Hidden>} sx={{color:'white',minWidth:'60px'}} {...a11yProps(5)} />
+                            <Tab icon={<Hidden smUp><SolCurrencyIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>Selling</Hidden>} sx={{color:'white',minWidth:'60px'}} {...a11yProps(6)} />
                         </Tabs>
-
-                        <TabPanel value={tabvalue} index={0}>
-                            <GalleryView finalCollection={finalCollection} walletCollection={walletCollection} />
-                        </TabPanel>
+                    
+                    
                         <TabPanel value={tabvalue} index={1}>
                             <FeedView />
                         </TabPanel>
+                        
+                        <TabPanel value={tabvalue} index={0}>
+                            <GalleryView finalCollection={finalCollection} walletCollection={walletCollection} />
+                        </TabPanel>
+                        
                         <TabPanel value={tabvalue} index={2}>
                             <SocialView pubkey={thisPublicKey} type={0} />
                         </TabPanel>
+                        
                         <TabPanel value={tabvalue} index={3}>
                             <SocialView pubkey={thisPublicKey} type={1} />
                         </TabPanel>
@@ -652,9 +645,6 @@ const MainPanel = (props: any) => {
                         </TabPanel>
                         <TabPanel value={tabvalue} index={5}>
                             <OffersView selectedstate={2} pubkey={thisPublicKey} wallet_collection={walletCollection} wallet_collection_meta={walletCollectionMeta} />
-                        </TabPanel>
-                        <TabPanel value={tabvalue} index={6}>
-                            <CurationView pubkey={thisPublicKey} type={1} />
                         </TabPanel>
                     </TabActiveProvider>
                 </Container>
@@ -862,12 +852,15 @@ const IdentityView = (props: any) => {
                         //console.log("pda: "+pda.toString());
                         mintsPDAs.push(pda);
                     }
+                    
                 }
             }
 
             //console.log("pushed pdas: "+JSON.stringify(mintsPDAs));
             const metadata = await ggoconnection.getMultipleAccountsInfo(mintsPDAs);
             //console.log("returned: "+JSON.stringify(metadata));
+
+            
             // LOOP ALL METADATA WE HAVE
             for (var metavalue of metadata){
                 //console.log("Metaplex val: "+JSON.stringify(metavalue));
@@ -881,6 +874,12 @@ const IdentityView = (props: any) => {
                 } else{
                     console.log("Something not right...");
                 }
+                //setCollectionRaw({meta_final,meta_primer});
+                
+                /*
+                const finalmetadata = await fetch(meta_final.data.uri).then(
+                    (res: any) => res.json());
+                */
             }
 
             return metadata;
@@ -925,6 +924,7 @@ const IdentityView = (props: any) => {
                 //}, 200);
                 
             }
+            
             //console.log(collectionmeta.length + ' vs '+wallet_collection.length);
 
             setLoadCount(loadCount+1);
@@ -946,8 +946,7 @@ const IdentityView = (props: any) => {
             setLoading(false);
         }
     }
-    const { t, i18n } = useTranslation();
-    
+
     React.useEffect(() => { 
         if (pubkey){
             if (ValidateAddress(pubkey)){
@@ -983,7 +982,7 @@ const IdentityView = (props: any) => {
     }, [solanaDomain, profilePictureUrl])
 
     if (loading){
-        return <>{t('Loading...')}</>
+        return <>Loading...</>
     } else {
 
         return (
@@ -1086,7 +1085,7 @@ const IdentityView = (props: any) => {
                                                                 :
                                                                     <>
                                                                         {isFollowing ?  
-                                                                            <Tooltip title={t('Unfollow')}>
+                                                                            <Tooltip title={`Unfollow`}>
                                                                                 <Button 
                                                                                     variant="text" 
                                                                                     onClick={() => followWalletDisconnect(pubkey)}
@@ -1098,7 +1097,7 @@ const IdentityView = (props: any) => {
                                                                                 </Button>
                                                                             </Tooltip>
                                                                             :
-                                                                            <Tooltip title={t('Follow')}>
+                                                                            <Tooltip title={`Follow`}>
                                                                                 <Button 
                                                                                     variant="text" 
                                                                                     onClick={() => followWalletConnect(pubkey, solanaDomain)}
@@ -1140,7 +1139,7 @@ const IdentityView = (props: any) => {
                                                     <Typography gutterBottom variant="body1" component="div" sx={{ flexGrow: 1, color:'white' }}>
                                                         {solanaDomain && solanaDomain.length > 0 ?
                                                             <>
-                                                                <Tooltip title={t('View Solana ID')}>
+                                                                <Tooltip title="View Solana ID">
                                                                     <Button 
                                                                         sx={{borderRadius:'17px'}} 
                                                                         size="small" variant="text" 
@@ -1163,7 +1162,7 @@ const IdentityView = (props: any) => {
                                                                 </Tooltip>
                                                             </>
                                                         :
-                                                            <Tooltip title={t('View Solana ID')}>
+                                                            <Tooltip title="View Solana ID">
                                                                 <Button 
                                                                     sx={{borderRadius:'17px'}} 
                                                                     size="small" variant="text" 
@@ -1195,14 +1194,14 @@ const IdentityView = (props: any) => {
                                                                     sx={{fontSize:'12px',textTransform:'none',color:'white',border:'1px solid #fff', borderRadius:'17px',pl:5,pr:5,pt:0,pb:0, m:1}}
                                                                 >
                                                                     <strong>{followListInfo.followingCount}</strong>&nbsp;  
-                                                                    <Typography component="span" color="#aaa" variant="caption" align="center" sx={{ flexGrow: 1 }}>{t('Following')}</Typography>&nbsp; 
+                                                                    <Typography component="span" color="#aaa" variant="caption" align="center" sx={{ flexGrow: 1 }}>Following</Typography>&nbsp; 
                                                                 </Button>
                                                                 <Button
                                                                     onClick={() => setActiveTab(2)}
                                                                     sx={{fontSize:'12px',textTransform:'none',color:'white',border:'1px solid #fff', borderRadius:'17px',pl:5,pr:5,pt:0,pb:0, m:1}}
                                                                 >
                                                                     <strong>{followListInfo.followerCount}</strong>&nbsp;
-                                                                    <Typography component="span" color="#aaa" variant="caption" align="center" sx={{ flexGrow: 1 }}>{t('Followers')}</Typography>
+                                                                    <Typography component="span" color="#aaa" variant="caption" align="center" sx={{ flexGrow: 1 }}>Followers</Typography>
                                                                 </Button>
                                                             </Typography>
                                                         </>
@@ -1211,7 +1210,7 @@ const IdentityView = (props: any) => {
                                                     { final_collection && final_collection.length > 0 && (
                                                         <>
                                                             <Typography component="div" variant="caption" align="center" color="#aaa"  sx={{ flexGrow: 1, mt:3 }}>
-                                                                <strong>{final_collection.length}</strong> {t('items collected')}
+                                                                <strong>{final_collection.length}</strong> items collected
                                                             </Typography>
                                                         </>
                                                     )}
@@ -1283,8 +1282,6 @@ export function ProfileView(this: any, props: any) {
     
     const navigate = useNavigate();
     //const location = useLocation();
-
-    const { t, i18n } = useTranslation();
     
     const fetchWalletCollection = async () => { 
         /*
@@ -1591,12 +1588,12 @@ export function ProfileView(this: any, props: any) {
                                                 color="inherit"
                                                 display='flex'
                                                 sx={{mb:3}}
-                                            >{t('Social. Stateless. Marketplace.')}</Typography>
+                                            >Social. Stateless. Marketplace.</Typography>
 
                                         </Grid>
                                             
                                         <Grid>
-                                            <Tooltip title={t('Search by mint address by entering: mint:address')}>
+                                            <Tooltip title='Search by mint address by entering "mint:address"'>
                                                 <Paper
                                                     component="form"
                                                     onSubmit={handlePublicKeySubmit}
@@ -1605,7 +1602,7 @@ export function ProfileView(this: any, props: any) {
                                                         <InputBase
                                                             fullWidth
                                                             sx={{ ml: 1, flex: 1 }}
-                                                            placeholder={t('Enter a solana address')}
+                                                            placeholder="Enter a solana address"
                                                             inputProps={{ 'aria-label': 'solana address' }}
                                                             value={newinputpkvalue}
                                                             onChange={(e) => setNewInputPKValue(e.target.value)}
