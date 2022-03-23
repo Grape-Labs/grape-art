@@ -250,12 +250,18 @@ function SellNowVotePrompt(props:any){
                         ...instructionsArray
                     );
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 =======
+=======
+>>>>>>> parent of 64937b6 (successful multiple instructions to test realm collaboration)
                 }
                 if (daoPublicKey){
                     enqueueSnackbar(`Preparing to create a Proposal for Listing Price to ${sell_now_amount} SOL`,{ variant: 'info' });
                 } else {
+<<<<<<< HEAD
+>>>>>>> parent of 64937b6 (successful multiple instructions to test realm collaboration)
+=======
 >>>>>>> parent of 64937b6 (successful multiple instructions to test realm collaboration)
                     enqueueSnackbar(`Preparing to set Sell Now Price to ${sell_now_amount} SOL`,{ variant: 'info' });
                 }
