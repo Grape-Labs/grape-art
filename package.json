@@ -24,9 +24,13 @@
     "@project-serum/borsh": "^0.2.2",
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     "@project-serum/common": "^0.0.1-beta.3",
     "@project-serum/serum": "^0.13.34",
     "@project-serum/sol-wallet-adapter": "^0.2.6",
+=======
+    "@project-serum/serum": "^0.13.34",
+>>>>>>> parent of 64937b6 (successful multiple instructions to test realm collaboration)
 =======
     "@project-serum/serum": "^0.13.34",
 >>>>>>> parent of 64937b6 (successful multiple instructions to test realm collaboration)
