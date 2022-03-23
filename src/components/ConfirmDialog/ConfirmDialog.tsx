@@ -14,6 +14,8 @@ import { Close } from '@mui/icons-material';
 // zustand
 import create from 'zustand';
 
+import { useTranslation } from 'react-i18next';
+
 type ConfirmDialogStore = {
   message: string;
   onSubmit?: () => void;
@@ -34,12 +36,13 @@ export const confirmDialog = (message: string, onSubmit: () => void) => {
 };
 
 const ConfirmDialog = () => {
+  const { t, i18n } = useTranslation();
   const { message, onSubmit, close } = useConfirmDialogStore();
   //return new Promise((res) => {
   return (
     <Dialog open={Boolean(onSubmit)} onClose={close} maxWidth="sm" fullWidth>
       <Box display="flex" justifyContent="space-between" alignItems="center">
-        <DialogTitle>Confirm the action</DialogTitle>
+        <DialogTitle>{t('Confirm the action')}</DialogTitle>
         <IconButton onClick={close}>
           <Close />
         </IconButton>
@@ -49,7 +52,7 @@ const ConfirmDialog = () => {
       </DialogContent>
       <DialogActions>
         <Button color="primary" variant="contained" onClick={close}>
-          Cancel
+          {t('Cancel')}
         </Button>
         <Button
           color="secondary"
@@ -61,7 +64,7 @@ const ConfirmDialog = () => {
             close();
           }}
         >
-          Confirm
+          {t('Confirm')}
         </Button>
       </DialogActions>
     </Dialog>

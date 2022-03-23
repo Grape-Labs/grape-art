@@ -56,6 +56,8 @@ import {
     WorkplaceIcon
   } from "react-share";
 
+  import { useTranslation } from 'react-i18next';
+
   const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     '& .MuDialogContent-root': {
       padding: theme.spacing(2),
@@ -95,9 +97,11 @@ export default function ShareSocialURL(props:any){
         setOpen(false);
     };
 
+    const { t, i18n } = useTranslation();
+
     return (
         <>
-            <Tooltip title={`Share`}>
+            <Tooltip title={t('Share')}>
                 <Button size="small" variant="text" onClick={handleClickOpen}
                     sx={{borderRadius:'24px', color:'white'}}
                 >
@@ -117,7 +121,7 @@ export default function ShareSocialURL(props:any){
                     }}
                 >
                 <DialogTitle>
-                    Share
+                {t('Share')}
                 </DialogTitle>
                 <DialogContent>
                     <List sx={{ pt: 0 }}>
