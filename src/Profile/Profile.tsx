@@ -1379,11 +1379,11 @@ export function ProfileView(this: any, props: any) {
             );
             const registry = await NameRegistryState.retrieve(connection, new PublicKey(domainKey));
             
-            if (!registry.data) {
+            if (!registry.registry) {
                 throw new Error("Could not retrieve name data");
             }
 
-            setPubkey(registry.owner.toBase58());
+            setPubkey(registry.registry.owner.toBase58());
             setRDLoading(false);
         }
     }
