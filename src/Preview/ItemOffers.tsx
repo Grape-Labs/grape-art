@@ -255,8 +255,11 @@ function SellNowVotePrompt(props:any){
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 =======
+=======
+>>>>>>> parent of 64937b6 (successful multiple instructions to test realm collaboration)
 =======
 >>>>>>> parent of 64937b6 (successful multiple instructions to test realm collaboration)
 =======
@@ -276,6 +279,9 @@ function SellNowVotePrompt(props:any){
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> parent of 64937b6 (successful multiple instructions to test realm collaboration)
+=======
 >>>>>>> parent of 64937b6 (successful multiple instructions to test realm collaboration)
 =======
 >>>>>>> parent of 64937b6 (successful multiple instructions to test realm collaboration)
