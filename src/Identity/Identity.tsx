@@ -1,9 +1,13 @@
 
-import React, { useEffect } from "react";
+import React, { useEffect, Suspense } from "react";
+import { Global } from '@emotion/react';
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import { decodeMetadata } from '../utils/grapeTools/utils';
 // @ts-ignore
 import { PublicKey, Connection, Commitment } from '@solana/web3.js';
+
+import { styled } from '@mui/material/styles';
+import { grey } from '@mui/material/colors';
 
 import { findDisplayName } from '../utils/name-service';
 import { getProfilePicture } from '@solflare-wallet/pfp';
@@ -26,7 +30,16 @@ import {
     ListItemText,
     ListItemButton,
     Tooltip,
+    SwipeableDrawer,
+    CssBaseline,
+    Tab,
 } from '@mui/material';
+
+import {
+    TabContext,
+    TabList,
+    TabPanel,
+} from '@mui/lab';
 
 import PortraitIcon from '@mui/icons-material/Portrait';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
@@ -36,25 +49,92 @@ import QrCode2Icon from '@mui/icons-material/QrCode2';
 import SolIcon from '../components/static/SolIcon';
 import SolCurrencyIcon from '../components/static/SolCurrencyIcon';
 
-import { ValidateAddress, trimAddress } from '../utils/grapeTools/WalletAddress'; // global key handling
+import { ValidateAddress, trimAddress, timeAgo, formatBlockTime } from '../utils/grapeTools/WalletAddress'; // global key handling
 import { GRAPE_RPC_ENDPOINT, GRAPE_PROFILE, GRAPE_PREVIEW } from '../utils/grapeTools/constants';
+import { ConstructionOutlined, JavascriptRounded } from "@mui/icons-material";
+
+import { useTranslation } from 'react-i18next';
 
 export function IdentityView(props: any){
     const [profilePictureUrl, setProfilePictureUrl] = React.useState(null);
     const [solanaDomain, setSolanaDomain] = React.useState(null);
     const [solanaHoldings, setSolanaHoldings] = React.useState(null);
     const [solanaBalance, setSolanaBalance] = React.useState(null);
+    const [solanaTransactions, setSolanaTransactions] = React.useState(null);
     const [loading, setLoading] = React.useState(false);
+    const [loadingTransactions, setLoadingTransactions] = React.useState(false);
     const { publicKey } = useWallet();
     const [pubkey, setPubkey] = React.useState(props.pubkey || null);
     const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
     const {handlekey} = useParams<{ handlekey: string }>();
     const [searchParams, setSearchParams] = useSearchParams();
     const urlParams = searchParams.get("pkey") || searchParams.get("address") || handlekey;
+    const [value, setValue] = React.useState('1');
+
+    const { t, i18n } = useTranslation();
+
+    const handleChange = (event, newValue) => {
+        setValue(newValue);
+    };
 
     const fetchSolanaBalance = async () => {
         const response = await ggoconnection.getBalance(new PublicKey(pubkey));
         setSolanaBalance(response);
+    }
+
+    const fetchSolanaTransactions = async () => {
+        setLoadingTransactions(true);
+        const response = await ggoconnection.getSignaturesForAddress(new PublicKey(pubkey));
+
+        let memos: any[] = [];
+        let signatures: any[] = [];
+        let counter = 0;
+        // get last 100
+        for (var value of response){
+            if (counter<100){
+                signatures.push(value.signature);
+                memos.push(value.memo);
+            }
+            counter++;
+        }
+        const getTransactionAccountInputs2 = await ggoconnection.getParsedTransactions(signatures, 'confirmed');
+
+        let cnt=0;
+        let tx: any[] = [];
+        for (var tvalue of getTransactionAccountInputs2){
+
+            //if (cnt===0)
+            //    console.log(signatures[cnt]+': '+JSON.stringify(tvalue));
+            
+            let txtype = "";
+            if (tvalue.meta?.logMessages){
+                for (var logvalue of tvalue.meta.logMessages){
+                    //console.log("txvalue: "+JSON.stringify(logvalue));
+                    if (logvalue.includes("Program log: Instruction: ")){
+                        if (txtype.length > 0)
+                            txtype += ", ";
+                        txtype += logvalue.substring(26,logvalue.length);
+                        
+                    }
+                }
+            }
+
+            tx.push({
+                signature:signatures[cnt],
+                blockTime:tvalue.blockTime,
+                //amount:tx_cost,
+                //owner:owner,
+                memo:memos[cnt],
+                source:null,
+                type:txtype,
+            });
+            
+            cnt++;
+        }
+
+        //setSolanaTransactions(response);
+        setSolanaTransactions(tx);
+        setLoadingTransactions(false);
     }
 
     const fetchSolanaTokens = async () => {
@@ -115,7 +195,8 @@ export function IdentityView(props: any){
     const fetchSolanaDomain = async () => {
         const domain = await findDisplayName(ggoconnection, pubkey);
         if (domain){
-            setSolanaDomain(domain)
+            if (domain.toString()!==pubkey)
+                setSolanaDomain(domain)
         }
     }
 
@@ -138,6 +219,7 @@ export function IdentityView(props: any){
                 fetchSolanaDomain();
                 fetchSolanaTokens();
                 fetchSolanaBalance();
+                fetchSolanaTransactions();
             setLoading(false);
         }
     }, [pubkey]);
@@ -147,12 +229,12 @@ export function IdentityView(props: any){
     if (loading){
         return (
             <>
-                Loading your solana profile
+                {t('Loading your solana profile')}
             </>
         );
     } else{
         return (
-                <Container>
+            <Container>
                     <Box
                         className="grape-art-generic-placeholder-container"
                     > 
@@ -167,7 +249,7 @@ export function IdentityView(props: any){
                                 <Grid 
                                     item xs={12}
                                 >
-                                    <Tooltip title="Back go Profile">
+                                    <Tooltip title={t('Back go Profile')}>
                                         <Button
                                             component={Link} 
                                             to={`${GRAPE_PROFILE}${pubkey}`}
@@ -194,7 +276,7 @@ export function IdentityView(props: any){
                                             color="inherit"
                                             display='flex'
                                             sx={{mb:3}}
-                                        ><SolIcon sx={{fontSize:'20px',mr:1}} /> SOLANA IDENTITY</Typography>
+                                        ><SolIcon sx={{fontSize:'20px',mr:1}} /> {t('SOLANA IDENTITY')}</Typography>
 
                                     </Grid>
                             </Grid>
@@ -205,11 +287,11 @@ export function IdentityView(props: any){
                                 <Typography
                                     variant="h6"
                                 >
-                                    ADDRESS:
+                                    {t('ADDRESS')}:
                                 </Typography>   
                                     <List dense={true}>
                                         <ListItem>
-                                            <Tooltip title="View on Solana Explorer">
+                                            <Tooltip title={t('View on Solana Explorer')}>
                                                 <ListItemButton 
                                                     component="a" 
                                                     href={`https://explorer.solana.com/address/${pubkey}`}
@@ -225,7 +307,7 @@ export function IdentityView(props: any){
                                                     </ListItemAvatar>
                                                     <ListItemText
                                                         primary={pubkey}
-                                                        secondary="Solana Address"
+                                                        secondary={t('Solana Address')}
                                                     />
                                                 </ListItemButton>
                                             </Tooltip>
@@ -235,13 +317,13 @@ export function IdentityView(props: any){
                                 <Typography
                                     variant="h6"
                                 >
-                                    PROFILE:
+                                    {t('PROFILE')}:
                                 </Typography>   
                                     <List dense={true}>
                                         {profilePictureUrl &&
                                             <ListItem>
                                                 {(profilePictureUrl.toLocaleUpperCase().indexOf("HTTPS://") > -1) ? (
-                                                    <Tooltip title="View Image">
+                                                    <Tooltip title={t('View Image')}>
                                                         <ListItemButton
                                                             component="a" 
                                                             href={profilePictureUrl}
@@ -257,7 +339,7 @@ export function IdentityView(props: any){
                                                             </ListItemAvatar>
                                                             <ListItemText
                                                                 primary={profilePictureUrl}
-                                                                secondary="Solana Profile Picture"
+                                                                secondary={t('Solana Profile Picture')}
                                                             />
                                                         </ListItemButton>
                                                     </Tooltip>
@@ -273,7 +355,7 @@ export function IdentityView(props: any){
                                                         </ListItemAvatar>
                                                         <ListItemText
                                                             primary={profilePictureUrl}
-                                                            secondary="Solana Profile Picture"
+                                                            secondary={t('Solana Profile Picture')}
                                                         />
                                                     </>
                                                 )}
@@ -282,61 +364,65 @@ export function IdentityView(props: any){
                                     </List>
                                 
                                 
-                                <Typography
-                                    variant="h6"
-                                >
-                                    DOMAINS/REGISTRATIONS: 
-                                    <Typography
-                                        variant="body2"
-                                        sx={{ml:2}}
-                                    >{solanaDomain && <>{solanaDomain.length}</>}
-                                    </Typography>
-                                </Typography> 
-                                
-                                <List dense={true}>
-                                        {solanaDomain && solanaDomain?.map((item: any) => (
-                                            <ListItem>
-                                                {(item.toLocaleUpperCase().indexOf(".SOL") > -1) ? (
-                                                    <Tooltip title="View registration">
-                                                        <ListItemButton
-                                                            component="a" 
-                                                            href={`https://naming.bonfida.org/#/domain/${item.slice(0,item.indexOf(".sol"))}`}
-                                                            target="_blank"
-                                                            sx={{borderRadius:'24px'}}                                           
-                                                        >
-                                                            <ListItemAvatar>
-                                                                <Avatar
-                                                                    sx={{backgroundColor:'#222'}}
+                                {solanaDomain &&
+                                    <>
+                                        <Typography
+                                            variant="h6"
+                                        >
+                                            {t('DOMAINS/REGISTRATIONS')}: 
+                                            <Typography
+                                                variant="body2"
+                                                sx={{ml:2}}
+                                            >{solanaDomain && <>{solanaDomain.length}</>}
+                                            </Typography>
+                                        </Typography> 
+                                    
+                                        <List dense={true}>
+                                                {solanaDomain && solanaDomain?.map((item: any) => (
+                                                    <ListItem>
+                                                        {(item.toLocaleUpperCase().indexOf(".SOL") > -1) ? (
+                                                            <Tooltip title={t('View registration')}>
+                                                                <ListItemButton
+                                                                    component="a" 
+                                                                    href={`https://naming.bonfida.org/#/domain/${item.slice(0,item.indexOf(".sol"))}`}
+                                                                    target="_blank"
+                                                                    sx={{borderRadius:'24px'}}                                           
                                                                 >
-                                                                    <PublicIcon sx={{color:'white'}} />
-                                                                </Avatar>
-                                                            </ListItemAvatar>
-                                                            <ListItemText
-                                                                primary={JSON.stringify(item)}
-                                                                secondary='Solana Domain'
-                                                                
-                                                            />
-                                                        </ListItemButton>
-                                                    </Tooltip>
-                                                ):(
-                                                    <>
-                                                        <ListItemAvatar>
-                                                            <Avatar
-                                                                sx={{backgroundColor:'#222'}}
-                                                            >
-                                                                <PublicIcon sx={{color:'white'}} />
-                                                            </Avatar>
-                                                        </ListItemAvatar>
-                                                        <ListItemText
-                                                            primary={JSON.stringify(item)}
-                                                            secondary={(item.slice(0,1) === '@') && <>Twitter Handle</>}
-                                                            
-                                                        />
-                                                    </>
-                                                )}
-                                            </ListItem>
-                                        ))}
-                                </List>
+                                                                    <ListItemAvatar>
+                                                                        <Avatar
+                                                                            sx={{backgroundColor:'#222'}}
+                                                                        >
+                                                                            <PublicIcon sx={{color:'white'}} />
+                                                                        </Avatar>
+                                                                    </ListItemAvatar>
+                                                                    <ListItemText
+                                                                        primary={JSON.stringify(item)}
+                                                                        secondary={t('Solana Domain')}
+                                                                        
+                                                                    />
+                                                                </ListItemButton>
+                                                            </Tooltip>
+                                                        ):(
+                                                            <>
+                                                                <ListItemAvatar>
+                                                                    <Avatar
+                                                                        sx={{backgroundColor:'#222'}}
+                                                                    >
+                                                                        <PublicIcon sx={{color:'white'}} />
+                                                                    </Avatar>
+                                                                </ListItemAvatar>
+                                                                <ListItemText
+                                                                    primary={JSON.stringify(item)}
+                                                                    secondary={(item.slice(0,1) === '@') && <>{t('Twitter Handle')}</>}
+                                                                    
+                                                                />
+                                                            </>
+                                                        )}
+                                                    </ListItem>
+                                                ))}
+                                        </List>
+                                    </>
+                                }
                                 
                                 <Typography
                                     variant="h6"
@@ -360,69 +446,125 @@ export function IdentityView(props: any){
                                         </ListItem>
                                     </List>
 
-                                <Typography
-                                    variant="h6"
-                                >
-                                    TOKENS: 
-                                    <Typography
-                                        variant="body2"
-                                        sx={{ml:2}}
-                                    >{solanaHoldings && <>{solanaHoldings.length}</>}
-                                    </Typography>
-                                </Typography> 
-                                {solanaHoldings ?
-                                    <List dense={true}>
-                                        {solanaHoldings.length > 0 ? solanaHoldings.map((item: any) => (
-                                            <ListItem>
-                                                {item.account.data.parsed.info.tokenAmount.decimals === 0 ?
-                                                <>
-                                                    <Tooltip title="NFT">
-                                                        <ListItemButton 
-                                                            component={Link} to={`${GRAPE_PREVIEW}${item.account.data.parsed.info.mint}`}
-                                                            sx={{borderRadius:'24px'}}
-                                                        >
-                                                            <ListItemAvatar>
-                                                                <Avatar
-                                                                    sx={{backgroundColor:'#222'}}
-                                                                >
-                                                                    <PortraitIcon sx={{color:'white'}} />
-                                                                </Avatar>
-                                                            </ListItemAvatar>
-                                                            <ListItemText
-                                                                primary={item.account.data.parsed.info.mint}
-                                                                secondary={`x${item.account.data.parsed.info.tokenAmount.amount}`}
-                                                                
-                                                            />
-                                                        </ListItemButton>
-                                                    </Tooltip>
-                                                </>
+                                    {solanaHoldings &&
+
+                                        <Box sx={{ width: '100%', typography: 'body1' }}>
+                                            <TabContext value={value}>
+                                                <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                                                <TabList onChange={handleChange} aria-label="lab API tabs example">
+                                                    <Tab sx={{color:'white'}} label={
+                                                        <Typography variant="h6">{t('Tokens')} {solanaHoldings.length}</Typography>
+                                                    } value="1" />
+                                                    <Tab sx={{color:'white'}} label={
+                                                        <Typography variant="h6">{t('Transactions')}</Typography>
+                                                    } value="2" />
+                                                </TabList>
+                                                </Box>
+                                                <TabPanel value="1">
+                                                    
+                                                {solanaHoldings ?
+                                                    <List dense={true}>
+                                                        {solanaHoldings.length > 0 ? solanaHoldings.map((item: any) => (
+                                                            <ListItem>
+                                                                {item.account.data.parsed.info.tokenAmount.decimals === 0 ?
+                                                                <>
+                                                                    <Tooltip title="NFT">
+                                                                        <ListItemButton 
+                                                                            component={Link} to={`${GRAPE_PREVIEW}${item.account.data.parsed.info.mint}`}
+                                                                            sx={{borderRadius:'24px'}}
+                                                                        >
+                                                                            <ListItemAvatar>
+                                                                                <Avatar
+                                                                                    sx={{backgroundColor:'#222'}}
+                                                                                >
+                                                                                    <PortraitIcon sx={{color:'white'}} />
+                                                                                </Avatar>
+                                                                            </ListItemAvatar>
+                                                                            <ListItemText
+                                                                                primary={item.account.data.parsed.info.mint}
+                                                                                secondary={`x${item.account.data.parsed.info.tokenAmount.amount}`}
+                                                                                
+                                                                            />
+                                                                        </ListItemButton>
+                                                                    </Tooltip>
+                                                                </>
+                                                                :
+                                                                <>
+                                                                        <ListItemAvatar>
+                                                                        <Avatar
+                                                                            sx={{backgroundColor:'#222'}}
+                                                                        >
+                                                                            <QrCode2Icon sx={{color:'white'}} />
+                                                                        </Avatar>
+                                                                    </ListItemAvatar>
+                                                                    <ListItemText
+                                                                        primary={((new TokenAmount(item.account.data.parsed.info.tokenAmount.amount, item.account.data.parsed.info.tokenAmount.decimals).format()))}
+                                                                        secondary={item.account.data.parsed.info.mint}
+                                                                    />
+                                                                </>
+                                                                }
+                                                            </ListItem>
+                                                        ))
+                                                        :
+                                                        <></>}
+                                                    </List>
                                                 :
-                                                <>
-                                                        <ListItemAvatar>
-                                                        <Avatar
-                                                            sx={{backgroundColor:'#222'}}
-                                                        >
-                                                            <QrCode2Icon sx={{color:'white'}} />
-                                                        </Avatar>
-                                                    </ListItemAvatar>
-                                                    <ListItemText
-                                                        primary={((new TokenAmount(item.account.data.parsed.info.tokenAmount.amount, item.account.data.parsed.info.tokenAmount.decimals).format()))}
-                                                        secondary={item.account.data.parsed.info.mint}
-                                                    />
-                                                </>
+                                                <List dense={true}>
+                                                    <ListItem key={0}>{t('No tokens on this address!')}</ListItem>    
+                                                </List>
                                                 }
-                                            </ListItem>
-                                        ))
-                                        :
-                                        <></>}
-                                    </List>
-                                :
-                                <List dense={true}>
-                                    <ListItem key={0}>No tokens on this address!</ListItem>    
-                                </List>
-                                }
+                                                </TabPanel>
+                                                <TabPanel value="2">
+                                                {solanaTransactions ?
+                                                    <List dense={true}>
+                                                        {solanaTransactions.length > 0 ? solanaTransactions.map((item: any) => (
+                                                            <ListItem>
+                                                                <>
+                                                                    <ListItemText
+                                                                        primary={
+                                                                            <>
+                                                                                <Tooltip title={formatBlockTime(item.blockTime,true,true)}>
+                                                                                    <Button>
+                                                                                    {timeAgo(item.blockTime)}
+                                                                                    </Button>
+                                                                                </Tooltip> - {item.type}<br/> 
+                                                                                <ListItemButton 
+                                                                                    component="a" 
+                                                                                    href={`https://explorer.solana.com/address/${item.signature}`}
+                                                                                    target="_blank"
+                                                                                    sx={{borderRadius:'24px'}}
+                                                                                >
+                                                                                    {item.signature}
+                                                                                </ListItemButton>
+                                                                            </>}
+                                                                        secondary={
+                                                                            <>
+                                                                                {item?.memo && <Typography variant="caption">{item?.memo}</Typography>}
+                                                                            </>
+                                                                        }
+                                                                    />
+                                                                </>
+                                                            </ListItem>
+                                                        ))
+                                                        :
+                                                        <></>}
+                                                    </List>
+                                                    :
+                                                    <List dense={true}>
+                                                        {loadingTransactions ?
+                                                            <ListItem key={0}>{t('Loading transactions...')}</ListItem>    
+                                                        :
+                                                            <ListItem key={0}>{t('No transactions for this address!')}</ListItem>    
+                                                        }
+                                                    </List>
+                                                }
+
+                                                </TabPanel>
+                                            </TabContext>
+                                        </Box>
+                                    }
                             </>
-                        
+                            
                     </Box>
                 </Container>
         );

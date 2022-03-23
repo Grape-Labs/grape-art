@@ -100,10 +100,16 @@ import {
     GRAPE_PREVIEW, 
     GRAPE_PROFILE,
     FEATURED_DAO_ARRAY,
-    GRAPE_TREASURY
+    GRAPE_TREASURY,
+    TOKEN_REPORT_AMOUNT,
 } from '../utils/grapeTools/constants';
 
+import {
+    METAPLEX_PROGRAM_ID,
+  } from '../utils/auctionHouse/helpers/constants';
+
 import ItemOffers from './ItemOffers';
+import { SocialLikes, SocialFlags } from './Social';
 import ShareSocialURL from '../utils/grapeTools/ShareUrl';
 import { MakeLinkableAddress, ValidateAddress, ValidateCurve, trimAddress, timeAgo } from '../utils/grapeTools/WalletAddress'; // global key handling
 
@@ -112,6 +118,8 @@ import "../App.less";
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { decodeMetadata } from '../utils/auctionHouse/helpers/schema';
 import GrapeIcon from "../components/static/GrapeIcon";
+
+import { useTranslation } from 'react-i18next';
 
 const StyledTable = styled(Table)(({ theme }) => ({
     '& .MuiTableCell-root': {
@@ -225,33 +233,34 @@ function GrapeVerified(props:any){
     let updateAuthority = props?.updateAuthority;
     let grape_verified = -1;
 
-    const MD_PUBKEY = new PublicKey("metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s");
-        const getCollectionData = async (collectionAddress:string) => {
-            try {
-                let mint_address = new PublicKey(collectionAddress)
-                let [pda, bump] = await PublicKey.findProgramAddress([
-                    Buffer.from("metadata"),
-                    MD_PUBKEY.toBuffer(),
-                    new PublicKey(mint_address).toBuffer(),
-                ], MD_PUBKEY)
-                
-                
-                const meta_response = await ggoconnection.getAccountInfo(pda);
+    const MD_PUBKEY = METAPLEX_PROGRAM_ID;
+    
+    const getCollectionData = async (collectionAddress:string) => {
+        try {
+            let mint_address = new PublicKey(collectionAddress)
+            let [pda, bump] = await PublicKey.findProgramAddress([
+                Buffer.from("metadata"),
+                MD_PUBKEY.toBuffer(),
+                new PublicKey(mint_address).toBuffer(),
+            ], MD_PUBKEY)
+            
+            
+            const meta_response = await ggoconnection.getAccountInfo(pda);
 
-                let meta_final = decodeMetadata(meta_response.data);
-                
-                const metadata = await fetch(meta_final.data.uri).then(
-                    (res: any) => res.json());
-                
-                setCollectionName(metadata.name);
-                setCollectionImage(metadata.image) 
+            let meta_final = decodeMetadata(meta_response.data);
+            
+            const metadata = await fetch(meta_final.data.uri).then(
+                (res: any) => res.json());
+            
+            setCollectionName(metadata.name);
+            setCollectionImage(metadata.image) 
 
-                return null;
-            } catch (e) { // Handle errors from invalid calls
-                console.log(e);
-                return null;
-            }
+            return null;
+        } catch (e) { // Handle errors from invalid calls
+            console.log(e);
+            return null;
         }
+    }
 
     React.useEffect(() => { 
         try{
@@ -293,10 +302,12 @@ function GrapeVerified(props:any){
         }catch(e){console.log("ERR: "+e)}
     }, [updateAuthority]);
 
+    const { t, i18n } = useTranslation();
+
     if (verifiedState){
         
         return (
-            <Tooltip title={`${props.symbol}: Update Authority/Creator Verified on Metaplex`} placement="top">
+            <Tooltip title={`${props.symbol}: ${t('Update Authority/Creator Verified on Metaplex')}`} placement="top">
                 <Button 
                     href={`${GRAPE_PREVIEW}${verifiedPK}`}
                     sx={{color:'white', borderRadius:'24px'}}>
@@ -318,571 +329,6 @@ function GrapeVerified(props:any){
     } else{
         return <>{collectionName}</>
     } 
-}
-
-function SocialLikes(props: any){
-    const [solanaDomain, setSolanaDomain] = React.useState(null);
-    const [isLiked, setIsLiked] = React.useState(false);
-    const [loadingLikedState, setLoadingLikedState] = React.useState(false);
-    const [loading, setLoading] = React.useState(false);
-    const [searchAddrInfo, setSearchAddrInfo] = useState<SearchUserInfoResp | null>(null);
-    const [followListInfo, setFollowListInfo] = useState<FollowListInfoResp | null>(null);
-    const {publicKey} = useWallet();
-    const solanaProvider = useWallet();
-    const mint = props.mint;
-    
-    const NAME_SPACE = 'Grape';
-    const NETWORK = Network.SOLANA;
-    const FIRST = 10; // The number of users in followings/followers list for each fetch
-
-    const cyberConnect = new CyberConnect({
-        namespace: NAME_SPACE,
-        env: Env.PRODUCTION,
-        chain: Blockchain.SOLANA,
-        provider: solanaProvider,
-        chainRef: solana.SOLANA_MAINNET_CHAIN_REF,
-        signingMessageEntity: 'Grape' || 'CyberConnect',
-    });
-
-    // Get the current user followings and followers list
-  const initFollowListInfo = async () => {
-    if (!mint) {
-      return;
-    }
-    
-    setLoading(true);
-    const resp = await followListInfoQuery({
-        address:mint,
-        namespace: '',
-        network: NETWORK,
-        followingFirst: FIRST,
-        followerFirst: FIRST,
-    });
-    if (resp) {
-      setFollowListInfo(resp);
-    }
-    setLoading(false);
-  };
-
-    const getLikeStatus = async () => {
-        
-        if (publicKey){
-            if (mint){
-                setLoadingLikedState(true);
-                setIsLiked(false);
-                let socialconnection = await fetchSearchAddrInfo(publicKey.toBase58(), mint);
-                if (socialconnection){
-                    //if (socialconnection?.identity){
-                    if (socialconnection?.connections[0]?.followStatus) {  
-                        if ((socialconnection?.connections[0].type.toString() === "LIKE")||
-                            (socialconnection?.connections[0].type.toString() === "FOLLOW"))
-                            setIsLiked(socialconnection?.connections[0].followStatus.isFollowing);
-                    }
-                }
-                setLoadingLikedState(false);
-            }
-            
-        }
-    }
-
-    const fetchSearchAddrInfo = async (fromAddr:string, toAddr: string) => {
-        const resp = await searchUserInfoQuery({
-            fromAddr:fromAddr,
-            toAddr,
-            namespace: 'Grape',
-            network: Network.SOLANA,
-            type: 'LIKE',
-        });
-        if (resp) {
-            setSearchAddrInfo(resp);
-        }
-
-        return resp;
-    };
-
-    const likeWalletConnect = async (followAddress:string) => {
-        // address:string, alias:string
-        let tofollow = followAddress;   
-        let promise = await cyberConnect.connect(tofollow,'', ConnectionType.LIKE)
-        .catch(function (error) {
-            console.log(error);
-        });
-        initFollowListInfo();
-        getLikeStatus();
-    };
-    const likeWalletDisconnect = async (followAddress:string) => {
-        // address:string, alias:string
-        let promise = await cyberConnect.disconnect(followAddress.toString())
-        .catch(function (error) {
-            console.log(error);
-        });
-        initFollowListInfo();
-        getLikeStatus();
-    };
-    
-    React.useEffect(() => {
-        initFollowListInfo();
-        getLikeStatus();
-    },[]);
-
-    return ( 
-        <>
-        {loadingLikedState ?
-            <Button 
-                sx={{borderRadius:'24px'}}
-            >
-                <CircularProgress sx={{p:'14px',m:-2}} />
-            </Button>
-        :
-            <>
-            {isLiked ?  
-                    <Tooltip title="Unlike">
-                        <Button 
-                            variant="text" 
-                            onClick={() => likeWalletDisconnect(mint)}
-                            size="small"
-                            className="profileAvatarIcon"
-                            sx={{borderRadius:'24px', color:'white'}}
-                            >
-                            <FavoriteIcon sx={{fontSize:'24px', color:'red'}} /> 
-                            {followListInfo?.liked && +followListInfo?.liked > 0 ?
-                                <Typography variant="caption" sx={{ml:1}}>
-                                    {followListInfo?.liked}
-                                </Typography>
-                            :<></>}
-                        </Button>
-                    </Tooltip>
-                :
-                    <Tooltip title="Like">
-                        <Button 
-                            variant="text" 
-                            onClick={() => likeWalletConnect(mint)}
-                            size="small"
-                            className="profileAvatarIcon"
-                            sx={{borderRadius:'24px', color:'white'}}
-                            >
-                            <FavoriteBorderIcon sx={{fontSize:'24px'}} /> 
-                            {followListInfo?.liked && +followListInfo?.liked > 0 ?
-                                <Typography variant="caption" sx={{ml:1}}>
-                                    {followListInfo?.liked}
-                                </Typography>
-                            :<></>}
-                        </Button>
-                    </Tooltip>
-            }
-            </>
-        }
-        </>
-    );
-}
-
-function SocialFlags(props: any){
-    const [solanaDomain, setSolanaDomain] = React.useState(null);
-    const [isFlagged, setIsFlagged] = React.useState(false);
-    const [loading, setLoading] = React.useState(false);
-    const [loadingFlaggedState, setLoadingFlaggedState] = React.useState(false);
-    const [searchAddrInfo, setSearchAddrInfo] = useState<SearchUserInfoResp | null>(null);
-    const [reportalertopen, setReportAlertOpen] = React.useState(false);
-    
-    const { publicKey, sendTransaction } = useWallet();
-
-    const freeconnection = new Connection(FREE_RPC_ENDPOINT);
-    const { connection } = useConnection();
-    
-    const [followListInfo, setFollowListInfo] = useState<FollowListInfoResp | null>(null);
-    const solanaProvider = useWallet();
-    const mint = props.mint;
-    
-    const NAME_SPACE = 'Grape';
-    const NETWORK = Network.SOLANA;
-    const FIRST = 10; // The number of users in followings/followers list for each fetch
-    
-    const { enqueueSnackbar, closeSnackbar } = useSnackbar();
-    const onError = useCallback(
-        (error: WalletError) => {
-            enqueueSnackbar(error.message ? `${error.name}: ${error.message}` : error.name, { variant: 'error' });
-            console.error(error);
-        },
-        [enqueueSnackbar]
-    );
-    
-    const cyberConnect = new CyberConnect({
-        namespace: 'Grape',
-        env: Env.PRODUCTION,
-        chain: Blockchain.SOLANA,
-        provider: solanaProvider,
-        chainRef: solana.SOLANA_MAINNET_CHAIN_REF,
-        signingMessageEntity: 'Grape' || 'CyberConnect',
-    });
-
-    const handleAlertReportClose = () => {
-        setReportAlertOpen(false);
-    };
-
-    const getFlagStatus = async () => {
-        
-        if (publicKey){
-            if (mint){
-                setLoadingFlaggedState(true);
-                let socialconnection = await fetchSearchAddrInfo(publicKey.toBase58(), mint);
-                if (socialconnection){
-                    //if (socialconnection?.identity){
-                    if (socialconnection?.connections[0]?.followStatus) { 
-                        if ((socialconnection?.connections[0].type.toString() === "REPORT")||
-                            (socialconnection?.connections[0].type.toString() === "FOLLOW"))
-                            setIsFlagged(socialconnection?.connections[0].followStatus.isFollowing);
-                    }
-                }
-                setLoadingFlaggedState(false);
-            }
-            
-        }
-    }
-
-    const fetchSearchAddrInfo = async (fromAddr:string, toAddr: string) => {
-        const resp = await searchUserInfoQuery({
-            fromAddr:fromAddr,
-            toAddr,
-            namespace: 'Grape',
-            network: Network.SOLANA,
-            type: 'REPORT',
-        });
-        if (resp) {
-            setSearchAddrInfo(resp);
-        }
-
-        return resp;
-    };
-
-    // Get the current user followings and followers list
-    const initFollowListInfo = async () => {
-        if (!mint) {
-        return;
-        }
-        
-        setLoading(true);
-        const resp = await followListInfoQuery({
-            address:mint,
-            namespace: '',
-            network: NETWORK,
-            followingFirst: FIRST,
-            followerFirst: FIRST,
-        });
-        if (resp) {
-        setFollowListInfo(resp);
-        }
-        setLoading(false);
-    };
-
-    function handleFlagMintTransaction(mint:string){
-        const tokenMintAddress = TOKEN_VERIFICATION_ADDRESS;
-        const tokenMintName = 'GRAPE';
-        const to = GRAPE_TREASURY;
-        const amount = 100;
-        const notes = mint;
-        flatMintTransaction(tokenMintAddress, tokenMintName, to, amount, notes)
-    }
-
-    async function flatMintTransaction(tokenMintAddress: string, tokenMintName: string, to: string, amount: number, notes:string) {
-        const fromWallet = publicKey;
-        const toaddress = to;
-        const toWallet = new PublicKey(to);
-        const mintPubkey = new PublicKey(tokenMintAddress);
-        const amountToSend = +amount;
-        const tokenAccount = new PublicKey(mintPubkey);
-        
-        handleAlertReportClose();
-
-        let GRAPE_TT_MEMO = {
-            state:1, // status
-            type:'REPORT', // AMA - SETUP 
-            ref:'GRAPE.ART', // SOURCE
-            notes:notes
-        };
-        
-        
-        if (tokenMintAddress == "So11111111111111111111111111111111111111112"){ // Check if SOL
-            const decimals = 9;
-            const adjustedAmountToSend = amountToSend * Math.pow(10, decimals);
-            const transaction = new Transaction()
-            .add(
-                SystemProgram.transfer({
-                    fromPubkey: fromWallet,
-                    toPubkey: toWallet,
-                    lamports: adjustedAmountToSend,
-                })
-            ).add(
-                new TransactionInstruction({
-                    keys: [{ pubkey: fromWallet, isSigner: true, isWritable: true }],
-                    data: Buffer.from(JSON.stringify(GRAPE_TT_MEMO), 'utf-8'),
-                    programId: new PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr"),
-                })
-            );
-            try{
-                enqueueSnackbar(`Preparing to send ${amountToSend} ${tokenMintName} to ${toaddress}`,{ variant: 'info' });
-                const signature = await sendTransaction(transaction, freeconnection);
-                const snackprogress = (key:any) => (
-                    <CircularProgress sx={{padding:'10px'}} />
-                );
-                const cnfrmkey = enqueueSnackbar(`Confirming transaction`,{ variant: 'info', action:snackprogress, persist: true });
-                await connection.confirmTransaction(signature, 'processed');
-                closeSnackbar(cnfrmkey);
-                const action = (key:any) => (
-                        <Button href={`https://explorer.solana.com/tx/${signature}`} target='_blank'  sx={{color:'white'}}>
-                            Signature: {signature}
-                        </Button>
-                );
-
-                flagWalletConnect(mint);
-
-                enqueueSnackbar(`Sent ${amountToSend} ${tokenMintName} to ${toaddress}`,{ variant: 'success', action });
-            }catch(e){
-                enqueueSnackbar(`Error: ${(e)}`,{ variant: 'error' });
-            } 
-        } else{
-            const accountInfo = await connection.getParsedAccountInfo(tokenAccount);
-            const accountParsed = JSON.parse(JSON.stringify(accountInfo.value.data));
-            const decimals = accountParsed.parsed.info.decimals;
-
-            let fromAta = await Token.getAssociatedTokenAddress( // calculate from ATA
-                ASSOCIATED_TOKEN_PROGRAM_ID, // always ASSOCIATED_TOKEN_PROGRAM_ID
-                TOKEN_PROGRAM_ID, // always TOKEN_PROGRAM_ID
-                mintPubkey, // mint
-                fromWallet // from owner
-            );
-            
-            let toAta = await Token.getAssociatedTokenAddress( // calculate to ATA
-                ASSOCIATED_TOKEN_PROGRAM_ID, // always ASSOCIATED_TOKEN_PROGRAM_ID
-                TOKEN_PROGRAM_ID, // always TOKEN_PROGRAM_ID
-                mintPubkey, // mint
-                toWallet // to owner
-            );
-            
-            const adjustedAmountToSend = amountToSend * Math.pow(10, decimals);
-            const receiverAccount = await connection.getAccountInfo(toAta);
-            
-            if (receiverAccount === null) { // initialize token
-                const transaction = new Transaction()
-                .add(
-                    Token.createAssociatedTokenAccountInstruction(
-                        ASSOCIATED_TOKEN_PROGRAM_ID, // always ASSOCIATED_TOKEN_PROGRAM_ID
-                        TOKEN_PROGRAM_ID, // always TOKEN_PROGRAM_ID
-                        mintPubkey, // mint
-                        toAta, // ata
-                        toWallet, // owner of token account
-                        fromWallet // fee payer
-                    )
-                )
-                .add(
-                    Token.createTransferInstruction(
-                        TOKEN_PROGRAM_ID,
-                        fromAta,
-                        toAta,
-                        publicKey,
-                        [],
-                        adjustedAmountToSend,
-                    )
-                ).add(
-                    new TransactionInstruction({
-                        keys: [{ pubkey: fromWallet, isSigner: true, isWritable: true }],
-                        data: Buffer.from(JSON.stringify(GRAPE_TT_MEMO), 'utf-8'),
-                        programId: new PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr"),
-                    })
-                );
-                
-                try{
-                    enqueueSnackbar(`Preparing to send ${amountToSend} ${tokenMintName} to ${toaddress}`,{ variant: 'info' });
-                    const signature = await sendTransaction(transaction, freeconnection);
-                    const snackprogress = (key:any) => (
-                        <CircularProgress sx={{padding:'10px'}} />
-                    );
-                    const cnfrmkey = enqueueSnackbar(`Confirming transaction`,{ variant: 'info', action:snackprogress, persist: true });
-                    await connection.confirmTransaction(signature, 'processed');
-                    closeSnackbar(cnfrmkey);
-                    const action = (key:any) => (
-                        <Button href={`https://explorer.solana.com/tx/${signature}`} target='_blank' sx={{color:'white'}} >
-                            Signature: {signature}
-                        </Button>
-                    );
-
-                    flagWalletConnect(mint);
-
-                    enqueueSnackbar(`Sent ${amountToSend} ${tokenMintName} to ${toaddress}`,{ variant: 'success', action });
-                }catch(e){
-                    closeSnackbar();
-                    enqueueSnackbar(`Error: ${(e)}`,{ variant: 'error' });
-                } 
-            } else{ // token already in wallet
-                const transaction = new Transaction()
-                .add(
-                    Token.createTransferInstruction(
-                    TOKEN_PROGRAM_ID,
-                    fromAta,
-                    toAta,
-                    publicKey,
-                    [],
-                    adjustedAmountToSend,
-                    )
-                )
-                .add(
-                    new TransactionInstruction({
-                        keys: [{ pubkey: fromWallet, isSigner: true, isWritable: true }],
-                        data: Buffer.from(JSON.stringify(GRAPE_TT_MEMO), 'utf-8'),
-                        programId: new PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr"),
-                    })
-                );
-                
-                try{
-                    enqueueSnackbar(`Preparing to send ${amountToSend} ${tokenMintName} to ${toaddress}`,{ variant: 'info' });
-                    const signature = await sendTransaction(transaction, freeconnection);
-                    const snackprogress = (key:any) => (
-                        <CircularProgress sx={{padding:'10px'}} />
-                    );
-                    const cnfrmkey = enqueueSnackbar(`Confirming transaction`,{ variant: 'info', action:snackprogress, persist: true });
-                    await connection.confirmTransaction(signature, 'processed');
-                    closeSnackbar(cnfrmkey);
-                    const action = (key:any) => (
-                        <Button href={`https://explorer.solana.com/tx/${signature}`} target='_blank' sx={{color:'white'}} >
-                            Signature: {signature}
-                        </Button>
-                    );
-
-                    flagWalletConnect(mint);
-
-                    enqueueSnackbar(`Sent ${amountToSend} ${tokenMintName} to ${toaddress}`,{ variant: 'success', action });
-                }catch(e){
-                    closeSnackbar();
-                    enqueueSnackbar(`Error: ${(e)}`,{ variant: 'error' });
-                } 
-            }
-        }
-    }
-
-    const flagWalletConnect = async (followAddress:string) => {
-        // address:string, alias:string
-        let tofollow = followAddress;   
-        // Show a prompt here in order to flag
-
-            let promise = await cyberConnect.connect(tofollow,'', ConnectionType.REPORT)
-            .catch(function (error) {
-                console.log(error);
-            });
-            initFollowListInfo();
-            getFlagStatus();
-    };
-    const flagWalletDisconnect = async (followAddress:string) => {
-        // address:string, alias:string
-        let promise = await cyberConnect.disconnect(followAddress.toString())
-        .catch(function (error) {
-            console.log(error);
-        });
-        initFollowListInfo();
-        getFlagStatus();
-    };
-
-    React.useEffect(() => {
-        initFollowListInfo();
-        getFlagStatus();
-    },[]);
-    
-    return ( 
-        <>
-        {loadingFlaggedState ?
-            <Button 
-                sx={{borderRadius:'24px'}}
-            >
-                <CircularProgress sx={{p:'14px',m:-2}} />
-            </Button>
-        :
-            <>
-            {isFlagged ?  
-                    <Tooltip title="Unflag">
-                        <Button 
-                            variant="text" 
-                            onClick={() => flagWalletDisconnect(mint)}
-                            size="small"
-                            className="profileAvatarIcon"
-                            sx={{borderRadius:'24px', color:'yellow'}}
-                            >
-                            <FlagIcon sx={{fontSize:'24px'}} />
-                            {followListInfo?.reported && +followListInfo?.reported > 0 ?
-                                <Typography variant="caption" sx={{ml:1}}>
-                                    {followListInfo?.reported}
-                                </Typography>
-                            :<></>}
-                        </Button>
-                    </Tooltip>
-                :
-                    <>
-                        <BootstrapDialog 
-                            fullWidth={true}
-                            maxWidth={"sm"}
-                            PaperProps={{
-                                style: {
-                                    background: '#13151C',
-                                    border: '1px solid rgba(255,255,255,0.05)',
-                                    borderTop: '1px solid rgba(255,255,255,0.1)',
-                                    borderRadius: '20px'
-                                }
-                            }}
-                            open={reportalertopen}
-                            onClose={handleAlertReportClose}
-                            aria-labelledby="alert-bn-dialog-title"
-                            aria-describedby="alert-bn-dialog-description"
-                            >
-                            <DialogTitle id="alert-bn-dialog-title">
-                                <Typography>
-                                    REPORT
-                                </Typography>
-                            </DialogTitle>
-                            <DialogContent>
-                                <DialogContentText id="alert-bn-dialog-description">
-                                <br />
-                                <Alert 
-                                    severity="info" variant="outlined"
-                                    sx={{backgroundColor:'black'}}
-                                    >
-                                    Mint: <MakeLinkableAddress addr={mint} trim={0} hasextlink={true} hascopy={false} fontsize={16} /> <br/>
-                                    <Typography sx={{textAlign:'center'}}>
-                                        You are about to report this mint, in order to minimize unnecessary reporting there is a <GrapeIcon sx={{fontSize:'12px'}} />100 fee to process this request
-                                    </Typography>
-                                </Alert>
-                                
-                                </DialogContentText>
-                            </DialogContent>
-                            <DialogActions>
-                                <Button onClick={handleAlertReportClose}>Cancel</Button>
-                                <Button 
-                                    onClick={() => handleFlagMintTransaction(mint)}
-                                    autoFocus>
-                                Accept
-                                </Button>
-                            </DialogActions>
-                        </BootstrapDialog>
-
-                        <Tooltip title="Flag">
-            
-                            <Button 
-                                variant="text" 
-                                onClick={() => setReportAlertOpen(true)}
-                                size="small"
-                                className="profileAvatarIcon"
-                                sx={{borderRadius:'24px', color:'white'}}
-                                >
-                                <EmojiFlagsIcon sx={{fontSize:'24px'}} />
-                                {followListInfo?.reported && +followListInfo?.reported > 0 ?
-                                    <Typography variant="caption" sx={{ml:1}}>
-                                        {followListInfo?.reported}
-                                    </Typography>
-                                :<></>}
-                            </Button>
-                        </Tooltip>
-                    </>
-            }
-            </>
-        }
-        </>
-    );
 }
 
 function GalleryItemMeta(props: any) {
@@ -1238,13 +684,13 @@ function GalleryItemMeta(props: any) {
         try{
             const transaction = await createSetProfilePictureTransaction(publicKey, new PublicKey(mint), new PublicKey(mintAta));
             //console.log("Transaction: "+JSON.stringify(transaction));
-            enqueueSnackbar(`Preparing set your avatar with ${mint} mint`,{ variant: 'info' });
+            enqueueSnackbar(`${t('Preparing set your avatar with')} ${mint} ${t('mint')}`,{ variant: 'info' });
             const signedTransaction = await sendTransaction(transaction, connection);
             
             const snackprogress = (key:any) => (
                 <CircularProgress sx={{padding:'10px'}} />
             );
-            const cnfrmkey = enqueueSnackbar(`Confirming transaction`,{ variant: 'info', action:snackprogress, persist: true });
+            const cnfrmkey = enqueueSnackbar(`${t('Confirming transaction')}`,{ variant: 'info', action:snackprogress, persist: true });
             await ggoconnection.confirmTransaction(signedTransaction, 'processed');
             closeSnackbar(cnfrmkey);
             const snackaction = (key:any) => (
@@ -1252,10 +698,10 @@ function GalleryItemMeta(props: any) {
                     {signedTransaction}
                 </Button>
             );
-            enqueueSnackbar(`Your avatar has been set `,{ variant: 'success', action:snackaction });
+            enqueueSnackbar(`${t('Your avatar has been set')} `,{ variant: 'success', action:snackaction });
         } catch(e){
             closeSnackbar();
-            enqueueSnackbar(`Error: ${e}`,{ variant: 'error' });
+            enqueueSnackbar(`${t('Error')}: ${e}`,{ variant: 'error' });
             console.log("Error: "+e);
         } 
     }
@@ -1307,7 +753,7 @@ function GalleryItemMeta(props: any) {
                     }}
                 >
                 <DialogTitle>
-                    Mint
+                    {t('Mint')}
                 </DialogTitle>
                 <form onSubmit={HandleMintAddressSubmit}>
                     <DialogContent>
@@ -1316,7 +762,7 @@ function GalleryItemMeta(props: any) {
                             autoComplete='off'
                             margin="dense"
                             id="preview_mint_key"
-                            label="Paste a mint address"
+                            label={t('Paste a mint address')}
                             type="text"
                             fullWidth
                             variant="standard"
@@ -1330,7 +776,7 @@ function GalleryItemMeta(props: any) {
                             type="submit"
                             variant="text" 
                             title="GO">
-                                Go
+                                {t('Go')}
                         </Button>
                     </DialogActions>
                 </form>
@@ -1378,11 +824,13 @@ function GalleryItemMeta(props: any) {
         }
     }, [mint]);
 
+    const { t, i18n } = useTranslation();
+
     try{
         return (
             <Grid>
                 <Helmet>
-                    <title>{`${collectionitem.name} | Grape Social. Stateless. Marketplace.`}</title>
+                    <title>{`${collectionitem.name} | ${t('Grape Social. Stateless. Marketplace.')}`}</title>
                     <meta property="og:title" content={`${collectionitem.name} @Grape`} />
                     <meta property="og:type" content="website" />
                     <meta property="og:url" content={window.location.href} />
@@ -1433,7 +881,7 @@ function GalleryItemMeta(props: any) {
                                             sx={{color:'white',borderRadius:'24px'}}
                                         >
                                             <ArrowBackIosIcon />
-                                            Back
+                                            {t('Back')}
                                         </Button>
                                         <SearchForMint setMintPubkey={props.setMintPubkey} />
                                     </ButtonGroup>
@@ -1520,7 +968,7 @@ function GalleryItemMeta(props: any) {
                                                                 onClick={ () => openImageViewer(0) }
                                                                 sx={{color:'white',borderRadius:'24px'}}
                                                             >
-                                                                Preview <OpenInFullIcon sx={{ fontSize:'16px', ml:1 }}/></Button>
+                                                                {t('Preview')} <OpenInFullIcon sx={{ fontSize:'16px', ml:1 }}/></Button>
                                                         </Grid>
                                                     </Grid>
                                                 
@@ -1552,7 +1000,7 @@ function GalleryItemMeta(props: any) {
                                                 <ListItemIcon>
                                                 <SegmentIcon />
                                                 </ListItemIcon>
-                                                <ListItemText primary="Description" />
+                                                <ListItemText primary={t('Description')} />
                                                 {open_description ? <ExpandLess /> : <ExpandMoreIcon />}
                                             </ListItemButton>
                                             <Collapse in={open_description} timeout="auto" unmountOnExit>
@@ -1577,7 +1025,7 @@ function GalleryItemMeta(props: any) {
                                             <ListItemIcon>
                                             <FormatListBulletedIcon />
                                             </ListItemIcon>
-                                            <ListItemText primary="Details" />
+                                            <ListItemText primary={t('Details')} />
                                             {open_meta ? <ExpandLess /> : <ExpandMoreIcon />}
                                         </ListItemButton>
                                         <Collapse in={open_meta} timeout="auto" unmountOnExit>
@@ -1608,7 +1056,7 @@ function GalleryItemMeta(props: any) {
                                                                         onClick={() => setOpenAttributeCollapse(!open_attribute_collapse)}
                                                                     >
                                                                         <TableCell>
-                                                                        Attributes:
+                                                                        {t('Attributes')}:
                                                                         </TableCell>
                                                                         <TableCell>
                                                                             {collectionitem.attributes.length}
@@ -1630,8 +1078,8 @@ function GalleryItemMeta(props: any) {
                                                                                         {collectionitem.attributes.length > 0 &&
                                                                                         <TableHead>
                                                                                             <TableRow>
-                                                                                                <TableCell><Typography variant="subtitle1">Attribute</Typography></TableCell>
-                                                                                                <TableCell><Typography variant="subtitle1" >Type</Typography></TableCell>
+                                                                                                <TableCell><Typography variant="subtitle1">{t('Attribute')}</Typography></TableCell>
+                                                                                                <TableCell><Typography variant="subtitle1" >{t('Type')}</Typography></TableCell>
                                                                                             </TableRow>
                                                                                         </TableHead>
                                                                                         }
@@ -1643,30 +1091,30 @@ function GalleryItemMeta(props: any) {
                                                                                         ))  
                                                                                         :
                                                                                         <TableRow>
-                                                                                            <TableCell>Attributes:</TableCell>
+                                                                                            <TableCell>{t('Attributes')}:</TableCell>
                                                                                             <TableCell>
                                                                                             {collectionitem.attributes.itemType?.length > 0 &&
-                                                                                                <Tooltip title={`Type`}>
+                                                                                                <Tooltip title={t('Type')}>
                                                                                                 <Chip label={collectionitem.attributes?.itemType} variant="outlined" />
                                                                                                 </Tooltip>
                                                                                             }
                                                                                             {collectionitem.attributes.category?.length > 0 &&
-                                                                                                <Tooltip title={`Category`}>
+                                                                                                <Tooltip title={t('Category')}>
                                                                                                 <Chip label={collectionitem.attributes?.category} variant="outlined" />
                                                                                                 </Tooltip>
                                                                                             }
                                                                                             {collectionitem.attributes.rarity?.length > 0 &&
-                                                                                                <Tooltip title={`Rarity`}>
+                                                                                                <Tooltip title={t('Rarity')}>
                                                                                                 <Chip label={collectionitem.attributes?.rarity} variant="outlined" />
                                                                                                 </Tooltip>
                                                                                             }
                                                                                             {collectionitem.attributes.spec?.length > 0 &&
-                                                                                                <Tooltip title={`Spec`}>
+                                                                                                <Tooltip title={t('Spec')}>
                                                                                                 <Chip label={collectionitem.attributes?.spec} variant="outlined" />
                                                                                                 </Tooltip>
                                                                                             }
                                                                                             {collectionitem.attributes.class?.length > 0 &&
-                                                                                                <Tooltip title={`Class`}>
+                                                                                                <Tooltip title={t('Class')}>
                                                                                                 <Chip label={collectionitem.attributes?.class} variant="outlined" />
                                                                                                 </Tooltip>
                                                                                             }
@@ -1684,14 +1132,14 @@ function GalleryItemMeta(props: any) {
                                                         : null }
 
                                                         <TableRow>
-                                                            <TableCell>Mint:</TableCell>
+                                                            <TableCell>{t('Mint')}:</TableCell>
                                                             <TableCell>
                                                                 <MakeLinkableAddress addr={mint} trim={5} hasextlink={true} hascopy={true} fontsize={14} />
                                                             </TableCell>
                                                         </TableRow>
                                                         
                                                         <TableRow>
-                                                            <TableCell>Owner:</TableCell>
+                                                            <TableCell>{t('Owner')}:</TableCell>
                                                             <TableCell>
                                                                 
                                                             {tokenOwners && (
@@ -1702,16 +1150,16 @@ function GalleryItemMeta(props: any) {
                                                         
                                                         {collectionitem?.symbol ? 
                                                             <TableRow>
-                                                                <TableCell>Symbol:</TableCell>
+                                                                <TableCell>{t('Symbol')}:</TableCell>
                                                                 <TableCell>{collectionitem.symbol}</TableCell>
                                                             </TableRow>
                                                         : null }
                                                         {collectionitem.seller_fee_basis_points > 0 ?
                                                             <TableRow>
-                                                                <TableCell>Royalty:</TableCell>
+                                                                <TableCell>{t('Royalty')}:</TableCell>
                                                                 <TableCell>
                                                                 {(+collectionitem.seller_fee_basis_points/100).toFixed(2)}%
-                                                                <Tooltip title={`This is the rate at which royalties are shared with creators if this asset is sold using the Metaplex Auction program`}><HelpOutlineIcon sx={{ fontSize:16, ml: 1  }}/></Tooltip>
+                                                                <Tooltip title={t('This is the rate at which royalties are shared with creators if this asset is sold using the Metaplex Auction program')}><HelpOutlineIcon sx={{ fontSize:16, ml: 1  }}/></Tooltip>
                                                                 </TableCell>
                                                             </TableRow>
                                                         : null }
@@ -1721,7 +1169,7 @@ function GalleryItemMeta(props: any) {
                                                                 <TableRow
                                                                     onClick={() => setOpenCreatorCollapse(!open_creator_collapse)}
                                                                 >
-                                                                    <TableCell>Creators:</TableCell>
+                                                                    <TableCell>{t('Creators')}:</TableCell>
                                                                     <TableCell>
                                                                         {collectionitem.properties.creators.length}
                                                                         <IconButton
@@ -1741,15 +1189,15 @@ function GalleryItemMeta(props: any) {
                                                                                 <Table size="small" aria-label="purchases">
                                                                                     <TableHead>
                                                                                         <TableRow>
-                                                                                            <TableCell><Typography variant="caption">Creator Address</Typography></TableCell>
-                                                                                            <TableCell align="right"><Typography variant="caption">% Royalty</Typography></TableCell>
+                                                                                            <TableCell><Typography variant="caption">{t('Creator Address')}</Typography></TableCell>
+                                                                                            <TableCell align="right"><Typography variant="caption">% {t('Royalty')}</Typography></TableCell>
                                                                                         </TableRow>
                                                                                     </TableHead>
                                                                                     {collectionitem.properties.creators.length > 0 && collectionitem.properties.creators.map((item: any) => (
                                                                                         <TableRow>
                                                                                             <TableCell>
                                                                                             <Button
-                                                                                                title="Visit Profile"
+                                                                                                title={t('Visit Profile')}
                                                                                                 component={Link} 
                                                                                                 to={`${GRAPE_PROFILE}${item.address}`}
                                                                                             >
@@ -1771,20 +1219,20 @@ function GalleryItemMeta(props: any) {
 
                                                         {collectionitem?.edition ?
                                                             <TableRow>
-                                                                <TableCell>Edition:</TableCell>
+                                                                <TableCell>{t('Edition')}:</TableCell>
                                                                 <TableCell>{collectionitem.edition}</TableCell>
                                                             </TableRow>
                                                         : null }
                                                         {collectionitem?.background_color ?
                                                             <TableRow>
-                                                                <TableCell>Background:</TableCell>
+                                                                <TableCell>{t('Background')}:</TableCell>
                                                                 <TableCell>#{collectionitem.background_color}</TableCell>
                                                             </TableRow>
                                                         : null }
 
                                                         {collectionrawdata?.updateAuthority ?
                                                             <TableRow>
-                                                                <TableCell>Update Authority:</TableCell>
+                                                                <TableCell>{t('Update Authority')}:</TableCell>
                                                                 <TableCell>
                                                                     <MakeLinkableAddress addr={collectionrawdata.updateAuthority} trim={5} hasextlink={true} hascopy={false} fontsize={14} />
                                                                 </TableCell>
@@ -1792,52 +1240,52 @@ function GalleryItemMeta(props: any) {
                                                         : null }
                                                         {collectionrawdata?.isMutable == 1 ?
                                                             <TableRow>
-                                                                <TableCell>Mutable:</TableCell>
+                                                                <TableCell>{t('Mutable')}:</TableCell>
                                                                 <TableCell><LockOpenIcon /></TableCell>
                                                             </TableRow>
                                                         : 
                                                             <TableRow>
-                                                                <TableCell>Mutable:</TableCell>
-                                                                <TableCell><Tooltip title={`This is immutable`}><LockIcon /></Tooltip></TableCell>
+                                                                <TableCell>{t('Mutable')}:</TableCell>
+                                                                <TableCell><Tooltip title={t('This is immutable')}><LockIcon /></Tooltip></TableCell>
                                                             </TableRow> }
                                                         {collectionrawdata?.primarySaleHappened ? 
                                                             <TableRow>
-                                                                <TableCell>Primary Sale:</TableCell>
+                                                                <TableCell>{t('Primary Sale')}:</TableCell>
                                                                 <TableCell><CheckCircleIcon /></TableCell>
                                                             </TableRow>
                                                         : 
                                                         <TableRow>
-                                                            <TableCell>Primary Sale:</TableCell>
-                                                            <TableCell><Tooltip title={`Primary sale has not occured as of this fetch`}><BlockIcon /></Tooltip></TableCell>
+                                                            <TableCell>{t('Primary Sale')}:</TableCell>
+                                                            <TableCell><Tooltip title={t('Primary sale has not occured as of this fetch')}><BlockIcon /></Tooltip></TableCell>
                                                         </TableRow>
                                                         }
 
                                                         {collectionitem?.createdAt ?
                                                             <TableRow>
-                                                                <TableCell>Created At:</TableCell>
+                                                                <TableCell>{t('Created At')}:</TableCell>
                                                                 <TableCell>{formatBlockTime(collectionitem.createdAt, false, false)}</TableCell>
                                                             </TableRow>
                                                         : null }
                                                         {collectionitem?.updatedAt ?
                                                             <TableRow>
-                                                                <TableCell>Updated At:</TableCell>
+                                                                <TableCell>{t('Updated At')}:</TableCell>
                                                                 <TableCell>{formatBlockTime(collectionitem.updatedAt, false, false)}</TableCell>
                                                             </TableRow>
                                                         : null }
                                                         {collectionitem?.deactivated ?
                                                             <TableRow>
-                                                                <TableCell>Deactivated:</TableCell>
-                                                                <TableCell><Tooltip title={`This is deactivated`}><CheckCircleIcon /></Tooltip></TableCell>
+                                                                <TableCell>{t('Deactivated')}:</TableCell>
+                                                                <TableCell><Tooltip title={t('This is deactivated')}><CheckCircleIcon /></Tooltip></TableCell>
                                                             </TableRow>
                                                         : null }
 
                                                         {collectionitem.image ?
                                                             
                                                             <TableRow>
-                                                                <TableCell>Image:</TableCell>
+                                                                <TableCell>{t('Image')}:</TableCell>
                                                                 <TableCell>
                                                                     <Button size="small" variant="text" component="a" href={`${collectionitem.image}`} target="_blank">
-                                                                        View Original <OpenInNewIcon sx={{fontSize:12, ml:1}} />
+                                                                    {t('View Original')} <OpenInNewIcon sx={{fontSize:12, ml:1}} />
                                                                     </Button>
                                                                 </TableCell>
                                                             </TableRow>
@@ -1891,7 +1339,7 @@ function GalleryItemMeta(props: any) {
                                                             <>
                                                                 {(OTHER_MARKETPLACES.filter(e => e.address === tokenOwners?.data.parsed.info.owner)).map(filteredMarket => (
                                                                 <>
-                                                                Listed on 
+                                                                {t('Listed on')}
                                                                     {(filteredMarket.name.length > 0) ? (
                                                                         <>  
                                                                             
@@ -1945,8 +1393,8 @@ function GalleryItemMeta(props: any) {
                                                                 <Grid item>
                                                                 {solanaDomain && solanaDomain.length > 0 ?
                                                                 <>
-                                                                    Owned by 
-                                                                    <Tooltip title={`Visit profile`}>
+                                                                    {t('Owned by')} 
+                                                                    <Tooltip title={t('Visit Profile')}>
                                                                         <Button
                                                                             component={Link} 
                                                                             to={`${GRAPE_PROFILE}${tokenOwners?.data.parsed.info.owner}`}
@@ -1960,8 +1408,8 @@ function GalleryItemMeta(props: any) {
                                                                 </>
                                                                 :
                                                                 <>
-                                                                    Owned by 
-                                                                    <Tooltip title={`Visit profile`}>
+                                                                    {t('Owned by')} 
+                                                                    <Tooltip title={t('Visit Profile')}>
                                                                         <Button
                                                                             component={Link} 
                                                                             to={`${GRAPE_PROFILE}${tokenOwners?.data.parsed.info.owner}`}
@@ -1982,11 +1430,11 @@ function GalleryItemMeta(props: any) {
                                                                         display: "flex",
                                                                         justifyContent: 'flex-end'
                                                                     }}>
-                                                                    <Tooltip title={`Explorer`}>
+                                                                    <Tooltip title={t('Explorer')}>
                                                                         <Button size="small" variant="text" component="a" href={`https://explorer.solana.com/address/${tokenOwners?.data.parsed.info.owner}`} target="_blank" sx={{borderRadius:'24px', color:'white', pl:0, pr:0}}> <OpenInNewIcon sx={{fontSize:'14px'}} /></Button>
                                                                     </Tooltip>
                                                                     {publicKey && publicKey.toBase58() === tokenOwners?.data.parsed.info.owner ?
-                                                                        <Tooltip title={`Set this NFT as your avatar`}>
+                                                                        <Tooltip title={t('Set this NFT as your avatar')}>
                                                                             <Button 
                                                                                 variant="text" 
                                                                                 onClick={HandleSetAvatar}
@@ -2014,7 +1462,7 @@ function GalleryItemMeta(props: any) {
                                                                             {isFollowing ?  
                                                                                     <Button 
                                                                                         variant="text" 
-                                                                                        title="Unfollow"
+                                                                                        title={t('Unfollow')}
                                                                                         onClick={() => followWalletDisconnect(tokenOwners?.data.parsed.info.owner)}
                                                                                         size="small"
                                                                                         className="profileAvatarIcon"
@@ -2025,7 +1473,7 @@ function GalleryItemMeta(props: any) {
                                                                                 :
                                                                                     <Button 
                                                                                         variant="text" 
-                                                                                        title="Follow"
+                                                                                        title={t('Follow')}
                                                                                         onClick={() => followWalletConnect(tokenOwners?.data.parsed.info.owner, solanaDomain || '')}
                                                                                         size="small"
                                                                                         className="profileAvatarIcon"
@@ -2042,7 +1490,7 @@ function GalleryItemMeta(props: any) {
                                                                 </Grid>
                                                                 
                                                             </Grid>
-                                                            :<>Loading owner</>}
+                                                            :<>{t('Loading owner')}</>}
                                                             </>
                                                         )
                                                     }
@@ -2071,7 +1519,6 @@ function GalleryItemMeta(props: any) {
                                         />
                                 }
                                 
-
                                 {collectionitem.attributes?.length && collectionitem.attributes.length > 0 ? (
                                     <Box
                                         sx={{ 
@@ -2087,7 +1534,7 @@ function GalleryItemMeta(props: any) {
                                             <ListItemIcon>
                                             <FormatListBulletedIcon />
                                             </ListItemIcon>
-                                            <ListItemText primary="Traits" />
+                                            <ListItemText primary={t('Traits')} />
                                             {open_traits ? <ExpandLess /> : <ExpandMoreIcon />}
                                         </ListItemButton>
                                         <Collapse in={open_traits} timeout="auto" unmountOnExit>
@@ -2230,12 +1677,12 @@ export function PreviewView(this: any, props: any) {
         const [collectionrawdata, setCollectionRaw] = React.useState(null);
         const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
         const { connection } = useConnection();
+        const MD_PUBKEY = METAPLEX_PROGRAM_ID;
         
         const handleExpandClick = () => {
             setExpanded(!expanded);
         };
         
-        const MD_PUBKEY = new PublicKey("metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s");
         const getCollectionData = async () => {
             try {
                 let mint_address = new PublicKey(mint)
@@ -2341,6 +1788,8 @@ export function PreviewView(this: any, props: any) {
         }
     }
 
+    const { t, i18n } = useTranslation();
+
     return (
         <React.Fragment>
                 { mint && ValidateAddress(mint) ?
@@ -2389,7 +1838,7 @@ export function PreviewView(this: any, props: any) {
                                             color="inherit"
                                             display='flex'
                                             sx={{mb:3}}
-                                        >ooops... you entered an invalid address!</Typography>
+                                        >{t('ooops... you entered an invalid address!')}</Typography>
 
                                     </Grid>
                                 </Grid>

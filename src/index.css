@@ -153,7 +153,9 @@ code {
 }
 
 @media screen and (max-width: 550px) {
-
+  .likeTab{
+    display:none;
+  }
   /* Overriding MUI Stylings for mobile screens */
   .wallet-adapter-button {
     line-height: 20px !important;
