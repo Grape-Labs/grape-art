@@ -2990,9 +2990,9 @@
     webpack-dev-server "^3.11.2"
 
 "@solana/spl-token-registry@^0.2.1280":
-  version "0.2.2984"
-  resolved "https://registry.yarnpkg.com/@solana/spl-token-registry/-/spl-token-registry-0.2.2984.tgz#5c76a8b35b9b41a10eb13391737fa25bcd15c358"
-  integrity sha512-Jdf3UHFi9D8SxQvBMFf4uJ8kQFbbodJ7hcmnkTFuOW+u0S8ZSBK5D25FppGC0k7QDxubEAB9FJRExrF3/yUfmg==
+  version "0.2.2985"
+  resolved "https://registry.yarnpkg.com/@solana/spl-token-registry/-/spl-token-registry-0.2.2985.tgz#22c434ef84fdd19beef896d67e2d14be36fe6994"
+  integrity sha512-V/57MmjuDAHiwUWnpRtjVF/PuMIwkmA6UWWBKl+ot3ix3AbtdLPTef93+oLyYfecosnr8NhAQR/d4VJstn1+Ag==
   dependencies:
     cross-fetch "3.0.6"
 
