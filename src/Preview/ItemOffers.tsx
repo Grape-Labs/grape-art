@@ -251,8 +251,11 @@ function SellNowVotePrompt(props:any){
                     );
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 =======
+=======
+>>>>>>> parent of 64937b6 (successful multiple instructions to test realm collaboration)
 =======
 >>>>>>> parent of 64937b6 (successful multiple instructions to test realm collaboration)
                 }
@@ -260,6 +263,9 @@ function SellNowVotePrompt(props:any){
                     enqueueSnackbar(`Preparing to create a Proposal for Listing Price to ${sell_now_amount} SOL`,{ variant: 'info' });
                 } else {
 <<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> parent of 64937b6 (successful multiple instructions to test realm collaboration)
+=======
 >>>>>>> parent of 64937b6 (successful multiple instructions to test realm collaboration)
 =======
 >>>>>>> parent of 64937b6 (successful multiple instructions to test realm collaboration)
