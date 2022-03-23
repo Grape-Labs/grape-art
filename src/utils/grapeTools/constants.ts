@@ -20,7 +20,7 @@ export const TOKEN_REPORT_AMOUNT = 10;
 export const REPORT_ALERT_THRESHOLD = 1;
 export const TOKEN_REALM_ID = 'By2sVGZXwfQq6rAiAM3rNPJ9iQfb5e2QhnF4YjJ4Bip';
 export const TOKEN_REALM_PROGRAM_ID = 'GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw';
-export const COLLABORATION_DAO = 'JAbgQLj9MoJ2Kvie8t8Y6z6as3Epf7rDp87Po3wFwrNK';
+
 export const FEATURED_DAO_ARRAY = [{
     address:'66pJhhESDjdeBBDdkKmxYYd7q6GUggYPWjxpMKNX39KV',
     daourl:'https://realms.today/dao/Ukraine',

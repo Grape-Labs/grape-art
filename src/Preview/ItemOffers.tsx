@@ -65,8 +65,7 @@ import {
     GRAPE_RPC_REFRESH, 
     GRAPE_PREVIEW, 
     GRAPE_PROFILE,
-    FEATURED_DAO_ARRAY,
-    COLLABORATION_DAO
+    FEATURED_DAO_ARRAY
 } from '../utils/grapeTools/constants';
 import { RegexTextField } from '../utils/grapeTools/RegexTextField';
 import { MakeLinkableAddress, ValidateCurve, trimAddress, timeAgo } from '../utils/grapeTools/WalletAddress'; // global key handling
@@ -96,8 +95,6 @@ import { buyNowListing } from '../utils/auctionHouse/buyNowListing';
 import { cancelWithdrawOffer } from '../utils/auctionHouse/cancelWithdrawOffer';
 import { depositInGrapeVine } from '../utils/auctionHouse/depositInGrapeVine';
 import { createDAOProposal } from '../utils/auctionHouse/createDAOProposal';
-import { sellNowListingDao } from '../utils/auctionHouse/sellNowListingDao';
-//import { cancelListingAh } from '../utils/auctionHouse/cancelListingAh';
 
 import "../App.less";
 
@@ -106,11 +103,6 @@ import { getPriceWithMantissa } from '../utils/auctionHouse/helpers/various';
 
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { WalletConnectButton } from "@solana/wallet-adapter-react-ui";
-import { createProposal } from '../utils/auctionHouse/createProposal';
-import  useWalletStore  from '../utils/governanceTools/useWalletStore';
-import { sendTransactions } from "../utils/governanceTools/sendTransactions";
-import { InstructionsAndSignersSet } from "../utils/auctionHouse/helpers/types";
-//import { RpcContext } from '@solana/spl-governance';
 
 import { useTranslation } from 'react-i18next';
 
@@ -208,7 +200,6 @@ function SellNowVotePrompt(props:any){
     const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
     const { connection } = useConnection();
     const { publicKey, wallet, sendTransaction } = useWallet();
-    const anchorWallet = useAnchorWallet();
     const [daoPublicKey, setDaoPublicKey] = React.useState(null);
     const salePrice = props.salePrice || null;
     const weightedScore = props.grapeWeightedScore || 0;
@@ -243,35 +234,46 @@ function SellNowVotePrompt(props:any){
             //const setSellNowPrice = async () => {
             try {
                 const transaction = new Transaction();
+                const transactionInstr = await sellNowListing(+sell_now_amount, mint, publicKey.toString(), mintOwner, weightedScore, daoPublicKey);
+                
+                const instructionsArray = [transactionInstr.instructions].flat();        
                 
                 // we need to pass the transactions to realms not to the wallet, and then with the instruction set we pass to the wallet only the ones from realms
                 if (daoPublicKey){
-                    const transactionInstr = await sellNowListingDao(+sell_now_amount, mint, publicKey.toString(), mintOwner, weightedScore, daoPublicKey);
-                    //console.log('transactionInstr' +JSON.stringify(transactionInstr));
-                    const proposalPk = await createProposal(+sell_now_amount, mint, publicKey.toString(), mintOwner, weightedScore, daoPublicKey, connection, transactionInstr, sendTransaction, anchorWallet);
-                    if (proposalPk){
-                        enqueueSnackbar(`Proposal: ${proposalPk} created for Listing Price Set to ${sell_now_amount} SOL`,{ variant: 'success' });
-                    }
+                    const transactionInstr2 = await createDAOProposal(+sell_now_amount, mint, publicKey.toString(), mintOwner, weightedScore, daoPublicKey, connection, transactionInstr, sendTransaction);
+                    //console.log("transactionInstr2: "+JSON.stringify(transactionInstr2));
+                    const instructionsArray2 = [transactionInstr2.instructions].flat();
+                    //console.log("instructionsArray2: "+ JSON.stringify(instructionsArray2));
+                    transaction.add(...instructionsArray2);
                 } else {
-                    const transactionInstr = await sellNowListing(+sell_now_amount, mint, publicKey.toString(), mintOwner, weightedScore, daoPublicKey);
-                    const instructionsArray = [transactionInstr.instructions].flat();            
                     transaction.add(
                         ...instructionsArray
                     );
+<<<<<<< HEAD
 
+=======
+                }
+                if (daoPublicKey){
+                    enqueueSnackbar(`Preparing to create a Proposal for Listing Price to ${sell_now_amount} SOL`,{ variant: 'info' });
+                } else {
+>>>>>>> parent of 64937b6 (successful multiple instructions to test realm collaboration)
                     enqueueSnackbar(`Preparing to set Sell Now Price to ${sell_now_amount} SOL`,{ variant: 'info' });
-                    const signedTransaction = await sendTransaction(transaction, connection);                    
-                    const snackprogress = (key:any) => (
-                        <CircularProgress sx={{padding:'10px'}} />
-                    );
-                    const cnfrmkey = enqueueSnackbar(`Confirming transaction`,{ variant: 'info', action:snackprogress, persist: true });
-                    await connection.confirmTransaction(signedTransaction, 'processed');
-                    closeSnackbar(cnfrmkey);
-                    const snackaction = (key:any) => (
-                        <Button href={`https://explorer.solana.com/tx/${signedTransaction}`} target='_blank'  sx={{color:'white'}}>
-                            {signedTransaction}
-                        </Button>
-                    );
+                }
+                const signedTransaction = await sendTransaction(transaction, connection);                    
+                const snackprogress = (key:any) => (
+                    <CircularProgress sx={{padding:'10px'}} />
+                );
+                const cnfrmkey = enqueueSnackbar(`Confirming transaction`,{ variant: 'info', action:snackprogress, persist: true });
+                await connection.confirmTransaction(signedTransaction, 'processed');
+                closeSnackbar(cnfrmkey);
+                const snackaction = (key:any) => (
+                    <Button href={`https://explorer.solana.com/tx/${signedTransaction}`} target='_blank'  sx={{color:'white'}}>
+                        {signedTransaction}
+                    </Button>
+                );
+                if (daoPublicKey){
+                    enqueueSnackbar(`Proposal Created for Listing Price Set to ${sell_now_amount} SOL`,{ variant: 'success', action:snackaction });
+                } else {
                     enqueueSnackbar(`Sell Now Price Set to ${sell_now_amount} SOL`,{ variant: 'success', action:snackaction });
 
                 }
@@ -309,7 +311,7 @@ function SellNowVotePrompt(props:any){
                     props.setRefreshOffers(true);
                 }, GRAPE_RPC_REFRESH);
                 
-
+            
             } catch(e){
                 closeSnackbar();
                 enqueueSnackbar(`${e}`,{ variant: 'error' });
@@ -328,8 +330,8 @@ function SellNowVotePrompt(props:any){
             }
         } 
         // static grape test (remove after testing)
-        if (mintOwner === COLLABORATION_DAO)
-            setDaoPublicKey(COLLABORATION_DAO);
+        if (mintOwner === 'JAbgQLj9MoJ2Kvie8t8Y6z6as3Epf7rDp87Po3wFwrNK')
+            setDaoPublicKey(featured.address);
     },[]);
 
     return (
@@ -938,7 +940,7 @@ export default function ItemOffers(props: any) {
     const handleCancelListing =  async (salePrice: number) => {
         try {
             //START CANCEL LISTING
-            const transactionInstr = await cancelListing(salePrice, mint, walletPublicKey.toString(), mintOwner);  
+            const transactionInstr = await cancelListing(salePrice, mint, walletPublicKey.toString(), mintOwner);
             const instructionsArray = [transactionInstr.instructions].flat();        
             const transaction = new Transaction()
             .add(
