@@ -13,26 +13,23 @@ UI:
 - Interface: MUI 5 https://mui.com
 
 BUILD:
-```
-yarn install
-yarn start
-```
+- yarn install
+- yarn start
 
 CONSTANTS: 
 - Following should be edited according to the DAO
--   utils/grapeTools/constants.tsx
+-   /utils/grapeTools/constants.tsx
 -   export const TOKEN_VERIFICATION_ADDRESS = '8upjSpvjcdpuzhfR1zriwg5NXkwDruejqNE9WNbPRtyA'; // Token to verify
--   export const TOKEN_VERIFICATION_NAME = 'Grape'; // just a label
+-   export const TOKEN_VERIFICATION_NAME = 'Grape'; 
 -   export const TOKEN_VERIFICATION_AMOUNT = 1000; // This is to verify the amount needed to make an offer
 -   export const TOKEN_REALM_ID = 'By2sVGZXwfQq6rAiAM3rNPJ9iQfb5e2QhnF4YjJ4Bip'; // governance/realms publicKey to capture if the wallet has holdings also on realms and account for that in the verification
-
 -   IMPORTANT:
 -   * connection endpoint can be edited in the grapeTools/constants.tsx
 -   * Default AH is set with 0% fees
 
 
-HAVE A DAO OR QUESTIONS:
--   Have a DAO and wondering how grape.art fits in or have questions - reach out to the Grape Team at https://discord.gg/greatape
+HELP SETTING UP:
+-   Have a DAO and want to run an instance of grape.art? each out to the Grape Team at https://discord.gg/greatape
 
 TRY IT OUT NOW:
 - https://grape.art
