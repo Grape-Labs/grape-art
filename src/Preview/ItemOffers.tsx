@@ -65,7 +65,8 @@ import {
     GRAPE_RPC_REFRESH, 
     GRAPE_PREVIEW, 
     GRAPE_PROFILE,
-    FEATURED_DAO_ARRAY
+    FEATURED_DAO_ARRAY,
+    VERIFIED_DAO_ARRAY,
 } from '../utils/grapeTools/constants';
 import { RegexTextField } from '../utils/grapeTools/RegexTextField';
 import { MakeLinkableAddress, ValidateCurve, trimAddress, timeAgo } from '../utils/grapeTools/WalletAddress'; // global key handling
@@ -171,6 +172,20 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
       padding: theme.spacing(1),
     },
 }));
+
+function ValidateDAO(mintOwner: string){
+    for (var featured of FEATURED_DAO_ARRAY){
+        if (featured.address === mintOwner){
+            return true;
+        }
+    } 
+    for (var verified of VERIFIED_DAO_ARRAY){
+        if (verified.address === mintOwner){
+            return true;
+        }
+    } 
+    return false;
+}
 
 function convertSolVal(sol: any){
     sol = parseFloat(new TokenAmount(sol, 9).format());
@@ -302,9 +317,11 @@ function SellNowVotePrompt(props:any){
                 setDaoPublicKey(featured.address);
             }
         } 
-        // static grape test (remove after testing)
-        if (mintOwner === 'JAbgQLj9MoJ2Kvie8t8Y6z6as3Epf7rDp87Po3wFwrNK')
-            setDaoPublicKey(featured.address);
+        for (var verified of VERIFIED_DAO_ARRAY){
+            if (verified.address === mintOwner){
+                setDaoPublicKey(verified.address);
+            }
+        } 
     },[]);
 
     return (
@@ -1721,13 +1738,19 @@ export default function ItemOffers(props: any) {
 
                                                             {((grape_whitelisted > -1) ||
                                                                 (grape_member_balance > grape_offer_threshhold)) ? (
-                                                                <Grid item>
-                                                                    {ValidateCurve(mintOwner) ?
-                                                                        <OfferPrompt mint={mint} mintOwner={mintOwner} setRefreshOffers={setRefreshOffers} solBalance={sol_portfolio_balance} highestOffer={highestOffer} />
-                                                                    :
-                                                                        <SellNowVotePrompt mint={mint} mintOwner={mintOwner} salePrice={salePrice} grapeWeightedScore={grape_weighted_score} RefreshOffers={setRefreshOffers} />
+                                                                    <>
+                                                                    {!ValidateCurve(mintOwner) &&
+                                                                        <Grid item>
+                                                                            <SellNowVotePrompt mint={mint} mintOwner={mintOwner} salePrice={salePrice} grapeWeightedScore={grape_weighted_score} RefreshOffers={setRefreshOffers} />
+                                                                        </Grid>
                                                                     }
-                                                                </Grid>
+                                                                    
+                                                                    {ValidateCurve(mintOwner) || (ValidateDAO(mintOwner)) && (
+                                                                        <Grid item>
+                                                                            <OfferPrompt mint={mint} mintOwner={mintOwner} setRefreshOffers={setRefreshOffers} solBalance={sol_portfolio_balance} highestOffer={highestOffer} />
+                                                                        </Grid>
+                                                                    )}
+                                                                    </>
                                                             ) : (
                                                                 <Grid item>
                                                                     <Tooltip title={`${t('The Marketplace requires')} ${TOKEN_VERIFICATION_AMOUNT} ${TOKEN_VERIFICATION_NAME} ${t('to make an offer')}`}>
@@ -1962,31 +1985,46 @@ export default function ItemOffers(props: any) {
                                                             <TableCell align="right">
                                                             
                                                             <>
-                                                                {publicKey && publicKey.toBase58() === mintOwner && (
-                                                                    <div>
-                                                                    <Button
-                                                                        onClick={() => setAcceptPrompt(convertSolVal(item.offeramount), item.buyeraddress)} //acceptOfferWrapper(convertSolVal(item.offeramount), item.buyeraddress)} //handleAcceptOffer(convertSolVal(item.offeramount), item.buyeraddress)}
+                                                                {(ValidateDAO(mintOwner)) ? (
+                                                                    <Tooltip
+                                                                        title='Vote to accept this offer'
+                                                                    >
+                                                                        <Button
+                                                                        onClick={() => setAcceptPrompt(convertSolVal(item.offeramount), item.buyeraddress)}
                                                                         className='buyNowButton'
                                                                         sx={{
                                                                         }}
-                                                                    >
-                                                                        {t('ACCEPT')}
-                                                                    </Button>
-                                                                </div>
-                                                                )}
-                                                                
-                                                                {publicKey && publicKey.toBase58() === item.buyeraddress && (
-                                                                    <Button 
-                                                                        color="error"
-                                                                        variant="text"
-                                                                        //onClick={() => handleWithdrawOffer(convertSolVal(item.offeramount))}
-                                                                        onClick={() => handleCancelOffer(convertSolVal(item.offeramount))}
-                                                                        sx={{
-                                                                            borderRadius: '10px',
-                                                                        }}
-                                                                    >
-                                                                        <CancelIcon />
-                                                                    </Button>
+                                                                        >
+                                                                            {t('VOTE')}
+                                                                        </Button>
+                                                                    </Tooltip>
+                                                                ):(
+                                                                    <>
+                                                                    {publicKey && publicKey.toBase58() === mintOwner && (
+                                                                        <Button
+                                                                            onClick={() => setAcceptPrompt(convertSolVal(item.offeramount), item.buyeraddress)} //acceptOfferWrapper(convertSolVal(item.offeramount), item.buyeraddress)} //handleAcceptOffer(convertSolVal(item.offeramount), item.buyeraddress)}
+                                                                            className='buyNowButton'
+                                                                            sx={{
+                                                                            }}
+                                                                        >
+                                                                            {t('ACCEPT')}
+                                                                        </Button>
+                                                                    )}
+                                                                    
+                                                                    {publicKey && publicKey.toBase58() === item.buyeraddress && (
+                                                                        <Button 
+                                                                            color="error"
+                                                                            variant="text"
+                                                                            //onClick={() => handleWithdrawOffer(convertSolVal(item.offeramount))}
+                                                                            onClick={() => handleCancelOffer(convertSolVal(item.offeramount))}
+                                                                            sx={{
+                                                                                borderRadius: '10px',
+                                                                            }}
+                                                                        >
+                                                                            <CancelIcon />
+                                                                        </Button>
+                                                                    )}
+                                                                    </>
                                                                 )}
                                                             </>
                                                             
