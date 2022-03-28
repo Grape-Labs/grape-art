@@ -21,6 +21,7 @@ import {
   } from '../utils/auctionHouse/helpers/constants';
 
 import { GRAPE_PREVIEW } from '../utils/grapeTools/constants';
+import { getImageOrFallback } from '../utils/grapeTools/WalletAddress';
 
 export default function GalleryItem(props: any){
     const MD_PUBKEY = METAPLEX_PROGRAM_ID;
@@ -106,8 +107,10 @@ export default function GalleryItem(props: any){
                 if (image){
                     if ((image?.toLocaleUpperCase().indexOf('?EXT=PNG') > -1) ||
                         (image?.toLocaleUpperCase().indexOf('?EXT=JPEG') > -1)){
-                            //image = image.slice(0, image.indexOf('?'));
-                            image = 'https://solana-cdn.com/cdn-cgi/image/width=256/'+image;
+                            let image_url = 'https://solana-cdn.com/cdn-cgi/image/width=256/'+image;
+                            getImageOrFallback(image_url, image).then(validUrl => {
+                                image = validUrl
+                            });
                     }
                 }
             }catch(e){console.log("ERR: "+e)}

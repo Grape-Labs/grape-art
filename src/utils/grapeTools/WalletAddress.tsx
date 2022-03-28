@@ -20,6 +20,20 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
+export async function getImageOrFallback(url:string, fallback:string) {
+    return new Promise((resolve, reject) => {
+      const img = new Image()
+      img.src = url
+      img.onload = () => resolve(url)
+      img.onerror = () => {
+      //  reject(`image not found for url ${url}`)
+        return fallback;
+      }
+    }).catch(() => {
+      return fallback
+    })
+}
+
 export function timeAgo(blockTime:string){
     try{
         let prettydate = moment.unix(+blockTime).format("MMMM Do YYYY, h:mm a");
