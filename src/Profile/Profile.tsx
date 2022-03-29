@@ -940,6 +940,8 @@ const IdentityView = (props: any) => {
                         let buf = Buffer.from(meta_primer.data, 'base64');
                         let meta_final = decodeMetadata(buf);
                         collectionmeta[i]["meta"] = meta_final;
+                        collectionmeta[i]["groupBySymbol"] = 0;
+                        collectionmeta[i]["floorPrice"] = 0;
                         final_collection_meta.push(collectionmeta[i]);
                     }catch(e){
                         console.log("ERR:"+e)
@@ -947,15 +949,33 @@ const IdentityView = (props: any) => {
                 }
             }
 
-            //console.log("final_collection_meta: "+JSON.stringify(final_collection_meta))
-
             let finalmeta = final_collection_meta;//JSON.parse(JSON.stringify(collectionmeta));
             try{
-                finalmeta.sort((a:any, b:any) => a?.meta.data.name.toLowerCase().trim() > b?.meta.data.name.toLowerCase().trim() ? 1 : -1);   
+                
+                // add a groupable counter
+                for (var i = 0; i < finalmeta.length; i++){
+                    let counter = 0;
+                    // using .symbol
+                    // query how many instances
+                    if (finalmeta[i].meta.data.symbol.length > 0){
+                        for (var metainstance of finalmeta){
+                            if (finalmeta[i].meta.data.symbol === metainstance.meta.data.symbol ){
+                                counter++;
+                                finalmeta[i]["groupBySymbol"] = counter;   
+                            }
+                        }
+                    }
+                }
+
+                //finalmeta.sort((a:any, b:any) => (a.groupBySymbol - b.groupBySymbol) || a?.meta.data.name.toLowerCase().trim() > b?.meta.data.name.toLowerCase().trim() ? 1 : -1);
+                finalmeta.sort((a:any, b:any) => a?.meta.data.name.toLowerCase().trim() > b?.meta.data.name.toLowerCase().trim() ? 1 : -1);
+
+                //for (var i = 0; i < finalmeta.length; i++){
+                //    console.log(finalmeta[i].meta.data.symbol+": "+finalmeta[i]["groupBySymbol"])
+                //}
             }catch(e){console.log("Sort ERR: "+e)}
             setCollectionMetaFinal(finalmeta);
             // setCollectionMetaFinal(); // add both arrays
-
             setLoading(false);
         }
     }
