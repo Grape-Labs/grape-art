@@ -1745,7 +1745,7 @@ export default function ItemOffers(props: any) {
                                                                         </Grid>
                                                                     }
                                                                     
-                                                                    {ValidateCurve(mintOwner) || (ValidateDAO(mintOwner)) && (
+                                                                    {(ValidateCurve(mintOwner) || (ValidateDAO(mintOwner))) && (
                                                                         <Grid item>
                                                                             <OfferPrompt mint={mint} mintOwner={mintOwner} setRefreshOffers={setRefreshOffers} solBalance={sol_portfolio_balance} highestOffer={highestOffer} />
                                                                         </Grid>
