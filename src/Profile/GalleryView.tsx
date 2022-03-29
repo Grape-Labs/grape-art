@@ -24,7 +24,7 @@ export default function GalleryView(props: any){
     const [page, setPage] = React.useState(1);
     const rowsperpage = 1500;
     const finalCollection = props.finalCollection;
-    const walletCollection = props.walletCollection;
+    //const walletCollection = props.walletCollection;
 
     return (
         <>
@@ -53,8 +53,7 @@ export default function GalleryView(props: any){
                                             minWidth: '175px'
                                         }} 
                                     >
-                                    <GalleryItem collectionitem={collectionInfo} listed={true} count={key} />
-                                    
+                                        <GalleryItem collectionitem={collectionInfo} listed={true} count={key} />
                                     </Box>
                                 </Grid>
                                     
@@ -63,11 +62,11 @@ export default function GalleryView(props: any){
                     )}
                 </Grid>
                 
-                { walletCollection.length > rowsperpage && 
+                { finalCollection.length > rowsperpage && 
                     <Grid container justifyContent="flex-end" sx={{ mt: 2 }}>
                         <Stack spacing={2}>
                             <Pagination
-                                count={(Math.ceil(walletCollection.length / rowsperpage))}
+                                count={(Math.ceil(finalCollection.length / rowsperpage))}
                                 page={page}
                                 //onChange={handlePageChange}
                                 defaultPage={1}

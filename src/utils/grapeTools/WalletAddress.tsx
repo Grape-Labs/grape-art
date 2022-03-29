@@ -21,13 +21,18 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
 });
 
 export async function getImageOrFallback(url:string, fallback:string) {
+    //console.log(url+" vs "+fallback)
     return new Promise((resolve, reject) => {
       const img = new Image()
       img.src = url
-      img.onload = () => resolve(url)
+      img.onload = () => {
+        //console.log("image found")
+        resolve(url)
+        return url
+      }
       img.onerror = () => {
-      //  reject(`image not found for url ${url}`)
-        return fallback;
+        //console.log("image not found")
+        reject(`image not found for url ${url}`)
       }
     }).catch(() => {
       return fallback

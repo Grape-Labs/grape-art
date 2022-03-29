@@ -635,7 +635,7 @@ const MainPanel = (props: any) => {
                         </Tabs>
 
                         <TabPanel value={tabvalue} index={0}>
-                            <GalleryView finalCollection={finalCollection} walletCollection={walletCollection} />
+                            <GalleryView finalCollection={finalCollection} />
                         </TabPanel>
                         <TabPanel value={tabvalue} index={1}>
                             <FeedView />
@@ -934,13 +934,24 @@ const IdentityView = (props: any) => {
                 //console.log(i+": "+JSON.stringify(collectionmeta[i])+" --- with --- "+JSON.stringify(wallet_collection[i]));
                 if (collectionmeta[i]){
                     collectionmeta[i]["wallet"] = wallet_collection[i];
+                    try{
+                        let meta_primer = collectionmeta[i];
+                        let buf = Buffer.from(meta_primer.data, 'base64');
+                        let meta_final = decodeMetadata(buf);
+                        collectionmeta[i]["meta"] = meta_final;
+                    }catch(e){
+                        // for invalid meta we should push a meta with null or something to avoid loading the nft
+                        console.log("ERR:"+e)
+                    }
+
                 }
             }
             
+            let finalmeta = collectionmeta;//JSON.parse(JSON.stringify(collectionmeta));
             try{
-                let finalmeta = JSON.parse(JSON.stringify(collectionmeta));
-                setCollectionMetaFinal(finalmeta);
-            }catch(e){}
+                finalmeta.sort((a, b) => a.meta.data.name.toLowerCase() > b.meta.data.name.toLowerCase() ? 1 : -1);   
+            }catch(e){console.log("Sort ERR: "+e)}
+            setCollectionMetaFinal(finalmeta);
             // setCollectionMetaFinal(); // add both arrays
 
             setLoading(false);

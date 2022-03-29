@@ -60,6 +60,12 @@ export default function GalleryItem(props: any){
             }
         }
 
+        const setImageUrl = async (image_url:string, image:string) => {
+            await getImageOrFallback(image_url, image).then(validUrl => {
+                return validUrl
+            });
+        }
+
         const getCollectionMeta = async () => {
             if (!loading){
                 setLoading(true);
@@ -108,9 +114,8 @@ export default function GalleryItem(props: any){
                     if ((image?.toLocaleUpperCase().indexOf('?EXT=PNG') > -1) ||
                         (image?.toLocaleUpperCase().indexOf('?EXT=JPEG') > -1)){
                             let image_url = 'https://solana-cdn.com/cdn-cgi/image/width=256/'+image;
-                            getImageOrFallback(image_url, image).then(validUrl => {
-                                image = validUrl
-                            });
+                            image = image_url;
+                            //image = setImageUrl(image_url, image);
                     }
                 }
             }catch(e){console.log("ERR: "+e)}
