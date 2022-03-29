@@ -192,22 +192,37 @@ export default function CurationView(props: any){
 
     const getCollectionMeta = async (start:number) => {
         const wallet_collection = likeListInfo.likes.list;
-
+        
         let tmpcollectionmeta = await getCollectionData(start);
         setCollectionMeta(tmpcollectionmeta);
-
+        
+        let final_collection_meta: any[] = [];
         for (var i = 0; i < tmpcollectionmeta.length; i++){
             //console.log(i+": "+JSON.stringify(collectionmeta[i])+" --- with --- "+JSON.stringify(wallet_collection[i]));
             if (tmpcollectionmeta[i]){
                 tmpcollectionmeta[i]["wallet"] = wallet_collection[i];
+                try{
+                    
+                    let meta_primer = tmpcollectionmeta[i];
+                    let buf = meta_primer.data;
+                        //Buffer.from(meta_primer.data, 'base64');
+                    let meta_final = decodeMetadata(buf);
+                    tmpcollectionmeta[i]["meta"] = meta_final;
+                    
+                    final_collection_meta.push(tmpcollectionmeta[i]);
+                    
+                }catch(e){
+                    console.log("ERR:"+e)
+                }
             }
         }
         
+        let finalmeta = final_collection_meta;//JSON.parse(JSON.stringify(final_collection_meta));
         try{
-            let finalmeta = JSON.parse(JSON.stringify(tmpcollectionmeta));
-            setCollectionMetaFinal(finalmeta);
-        }catch(e){}
-
+            finalmeta.sort((a:any, b:any) => a?.meta.data.name.toLowerCase().trim() > b?.meta.data.name.toLowerCase().trim() ? 1 : -1);   
+        }catch(e){console.log("Sort ERR: "+e)}
+        setCollectionMetaFinal(finalmeta);
+        
     }
 
     // if likeListInfo set

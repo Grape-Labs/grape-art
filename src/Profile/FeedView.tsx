@@ -577,7 +577,7 @@ export default function FeedView(props: any){
                     let meta_final = decodeMetadata(buf);
                     //console.log(JSON.stringify(meta_final));
                 }
-
+                
                 finalmeta.sort((a:any,b:any) => (b.memo.score - a.memo.score) || (b.memo.blockTime - a.memo.blockTime));
                 setMergedFeaturedMeta(finalmeta);
             }catch(e){

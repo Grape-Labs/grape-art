@@ -947,7 +947,7 @@ const IdentityView = (props: any) => {
                 }
             }
 
-            console.log("final_collection_meta: "+JSON.stringify(final_collection_meta))
+            //console.log("final_collection_meta: "+JSON.stringify(final_collection_meta))
 
             let finalmeta = final_collection_meta;//JSON.parse(JSON.stringify(collectionmeta));
             try{
