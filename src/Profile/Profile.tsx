@@ -930,6 +930,7 @@ const IdentityView = (props: any) => {
             setLoadCount(loadCount+1);
             setCollectionMeta({collectionmeta});
 
+            let final_collection_meta: any[] = [];
             for (var i = 0; i < collectionmeta.length; i++){
                 //console.log(i+": "+JSON.stringify(collectionmeta[i])+" --- with --- "+JSON.stringify(wallet_collection[i]));
                 if (collectionmeta[i]){
@@ -939,17 +940,18 @@ const IdentityView = (props: any) => {
                         let buf = Buffer.from(meta_primer.data, 'base64');
                         let meta_final = decodeMetadata(buf);
                         collectionmeta[i]["meta"] = meta_final;
+                        final_collection_meta.push(collectionmeta[i]);
                     }catch(e){
-                        // for invalid meta we should push a meta with null or something to avoid loading the nft
                         console.log("ERR:"+e)
                     }
-
                 }
             }
-            
-            let finalmeta = collectionmeta;//JSON.parse(JSON.stringify(collectionmeta));
+
+            console.log("final_collection_meta: "+JSON.stringify(final_collection_meta))
+
+            let finalmeta = final_collection_meta;//JSON.parse(JSON.stringify(collectionmeta));
             try{
-                finalmeta.sort((a, b) => a.meta.data.name.toLowerCase() > b.meta.data.name.toLowerCase() ? 1 : -1);   
+                finalmeta.sort((a:any, b:any) => a?.meta.data.name.toLowerCase().trim() > b?.meta.data.name.toLowerCase().trim() ? 1 : -1);   
             }catch(e){console.log("Sort ERR: "+e)}
             setCollectionMetaFinal(finalmeta);
             // setCollectionMetaFinal(); // add both arrays
