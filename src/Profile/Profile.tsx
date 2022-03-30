@@ -635,7 +635,7 @@ const MainPanel = (props: any) => {
                         </Tabs>
 
                         <TabPanel value={tabvalue} index={0}>
-                            <GalleryView finalCollection={finalCollection} />
+                            <GalleryView finalCollection={finalCollection} isparent={true} />
                         </TabPanel>
                         <TabPanel value={tabvalue} index={1}>
                             <FeedView />
@@ -941,6 +941,7 @@ const IdentityView = (props: any) => {
                         let meta_final = decodeMetadata(buf);
                         collectionmeta[i]["meta"] = meta_final;
                         collectionmeta[i]["groupBySymbol"] = 0;
+                        collectionmeta[i]["groupBySymbolIndex"] = 0;
                         collectionmeta[i]["floorPrice"] = 0;
                         final_collection_meta.push(collectionmeta[i]);
                     }catch(e){
@@ -951,31 +952,37 @@ const IdentityView = (props: any) => {
 
             let finalmeta = final_collection_meta;//JSON.parse(JSON.stringify(collectionmeta));
             try{
-                
                 // add a groupable counter
                 for (var i = 0; i < finalmeta.length; i++){
-                    let counter = 0;
-                    // using .symbol
+                    // using nft symbol
                     // query how many instances
                     if (finalmeta[i].meta.data.symbol.length > 0){
                         for (var metainstance of finalmeta){
-                            if (finalmeta[i].meta.data.symbol === metainstance.meta.data.symbol ){
-                                counter++;
-                                finalmeta[i]["groupBySymbol"] = counter;   
+                            if (finalmeta[i].meta.data.symbol === metainstance.meta.data.symbol){
+                                finalmeta[i]["groupBySymbol"]++;
                             }
                         }
                     }
                 }
+                finalmeta.sort((a:any, b:any) => a?.meta.data.symbol.toLowerCase().trim() > b?.meta.data.symbol.toLowerCase().trim() ? 1 : -1);
+                //finalmeta.sort((a:any, b:any) => a?.meta.data.name.toLowerCase().trim() > b?.meta.data.name.toLowerCase().trim() ? 1 : -1);
+                
+                let previousSymbol = null;
+                let counter = 0;
+                for (var i = 0; i < finalmeta.length; i++){
+                    if (previousSymbol !== finalmeta[i].meta.data.symbol)
+                        counter = 0;
+                    
+                    if (finalmeta[i]["groupBySymbol"] > 1){
+                        finalmeta[i]["groupBySymbolIndex"] = counter;
+                        counter++;
+                    }
+                    previousSymbol = finalmeta[i].meta.data.symbol;
+                }
 
-                //finalmeta.sort((a:any, b:any) => (a.groupBySymbol - b.groupBySymbol) || a?.meta.data.name.toLowerCase().trim() > b?.meta.data.name.toLowerCase().trim() ? 1 : -1);
-                finalmeta.sort((a:any, b:any) => a?.meta.data.name.toLowerCase().trim() > b?.meta.data.name.toLowerCase().trim() ? 1 : -1);
-
-                //for (var i = 0; i < finalmeta.length; i++){
-                //    console.log(finalmeta[i].meta.data.symbol+": "+finalmeta[i]["groupBySymbol"])
-                //}
+                finalmeta.sort((a:any, b:any) => (b.groupBySymbol - a.groupBySymbol));
             }catch(e){console.log("Sort ERR: "+e)}
             setCollectionMetaFinal(finalmeta);
-            // setCollectionMetaFinal(); // add both arrays
             setLoading(false);
         }
     }

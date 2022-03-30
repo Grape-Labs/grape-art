@@ -14,11 +14,15 @@ import {
     Box,
     Skeleton,
     ListItemButton,
+    ImageListItemBar,
+    IconButton,
 } from '@mui/material';
 
 import {
     METAPLEX_PROGRAM_ID,
   } from '../utils/auctionHouse/helpers/constants';
+
+import GalleryView from './GalleryView';
 
 import { GRAPE_PREVIEW } from '../utils/grapeTools/constants';
 import { getImageOrFallback } from '../utils/grapeTools/WalletAddress';
@@ -30,6 +34,7 @@ export default function GalleryItem(props: any){
     const [expanded, setExpanded] = React.useState(false);
     const [loading, setLoading] = React.useState(false);
     const [collectionmeta, setCollectionMeta] = React.useState(null);
+    const isparent = props?.isparent || false;
         //const [collectionrawdata, setCollectionRaw] = React.useState(props.collectionitemmeta || null);
         
         const handleExpandClick = () => {
@@ -39,9 +44,10 @@ export default function GalleryItem(props: any){
         const getCollectionData = async () => {
             if (collectionitem){
                 try {
-                    let meta_primer = collectionitem;
-                    let buf = Buffer.from(meta_primer.data, 'base64');
-                    let meta_final = decodeMetadata(buf);
+                    //let meta_primer = collectionitem;
+                    //let buf = Buffer.from(meta_primer.data, 'base64');
+                    //let meta_final = decodeMetadata(buf);
+                    let meta_final = collectionitem.meta;
                     try{
                         const metadata = await fetch(meta_final.data.uri)
                         .then(
@@ -134,20 +140,42 @@ export default function GalleryItem(props: any){
                                     container 
                                     alignItems="center"
                                     justifyContent="center">
-                                    <Grid item sx={{display:'flex',justifyContent:'center',alignItems:'center'}}>
-                                        <ListItemButton
-                                            component={Link} to={`${GRAPE_PREVIEW}${mint}`}
-                                            sx={{
-                                                width:'100%',
-                                                borderRadius:'25px',
-                                                p: '2px'
-                                            }}
-                                        >
+                                    {!isparent ? (
+                                        <Grid item sx={{display:'flex',justifyContent:'center',alignItems:'center'}}>
+                                            <ListItemButton
+                                                component={Link} to={`${GRAPE_PREVIEW}${mint}`}
+                                                sx={{
+                                                    width:'100%',
+                                                    borderRadius:'25px',
+                                                    p: '2px'
+                                                }}
+                                            >
+                                                <img
+                                                    src={`${image}`}
+                                                    srcSet={`${image}`}
+                                                    alt={collectionmeta.collectionmeta?.name}
+                                                    loading="lazy"
+                                                    height="auto"
+                                                    style={{
+                                                        width:'100%',
+                                                        borderRadius:'24px'
+                                                    }}
+                                                />
+                                            </ListItemButton>
+                                        </Grid>
+                                    ):(
+                                        
+                                            <ListItemButton
+                                                sx={{
+                                                    width:'100%',
+                                                    borderRadius:'25px',
+                                                    p: '2px'
+                                                }}
+                                            >
                                             <img
                                                 src={`${image}`}
                                                 srcSet={`${image}`}
                                                 alt={collectionmeta.collectionmeta?.name}
-                                                //onClick={ () => openImageViewer(0) }
                                                 loading="lazy"
                                                 height="auto"
                                                 style={{
@@ -155,14 +183,41 @@ export default function GalleryItem(props: any){
                                                     borderRadius:'24px'
                                                 }}
                                             />
-                                        </ListItemButton>
-                                    </Grid>
+                                            {collectionitem.groupBySymbol > 1 && (
+                                                <ImageListItemBar
+                                                    sx={{
+                                                        p:0,
+                                                        m:0,
+                                                        borderBottomRightRadius:'26px',
+                                                        borderBottomLeftRadius:'26px',
+                                                    }}
+                                                    actionIcon={
+                                                    <IconButton
+                                                        sx={{ 
+                                                            color: 'rgba(255, 255, 255, 0.25)',
+                                                        }}
+                                                    >
+                                                        {collectionitem.groupBySymbol}
+                                                    </IconButton>
+                                                    }
+                                                />
+                                            )}
+                                            </ListItemButton>
+                                    )}
                                     <Grid item sx={{display:'flex'}}>
                                         <Box
                                             sx={{p:1}}
                                         >
                                             <Typography variant="caption">
-                                                {collectionmeta.collectionmeta?.name}
+                                                {!isparent ? (
+                                                    <>
+                                                    {collectionmeta.collectionmeta?.name}
+                                                    </>
+                                                ):(
+                                                    <>
+                                                    {collectionmeta.collectionmeta?.name.substring(0,collectionmeta.collectionmeta?.name.indexOf('#')).trim()}
+                                                    </>
+                                                )}
                                             </Typography>
                                         </Box>
                                     </Grid>

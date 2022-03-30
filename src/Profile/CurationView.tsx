@@ -208,7 +208,8 @@ export default function CurationView(props: any){
                         //Buffer.from(meta_primer.data, 'base64');
                     let meta_final = decodeMetadata(buf);
                     tmpcollectionmeta[i]["meta"] = meta_final;
-                    
+                    tmpcollectionmeta[i]["groupBySymbol"] = 0;
+                    tmpcollectionmeta[i]["floorPrice"] = 0;
                     final_collection_meta.push(tmpcollectionmeta[i]);
                     
                 }catch(e){
