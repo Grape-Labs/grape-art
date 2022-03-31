@@ -964,7 +964,7 @@ const IdentityView = (props: any) => {
                         }
                     }
                 }
-                finalmeta.sort((a:any, b:any) => a?.meta.data.symbol.toLowerCase().trim() > b?.meta.data.symbol.toLowerCase().trim() ? 1 : -1);
+                finalmeta.sort((a:any, b:any) => a?.meta.data.symbol.trim() > b?.meta.data.symbol.trim() ? 1 : -1);
                 //finalmeta.sort((a:any, b:any) => a?.meta.data.name.toLowerCase().trim() > b?.meta.data.name.toLowerCase().trim() ? 1 : -1);
                 
                 let previousSymbol = null;
@@ -978,6 +978,12 @@ const IdentityView = (props: any) => {
                         counter++;
                     }
                     previousSymbol = finalmeta[i].meta.data.symbol;
+                }
+
+                for (var i = 0; i < finalmeta.length; i++){
+                    if (finalmeta[i]["groupBySymbol"] > 1){
+                        console.log(finalmeta[i].groupBySymbol+": "+finalmeta[i].meta.data.symbol+": "+finalmeta[i].meta.data.name);
+                    }
                 }
 
                 finalmeta.sort((a:any, b:any) => (b.groupBySymbol - a.groupBySymbol));
