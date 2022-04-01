@@ -13,8 +13,8 @@ UI:
 - Interface: MUI 5 https://mui.com
 
 BUILD:
-- yarn install
-- yarn start
+- `yarn install`
+- `yarn start`
 
 CONSTANTS: 
 - Following should be edited according to the DAO
