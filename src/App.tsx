@@ -62,7 +62,7 @@ import {
 //import { mainListItems, secondaryListItems } from './components/SidebarList/SidebarList';
 import grapeTheme from  './utils/config/theme'
 import "./App.less";
-import { GRAPE_RPC_ENDPOINT, FREE_RPC_ENDPOINT } from './utils/grapeTools/constants';
+import { GRAPE_RPC_ENDPOINT, TX_RPC_ENDPOINT } from './utils/grapeTools/constants';
 
 function Copyright(props: any): JSX.Element {
   const { t, i18n } = useTranslation();
@@ -90,7 +90,7 @@ function DashboardContent() {
   // You can also provide a custom RPC endpoint
   //const endpoint =  useMemo(() => clusterApiUrl(network), [network]); // GRAPE_RPC_ENDPOINT;
   //const endpoint =  GRAPE_RPC_ENDPOINT;
-  const endpoint =  FREE_RPC_ENDPOINT;
+  const endpoint =  TX_RPC_ENDPOINT;
   const wallets = useMemo(() => [
   
     getPhantomWallet(),

@@ -45,7 +45,7 @@ import {
     GRAPE_RPC_ENDPOINT, 
     GRAPE_PREVIEW,
     REPORT_ALERT_THRESHOLD,
-    FREE_RPC_ENDPOINT, 
+    TX_RPC_ENDPOINT, 
 } from '../utils/grapeTools/constants';
 import { trimAddress, timeAgo } from '../utils/grapeTools/WalletAddress'; // global key handling
 
