@@ -980,12 +980,6 @@ const IdentityView = (props: any) => {
                     previousSymbol = finalmeta[i].meta.data.symbol;
                 }
 
-                for (var i = 0; i < finalmeta.length; i++){
-                    if (finalmeta[i]["groupBySymbol"] > 1){
-                        console.log(finalmeta[i].groupBySymbol+": "+finalmeta[i].meta.data.symbol+": "+finalmeta[i].meta.data.name);
-                    }
-                }
-
                 finalmeta.sort((a:any, b:any) => (b.groupBySymbol - a.groupBySymbol));
             }catch(e){console.log("Sort ERR: "+e)}
             setCollectionMetaFinal(finalmeta);

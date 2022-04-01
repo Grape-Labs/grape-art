@@ -195,6 +195,10 @@ export default function GalleryItem(props: any){
                                                     <IconButton
                                                         sx={{ 
                                                             color: 'rgba(255, 255, 255, 0.25)',
+                                                            borderTopLeftRadius:'0px',
+                                                            borderTopRightRadius:'0px',
+                                                            borderBottomLeftRadius:'0px',
+                                                            borderBottomRightRadius:'26px',
                                                         }}
                                                     >
                                                         {collectionitem.groupBySymbol}
