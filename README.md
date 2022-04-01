@@ -12,8 +12,9 @@ Wallet Adapter:
 UI:
 - Interface: MUI 5 https://mui.com
 
-BUILD:
+BUILD/START:
 - `yarn install`
+- `yarn run build` (only if you want to make a production build otherwise skip)
 - `yarn start`
 
 CONSTANTS: 
