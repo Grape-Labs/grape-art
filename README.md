@@ -30,7 +30,7 @@ CONSTANTS:
 
 
 HELP SETTING UP:
--   Have a DAO and want to run an instance of grape.art? each out to the Grape Team at https://discord.gg/greatape
+-   Have a DAO and want to run an instance of grape.art? RSeach out to the Grape Team at https://discord.gg/greatape
 
 TRY IT OUT NOW:
 - https://grape.art
