@@ -26,6 +26,7 @@
     "@react-native-async-storage/async-storage": "^1.15.17",
     "@react-three/drei": "^7.14.2",
     "@react-three/fiber": "^7.0.15",
+    "@self.id/web": "^0.3.0",
     "@solana/pay": "^0.1.0-alpha.7",
     "@solana/spl-governance": "^0.0.28",
     "@solana/spl-name-service": "^0.1.3",

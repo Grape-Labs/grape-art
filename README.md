@@ -14,23 +14,22 @@ UI:
 
 BUILD/START:
 - `yarn install`
-- `yarn run build` (only if you want to make a production build otherwise skip)
 - `yarn start`
 
 CONSTANTS: 
 - Following should be edited according to the DAO
--   /utils/grapeTools/constants.tsx
--   export const TOKEN_VERIFICATION_ADDRESS = '8upjSpvjcdpuzhfR1zriwg5NXkwDruejqNE9WNbPRtyA'; // Token to verify
--   export const TOKEN_VERIFICATION_NAME = 'Grape'; 
--   export const TOKEN_VERIFICATION_AMOUNT = 1000; // This is to verify the amount needed to make an offer
--   export const TOKEN_REALM_ID = 'By2sVGZXwfQq6rAiAM3rNPJ9iQfb5e2QhnF4YjJ4Bip'; // governance/realms publicKey to capture if the wallet has holdings also on realms and account for that in the verification
--   IMPORTANT:
+-   `/utils/grapeTools/constants.tsx`
+-   `export const TOKEN_VERIFICATION_ADDRESS = '8upjSpvjcdpuzhfR1zriwg5NXkwDruejqNE9WNbPRtyA';` // Token to verify
+-   `export const TOKEN_VERIFICATION_NAME = 'Grape';`
+-   `export const TOKEN_VERIFICATION_AMOUNT = 1000;` // This is to verify the amount needed to make an offer
+-   `export const TOKEN_REALM_ID = 'By2sVGZXwfQq6rAiAM3rNPJ9iQfb5e2QhnF4YjJ4Bip';` // governance/realms publicKey to capture if the wallet has holdings also on realms and account for that in the verification
+-   IMPORTANT: c
 -   * connection endpoint can be edited in the grapeTools/constants.tsx
 -   * Default AH is set with 0% fees
 
 
 HELP SETTING UP:
--   Have a DAO and want to run an instance of grape.art? RSeach out to the Grape Team at https://discord.gg/greatape
+-   Have a DAO and want to run an instance of grape.art? Reach out to the Grape Team at https://discord.gg/greatape
 
 TRY IT OUT NOW:
 - https://grape.art
