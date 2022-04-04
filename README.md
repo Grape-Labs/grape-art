@@ -23,8 +23,8 @@ CONSTANTS:
 -   `export const TOKEN_VERIFICATION_NAME = 'Grape';`
 -   `export const TOKEN_VERIFICATION_AMOUNT = 1000;` // This is to verify the amount needed to make an offer
 -   `export const TOKEN_REALM_ID = 'By2sVGZXwfQq6rAiAM3rNPJ9iQfb5e2QhnF4YjJ4Bip';` // governance/realms publicKey to capture if the wallet has holdings also on realms and account for that in the verification
--   IMPORTANT: c
--   * connection endpoint can be edited in the grapeTools/constants.tsx
+-   IMPORTANT:
+-   * connection endpoint can be edited in the `utils/grapeTools/constants.tsx`
 -   * Default AH is set with 0% fees
 
 
