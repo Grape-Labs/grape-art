@@ -13,6 +13,8 @@ export const GRAPE_IDENTITY = '/identity?pkey=';
 export const GRAPE_RPC_REFRESH = 25000;
 export const GRAPE_TREASURY = 'GrapevviL94JZRiZwn2LjpWtmDacXU8QhAJvzpUMMFdL';
 
+export const MARKET_LOGO = '/grape_white_logo.svg';
+
 export const TOKEN_VERIFICATION_ADDRESS = '8upjSpvjcdpuzhfR1zriwg5NXkwDruejqNE9WNbPRtyA';
 export const TOKEN_VERIFICATION_NAME = 'Grape';
 export const TOKEN_VERIFICATION_AMOUNT = 1000;
@@ -20,6 +22,22 @@ export const TOKEN_REPORT_AMOUNT = 10;
 export const REPORT_ALERT_THRESHOLD = 1;
 export const TOKEN_REALM_ID = 'By2sVGZXwfQq6rAiAM3rNPJ9iQfb5e2QhnF4YjJ4Bip';
 export const TOKEN_REALM_PROGRAM_ID = 'GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw';
+
+export const VERIFIED_COLLECTION_ARRAY = [{
+    address:'',
+    name:'',
+    status:1,// mint status (0:minting, 1:completed)
+    size:0,
+    description:'',
+    links:{
+        url:'',
+        discord:'',
+        twitter:'',
+        instagram:'',
+    },
+    logo:'',
+    splash:'',
+}]
 
 export const VERIFIED_DAO_ARRAY = [{
     address:'JAbgQLj9MoJ2Kvie8t8Y6z6as3Epf7rDp87Po3wFwrNK',
