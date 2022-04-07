@@ -2040,12 +2040,10 @@ export default function ItemOffers(props: any) {
                         </List>
                     </Collapse>
                 </Box>
-                {mint &&
-                    <></>
-                    /*
-                    <HistoryView mint={mint} />
-                    */
-
+                {mint && 
+                    <>
+                    {/*<HistoryView mint={mint} />*/}
+                    </>
                 }
             </>
         )

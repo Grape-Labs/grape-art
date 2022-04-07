@@ -63,7 +63,7 @@ import ExpandLess from '@mui/icons-material/ExpandLess';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import CircularProgress from '@mui/material/CircularProgress';
 import CancelIcon from '@mui/icons-material/Cancel';
-import { ConstructionOutlined } from "@mui/icons-material";
+import { ConstructionOutlined, SentimentSatisfiedSharp } from "@mui/icons-material";
 
 function convertSolVal(sol: any){
     try{
@@ -78,9 +78,11 @@ export default function HistoryView(props: any){
     const [open_history_collapse, setOpenHistoryCollapse] = React.useState(false);
     const [openHistory, setOpenHistory] = React.useState(0);
     const [historyME, setMEHistory] = React.useState(null);
+    const [statsME, setMEStats] = React.useState(null);
     const [openMEHistory, setMEOpenHistory] = React.useState(0);
     const [me_open_history_collapse, setMEOpenHistoryCollapse] = React.useState(false);
     const [mint, setMint] = React.useState(props.mint || null);
+    const [symbol, setSymbol] = React.useState(props.symbol || null);
     const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
     const { connection } = useConnection();
 
@@ -90,6 +92,28 @@ export default function HistoryView(props: any){
 
     const handleClick = () => {
         setOpenHistoryCollapse(!open_history_collapse);
+    }
+
+    const getMEStats = async () => {
+        setLoading(true);
+
+        if (mint){
+            let response = null;
+
+            const apiUrl = "https://api-mainnet.magiceden.dev/v2/collections/"+symbol+"/stats";
+            
+            const resp = await fetch(apiUrl, {
+                method: 'GET',
+                redirect: 'follow',
+                //body: JSON.stringify(body),
+                //headers: { "Content-Type": "application/json" },
+            })
+
+            const json = await resp.json();
+            //console.log("json: "+JSON.stringify(json));
+            setMEStats(json);
+        }
+        setLoading(false);
     }
 
     const getMEHistory = async () => {
@@ -103,7 +127,6 @@ export default function HistoryView(props: any){
             
             const resp = await fetch(apiUrl, {
                 method: 'GET',
-                mode:'cors',
                 redirect: 'follow',
                 //body: JSON.stringify(body),
                 //headers: { "Content-Type": "application/json" },
@@ -121,7 +144,7 @@ export default function HistoryView(props: any){
                     if (item.type === "buyNow"){
                         let elements = document.getElementById("grape-art-last-sale");
                         if (!found){
-                            elements.innerHTML = 'Last sale '+item.price+'sol on '+formatBlockTime(item.blockTime, true, false);
+                            //elements.innerHTML = 'Last sale '+item.price+'sol on '+formatBlockTime(item.blockTime, true, false);
                         }
                         found = true;
                     }
@@ -251,7 +274,7 @@ export default function HistoryView(props: any){
     React.useEffect(() => {
         if (mint){
             //if (!history){
-                getHistory();
+                //getHistory();
                 getMEHistory();
             //}
         }

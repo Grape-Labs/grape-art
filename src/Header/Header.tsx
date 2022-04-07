@@ -13,6 +13,10 @@ import { useSnackbar } from 'notistack';
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
 import Snackbar, { SnackbarOrigin } from '@mui/material/Snackbar';
 
+import { 
+    MARKET_LOGO
+} from '../utils/grapeTools/constants';
+
 import {
     WalletModalProvider,
     WalletDisconnectButton,
@@ -129,49 +133,8 @@ export function Header(props: any) {
 
     const routes = [
         { name: "Home", path: "/" },
-        // { name: "Servers", path: "/servers" },
-
-        // { name: "Settings", path: "/settings" }
     ]
     
-    /*
-    const toggleDrawer = () => {
-        //setOpenDrawer(!open);
-        open = !open;//setOpen(!open);
-    };
-    */
-
-    
-    /*
-    async function connect() {
-        let wallet = new Wallet();
-        wallet.onChange = (wallet) => onWalletConnect(wallet);
-        await wallet.connect();
-    }
-
-    async function connectPhantom() {
-        let wallet = new PhantomWallet();
-        wallet.onChange = (wallet: any) => onWalletConnect(wallet);
-        await wallet.connect();
-    }
-    
-    async function connectSolflare() {
-        let wallet = new SolflareWallet();
-        wallet.onChange = () => onWalletConnect(wallet);
-        await wallet.connect();
-    }
-    
-    async function onWalletConnect(wallet: any){
-        if(wallet){
-            let session = await wallet.signMessage('$GRAPE');
-            if(session){
-                setSession(session);
-            }
-        }
-    }
-    */
-    
-
     //Menu
     const menuId = 'primary-wallet-account-menu';
     const menuWalletId = 'primary-fullwallet-account-menu';
@@ -183,26 +146,6 @@ export function Header(props: any) {
     const handleMenuClose = () => {
         setAnchorEl(null);
         // this.props.parentCallback("Data from child");
-    };
-
-    const handleWalletConnectClickOpen = (type: string, callback: any) => {
-        /*
-        switch(type) {
-            case "sollet":
-                connect();
-                break;
-            case "phantom":
-                connectPhantom();
-                break;
-            case "solflare":
-                connectSolflare();
-                break;
-            default:
-                break;
-        }
-        */
-       
-        callback && callback();
     };
 
     const handleCloseWallet = (value: any) => {
@@ -293,7 +236,7 @@ export function Header(props: any) {
                         display='flex'
                         sx={{ml:1,mr:1}}
                     >
-                        <img src="/grape_white_logo.svg" height="40px" width="137px" className="header-logo" alt="Grape" />
+                        <img src={MARKET_LOGO} height="40px" width="137px" className="header-logo" alt="Powered by Grape" />
                     </Typography>
                 </Button>
                     <Container
