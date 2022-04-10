@@ -90,6 +90,7 @@
     "react-share": "^4.4.0",
     "react-simple-image-viewer": "^1.1.1",
     "react-solana-jazzicon": "^0.1.5",
+    "spok": "^1.4.3",
     "styled-components": "^5.3.1",
     "three": "^0.133.1",
     "three-gltf-loader": "^1.111.0",
