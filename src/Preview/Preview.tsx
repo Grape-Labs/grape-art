@@ -3,7 +3,7 @@ import { Link, useParams, useSearchParams } from "react-router-dom";
 
 import CyberConnect, { Env, Blockchain, solana, ConnectionType } from '@cyberlab/cyberconnect';
 
-import { Connection, PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js'
+import { Connection, ParsedAccountData, PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js'
 import { Token, TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID } from "@solana/spl-token";
 // @ts-ignore
 import fetch from 'node-fetch'
@@ -120,6 +120,7 @@ import { decodeMetadata } from '../utils/auctionHouse/helpers/schema';
 import GrapeIcon from "../components/static/GrapeIcon";
 
 import { useTranslation } from 'react-i18next';
+import { JavascriptRounded } from "@mui/icons-material";
 
 const StyledTable = styled(Table)(({ theme }) => ({
     '& .MuiTableCell-root': {
@@ -527,6 +528,24 @@ function GalleryItemMeta(props: any) {
     };
 
     const GetLargestTokenAccounts = async () => {
+        /*
+        let { value: accounts } = await connection.getTokenLargestAccounts(new PublicKey(mint));
+        let ownerTokenAccount = null;
+        for (let { address, amount } of accounts)
+          if (amount == "1") ownerTokenAccount = address;
+        
+
+        //if (!ownerTokenAccount)
+        //  throw new Error(`Could not get current owner for ${mint}`);
+      
+        let parsedAccountInfo = await connection.getParsedAccountInfo(
+          ownerTokenAccount
+        );
+        let parsed = parsedAccountInfo!.value!.data as ParsedAccountData;
+        console.log("Parsed: "+JSON.stringify(parsed));
+        return parsed.info.owner;
+        */
+        
         const body = {
           method: "getTokenLargestAccounts", // getAccountInfo
           jsonrpc: "2.0",
@@ -545,13 +564,15 @@ function GalleryItemMeta(props: any) {
         });
         
         const json = await response.json();
-        const resultValues = json.result.value
+        const resultValues = json.result.value;
         return resultValues;
+        
     };
 
     const fetchTokenAccountData = async () => {
         let [flargestTokenAccounts] = await Promise.all([GetLargestTokenAccounts()]);
         //console.log("settings setMintAta: "+JSON.stringify(flargestTokenAccounts));
+
         if (+flargestTokenAccounts[0].amount === 1){ // some NFTS are amount > 1
             setMintATA(flargestTokenAccounts[0].address);
         }

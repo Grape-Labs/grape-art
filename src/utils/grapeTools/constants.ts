@@ -40,7 +40,9 @@ export const VERIFIED_COLLECTION_ARRAY = [{
 }]
 
 export const VERIFIED_DAO_ARRAY = [{
-    address:'JAbgQLj9MoJ2Kvie8t8Y6z6as3Epf7rDp87Po3wFwrNK',
+    address:'JAbgQLj9MoJ2Kvie8t8Y6z6as3Epf7rDp87Po3wFwrNK'
+},{
+    address:'5xZeVxC2UDnd64bgC3cZQoM38WwUi6T46SvTqUbShuAX'
 }]
 
 export const FEATURED_DAO_ARRAY = [{
