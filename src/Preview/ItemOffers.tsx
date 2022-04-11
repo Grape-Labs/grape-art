@@ -1151,6 +1151,7 @@ export default function ItemOffers(props: any) {
                         //console.log("gtai ("+getTransactionAccountInputs2.length+"): "+JSON.stringify(getTransactionAccountInputs2[cnt]));
                         
                         if (getTransactionAccountInputs?.transaction && getTransactionAccountInputs?.transaction?.message){
+                            
                             let feePayer = new PublicKey(getTransactionAccountInputs?.transaction.message.accountKeys[0].pubkey); // .feePayer.toBase58();
                             let progAddress = getTransactionAccountInputs.meta.logMessages[0];
                             let instructionType = getTransactionAccountInputs.meta.logMessages[1];
@@ -1298,9 +1299,9 @@ export default function ItemOffers(props: any) {
                                                                                     }
 
                                                                                     if (feePayer.toBase58() === mintOwner)
-                                                                                        offerResults.push({buyeraddress: feePayer.toBase58(), offeramount: memo_json?.amount || memo_json?.offer, mint: memo_json?.mint, isowner: true, timestamp: withMemo.blockTime, state: memo_json?.state || memo_json?.status});  
+                                                                                        offerResults.push({buyeraddress: feePayer.toBase58(), offeramount: memo_json?.amount || memo_json?.offer, mint: memo_json?.mint, isowner: true, timestamp: value.blockTime, state: memo_json?.state || memo_json?.status});  
                                                                                     else   
-                                                                                        offerResults.push({buyeraddress: feePayer.toBase58(), offeramount: memo_json?.amount || memo_json?.offer, mint: memo_json?.mint, isowner: false, timestamp: withMemo.blockTime, state: memo_json?.state || memo_json?.status});  
+                                                                                        offerResults.push({buyeraddress: feePayer.toBase58(), offeramount: memo_json?.amount || memo_json?.offer, mint: memo_json?.mint, isowner: false, timestamp: value.blockTime, state: memo_json?.state || memo_json?.status});  
                                                                                 }
                                                                             }
                                                                         }
@@ -1313,9 +1314,28 @@ export default function ItemOffers(props: any) {
                                             }
                                             //CHECK IF OWNER HAS AN ACTIVE SELL NOW PRICE
                                             //console.log(feePayer.toBase58() + " vs "+ mintOwner);
-                                            if ( feePayer.toBase58() === mintOwner && progAddress.search(AUCTION_HOUSE_PROGRAM_ID.toBase58())>0 && feePayer != null && existSaleCancelAction === 0){
+                                            
+                                            let feePayerMatched = false;
+                                            if (feePayer.toBase58() === mintOwner){
+                                                feePayerMatched = true;
+                                            } else {
+                                                for (var fpayer of getTransactionAccountInputs?.transaction.message.accountKeys){
+                                                    if (fpayer.pubkey.toBase58() === mintOwner){
+                                                        feePayerMatched = true;
+                                                        feePayer = fpayer.pubkey;
+                                                    }
+                                                }
+                                            }
+
+                                            let paSearch = progAddress.search(AUCTION_HOUSE_PROGRAM_ID.toBase58());
+                                            if (paSearch != 0){
+                                                if (ValidateDAO(mintOwner))
+                                                    paSearch = 1;
+                                            }
+                                            
+                                            if ( feePayerMatched && paSearch && feePayer != null && existSaleCancelAction === 0){
                                                 //console.log('PUSH '+memo_json?.state+':: '+feePayer.toBase58() + '('+memo_json?.amount+'): ' +memo_str);
-                                                                                    
+                                                
                                                 for (var i = 0; i < offerResults.length; i++){
                                                     if ((feePayer.toBase58() === offerResults[i].buyeraddress)){
                                                         exists = true;
@@ -1326,7 +1346,8 @@ export default function ItemOffers(props: any) {
                                                     //console.log(feePayer+": "+JSON.stringify(memo_str)); 
                                                     if ((memo_json?.status === 2) ||
                                                         (memo_json?.state === 2)) {
-														//make a final check for seller trade state
+                                                            console.log(memo_json);
+														    //make a final check for seller trade state
                                                             const mintOwnerPK = new PublicKey(mintOwner);
                                                             const mintKey = new PublicKey(mint);
                                                             const tokenAccountKey = (await getAtaForMint(mintKey, mintOwnerPK))[0];
@@ -1753,7 +1774,7 @@ export default function ItemOffers(props: any) {
                                                             {((grape_whitelisted > -1) ||
                                                                 (grape_member_balance > grape_offer_threshhold)) ? (
                                                                     <>
-                                                                    {!ValidateCurve(mintOwner) &&
+                                                                    {!ValidateCurve(mintOwner) && salePrice <= 0 &&
                                                                         <Grid item>
                                                                             <SellNowVotePrompt mint={mint} mintOwner={mintOwner} salePrice={salePrice} grapeWeightedScore={grape_weighted_score} RefreshOffers={setRefreshOffers} />
                                                                         </Grid>

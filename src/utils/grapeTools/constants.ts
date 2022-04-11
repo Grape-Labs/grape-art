@@ -39,13 +39,15 @@ export const VERIFIED_COLLECTION_ARRAY = [{
     splash:'',
 }]
 
-export const VERIFIED_DAO_ARRAY = [{
-    address:'JAbgQLj9MoJ2Kvie8t8Y6z6as3Epf7rDp87Po3wFwrNK'
-},{
-    address:'5xZeVxC2UDnd64bgC3cZQoM38WwUi6T46SvTqUbShuAX'
-},
-    {address:'5UFKrfJkaWp45b8Kn82bXgokaKrzfVkoM1LBoHHk78wn'
-}]
+export const VERIFIED_DAO_ARRAY = [
+    {
+        address:'JAbgQLj9MoJ2Kvie8t8Y6z6as3Epf7rDp87Po3wFwrNK'
+    },{
+        address:'5xZeVxC2UDnd64bgC3cZQoM38WwUi6T46SvTqUbShuAX'
+    },{
+        address:'5UFKrfJkaWp45b8Kn82bXgokaKrzfVkoM1LBoHHk78wn'
+    }
+]
 
 export const FEATURED_DAO_ARRAY = [{
     address:'66pJhhESDjdeBBDdkKmxYYd7q6GUggYPWjxpMKNX39KV',
