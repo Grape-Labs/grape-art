@@ -1114,7 +1114,8 @@ export default function ItemOffers(props: any) {
         console.log("derivedOwnerPDA: "+derivedOwnerPDA);
         */
 
-        //console.log("derivedMintPDA: "+derivedMintPDA);
+        
+        //console.log(mint + " - derivedMintPDA: "+derivedMintPDA);
         
         let [result] = await Promise.all([GetSignatureOffers(derivedMintPDA[0].toString(),'', 25)]);
         let offerResults: any[] = [];
@@ -1128,6 +1129,7 @@ export default function ItemOffers(props: any) {
         var forSaleDate = null;
         var forSaleTimeAgo = null;
         //console.log('derivedMintPDA[0]: '+derivedMintPDA[0].toString());
+        //console.log('result: '+JSON.stringify(result));
 
         if (!loading){
             setLoading(true);
@@ -1136,7 +1138,7 @@ export default function ItemOffers(props: any) {
             for (var value of result){
                 signatures.push(value.signature);
             }
-
+            
             const getTransactionAccountInputs2 = await ggoconnection.getParsedTransactions(signatures, 'confirmed');
             setOpenOffers(0);
             for (var value of result){
@@ -1154,20 +1156,31 @@ export default function ItemOffers(props: any) {
                             let instructionType = getTransactionAccountInputs.meta.logMessages[1];
                             let allLogMessages = getTransactionAccountInputs.meta.logMessages;
 
-                            //console.log("feePayer: "+feePayer.toBase58());
-
                             //console.log('getTransactionAccountInputs:', getTransactionAccountInputs);
                             //console.log("escrow: "+JSON.stringify(getTransactionAccountInputs.meta.preTokenBalances));
                             let auctionMint = getTransactionAccountInputs.meta.preTokenBalances[0]?.mint;                        
-                            //console.log("escrow: "+JSON.stringify(getTransactionAccountInputs.transaction.feePayer));
+                            //console.log("escrow: "+JSON.stringify(auctionMint) + " ::: value "+JSON.stringify(value));
                             //if (auctionMint){
-                            {    
-                                    
-                                if ((value) && (value?.memo)){
 
+                            let withMemo = value?.memo;
+
+                            if (withMemo === null){ // loop inner instructions
+                                for (var instruction of getTransactionAccountInputs.meta?.innerInstructions){
+                                    
+                                    for (var iinstruction of (instruction.instructions)){
+                                        if (iinstruction?.programId.toBase58() === 'MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr'){
+                                            withMemo = JSON.parse(JSON.stringify(iinstruction))?.parsed;
+                                        }
+                                    }
+                                }
+                            }
+                            
+                            {
+                                //if ((value) && (value?.memo)){
+                                if (withMemo){
                                     let memo_arr: any[] = [];
-                                    let memo_str = value.memo;
-                                    let memo_instances = ((value.memo.match(/{/g)||[]).length);
+                                    let memo_str = withMemo;
+                                    let memo_instances = ((withMemo.match(/{/g)||[]).length);
                                     if (memo_instances > 0) {
                                         // multi memo
                                         let mcnt = 0;
@@ -1226,7 +1239,7 @@ export default function ItemOffers(props: any) {
                                                                 (memo_json?.status === 5) ||
                                                                 (memo_json?.state === 0)||
                                                                 (memo_json?.state === 5)){ // add to an array to search against other offers and cancel them out
-                                                                offerResultsCancelled.push({buyeraddress: feePayer, offeramount: memo_json?.amount, mint: memo_json.mint, isowner: false, timestamp: value.blockTime, state: memo_json?.state || memo_json?.status});  
+                                                                offerResultsCancelled.push({buyeraddress: feePayer, offeramount: memo_json?.amount, mint: memo_json.mint, isowner: false, timestamp: withMemo.blockTime, state: memo_json?.state || memo_json?.status});  
                                                             }
                                                             
                                                             //console.log('memo_json: ' + memo_str);
@@ -1285,9 +1298,9 @@ export default function ItemOffers(props: any) {
                                                                                     }
 
                                                                                     if (feePayer.toBase58() === mintOwner)
-                                                                                        offerResults.push({buyeraddress: feePayer.toBase58(), offeramount: memo_json?.amount || memo_json?.offer, mint: memo_json?.mint, isowner: true, timestamp: value.blockTime, state: memo_json?.state || memo_json?.status});  
+                                                                                        offerResults.push({buyeraddress: feePayer.toBase58(), offeramount: memo_json?.amount || memo_json?.offer, mint: memo_json?.mint, isowner: true, timestamp: withMemo.blockTime, state: memo_json?.state || memo_json?.status});  
                                                                                     else   
-                                                                                        offerResults.push({buyeraddress: feePayer.toBase58(), offeramount: memo_json?.amount || memo_json?.offer, mint: memo_json?.mint, isowner: false, timestamp: value.blockTime, state: memo_json?.state || memo_json?.status});  
+                                                                                        offerResults.push({buyeraddress: feePayer.toBase58(), offeramount: memo_json?.amount || memo_json?.offer, mint: memo_json?.mint, isowner: false, timestamp: withMemo.blockTime, state: memo_json?.state || memo_json?.status});  
                                                                                 }
                                                                             }
                                                                         }
@@ -1299,6 +1312,7 @@ export default function ItemOffers(props: any) {
                                                 }
                                             }
                                             //CHECK IF OWNER HAS AN ACTIVE SELL NOW PRICE
+                                            //console.log(feePayer.toBase58() + " vs "+ mintOwner);
                                             if ( feePayer.toBase58() === mintOwner && progAddress.search(AUCTION_HOUSE_PROGRAM_ID.toBase58())>0 && feePayer != null && existSaleCancelAction === 0){
                                                 //console.log('PUSH '+memo_json?.state+':: '+feePayer.toBase58() + '('+memo_json?.amount+'): ' +memo_str);
                                                                                     
