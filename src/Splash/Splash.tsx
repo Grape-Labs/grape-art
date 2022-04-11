@@ -94,6 +94,8 @@ import { ConstructionOutlined } from "@mui/icons-material";
 
 import { useTranslation } from 'react-i18next';
 
+import GlobalView from './GlobalView';
+
 const StyledTable = styled(Table)(({ theme }) => ({
     '& .MuiTableCell-root': {
         borderBottom: '1px solid rgba(255,255,255,0.05)'
@@ -171,7 +173,7 @@ export function SplashView(this: any, props: any) {
             setNewInputPKValue('');
         }
     }
-    
+
     React.useEffect(() => { 
         if (urlParams){
             setWithPubKey(urlParams);
@@ -203,7 +205,6 @@ export function SplashView(this: any, props: any) {
                                             alignItems="center"
                                             rowSpacing={8}
                                         >
-                                            
                                             <Grid 
                                         item xs={12}
                                         alignItems="center"
@@ -230,28 +231,9 @@ export function SplashView(this: any, props: any) {
                                             >{t('Social. Stateless. Marketplace.')}</Typography>
 
                                         </Grid>
-                                            
+                                        
                                         <Grid>
-                                            <Tooltip title={t('Search by mint address by entering: mint:address')}>
-                                                <Paper
-                                                    component="form"
-                                                    onSubmit={handlePublicKeySubmit}
-                                                    sx={{ m:2, p: 1, display: 'flex', alignItems: 'center', borderRadius: '24px' }}
-                                                >    
-                                                        <InputBase
-                                                            fullWidth
-                                                            sx={{ ml: 1, flex: 1 }}
-                                                            placeholder={t('Enter a solana address')}
-                                                            inputProps={{ 'aria-label': 'solana address' }}
-                                                            value={newinputpkvalue}
-                                                            onChange={(e) => setNewInputPKValue(e.target.value)}
-                                                        />
-                                                        <IconButton type="submit" sx={{ p: '10px' }} aria-label="search">
-                                                            <SearchIcon />
-                                                        </IconButton>
-                                                
-                                                </Paper>
-                                            </Tooltip>
+                                            <GlobalView />
                                         </Grid>
                                     </Grid>
                                 </Box>

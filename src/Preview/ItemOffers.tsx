@@ -2042,7 +2042,7 @@ export default function ItemOffers(props: any) {
                 </Box>
                 {mint && 
                     <>
-                    {/*<HistoryView mint={mint} />*/}
+                    <HistoryView mint={mint} />
                     </>
                 }
             </>

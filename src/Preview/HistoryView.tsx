@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-import { Connection, PublicKey, Transaction } from '@solana/web3.js'
+import { Connection, PublicKey, Transaction, LAMPORTS_PER_SOL } from '@solana/web3.js'
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { BN, web3 } from '@project-serum/anchor';
 import spok from 'spok';
@@ -41,28 +41,10 @@ import {
     AUCTION_HOUSE_ADDRESS,
     WRAPPED_SOL_MINT,
     TOKEN_PROGRAM_ID,
-  } from '../utils/auctionHouse/helpers/constants';
+} from '../utils/auctionHouse/helpers/constants';
 
-import { AuctionHouse, AuctionHouseArgs } from '../utils/auction-house/js/generated';
-import {
-    loadAuctionHouseProgram,
-    getAuctionHouseBuyerEscrow,
-    getTokenAmount,
-    getAuctionHouseTradeState,
-    getAtaForMint,
-} from '../utils/auctionHouse/helpers/accounts';
-
-import {
-    AuctionHouseProgram
-} from '../utils/auction-house/js/AuctionHouseProgram';
-
-import {
-    ListingReceipt
-} from '../utils/auction-house/js/generated/accounts/ListingReceipt';
-
-import {
-    PurchaseReceipt
-} from '../utils/auction-house/js/generated/accounts/PurchaseReceipt';
+import { AuctionHouseProgram  } from '@metaplex-foundation/mpl-auction-house';
+import { Metadata } from '@metaplex-foundation/mpl-token-metadata';
 
 import { 
     GRAPE_RPC_ENDPOINT,
@@ -106,6 +88,11 @@ export default function HistoryView(props: any){
     const [symbol, setSymbol] = React.useState(props.symbol || null);
     const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
     const { connection } = useConnection();
+
+    const [receiptListing, setReceiptListing] = React.useState(null);
+    const [receiptPurchase, setReceiptPurchase] = React.useState(null);
+    const [receiptBid, setReceiptBid] = React.useState(null);
+    const [receipts, setReceipts] = React.useState(null);
 
     const handleMEClick = () => {
         setMEOpenHistoryCollapse(!me_open_history_collapse);
@@ -180,17 +167,21 @@ export default function HistoryView(props: any){
 
     const getHistory = async () => {
         setLoading(true);
-        //const AuctionHouseProgram = await ggoconnection.AuctionHouseProgram();// await ggoconnection.AuctionHouseProgram(new PublicKey(ENV_AH)); // loadAuctionHouseProgram(null, ENV_AH, GRAPE_RPC_ENDPOINT);
+        //const AuctionHouseProgram = await ggoconnection.AuctionHouseProgram(new PublicKey(ENV_AH)); // loadAuctionHouseProgram(null, ENV_AH, GRAPE_RPC_ENDPOINT);
+        //const AuctionHouseProgram =  AuctionHouse.fromAccountAddress(ggoconnection, new PublicKey(ENV_AH)); //.fromAccountInfo(info)[0];
         
-        const AuctionHouseProgram = AuctionHouse.fromAccountAddress(ggoconnection, new PublicKey(ENV_AH)); //.fromAccountInfo(info)[0];
-        //spok(t, AuctionHouseProgram, expected);
+        //AuctionHouseProgram.LISTINE_RECEIPT
 
+        //const AHP = await AuctionHouseProgram;
+        //spok(t, AuctionHouseProgram, expected);
         
         if (mint){
-            /*
+            
             const _mint = new PublicKey(mint);
-            const metadata = await Metadata.findByMint(ggoconnection, _mint);
-            */
+            //const metadata = await Metadata.findByMint(ggoconnection, _mint);
+            
+            //const [metadata_program] = await Metadata.fromAccountAddress(tokenMint)
+            
             /**
              * Allocated data size on auction_house program per PDA type
              * CreateAuctionHouse: 459
@@ -199,7 +190,6 @@ export default function HistoryView(props: any){
              * PrintPurchaseReceipt: 193
              */
             
-            /*
             const PrintListingReceiptSize = 236;
             const PrintBidReceiptSize = 269;
             const PrintPurchaseReceiptSize = 193;
@@ -222,6 +212,7 @@ export default function HistoryView(props: any){
                     ],
                   }
                 );
+                
                 const parsedAccounts = await accounts.map(async account => {
                   switch (size) {
                     case PrintListingReceiptSize:
@@ -230,12 +221,16 @@ export default function HistoryView(props: any){
                       ] = await AuctionHouseProgram.accounts.ListingReceipt.fromAccountInfo(
                         account.account
                       );
+                      /*
                       return {
                         ...ListingReceipt,
                         receipt_type: ListingReceipt.canceledAt
                           ? 'cancel_listing_receipt'
                           : 'listing_receipt',
                       } as TransactionReceipt;
+                      */
+                      //console.log("ListingReceipt. "+JSON.stringify(ListingReceipt));
+                      setReceiptListing(ListingReceipt);
                       break;
                     case PrintBidReceiptSize:
                       const [
@@ -243,10 +238,14 @@ export default function HistoryView(props: any){
                       ] = await AuctionHouseProgram.accounts.BidReceipt.fromAccountInfo(
                         account.account
                       );
+                      /*
                       return {
                         ...BidReceipt,
                         receipt_type: 'bid_receipt',
                       } as TransactionReceipt;
+                      */
+                      //console.log("BidReceipt. "+JSON.stringify(BidReceipt));
+                      setReceiptBid(BidReceipt);
                       break;
                     case PrintPurchaseReceiptSize:
                       const [
@@ -254,10 +253,14 @@ export default function HistoryView(props: any){
                       ] = await AuctionHouseProgram.accounts.PurchaseReceipt.fromAccountInfo(
                         account.account
                       );
+                      /*
                       return {
                         ...PurchaseReceipt,
                         receipt_type: 'purchase_receipt',
                       } as TransactionReceipt;
+                      */
+                      setReceiptPurchase(PurchaseReceipt);
+                      break;
                     default:
                       return undefined;
                       break;
@@ -266,29 +269,29 @@ export default function HistoryView(props: any){
           
                 return await Promise.all(parsedAccounts);
               });
-          
-              return await (await Promise.all(ReceiptAccounts))
+            
+            const receipts = await (await Promise.all(ReceiptAccounts))
                 .flat()
                 .filter(
-                  receipt =>
+                    receipt =>
                     !!receipt &&
-                    receipt.metadata.toBase58() === metadata.pubkey.toBase58()
+                    receipt.metadata.toBase58() === _mint.toBase58()//metadata.pubkey.toBase58()
                 )
                 .map(receipt => ({
-                  ...receipt,
-                  */
-                  /** @ts-ignore */
-                  //tokenSize: receipt.tokenSize.toNumber(),
-                  /** @ts-ignore */
-                  //price: receipt.price.toNumber() / LAMPORTS_PER_SOL,
-                  /** @ts-ignore */
-                  //createdAt: receipt.createdAt.toNumber(),
-                  /** @ts-ignore */
-                  //cancelledAt: receipt.canceledAt?.toNumber?.(),
-                //}));
+                    ...receipt,
+                    
+                    tokenSize: receipt.tokenSize.toNumber(),
+                    price: receipt.price.toNumber() / LAMPORTS_PER_SOL,
+                    createdAt: receipt.createdAt.toNumber(),
+                    cancelledAt: receipt.canceledAt?.toNumber?.(),
+                }));
 
+            console.log("Receipts: "+JSON.stringify(receipts));
+            setOpenHistory(receipts.length);
+            setReceipts(receipts);
+            
             //const confirmedsignatures = await ggoconnection.getConfirmedSignaturesForAddress2(new PublicKey(mint), {"limit":25});
-            const listingreceipts = await ggoconnection.getConfirmedSignaturesForAddress2(new PublicKey(mint), {"limit":25});
+            //const listingreceipts = await ggoconnection.getConfirmedSignaturesForAddress2(new PublicKey(mint), {"limit":25});
             
             //setHistory(nftSales);
             //setOpenHistory(nftSales.length);
