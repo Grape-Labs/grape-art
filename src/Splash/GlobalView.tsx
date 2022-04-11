@@ -247,7 +247,7 @@ export default function GlobalView(props: any){
                                                     <TableCell align="center"><Typography variant="caption">seller</Typography></TableCell>
                                                     <TableCell align="center"><Typography variant="caption">metadata</Typography></TableCell>
                                                     <TableCell align="center"><Typography variant="caption">price</Typography></TableCell>
-                                                    <TableCell align="center"><Typography variant="caption">canceledAt</Typography></TableCell>
+                                                    <TableCell align="center"><Typography variant="caption">createdAt</Typography></TableCell>
                                                     <TableCell align="center"><Typography variant="caption">purchaseReceipt</Typography></TableCell>
                                                     <TableCell align="center"><Typography variant="caption">receipt_type</Typography></TableCell>
                                                 </TableRow>
@@ -302,9 +302,9 @@ export default function GlobalView(props: any){
                                                             }  
                                                         </TableCell>
                                                         <TableCell>
-                                                            {item?.canceledAt &&
+                                                            {item?.createdAt &&
                                                                 <>
-                                                               {``}
+                                                               {moment.unix(item?.createdAt).format('YYYY-MM-DD h:mma')} 
                                                                </>
                                                             }  
                                                         </TableCell>
