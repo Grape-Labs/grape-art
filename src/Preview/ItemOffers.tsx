@@ -2059,18 +2059,37 @@ export default function ItemOffers(props: any) {
                                                             
                                                             <>
                                                                 {(ValidateDAO(mintOwner)) ? (
-                                                                    <Tooltip
-                                                                        title='Vote to accept this offer'
-                                                                    >
-                                                                        <Button
-                                                                        onClick={() => setAcceptPrompt(convertSolVal(item.offeramount), item.buyeraddress)}
-                                                                        className='buyNowButton'
-                                                                        sx={{
-                                                                        }}
-                                                                        >
-                                                                            {t('VOTE')}
-                                                                        </Button>
-                                                                    </Tooltip>
+                                                                    
+                                                                    <>
+                                                                        {publicKey && publicKey.toBase58() === item.buyeraddress ? (
+                                                                            <Button 
+                                                                                color="error"
+                                                                                variant="text"
+                                                                                //onClick={() => handleWithdrawOffer(convertSolVal(item.offeramount))}
+                                                                                onClick={() => handleCancelOffer(convertSolVal(item.offeramount))}
+                                                                                sx={{
+                                                                                    borderRadius: '10px',
+                                                                                }}
+                                                                            >
+                                                                                <CancelIcon />
+                                                                            </Button>
+                                                                        ):(
+                                                                            <>
+                                                                                <Tooltip
+                                                                                    title='Vote to accept'
+                                                                                >
+                                                                                    <Button
+                                                                                        //onClick={() => setAcceptPrompt(convertSolVal(item.offeramount), item.buyeraddress)}
+                                                                                        className='buyNowButton'
+                                                                                        sx={{
+                                                                                    }}
+                                                                                    >
+                                                                                        {t('VOTE')}
+                                                                                    </Button>
+                                                                                </Tooltip>
+                                                                            </>
+                                                                        )}
+                                                                    </>
                                                                 ):(
                                                                     <>
                                                                     {publicKey && publicKey.toBase58() === mintOwner && (
