@@ -41,11 +41,13 @@ export const VERIFIED_COLLECTION_ARRAY = [{
 
 export const VERIFIED_DAO_ARRAY = [
     {
-        address:'JAbgQLj9MoJ2Kvie8t8Y6z6as3Epf7rDp87Po3wFwrNK'
+        address:'JAbgQLj9MoJ2Kvie8t8Y6z6as3Epf7rDp87Po3wFwrNK',
+        solTreasury: '5UFKrfJkaWp45b8Kn82bXgokaKrzfVkoM1LBoHHk78wn',
+        realmPK: 'DcR6g5EawaEoTRYcnuBjtD26VSVjWNoi1C1hKJWwvcup'
     },{
-        address:'5xZeVxC2UDnd64bgC3cZQoM38WwUi6T46SvTqUbShuAX'
-    },{
-        address:'5UFKrfJkaWp45b8Kn82bXgokaKrzfVkoM1LBoHHk78wn'
+        address:'9fxVRxEqgMXRnNFePLVbbWTePs2pPQSSpbq6ZgZN4LBG',
+        solTreasury: '5xZeVxC2UDnd64bgC3cZQoM38WwUi6T46SvTqUbShuAX',
+        realmPK: 'DcR6g5EawaEoTRYcnuBjtD26VSVjWNoi1C1hKJWwvcup'
     }
 ]
 
