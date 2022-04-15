@@ -95,7 +95,10 @@ import { sellNowListing } from '../utils/auctionHouse/sellNowListing';
 import { buyNowListing } from '../utils/auctionHouse/buyNowListing';
 import { cancelWithdrawOffer } from '../utils/auctionHouse/cancelWithdrawOffer';
 import { depositInGrapeVine } from '../utils/auctionHouse/depositInGrapeVine';
-import { createDAOProposal } from '../utils/auctionHouse/createDAOProposal';
+import { voteSell } from '../utils/auctionHouse/voteSell';
+import { voteListing } from '../utils/auctionHouse/voteListing';
+import { voteOffer } from '../utils/auctionHouse/voteOffer';
+import { createProposal } from '../utils/auctionHouse/createProposal';
 
 import "../App.less";
 
@@ -104,7 +107,9 @@ import { getPriceWithMantissa } from '../utils/auctionHouse/helpers/various';
 
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { WalletConnectButton } from "@solana/wallet-adapter-react-ui";
-
+import  useWalletStore  from '../utils/governanceTools/useWalletStore';
+import { sendTransactions } from "../utils/governanceTools/sendTransactions";
+import { InstructionsAndSignersSet } from "../utils/auctionHouse/helpers/types";
 import { useTranslation } from 'react-i18next';
 
 const StyledTable = styled(Table)(({ theme }) => ({
@@ -180,7 +185,8 @@ function ValidateDAO(mintOwner: string){
         }
     } 
     for (var verified of VERIFIED_DAO_ARRAY){
-        if (verified.address === mintOwner){
+        //if (verified.address === mintOwner){
+        if (verified.solTreasury === mintOwner){
             return true;
         }
     } 
@@ -215,6 +221,7 @@ function SellNowVotePrompt(props:any){
     const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
     const { connection } = useConnection();
     const { publicKey, wallet, sendTransaction } = useWallet();
+	const anchorWallet = useAnchorWallet();
     const [daoPublicKey, setDaoPublicKey] = React.useState(null);
     const salePrice = props.salePrice || null;
     const weightedScore = props.grapeWeightedScore || 0;
@@ -249,43 +256,44 @@ function SellNowVotePrompt(props:any){
             //const setSellNowPrice = async () => {
             try {
                 const transaction = new Transaction();
-                const transactionInstr = await sellNowListing(+sell_now_amount, mint, publicKey.toString(), mintOwner, weightedScore, daoPublicKey);
-                
-                const instructionsArray = [transactionInstr.instructions].flat();        
-                
-                // we need to pass the transactions to realms not to the wallet, and then with the instruction set we pass to the wallet only the ones from realms
                 if (daoPublicKey){
-                    const transactionInstr2 = await createDAOProposal(+sell_now_amount, mint, publicKey.toString(), mintOwner, weightedScore, daoPublicKey, connection, transactionInstr, sendTransaction);
-                    //console.log("transactionInstr2: "+JSON.stringify(transactionInstr2));
-                    const instructionsArray2 = [transactionInstr2.instructions].flat();
-                    //console.log("instructionsArray2: "+ JSON.stringify(instructionsArray2));
-                    transaction.add(...instructionsArray2);
-                } else {
+                    //voteListing2
+                    const daoTransactionInstr = await voteListing(+sell_now_amount, mint, publicKey.toString(), mintOwner, weightedScore, daoPublicKey);
+                    //params from original voteListing
+                    //const daoTransactionInstr = await voteListing(+sell_now_amount, mint, daoPublicKey.toString(), publicKey);
+                    console.log('transactionInstr' +JSON.stringify(daoTransactionInstr));
+                    /*const instructionsArray = [daoTransactionInstr.instructions].flat();            
                     transaction.add(
                         ...instructionsArray
+                    );*/
+                    //console.log(daoTransactionInstr);
+                    //console.log(daoTransactionInstr.instructions[1].data.buffer.toString());
+                    //console.log(Utf8ArrayToStr(daoTransactionInstr.instructions[1].data));
+                    const proposalPk = await createProposal(+sell_now_amount, mint, publicKey.toString(), mintOwner, weightedScore, daoPublicKey, connection, daoTransactionInstr, sendTransaction, anchorWallet, 2);
+
+                    if (proposalPk){
+                        enqueueSnackbar(`Proposal: ${proposalPk} created for accepting Listing Price Set to ${sell_now_amount} SOL`,{ variant: 'success' });
+                    }
+                } else {
+                    const transactionInstr = await sellNowListing(+sell_now_amount, mint, publicKey.toString(), mintOwner, weightedScore, daoPublicKey);
+                    const instructionsArray = [transactionInstr.instructions].flat();            
+                    transaction.add(
+                        ...instructionsArray
+                    );     
+                    enqueueSnackbar(`Preparing to set Sell Now Price to ${sell_now_amount} SOL`,{ variant: 'info' });
+                    const signedTransaction = await sendTransaction(transaction, connection);                    
+                    const snackprogress = (key:any) => (
+                        <CircularProgress sx={{padding:'10px'}} />
                     );
-                }
-                if (daoPublicKey){
-                    enqueueSnackbar(`${t('Preparing to create a Proposal for Listing Price to')} ${sell_now_amount} SOL`,{ variant: 'info' });
-                } else {
-                    enqueueSnackbar(`${t('Preparing to set Sell Now Price to')} ${sell_now_amount} SOL`,{ variant: 'info' });
-                }
-                const signedTransaction = await sendTransaction(transaction, connection);                    
-                const snackprogress = (key:any) => (
-                    <CircularProgress sx={{padding:'10px'}} />
-                );
-                const cnfrmkey = enqueueSnackbar(`${t('Confirming transaction')}`,{ variant: 'info', action:snackprogress, persist: true });
-                await connection.confirmTransaction(signedTransaction, 'processed');
-                closeSnackbar(cnfrmkey);
-                const snackaction = (key:any) => (
-                    <Button href={`https://explorer.solana.com/tx/${signedTransaction}`} target='_blank'  sx={{color:'white'}}>
-                        {signedTransaction}
-                    </Button>
-                );
-                if (daoPublicKey){
-                    enqueueSnackbar(`${t('Proposal Created for Listing Price Set to')} ${sell_now_amount} SOL`,{ variant: 'success', action:snackaction });
-                } else {
-                    enqueueSnackbar(`${t('Sell Now Price Set to')} ${sell_now_amount} SOL`,{ variant: 'success', action:snackaction });
+                    const cnfrmkey = enqueueSnackbar(`Confirming transaction`,{ variant: 'info', action:snackprogress, persist: true });
+                    await connection.confirmTransaction(signedTransaction, 'processed');
+                    closeSnackbar(cnfrmkey);
+                    const snackaction = (key:any) => (
+                        <Button href={`https://explorer.solana.com/tx/${signedTransaction}`} target='_blank'  sx={{color:'white'}}>
+                            {signedTransaction}
+                        </Button>
+                    );
+                    enqueueSnackbar(`Sell Now Price Set to ${sell_now_amount} SOL`,{ variant: 'success', action:snackaction });      
                 }
                 const eskey = enqueueSnackbar(`${t('Metadata will be refreshed in a few seconds')}`, {
                     anchorOrigin: {
@@ -297,9 +305,8 @@ function SellNowVotePrompt(props:any){
                 setTimeout(function() {
                     closeSnackbar(eskey);
                     props.setRefreshOffers(true);
-                }, GRAPE_RPC_REFRESH);
-                
-            
+                }, GRAPE_RPC_REFRESH);        
+				
             } catch(e){
                 closeSnackbar();
                 enqueueSnackbar(`${e}`,{ variant: 'error' });
@@ -318,7 +325,8 @@ function SellNowVotePrompt(props:any){
             }
         } 
         for (var verified of VERIFIED_DAO_ARRAY){
-            if (verified.address === mintOwner){
+            //if (verified.address === mintOwner){
+             if (verified.solTreasury == mintOwner){
                 setDaoPublicKey(verified.address);
             }
         } 
@@ -883,26 +891,61 @@ export default function ItemOffers(props: any) {
         handleAlertClose();
 
         try {
-            const transactionInstr = await acceptOffer(offerAmount, mint, walletPublicKey, buyerAddress.toString());
-            const instructionsArray = [transactionInstr.instructions].flat();  
-            const transaction = new Transaction()
-            .add(...instructionsArray);
-
-            enqueueSnackbar(`${t('Preparing to accept offer of')}: ${offerAmount} SOL ${t('from')}: ${buyerAddress.toString()}`,{ variant: 'info' });
-            const signedTransaction2 = await sendTransaction(transaction, connection);
+            const transaction = new Transaction();
             
-            const snackprogress = (key:any) => (
-                <CircularProgress sx={{padding:'10px'}} />
-            );
-            const cnfrmkey = enqueueSnackbar(`${t('Confirming transaction')}`,{ variant: 'info', action:snackprogress, persist: true });
-            await ggoconnection.confirmTransaction(signedTransaction2, 'processed');
-            closeSnackbar(cnfrmkey);
-            const snackaction = (key:any) => (
-                <Button href={`https://explorer.solana.com/tx/${signedTransaction2}`} target='_blank'  sx={{color:'white'}}>
-                    {signedTransaction2}
-                </Button>
-            );
-            enqueueSnackbar(`{t('NFT transaction completed')} `,{ variant: 'success', action:snackaction });
+            if (!ValidateDAO(mintOwner)) {
+                const transactionInstr = await acceptOffer(offerAmount, mint, walletPublicKey, buyerAddress.toString());
+                const instructionsArray = [transactionInstr.instructions].flat();  
+                transaction.add(
+                    ...instructionsArray
+                );  
+
+                enqueueSnackbar(`${t('Preparing to accept offer of')}: ${offerAmount} SOL ${t('from')}: ${buyerAddress.toString()}`,{ variant: 'info' });
+                const signedTransaction2 = await sendTransaction(transaction, connection);
+            
+                const snackprogress = (key:any) => (
+                    <CircularProgress sx={{padding:'10px'}} />
+                );
+                const cnfrmkey = enqueueSnackbar(`${t('Confirming transaction')}`,{ variant: 'info', action:snackprogress, persist: true });
+                await ggoconnection.confirmTransaction(signedTransaction2, 'processed');
+                closeSnackbar(cnfrmkey);
+                const snackaction = (key:any) => (
+                    <Button href={`https://explorer.solana.com/tx/${signedTransaction2}`} target='_blank'  sx={{color:'white'}}>
+                        {signedTransaction2}
+                    </Button>
+                );
+                enqueueSnackbar(`${t('NFT transaction completed')} `,{ variant: 'success', action:snackaction });
+            } else {
+                //set instruction to sell state before sending proposal to realm
+                const transactionInstrSell = await voteSell(+offerAmount, mint, publicKey.toString(), mintOwner, mintOwner.toString());
+                const instructionsArray = [transactionInstrSell.instructions].flat();            
+                transaction.add(
+                    ...instructionsArray
+                ); 
+                enqueueSnackbar(`Preparing to create proposal to vote on for ${offerAmount} SOL`,{ variant: 'info' });
+                const signedTransaction = await sendTransaction(transaction, connection);                    
+                const snackprogress = (key:any) => (
+                    <CircularProgress sx={{padding:'10px'}} />
+                );
+                const cnfrmkey = enqueueSnackbar(`Confirming transaction`,{ variant: 'info', action:snackprogress, persist: true });
+                await connection.confirmTransaction(signedTransaction, 'processed');
+                closeSnackbar(cnfrmkey);
+                const snackaction = (key:any) => (
+                    <Button href={`https://explorer.solana.com/tx/${signedTransaction}`} target='_blank'  sx={{color:'white'}}>
+                        {signedTransaction}
+                    </Button>
+                );
+                enqueueSnackbar(`Offer state changed. Proceed to acccept proposal creation`,{ variant: 'success', action:snackaction });               
+
+                const transactionInstr = await voteOffer(+offerAmount, mint, mintOwner.toString(), buyerAddress.toString(), publicKey.toString());
+                console.log('transactionInstr' +JSON.stringify(transactionInstr));
+                //transactionInstr.add(feePayer: COLLABORATION_SOL_TREASURY);
+                const proposalPk = await createProposal(+offerAmount, mint, publicKey.toString(), mintOwner, 0, mintOwner.toString(), connection, transactionInstr, sendTransaction, anchorWallet, 1);
+                //const proposalPk = await createProposal(+offerAmount, mint, publicKey.toString(), mintOwner, 0, mintOwner.toString(), ggoconnection, transactionInstr, sendTransaction, anchorWallet, 1);
+                if (proposalPk){
+                    enqueueSnackbar(`Proposal: ${proposalPk} created and offer for ${offerAmount} SOL will be voted if to be accepted.`,{ variant: 'success' });
+                }
+            }
             
             const eskey = enqueueSnackbar(`${t('Metadata will be refreshed in a few seconds')}`, {
                     anchorOrigin: {
@@ -1114,7 +1157,8 @@ export default function ItemOffers(props: any) {
         console.log("derivedOwnerPDA: "+derivedOwnerPDA);
         */
 
-        //console.log("derivedMintPDA: "+derivedMintPDA);
+        
+        //console.log(mint + " - derivedMintPDA: "+derivedMintPDA);
         
         let [result] = await Promise.all([GetSignatureOffers(derivedMintPDA[0].toString(),'', 25)]);
         let offerResults: any[] = [];
@@ -1128,6 +1172,7 @@ export default function ItemOffers(props: any) {
         var forSaleDate = null;
         var forSaleTimeAgo = null;
         //console.log('derivedMintPDA[0]: '+derivedMintPDA[0].toString());
+        //console.log('result: '+JSON.stringify(result));
 
         if (!loading){
             setLoading(true);
@@ -1136,7 +1181,7 @@ export default function ItemOffers(props: any) {
             for (var value of result){
                 signatures.push(value.signature);
             }
-
+            
             const getTransactionAccountInputs2 = await ggoconnection.getParsedTransactions(signatures, 'confirmed');
             setOpenOffers(0);
             for (var value of result){
@@ -1149,25 +1194,37 @@ export default function ItemOffers(props: any) {
                         //console.log("gtai ("+getTransactionAccountInputs2.length+"): "+JSON.stringify(getTransactionAccountInputs2[cnt]));
                         
                         if (getTransactionAccountInputs?.transaction && getTransactionAccountInputs?.transaction?.message){
+                            
                             let feePayer = new PublicKey(getTransactionAccountInputs?.transaction.message.accountKeys[0].pubkey); // .feePayer.toBase58();
                             let progAddress = getTransactionAccountInputs.meta.logMessages[0];
                             let instructionType = getTransactionAccountInputs.meta.logMessages[1];
                             let allLogMessages = getTransactionAccountInputs.meta.logMessages;
 
-                            //console.log("feePayer: "+feePayer.toBase58());
-
                             //console.log('getTransactionAccountInputs:', getTransactionAccountInputs);
                             //console.log("escrow: "+JSON.stringify(getTransactionAccountInputs.meta.preTokenBalances));
                             let auctionMint = getTransactionAccountInputs.meta.preTokenBalances[0]?.mint;                        
-                            //console.log("escrow: "+JSON.stringify(getTransactionAccountInputs.transaction.feePayer));
+                            //console.log("escrow: "+JSON.stringify(auctionMint) + " ::: value "+JSON.stringify(value));
                             //if (auctionMint){
-                            {    
-                                    
-                                if ((value) && (value?.memo)){
 
+                            let withMemo = value?.memo;
+
+                            if (withMemo === null){ // loop inner instructions
+                                for (var instruction of getTransactionAccountInputs.meta?.innerInstructions){
+                                    
+                                    for (var iinstruction of (instruction.instructions)){
+                                        if (iinstruction?.programId.toBase58() === 'MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr'){
+                                            withMemo = JSON.parse(JSON.stringify(iinstruction))?.parsed;
+                                        }
+                                    }
+                                }
+                            }
+                            
+                            {
+                                //if ((value) && (value?.memo)){
+                                if (withMemo){
                                     let memo_arr: any[] = [];
-                                    let memo_str = value.memo;
-                                    let memo_instances = ((value.memo.match(/{/g)||[]).length);
+                                    let memo_str = withMemo;
+                                    let memo_instances = ((withMemo.match(/{/g)||[]).length);
                                     if (memo_instances > 0) {
                                         // multi memo
                                         let mcnt = 0;
@@ -1226,7 +1283,7 @@ export default function ItemOffers(props: any) {
                                                                 (memo_json?.status === 5) ||
                                                                 (memo_json?.state === 0)||
                                                                 (memo_json?.state === 5)){ // add to an array to search against other offers and cancel them out
-                                                                offerResultsCancelled.push({buyeraddress: feePayer, offeramount: memo_json?.amount, mint: memo_json.mint, isowner: false, timestamp: value.blockTime, state: memo_json?.state || memo_json?.status});  
+                                                                offerResultsCancelled.push({buyeraddress: feePayer, offeramount: memo_json?.amount, mint: memo_json.mint, isowner: false, timestamp: withMemo.blockTime, state: memo_json?.state || memo_json?.status});  
                                                             }
                                                             
                                                             //console.log('memo_json: ' + memo_str);
@@ -1299,9 +1356,29 @@ export default function ItemOffers(props: any) {
                                                 }
                                             }
                                             //CHECK IF OWNER HAS AN ACTIVE SELL NOW PRICE
-                                            if ( feePayer.toBase58() === mintOwner && progAddress.search(AUCTION_HOUSE_PROGRAM_ID.toBase58())>0 && feePayer != null && existSaleCancelAction === 0){
+                                            //console.log(feePayer.toBase58() + " vs "+ mintOwner);
+                                            
+                                            let feePayerMatched = false;
+                                            if (feePayer.toBase58() === mintOwner){
+                                                feePayerMatched = true;
+                                            } else {
+                                                for (var fpayer of getTransactionAccountInputs?.transaction.message.accountKeys){
+                                                    if (fpayer.pubkey.toBase58() === mintOwner){
+                                                        feePayerMatched = true;
+                                                        feePayer = fpayer.pubkey;
+                                                    }
+                                                }
+                                            }
+
+                                            let paSearch = progAddress.search(AUCTION_HOUSE_PROGRAM_ID.toBase58());
+                                            if (paSearch != 0){
+                                                if (ValidateDAO(mintOwner))
+                                                    paSearch = 1;
+                                            }
+                                            
+                                            if ( feePayerMatched && paSearch && feePayer != null && existSaleCancelAction === 0){
                                                 //console.log('PUSH '+memo_json?.state+':: '+feePayer.toBase58() + '('+memo_json?.amount+'): ' +memo_str);
-                                                                                    
+                                                
                                                 for (var i = 0; i < offerResults.length; i++){
                                                     if ((feePayer.toBase58() === offerResults[i].buyeraddress)){
                                                         exists = true;
@@ -1312,7 +1389,8 @@ export default function ItemOffers(props: any) {
                                                     //console.log(feePayer+": "+JSON.stringify(memo_str)); 
                                                     if ((memo_json?.status === 2) ||
                                                         (memo_json?.state === 2)) {
-														//make a final check for seller trade state
+                                                            console.log(memo_json);
+														    //make a final check for seller trade state
                                                             const mintOwnerPK = new PublicKey(mintOwner);
                                                             const mintKey = new PublicKey(mint);
                                                             const tokenAccountKey = (await getAtaForMint(mintKey, mintOwnerPK))[0];
@@ -1521,23 +1599,18 @@ export default function ItemOffers(props: any) {
         
         console.log('3. 💰 Create a payment request link \n');
         const url = encodeURL({ recipient: MERCHANT_WALLET, amount, reference, label, message, memo });
-
         // encode URL in QR code
         const qrCode = createQR(url);
-
         */
 
 
         /* // ADD QR TO PAGE
         console.log('3. 💰 Create a payment request link \n');
         const url = encodeURL({ recipient: MERCHANT_WALLET, amount, reference, label, message, memo });
-
         // encode URL in QR code
         const qrCode = createQR(url);
-
         // get a handle of the element
         const element = document.getElementById('qr-code');
-
         // append QR code to the element
         qrCode.append(element);
         */
@@ -1739,7 +1812,7 @@ export default function ItemOffers(props: any) {
                                                             {((grape_whitelisted > -1) ||
                                                                 (grape_member_balance > grape_offer_threshhold)) ? (
                                                                     <>
-                                                                    {!ValidateCurve(mintOwner) &&
+                                                                    {!ValidateCurve(mintOwner) && salePrice <= 0 &&
                                                                         <Grid item>
                                                                             <SellNowVotePrompt mint={mint} mintOwner={mintOwner} salePrice={salePrice} grapeWeightedScore={grape_weighted_score} RefreshOffers={setRefreshOffers} />
                                                                         </Grid>
@@ -1986,18 +2059,37 @@ export default function ItemOffers(props: any) {
                                                             
                                                             <>
                                                                 {(ValidateDAO(mintOwner)) ? (
-                                                                    <Tooltip
-                                                                        title='Vote to accept this offer'
-                                                                    >
-                                                                        <Button
-                                                                        onClick={() => setAcceptPrompt(convertSolVal(item.offeramount), item.buyeraddress)}
-                                                                        className='buyNowButton'
-                                                                        sx={{
-                                                                        }}
-                                                                        >
-                                                                            {t('VOTE')}
-                                                                        </Button>
-                                                                    </Tooltip>
+                                                                    
+                                                                    <>
+                                                                        {publicKey && publicKey.toBase58() === item.buyeraddress ? (
+                                                                            <Button 
+                                                                                color="error"
+                                                                                variant="text"
+                                                                                //onClick={() => handleWithdrawOffer(convertSolVal(item.offeramount))}
+                                                                                onClick={() => handleCancelOffer(convertSolVal(item.offeramount))}
+                                                                                sx={{
+                                                                                    borderRadius: '10px',
+                                                                                }}
+                                                                            >
+                                                                                <CancelIcon />
+                                                                            </Button>
+                                                                        ):(
+                                                                            <>
+                                                                                <Tooltip
+                                                                                    title='Vote to accept'
+                                                                                >
+                                                                                    <Button
+                                                                                        //onClick={() => setAcceptPrompt(convertSolVal(item.offeramount), item.buyeraddress)}
+                                                                                        className='buyNowButton'
+                                                                                        sx={{
+                                                                                    }}
+                                                                                    >
+                                                                                        {t('VOTE')}
+                                                                                    </Button>
+                                                                                </Tooltip>
+                                                                            </>
+                                                                        )}
+                                                                    </>
                                                                 ):(
                                                                     <>
                                                                     {publicKey && publicKey.toBase58() === mintOwner && (
@@ -2042,7 +2134,7 @@ export default function ItemOffers(props: any) {
                 </Box>
                 {mint && 
                     <>
-                    {/*<HistoryView mint={mint} />*/}
+                    <HistoryView mint={mint} />
                     </>
                 }
             </>

@@ -1,10 +1,10 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-import { Connection, PublicKey, Transaction } from '@solana/web3.js'
+import { Connection, PublicKey, Transaction, LAMPORTS_PER_SOL } from '@solana/web3.js'
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { BN, web3 } from '@project-serum/anchor';
-import axios from "axios";
+import spok from 'spok';
 
 import moment from 'moment';
 
@@ -41,7 +41,10 @@ import {
     AUCTION_HOUSE_ADDRESS,
     WRAPPED_SOL_MINT,
     TOKEN_PROGRAM_ID,
-  } from '../utils/auctionHouse/helpers/constants';
+} from '../utils/auctionHouse/helpers/constants';
+
+import { AuctionHouseProgram  } from '@metaplex-foundation/mpl-auction-house';
+import { Metadata } from '@metaplex-foundation/mpl-token-metadata';
 
 import { 
     GRAPE_RPC_ENDPOINT,
@@ -85,6 +88,11 @@ export default function HistoryView(props: any){
     const [symbol, setSymbol] = React.useState(props.symbol || null);
     const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
     const { connection } = useConnection();
+
+    const [receiptListing, setReceiptListing] = React.useState(null);
+    const [receiptPurchase, setReceiptPurchase] = React.useState(null);
+    const [receiptBid, setReceiptBid] = React.useState(null);
+    const [receipts, setReceipts] = React.useState(null);
 
     const handleMEClick = () => {
         setMEOpenHistoryCollapse(!me_open_history_collapse);
@@ -159,114 +167,134 @@ export default function HistoryView(props: any){
 
     const getHistory = async () => {
         setLoading(true);
-        //const anchorProgram = await loadAuctionHouseProgram(pubkey, ENV_AH, GRAPE_RPC_ENDPOINT);
+        //const AuctionHouseProgram = await ggoconnection.AuctionHouseProgram(new PublicKey(ENV_AH)); // loadAuctionHouseProgram(null, ENV_AH, GRAPE_RPC_ENDPOINT);
+        //const AuctionHouseProgram =  AuctionHouse.fromAccountAddress(ggoconnection, new PublicKey(ENV_AH)); //.fromAccountInfo(info)[0];
+        
+        //AuctionHouseProgram.LISTINE_RECEIPT
+
+        //const AHP = await AuctionHouseProgram;
+        //spok(t, AuctionHouseProgram, expected);
         
         if (mint){
-
-            const confirmedsignatures = await ggoconnection.getConfirmedSignaturesForAddress2(new PublicKey(mint), {"limit":25});
-            // then get parsed txs
-            //console.log("Signatures: "+JSON.stringify(confirmedsignatures));
-            // with signatures get txs
-            let signatures: any[] = [];
-            for (var value of confirmedsignatures){
-                signatures.push(value.signature);
-            }
-            const getTransactionAccountInputs2 = await ggoconnection.getParsedTransactions(signatures, 'confirmed');
-            let cnt = 0;
-            let nftSales: any[] = [];
-            for (var tvalue of getTransactionAccountInputs2){
-                let has_revoke = 0;
-                let has_allocate = 0;
-                let has_transfer = 0;
-                let has_closeAccount = 0;
-                let has_init = 0;
-                let has_auth = 0;
-                let has_create= 0;
-                let has_createAccount= 0;
-                let has_assign= 0;
-                let tx_cost = 0;
-                console.log("tvalue: "+JSON.stringify(tvalue));
-                let is_mint = false;
-                let owner = null;
-                if (tvalue.meta?.innerInstructions){
-                    /*
-                    for (var innerInstruction of tvalue.meta.innerInstructions){
-                        if (innerInstruction.instructions){
-                            for (var instruction of innerInstruction.instructions){
-                                let parsedinstruction = JSON.parse(JSON.stringify(instruction));
-                                //console.log("Instruction: "+JSON.stringify(parsedinstruction.parsed?.type));
-                            }
-                            
-                        }
-                    }
-                    */
-
-                    tx_cost = tvalue.meta.preBalances[0] - tvalue.meta.postBalances[0];
-                    
-                    for (var postTokenBalance of tvalue.meta.postTokenBalances){
-                        if (postTokenBalance.mint === mint){
-                            owner = postTokenBalance.owner;
-                        }
-                    }
-
-                    for (var iinstruction2 of tvalue.transaction.message.instructions){
-                        //console.log("PB: "+JSON.stringify(iinstruction2));
-                        let parsed_instruction = JSON.parse(JSON.stringify(iinstruction2));
-                        console.log("ISTR: "+JSON.stringify(parsed_instruction.parsed?.type));
-                        
-                        if (parsed_instruction.parsed?.type === 'revoke')
-                            has_revoke++;
-                        else if (parsed_instruction.parsed?.type === 'allocate')
-                            has_allocate++;
-                        else if (parsed_instruction.parsed?.type === 'transfer')
-                            has_transfer++;
-                        else if (parsed_instruction.parsed?.type === 'closeAccount')
-                            has_closeAccount++;
-                        else if (parsed_instruction.parsed?.type === 'createAccount')
-                            has_createAccount++;
-                        else if (parsed_instruction.parsed?.type === 'initializeAccount')
-                            has_init++;
-                        else if (parsed_instruction.parsed?.type === 'setAuthority')
-                            has_auth++;
-                        else if (parsed_instruction.parsed?.type === 'create')
-                            has_create++;
-                        else if (parsed_instruction.parsed?.type === 'assign')
-                            has_assign++;
-                    
-                    }
-                    
-                }
-
-                console.log("Signature: "+signatures[cnt]);
-                
-                let txtype = "TX";
-                if (has_create > 0){
-                    if ((has_transfer > 0)&&(has_closeAccount > 0))
-                        txtype = "Transfer";
-
-                    nftSales.push({
-                        signature:signatures[cnt],
-                        blockTime:tvalue.blockTime,
-                        amount:tx_cost,
-                        owner:owner,
-                        source:null,
-                        type:txtype,
-                    });
-                }
-
-
-
-                cnt++;
-                // loop all txs to find transfers
-
-            }
-
-            // loop through getTransactionAccountInputs2
             
-            //console.log("getTransactionAccountInputs2: "+JSON.stringify(getTransactionAccountInputs2));
+            const _mint = new PublicKey(mint);
+            //const metadata = await Metadata.findByMint(ggoconnection, _mint);
+            
+            //const [metadata_program] = await Metadata.fromAccountAddress(tokenMint)
+            
+            /**
+             * Allocated data size on auction_house program per PDA type
+             * CreateAuctionHouse: 459
+             * PrintListingReceipt: 236
+             * PrintBidReceipt: 269
+             * PrintPurchaseReceipt: 193
+             */
+            
+            const PrintListingReceiptSize = 236;
+            const PrintBidReceiptSize = 269;
+            const PrintPurchaseReceiptSize = 193;
 
-            setHistory(nftSales);
-            setOpenHistory(nftSales.length);
+            const ReceiptAccountSizes = [
+                PrintListingReceiptSize,
+                PrintBidReceiptSize,
+                PrintPurchaseReceiptSize,
+            ] as const;
+
+            const ReceiptAccounts = await ReceiptAccountSizes.map(async size => {
+                const accounts = await ggoconnection.getProgramAccounts(
+                  AUCTION_HOUSE_PROGRAM_ID,
+                  {
+                    commitment: 'confirmed',
+                    filters: [
+                      {
+                        dataSize: size,
+                      },
+                    ],
+                  }
+                );
+                
+                const parsedAccounts = await accounts.map(async account => {
+                  switch (size) {
+                    case PrintListingReceiptSize:
+                      const [
+                        ListingReceipt,
+                      ] = await AuctionHouseProgram.accounts.ListingReceipt.fromAccountInfo(
+                        account.account
+                      );
+                      /*
+                      return {
+                        ...ListingReceipt,
+                        receipt_type: ListingReceipt.canceledAt
+                          ? 'cancel_listing_receipt'
+                          : 'listing_receipt',
+                      } as TransactionReceipt;
+                      */
+                      //console.log("ListingReceipt. "+JSON.stringify(ListingReceipt));
+                      setReceiptListing(ListingReceipt);
+                      break;
+                    case PrintBidReceiptSize:
+                      const [
+                        BidReceipt,
+                      ] = await AuctionHouseProgram.accounts.BidReceipt.fromAccountInfo(
+                        account.account
+                      );
+                      /*
+                      return {
+                        ...BidReceipt,
+                        receipt_type: 'bid_receipt',
+                      } as TransactionReceipt;
+                      */
+                      //console.log("BidReceipt. "+JSON.stringify(BidReceipt));
+                      setReceiptBid(BidReceipt);
+                      break;
+                    case PrintPurchaseReceiptSize:
+                      const [
+                        PurchaseReceipt,
+                      ] = await AuctionHouseProgram.accounts.PurchaseReceipt.fromAccountInfo(
+                        account.account
+                      );
+                      /*
+                      return {
+                        ...PurchaseReceipt,
+                        receipt_type: 'purchase_receipt',
+                      } as TransactionReceipt;
+                      */
+                      setReceiptPurchase(PurchaseReceipt);
+                      break;
+                    default:
+                      return undefined;
+                      break;
+                  }
+                });
+          
+                return await Promise.all(parsedAccounts);
+              });
+            
+            const receipts = await (await Promise.all(ReceiptAccounts))
+                .flat()
+                .filter(
+                    receipt =>
+                    !!receipt &&
+                    receipt.metadata.toBase58() === _mint.toBase58()//metadata.pubkey.toBase58()
+                )
+                .map(receipt => ({
+                    ...receipt,
+                    
+                    tokenSize: receipt.tokenSize.toNumber(),
+                    price: receipt.price.toNumber() / LAMPORTS_PER_SOL,
+                    createdAt: receipt.createdAt.toNumber(),
+                    cancelledAt: receipt.canceledAt?.toNumber?.(),
+                }));
+
+            console.log("Receipts: "+JSON.stringify(receipts));
+            setOpenHistory(receipts.length);
+            setReceipts(receipts);
+            
+            //const confirmedsignatures = await ggoconnection.getConfirmedSignaturesForAddress2(new PublicKey(mint), {"limit":25});
+            //const listingreceipts = await ggoconnection.getConfirmedSignaturesForAddress2(new PublicKey(mint), {"limit":25});
+            
+            //setHistory(nftSales);
+            //setOpenHistory(nftSales.length);
         }
         setLoading(false);
     }
@@ -274,8 +302,8 @@ export default function HistoryView(props: any){
     React.useEffect(() => {
         if (mint){
             //if (!history){
-                //getHistory();
-                getMEHistory();
+                getHistory();
+                //getMEHistory();
             //}
         }
     }, [mint]);

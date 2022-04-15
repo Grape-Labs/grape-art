@@ -2405,6 +2405,51 @@
     prop-types "^15.7.2"
     react-is "^17.0.2"
 
+"@metaplex-foundation/beet-solana@^0.0.6":
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/@metaplex-foundation/beet-solana/-/beet-solana-0.0.6.tgz#64dc7bb5a0f5938f25da11bb2a44729ee806a0d9"
+  integrity sha512-MMwqCd51q+dZFtpjuUkGN/jX/gO5fiRuf+uyZ2fVAUcnZCmVWwSEeeSISffvR0mmhc/JSWkJ7Pi0s+FkYVB7dA==
+  dependencies:
+    "@metaplex-foundation/beet" ">0.0.5"
+    "@solana/web3.js" "^1.31.0"
+
+"@metaplex-foundation/beet@>0.0.5":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@metaplex-foundation/beet/-/beet-0.1.0.tgz#65bcd05a47bb99230fdfc2e3cfc0693c62b9a285"
+  integrity sha512-6SKV0Tp1+onU1vjBA26wvgPIKpxhnYINNpnpxvBpK9Cl8dNfz5+sfdx6opaKcljpCSaRpQqHfdtEn6qlYVCO8A==
+  dependencies:
+    ansicolors "^0.3.2"
+    bn.js "^5.2.0"
+    debug "^4.3.3"
+
+"@metaplex-foundation/beet@^0.0.8":
+  version "0.0.8"
+  resolved "https://registry.yarnpkg.com/@metaplex-foundation/beet/-/beet-0.0.8.tgz#c0d6cfc4e9804ec863efc2e05302cc5d89d144cd"
+  integrity sha512-OI4V/ASqqR802GivPLBLrihDj99xX2yceTvZt20gn2A3tlPg0ygV8brTHE5LZey/ud3Guh8t54GRwD6XcqStZg==
+  dependencies:
+    ansicolors "^0.3.2"
+    bn.js "^5.2.0"
+    debug "^4.3.3"
+
+"@metaplex-foundation/mpl-auction-house@^1.1.1":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@metaplex-foundation/mpl-auction-house/-/mpl-auction-house-1.1.1.tgz#9c4ef47d13ff766bf9606868099dc1489477f77c"
+  integrity sha512-47dGB74A+VB0cmzfzfrIUTn7cScKkbHzPioUR+YSC+4jkNW+d5OjNJWaE5lIP8JrzZUfPRfuzCxOyvwNtNM1Tg==
+  dependencies:
+    "@metaplex-foundation/beet" "^0.0.8"
+    "@metaplex-foundation/beet-solana" "^0.0.6"
+    "@metaplex-foundation/mpl-core" "0.0.4"
+    "@solana/web3.js" "^1.35.1"
+    bn.js "^5.2.0"
+
+"@metaplex-foundation/mpl-core@0.0.4":
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/@metaplex-foundation/mpl-core/-/mpl-core-0.0.4.tgz#af7c518b1283f91fa98e8c38ab97fd3f7d18984f"
+  integrity sha512-lrWdbufDgPw+GmSJpd6PP4QaThoHTkWKD9309vQ9Wkq2cABzv1g6VA83zIIkn/kwDRLcDaEjiiAKIfIck/09GQ==
+  dependencies:
+    "@solana/web3.js" "^1.33.0"
+    bs58 "^4.0.1"
+
 "@metaplex-foundation/mpl-core@^0.0.2":
   version "0.0.2"
   resolved "https://registry.npmjs.org/@metaplex-foundation/mpl-core/-/mpl-core-0.0.2.tgz"
@@ -2744,6 +2789,26 @@
   resolved "https://registry.npmjs.org/@project-serum/borsh/-/borsh-0.2.5.tgz"
   integrity sha512-UmeUkUoKdQ7rhx6Leve1SssMR/Ghv8qrEiyywyxSWg7ooV7StdpPBhciiy5eB3T0qU1BXvdRNC8TdrkxK7WC5Q==
   dependencies:
+    bn.js "^5.1.2"
+    buffer-layout "^1.2.0"
+
+"@project-serum/common@^0.0.1-beta.3":
+  version "0.0.1-beta.3"
+  resolved "https://registry.yarnpkg.com/@project-serum/common/-/common-0.0.1-beta.3.tgz#53586eaff9d9fd7e8938b1e12080c935b8b6ad07"
+  integrity sha512-gnQE/eUydTtto5okCgLWj1M97R9RRPJqnhKklikYI7jP/pnNhDmngSXC/dmfzED2GXSJEIKNIlxVw1k+E2Aw3w==
+  dependencies:
+    "@project-serum/serum" "^0.13.21"
+    bn.js "^5.1.2"
+    superstruct "0.8.3"
+
+"@project-serum/serum@^0.13.21":
+  version "0.13.64"
+  resolved "https://registry.yarnpkg.com/@project-serum/serum/-/serum-0.13.64.tgz#d5a9009ded8d2539ebfd12e1ff58b9028cfcdf45"
+  integrity sha512-33d8K3qcbiFnL1Azv5k6IYMtJYjCqqmFkf95w5W8MPB0A+5zQfOwhEfXQuBw0ExZ8ft5s9Vy8sReLyx0SsINWA==
+  dependencies:
+    "@project-serum/anchor" "^0.11.1"
+    "@solana/spl-token" "^0.1.6"
+    "@solana/web3.js" "^1.21.0"
     bn.js "^5.1.2"
     buffer-layout "^1.2.0"
 
@@ -3258,6 +3323,26 @@
     "@solana/buffer-layout" "^3.0.0"
     bn.js "^5.0.0"
     borsh "^0.4.0"
+    bs58 "^4.0.1"
+    buffer "6.0.1"
+    cross-fetch "^3.1.4"
+    jayson "^3.4.4"
+    js-sha3 "^0.8.0"
+    rpc-websockets "^7.4.2"
+    secp256k1 "^4.0.2"
+    superstruct "^0.14.2"
+    tweetnacl "^1.0.0"
+
+"@solana/web3.js@^1.33.0", "@solana/web3.js@^1.35.1":
+  version "1.37.2"
+  resolved "https://registry.yarnpkg.com/@solana/web3.js/-/web3.js-1.37.2.tgz#41f2daf402743d2cdda85c65a7a4e71d86b795e9"
+  integrity sha512-rgPidynwPTu8iLmS++aQbDGiPPtwjRmu+uQxF9jTNT7v3ifKIlS4HccMdjj4WDcYx8h2mUtQX5xkdk6liSbdvg==
+  dependencies:
+    "@babel/runtime" "^7.12.5"
+    "@ethersproject/sha2" "^5.5.0"
+    "@solana/buffer-layout" "^4.0.0"
+    bn.js "^5.0.0"
+    borsh "^0.7.0"
     bs58 "^4.0.1"
     buffer "6.0.1"
     cross-fetch "^3.1.4"
@@ -4588,6 +4673,11 @@ ansi-styles@^5.0.0:
   version "5.2.0"
   resolved "https://registry.npmjs.org/ansi-styles/-/ansi-styles-5.2.0.tgz"
   integrity sha512-Cxwpt2SfTzTtXcfOlzGEee8O+c+MmUgGrNiBcXnuWxuFJHe6a5Hz7qwhwe5OgaSYI0IJvkLqWX1ASG+cJOkEiA==
+
+ansicolors@^0.3.2, ansicolors@~0.3.2:
+  version "0.3.2"
+  resolved "https://registry.yarnpkg.com/ansicolors/-/ansicolors-0.3.2.tgz#665597de86a9ffe3aa9bfbe6cae5c6ea426b4979"
+  integrity sha1-ZlWX3oap/+Oqm/vmyuXG6kJrSXk=
 
 antd@^4.15.6:
   version "4.18.9"
@@ -6795,6 +6885,13 @@ debug@^3.1.1, debug@^3.2.5, debug@^3.2.7:
   integrity sha512-CFjzYYAi4ThfiQvizrFQevTTXHtnCqWfe7x1AhgEscTz6ZbLbfoLRLPugTQyBth6f8ZERVUSyWHFD/7Wu4t1XQ==
   dependencies:
     ms "^2.1.1"
+
+debug@^4.3.3:
+  version "4.3.4"
+  resolved "https://registry.yarnpkg.com/debug/-/debug-4.3.4.tgz#1319f6579357f2338d3337d2cdd4914bb5dcc865"
+  integrity sha512-PRWFHuSU3eDtQJPvnNY7Jcket1j0t5OuOsFzPPzsekD52Zl8qUfFIPEiswXqIvHWGVHOgX+7G/vCNNhehwxfkQ==
+  dependencies:
+    ms "2.1.2"
 
 decamelize@^1.2.0:
   version "1.2.0"
@@ -14940,6 +15037,13 @@ split@0.3:
   dependencies:
     through "2"
 
+spok@^1.4.3:
+  version "1.4.3"
+  resolved "https://registry.yarnpkg.com/spok/-/spok-1.4.3.tgz#8516234e6bd8caf0e10567bd675e15fd03b5ceb8"
+  integrity sha512-5wFGctwrk638aDs+44u99kohxFNByUq2wo0uShQ9yqxSmsxqx7zKbMo1Busy4s7stZQXU+PhJ/BlVf2XWFEGIw==
+  dependencies:
+    ansicolors "~0.3.2"
+
 sprintf-js@~1.0.2:
   version "1.0.3"
   resolved "https://registry.npmjs.org/sprintf-js/-/sprintf-js-1.0.3.tgz"
@@ -15278,6 +15382,14 @@ stylis@4.0.13:
   resolved "https://registry.npmjs.org/stylis/-/stylis-4.0.13.tgz"
   integrity sha512-xGPXiFVl4YED9Jh7Euv2V220mriG9u4B2TA6Ybjc1catrstKD2PpIdU3U0RKpkVBC2EhmL/F0sPCr9vrFTNRag==
 
+superstruct@0.8.3:
+  version "0.8.3"
+  resolved "https://registry.yarnpkg.com/superstruct/-/superstruct-0.8.3.tgz#fb4d8901aca3bf9f79afab1bbab7a7f335cc4ef2"
+  integrity sha512-LbtbFpktW1FcwxVIJlxdk7bCyBq/GzOx2FSFLRLTUhWIA1gHkYPIl3aXRG5mBdGZtnPNT6t+4eEcLDCMOuBHww==
+  dependencies:
+    kind-of "^6.0.2"
+    tiny-invariant "^1.0.6"
+
 superstruct@^0.14.2:
   version "0.14.2"
   resolved "https://registry.npmjs.org/superstruct/-/superstruct-0.14.2.tgz"
@@ -15551,6 +15663,11 @@ tiny-inflate@^1.0.3:
   version "1.0.3"
   resolved "https://registry.npmjs.org/tiny-inflate/-/tiny-inflate-1.0.3.tgz"
   integrity sha512-pkY1fj1cKHb2seWDy0B16HeWyczlJA9/WW3u3c4z/NiWDsO3DOU5D7nhTLE9CF0yXv/QZFY7sEJmj24dK+Rrqw==
+
+tiny-invariant@^1.0.6:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/tiny-invariant/-/tiny-invariant-1.2.0.tgz#a1141f86b672a9148c72e978a19a73b9b94a15a9"
+  integrity sha512-1Uhn/aqw5C6RI4KejVeTg6mIS7IqxnLJ8Mv2tV5rTc0qWobay7pDUz6Wi392Cnc8ak1H0F2cjoRzb2/AW4+Fvg==
 
 tiny-secp256k1@^1.1.3:
   version "1.1.6"
