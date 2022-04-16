@@ -43,8 +43,8 @@ import {
     TOKEN_PROGRAM_ID,
 } from '../utils/auctionHouse/helpers/constants';
 
-//import { AuctionHouseProgram  } from '@metaplex-foundation/mpl-auction-house';
-//import { Metadata } from '@metaplex-foundation/mpl-token-metadata';
+import { AuctionHouseProgram  } from '@metaplex-foundation/mpl-auction-house';
+import { Metadata } from '@metaplex-foundation/mpl-token-metadata';
 
 import { 
     GRAPE_RPC_ENDPOINT,
