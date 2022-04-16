@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { Connection, PublicKey, Transaction, LAMPORTS_PER_SOL } from '@solana/web3.js'
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { BN, web3 } from '@project-serum/anchor';
-import spok from 'spok';
+//import spok from 'spok';
 
 import moment from 'moment';
 
@@ -43,8 +43,8 @@ import {
     TOKEN_PROGRAM_ID,
 } from '../utils/auctionHouse/helpers/constants';
 
-import { AuctionHouseProgram  } from '@metaplex-foundation/mpl-auction-house';
-import { Metadata } from '@metaplex-foundation/mpl-token-metadata';
+//import { AuctionHouseProgram  } from '@metaplex-foundation/mpl-auction-house';
+//import { Metadata } from '@metaplex-foundation/mpl-token-metadata';
 
 import { 
     GRAPE_RPC_ENDPOINT,
@@ -119,7 +119,7 @@ export default function GlobalView(props: any){
                 PrintBidReceiptSize,
                 PrintPurchaseReceiptSize,
             ] as const;
-
+            /*
             const ReceiptAccounts = await (Promise.all(ReceiptAccountSizes.map(async size => {
                 const accounts = await ggoconnection.getProgramAccounts(
                   AUCTION_HOUSE_PROGRAM_ID,
@@ -191,7 +191,9 @@ export default function GlobalView(props: any){
                     createdAt: new BN(receipt.createdAt).toNumber(),
                     //cancelledAt: receipt?.canceledAt,
                 }));
+            
             setReceipts(receipts);
+            */
         }
         setLoading(false);
     }

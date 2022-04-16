@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { Connection, PublicKey, Transaction, LAMPORTS_PER_SOL } from '@solana/web3.js'
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { BN, web3 } from '@project-serum/anchor';
-import spok from 'spok';
+//import spok from 'spok';
 
 import moment from 'moment';
 
@@ -43,8 +43,8 @@ import {
     TOKEN_PROGRAM_ID,
 } from '../utils/auctionHouse/helpers/constants';
 
-import { AuctionHouseProgram  } from '@metaplex-foundation/mpl-auction-house';
-import { Metadata } from '@metaplex-foundation/mpl-token-metadata';
+//import { AuctionHouseProgram  } from '@metaplex-foundation/mpl-auction-house';
+//import { Metadata } from '@metaplex-foundation/mpl-token-metadata';
 
 import { 
     GRAPE_RPC_ENDPOINT,
@@ -182,113 +182,9 @@ export default function HistoryView(props: any){
             
             //const [metadata_program] = await Metadata.fromAccountAddress(tokenMint)
             
-            /**
-             * Allocated data size on auction_house program per PDA type
-             * CreateAuctionHouse: 459
-             * PrintListingReceipt: 236
-             * PrintBidReceipt: 269
-             * PrintPurchaseReceipt: 193
-             */
-            
-            const PrintListingReceiptSize = 236;
-            const PrintBidReceiptSize = 269;
-            const PrintPurchaseReceiptSize = 193;
-
-            const ReceiptAccountSizes = [
-                PrintListingReceiptSize,
-                PrintBidReceiptSize,
-                PrintPurchaseReceiptSize,
-            ] as const;
-
-            const ReceiptAccounts = await ReceiptAccountSizes.map(async size => {
-                const accounts = await ggoconnection.getProgramAccounts(
-                  AUCTION_HOUSE_PROGRAM_ID,
-                  {
-                    commitment: 'confirmed',
-                    filters: [
-                      {
-                        dataSize: size,
-                      },
-                    ],
-                  }
-                );
-                
-                const parsedAccounts = await accounts.map(async account => {
-                  switch (size) {
-                    case PrintListingReceiptSize:
-                      const [
-                        ListingReceipt,
-                      ] = await AuctionHouseProgram.accounts.ListingReceipt.fromAccountInfo(
-                        account.account
-                      );
-                      /*
-                      return {
-                        ...ListingReceipt,
-                        receipt_type: ListingReceipt.canceledAt
-                          ? 'cancel_listing_receipt'
-                          : 'listing_receipt',
-                      } as TransactionReceipt;
-                      */
-                      //console.log("ListingReceipt. "+JSON.stringify(ListingReceipt));
-                      setReceiptListing(ListingReceipt);
-                      break;
-                    case PrintBidReceiptSize:
-                      const [
-                        BidReceipt,
-                      ] = await AuctionHouseProgram.accounts.BidReceipt.fromAccountInfo(
-                        account.account
-                      );
-                      /*
-                      return {
-                        ...BidReceipt,
-                        receipt_type: 'bid_receipt',
-                      } as TransactionReceipt;
-                      */
-                      //console.log("BidReceipt. "+JSON.stringify(BidReceipt));
-                      setReceiptBid(BidReceipt);
-                      break;
-                    case PrintPurchaseReceiptSize:
-                      const [
-                        PurchaseReceipt,
-                      ] = await AuctionHouseProgram.accounts.PurchaseReceipt.fromAccountInfo(
-                        account.account
-                      );
-                      /*
-                      return {
-                        ...PurchaseReceipt,
-                        receipt_type: 'purchase_receipt',
-                      } as TransactionReceipt;
-                      */
-                      setReceiptPurchase(PurchaseReceipt);
-                      break;
-                    default:
-                      return undefined;
-                      break;
-                  }
-                });
-          
-                return await Promise.all(parsedAccounts);
-              });
-            
-            const receipts = await (await Promise.all(ReceiptAccounts))
-                .flat()
-                .filter(
-                    receipt =>
-                    !!receipt &&
-                    receipt.metadata.toBase58() === _mint.toBase58()//metadata.pubkey.toBase58()
-                )
-                .map(receipt => ({
-                    ...receipt,
-                    
-                    tokenSize: receipt.tokenSize.toNumber(),
-                    price: receipt.price.toNumber() / LAMPORTS_PER_SOL,
-                    createdAt: receipt.createdAt.toNumber(),
-                    cancelledAt: receipt.canceledAt?.toNumber?.(),
-                }));
-
             console.log("Receipts: "+JSON.stringify(receipts));
-            setOpenHistory(receipts.length);
-            setReceipts(receipts);
+            //setOpenHistory(receipts.length);
+            //setReceipts(receipts);
             
             //const confirmedsignatures = await ggoconnection.getConfirmedSignaturesForAddress2(new PublicKey(mint), {"limit":25});
             //const listingreceipts = await ggoconnection.getConfirmedSignaturesForAddress2(new PublicKey(mint), {"limit":25});
