@@ -17,7 +17,7 @@ import { GRAPE_RPC_ENDPOINT, OTHER_MARKETPLACES } from '../../utils/grapeTools/c
 import {InstructionsAndSignersSet} from "./helpers/types";
 
 import { AuctionHouseProgram } from '@metaplex-foundation/mpl-auction-house'
-//import { MetadataProgram, Metadata, deprecated } from '@metaplex-foundation/mpl-token-metadata'
+//mport { MetadataProgram, Metadata } from '@metaplex-foundation/mpl-token-metadata'
 import { deprecated } from "@metaplex-foundation/mpl-token-metadata";
 
 import {
