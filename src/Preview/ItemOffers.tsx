@@ -89,6 +89,7 @@ import {
 import { cancelOffer } from '../utils/auctionHouse/cancelOffer';
 import { withdrawOffer } from '../utils/auctionHouse/withdrawOffer';
 import { submitOffer } from '../utils/auctionHouse/submitOffer';
+import { makeOffer } from '../utils/auctionHouse/makeOffer';
 import { acceptOffer } from '../utils/auctionHouse/acceptOffer';
 import { cancelListing } from '../utils/auctionHouse/cancelListing';
 import { sellNowListing } from '../utils/auctionHouse/sellNowListing';
@@ -648,6 +649,7 @@ export function OfferPrompt(props: any) {
 			//no need allowing for multiple offers
                 try {
                     const transactionInstr = await submitOffer(+offer_amount, mint, publicKey.toString(), mintOwner);
+                    //const transactionInstr = await makeOffer(+offer_amount, mint, publicKey.toString(), mintOwner);
                     const instructionsArray = [transactionInstr.instructions].flat();        
                     const transaction = new Transaction()
                     .add(

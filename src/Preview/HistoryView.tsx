@@ -43,7 +43,7 @@ import {
     TOKEN_PROGRAM_ID,
 } from '../utils/auctionHouse/helpers/constants';
 
-//import { AuctionHouseProgram  } from '@metaplex-foundation/mpl-auction-house';
+import { AuctionHouseProgram  } from '@metaplex-foundation/mpl-auction-house';
 import { Metadata } from '@metaplex-foundation/mpl-token-metadata';
 
 import { 
@@ -182,14 +182,15 @@ export default function HistoryView(props: any){
             
             //const [metadata_program] = await Metadata.fromAccountAddress(tokenMint)
             
-            /**
-             * Allocated data size on auction_house program per PDA type
-             * CreateAuctionHouse: 459
-             * PrintListingReceipt: 236
-             * PrintBidReceipt: 269
-             * PrintPurchaseReceipt: 193
-             */
+            console.log("Receipts: "+JSON.stringify(receipts));
+            //setOpenHistory(receipts.length);
+            //setReceipts(receipts);
             
+            //const confirmedsignatures = await ggoconnection.getConfirmedSignaturesForAddress2(new PublicKey(mint), {"limit":25});
+            //const listingreceipts = await ggoconnection.getConfirmedSignaturesForAddress2(new PublicKey(mint), {"limit":25});
+            
+            //setHistory(nftSales);
+            //setOpenHistory(nftSales.length);
         }
         setLoading(false);
     }

@@ -1419,11 +1419,11 @@ export function ProfileView(this: any, props: any) {
             );
             const registry = await NameRegistryState.retrieve(connection, new PublicKey(domainKey));
             
-            if (!registry?.owner) {
+            if (!registry?.nftOwner) {
                 throw new Error("Could not retrieve name data");
             }
 
-            setPubkey(registry.owner.toBase58());
+            setPubkey(registry.nftOwner.toBase58());
             setRDLoading(false);
         }
     }
