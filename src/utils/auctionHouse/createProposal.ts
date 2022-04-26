@@ -39,6 +39,7 @@ import { sendTransactions, SequenceType, WalletSigner, getWalletPublicKey } from
 //import { SignerWalletAdapter } from '@solana/wallet-adapter-base';
 //import { useAnchorWallet } from "@solana/wallet-adapter-react";
 
+
   export async function createProposal(offerAmount: number, mint: string, walletPublicKey: string, mintOwner: any, weightedScore: any, daoPublicKey: string, connection: Connection, transactionInstr: InstructionsAndSignersSet, sendTransaction: any, wallet: WalletSigner, state: number): Promise<PublicKey> {
     
     //let instructions: TransactionInstruction[] = [];
@@ -70,7 +71,7 @@ import { sendTransactions, SequenceType, WalletSigner, getWalletPublicKey } from
     } else if (state===2){
       name = 'Sale of NFT: '+mint+' for '+offerAmount+'sol on grape.art';
     }  else {
-      name = 'Unknown proposal for NFT: '+mint+' for '+offerAmount+'sol on grape.art';
+      name = 'Unknow proposal for NFT: '+mint+' for '+offerAmount+'sol on grape.art';
     }
     
     const descriptionLink = '';
@@ -189,7 +190,7 @@ import { sendTransactions, SequenceType, WalletSigner, getWalletPublicKey } from
       undefined,
       tokenOwnerRecordPk
     );
-  
+
     const insertChunks = chunks(insertInstructions, 1);
     const signerChunks = Array(insertChunks.length).fill([]);
     //console.log('connection publicKey:', connection)
@@ -202,6 +203,6 @@ import { sendTransactions, SequenceType, WalletSigner, getWalletPublicKey } from
       [[], [], ...signerChunks],
       SequenceType.Sequential
     );
-  
+
     return proposalAddress;
   }

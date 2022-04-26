@@ -6,7 +6,7 @@ import { ProfileView } from "./Profile/Profile";
 import { PreviewView } from "./Preview/Preview";
 import { FeaturedView } from "./Featured/Featured";
 import { IdentityView } from "./Identity/Identity";
-import { SplashView } from "./Splash/Splash";
+//import { SplashView } from "./Splash/Splash";
 import CssBaseline from '@mui/material/CssBaseline';
 
 import {
@@ -164,9 +164,9 @@ function DashboardContent() {
                               <Container maxWidth="lg" sx={{ mt: 4, mb: 4}}>
                                   <ConfirmDialog />
                                   <Routes>
-
+                                    {/*
                                     <Route path="/splash" element={<SplashView/>} />
-
+                                    */}
                                     <Route path="/featured" element={<FeaturedView/>} />
 
                                     <Route path="/" element={<ProfileView/>}>

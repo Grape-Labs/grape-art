@@ -14,10 +14,6 @@
     "@google/model-viewer": "^1.8.0",
     "@ledgerhq/hw-transport-webusb": "^5.41.0",
     "@ledgerhq/react-native-hid": "^6.9.0",
-    "@metaplex-foundation/beet-solana": "^0.1.1",
-    "@metaplex-foundation/mpl-auction-house": "^1.1.1",
-    "@metaplex-foundation/mpl-core": "^0.6.1",
-    "@metaplex-foundation/mpl-token-metadata": "~2.0",
     "@mui/icons-material": "^5.0.0",
     "@mui/lab": "^5.0.0-alpha.50",
     "@mui/material": "^5.0.0",
@@ -66,7 +62,6 @@
     "eventemitter3": "^4.0.7",
     "fs": "^0.0.1-security",
     "fs.promises": "^0.1.2",
-    "i": "^0.3.7",
     "i18next": "^21.6.14",
     "i18next-browser-languagedetector": "^6.1.4",
     "i18next-http-backend": "^1.4.0",
@@ -76,8 +71,7 @@
     "moment": "^2.29.1",
     "mui-datatables": "^4.0.0",
     "next": "^12.0.7",
-    "notistack": "^2.0.4",
-    "npm": "^8.7.0",
+    "notistack": "^2.0.2",
     "prop-types": "^15.7.2",
     "qr-code-styling": "^1.6.0-rc.1",
     "react": "^17.0.2",
@@ -140,7 +134,6 @@
   },
   "resolutions": {
     "/@typescript-eslint/eslint-plugin": "^4.25.0",
-    "/@typescript-eslint/parser": "^4.25.0",
-    "@types/react": "17.0.40"
+    "/@typescript-eslint/parser": "^4.25.0"
   }
 }

@@ -43,11 +43,11 @@ export async function performReverseLookup(
     connection,
     reverseLookupAccount
   );
-  if (!name.registry.data) {
+  if (!name.data) {
     throw new Error("Could not retrieve name data");
   }
-  const nameLength = new BN(name.registry.data.slice(0, 4), "le").toNumber();
-  return name.registry.data.slice(4, 4 + nameLength).toString();
+  const nameLength = new BN(name.data.slice(0, 4), "le").toNumber();
+  return name.data.slice(4, 4 + nameLength).toString();
 }
 
 export async function performReverseLookupBatch(
