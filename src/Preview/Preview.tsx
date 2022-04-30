@@ -849,7 +849,9 @@ function GalleryItemMeta(props: any) {
 
     try{
         return (
-            <Grid>
+            <Grid
+                sx={{mt:12}}
+            >
                 <Helmet>
                     <title>{`${collectionitem.name} | ${t('Grape Social. Stateless. Marketplace.')}`}</title>
                     <meta property="og:title" content={`${collectionitem.name} @Grape`} />
@@ -1754,6 +1756,7 @@ export function PreviewView(this: any, props: any) {
             return (
                 <Card
                     sx={{
+                        mt:12,
                         borderRadius: '20px',
                     }}
                 >
@@ -1821,6 +1824,7 @@ export function PreviewView(this: any, props: any) {
                         <Box
                             sx={{ 
                                 p: 1, 
+                                mt: 10,
                                 mb: 3, 
                                 width: '100%',
                                 background: '#13151C',

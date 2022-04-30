@@ -67,7 +67,7 @@ export default function GalleryGroupItem(props: any){
                         <></>
                     ):(
                         
-                            <Grid item xs={12} sm={12} md={4} lg={3} key={childCollection[0].groupBySymbolIndex}>
+                            <Grid item xs={12} sm={12} md={4} lg={3} xl={2} key={childCollection[0].groupBySymbolIndex}>
                                 <Box
                                     sx={{
                                         background: 'rgba(0, 0, 0, 0.6)',

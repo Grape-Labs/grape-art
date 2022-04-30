@@ -17,7 +17,6 @@ import {
 } from '@mui/material';
 
 import GalleryItem from './GalleryItem';
-import GalleryGroupItem from './GalleryGroupItem';
 import { GRAPE_PREVIEW } from '../utils/grapeTools/constants';
 import { ConstructionOutlined } from "@mui/icons-material";
 
@@ -52,25 +51,17 @@ export default function GalleryView(props: any){
                         .map((collectionInfo: any, key: any) => {
                             return(
                                 <>
-                                    {(collectionInfo.groupBySymbol > 1) ? (
-                                        <>
-                                        {(collectionInfo.groupBySymbolIndex === 0) && (
-                                            <GalleryGroupItem groupCollection={finalCollection} symbol={collectionInfo.meta.data.symbol} isparent={true} key={key} />
-                                        )}
-                                        </>
-                                    ):(
-                                        <Grid item xs={12} sm={12} md={4} lg={3} xl={2} key={key}>
-                                            <Box
-                                                sx={{
-                                                    background: 'rgba(0, 0, 0, 0.6)',
-                                                    borderRadius: '26px',
-                                                    minWidth: '175px'
-                                                }} 
-                                            >
-                                                <GalleryItem collectionitem={collectionInfo} groupbysymbol={collectionInfo.groupBySymbol} isparent={false} finalCollection={finalCollection} listed={true} count={key} />
-                                            </Box>
-                                        </Grid>
-                                    )}
+                                    <Grid item xs={12} sm={12} md={4} lg={3} key={key}>
+                                        <Box
+                                            sx={{
+                                                background: 'rgba(0, 0, 0, 0.6)',
+                                                borderRadius: '26px',
+                                                minWidth: '175px'
+                                            }} 
+                                        >
+                                            <GalleryItem collectionitem={collectionInfo} groupbysymbol={collectionInfo.groupBySymbol} isparent={false} finalCollection={finalCollection} listed={true} count={key} />
+                                        </Box>
+                                    </Grid>
                                 </>   
                             )
                         }

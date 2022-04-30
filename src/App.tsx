@@ -7,6 +7,7 @@ import { PreviewView } from "./Preview/Preview";
 import { FeaturedView } from "./Featured/Featured";
 import { IdentityView } from "./Identity/Identity";
 import { SplashView } from "./Splash/Splash";
+import { StoreFrontView } from "./StoreFront/StoreFront";
 import CssBaseline from '@mui/material/CssBaseline';
 
 import {
@@ -156,12 +157,11 @@ function DashboardContent() {
                             <Grid
                               component="main"
                               sx={{
-                                  mt: 6,
                                   display: 'flex',
                                   flexGrow: 1
                               }}
                               >
-                              <Container maxWidth="lg" sx={{ mt: 4, mb: 4}}>
+                              <Container maxWidth="xl" sx={{ mb: 4}}>
                                   <ConfirmDialog />
                                   <Routes>
 
@@ -174,11 +174,14 @@ function DashboardContent() {
                                     </Route>
                                     <Route index element={<ProfileView/>} />
                                     
-                                    <Route path="profile/*" element={<ProfileView />} >
-                                        <Route path=":handlekey" element={<ProfileView />} />
+                                    <Route path="store/*" element={<StoreFrontView />} >
+                                        <Route path=":handlekey" element={<StoreFrontView />} />
+                                    </Route>
+                                    <Route path="collection/*" element={<StoreFrontView />} >
+                                        <Route path=":handlekey" element={<StoreFrontView />} />
                                     </Route>
 
-                                    <Route path="collection/*" element={<ProfileView />} >
+                                    <Route path="profile/*" element={<ProfileView />} >
                                         <Route path=":handlekey" element={<ProfileView />} />
                                     </Route>
                                     

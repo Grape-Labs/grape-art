@@ -11,7 +11,6 @@ import {
     getHashedName,
     getNameAccountKey,
     NameRegistryState,
-    performReverseLookup,
     getTwitterRegistry,
   } from "@bonfida/spl-name-service";
 
@@ -87,13 +86,11 @@ import SearchIcon from '@mui/icons-material/Search';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import CircularProgress from '@mui/material/CircularProgress';
 
-import { GRAPE_RPC_ENDPOINT, GRAPE_RPC_REFRESH, GRAPE_PREVIEW, GRAPE_PROFILE, GRAPE_IDENTITY, FEATURED_DAO_ARRAY } from '../utils/grapeTools/constants';
+import { GRAPE_RPC_ENDPOINT, VERIFIED_COLLECTION_ARRAY, GRAPE_PREVIEW, GRAPE_PROFILE, GRAPE_IDENTITY, FEATURED_DAO_ARRAY } from '../utils/grapeTools/constants';
 import ShareSocialURL from '../utils/grapeTools/ShareUrl';
-import FeedView from './FeedView';
-import OffersView from './OffersView';
-import SocialView from './SocialView';
-import GalleryView from './GalleryView';
-import CurationView from './CurationView';
+
+import CollectionGalleryView from './StoreFrontGalleryView';
+
 import { MakeLinkableAddress, ValidateAddress, trimAddress, timeAgo } from '../utils/grapeTools/WalletAddress'; // global key handling
 import { ConstructionOutlined } from "@mui/icons-material";
 
@@ -560,7 +557,7 @@ export const TabActiveProvider = ({ children, initialActiveKey }) => {
 
 const MainPanel = (props: any) => {
     const [loading, setLoading] = React.useState(false);
-    const [ thisPublicKey, setThisPublicKey] = React.useState(props.thisPublicKey || null);
+    const [ thisCollection, setThisCollection] = React.useState(props.thisCollection || null);
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
     const [walletCollection, setWalletCollection] = React.useState(props.wallet_collection);
     const [walletCollectionMeta, setWalletCollectionMeta] = React.useState(props.wallet_collection_meta);
@@ -604,7 +601,7 @@ const MainPanel = (props: any) => {
         )
     } else{
         return (
-            <Grid item xs={12} sm={7} md={9} lg={9} xl={10}>
+            <Grid item xs={12} sm={7} md={9} lg={9} xl={9}>
                 <Container
                     sx={{
                         minHeight: '225px',
@@ -612,58 +609,14 @@ const MainPanel = (props: any) => {
                         p:0,
                     }} 
                 >
-                    <TabActiveProvider initialActiveKey="0">   
-                        <Tabs 
-                            variant="scrollable"
-                            scrollButtons="auto"
-                            value={tabvalue} 
-                            onChange={handleTabChange} 
-                            sx={{
-                                background: 'rgba(0, 0, 0, 0.6)',
-                                borderRadius: '17px',
-                                mb:1,
-                            }} 
-                        >
-                            <Tab icon={<Hidden smUp><CollectionsOutlinedIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>{t('Collection')}</Hidden>} sx={{color:'white',minWidth:'25px'}} {...a11yProps(0)} />
-                            <Tab icon={<Hidden smUp><RssFeedOutlinedIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>{t('Feed')}</Hidden>} sx={{color:'white',minWidth:'25px'}} {...a11yProps(1)} />
-                            <Tab icon={<Hidden smUp><ArrowCircleLeftOutlinedIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>{t('Followers')}</Hidden>} sx={{color:'white',minWidth:'25px'}} {...a11yProps(2)} />
-                            <Tab icon={<Hidden smUp><ArrowCircleRightOutlinedIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>{t('Following')}</Hidden>} sx={{color:'white',minWidth:'25px'}} {...a11yProps(3)} />
-                            {/*<Tab label="Bids" sx={{color:'white'}} {...a11yProps(4)} />*/}
-                            <Tab icon={<Hidden smUp><GavelOutlinedIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>{t('Offers')}</Hidden>} sx={{color:'white',minWidth:'25px'}} {...a11yProps(5)} />
-                            <Tab icon={<Hidden smUp><SolCurrencyIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>{t('Selling')}</Hidden>} sx={{color:'white',minWidth:'25px'}} {...a11yProps(6)} />
-                            <Tab icon={<Hidden smUp><FavoriteBorderIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>{t('Likes')}</Hidden>} sx={{color:'white',minWidth:'25px'}} {...a11yProps(7)} />
-                        </Tabs>
-
-                        <TabPanel value={tabvalue} index={0}>
-                            <GalleryView finalCollection={finalCollection} isparent={true} />
-                        </TabPanel>
-                        <TabPanel value={tabvalue} index={1}>
-                            <FeedView />
-                        </TabPanel>
-                        <TabPanel value={tabvalue} index={2}>
-                            <SocialView pubkey={thisPublicKey} type={0} />
-                        </TabPanel>
-                        <TabPanel value={tabvalue} index={3}>
-                            <SocialView pubkey={thisPublicKey} type={1} />
-                        </TabPanel>
-
-                        <TabPanel value={tabvalue} index={4}>
-                            <OffersView selectedstate={1} pubkey={thisPublicKey} wallet_collection={walletCollection} wallet_collection_meta={walletCollectionMeta} />
-                        </TabPanel>
-                        <TabPanel value={tabvalue} index={5}>
-                            <OffersView selectedstate={2} pubkey={thisPublicKey} wallet_collection={walletCollection} wallet_collection_meta={walletCollectionMeta} />
-                        </TabPanel>
-                        <TabPanel value={tabvalue} index={6}>
-                            <CurationView pubkey={thisPublicKey} type={1} />
-                        </TabPanel>
-                    </TabActiveProvider>
+                    TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST 
                 </Container>
             </Grid>
         );
     }
 }
 
-const IdentityView = (props: any) => {
+const StoreIdentityView = (props: any) => {
     const [expanded_collection, setExpandedCollection] = React.useState(true);
     const [pubkey, setPubKey] = React.useState<string>(props.pubkey || null);
     const [loading, setLoading] = React.useState(false);
@@ -672,9 +625,9 @@ const IdentityView = (props: any) => {
     const rpclimit = 100;
     //const [wallet_collection, setCollectionArray] = React.useState(props.collection.collection)
     //const [wallet_collection] = React.useState(props.collection.collection);
-    const [wallet_collection, setCollectionArray] = React.useState(props.collection.collection);
-    const [wallet_collection_meta, setCollectionMeta] = React.useState(null);
-    const [final_collection, setCollectionMetaFinal] = React.useState(null);
+    //const [wallet_collection, setCollectionArray] = React.useState(props.collection.collection);
+    //const [wallet_collection_meta, setCollectionMeta] = React.useState(null);
+    //const [final_collection, setCollectionMetaFinal] = React.useState(null);
     const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
     const { connection } = useConnection();
     const [featuredObj, setFeaturedObj] = React.useState(null);
@@ -810,7 +763,7 @@ const IdentityView = (props: any) => {
 
     const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
         setPage(value);
-        getCollectionMeta(value);
+        //getCollectionMeta(value);
         //count={(Math.ceil(wallet_collection.length / rowsperpage))}
     };
 
@@ -837,60 +790,6 @@ const IdentityView = (props: any) => {
         }
     }
 
-    const MD_PUBKEY = new PublicKey("metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s");
-    const getCollectionData = async (start:number) => {
-        try {
-            let mintsPDAs = new Array();
-            //console.log("RPClim: "+rpclimit);
-            //console.log("Paging "+(rpclimit*(start))+" - "+(rpclimit*(start+1)));
-            
-            let mintarr = wallet_collection.slice(rpclimit*(start), rpclimit*(start+1)).map((value:any, index:number) => {
-                //console.log("mint: "+JSON.stringify(value.account.data.parsed.info.mint));
-                return value.account.data.parsed.info.mint;
-            });
-
-            for (var value of mintarr){
-                if (value){
-                    let mint_address = new PublicKey(value);
-                    let [pda, bump] = await PublicKey.findProgramAddress([
-                        Buffer.from("metadata"),
-                        MD_PUBKEY.toBuffer(),
-                        new PublicKey(mint_address).toBuffer(),
-                    ], MD_PUBKEY)
-
-                    if (pda){
-                        //console.log("pda: "+pda.toString());
-                        mintsPDAs.push(pda);
-                    }
-                }
-            }
-
-            //console.log("pushed pdas: "+JSON.stringify(mintsPDAs));
-            const metadata = await ggoconnection.getMultipleAccountsInfo(mintsPDAs);
-            //console.log("returned: "+JSON.stringify(metadata));
-            // LOOP ALL METADATA WE HAVE
-            for (var metavalue of metadata){
-                //console.log("Metaplex val: "+JSON.stringify(metavalue));
-                if (metavalue?.data){
-                    try{
-                        let meta_primer = metavalue;
-                        let buf = Buffer.from(metavalue.data);
-                        let meta_final = decodeMetadata(buf);
-                        //console.log("meta_final: "+JSON.stringify(meta_final));
-                    }catch(etfm){console.log("ERR: "+etfm + " for "+ JSON.stringify(metavalue));}
-                } else{
-                    console.log("Something not right...");
-                }
-            }
-
-            return metadata;
-            
-        } catch (e) { // Handle errors from invalid calls
-            console.log(e);
-            return null;
-        }
-    }
-
     const getFollowStatus = async () => {
         if (publicKey){
             if (pubkey){
@@ -907,85 +806,6 @@ const IdentityView = (props: any) => {
         }
     }
 
-    const getCollectionMeta = async (start:number) => {
-        if (!loading){
-            setLoading(true);
-            // see how many loops we will need to conduct
-            let wallletlength = wallet_collection.length;
-            
-            let loops = (Math.ceil(wallet_collection.length/rpclimit));
-            let collectionmeta: any[] = [];
-
-            console.log("lps: "+loops);
-            for (var x=0;x<loops;x++){
-                //const interval = setTimeout(() => {
-                    let tmpcollectionmeta = await getCollectionData(x);
-                    //collectionmeta.push(tmpcollectionmeta);
-                    collectionmeta = collectionmeta.concat(tmpcollectionmeta);
-                //}, 200);
-                
-            }
-            //console.log(collectionmeta.length + ' vs '+wallet_collection.length);
-
-            setLoadCount(loadCount+1);
-            setCollectionMeta({collectionmeta});
-
-            let final_collection_meta: any[] = [];
-            for (var i = 0; i < collectionmeta.length; i++){
-                //console.log(i+": "+JSON.stringify(collectionmeta[i])+" --- with --- "+JSON.stringify(wallet_collection[i]));
-                if (collectionmeta[i]){
-                    collectionmeta[i]["wallet"] = wallet_collection[i];
-                    try{
-                        let meta_primer = collectionmeta[i];
-                        let buf = Buffer.from(meta_primer.data, 'base64');
-                        let meta_final = decodeMetadata(buf);
-                        collectionmeta[i]["meta"] = meta_final;
-                        collectionmeta[i]["groupBySymbol"] = 0;
-                        collectionmeta[i]["groupBySymbolIndex"] = 0;
-                        collectionmeta[i]["floorPrice"] = 0;
-                        final_collection_meta.push(collectionmeta[i]);
-                    }catch(e){
-                        console.log("ERR:"+e)
-                    }
-                }
-            }
-
-            let finalmeta = final_collection_meta;//JSON.parse(JSON.stringify(collectionmeta));
-            try{
-                // add a groupable counter
-                for (var i = 0; i < finalmeta.length; i++){
-                    // using nft symbol
-                    // query how many instances
-                    if (finalmeta[i].meta.data.symbol.length > 0){
-                        for (var metainstance of finalmeta){
-                            if (finalmeta[i].meta.data.symbol === metainstance.meta.data.symbol){
-                                finalmeta[i]["groupBySymbol"]++;
-                            }
-                        }
-                    }
-                }
-                finalmeta.sort((a:any, b:any) => a?.meta.data.symbol.trim() > b?.meta.data.symbol.trim() ? 1 : -1);
-                //finalmeta.sort((a:any, b:any) => a?.meta.data.name.toLowerCase().trim() > b?.meta.data.name.toLowerCase().trim() ? 1 : -1);
-                
-                let previousSymbol = null;
-                let counter = 0;
-                for (var i = 0; i < finalmeta.length; i++){
-                    if (previousSymbol !== finalmeta[i].meta.data.symbol)
-                        counter = 0;
-                    
-                    if (finalmeta[i]["groupBySymbol"] > 1){
-                        finalmeta[i]["groupBySymbolIndex"] = counter;
-                        counter++;
-                    }
-                    previousSymbol = finalmeta[i].meta.data.symbol;
-                }
-
-                finalmeta.sort((a:any, b:any) => (b.groupBySymbol - a.groupBySymbol));
-            }catch(e){console.log("Sort ERR: "+e)}
-            setCollectionMetaFinal(finalmeta);
-            setLoading(false);
-        }
-    }
     const { t, i18n } = useTranslation();
     
     React.useEffect(() => { 
@@ -993,7 +813,7 @@ const IdentityView = (props: any) => {
             if (ValidateAddress(pubkey)){
                 if (loadCount < 1){
                     fetchProfilePicture();
-                    getCollectionMeta(0);
+                    //getCollectionMeta(0);
                     fetchSolanaDomain();
                     getFollowStatus();
                     initFollowListInfo();
@@ -1029,6 +849,7 @@ const IdentityView = (props: any) => {
         return (
             <React.Fragment>
                 <Box>
+                    
                         <Box
                             sx={{
                                 mb:4,
@@ -1058,215 +879,42 @@ const IdentityView = (props: any) => {
                                 </Card>
                             )}
 
+
                                 <Grid 
                                     container 
                                     spacing={2}
                                     rowSpacing={3}
                                     >    
-                                    <Grid item xs={12} sm={5} md={3} lg={3} xl={2}
+                                    <Grid item xs={12} sm={5} md={3} lg={3} xl={3}
                                     sx={{
                                     }}
                                     >
                                     
-                                    <Box
-                                        className='grape-profile-background'
+                                        <Box
+                                            className='grape-profile-background'
+                                        >
+                                            TEST
+                                        </Box>
+                                        <MainMenu pubkey={pubkey} />
+
+                                    </Grid>
+                                    <Grid item xs={12} sm={7} md={9} lg={9} xl={9}
+                                    sx={{
+                                    }}
                                     >
-                                    {featuredObj ? (  
-                                        <img
-                                            src={featuredObj.img}
-                                            alt=""
-                                            className="grape-art-profile-img"
-                                        />
-                                    )
-                                    :(
-                                        <>
-                                            {(hasProfilePicture && profilePictureUrl) &&
-                                                <img
-                                                    src={profilePictureUrl}
-                                                    alt=""
-                                                    className="grape-art-profile-img"
-                                                />
-                                            }
-                                        </>
-                                        )
-                                    }
                                     
-                                        
-                                        <List
-                                            sx={{ 
-                                                width: '100%',
-                                                pl: 2,
-                                                pr: 2,
-                                                pb: 2
-                                            }}
-                                            component="nav"
-                                            >       
-                                            <ListItemText>
-
-                                            <Grid 
-                                                container 
-                                                direction="column"
-                                                alignItems="flex-end"
-                                                justifyContent="flex-end"
-                                            >
-                                                <Grid item>
-                                                    <Box sx={{ mt:-1.5,mr:-2 }}>
-                                                        
-                                                        <Typography component="div" variant="caption" alignItems="flex-end" justifyContent="flex-end">
-
-                                                            <ButtonGroup variant="text">
-                                                            <ShareSocialURL url={window.location.href} title={'Grape Profile | '+trimAddress(pubkey,4)} />
-
-                                                            {publicKey && publicKey.toBase58() !== pubkey &&
-                                                                <Typography component="div" variant="caption" align="center" sx={{ flexGrow: 1 }}>
-                                                                {loadingFollowState ?
-                                                                    <>
-                                                                        <CircularProgress sx={{p:'14px',m:-0.75}} />
-                                                                    </>
-                                                                :
-                                                                    <>
-                                                                        {isFollowing ?  
-                                                                            <Tooltip title={t('Unfollow')}>
-                                                                                <Button 
-                                                                                    variant="text" 
-                                                                                    onClick={() => followWalletDisconnect(pubkey)}
-                                                                                    size="small"
-                                                                                    className="profileAvatarIcon"
-                                                                                    sx={{borderRadius:'24px', color:'white'}}
-                                                                                    >
-                                                                                    <PersonRemoveOutlinedIcon />
-                                                                                </Button>
-                                                                            </Tooltip>
-                                                                            :
-                                                                            <Tooltip title={t('Follow')}>
-                                                                                <Button 
-                                                                                    variant="text" 
-                                                                                    onClick={() => followWalletConnect(pubkey, solanaDomain)}
-                                                                                    size="small"
-                                                                                    className="profileAvatarIcon"
-                                                                                    sx={{borderRadius:'24px', color:'white'}}
-                                                                                    >
-                                                                                    <PersonAddOutlinedIcon />
-                                                                                </Button>
-                                                                            </Tooltip>
-                                                                        }
-                                                                    </>
-                                                                }
-                                                                </Typography>
-                                                            }
-                                                            </ButtonGroup>
-                                                        </Typography>
-                                                    </Box>
-                                                </Grid>  
-                                            </Grid>  
-                                            <Grid 
-                                                container 
-                                                direction="column"
-                                                alignItems="center"
-                                                justifyContent="center"
-                                                sx={{mt:2}}
-                                            >
-                                                <Grid item>
-                                                {(hasProfilePicture && profilePictureUrl) ?
-                                                    <Avatar sx={{ width: 100, height: 100 }} alt="Profile" src={profilePictureUrl} />
-                                                :
-                                                    <Jazzicon diameter={100} seed={jsNumberForAddress(pubkey)} />
-                                                }
-                                                </Grid>
-                                                <Grid item
-                                                    alignItems="center"
-                                                    justifyContent="center"
-                                                >
-                                                    <Typography gutterBottom variant="body1" component="div" sx={{ flexGrow: 1, color:'white' }}>
-                                                        {solanaDomain && solanaDomain.length > 0 ?
-                                                            <>
-                                                                <Tooltip title={t('View Solana ID')}>
-                                                                    <Button 
-                                                                        sx={{borderRadius:'17px'}} 
-                                                                        size="small" variant="text" 
-                                                                        component={Link} 
-                                                                        to={`${GRAPE_IDENTITY}${pubkey}`}>
-                                                                        <Grid 
-                                                                        container 
-                                                                        direction="column"
-                                                                        alignItems="center"
-                                                                        justifyContent="center"
-                                                                        >
-                                                                            <Grid item>
-                                                                                <Typography gutterBottom variant="body1" component="div" sx={{ flexGrow: 1, color:'white' }}><strong>{solanaDomain}</strong></Typography>
-                                                                            </Grid>
-                                                                            <Grid item sx={{mt:-1.5}}>
-                                                                                <Typography gutterBottom variant="caption" component="div" sx={{ flexGrow: 1, color:'white' }}>{trimAddress(pubkey,4)}</Typography>
-                                                                            </Grid>
-                                                                        </Grid>
-                                                                    </Button>
-                                                                </Tooltip>
-                                                            </>
-                                                        :
-                                                            <Tooltip title={t('View Solana ID')}>
-                                                                <Button 
-                                                                    sx={{borderRadius:'17px'}} 
-                                                                    size="small" variant="text" 
-                                                                    component={Link} 
-                                                                    to={`${GRAPE_IDENTITY}${pubkey}`}>
-                                                                    <Grid 
-                                                                    container 
-                                                                    direction="column"
-                                                                    alignItems="center"
-                                                                    justifyContent="center"
-                                                                    >
-                                                                        <Grid item>
-                                                                            <Typography gutterBottom variant="body1" component="div" sx={{ flexGrow: 1, color:'white' }}>{trimAddress(pubkey,4)}</Typography>
-                                                                        </Grid>
-                                                                    </Grid>
-                                                                </Button>
-                                                            </Tooltip>
-                                                        }
-                                                    </Typography>
-                                                </Grid>
-                                                <Grid item sx={{mt:1}}>
-                                                    
-                                                    {followListInfo && 
-                                                        <>
-                                                            
-                                                            <Typography component="div" variant="caption" align="center" sx={{ flexGrow: 1 }}>
-                                                                <Button
-                                                                    onClick={() => setActiveTab(3)}
-                                                                    sx={{fontSize:'12px',textTransform:'none',color:'white',border:'1px solid #fff', borderRadius:'17px',pl:5,pr:5,pt:0,pb:0, m:1}}
-                                                                >
-                                                                    <strong>{followListInfo.followingCount}</strong>&nbsp;  
-                                                                    <Typography component="span" color="#aaa" variant="caption" align="center" sx={{ flexGrow: 1 }}>{t('Following')}</Typography>&nbsp; 
-                                                                </Button>
-                                                                <Button
-                                                                    onClick={() => setActiveTab(2)}
-                                                                    sx={{fontSize:'12px',textTransform:'none',color:'white',border:'1px solid #fff', borderRadius:'17px',pl:5,pr:5,pt:0,pb:0, m:1}}
-                                                                >
-                                                                    <strong>{followListInfo.followerCount}</strong>&nbsp;
-                                                                    <Typography component="span" color="#aaa" variant="caption" align="center" sx={{ flexGrow: 1 }}>{t('Followers')}</Typography>
-                                                                </Button>
-                                                            </Typography>
-                                                        </>
-                                                    }
-                                                    
-                                                    { final_collection && final_collection.length > 0 && (
-                                                        <>
-                                                            <Typography component="div" variant="caption" align="center" color="#aaa"  sx={{ flexGrow: 1, mt:3 }}>
-                                                                <strong>{final_collection.length}</strong> {t('items collected')}
-                                                            </Typography>
-                                                        </>
-                                                    )}
-                                                    
-                                                    
-                                                            
-                                                </Grid>
-                                            </Grid>
-                                            </ListItemText>
-                                        </List>
-                                    </Box>
-                                    <MainMenu pubkey={pubkey} />
-                                </Grid>
+                                        <Container
+                                            sx={{
+                                                minHeight: '225px',
+                                                m:0,
+                                                p:0,
+                                            }} 
+                                        >
+                                            TEST
+                                        </Container>
+                                    </Grid>
                                 
-                                <MainPanel activeTab={activeTab} thisPublicKey={pubkey} final_collection={final_collection} wallet_collection={wallet_collection} wallet_collection_meta={wallet_collection_meta} />
+                                
                             </Grid>
                         </Box>
                         
@@ -1297,11 +945,11 @@ export async function findOwnedNameAccountsForUser(
     return accounts.map((a) => a.pubkey);    
 }
 
-
-export function ProfileView(this: any, props: any) {
+export function StoreFrontView(this: any, props: any) {
     //const [provider, setProvider] = React.useState(getParam('provider'));
     const [gallery, setGallery] = React.useState(null);
-    const [collection, setCollection] = React.useState(null);
+    const [collectionMintList, setCollectionMintList] = React.useState(null);
+    const [collectionAuthority, setCollectionAuthority] = React.useState(null);
     //const isConnected = session && session.isConnected;
     const [loading, setLoading] = React.useState(false);
     const [rdloading, setRDLoading] = React.useState(false);
@@ -1326,79 +974,20 @@ export function ProfileView(this: any, props: any) {
 
     const { t, i18n } = useTranslation();
     
-    const fetchWalletCollection = async () => { 
-        /*
-        TokenAccountsFilter
-        const response = await connection.getTokenAccountsByOwner(
-            { programId: "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA" }
-        );*/
-
-        const body = {
-          method: "getTokenAccountsByOwner",
-          jsonrpc: "2.0",
-          params: [
-            // Get the public key of the account you want the balance for.
-            pubkey,
-            { programId: "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA" },
-            { encoding: "jsonParsed", commitment: "processed" },
-          ],
-          id: "35f0036a-3801-4485-b573-2bf29a7c77d4",
-        };
-        
-        const response = await fetch(GRAPE_RPC_ENDPOINT, {
-          method: "POST",
-          body: JSON.stringify(body),
-          headers: { "Content-Type": "application/json" },
-        });
-    
-        const json = await response.json();
+    const fetchMintList = async(address:string) => {
         try{
-            //const err = json?.result || true;
-            //if (!err){
-            //    return [];
-            //} else{
-                const resultValues = json.result.value
-                
-                let walletCollection = new Array();
-                let wallet = resultValues && resultValues?.map((collectionInfo: any) => {
-                    (+collectionInfo.account.data.parsed.info.tokenAmount.amount >= 1) &&
-                        (+collectionInfo.account.data.parsed.info.tokenAmount.decimals === 0) && 
-                            walletCollection.push(collectionInfo);    
-                            return collectionInfo;
-                });
-                return walletCollection;
-            //}
-        } catch(e){console.log(e);}
-        return [];
-    };
-
-    const getWalletGallery = async () => {
-        if (!loading){
-            setLoading(true);
-            setLoadCount(loadCount+1);
-
-            let [collection] = await Promise.all([fetchWalletCollection()]);
-            setCollection({
-                collection
-            })
-            setLoading(false);
-        } else{
-            return (
-                <Grid 
-                    container 
-                    direction="column" 
-                    spacing={2} 
-                    alignItems="center"
-                    rowSpacing={8}
-                >
-                    <Grid 
-                        item xs={12}
-                    >
-                        <CircularProgress color="inherit" />
-                    </Grid>
-                </Grid>
-            )
-        }
+            const url = './'+address+'.json';
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                }
+              });
+              const string = await response.text();
+              const json = string === "" ? {} : JSON.parse(string);
+              return json;
+            
+        } catch(e){console.log("ERR: "+e)}
+        
     }
 
     const getReverseDomainLookup = async (url:string) => {
@@ -1442,7 +1031,7 @@ export function ProfileView(this: any, props: any) {
         }
     }
 
-    const CollectionProfile = (props: any) => {
+    const StoreProfile = (props: any) => {
         return (
                 <Grid 
                     container 
@@ -1459,52 +1048,46 @@ export function ProfileView(this: any, props: any) {
                             display="flex-grow"
                             justifyContent="center"
                         >
-                            <IdentityView gallery={gallery} collection={collection} pubkey={pubkey} setPubkey={setPubkey} />
+                            <StoreIdentityView collectionMintList={collectionMintList} />
                         </Box>
                     </Grid>
                 </Grid>
         );
     }
 
-    function handlePublicKeySubmit(event: any) {
-        event.preventDefault();
-
-        if ((newinputpkvalue && newinputpkvalue.length>0 && ValidateAddress(newinputpkvalue))||
-            ((newinputpkvalue.toLocaleUpperCase().indexOf(".SOL") > -1) || (newinputpkvalue.slice(0,1) === '@'))){
-            navigate({
-                pathname: GRAPE_PROFILE+newinputpkvalue
-            },
-                { replace: true }
-            );
-            setNewInputPKValue('');
-        } else if (newinputpkvalue && newinputpkvalue.length>0){
-            if (newinputpkvalue.toLocaleUpperCase().indexOf("MINT:") > -1){
-                let mint = newinputpkvalue.slice(5,newinputpkvalue.length);
-                if (ValidateAddress(mint)){
-                    navigate({
-                        pathname: GRAPE_PREVIEW+mint
-                    },
-                        { replace: true }
-                    );
-                    setNewInputPKValue('');
-                }
-            }
-        }else{
-            setNewInputPKValue('');
-        }
-    }
-
     React.useEffect(() => { 
-        if (pubkey){
-            console.log("with address: "+pubkey);
-            if (ValidateAddress(pubkey)){
-                getWalletGallery();
+        if (collectionAuthority){
+            console.log("with collectionAuthority: "+JSON.stringify(collectionAuthority));
+            if (ValidateAddress(collectionAuthority.address)){
+                //getWalletGallery();
             }
         }
-    }, [pubkey]);
+    }, [collectionAuthority]);
 
     React.useEffect(() => { 
+        
         if (withPubKey){
+            console.log("using: "+withPubKey)
+            
+            // check if this is a valid address using VERIFIED_COLLECTION_ARRAY
+            // check both .name and .address
+            for (var verified of VERIFIED_COLLECTION_ARRAY){
+                //if (verified.address === mintOwner){
+                if (verified.address === withPubKey){
+                    setCollectionAuthority(verified);
+                    // get collection mint list
+                    const fml = fetchMintList(verified.address);
+                } else if (verified.name.replaceAll("\\s", "").toLowerCase().localeCompare(withPubKey.replaceAll("\\s", "").toLowerCase())){ // REMOVE SPACES FROM verified.name
+                    setCollectionAuthority(verified);
+                    // get collection mint list
+                    const fml = fetchMintList(verified.address);
+
+                }
+            } 
+
+            // IMPORTANT HANDLE INVALID COLLECTION ENTRY
+
+            /*
             if (ValidateAddress(withPubKey)){
                 setPubkey(withPubKey);
                 navigate({
@@ -1520,15 +1103,16 @@ export function ProfileView(this: any, props: any) {
                         getTwitterLookup(withPubKey);
                     }
                 } else{
-                    console.log("Nothing send reverting to default profile");
+                    console.log("Nothing sent reverting to default profile");
                     navigate({
                         pathname: '/profile'
                     },
                         { replace: true }
                     );
                 }
-            }
+            }*/
         }
+        
     }, [withPubKey]);
 
     React.useEffect(() => { 
@@ -1536,22 +1120,20 @@ export function ProfileView(this: any, props: any) {
             setWithPubKey(urlParams);
         } else if (pubkey){
         } else if (publicKey){
-            setWithPubKey(publicKey.toBase58());
+        //    setWithPubKey(publicKey.toBase58());
         }
-    }, [publicKey, urlParams]);
+    }, [urlParams]);
 
     
     if (!pubkey){ 
         // ...
     } else {
-        if(((!gallery) && (!collection))||
-            (loading)){
+        if((loading)){
             return (
             <React.Fragment>
                 <Box
                     sx={{ 
                         p: 1, 
-                        mt: 12, 
                         mb: 3, 
                         width: '100%',
                         background: '#13151C',
@@ -1587,80 +1169,127 @@ export function ProfileView(this: any, props: any) {
         <React.Fragment>
             <Box
                 sx={{
-                    mt: 12,
+                    mb:4,
+                    mt:0,
+                    ml:0,
+                    mr:0,
+                    width:'100%',
+                }}
+                >
+                    <Box>
+                        <img
+                            src={`solbears/bearssplash.png`}
+                            srcSet={`solbears/bearssplash.png`}
+                            alt='Bears Reloaded'
+                            //onClick={ () => openImageViewer(0) }
+                            loading="lazy"
+                            height="auto"
+                            style={{
+                                width:'100%',
+                                borderBottomRightRadius:'24px',
+                                borderBottomLeftRadius:'24px',
+                            }}
+                        />
+                    </Box>
+                    
+
+                    <Box
+                        className='grape-store-info'
+                        sx={{
+                            m:10,
+                            mb:4,
+                            mt:-12,
+                            p:1,
+                            textAlign:'center',
+                            borderRadius:'24px'
+                        }}
+                    >
+
+                        <img
+                            src={`solbears/bearlogo1000px.png`}
+                            srcSet={`solbears/bearlogo1000px.png`}
+                            alt='Bears Reloaded'
+                            //onClick={ () => openImageViewer(0) }
+                            loading="lazy"
+                            height="auto"
+                            style={{
+                                width:'100px',
+                            }}
+                        />
+
+                        <Box
+                            sx={{m:0}}
+                        >
+                            <Typography variant="h4">
+                                Bears Reloaded
+                            </Typography>
+
+                            <Typography variant="h6">
+                                The Sanctuary
+                            </Typography>
+                        </Box>
+
+
+                        
+                        <Grid container spacing={0.5}>
+                            <Grid item xs={12} sm={12} md={4} key={1}>
+                                <Box
+                                    className='grape-store-stat-item'
+                                    sx={{borderRadius:'24px',m:2,p:2}}
+                                >
+                                    <Typography variant="body2" sx={{color:'yellow'}}>
+                                        ITEMS
+                                    </Typography>
+                                    <Typography variant="subtitle2">
+                                        10k
+                                    </Typography>
+                                </Box>
+                            </Grid>
+                            <Grid item xs={12} sm={12} md={4} key={1}>
+                                <Box
+                                    className='grape-store-stat-item'
+                                    sx={{borderRadius:'24px',m:2,p:2}}
+                                >
+                                    <Typography variant="body2" sx={{color:'yellow'}}>
+                                        OWNERS
+                                    </Typography>
+                                    <Typography variant="subtitle2">
+                                        5.5k
+                                    </Typography>
+                                </Box>
+                            </Grid>
+                            <Grid item xs={12} sm={12} md={4} key={1}>
+                                <Box
+                                    className='grape-store-stat-item'
+                                    sx={{borderRadius:'24px',m:2,p:2}}
+                                >
+                                    <Typography variant="body2" sx={{color:'yellow'}}>
+                                        VOLUME
+                                    </Typography>
+                                    <Typography variant="subtitle2">
+                                        80k SOL
+                                    </Typography>
+                                </Box>
+                            </Grid>
+                        </Grid>
+                    </Box>
+            </Box>
+            <Box
+                sx={{
                     
                 }}
             >
                 <Box>  
+                        { collectionAuthority ?
+                            <>
+                                <StoreProfile collectionAuthority={collectionAuthority}/>
+                            </>
 
-                        { pubkey && ValidateAddress(pubkey) ?
-                            <CollectionProfile />
                         : 
                         <>
-                            <React.Fragment>
-                                <Box
-                                    className="grape-art-generic-placeholder-container"
-                                > 
-                                        <Grid 
-                                            container 
-                                            direction="column" 
-                                            spacing={2} 
-                                            alignItems="center"
-                                            rowSpacing={8}
-                                        >
-                                            
-                                            <Grid 
-                                        item xs={12}
-                                        alignItems="center"
-                                    >
-                                        <Typography
-                                            variant="h3"
-                                            color="inherit"
-                                            display='flex'
-                                            sx={{mt:2}}
-                                        >
-                                            <img src="/grape_white_logo.svg" width="300px" className="header-logo" alt="Grape" />
-                                            .art
-                                            </Typography>
-                                        </Grid>
-                                        <Grid 
-                                            item xs={12}
-                                            alignItems="center"
-                                        > 
-                                            <Typography
-                                                variant="h6"
-                                                color="inherit"
-                                                display='flex'
-                                                sx={{mb:3}}
-                                            >{t('Social. Stateless. Marketplace.')}</Typography>
-
-                                        </Grid>
-                                            
-                                        <Grid>
-                                            <Tooltip title={t('Search by mint address by entering: mint:address')}>
-                                                <Paper
-                                                    component="form"
-                                                    onSubmit={handlePublicKeySubmit}
-                                                    sx={{ m:2, p: 1, display: 'flex', alignItems: 'center', borderRadius: '24px' }}
-                                                >    
-                                                        <InputBase
-                                                            fullWidth
-                                                            sx={{ ml: 1, flex: 1 }}
-                                                            placeholder={t('Enter a solana address')}
-                                                            inputProps={{ 'aria-label': 'solana address' }}
-                                                            value={newinputpkvalue}
-                                                            onChange={(e) => setNewInputPKValue(e.target.value)}
-                                                        />
-                                                        <IconButton type="submit" sx={{ p: '10px' }} aria-label="search">
-                                                            <SearchIcon />
-                                                        </IconButton>
-                                                
-                                                </Paper>
-                                            </Tooltip>
-                                        </Grid>
-                                    </Grid>
-                                </Box>
-                            </React.Fragment>
+                            <Typography >
+                                Nothing to see here...
+                            </Typography>
                         </>
                         }
 

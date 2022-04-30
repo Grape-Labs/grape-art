@@ -23,6 +23,9 @@ body {
   -moz-osx-font-smoothing: grayscale;
   
   background: #4e8ebf;  /* fallback for old browsers */
+  
+  
+  //background: radial-gradient(88.33% 113.42% at 71.34% 83.89%, #4D068B 0%,  #4D068B 32.29%,  #4D068B 58.85%,  #4D068B 85.5%,  #180835 98.96%);
   background: radial-gradient(88.33% 113.42% at 71.34% 83.89%, #4e8ebf 0%,  #5671be 32.29%,  #713585 58.85%,  #36325d 85.5%,  #251a3a 98.96%);
   height:100%;
   background-attachment: fixed;
@@ -37,6 +40,10 @@ code {
   color:#fff!important;
 }
 
+.grape-store-background{
+  background: linear-gradient(to right, #4597D6 0%, #8D41A7 48.6%, #36325D 90.62%, #251A3A 100%);
+}
+
 .grape-profile-background{
   background: linear-gradient(to bottom, #36325d 0%, #251A3A 48.6%, #251A3A 90.62%, #251A3A 10%);
   border-radius: 17px;
@@ -49,6 +56,14 @@ code {
 
 .grape-art-header{
   background: none;
+  backdrop-filter: blur(12.5px);
+}
+.grape-store-info{
+  background: rgba(0,0,0,0.4);
+  backdrop-filter: blur(12.5px);
+}
+.grape-store-stat-item{
+  background: rgba(0,0,0,0.025);
   backdrop-filter: blur(12.5px);
 }
 

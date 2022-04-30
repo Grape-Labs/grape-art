@@ -23,19 +23,19 @@ export const TOKEN_REALM_ID = 'By2sVGZXwfQq6rAiAM3rNPJ9iQfb5e2QhnF4YjJ4Bip';
 export const TOKEN_REALM_PROGRAM_ID = 'GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw';
 
 export const VERIFIED_COLLECTION_ARRAY = [{
-    address:'',
-    name:'',
-    status:1,// mint status (0:minting, 1:completed)
-    size:0,
-    description:'',
+    address:'123456789',
+    name:'Bears Reloaded',
+    status:1,// (0:minting, 1:completed, 2: entangled)
+    size:10000,
+    description:'10,000 algo-generated, unique, cute & collectible Bears. - The Sanctuary',
     links:{
         url:'',
-        discord:'',
-        twitter:'',
+        discord:'discord.gg/solsanctuary',
+        twitter:'@BearsReloaded',
         instagram:'',
     },
-    logo:'',
-    splash:'',
+    logo:'/solbears/bearlogo1000px.png',
+    splash:'/solbears/bearssplash.png',
 }]
 
 export const VERIFIED_DAO_ARRAY = [

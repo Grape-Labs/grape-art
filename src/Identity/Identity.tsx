@@ -5,6 +5,7 @@ import { Link, useParams, useSearchParams } from "react-router-dom";
 import { decodeMetadata } from '../utils/grapeTools/utils';
 // @ts-ignore
 import { PublicKey, Connection, Commitment } from '@solana/web3.js';
+import {ENV, TokenInfo, TokenListProvider} from '@solana/spl-token-registry';
 
 import { styled } from '@mui/material/styles';
 import { grey } from '@mui/material/colors';
@@ -70,6 +71,7 @@ export function IdentityView(props: any){
     const [searchParams, setSearchParams] = useSearchParams();
     const urlParams = searchParams.get("pkey") || searchParams.get("address") || handlekey;
     const [value, setValue] = React.useState('1');
+    const [tokenMap, setTokenMap] = React.useState<Map<string,TokenInfo>>(undefined);
 
     const { t, i18n } = useTranslation();
 
@@ -102,7 +104,6 @@ export function IdentityView(props: any){
         let cnt=0;
         let tx: any[] = [];
         for (var tvalue of getTransactionAccountInputs2){
-
             //if (cnt===0)
             //    console.log(signatures[cnt]+': '+JSON.stringify(tvalue));
             
@@ -200,6 +201,16 @@ export function IdentityView(props: any){
         }
     }
 
+    const fetchTokens = async () => {
+        const tokens = await new TokenListProvider().resolve();
+        const tokenList = tokens.filterByChainId(ENV.MainnetBeta).getList();
+        const tokenMapValue = tokenList.reduce((map, item) => {
+            map.set(item.address, item);
+            return map;
+        }, new Map())
+        setTokenMap(tokenMapValue);
+    }
+
     React.useEffect(() => {
         if (urlParams){
             if (!pubkey){
@@ -211,7 +222,6 @@ export function IdentityView(props: any){
         }
     }, [urlParams, publicKey]);
 
-
     React.useEffect(() => {
         if (pubkey){
             setLoading(true);
@@ -220,6 +230,7 @@ export function IdentityView(props: any){
                 fetchSolanaTokens();
                 fetchSolanaBalance();
                 fetchSolanaTransactions();
+                fetchTokens();
             setLoading(false);
         }
     }, [pubkey]);
@@ -234,7 +245,7 @@ export function IdentityView(props: any){
         );
     } else{
         return (
-            <Container>
+            <Container sx={{mt:12}}>
                     <Box
                         className="grape-art-generic-placeholder-container"
                     > 
@@ -490,16 +501,24 @@ export function IdentityView(props: any){
                                                                 </>
                                                                 :
                                                                 <>
-                                                                        <ListItemAvatar>
+                                                                    <ListItemAvatar>
+                                                                        {tokenMap.get(item.account.data.parsed.info.mint)?.logoURI ?
+                                                                            <Avatar
+                                                                                sx={{backgroundColor:'#222'}}
+                                                                                src={tokenMap.get(item.account.data.parsed.info.mint)?.logoURI}
+                                                                                alt={tokenMap.get(item.account.data.parsed.info.mint)?.name || item.account.data.parsed.info.mint}
+                                                                            />
+                                                                        :
                                                                         <Avatar
                                                                             sx={{backgroundColor:'#222'}}
                                                                         >
                                                                             <QrCode2Icon sx={{color:'white'}} />
                                                                         </Avatar>
+                                                                        }
                                                                     </ListItemAvatar>
                                                                     <ListItemText
                                                                         primary={((new TokenAmount(item.account.data.parsed.info.tokenAmount.amount, item.account.data.parsed.info.tokenAmount.decimals).format()))}
-                                                                        secondary={item.account.data.parsed.info.mint}
+                                                                        secondary={`${tokenMap.get(item.account.data.parsed.info.mint)?.name || item.account.data.parsed.info.mint}`}
                                                                     />
                                                                 </>
                                                                 }
