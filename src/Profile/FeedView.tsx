@@ -596,27 +596,27 @@ export default function FeedView(props: any){
 
     if (loading){
         return (
-            <Grid 
-                container 
-                direction="column" 
-                spacing={0} 
-                alignItems="center"
-                rowSpacing={8}
-                width="100%"
-                minWidth="400px"
-            >
+            <Box
+                sx={{
+                    background: 'rgba(0, 0, 0, 0.6)',
+                    borderRadius: '17px',
+                    p:4
+                }} 
+            > 
                 <Grid 
-                    item xs={12}
+                    container 
+                    direction="column" 
+                    spacing={2} 
+                    alignItems="center"
+                    rowSpacing={8}
                 >
-                    <Box
-                        height="100%"
-                        display="flex-grow"
-                        justifyContent="center"
+                    <Grid 
+                        item xs={12}
                     >
                         <CircularProgress />
-                    </Box>
+                    </Grid>
                 </Grid>
-            </Grid>
+            </Box>
         )
     } else{
         return (

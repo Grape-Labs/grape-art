@@ -591,7 +591,7 @@ const MainPanel = (props: any) => {
     
     if(loading){
         return (
-            <Grid item xs='auto' sm='auto' md='auto' lg='auto' xl='auto'>
+            <Grid item xs={12} sm={7} md={9} lg={9} xl={10}>
                 <Box
                     alignItems="center"
                     justifyContent="center"
@@ -605,59 +605,68 @@ const MainPanel = (props: any) => {
     } else{
         return (
             <Grid item xs={12} sm={7} md={9} lg={9} xl={10}>
-                <Container
+                <Box
                     sx={{
-                        minHeight: '225px',
-                        m:0,
-                        p:0,
                     }} 
-                >
-                    <TabActiveProvider initialActiveKey="0">   
-                        <Tabs 
-                            variant="scrollable"
-                            scrollButtons="auto"
-                            value={tabvalue} 
-                            onChange={handleTabChange} 
+                > 
+                    <Grid container 
+                        justifyContent="center"
+                        alignItems="center">
+                        <Box
                             sx={{
-                                background: 'rgba(0, 0, 0, 0.6)',
-                                borderRadius: '17px',
-                                mb:1,
+                                minHeight: '225px',
+                                ml:2,
+                                p:0,
                             }} 
                         >
-                            <Tab icon={<Hidden smUp><CollectionsOutlinedIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>{t('Collection')}</Hidden>} sx={{color:'white',minWidth:'25px'}} {...a11yProps(0)} />
-                            <Tab icon={<Hidden smUp><RssFeedOutlinedIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>{t('Feed')}</Hidden>} sx={{color:'white',minWidth:'25px'}} {...a11yProps(1)} />
-                            <Tab icon={<Hidden smUp><ArrowCircleLeftOutlinedIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>{t('Followers')}</Hidden>} sx={{color:'white',minWidth:'25px'}} {...a11yProps(2)} />
-                            <Tab icon={<Hidden smUp><ArrowCircleRightOutlinedIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>{t('Following')}</Hidden>} sx={{color:'white',minWidth:'25px'}} {...a11yProps(3)} />
-                            {/*<Tab label="Bids" sx={{color:'white'}} {...a11yProps(4)} />*/}
-                            <Tab icon={<Hidden smUp><GavelOutlinedIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>{t('Offers')}</Hidden>} sx={{color:'white',minWidth:'25px'}} {...a11yProps(5)} />
-                            <Tab icon={<Hidden smUp><SolCurrencyIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>{t('Selling')}</Hidden>} sx={{color:'white',minWidth:'25px'}} {...a11yProps(6)} />
-                            <Tab icon={<Hidden smUp><FavoriteBorderIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>{t('Likes')}</Hidden>} sx={{color:'white',minWidth:'25px'}} {...a11yProps(7)} />
-                        </Tabs>
+                            <TabActiveProvider initialActiveKey="0">   
+                                <Tabs 
+                                    variant="scrollable"
+                                    scrollButtons="auto"
+                                    value={tabvalue} 
+                                    onChange={handleTabChange} 
+                                    sx={{
+                                        background: 'rgba(0, 0, 0, 0.6)',
+                                        borderRadius: '17px',
+                                        mb:1,
+                                    }} 
+                                >
+                                    <Tab icon={<Hidden smUp><CollectionsOutlinedIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>{t('Collection')}</Hidden>} sx={{color:'white',minWidth:'25px'}} {...a11yProps(0)} />
+                                    <Tab icon={<Hidden smUp><RssFeedOutlinedIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>{t('Feed')}</Hidden>} sx={{color:'white',minWidth:'25px'}} {...a11yProps(1)} />
+                                    <Tab icon={<Hidden smUp><ArrowCircleLeftOutlinedIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>{t('Followers')}</Hidden>} sx={{color:'white',minWidth:'25px'}} {...a11yProps(2)} />
+                                    <Tab icon={<Hidden smUp><ArrowCircleRightOutlinedIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>{t('Following')}</Hidden>} sx={{color:'white',minWidth:'25px'}} {...a11yProps(3)} />
+                                    {/*<Tab label="Bids" sx={{color:'white'}} {...a11yProps(4)} />*/}
+                                    <Tab icon={<Hidden smUp><GavelOutlinedIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>{t('Offers')}</Hidden>} sx={{color:'white',minWidth:'25px'}} {...a11yProps(5)} />
+                                    <Tab icon={<Hidden smUp><SolCurrencyIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>{t('Selling')}</Hidden>} sx={{color:'white',minWidth:'25px'}} {...a11yProps(6)} />
+                                    <Tab icon={<Hidden smUp><FavoriteBorderIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>{t('Likes')}</Hidden>} sx={{color:'white',minWidth:'25px'}} {...a11yProps(7)} />
+                                </Tabs>
 
-                        <TabPanel value={tabvalue} index={0}>
-                            <GalleryView finalCollection={finalCollection} isparent={true} />
-                        </TabPanel>
-                        <TabPanel value={tabvalue} index={1}>
-                            <FeedView />
-                        </TabPanel>
-                        <TabPanel value={tabvalue} index={2}>
-                            <SocialView pubkey={thisPublicKey} type={0} />
-                        </TabPanel>
-                        <TabPanel value={tabvalue} index={3}>
-                            <SocialView pubkey={thisPublicKey} type={1} />
-                        </TabPanel>
-
-                        <TabPanel value={tabvalue} index={4}>
-                            <OffersView selectedstate={1} pubkey={thisPublicKey} wallet_collection={walletCollection} wallet_collection_meta={walletCollectionMeta} />
-                        </TabPanel>
-                        <TabPanel value={tabvalue} index={5}>
-                            <OffersView selectedstate={2} pubkey={thisPublicKey} wallet_collection={walletCollection} wallet_collection_meta={walletCollectionMeta} />
-                        </TabPanel>
-                        <TabPanel value={tabvalue} index={6}>
-                            <CurationView pubkey={thisPublicKey} type={1} />
-                        </TabPanel>
-                    </TabActiveProvider>
-                </Container>
+                                <TabPanel value={tabvalue} index={0}>
+                                    <GalleryView finalCollection={finalCollection} isparent={true} />
+                                </TabPanel>
+                                <TabPanel value={tabvalue} index={1}>
+                                    <FeedView />
+                                </TabPanel>
+                                <TabPanel value={tabvalue} index={2}>
+                                    <SocialView pubkey={thisPublicKey} type={0} />
+                                </TabPanel>
+                                <TabPanel value={tabvalue} index={3}>
+                                    <SocialView pubkey={thisPublicKey} type={1} />
+                                </TabPanel>
+                                    
+                                <TabPanel value={tabvalue} index={4}>
+                                    <OffersView selectedstate={1} pubkey={thisPublicKey} wallet_collection={walletCollection} wallet_collection_meta={walletCollectionMeta} />
+                                </TabPanel>
+                                <TabPanel value={tabvalue} index={5}>
+                                    <OffersView selectedstate={2} pubkey={thisPublicKey} wallet_collection={walletCollection} wallet_collection_meta={walletCollectionMeta} />
+                                </TabPanel>
+                                <TabPanel value={tabvalue} index={6}>
+                                    <CurationView pubkey={thisPublicKey} type={1} />
+                                </TabPanel>
+                            </TabActiveProvider>
+                        </Box>
+                    </Grid>
+                </Box>
             </Grid>
         );
     }
@@ -1060,9 +1069,8 @@ const IdentityView = (props: any) => {
 
                                 <Grid 
                                     container 
-                                    spacing={2}
                                     rowSpacing={3}
-                                    >    
+                                    >  
                                     <Grid item xs={12} sm={5} md={3} lg={3} xl={2}
                                     sx={{
                                     }}

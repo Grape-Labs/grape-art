@@ -919,22 +919,35 @@ export default function OffersView(props:any){
     
     if (loading){
         return (
-            <Grid container
-                alignItems="center"
-                justifyContent="center"
-                sx={{
-                }} 
-            >
-                <CircularProgress />
-            </Grid>
+            <Box
+                    sx={{
+                        background: 'rgba(0, 0, 0, 0.6)',
+                        borderRadius: '17px',
+                        p:2
+                    }} 
+                > 
+                <Grid container
+                    alignItems="center"
+                    justifyContent="center"
+                    sx={{
+                    }} 
+                >
+                    <CircularProgress />
+                </Grid>
+            </Box>
         );
     } else {
         if (selectedstate == 1){
             return (
                 
-                <Container
-                    sx={{p:0,m:0}}
-                >
+            <Box
+                sx={{
+                    background: 'rgba(0, 0, 0, 0.05)',
+                    borderRadius: '17px',
+                    p:2
+                }} 
+            > 
+                <Grid container >
                     {(publicKey && publicKey.toBase58() === thisPublicKey && ahbalance && (ahbalance > 0)) ?
                         <Box
                             sx={{
@@ -997,7 +1010,6 @@ export default function OffersView(props:any){
                                 justifyContent='flex-end'
                                 alignContent='flex-end'
                                 sx={{
-                                    p:1,pr:1.25
                                 }}
                             >
                                 <Typography variant="caption">
@@ -1021,12 +1033,12 @@ export default function OffersView(props:any){
                     :
                     <Box></Box>
                     }
-                
+                    
                     <TableContainer
                         sx={{
                             background: 'rgba(0, 0, 0, 0.6)',
                             borderRadius: '17px',
-                            p:0,
+
                         }}
                     >
                         <Table size="small" aria-label="offers">
@@ -1034,7 +1046,7 @@ export default function OffersView(props:any){
                                 <>
                                     {item.state === selectedstate && (
                                     <>
-                                        <TableRow sx={{p:1}} key={key}>
+                                        <TableRow sx={{border:'none'}} key={key}>
                                             <TableCell>
                                                 <Tooltip title={t('Visit Profile')}>
                                                     <Button
@@ -1112,13 +1124,19 @@ export default function OffersView(props:any){
                             ))}
                         </Table>
                     </TableContainer>
-                </Container>
+                </Grid>
+            </Box>
             )
         } else {
             return (
-                <Container
-                    sx={{p:0}}
-                >
+                <Box
+                sx={{
+                    background: 'rgba(0, 0, 0, 0.05)',
+                    borderRadius: '17px',
+                    p:2
+                }} 
+            > 
+                <Grid container >
                     {(publicKey && publicKey.toBase58() === thisPublicKey && ahbalance && (ahbalance > 0)) ?
                         <Box
                             sx={{
@@ -1134,7 +1152,6 @@ export default function OffersView(props:any){
                                 justifyContent='flex-end'
                                 alignContent='flex-end'
                                 sx={{
-                                    p:1,pr:1.25
                                 }}
                             >
                                 <Typography variant="caption">
@@ -1163,7 +1180,6 @@ export default function OffersView(props:any){
                         sx={{
                             background: 'rgba(0, 0, 0, 0.6)',
                             borderRadius: '17px',
-                            
                         }}
                     >
                         <Table size="small" aria-label="listings">
@@ -1206,7 +1222,8 @@ export default function OffersView(props:any){
                             ))}
                         </Table>
                     </TableContainer>
-                </Container>
+                </Grid>
+            </Box>
             )
         }
     }
