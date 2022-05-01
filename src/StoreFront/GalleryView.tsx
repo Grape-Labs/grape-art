@@ -1,19 +1,11 @@
 
 import React, { useEffect } from "react";
-import { Link } from "react-router-dom";
-import { decodeMetadata } from '../utils/grapeTools/utils'
-// @ts-ignore
-import fetch from 'node-fetch'
-import { PublicKey } from '@solana/web3.js';
 
 import {
     Pagination,
     Stack,
-    Typography,
     Grid,
     Box,
-    Skeleton,
-    ListItemButton,
 } from '@mui/material';
 
 import GalleryItem from './GalleryItem';
@@ -37,7 +29,7 @@ export default function GalleryView(props: any){
             <Box
                 sx={{
                     background: 'rgba(0, 0, 0, 0.6)',
-                    borderRadius: '17px',
+                    borderRadius: '24px',
                     p:4
                 }} 
             > 

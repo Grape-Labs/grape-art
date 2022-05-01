@@ -86,10 +86,14 @@ import SearchIcon from '@mui/icons-material/Search';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import CircularProgress from '@mui/material/CircularProgress';
 
+import {
+    METAPLEX_PROGRAM_ID,
+} from '../utils/auctionHouse/helpers/constants';
+
 import { GRAPE_RPC_ENDPOINT, VERIFIED_COLLECTION_ARRAY, GRAPE_PREVIEW, GRAPE_PROFILE, GRAPE_IDENTITY, FEATURED_DAO_ARRAY } from '../utils/grapeTools/constants';
 import ShareSocialURL from '../utils/grapeTools/ShareUrl';
 
-import CollectionGalleryView from './StoreFrontGalleryView';
+import GalleryView from './GalleryView';
 
 import { MakeLinkableAddress, ValidateAddress, trimAddress, timeAgo } from '../utils/grapeTools/WalletAddress'; // global key handling
 import { ConstructionOutlined } from "@mui/icons-material";
@@ -634,133 +638,13 @@ const StoreIdentityView = (props: any) => {
     const [profilePictureUrl, setProfilePictureUrl] = React.useState(null);
     const [hasProfilePicture, setHasProfilePicture] = React.useState(false);
     const [solanaDomain, setSolanaDomain] = React.useState(null);
-    const [isFollowing, setIsFollowing] = React.useState(false);
     const [loadCount, setLoadCount] = React.useState(0);
-    const [loadingFollowState, setLoadingFollowState] = React.useState(false);
-    const [followListInfo, setFollowListInfo] = useState<FollowListInfoResp | null>(null);
     const [searchAddrInfo, setSearchAddrInfo] = useState<SearchUserInfoResp | null>(null);
     const solanaProvider = useWallet();
     const { publicKey } = useWallet();
-    //const { setActiveTab } = React.useContext(TabActiveContext);
-    const [activeTab, setActiveTab] = React.useState(0);
-
-    let ref = React.createRef()
-
-    const NAME_SPACE = 'Grape';
-    const NETWORK = Network.SOLANA;
-    const FIRST = 10; // The number of users in followings/followers list for each fetch
-
-    const cyberConnect = new CyberConnect({
-        namespace: NAME_SPACE,
-        env: Env.PRODUCTION,
-        chain: Blockchain.SOLANA,
-        provider: solanaProvider,
-        chainRef: solana.SOLANA_MAINNET_CHAIN_REF,
-        signingMessageEntity: 'Grape' || 'CyberConnect',
-    });
-
-    // Get the current user followings and followers list
-  const initFollowListInfo = async () => {
-    if (!pubkey) {
-      return;
-    }
     
-    setLoading(true);
-    const resp = await followListInfoQuery({
-        address:pubkey,
-        namespace: '',
-        network: NETWORK,
-        followingFirst: FIRST,
-        followerFirst: FIRST
-    });
-    if (resp) {
-      setFollowListInfo(resp);
-    }
-    setLoading(false);
-  };
-  
-  const fetchMore = async (type: 'followings' | 'followers') => {
-    if (!pubkey || !followListInfo) {
-      return;
-    }
-
-    const params =
-      type === 'followers'
-        ? {
-            address:pubkey,
-            namespace: '',
-            network: NETWORK,
-            followerFirst: FIRST,
-            followerAfter: followListInfo.followers.pageInfo.endCursor,
-          }
-        : {
-            address:pubkey,
-            namespace: '',
-            network: NETWORK,
-            followingFirst: FIRST,
-            followingAfter: followListInfo.followings.pageInfo.endCursor,
-          };
-
-    const resp = await followListInfoQuery(params);
-    if (resp) {
-      type === 'followers'
-        ? setFollowListInfo({
-            ...followListInfo,
-            followers: {
-              pageInfo: resp.followers.pageInfo,
-              list: removeDuplicate(
-                followListInfo.followers.list.concat(resp.followers.list)
-              ),
-            },
-          })
-        : setFollowListInfo({
-            ...followListInfo,
-            followings: {
-              pageInfo: resp.followings.pageInfo,
-              list: removeDuplicate(
-                followListInfo.followings.list.concat(resp.followings.list)
-              ),
-            },
-          });
-    }
-  };
-  
-    const fetchSearchAddrInfo = async (fromAddr:string, toAddr: string) => {
-
-        const resp = await searchUserInfoQuery({
-            fromAddr:fromAddr,
-            toAddr,
-            namespace: NAME_SPACE,
-            network: NETWORK,
-            type: 'FOLLOW',
-        });
-        if (resp) {
-            setSearchAddrInfo(resp);
-        }
-  
-        return resp;
-    };
-
-    const followWalletConnect = async (followAddress:string, solanaAddress:string) => {
-        // address:string, alias:string
-        let tofollow = followAddress;  
-        //console.log(followAddress+": "+solanaAddress);
-        let promise = await cyberConnect.connect(followAddress, solanaAddress)
-        .catch(function (error) {
-            console.log(error);
-        });
-        getFollowStatus();
-    };
-    const followWalletDisconnect = async (followAddress:string) => {
-        // address:string, alias:string
-
-        let promise = await cyberConnect.disconnect(followAddress)
-        .catch(function (error) {
-            console.log(error);
-        });
-        getFollowStatus();
-    };
-
+    let ref = React.createRef()
+    
     const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
         setPage(value);
         //getCollectionMeta(value);
@@ -790,22 +674,6 @@ const StoreIdentityView = (props: any) => {
         }
     }
 
-    const getFollowStatus = async () => {
-        if (publicKey){
-            if (pubkey){
-                setLoadingFollowState(true);
-                let socialconnection = await fetchSearchAddrInfo(publicKey.toBase58(), pubkey);
-                if (socialconnection){
-                    //if (socialconnection?.identity){
-                    if (socialconnection?.connections[0]?.followStatus) {  
-                        setIsFollowing(socialconnection?.connections[0].followStatus.isFollowing);
-                    }
-                }
-                setLoadingFollowState(false);
-            }
-        }
-    }
-
     const { t, i18n } = useTranslation();
     
     React.useEffect(() => { 
@@ -815,8 +683,6 @@ const StoreIdentityView = (props: any) => {
                     fetchProfilePicture();
                     //getCollectionMeta(0);
                     fetchSolanaDomain();
-                    getFollowStatus();
-                    initFollowListInfo();
 
                     // get featured
                     for (var featured of FEATURED_DAO_ARRAY){
@@ -829,6 +695,7 @@ const StoreIdentityView = (props: any) => {
         }
     }, [pubkey]);
 
+    /*
     React.useEffect(() => {
         if (publicKey){
             if (pubkey === publicKey.toBase58()){
@@ -841,6 +708,7 @@ const StoreIdentityView = (props: any) => {
             }
         }
     }, [solanaDomain, profilePictureUrl])
+    */
 
     if (loading){
         return <>{t('Loading...')}</>
@@ -950,6 +818,8 @@ export function StoreFrontView(this: any, props: any) {
     const [gallery, setGallery] = React.useState(null);
     const [collectionMintList, setCollectionMintList] = React.useState(null);
     const [collectionAuthority, setCollectionAuthority] = React.useState(null);
+    const [wallet_collection_meta, setCollectionMeta] = React.useState(null);
+    const [final_collection, setCollectionMetaFinal] = React.useState(null);
     //const isConnected = session && session.isConnected;
     const [loading, setLoading] = React.useState(false);
     const [rdloading, setRDLoading] = React.useState(false);
@@ -984,51 +854,12 @@ export function StoreFrontView(this: any, props: any) {
               });
               const string = await response.text();
               const json = string === "" ? {} : JSON.parse(string);
+              console.log(JSON.stringify(json));
+              setCollectionMintList(json);   
               return json;
             
         } catch(e){console.log("ERR: "+e)}
         
-    }
-
-    const getReverseDomainLookup = async (url:string) => {
-        if (!rdloading){
-            setRDLoading(true);
-            
-            const SOL_TLD_AUTHORITY = new PublicKey("58PwtjSDuFHuUkYjH9BYnnQKHfwo9reZhC2zMJv9JPkx");
-            const ROOT_TLD_AUTHORITY = new PublicKey("ZoAhWEqTVqHVqupYmEanDobY7dee5YKbQox9BNASZzU");
-            const PROGRAM_ID = new PublicKey("jCebN34bUfdeUYJT13J1yG16XWQpt5PDx6Mse9GUqhR");
-            const centralState = new PublicKey("33m47vH6Eav6jr5Ry86XjhRft2jRBLDnDgPSHoquXi2Z");
-            
-            const domainName = url.slice(0, url.indexOf('.'));
-            const hashedName = await getHashedName(domainName);
-            const domainKey = await getNameAccountKey(
-                hashedName,
-                undefined,
-                SOL_TLD_AUTHORITY
-            );
-            const registry = await NameRegistryState.retrieve(connection, new PublicKey(domainKey));
-            
-            if (!registry?.nftOwner) {
-                throw new Error("Could not retrieve name data");
-            }
-
-            setPubkey(registry.nftOwner.toBase58());
-            setRDLoading(false);
-        }
-    }
-    const getTwitterLookup = async (url:string) => {
-        if ((!rdloading)&&(!pubkey)){
-            setRDLoading(true);
-            
-            //const domainName = url.slice(url.indexOf('@'), url.length);
-            const twitterHandle = "";
-            //console.log("checking: "+twitterHandle);
-            const registry = await getTwitterRegistry(connection, twitterHandle);
-            
-            // verify that this is working and then push live...
-            //setPubkey(registry.owner.toBase58());
-            setRDLoading(false);
-        }
     }
 
     const StoreProfile = (props: any) => {
@@ -1055,14 +886,108 @@ export function StoreFrontView(this: any, props: any) {
         );
     }
 
+    const getCollectionData = async (start:number) => {
+        const wallet_collection = collectionMintList;//likeListInfo.likes.list;
+        let rpclimit = 100;
+        const MD_PUBKEY = METAPLEX_PROGRAM_ID;
+        const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
+        
+        
+        
+        try {
+            let mintsPDAs = new Array();
+            //console.log("RPClim: "+rpclimit);
+            //console.log("Paging "+(rpclimit*(start))+" - "+(rpclimit*(start+1)));
+            
+            let mintarr = wallet_collection.slice(rpclimit*(start), rpclimit*(start+1)).map((value:any, index:number) => {
+                //console.log("mint: "+JSON.stringify(value.address));
+                //return value.account.data.parsed.info.mint;
+                return value.address;
+            });
+            
+            for (var value of mintarr){
+                if (value){
+                    let mint_address = new PublicKey(value);
+                    let [pda, bump] = await PublicKey.findProgramAddress([
+                        Buffer.from("metadata"),
+                        MD_PUBKEY.toBuffer(),
+                        new PublicKey(mint_address).toBuffer(),
+                    ], MD_PUBKEY)
+
+                    if (pda){
+                        //console.log("pda: "+pda.toString());
+                        mintsPDAs.push(pda);
+                    }
+                }
+            }
+            //console.log("pushed pdas: "+JSON.stringify(mintsPDAs));
+            const metadata = await ggoconnection.getMultipleAccountsInfo(mintsPDAs);
+            //console.log("returned: "+JSON.stringify(metadata));
+            // LOOP ALL METADATA WE HAVE
+            for (var metavalue of metadata){
+                //console.log("Metaplex val: "+JSON.stringify(metavalue));
+                if (metavalue?.data){
+                    try{
+                        let meta_primer = metavalue;
+                        let buf = Buffer.from(metavalue.data);
+                        let meta_final = decodeMetadata(buf);
+                        //console.log("meta_final: "+JSON.stringify(meta_final));
+                    }catch(etfm){console.log("ERR: "+etfm + " for "+ JSON.stringify(metavalue));}
+                } else{
+                    console.log("Something not right...");
+                }
+            }
+            return metadata;
+        } catch (e) { // Handle errors from invalid calls
+            console.log(e);
+            return null;
+        }
+    }
+
+    const getCollectionMeta = async (start:number) => {
+        const wallet_collection = collectionMintList;//likeListInfo.likes.list;
+        
+        let tmpcollectionmeta = await getCollectionData(start);
+        setCollectionMeta(tmpcollectionmeta);
+        
+        let final_collection_meta: any[] = [];
+        for (var i = 0; i < tmpcollectionmeta.length; i++){
+            //console.log(i+": "+JSON.stringify(collectionmeta[i])+" --- with --- "+JSON.stringify(wallet_collection[i]));
+            if (tmpcollectionmeta[i]){
+                tmpcollectionmeta[i]["wallet"] = wallet_collection[i].address;
+                try{
+                    
+                    let meta_primer = tmpcollectionmeta[i];
+                    let buf = meta_primer.data;
+                    //Buffer.from(meta_primer.data, 'base64');
+                    let meta_final = decodeMetadata(buf);
+                    tmpcollectionmeta[i]["meta"] = meta_final;
+                    tmpcollectionmeta[i]["groupBySymbol"] = 0;
+                    tmpcollectionmeta[i]["floorPrice"] = 0;
+                    final_collection_meta.push(tmpcollectionmeta[i]);
+                    
+                }catch(e){
+                    console.log("ERR:"+e)
+                }
+            }
+        }
+        let finalmeta = final_collection_meta;//JSON.parse(JSON.stringify(final_collection_meta));
+        try{
+            finalmeta.sort((a:any, b:any) => a?.meta.data.name.toLowerCase().trim() > b?.meta.data.name.toLowerCase().trim() ? 1 : -1);   
+        }catch(e){console.log("Sort ERR: "+e)}
+
+        setCollectionMetaFinal(finalmeta);
+    }
+
     React.useEffect(() => { 
         if (collectionAuthority){
             console.log("with collectionAuthority: "+JSON.stringify(collectionAuthority));
-            if (ValidateAddress(collectionAuthority.address)){
-                //getWalletGallery();
-            }
+            //if (ValidateAddress(collectionAuthority.address)){
+                if (collectionMintList)
+                    getCollectionMeta(0);
+            //}
         }
-    }, [collectionAuthority]);
+    }, [collectionMintList]);
 
     React.useEffect(() => { 
         
@@ -1081,7 +1006,6 @@ export function StoreFrontView(this: any, props: any) {
                     setCollectionAuthority(verified);
                     // get collection mint list
                     const fml = fetchMintList(verified.address);
-
                 }
             } 
 
@@ -1228,8 +1152,6 @@ export function StoreFrontView(this: any, props: any) {
                                 The Sanctuary
                             </Typography>
                         </Box>
-
-
                         
                         <Grid container spacing={0.5}>
                             <Grid item xs={12} sm={12} md={4} key={1}>
@@ -1280,17 +1202,8 @@ export function StoreFrontView(this: any, props: any) {
                 }}
             >
                 <Box>  
-                        { collectionAuthority ?
-                            <>
-                                <StoreProfile collectionAuthority={collectionAuthority}/>
-                            </>
-
-                        : 
-                        <>
-                            <Typography >
-                                Nothing to see here...
-                            </Typography>
-                        </>
+                        {wallet_collection_meta && final_collection &&
+                            <GalleryView finalCollection={final_collection} walletCollection={wallet_collection_meta} />
                         }
 
                 </Box>

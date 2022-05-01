@@ -30,7 +30,8 @@ import { getImageOrFallback } from '../utils/grapeTools/WalletAddress';
 export default function GalleryItem(props: any){
     const MD_PUBKEY = METAPLEX_PROGRAM_ID;
     const collectionitem = props.collectionitem || [];
-    const mint = collectionitem?.wallet?.account?.data.parsed.info.mint || collectionitem?.wallet?.address || null;
+    //console.log("collectionitem: "+JSON.stringify(collectionitem));
+    const mint = collectionitem?.wallet?.account?.data.parsed.info.mint || collectionitem?.wallet?.address || collectionitem?.meta?.mint || null;
     const [expanded, setExpanded] = React.useState(false);
     const [loading, setLoading] = React.useState(false);
     const [collectionmeta, setCollectionMeta] = React.useState(null);
@@ -83,15 +84,16 @@ export default function GalleryItem(props: any){
             }
         }
 
+        
         useEffect(() => {
             const interval = setTimeout(() => {
-
                 if (mint)
                     getCollectionMeta();
             }, 500);
             return () => clearInterval(interval); 
         }, [collectionitem]);
         
+
         if((!collectionmeta)||
             (loading)){
             //getCollectionMeta();
@@ -133,6 +135,7 @@ export default function GalleryItem(props: any){
             //console.log("Mint: "+mint);
             //if ((collectionmeta)&&(!loading)){
             //if (image){
+                
                 return (
                         <>
                             {collectionmeta &&
@@ -165,48 +168,48 @@ export default function GalleryItem(props: any){
                                         </Grid>
                                     ):(
                                         
-                                            <ListItemButton
+                                        <ListItemButton
+                                            sx={{
+                                                width:'100%',
+                                                borderRadius:'25px',
+                                                p: '2px'
+                                            }}
+                                        >
+                                        <img
+                                            src={`${image}`}
+                                            srcSet={`${image}`}
+                                            alt={collectionmeta.collectionmeta?.name}
+                                            loading="lazy"
+                                            height="auto"
+                                            style={{
+                                                width:'100%',
+                                                borderRadius:'24px'
+                                            }}
+                                        />
+                                        {collectionitem.groupBySymbol > 1 && (
+                                            <ImageListItemBar
                                                 sx={{
-                                                    width:'100%',
-                                                    borderRadius:'25px',
-                                                    p: '2px'
+                                                    p:0,
+                                                    m:0,
+                                                    borderBottomRightRadius:'26px',
+                                                    borderBottomLeftRadius:'26px',
                                                 }}
-                                            >
-                                            <img
-                                                src={`${image}`}
-                                                srcSet={`${image}`}
-                                                alt={collectionmeta.collectionmeta?.name}
-                                                loading="lazy"
-                                                height="auto"
-                                                style={{
-                                                    width:'100%',
-                                                    borderRadius:'24px'
-                                                }}
-                                            />
-                                            {collectionitem.groupBySymbol > 1 && (
-                                                <ImageListItemBar
-                                                    sx={{
-                                                        p:0,
-                                                        m:0,
+                                                actionIcon={
+                                                <IconButton
+                                                    sx={{ 
+                                                        color: 'rgba(255, 255, 255, 0.25)',
+                                                        borderTopLeftRadius:'0px',
+                                                        borderTopRightRadius:'0px',
+                                                        borderBottomLeftRadius:'0px',
                                                         borderBottomRightRadius:'26px',
-                                                        borderBottomLeftRadius:'26px',
                                                     }}
-                                                    actionIcon={
-                                                    <IconButton
-                                                        sx={{ 
-                                                            color: 'rgba(255, 255, 255, 0.25)',
-                                                            borderTopLeftRadius:'0px',
-                                                            borderTopRightRadius:'0px',
-                                                            borderBottomLeftRadius:'0px',
-                                                            borderBottomRightRadius:'26px',
-                                                        }}
-                                                    >
-                                                        {collectionitem.groupBySymbol}
-                                                    </IconButton>
-                                                    }
-                                                />
-                                            )}
-                                            </ListItemButton>
+                                                >
+                                                    {collectionitem.groupBySymbol}
+                                                </IconButton>
+                                                }
+                                            />
+                                        )}
+                                        </ListItemButton>
                                     )}
                                     <Grid item sx={{display:'flex'}}>
                                         <Box

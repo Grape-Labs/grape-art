@@ -1,4 +1,10 @@
-[{"name":"Degen Trash Panda #171", "address":"9XBPFXX8mzvLcnGEHLeqDhDbtvcWS1J95RKE2AtuNRfT"},
-{"name":"Degen Trash Panda #15094", "address":"7YkPJiRCZCgY5iZY1zWMHH3mxtb9sRoBnBm8QT6Ed93M"},
-{"name":"Degen Trash Panda #7815", "address":"CLMrBtX15gT6bw84khbrRyZPinww59hFGjxZkJVQXUZ4"},
-{"name":"Degen Trash Panda #3525", "address":"HwZxG8C3sUKLWg3WrVW9BRS8jsYH75BHvuANys9GpTsT"}]
+[
+    {"name":"SolBear #3530", "address":"HBTk7zVLD1bB8jPoMW8DRjeknDtYoAKe3Durv2cbb1Sp", "image":"https://ipfs.io/ipfs/QmcFLNrNkNv6oGttUUjcpXPcF9anbhThwCYYYjTgc8M4jq", "listed":true, "price":1, "token":"So11111111111111111111111111111111111111112", "highest_offer":0},
+    {"name":"SolBear #3845", "address":"6dfbWrUNhBUZtb4C8BHFhvUt8KZkXw5FQtUW92HBUhd9", "image":"https://ipfs.io/ipfs/QmaLfTr9sRYXW49wKf24idWMGbxiJwREqVz3RLnPEXq3Hq", "listed":true, "price":1, "token":"So11111111111111111111111111111111111111112", "highest_offer":0},
+    {"name":"SolBear #8413", "address":"FV4PfTAa1sVkwREneww8zfe9nhyaZoVpHXesMoDdiCvX", "image":"https://ipfs.io/ipfs/QmPVC19Mbr8dDFpVBtz5fuLYNfzH5JcQYv9zBvynDJgBsw", "listed":true, "price":1, "token":"So11111111111111111111111111111111111111112", "highest_offer":0},
+    {"name":"SolBear #242", "address":"EUGL92AKntRavTPbwjZ7nXoEEM1jehUc8o4Fcd2TiW9y", "image":"https://ipfs.io/ipfs/QmTzALv6aUUTCTUT6LKEKjb8pwUrP26bcv6ZzZunQEv36g", "listed":true, "price":1, "token":"So11111111111111111111111111111111111111112", "highest_offer":0},
+    {"name":"SolBear #3530", "address":"HBTk7zVLD1bB8jPoMW8DRjeknDtYoAKe3Durv2cbb1Sp", "image":"https://ipfs.io/ipfs/QmcFLNrNkNv6oGttUUjcpXPcF9anbhThwCYYYjTgc8M4jq", "listed":true, "price":1, "token":"So11111111111111111111111111111111111111112", "highest_offer":0},
+    {"name":"SolBear #3845", "address":"6dfbWrUNhBUZtb4C8BHFhvUt8KZkXw5FQtUW92HBUhd9", "image":"https://ipfs.io/ipfs/QmaLfTr9sRYXW49wKf24idWMGbxiJwREqVz3RLnPEXq3Hq", "listed":true, "price":1, "token":"So11111111111111111111111111111111111111112", "highest_offer":0},
+    {"name":"SolBear #8413", "address":"FV4PfTAa1sVkwREneww8zfe9nhyaZoVpHXesMoDdiCvX", "image":"https://ipfs.io/ipfs/QmPVC19Mbr8dDFpVBtz5fuLYNfzH5JcQYv9zBvynDJgBsw", "listed":true, "price":1, "token":"So11111111111111111111111111111111111111112", "highest_offer":0},
+    {"name":"SolBear #242", "address":"EUGL92AKntRavTPbwjZ7nXoEEM1jehUc8o4Fcd2TiW9y", "image":"https://ipfs.io/ipfs/QmTzALv6aUUTCTUT6LKEKjb8pwUrP26bcv6ZzZunQEv36g", "listed":true, "price":1, "token":"So11111111111111111111111111111111111111112", "highest_offer":0}
+]

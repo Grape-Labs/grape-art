@@ -35,7 +35,6 @@ import {
 
 import CircularProgress from '@mui/material/CircularProgress';
 
-import GalleryItem from './GalleryItem';
 import GalleryView from './GalleryView';
 import { GRAPE_RPC_ENDPOINT, GRAPE_RPC_REFRESH, GRAPE_PREVIEW, GRAPE_PROFILE, FEATURED_DAO_ARRAY } from '../utils/grapeTools/constants';
 import { trimAddress } from '../utils/grapeTools/WalletAddress'; // global key handling
@@ -182,7 +181,7 @@ export default function CurationView(props: any){
                     console.log("Something not right...");
                 }
             }
-
+            console.log(JSON.stringify(metadata));
             return metadata;
         } catch (e) { // Handle errors from invalid calls
             console.log(e);

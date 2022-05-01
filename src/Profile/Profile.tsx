@@ -924,7 +924,7 @@ const IdentityView = (props: any) => {
             
             let loops = (Math.ceil(wallet_collection.length/rpclimit));
             let collectionmeta: any[] = [];
-
+            
             console.log("lps: "+loops);
             for (var x=0;x<loops;x++){
                 //const interval = setTimeout(() => {
@@ -1072,8 +1072,8 @@ const IdentityView = (props: any) => {
                                     rowSpacing={3}
                                     >  
                                     <Grid item xs={12} sm={5} md={3} lg={3} xl={2}
-                                    sx={{
-                                    }}
+                                        sx={{
+                                        }}
                                     >
                                     
                                     <Box
