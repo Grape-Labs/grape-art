@@ -93,7 +93,7 @@ import {
 import { GRAPE_RPC_ENDPOINT, VERIFIED_COLLECTION_ARRAY, GRAPE_PREVIEW, GRAPE_PROFILE, GRAPE_IDENTITY, FEATURED_DAO_ARRAY } from '../utils/grapeTools/constants';
 import ShareSocialURL from '../utils/grapeTools/ShareUrl';
 
-import GalleryView from './GalleryView';
+import GalleryView from '../Profile/GalleryView';
 
 import { MakeLinkableAddress, ValidateAddress, trimAddress, timeAgo } from '../utils/grapeTools/WalletAddress'; // global key handling
 import { ConstructionOutlined } from "@mui/icons-material";
@@ -1202,9 +1202,13 @@ export function StoreFrontView(this: any, props: any) {
                 }}
             >
                 <Box>  
-                        {wallet_collection_meta && final_collection &&
-                            <GalleryView finalCollection={final_collection} walletCollection={wallet_collection_meta} />
-                        }
+                    {collectionMintList &&
+                        <GalleryView mode={1} collectionMintList={collectionMintList}/>
+                    }
+
+                    {/*wallet_collection_meta && final_collection &&
+                        <GalleryView mode={0} finalCollection={final_collection} walletCollection={wallet_collection_meta} />
+                    */}
 
                 </Box>
             </Box>

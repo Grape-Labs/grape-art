@@ -260,7 +260,7 @@ export default function CurationView(props: any){
         return (
             <> 
                 {wallet_collection_meta && final_collection &&
-                    <GalleryView finalCollection={final_collection} walletCollection={wallet_collection_meta} />
+                    <GalleryView mode={0} finalCollection={final_collection} walletCollection={wallet_collection_meta} />
                 }
             </>
         );

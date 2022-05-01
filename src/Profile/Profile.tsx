@@ -642,7 +642,7 @@ const MainPanel = (props: any) => {
                                 </Tabs>
 
                                 <TabPanel value={tabvalue} index={0}>
-                                    <GalleryView finalCollection={finalCollection} isparent={true} />
+                                    <GalleryView mode={0} finalCollection={finalCollection} isparent={true} />
                                 </TabPanel>
                                 <TabPanel value={tabvalue} index={1}>
                                     <FeedView />

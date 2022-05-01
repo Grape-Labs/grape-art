@@ -20,17 +20,17 @@ import {
 
 import {
     METAPLEX_PROGRAM_ID,
-  } from '../utils/auctionHouse/helpers/constants';
+} from '../utils/auctionHouse/helpers/constants';
 
-import GalleryView from './GalleryView';
-
+import SolCurrencyIcon from '../components/static/SolCurrencyIcon';
 import { GRAPE_PREVIEW } from '../utils/grapeTools/constants';
 import { getImageOrFallback } from '../utils/grapeTools/WalletAddress';
 
 export default function GalleryItem(props: any){
     const MD_PUBKEY = METAPLEX_PROGRAM_ID;
     const collectionitem = props.collectionitem || [];
-    const mint = collectionitem?.wallet?.account?.data.parsed.info.mint || collectionitem?.wallet?.address || null;
+    const mode = props?.mode || 0;
+    const mint = collectionitem?.wallet?.account?.data.parsed.info.mint || collectionitem?.wallet?.address || collectionitem?.meta?.mint || null;
     const [expanded, setExpanded] = React.useState(false);
     const [loading, setLoading] = React.useState(false);
     const [collectionmeta, setCollectionMeta] = React.useState(null);
@@ -84,37 +84,41 @@ export default function GalleryItem(props: any){
         }
 
         useEffect(() => {
-            const interval = setTimeout(() => {
+            if (mode === 0){
+                const interval = setTimeout(() => {
 
-                if (mint)
-                    getCollectionMeta();
-            }, 500);
-            return () => clearInterval(interval); 
+                    if (mint)
+                        getCollectionMeta();
+                }, 500);
+                return () => clearInterval(interval); 
+            }
         }, [collectionitem]);
         
-        if((!collectionmeta)||
-            (loading)){
-            //getCollectionMeta();
-            //setTimeout(getCollectionMeta(), 250);
-            return (
-                <ListItemButton
-                    sx={{
-                        width:'100%',
-                        borderRadius:'25px',
-                        p: '2px',
-                        mb: 5
-                    }}
-                >
-                    <Skeleton 
+        if (mode === 0){
+            if ((!collectionmeta)||
+                (loading)){
+                //getCollectionMeta();
+                //setTimeout(getCollectionMeta(), 250);
+                return (
+                    <ListItemButton
                         sx={{
+                            width:'100%',
                             borderRadius:'25px',
+                            p: '2px',
+                            mb: 5
                         }}
-                        variant="rectangular" width={325} height={325} />
-                </ListItemButton>
-            )
-        } //else{
+                    >
+                        <Skeleton 
+                            sx={{
+                                borderRadius:'25px',
+                            }}
+                            variant="rectangular" width={325} height={325} />
+                    </ListItemButton>
+                )
+            }
+        }
         {   
-            let image = collectionmeta.collectionmeta?.image || null;
+            let image = collectionmeta?.collectionmeta?.image || collectionitem?.image || null;
             try{
                 if (image){
                     if ((image?.toLocaleUpperCase().indexOf('?EXT=PNG') > -1) ||
@@ -135,12 +139,108 @@ export default function GalleryItem(props: any){
             //if (image){
                 return (
                         <>
-                            {collectionmeta &&
+                            
+                            {mode === 0 ?
+                                <>
+                                {collectionmeta &&
+                                    <Grid 
+                                        container 
+                                        alignItems="center"
+                                        justifyContent="center">
+                                        {!isparent ? (
+                                            <Grid item sx={{display:'flex',justifyContent:'center',alignItems:'center'}}>
+                                                <ListItemButton
+                                                    component={Link} to={`${GRAPE_PREVIEW}${mint}`}
+                                                    sx={{
+                                                        width:'100%',
+                                                        borderRadius:'25px',
+                                                        p: '2px'
+                                                    }}
+                                                >
+                                                    <img
+                                                        src={`${image}`}
+                                                        srcSet={`${image}`}
+                                                        alt={collectionmeta.collectionmeta?.name}
+                                                        loading="lazy"
+                                                        height="auto"
+                                                        style={{
+                                                            width:'100%',
+                                                            borderRadius:'24px'
+                                                        }}
+                                                    />
+                                                </ListItemButton>
+                                            </Grid>
+                                        ):(
+                                            
+                                                <ListItemButton
+                                                    sx={{
+                                                        width:'100%',
+                                                        borderRadius:'25px',
+                                                        p: '2px'
+                                                    }}
+                                                >
+                                                <img
+                                                    src={`${image}`}
+                                                    srcSet={`${image}`}
+                                                    alt={collectionmeta.collectionmeta?.name}
+                                                    loading="lazy"
+                                                    height="auto"
+                                                    style={{
+                                                        width:'100%',
+                                                        borderRadius:'24px'
+                                                    }}
+                                                />
+                                                {collectionitem.groupBySymbol > 1 && (
+                                                    <ImageListItemBar
+                                                        sx={{
+                                                            p:0,
+                                                            m:0,
+                                                            borderBottomRightRadius:'26px',
+                                                            borderBottomLeftRadius:'26px',
+                                                        }}
+                                                        actionIcon={
+                                                        <IconButton
+                                                            sx={{ 
+                                                                color: 'rgba(255, 255, 255, 0.25)',
+                                                                borderTopLeftRadius:'0px',
+                                                                borderTopRightRadius:'0px',
+                                                                borderBottomLeftRadius:'0px',
+                                                                borderBottomRightRadius:'26px',
+                                                            }}
+                                                        >
+                                                            {collectionitem.groupBySymbol}
+                                                        </IconButton>
+                                                        }
+                                                    />
+                                                )}
+                                                </ListItemButton>
+                                        )}
+                                        <Grid item sx={{display:'flex'}}>
+                                            <Box
+                                                sx={{p:1}}
+                                            >
+                                                <Typography variant="caption">
+                                                    {!isparent ? (
+                                                        <>
+                                                        {collectionmeta.collectionmeta?.name}
+                                                        </>
+                                                    ):(
+                                                        <>
+                                                        {collectionmeta.collectionmeta?.name.substring(0,collectionmeta.collectionmeta?.name.indexOf('#')).trim()}
+                                                        </>
+                                                    )}
+                                                </Typography>
+                                            </Box>
+                                        </Grid>
+                                    </Grid>
+                                }
+                                </>
+                            :
+                            <>
                                 <Grid 
                                     container 
                                     alignItems="center"
                                     justifyContent="center">
-                                    {!isparent ? (
                                         <Grid item sx={{display:'flex',justifyContent:'center',alignItems:'center'}}>
                                             <ListItemButton
                                                 component={Link} to={`${GRAPE_PREVIEW}${mint}`}
@@ -153,7 +253,7 @@ export default function GalleryItem(props: any){
                                                 <img
                                                     src={`${image}`}
                                                     srcSet={`${image}`}
-                                                    alt={collectionmeta.collectionmeta?.name}
+                                                    alt={collectionitem?.name}
                                                     loading="lazy"
                                                     height="auto"
                                                     style={{
@@ -163,69 +263,40 @@ export default function GalleryItem(props: any){
                                                 />
                                             </ListItemButton>
                                         </Grid>
-                                    ):(
-                                        
-                                            <ListItemButton
-                                                sx={{
-                                                    width:'100%',
-                                                    borderRadius:'25px',
-                                                    p: '2px'
-                                                }}
-                                            >
-                                            <img
-                                                src={`${image}`}
-                                                srcSet={`${image}`}
-                                                alt={collectionmeta.collectionmeta?.name}
-                                                loading="lazy"
-                                                height="auto"
-                                                style={{
-                                                    width:'100%',
-                                                    borderRadius:'24px'
-                                                }}
-                                            />
-                                            {collectionitem.groupBySymbol > 1 && (
-                                                <ImageListItemBar
-                                                    sx={{
-                                                        p:0,
-                                                        m:0,
-                                                        borderBottomRightRadius:'26px',
-                                                        borderBottomLeftRadius:'26px',
-                                                    }}
-                                                    actionIcon={
-                                                    <IconButton
-                                                        sx={{ 
-                                                            color: 'rgba(255, 255, 255, 0.25)',
-                                                            borderTopLeftRadius:'0px',
-                                                            borderTopRightRadius:'0px',
-                                                            borderBottomLeftRadius:'0px',
-                                                            borderBottomRightRadius:'26px',
-                                                        }}
-                                                    >
-                                                        {collectionitem.groupBySymbol}
-                                                    </IconButton>
-                                                    }
-                                                />
-                                            )}
-                                            </ListItemButton>
-                                    )}
+                                    
                                     <Grid item sx={{display:'flex'}}>
                                         <Box
                                             sx={{p:1}}
                                         >
-                                            <Typography variant="caption">
-                                                {!isparent ? (
-                                                    <>
-                                                    {collectionmeta.collectionmeta?.name}
-                                                    </>
-                                                ):(
-                                                    <>
-                                                    {collectionmeta.collectionmeta?.name.substring(0,collectionmeta.collectionmeta?.name.indexOf('#')).trim()}
-                                                    </>
-                                                )}
-                                            </Typography>
+                                            <Grid container spacing={2} alignItems="center">
+                                                <Grid item xs={12}>
+                                                    <Typography variant="h6" textAlign="center">
+                                                        {collectionitem?.name}
+                                                    </Typography> 
+                                                </Grid>
+                                            
+                                                <Grid item xs={6}>
+                                                    <Typography variant="h4">
+                                                    {collectionitem?.price}  <SolCurrencyIcon sx={{fontSize:"20px"}} />
+                                                    </Typography>
+                                                </Grid>
+                                                <Grid item xs={6}>
+                                                    {collectionitem?.highest_offer>0 &&
+                                                        <>
+                                                            <Typography variant="body2" textAlign="right">
+                                                            Offer for
+                                                            </Typography>
+                                                            <Typography variant="body1" textAlign="right">
+                                                            {collectionitem?.highest_offer} <SolCurrencyIcon sx={{fontSize:"11px"}} />
+                                                            </Typography>
+                                                        </>
+                                                    }
+                                                </Grid>
+                                            </Grid>
                                         </Box>
                                     </Grid>
                                 </Grid>
+                            </>
                             }
                         </>
                 );
