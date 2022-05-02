@@ -49,7 +49,6 @@ function convertSolVal(sol: any){
 
 export async function makeOffer(offerAmount: number, mint: string, walletPublicKey: string, mintOwner: any): Promise<InstructionsAndSignersSet> {
     //const { publicKey, signTransaction } = useWallet();
-
     let tokenSize = 1;
     const auctionHouseKey = new web3.PublicKey(AUCTION_HOUSE_ADDRESS);
     const mintKey = new web3.PublicKey(mint);
