@@ -1,9 +1,12 @@
 [{
     "name":"Bears Reloaded",
+    "author":"The Sanctuary",
     "tensorId":"",
     "address":"123456789",
     "status":1,
     "size":10000,
+    "owners":5500,
+    "volume":80000,
     "description":"10,000 algo-generated, unique, cute & collectible Bears. - The Sanctuary",
     "links":{
         "url":"",
@@ -12,7 +15,46 @@
         "instagram":""
     },
     "logo":"/solbears/bearlogo1000px.png",
-    "splash":"/solbears/bearssplash.png"
+    "splash":"/solbears/bearssplash.png",
+    "attributes":{
+        "Furs":{
+            "Mocha Bear":"33.95",
+            "Polar Bear":"7.97",
+            "Red Velvet Bear":"7.86",
+            "Grey Velvet Bear":"6.99",
+            "Grape Bear":"4.59%",
+            "Prince Bear":"4.57",
+            "Cool Bear":"4.54%",
+            "Black Velvet Bear":"4.49",
+            "Leopard Bear":"4.31",
+            "Metal Bear":"4.20",
+            "Flower Bear":"4.15",
+            "Espresso Bear":"3.74",
+            "Solana Bear":"1.70",
+            "Glow Bear":"1.54",
+            "Snake Bear":"1.52",
+            "Rough Bear":"0.86",
+            "Kemosabe Jorts Bear":"0.85",
+            "Murder Bear":"0.78",
+            "Gilder Bear":"0.72",
+            "Paper Hands Bear":"0.66"
+        },
+        "Clothes":{
+            "Da Angel":"5.57"
+        },
+        "Hat":{
+            "Saint Ven Zoah":"6.34"
+        },
+        "Face":{
+            "FACE!":"32.77"
+        },
+        "Scene":{
+            "Spotlight":"38.80"
+        },
+        "Background":{
+            "Lavender Sun":"25.21"
+        }
+    }
 },{
     "name":"Solanauts",
     "tensorId":"BDYYJ1VzPDXwJoARMZNnN4MX4cZNjVvc5DfFaKzgrruz",

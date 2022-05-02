@@ -90,7 +90,7 @@ import {
     METAPLEX_PROGRAM_ID,
 } from '../utils/auctionHouse/helpers/constants';
 
-import { GRAPE_RPC_ENDPOINT, VERIFIED_COLLECTION_ARRAY, GRAPE_PREVIEW, GRAPE_PROFILE, GRAPE_IDENTITY, FEATURED_DAO_ARRAY } from '../utils/grapeTools/constants';
+import { GRAPE_RPC_ENDPOINT, GRAPE_PREVIEW, GRAPE_PROFILE, FEATURED_DAO_ARRAY } from '../utils/grapeTools/constants';
 import ShareSocialURL from '../utils/grapeTools/ShareUrl';
 
 import GalleryView from '../Profile/GalleryView';
@@ -323,7 +323,6 @@ const GalleryItem = (props: any) => {
 
         useEffect(() => {
             const interval = setTimeout(() => {
-
                 if (mint)
                     getCollectionMeta();
             }, 500);
@@ -559,67 +558,6 @@ export const TabActiveProvider = ({ children, initialActiveKey }) => {
     );
 };
 
-const MainPanel = (props: any) => {
-    const [loading, setLoading] = React.useState(false);
-    const [ thisCollection, setThisCollection] = React.useState(props.thisCollection || null);
-    const { enqueueSnackbar, closeSnackbar } = useSnackbar();
-    const [walletCollection, setWalletCollection] = React.useState(props.wallet_collection);
-    const [walletCollectionMeta, setWalletCollectionMeta] = React.useState(props.wallet_collection_meta);
-    const finalCollection = props.final_collection || null;
-    const [page, setPage] = React.useState(1);
-    const rowsperpage = 1500;
-    //const { activeTab, setActiveTab } = React.useContext(TabActiveContext);
-    const [tabvalue, setTabValue] = React.useState(props?.activeTab || 0);
-    
-    const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
-        setTabValue(newValue);
-    };
-
-    const { t, i18n } = useTranslation();
-
-    function a11yProps(index: number) {
-        return {
-            id: `grapeart-tab-${index}`,
-            'aria-controls': `grapeart-tabpanel-${index}`,
-        };
-    }
-
-    React.useEffect(() => { 
-        if (tabvalue!=props?.activeTab){
-            setTabValue(props?.activeTab);
-        }
-    }, [props?.activeTab]);
-    
-    if(loading){
-        return (
-            <Grid item xs='auto' sm='auto' md='auto' lg='auto' xl='auto'>
-                <Box
-                    alignItems="center"
-                    justifyContent="center"
-                    sx={{
-                    }} 
-                >
-                    <CircularProgress />
-                </Box>
-            </Grid>
-        )
-    } else{
-        return (
-            <Grid item xs={12} sm={7} md={9} lg={9} xl={9}>
-                <Container
-                    sx={{
-                        minHeight: '225px',
-                        m:0,
-                        p:0,
-                    }} 
-                >
-                    TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST 
-                </Container>
-            </Grid>
-        );
-    }
-}
-
 const StoreIdentityView = (props: any) => {
     const [expanded_collection, setExpandedCollection] = React.useState(true);
     const [pubkey, setPubKey] = React.useState<string>(props.pubkey || null);
@@ -818,6 +756,7 @@ export function StoreFrontView(this: any, props: any) {
     const [gallery, setGallery] = React.useState(null);
     const [collectionMintList, setCollectionMintList] = React.useState(null);
     const [collectionAuthority, setCollectionAuthority] = React.useState(null);
+    const [verifiedCollectionArray, setVerifiedCollectionArray] = React.useState(null);
     const [wallet_collection_meta, setCollectionMeta] = React.useState(null);
     const [final_collection, setCollectionMetaFinal] = React.useState(null);
     //const isConnected = session && session.isConnected;
@@ -844,6 +783,24 @@ export function StoreFrontView(this: any, props: any) {
 
     const { t, i18n } = useTranslation();
     
+    const fetchVerifiedCollection = async(address:string) => {
+        try{
+            const url = './verified_collections.json';
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                }
+              });
+              const string = await response.text();
+              const json = string === "" ? {} : JSON.parse(string);
+              //console.log(">>> "+JSON.stringify(json));
+              setVerifiedCollectionArray(json);   
+              return json;
+            
+        } catch(e){console.log("ERR: "+e)}
+        
+    }
+
     const fetchMintList = async(address:string) => {
         try{
             const url = './'+address+'.json';
@@ -854,7 +811,7 @@ export function StoreFrontView(this: any, props: any) {
               });
               const string = await response.text();
               const json = string === "" ? {} : JSON.parse(string);
-              console.log(JSON.stringify(json));
+              //console.log("::: "+JSON.stringify(json));
               setCollectionMintList(json);   
               return json;
             
@@ -864,25 +821,25 @@ export function StoreFrontView(this: any, props: any) {
 
     const StoreProfile = (props: any) => {
         return (
+            <Grid 
+                container 
+                direction="column" 
+                spacing={2} 
+                alignItems="center"
+                rowSpacing={8}
+            >
                 <Grid 
-                    container 
-                    direction="column" 
-                    spacing={2} 
-                    alignItems="center"
-                    rowSpacing={8}
+                    item xs={12}
                 >
-                    <Grid 
-                        item xs={12}
+                    <Box
+                        height="100%"
+                        display="flex-grow"
+                        justifyContent="center"
                     >
-                        <Box
-                            height="100%"
-                            display="flex-grow"
-                            justifyContent="center"
-                        >
-                            <StoreIdentityView collectionMintList={collectionMintList} />
-                        </Box>
-                    </Grid>
+                        <StoreIdentityView collectionMintList={collectionMintList} />
+                    </Box>
                 </Grid>
+            </Grid>
         );
     }
 
@@ -891,8 +848,6 @@ export function StoreFrontView(this: any, props: any) {
         let rpclimit = 100;
         const MD_PUBKEY = METAPLEX_PROGRAM_ID;
         const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
-        
-        
         
         try {
             let mintsPDAs = new Array();
@@ -981,7 +936,7 @@ export function StoreFrontView(this: any, props: any) {
 
     React.useEffect(() => { 
         if (collectionAuthority){
-            console.log("with collectionAuthority: "+JSON.stringify(collectionAuthority));
+            //console.log("with collectionAuthority: "+JSON.stringify(collectionAuthority));
             //if (ValidateAddress(collectionAuthority.address)){
                 if (collectionMintList)
                     getCollectionMeta(0);
@@ -990,53 +945,38 @@ export function StoreFrontView(this: any, props: any) {
     }, [collectionMintList]);
 
     React.useEffect(() => { 
-        
-        if (withPubKey){
-            console.log("using: "+withPubKey)
-            
-            // check if this is a valid address using VERIFIED_COLLECTION_ARRAY
-            // check both .name and .address
-            for (var verified of VERIFIED_COLLECTION_ARRAY){
-                //if (verified.address === mintOwner){
-                if (verified.address === withPubKey){
-                    setCollectionAuthority(verified);
-                    // get collection mint list
-                    const fml = fetchMintList(verified.address);
-                } else if (verified.name.replaceAll("\\s", "").toLowerCase().localeCompare(withPubKey.replaceAll("\\s", "").toLowerCase())){ // REMOVE SPACES FROM verified.name
-                    setCollectionAuthority(verified);
-                    // get collection mint list
-                    const fml = fetchMintList(verified.address);
-                }
-            } 
-
-            // IMPORTANT HANDLE INVALID COLLECTION ENTRY
-
-            /*
-            if (ValidateAddress(withPubKey)){
-                setPubkey(withPubKey);
-                navigate({
-                    pathname: GRAPE_PROFILE+withPubKey
-                },
-                    { replace: true }
-                );
-            } else {
-                if ((withPubKey.toLocaleUpperCase().indexOf(".SOL") > -1) || (withPubKey.slice(0,1) === '@')){
-                    if (withPubKey.toLocaleUpperCase().endsWith(".SOL")){ // Solana Domain
-                        getReverseDomainLookup(withPubKey);
-                    } else if (withPubKey.toLocaleUpperCase().startsWith("@")){ // Twitter Handle
-                        getTwitterLookup(withPubKey);
+        if ((verifiedCollectionArray)&&(!collectionAuthority)){
+            if (withPubKey){
+                console.log("using: "+withPubKey)
+                
+                //console.log("verified_collection_array: "+JSON.stringify(verified_collection_array))
+                
+                // check if this is a valid address using VERIFIED_COLLECTION_ARRAY
+                // check both .name and .address
+                for (var verified of verifiedCollectionArray){
+                    //if (verified.address === mintOwner){
+                    if (verified.address === withPubKey){
+                        setCollectionAuthority(verified);
+                        // get collection mint list
+                        const fml = fetchMintList(verified.address);
+                        break;
+                    } else if (verified.name.replaceAll("\\s", "").toLowerCase().localeCompare(withPubKey.replaceAll("\\s", "").toLowerCase())){ // REMOVE SPACES FROM verified.name
+                        setCollectionAuthority(verified);
+                        // get collection mint list
+                        console.log("f ADDRESS: "+verified.address)
+                        const fml = fetchMintList(verified.address);
+                        break;
                     }
-                } else{
-                    console.log("Nothing sent reverting to default profile");
-                    navigate({
-                        pathname: '/profile'
-                    },
-                        { replace: true }
-                    );
-                }
-            }*/
+                } 
+    
+                // IMPORTANT HANDLE INVALID COLLECTION ENTRY
+            }
         }
-        
+    }, [verifiedCollectionArray]);
+
+    React.useEffect(() => { 
+        if ((withPubKey)&&(!verifiedCollectionArray))
+            fetchVerifiedCollection(withPubKey); 
     }, [withPubKey]);
 
     React.useEffect(() => { 
@@ -1052,7 +992,7 @@ export function StoreFrontView(this: any, props: any) {
     if (!pubkey){ 
         // ...
     } else {
-        if((loading)){
+        if((loading)&&(!collectionAuthority)){
             return (
             <React.Fragment>
                 <Box
@@ -1091,6 +1031,7 @@ export function StoreFrontView(this: any, props: any) {
     
     return (
         <React.Fragment>
+            {collectionAuthority &&
             <Box
                 sx={{
                     mb:4,
@@ -1102,10 +1043,9 @@ export function StoreFrontView(this: any, props: any) {
                 >
                     <Box>
                         <img
-                            src={`solbears/bearssplash.png`}
-                            srcSet={`solbears/bearssplash.png`}
-                            alt='Bears Reloaded'
-                            //onClick={ () => openImageViewer(0) }
+                            src={collectionAuthority.splash}
+                            srcSet={collectionAuthority.splash}
+                            alt={collectionAuthority.name}
                             loading="lazy"
                             height="auto"
                             style={{
@@ -1130,9 +1070,9 @@ export function StoreFrontView(this: any, props: any) {
                     >
 
                         <img
-                            src={`solbears/bearlogo1000px.png`}
-                            srcSet={`solbears/bearlogo1000px.png`}
-                            alt='Bears Reloaded'
+                            src={collectionAuthority.logo}
+                            srcSet={collectionAuthority.logo}
+                            alt={collectionAuthority.name}
                             //onClick={ () => openImageViewer(0) }
                             loading="lazy"
                             height="auto"
@@ -1145,11 +1085,11 @@ export function StoreFrontView(this: any, props: any) {
                             sx={{m:0}}
                         >
                             <Typography variant="h4">
-                                Bears Reloaded
+                                {collectionAuthority.name}
                             </Typography>
 
                             <Typography variant="h6">
-                                The Sanctuary
+                                {collectionAuthority.author}
                             </Typography>
                         </Box>
                         
@@ -1163,7 +1103,7 @@ export function StoreFrontView(this: any, props: any) {
                                         ITEMS
                                     </Typography>
                                     <Typography variant="subtitle2">
-                                        10k
+                                        {(collectionAuthority.size/1000).toFixed(1)}k
                                     </Typography>
                                 </Box>
                             </Grid>
@@ -1176,7 +1116,7 @@ export function StoreFrontView(this: any, props: any) {
                                         OWNERS
                                     </Typography>
                                     <Typography variant="subtitle2">
-                                        5.5k
+                                        {(collectionAuthority.owners/1000).toFixed(1)}k
                                     </Typography>
                                 </Box>
                             </Grid>
@@ -1189,29 +1129,25 @@ export function StoreFrontView(this: any, props: any) {
                                         VOLUME
                                     </Typography>
                                     <Typography variant="subtitle2">
-                                        80k SOL
+                                        {(collectionAuthority.volume/1000).toFixed(1)}k SOL
                                     </Typography>
                                 </Box>
                             </Grid>
                         </Grid>
                     </Box>
             </Box>
-            <Box
-                sx={{
-                    
-                }}
-            >
-                <Box>  
-                    {collectionMintList &&
-                        <GalleryView mode={1} collectionMintList={collectionMintList}/>
-                    }
-
-                    {/*wallet_collection_meta && final_collection &&
-                        <GalleryView mode={0} finalCollection={final_collection} walletCollection={wallet_collection_meta} />
-                    */}
-
+            }
+                <Box
+                    sx={{
+                        
+                    }}
+                >
+                    <Box>  
+                        {collectionMintList &&  
+                            <GalleryView mode={1} collectionMintList={collectionMintList} collectionAuthority={collectionAuthority}/>
+                        }
+                    </Box>
                 </Box>
-            </Box>
         </React.Fragment>
     );
 }

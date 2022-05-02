@@ -16,6 +16,7 @@ import {
     ListItemButton,
     ImageListItemBar,
     IconButton,
+    Button,
 } from '@mui/material';
 
 import {
@@ -243,7 +244,7 @@ export default function GalleryItem(props: any){
                                     justifyContent="center">
                                         <Grid item sx={{display:'flex',justifyContent:'center',alignItems:'center'}}>
                                             <ListItemButton
-                                                component={Link} to={`${GRAPE_PREVIEW}${mint}`}
+                                                component={Link} to={`${GRAPE_PREVIEW}${collectionitem?.address}`}
                                                 sx={{
                                                     width:'100%',
                                                     borderRadius:'25px',
@@ -270,14 +271,14 @@ export default function GalleryItem(props: any){
                                         >
                                             <Grid container spacing={2} alignItems="center">
                                                 <Grid item xs={12}>
-                                                    <Typography variant="h6" textAlign="center">
+                                                    <Typography variant="subtitle1" textAlign="center">
                                                         {collectionitem?.name}
                                                     </Typography> 
                                                 </Grid>
                                             
                                                 <Grid item xs={6}>
-                                                    <Typography variant="h4">
-                                                    {collectionitem?.price}  <SolCurrencyIcon sx={{fontSize:"20px"}} />
+                                                    <Typography variant="h6">
+                                                    {collectionitem?.price}  <SolCurrencyIcon sx={{fontSize:"16px"}} />
                                                     </Typography>
                                                 </Grid>
                                                 <Grid item xs={6}>
@@ -286,7 +287,7 @@ export default function GalleryItem(props: any){
                                                             <Typography variant="body2" textAlign="right">
                                                             Offer for
                                                             </Typography>
-                                                            <Typography variant="body1" textAlign="right">
+                                                            <Typography variant="body1" textAlign="right" sx={{color:'yellow'}}>
                                                             {collectionitem?.highest_offer} <SolCurrencyIcon sx={{fontSize:"11px"}} />
                                                             </Typography>
                                                         </>

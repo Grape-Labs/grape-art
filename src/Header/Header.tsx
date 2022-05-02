@@ -239,28 +239,29 @@ export function Header(props: any) {
                         <img src={MARKET_LOGO} height="40px" width="137px" className="header-logo" alt="Powered by Grape" />
                     </Typography>
                 </Button>
-                    <Container
-                        component="form"
-                        onSubmit={handlePublicKeySubmit}
-                        sx={{background:'none'}}
+                
+                <Container
+                    component="form"
+                    onSubmit={handlePublicKeySubmit}
+                    sx={{background:'none'}}
+                    >
+                    <Tooltip title='Search by mint address by entering: mint:address'>
+                        <Search
+                            sx={{height:'40px'}}
                         >
-                        <Tooltip title={t('Search by mint address by entering: mint:address')}>
-                            <Search
-                                sx={{height:'40px'}}
-                            >
-                                <SearchIconWrapper>
-                                    <SearchIcon />
-                                </SearchIconWrapper>
-                                <StyledInputBase
-                                    sx={{height:'40px', width:'100%'}}
-                                    placeholder={t('Search Solana Address')}
-                                    inputProps={{ 'aria-label': 'search' }}
-                                    value={newinputpkvalue}
-                                    onChange={(e) => setNewInputPKValue(e.target.value)}
-                                />
-                            </Search>
-                        </Tooltip>
-                    </Container>
+                            <SearchIconWrapper>
+                                <SearchIcon />
+                            </SearchIconWrapper>
+                            <StyledInputBase
+                                sx={{height:'40px', width:'100%'}}
+                                placeholder={t('Search Solana Address')}
+                                inputProps={{ 'aria-label': 'search' }}
+                                value={newinputpkvalue}
+                                onChange={(e) => setNewInputPKValue(e.target.value)}
+                            />
+                        </Search>
+                    </Tooltip>
+                </Container>
 
 
             </Box>
