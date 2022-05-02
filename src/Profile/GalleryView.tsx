@@ -19,7 +19,13 @@ import {
     Tooltip,
     InputBase,
     Button,
+    FormControl,
+    NativeSelect,
+    InputLabel
 } from '@mui/material';
+
+
+import { SelectChangeEvent } from '@mui/material/Select';
 
 import SearchIcon from '@mui/icons-material/Search';
 
@@ -100,28 +106,56 @@ export default function GalleryView(props: any){
                             }} 
                         > 
 
-                            <Container
-                                component="form"
-                                //onSubmit={handlePublicKeySubmit}
-                                sx={{background:'none'}}
-                            >
-                                <Tooltip title='Filter Collection'>
-                                    <Search
-                                        sx={{height:'40px'}}
+                            <Grid container 
+                                spacing={{ xs: 1, md: 2 }} 
+                                alignItems="flex-start"
+                                >
+                                <Grid item xs={0} sm={2}>
+                                    <FormControl fullWidth>
+                                        <InputLabel htmlFor="uncontrolled-native" sx={{height:'40px',m:0,p:0}}>Sort</InputLabel>
+                                        <NativeSelect
+                                            defaultValue={0}
+                                            inputProps={{
+                                                name: 'Sorting',
+                                                id: 'uncontrolled-native',
+                                              }}
+                                            id="demo-simple-select"
+                                            //onChange={handleChange}
+                                            sx={{borderRadius:'17px', height:'40px'}}
+                                        >
+                                            <option value={0}>Price Ascending</option>
+                                            <option value={1}>Price Descending</option>
+                                            <option value={1}>Date Descending</option>
+                                        </NativeSelect>
+                                    </FormControl>
+                                </Grid>    
+                                
+                                <Grid item xs={0} sm={10}>
+                                    <Container
+                                        component="form"
+                                        //onSubmit={handlePublicKeySubmit}
+                                        sx={{background:'none'}}
                                     >
-                                        <SearchIconWrapper>
-                                            <SearchIcon />
-                                        </SearchIconWrapper>
-                                        <StyledInputBase
-                                            sx={{height:'40px', width:'100%'}}
-                                            placeholder='Filter Collection'
-                                            inputProps={{ 'aria-label': 'search' }}
-                                            //value={newinputpkvalue}
-                                            //onChange={(e) => setNewInputPKValue(e.target.value)}
-                                        />
-                                    </Search>
-                                </Tooltip>
-                            </Container>
+                                        
+                                        <Tooltip title='Filter Collection'>
+                                            <Search
+                                                sx={{height:'40px'}}
+                                            >
+                                                <SearchIconWrapper>
+                                                    <SearchIcon />
+                                                </SearchIconWrapper>
+                                                <StyledInputBase
+                                                    sx={{height:'40px', width:'100%'}}
+                                                    placeholder='Filter Collection'
+                                                    inputProps={{ 'aria-label': 'search' }}
+                                                    //value={newinputpkvalue}
+                                                    //onChange={(e) => setNewInputPKValue(e.target.value)}
+                                                />
+                                            </Search>
+                                        </Tooltip>
+                                    </Container>
+                                </Grid>
+                            </Grid>
 
                             <Grid container 
                                 spacing={{ xs: 2, md: 3 }} 
