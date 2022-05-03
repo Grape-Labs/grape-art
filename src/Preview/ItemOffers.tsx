@@ -11,6 +11,8 @@ import { Button } from '@mui/material';
 import { useSnackbar } from 'notistack';
 import moment from 'moment';
 
+import { unicastSolflareMessage } from "../utils/walletnotifications/walletnotifications"
+
 import {
     Typography,
     Grid,
@@ -112,6 +114,7 @@ import  useWalletStore  from '../utils/governanceTools/useWalletStore';
 import { sendTransactions } from "../utils/governanceTools/sendTransactions";
 import { InstructionsAndSignersSet } from "../utils/auctionHouse/helpers/types";
 import { useTranslation } from 'react-i18next';
+import GrapeIcon from "../components/static/GrapeIcon";
 
 const StyledTable = styled(Table)(({ theme }) => ({
     '& .MuiTableCell-root': {
@@ -606,6 +609,7 @@ export function OfferPrompt(props: any) {
     //const [sol_balance, setSolBalance] = React.useState(props.solBalance);
     const sol_balance = props.solBalance;  
     const mint = props.mint;  
+    const image = props.image;
     const mintOwner = props.mintOwner;  
     const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
     const { connection } = useConnection();
@@ -671,6 +675,10 @@ export function OfferPrompt(props: any) {
                     );
                     enqueueSnackbar(`${t('Offer sent')} `,{ variant: 'success', action:snackaction });
                     
+                    //(title:string,message:string,image:string,publicKey:string,actionUrl:string)
+                    
+                    unicastSolflareMessage('Offer Received', offer_amount+' SOL offer made for '+mint+' on grape.art', image, publicKey.toBase58(), `${GRAPE_PREVIEW}${mint}`);
+
                     const eskey = enqueueSnackbar(`${t('Metadata will be refreshed in a few seconds')}`, {
                             anchorOrigin: {
                                 vertical: 'top',
@@ -844,6 +852,7 @@ export default function ItemOffers(props: any) {
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
     const walletPublicKey = publicKey;
     const mint = props.mint; 
+    const image = props.image;
     const [refreshOffers, setRefreshOffers] = React.useState(false);
     const anchorWallet = useAnchorWallet();
     const [alertopen, setAlertOpen] = React.useState(false); 
@@ -1822,7 +1831,7 @@ export default function ItemOffers(props: any) {
                                                                     
                                                                     {(ValidateCurve(mintOwner) || (ValidateDAO(mintOwner))) && (
                                                                         <Grid item>
-                                                                            <OfferPrompt mint={mint} mintOwner={mintOwner} setRefreshOffers={setRefreshOffers} solBalance={sol_portfolio_balance} highestOffer={highestOffer} />
+                                                                            <OfferPrompt mint={mint} image={image} mintOwner={mintOwner} setRefreshOffers={setRefreshOffers} solBalance={sol_portfolio_balance} highestOffer={highestOffer} />
                                                                         </Grid>
                                                                     )}
                                                                     </>

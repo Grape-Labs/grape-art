@@ -1530,6 +1530,7 @@ function GalleryItemMeta(props: any) {
                                         mintAta={mintAta} 
                                         mintOwner={tokenOwners?.data.parsed.info.owner} 
                                         mint={mint} 
+                                        image={collectionitem.image}
                                         refreshOwner={refreshOwner}
                                         setRefreshOwner={setRefreshOwner} 
                                         setRefresh={props.setRefresh} 

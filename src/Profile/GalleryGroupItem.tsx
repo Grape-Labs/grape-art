@@ -95,7 +95,7 @@ export default function GalleryGroupItem(props: any){
                             return(
                                 <>
                                 {expanded && (
-                                    <Grid item xs={12} sm={12} md={4} lg={3} key={key}>
+                                    <Grid item xs={12} sm={12} md={4} lg={3} xl={2} key={key}>
                                         <Box
                                             sx={{
                                                 background: 'rgba(0, 0, 0, 0.6)',
