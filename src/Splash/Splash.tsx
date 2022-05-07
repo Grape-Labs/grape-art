@@ -88,6 +88,10 @@ import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import CircularProgress from '@mui/material/CircularProgress';
 
 import { GRAPE_RPC_ENDPOINT, GRAPE_RPC_REFRESH, GRAPE_PREVIEW, GRAPE_PROFILE, GRAPE_IDENTITY, FEATURED_DAO_ARRAY } from '../utils/grapeTools/constants';
+import { 
+    MARKET_LOGO
+} from '../utils/grapeTools/constants';
+
 import ShareSocialURL from '../utils/grapeTools/ShareUrl';
 import { MakeLinkableAddress, ValidateAddress, trimAddress, timeAgo } from '../utils/grapeTools/WalletAddress'; // global key handling
 import { ConstructionOutlined } from "@mui/icons-material";
@@ -215,7 +219,7 @@ export function SplashView(this: any, props: any) {
                                             display='flex'
                                             sx={{mt:2}}
                                         >
-                                            <img src="/grape_white_logo.svg" width="300px" className="header-logo" alt="Grape" />
+                                            <img src={MARKET_LOGO} width="300px" className="header-logo" alt="Grape" />
                                             .art
                                             </Typography>
                                         </Grid>

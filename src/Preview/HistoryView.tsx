@@ -110,7 +110,7 @@ export default function HistoryView(props: any){
 
             const apiUrl = "https://api-mainnet.magiceden.dev/v2/collections/"+symbol+"/stats";
             
-            const resp = await fetch(apiUrl, {
+            const resp = await window.fetch(apiUrl, {
                 method: 'GET',
                 redirect: 'follow',
                 //body: JSON.stringify(body),
@@ -133,7 +133,7 @@ export default function HistoryView(props: any){
 
             const apiUrl = "https://api-mainnet.magiceden.dev/v2/tokens/"+mint+"/activities?offset=0&limit=100";
             
-            const resp = await fetch(apiUrl, {
+            const resp = await window.fetch(apiUrl, {
                 method: 'GET',
                 redirect: 'follow',
                 //body: JSON.stringify(body),

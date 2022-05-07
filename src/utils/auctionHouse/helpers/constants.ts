@@ -1,5 +1,5 @@
 import { PublicKey } from '@solana/web3.js';
-import 'dotenv/config.js';
+//import 'dotenv/config.js';
 
 export const CANDY_MACHINE = 'candy_machine';
 export const AUCTION_HOUSE = 'auction_house';

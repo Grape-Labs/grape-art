@@ -34,8 +34,9 @@ import { useTranslation } from 'react-i18next';
 
 //import { WalletDialogProvider, WalletDisconnectButton, WalletMultiButton } from '../WalletAdapterMui';
 
-/*
+
 import {
+  GlowWalletAdapter,
   LedgerWalletAdapter,
   PhantomWalletAdapter,
   SlopeWalletAdapter,
@@ -43,13 +44,14 @@ import {
   SolletExtensionWalletAdapter,
   SolletWalletAdapter,
   TorusWalletAdapter,
-  //CloverWalletAdapter,
-  //MathWalletAdapter,
-  //Coin98WalletAdapter,
-  //SolongWalletAdapter,
+  CloverWalletAdapter,
+  MathWalletAdapter,
+  Coin98WalletAdapter,
+  SolongWalletAdapter,
 } from '@solana/wallet-adapter-wallets';
-*/
 
+
+/*
 import {
     getLedgerWallet,
     getPhantomWallet,
@@ -59,18 +61,18 @@ import {
     getSolletWallet,
     //getTorusWallet,
   } from '@solana/wallet-adapter-wallets';
-
+*/
 
 //import { mainListItems, secondaryListItems } from './components/SidebarList/SidebarList';
 import grapeTheme from  './utils/config/theme'
-import "./App.less";
+//import "./App.less";
 import { GRAPE_RPC_ENDPOINT, TX_RPC_ENDPOINT } from './utils/grapeTools/constants';
 
 function Copyright(props: any): JSX.Element {
   const { t, i18n } = useTranslation();
     return (
     <Typography sx={{background:'transparent'}} variant="body2" color="text.secondary" align="center" {...props}>
-      {t('Powered by Grape and Metaplex on Solana')}
+      {t('Powered by Grape on Solana')}
       {/*
       <Link color="inherit" href="https://verify.grapes.network">
         Grape Network | Dashboard v1.1.5
@@ -94,7 +96,7 @@ function DashboardContent() {
   //const endpoint =  GRAPE_RPC_ENDPOINT;
   const endpoint =  TX_RPC_ENDPOINT;
   const wallets = useMemo(() => [
-  
+  /*
     getPhantomWallet(),
     getSolflareWallet(),
     getSlopeWallet(),
@@ -105,7 +107,8 @@ function DashboardContent() {
     //getTorusWallet({
     //  options: { clientId: 'BCX2hQWDez2_qJhmSuQC7DXD4OG0VfGEFjCZfLar2EA5NvKyudCxOOlOcQ4YZbPGQhdwLonSXZr3i_siIJVhtwI' }
     //}),
-  /*  
+  */  
+    new GlowWalletAdapter(),
     new PhantomWalletAdapter(),
     new SlopeWalletAdapter(),
     new SolflareWalletAdapter(),
@@ -113,11 +116,10 @@ function DashboardContent() {
     new LedgerWalletAdapter(),
     new SolletWalletAdapter({ network }),
     new SolletExtensionWalletAdapter({ network }),
-  */  
-    //new CloverWalletAdapter(),
-    //new MathWalletAdapter(),
-    //new Coin98WalletAdapter(),
-    //new SolongWalletAdapter(),
+    new CloverWalletAdapter(),
+    new MathWalletAdapter(),
+    new Coin98WalletAdapter(),
+    new SolongWalletAdapter(),
   ], [network]);
   
   /*
@@ -157,11 +159,12 @@ function DashboardContent() {
                             <Grid
                               component="main"
                               sx={{
+                                  mt: 6,
                                   display: 'flex',
                                   flexGrow: 1
                               }}
                               >
-                              <Container maxWidth="xl" sx={{ mb: 4}}>
+                              <Container maxWidth="xl" sx={{ mb: 4 }}>
                                   <ConfirmDialog />
                                   <Routes>
 

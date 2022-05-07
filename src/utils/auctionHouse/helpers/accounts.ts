@@ -28,7 +28,7 @@ import fs from 'fs';
 //import { createConfigAccount } from './instructions';
 import { web3 } from '@project-serum/anchor';
 import log from 'loglevel';
-import { AccountLayout, u64 } from '@solana/spl-token';
+import { AccountLayout } from '@solana/spl-token';
 
 export type AccountAndPubkey = {
   pubkey: string;
@@ -42,6 +42,7 @@ export const deserializeAccount = (data: Buffer) => {
   const accountInfo = AccountLayout.decode(data);
   accountInfo.mint = new PublicKey(accountInfo.mint);
   accountInfo.owner = new PublicKey(accountInfo.owner);
+  /*
   accountInfo.amount = u64.fromBuffer(accountInfo.amount);
 
   if (accountInfo.delegateOption === 0) {
@@ -68,7 +69,7 @@ export const deserializeAccount = (data: Buffer) => {
   } else {
     accountInfo.closeAuthority = new PublicKey(accountInfo.closeAuthority);
   }
-
+  */
   return accountInfo;
 };
 

@@ -18,7 +18,7 @@ import {
     getMetadata,
   } from './helpers/accounts';
 import { getPriceWithMantissa } from './helpers/various';
-import { ASSOCIATED_TOKEN_PROGRAM_ID, Token } from '@solana/spl-token';
+import { ASSOCIATED_TOKEN_PROGRAM_ID, createApproveInstruction, createRevokeInstruction } from '@solana/spl-token';
 
 import { TokenAmount } from '../../utils/grapeTools/safe-math';
 
@@ -126,24 +126,25 @@ function convertSolVal(sol: any){
       ...(isNative
           ? []
           : [
-              Token.createApproveInstruction(
-                  TOKEN_PROGRAM_ID,
+              createApproveInstruction(
                   ata,
                   transferAuthority.publicKey,
                   buyerWalletKey, //walletKeyPair.publicKey, 
-                  [],
                   buyPriceAdjusted.toNumber(),
+                  [],
+                  TOKEN_PROGRAM_ID,
+                  
               ),
           ]),
       instruction,
       ...(isNative
           ? []
           : [
-              Token.createRevokeInstruction(
-                  TOKEN_PROGRAM_ID,
+              createRevokeInstruction(
                   ata,
                   buyerWalletKey, //walletKeyPair.publicKey, 
                   [],
+                  TOKEN_PROGRAM_ID,
               ),
           ]),
       ];

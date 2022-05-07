@@ -109,7 +109,8 @@ import { BN, web3 } from '@project-serum/anchor';
 import { getPriceWithMantissa } from '../utils/auctionHouse/helpers/various';
 
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
-import { WalletConnectButton } from "@solana/wallet-adapter-react-ui";
+//import { WalletConnectButton } from "@solana/wallet-adapter-react-ui";
+import { WalletConnectButton } from "@solana/wallet-adapter-material-ui";
 import  useWalletStore  from '../utils/governanceTools/useWalletStore';
 import { sendTransactions } from "../utils/governanceTools/sendTransactions";
 import { InstructionsAndSignersSet } from "../utils/auctionHouse/helpers/types";
@@ -967,7 +968,9 @@ export default function ItemOffers(props: any) {
                 });
             setTimeout(function() {
                 closeSnackbar(eskey);
-                props.setRefresh(true);
+                try{
+                    props.setRefresh(true);
+                }catch(err){console.log("ERR: "+err)}
                 //props.refreshOffers(true);
                 //props.setRefreshOwner(true);
             }, GRAPE_RPC_REFRESH);
@@ -1142,7 +1145,7 @@ export default function ItemOffers(props: any) {
           "id":1,
         };
 
-        const response = await fetch(GRAPE_RPC_ENDPOINT, {
+        const response = await window.fetch(GRAPE_RPC_ENDPOINT, {
           method: "POST",
           body: JSON.stringify(body),
           headers: { "Content-Type": "application/json" },
@@ -1565,7 +1568,9 @@ export default function ItemOffers(props: any) {
                 
                 setTimeout(function() {
                     closeSnackbar(eskey);
-                    props.setRefresh(true);
+                    try{
+                        props.setRefresh(true);
+                    }catch(err){console.log("ERR: "+err);}
                 }, GRAPE_RPC_REFRESH);
 
             /*}

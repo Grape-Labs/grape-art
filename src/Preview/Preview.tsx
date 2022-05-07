@@ -24,6 +24,10 @@ import { useSnackbar } from 'notistack';
 import { FollowListInfoResp, SearchUserInfoResp, Network } from '../utils/cyberConnect/types';
 import { followListInfoQuery, searchUserInfoQuery } from '../utils/cyberConnect/query';
 
+import { 
+    MARKET_LOGO
+} from '../utils/grapeTools/constants';
+
 import {
     Avatar,
     Chip,
@@ -250,7 +254,7 @@ function GrapeVerified(props:any){
 
             let meta_final = decodeMetadata(meta_response.data);
             
-            const metadata = await fetch(meta_final.data.uri).then(
+            const metadata = await window.fetch(meta_final.data.uri).then(
                 (res: any) => res.json());
             
             setCollectionName(metadata.name);
@@ -487,7 +491,7 @@ function GalleryItemMeta(props: any) {
           id: "35f0036a-3801-4485-b573-2bf29a7c77d2",
         };
     
-          const response = await fetch(GRAPE_RPC_ENDPOINT, {
+          const response = await window.fetch(GRAPE_RPC_ENDPOINT, {
             method: "POST",
             body: JSON.stringify(body),
             headers: { "Content-Type": "application/json" },
@@ -516,7 +520,7 @@ function GalleryItemMeta(props: any) {
           "id":1,
         };
     
-        const response = await fetch(GRAPE_RPC_ENDPOINT, {
+        const response = await window.fetch(GRAPE_RPC_ENDPOINT, {
           method: "POST",
           body: JSON.stringify(body),
           headers: { "Content-Type": "application/json" },
@@ -557,7 +561,7 @@ function GalleryItemMeta(props: any) {
           "id":1,
         };
     
-        const response = await fetch(GRAPE_RPC_ENDPOINT, {
+        const response = await window.fetch(GRAPE_RPC_ENDPOINT, {
           method: "POST",
           body: JSON.stringify(body),
           headers: { "Content-Type": "application/json" },
@@ -589,7 +593,7 @@ function GalleryItemMeta(props: any) {
           id: "35f0036a-3801-4485-b573-2bf29a7c77d3",
         };
     
-        const response = await fetch(GRAPE_RPC_ENDPOINT, {
+        const response = await window.fetch(GRAPE_RPC_ENDPOINT, {
           method: "POST",
           body: JSON.stringify(body),
           headers: { "Content-Type": "application/json" },
@@ -850,7 +854,7 @@ function GalleryItemMeta(props: any) {
     try{
         return (
             <Grid
-                sx={{mt:12}}
+                sx={{mt:6}}
             >
                 <Helmet>
                     <title>{`${collectionitem.name} | ${t('Grape Social. Stateless. Marketplace.')}`}</title>
@@ -1722,7 +1726,7 @@ export function PreviewView(this: any, props: any) {
                 
                 setCollectionRaw({meta_final,meta_response});
                 
-                const metadata = await fetch(meta_final.data.uri).then(
+                const metadata = await window.fetch(meta_final.data.uri).then(
                     (res: any) => res.json());
                 
                 return metadata;
@@ -1757,7 +1761,7 @@ export function PreviewView(this: any, props: any) {
             return (
                 <Card
                     sx={{
-                        mt:12,
+                        mt:4,
                         borderRadius: '20px',
                     }}
                 >
@@ -1825,7 +1829,7 @@ export function PreviewView(this: any, props: any) {
                         <Box
                             sx={{ 
                                 p: 1, 
-                                mt: 10,
+                                mt: 6,
                                 mb: 3, 
                                 width: '100%',
                                 background: '#13151C',
@@ -1851,7 +1855,7 @@ export function PreviewView(this: any, props: any) {
                                             display='flex'
                                             sx={{mt:2,mb:3}}
                                         >
-                                            <img src="/grape_white_logo.svg" width="300px" className="header-logo" alt="Grape" />
+                                            <img src={MARKET_LOGO} width="300px" className="header-logo" alt="Grape" />
                                             .art
                                         </Typography>
                                     </Grid>

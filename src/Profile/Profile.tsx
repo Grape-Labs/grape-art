@@ -87,6 +87,10 @@ import SearchIcon from '@mui/icons-material/Search';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import CircularProgress from '@mui/material/CircularProgress';
 
+import { 
+    MARKET_LOGO
+} from '../utils/grapeTools/constants';
+
 import { GRAPE_RPC_ENDPOINT, GRAPE_RPC_REFRESH, GRAPE_PREVIEW, GRAPE_PROFILE, GRAPE_IDENTITY, FEATURED_DAO_ARRAY } from '../utils/grapeTools/constants';
 import ShareSocialURL from '../utils/grapeTools/ShareUrl';
 import FeedView from './FeedView';
@@ -95,7 +99,6 @@ import SocialView from './SocialView';
 import GalleryView from './GalleryView';
 import CurationView from './CurationView';
 import { MakeLinkableAddress, ValidateAddress, trimAddress, timeAgo } from '../utils/grapeTools/WalletAddress'; // global key handling
-import { ConstructionOutlined } from "@mui/icons-material";
 
 import { useTranslation } from 'react-i18next';
 
@@ -299,7 +302,7 @@ const GalleryItem = (props: any) => {
                 let buf = Buffer.from(meta_primer.data, 'base64');
                 let meta_final = decodeMetadata(buf);
                 
-                const metadata = await fetch(meta_final.data.uri).then(
+                const metadata = await window.fetch(meta_final.data.uri).then(
                     (res: any) => res.json());
                 
                 return metadata;
@@ -604,11 +607,10 @@ const MainPanel = (props: any) => {
         )
     } else{
         return (
-            <Grid item xs={12} sm={7} md={9} lg={9} xl={10}>
+            <Grid item xs={12} sm={6} md={9} lg={9} xl={10}>
                 <Box
                     sx={{
-                    }} 
-                > 
+                    }}                 > 
                     <Grid container 
                         justifyContent="center"
                         alignItems="center">
@@ -1023,9 +1025,13 @@ const IdentityView = (props: any) => {
             if (pubkey === publicKey.toBase58()){
                 if (solanaDomain){
                     let sppicon = '';
-                    if (profilePictureUrl)
-                        sppicon = '<i class="wallet-adapter-button-start-icon"><img style="border-radius:24px" src="'+profilePictureUrl+'" alt="Solana Profile Icon"></i>';
-                    document.getElementsByClassName("wallet-adapter-button")[0].innerHTML = sppicon+'<span class="wallet-adapter-solana-domain">'+solanaDomain+'</span>';
+                    try{
+                        if (profilePictureUrl)
+                            sppicon = '<i class="wallet-adapter-button-start-icon"><img style="border-radius:24px"" src="'+profilePictureUrl+'" alt="Solana Profile Icon"></i>';
+                        document.getElementsByClassName("grape-wallet-button")[0].innerHTML = sppicon+'<span class="wallet-adapter-solana-domain">'+solanaDomain+'</span>';
+                    }catch(e){
+
+                    }
                 }
             }
         }
@@ -1353,7 +1359,7 @@ export function ProfileView(this: any, props: any) {
           id: "35f0036a-3801-4485-b573-2bf29a7c77d4",
         };
         
-        const response = await fetch(GRAPE_RPC_ENDPOINT, {
+        const response = await window.fetch(GRAPE_RPC_ENDPOINT, {
           method: "POST",
           body: JSON.stringify(body),
           headers: { "Content-Type": "application/json" },
@@ -1427,8 +1433,10 @@ export function ProfileView(this: any, props: any) {
             );
             const registry = await NameRegistryState.retrieve(connection, new PublicKey(domainKey));
             
-            if (!registry?.nftOwner) {
-                throw new Error("Could not retrieve name data");
+            if (!registry){
+                if (!registry?.nftOwner) {
+                    throw new Error("Could not retrieve name data");
+                }
             }
 
             setPubkey(registry.nftOwner.toBase58());
@@ -1559,7 +1567,7 @@ export function ProfileView(this: any, props: any) {
                 <Box
                     sx={{ 
                         p: 1, 
-                        mt: 12, 
+                        mt: 6, 
                         mb: 3, 
                         width: '100%',
                         background: '#13151C',
@@ -1595,8 +1603,7 @@ export function ProfileView(this: any, props: any) {
         <React.Fragment>
             <Box
                 sx={{
-                    mt: 12,
-                    
+                    mt: 6,
                 }}
             >
                 <Box>  
@@ -1627,7 +1634,7 @@ export function ProfileView(this: any, props: any) {
                                             display='flex'
                                             sx={{mt:2}}
                                         >
-                                            <img src="/grape_white_logo.svg" width="300px" className="header-logo" alt="Grape" />
+                                            <img src={MARKET_LOGO} width="300px" className="header-logo" alt="Grape" />
                                             .art
                                             </Typography>
                                         </Grid>

@@ -300,7 +300,7 @@ const GalleryItem = (props: any) => {
                 let buf = Buffer.from(meta_primer.data, 'base64');
                 let meta_final = decodeMetadata(buf);
                 
-                const metadata = await fetch(meta_final.data.uri).then(
+                const metadata = await window.fetch(meta_final.data.uri).then(
                     (res: any) => res.json());
                 
                 return metadata;
@@ -786,7 +786,7 @@ export function StoreFrontView(this: any, props: any) {
     const fetchVerifiedCollection = async(address:string) => {
         try{
             const url = './verified_collections.json';
-            const response = await fetch(url, {
+            const response = await window.fetch(url, {
                 method: 'GET',
                 headers: {
                 }
@@ -804,7 +804,7 @@ export function StoreFrontView(this: any, props: any) {
     const fetchMintList = async(address:string) => {
         try{
             const url = './'+address+'.json';
-            const response = await fetch(url, {
+            const response = await window.fetch(url, {
                 method: 'GET',
                 headers: {
                 }

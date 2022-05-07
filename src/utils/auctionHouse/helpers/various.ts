@@ -3,7 +3,7 @@ import fs from 'fs';
 import weighted from 'weighted';
 import path from 'path';
 import { Program, web3 } from '@project-serum/anchor';
-import { Token, TOKEN_PROGRAM_ID } from '@solana/spl-token';
+import { TOKEN_PROGRAM_ID, getMint } from '@solana/spl-token';
 
 //const { readFile } = fs.promises;
 
@@ -296,15 +296,22 @@ export const getPriceWithMantissa = async (
   walletKeyPair: any,
   anchorProgram: Program,
 ): Promise<number> => {
+  
+  /*
   const token = new Token(
     anchorProgram.provider.connection,
     new web3.PublicKey(mint),
     TOKEN_PROGRAM_ID,
     walletKeyPair,
   );
-
+  
   const mintInfo = await token.getMintInfo();
-
+    */
+  const mintInfo = await getMint(
+      anchorProgram.provider.connection,
+      new web3.PublicKey(mint),
+      walletKeyPair
+  );
   const mantissa = 10 ** mintInfo.decimals;
 
   return Math.ceil(price * mantissa);

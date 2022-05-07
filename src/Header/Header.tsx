@@ -17,11 +17,21 @@ import {
     MARKET_LOGO
 } from '../utils/grapeTools/constants';
 
+
+import {
+    WalletDialogProvider,
+    WalletDisconnectButton,
+    WalletMultiButton
+} from '@solana/wallet-adapter-material-ui';
+
+//require('@solana/wallet-adapter-react-ui/styles.css');
+/*
 import {
     WalletModalProvider,
     WalletDisconnectButton,
     WalletMultiButton
 } from '@solana/wallet-adapter-react-ui';
+*/
 
 import {
     MenuItem,
@@ -44,8 +54,6 @@ import { GRAPE_PROFILE, GRAPE_PREVIEW } from '../utils/grapeTools/constants';
 import { ValidateAddress } from '../utils/grapeTools/WalletAddress'; // global key handling
 
 import { useTranslation } from 'react-i18next';
-
-require('@solana/wallet-adapter-react-ui/styles.css');
 
 export interface State extends SnackbarOrigin {
     open: boolean;
@@ -114,7 +122,6 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
 export function Header(props: any) {
     const { open_menu } = props;
     const [open_snackbar, setSnackbarState] = React.useState(false);
-    
     const [tokenParam, setTokenParam] = React.useState(getParam('token'));
     const [discordId, setDiscordId] = React.useState(getParam('discord_id'));
     const [userId, setUserId] = React.useState(getParam('user_id'));
@@ -199,7 +206,6 @@ export function Header(props: any) {
             );
             setNewInputPKValue('');
         } else if (newinputpkvalue && newinputpkvalue.length>0){
-            
             if (newinputpkvalue.toLocaleUpperCase().indexOf("MINT:") > -1){
                 let mint = newinputpkvalue.slice(5,newinputpkvalue.length);
                 if (ValidateAddress(mint)){
@@ -263,12 +269,11 @@ export function Header(props: any) {
                     </Tooltip>
                 </Container>
 
-
             </Box>
-            <div>
-                <WalletModalProvider>
-                    <WalletMultiButton />
-                </WalletModalProvider>
+            <div className="grape-wallet-adapter">
+                <WalletDialogProvider className="grape-wallet-provider">
+                    <WalletMultiButton className="grape-wallet-button" />
+                </WalletDialogProvider>
             </div>
         </Toolbar>
         

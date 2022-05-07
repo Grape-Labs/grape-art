@@ -223,7 +223,7 @@ export default function FeedView(props: any){
                 let meta_final = decodeMetadata(buf);
                 //setCollectionRaw({meta_final,meta_primer});
     
-                const metadata = await fetch(meta_final.data.uri).then(
+                const metadata = await window.fetch(meta_final.data.uri).then(
                     (res: any) => res.json());
                 
                 return metadata;

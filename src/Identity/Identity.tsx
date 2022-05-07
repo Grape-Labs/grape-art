@@ -42,6 +42,10 @@ import {
     TabPanel,
 } from '@mui/lab';
 
+import { 
+    MARKET_LOGO
+} from '../utils/grapeTools/constants';
+
 import PortraitIcon from '@mui/icons-material/Portrait';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import PublicIcon from '@mui/icons-material/Public';
@@ -155,7 +159,7 @@ export function IdentityView(props: any){
             ],
             id: "35f0036a-3801-4485-b573-2bf29a7c77d2",
         };
-        const resp = await fetch(GRAPE_RPC_ENDPOINT, {
+        const resp = await window.fetch(GRAPE_RPC_ENDPOINT, {
             method: "POST",
             body: JSON.stringify(body),
             headers: { "Content-Type": "application/json" },
@@ -245,7 +249,7 @@ export function IdentityView(props: any){
         );
     } else{
         return (
-            <Container sx={{mt:12}}>
+            <Container sx={{mt:4}}>
                     <Box
                         className="grape-art-generic-placeholder-container"
                     > 
@@ -272,7 +276,7 @@ export function IdentityView(props: any){
                                                 display='flex'
                                                 sx={{mt:2}}
                                             >
-                                                <img src="/grape_white_logo.svg" width="300px" className="header-logo" alt="Grape" />
+                                                <img src={MARKET_LOGO} width="300px" className="header-logo" alt="Grape" />
                                                 .art
                                                 </Typography>
                                         </Button>
@@ -502,19 +506,19 @@ export function IdentityView(props: any){
                                                                 :
                                                                 <>
                                                                     <ListItemAvatar>
-                                                                        {tokenMap.get(item.account.data.parsed.info.mint)?.logoURI ?
+                                                                            {item.account.data.parsed.info?.mint && tokenMap.get(item.account.data.parsed.info?.mint)?.logoURI ?
+                                                                                <Avatar
+                                                                                    sx={{backgroundColor:'#222'}}
+                                                                                    src={tokenMap.get(item.account.data.parsed.info.mint)?.logoURI}
+                                                                                    alt={tokenMap.get(item.account.data.parsed.info.mint)?.name || item.account.data.parsed.info.mint}
+                                                                                />
+                                                                            :
                                                                             <Avatar
                                                                                 sx={{backgroundColor:'#222'}}
-                                                                                src={tokenMap.get(item.account.data.parsed.info.mint)?.logoURI}
-                                                                                alt={tokenMap.get(item.account.data.parsed.info.mint)?.name || item.account.data.parsed.info.mint}
-                                                                            />
-                                                                        :
-                                                                        <Avatar
-                                                                            sx={{backgroundColor:'#222'}}
-                                                                        >
-                                                                            <QrCode2Icon sx={{color:'white'}} />
-                                                                        </Avatar>
-                                                                        }
+                                                                            >
+                                                                                <QrCode2Icon sx={{color:'white'}} />
+                                                                            </Avatar>
+                                                                            }
                                                                     </ListItemAvatar>
                                                                     <ListItemText
                                                                         primary={((new TokenAmount(item.account.data.parsed.info.tokenAmount.amount, item.account.data.parsed.info.tokenAmount.decimals).format()))}

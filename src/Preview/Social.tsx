@@ -2,8 +2,8 @@ import React, { useEffect, useState, useCallback, memo } from "react";
 
 import CyberConnect, { Env, Blockchain, solana, ConnectionType } from '@cyberlab/cyberconnect';
 
-import { Connection, PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js'
-import { Token, TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID } from "@solana/spl-token";
+import { Connection, PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js';
+import { TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID, getAssociatedTokenAddress, createAssociatedTokenAccountInstruction, createTransferInstruction } from "@solana/spl-token";
 
 import { styled } from '@mui/material/styles';
 import { Button } from '@mui/material';
@@ -403,18 +403,20 @@ export function SocialFlags(props: any){
             const accountParsed = JSON.parse(JSON.stringify(accountInfo.value.data));
             const decimals = accountParsed.parsed.info.decimals;
 
-            let fromAta = await Token.getAssociatedTokenAddress( // calculate from ATA
-                ASSOCIATED_TOKEN_PROGRAM_ID, // always ASSOCIATED_TOKEN_PROGRAM_ID
-                TOKEN_PROGRAM_ID, // always TOKEN_PROGRAM_ID
+            let fromAta = await getAssociatedTokenAddress( // calculate from ATA
                 mintPubkey, // mint
-                fromWallet // from owner
+                fromWallet, // from owner
+                true,
+                TOKEN_PROGRAM_ID, // always TOKEN_PROGRAM_ID
+                ASSOCIATED_TOKEN_PROGRAM_ID, // always ASSOCIATED_TOKEN_PROGRAM_ID
             );
             
-            let toAta = await Token.getAssociatedTokenAddress( // calculate to ATA
-                ASSOCIATED_TOKEN_PROGRAM_ID, // always ASSOCIATED_TOKEN_PROGRAM_ID
-                TOKEN_PROGRAM_ID, // always TOKEN_PROGRAM_ID
+            let toAta = await getAssociatedTokenAddress( // calculate to ATA
                 mintPubkey, // mint
-                toWallet // to owner
+                toWallet, // to owner
+                true,
+                TOKEN_PROGRAM_ID, // always TOKEN_PROGRAM_ID
+                ASSOCIATED_TOKEN_PROGRAM_ID, // always ASSOCIATED_TOKEN_PROGRAM_ID
             );
             
             const adjustedAmountToSend = amountToSend * Math.pow(10, decimals);
@@ -423,23 +425,24 @@ export function SocialFlags(props: any){
             if (receiverAccount === null) { // initialize token
                 const transaction = new Transaction()
                 .add(
-                    Token.createAssociatedTokenAccountInstruction(
-                        ASSOCIATED_TOKEN_PROGRAM_ID, // always ASSOCIATED_TOKEN_PROGRAM_ID
-                        TOKEN_PROGRAM_ID, // always TOKEN_PROGRAM_ID
-                        mintPubkey, // mint
-                        toAta, // ata
+                    createAssociatedTokenAccountInstruction(
                         toWallet, // owner of token account
-                        fromWallet // fee payer
+                        toAta, // ata
+                        fromWallet, // fee payer
+                        mintPubkey, // mint
+                        TOKEN_PROGRAM_ID, // always TOKEN_PROGRAM_ID
+                        ASSOCIATED_TOKEN_PROGRAM_ID, // always ASSOCIATED_TOKEN_PROGRAM_ID
+                        
                     )
                 )
                 .add(
-                    Token.createTransferInstruction(
-                        TOKEN_PROGRAM_ID,
+                    createTransferInstruction(
                         fromAta,
                         toAta,
                         publicKey,
-                        [],
                         adjustedAmountToSend,
+                        [],
+                        TOKEN_PROGRAM_ID,
                     )
                 ).add(
                     new TransactionInstruction({
@@ -474,13 +477,13 @@ export function SocialFlags(props: any){
             } else{ // token already in wallet
                 const transaction = new Transaction()
                 .add(
-                    Token.createTransferInstruction(
-                    TOKEN_PROGRAM_ID,
-                    fromAta,
-                    toAta,
-                    publicKey,
-                    [],
-                    adjustedAmountToSend,
+                    createTransferInstruction(
+                        fromAta,
+                        toAta,
+                        publicKey,
+                        adjustedAmountToSend,
+                        [],
+                        TOKEN_PROGRAM_ID,
                     )
                 )
                 .add(

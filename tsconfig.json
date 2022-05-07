@@ -1,33 +1,34 @@
 {
-  "compilerOptions": {
-    "target": "es5",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    "strictPropertyInitialization": false,
-    "strictNullChecks": false,
-    "allowSyntheticDefaultImports": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "noFallthroughCasesInSwitch": true,
-    "module": "esnext",
-    "moduleResolution": "node",
-    "downlevelIteration": true,
-    "resolveJsonModule": true,
-    "noEmit": true,
-    "noImplicitAny": false,
-    "typeRoots": [
-      "./types"
-    ],
-    "jsx": "react-jsx",
-    "isolatedModules": true
-  },
-  "include": [
-    "src"
-  ]
-}
+    "compilerOptions": {
+      "target": "es5",
+      "lib": [
+        "dom",
+        "dom.iterable",
+        "esnext"
+      ],
+      "allowJs": true,
+      "skipLibCheck": true,
+      "esModuleInterop": true,
+      "strictPropertyInitialization": false,
+      "strictNullChecks": false,
+      "allowSyntheticDefaultImports": true,
+      "strict": true,
+      "forceConsistentCasingInFileNames": true,
+      "noFallthroughCasesInSwitch": true,
+      "module": "esnext",
+      "moduleResolution": "node",
+      "downlevelIteration": true,
+      "resolveJsonModule": true,
+      "noEmit": true,
+      "noImplicitAny": false,
+      "typeRoots": [
+        "./types"
+      ],
+      "jsx": "react-jsx",
+      "isolatedModules": true
+    },
+    "include": [
+      "src"
+    ]
+  }
+  

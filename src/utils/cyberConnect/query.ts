@@ -160,7 +160,7 @@ export const querySchemas = {
 
 export const request = async (url = "", data = {}) => {
   // Default options are marked with *
-  const response = await fetch(url, {
+  const response = await window.fetch(url, {
     method: "POST",
     mode: "cors",
     cache: "no-cache",

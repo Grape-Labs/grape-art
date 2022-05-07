@@ -20,7 +20,7 @@ import {
   } from './helpers/accounts';
 import { getPriceWithMantissa } from './helpers/various';
 import { decodeMetadata, Metadata } from './helpers/schema';
-import { ASSOCIATED_TOKEN_PROGRAM_ID, Token } from '@solana/spl-token';
+import { ASSOCIATED_TOKEN_PROGRAM_ID, createApproveInstruction, createRevokeInstruction } from '@solana/spl-token';
 
 export async function buyNowListing(offerAmount: number, mint: string, walletPublicKey: string, buyerAddress: PublicKey): Promise<InstructionsAndSignersSet> {
   //START BUY
@@ -114,24 +114,25 @@ export async function buyNowListing(offerAmount: number, mint: string, walletPub
     ...(isNative
         ? []
         : [
-            Token.createApproveInstruction(
-                TOKEN_PROGRAM_ID,
+            createApproveInstruction(
                 ata,
                 transferAuthority.publicKey,
                 buyerAddress,
-                [],
                 buyPriceAdjusted.toNumber(),
+                [],
+                TOKEN_PROGRAM_ID,
+                
             ),
         ]),
     instruction,
     ...(isNative
         ? []
         : [
-            Token.createRevokeInstruction(
-                TOKEN_PROGRAM_ID,
+            createRevokeInstruction(
                 ata,
                 buyerAddress,
                 [],
+                TOKEN_PROGRAM_ID,
             ),
         ]),
   ];

@@ -50,7 +50,7 @@ export default function GalleryItem(props: any){
                     //let meta_final = decodeMetadata(buf);
                     let meta_final = collectionitem.meta;
                     try{
-                        const metadata = await fetch(meta_final.data.uri)
+                        const metadata = await window.fetch(meta_final.data.uri)
                         .then(
                             (res: any) => res.json()
                         );
