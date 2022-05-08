@@ -68,6 +68,11 @@ import {
 
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
 
+import LanguageIcon from '@mui/icons-material/Language';
+import TwitterIcon from '@mui/icons-material/Twitter';
+import InstagramIcon from '@mui/icons-material/Instagram';
+
+import DiscordIcon from '../components/static/DiscordIcon';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import ArtTrackOutlinedIcon from '@mui/icons-material/ArtTrackOutlined';
 import CollectionsOutlinedIcon from '@mui/icons-material/CollectionsOutlined';
@@ -1045,6 +1050,9 @@ export function StoreFrontView(this: any, props: any) {
                 >
                     <Box
                         className='grape-store-splash'
+                        sx={{
+                            mt:-16
+                        }}
                     >
                         <img
                             src={GRAPE_COLLECTIONS_DATA+collectionAuthority.splash}
@@ -1067,11 +1075,11 @@ export function StoreFrontView(this: any, props: any) {
                         sx={{
                             m:10,
                             mb:4,
-                            mt:-12,
+                            mt:-14,
                             p:1,
                             textAlign:'center',
                             borderRadius:'24px',
-                            background:'green'
+                            background: 'rgba(0, 0, 0, 0.6)',
                         }}
                     >
 
@@ -1097,9 +1105,50 @@ export function StoreFrontView(this: any, props: any) {
                             <Typography variant="h6">
                                 {collectionAuthority.author}
                             </Typography>
+
+                            <Typography variant="caption">
+                                {collectionAuthority.description}
+                            </Typography>
+
+                            <Box sx={{ justifyContent: 'flex-end' }}>
+                                {collectionAuthority.links?.url &&
+                                    <Button 
+                                        target='_blank' href={collectionAuthority.links.url}
+                                        sx={{
+                                            verticalAlign: 'middle',
+                                            display: 'inline-flex',
+                                            borderRadius:'17px'}}
+                                    >
+                                        <LanguageIcon sx={{m:0.75,color:'white',borderRadius:'17px'}} />
+                                    </Button>
+                                }
+                                {collectionAuthority.links?.discord &&
+                                    <Button 
+                                        target='_blank' href={`https://${collectionAuthority.links.discord}`}
+                                        sx={{
+                                        verticalAlign: 'middle',
+                                        display: 'inline-flex',
+                                        borderRadius:'17px'
+                                    }}>
+                                        <DiscordIcon sx={{mt:1,fontSize:27.5,color:'white'}} />
+                                    </Button>
+                                }
+                                {collectionAuthority.links?.twitter &&
+                                    <Button 
+                                        target='_blank' href={`https://twitter.com/${collectionAuthority.links.twitter}`}
+                                        sx={{
+                                            verticalAlign: 'middle',
+                                            display: 'inline-flex',
+                                            borderRadius:'17px'
+                                        }}
+                                    >
+                                        <TwitterIcon sx={{m:0.75,color:'white'}} />
+                                    </Button>
+                                }
+                            </Box>
                         </Box>
                         
-                        <Grid container spacing={0.5}>
+                        <Grid container spacing={0} sx={{mt:-2}}>
                             <Grid item xs={12} sm={12} md={4} key={1}>
                                 <Box
                                     className='grape-store-stat-item'

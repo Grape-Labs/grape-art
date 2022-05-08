@@ -2,7 +2,7 @@ import SvgIcon, { SvgIconProps } from '@mui/material/SvgIcon';
 
 export default function DiscordIcon(props: SvgIconProps) {
     return (
-      <SvgIcon {...props}>
+      <SvgIcon {...props} viewBox='0 0 24 24'>
         <path d="M17.2,3.6C14.9,1.8,13,1.5,13,1.5l-0.2,0.3c2.8,0.9,3.7,2.5,3.7,2.5c-1.7-1-3.4-1.4-4.9-1.6
               c-1.2-0.2-2.3-0.1-3.3,0c-0.1,0-0.2,0-0.3,0C7.4,2.8,6,3,4.3,3.7c-0.6,0.3-1,0.4-1,0.4s1.1-1.6,4.1-2.4L7.1,1.5c0,0-2,0.3-4.3,2.1
               c0,0-2.3,4.3-2.3,9.5c0,0,1.4,2.3,4.9,2.4c0,0,0.4-0.4,0.9-1c-2.1-0.6-2.7-2.2-2.7-2.2s0.2,0.1,0.4,0.3c0,0,0,0,0.1,0
