@@ -52,6 +52,17 @@ code {
   backdrop-filter: blur(12.5px);
 }
 
+.grape-store-splash{
+  z-index:-999!important;
+}
+.grape-store-info{
+  z-index:999!important;
+}
+
+.grape-store-background{
+  background: linear-gradient(to right, #4597D6 0%, #8D41A7 48.6%, #36325D 90.62%, #251A3A 100%);
+}
+
 .grape-art-profile-img{
   opacity: 0.1;
   position: absolute;

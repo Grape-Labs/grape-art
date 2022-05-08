@@ -130,7 +130,7 @@ export function Header(props: any) {
     
     const [anchorEl, setAnchorEl] = React.useState(null);
     const isWalletOpen = Boolean(anchorEl);
-    const [newinputpkvalue, setNewInputPKValue] = React.useState(null);
+    const [newinputpkvalue, setNewInputPKValue] = React.useState("");
     const navigate = useNavigate();
     const location = useLocation();
     const currPath = location.pathname;

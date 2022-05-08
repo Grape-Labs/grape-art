@@ -90,7 +90,7 @@ import {
     METAPLEX_PROGRAM_ID,
 } from '../utils/auctionHouse/helpers/constants';
 
-import { GRAPE_RPC_ENDPOINT, GRAPE_PREVIEW, GRAPE_PROFILE, FEATURED_DAO_ARRAY } from '../utils/grapeTools/constants';
+import { GRAPE_RPC_ENDPOINT, GRAPE_PREVIEW, GRAPE_PROFILE, FEATURED_DAO_ARRAY, GRAPE_COLLECTIONS_DATA } from '../utils/grapeTools/constants';
 import ShareSocialURL from '../utils/grapeTools/ShareUrl';
 
 import GalleryView from '../Profile/GalleryView';
@@ -785,7 +785,8 @@ export function StoreFrontView(this: any, props: any) {
     
     const fetchVerifiedCollection = async(address:string) => {
         try{
-            const url = './verified_collections.json';
+            //const url = './verified_collections.json';
+            const url = GRAPE_COLLECTIONS_DATA+'verified_collections.json';
             const response = await window.fetch(url, {
                 method: 'GET',
                 headers: {
@@ -803,7 +804,8 @@ export function StoreFrontView(this: any, props: any) {
 
     const fetchMintList = async(address:string) => {
         try{
-            const url = './'+address+'.json';
+            const url = GRAPE_COLLECTIONS_DATA+address+'.json';
+            console.log("with: "+url);
             const response = await window.fetch(url, {
                 method: 'GET',
                 headers: {
@@ -1041,10 +1043,12 @@ export function StoreFrontView(this: any, props: any) {
                     width:'100%',
                 }}
                 >
-                    <Box>
+                    <Box
+                        className='grape-store-splash'
+                    >
                         <img
-                            src={collectionAuthority.splash}
-                            srcSet={collectionAuthority.splash}
+                            src={GRAPE_COLLECTIONS_DATA+collectionAuthority.splash}
+                            srcSet={GRAPE_COLLECTIONS_DATA+collectionAuthority.splash}
                             alt={collectionAuthority.name}
                             loading="lazy"
                             height="auto"
@@ -1066,13 +1070,14 @@ export function StoreFrontView(this: any, props: any) {
                             mt:-12,
                             p:1,
                             textAlign:'center',
-                            borderRadius:'24px'
+                            borderRadius:'24px',
+                            background:'green'
                         }}
                     >
 
                         <img
-                            src={collectionAuthority.logo}
-                            srcSet={collectionAuthority.logo}
+                            src={GRAPE_COLLECTIONS_DATA+collectionAuthority.logo}
+                            srcSet={GRAPE_COLLECTIONS_DATA+collectionAuthority.logo}
                             alt={collectionAuthority.name}
                             //onClick={ () => openImageViewer(0) }
                             loading="lazy"

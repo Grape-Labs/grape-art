@@ -25,6 +25,8 @@ export const REPORT_ALERT_THRESHOLD = 1;
 export const TOKEN_REALM_ID = 'By2sVGZXwfQq6rAiAM3rNPJ9iQfb5e2QhnF4YjJ4Bip';
 export const TOKEN_REALM_PROGRAM_ID = 'GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw';
 
+export const GRAPE_COLLECTIONS_DATA = 'https://raw.githubusercontent.com/Grape-Labs/api.grape.io/main/collections/';
+
 export const VERIFIED_DAO_ARRAY = [
     {
         address:'JAbgQLj9MoJ2Kvie8t8Y6z6as3Epf7rDp87Po3wFwrNK',
@@ -40,7 +42,7 @@ export const VERIFIED_DAO_ARRAY = [
 export const FEATURED_DAO_ARRAY = [{
     address:'66pJhhESDjdeBBDdkKmxYYd7q6GUggYPWjxpMKNX39KV',
     daourl:'https://realms.today/dao/Ukraine',
-    img:'/solana4ukraine.png',
+    img:'../../public/solana4ukraine.png',
     title:'Solana for Ukraine',
     text:'NFT Artists come together in the DAO made exlusively to help out Ukraine, all proceeds of these NFT\'s will be donated to help the Ukrainian people'
 }]

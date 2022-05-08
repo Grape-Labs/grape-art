@@ -27,7 +27,7 @@ export function FeaturedView(props: any) {
 const { t, i18n } = useTranslation();
     
   return (
-        <>
+        <Grid sx={{mt:6}}>
             {FEATURED_DAO_ARRAY.map((featured: any, key: number) => (
             <Card sx={{borderRadius:'26px',mb:2}}>
                 <CardActionArea
@@ -95,6 +95,6 @@ const { t, i18n } = useTranslation();
                 </CardActions>
             </Card> 
             ))}
-        </>
+        </Grid>
   );
 }

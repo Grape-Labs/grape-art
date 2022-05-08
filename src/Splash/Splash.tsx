@@ -191,7 +191,7 @@ export function SplashView(this: any, props: any) {
         <React.Fragment>
             <Box
                 sx={{
-                    mt: 2,
+                    mt: 6,
                     
                 }}
             >
