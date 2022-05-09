@@ -1434,12 +1434,15 @@ export function ProfileView(this: any, props: any) {
             const registry = await NameRegistryState.retrieve(connection, new PublicKey(domainKey));
             
             if (!registry){
-                if (!registry?.nftOwner) {
+                if (!registry?.registry?.owner?.toBase58()) {
                     throw new Error("Could not retrieve name data");
                 }
             }
 
-            setPubkey(registry.nftOwner.toBase58());
+            //console.log("registry.nftOwner.toBase58(): "+registry?.nftOwner?.toBase58());
+            //console.log("registry.registry.owner.toBase58(): "+registry?.registry?.owner?.toBase58());
+
+            setPubkey(registry?.registry?.owner?.toBase58());
             setRDLoading(false);
         }
     }
