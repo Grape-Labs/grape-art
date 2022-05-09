@@ -37,12 +37,12 @@ import { useTranslation } from 'react-i18next';
 
 
 import {
-  GlowWalletAdapter,
-  LedgerWalletAdapter,
+  //LedgerWalletAdapter,
   PhantomWalletAdapter,
-  SlopeWalletAdapter,
+  GlowWalletAdapter,
   SolflareWalletAdapter,
   SolletExtensionWalletAdapter,
+  SlopeWalletAdapter,
   SolletWalletAdapter,
   TorusWalletAdapter,
   CloverWalletAdapter,
@@ -109,12 +109,12 @@ function DashboardContent() {
     //  options: { clientId: 'BCX2hQWDez2_qJhmSuQC7DXD4OG0VfGEFjCZfLar2EA5NvKyudCxOOlOcQ4YZbPGQhdwLonSXZr3i_siIJVhtwI' }
     //}),
   */  
-    new GlowWalletAdapter(),
     new PhantomWalletAdapter(),
-    new SlopeWalletAdapter(),
+    new GlowWalletAdapter(),
     new SolflareWalletAdapter(),
+    new SlopeWalletAdapter(),
     new TorusWalletAdapter(),
-    new LedgerWalletAdapter(),
+    //new LedgerWalletAdapter(),
     new SolletWalletAdapter({ network }),
     new SolletExtensionWalletAdapter({ network }),
     new CloverWalletAdapter(),
