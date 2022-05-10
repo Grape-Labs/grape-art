@@ -191,7 +191,8 @@ export default function OffersView(props:any){
             }, GRAPE_RPC_REFRESH);
         }catch(e){
             closeSnackbar();
-            enqueueSnackbar(`${t('Error')}: ${(e)}`,{ variant: 'error' });
+            enqueueSnackbar(e.message ? `${e.name}: ${e.message}` : e.name, { variant: 'error' });
+            //enqueueSnackbar(`${t('Error')}: ${(e)}`,{ variant: 'error' });
             console.log("Error: "+e);
             //console.log("Error: "+JSON.stringify(e));
         }  
@@ -241,7 +242,8 @@ export default function OffersView(props:any){
                 AUCTION_HOUSE_ADDRESS, '. New Balance:', currBal - amountAdjusted,);*/
         } catch(e){
             closeSnackbar()
-            enqueueSnackbar(`Error: ${(e)}`,{ variant: 'error' });
+            enqueueSnackbar(e.message ? `${e.name}: ${e.message}` : e.name, { variant: 'error' });
+            //enqueueSnackbar(`Error: ${(e)}`,{ variant: 'error' });
             console.log("Error: "+e);
             //console.log("Error: "+JSON.stringify(e));
         }  

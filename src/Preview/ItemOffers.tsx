@@ -511,7 +511,8 @@ function SellNowPrompt(props:any){
                 }, GRAPE_RPC_REFRESH);
             } catch(e){
                 closeSnackbar();
-                enqueueSnackbar(`Error: ${e}`,{ variant: 'error' });
+                enqueueSnackbar(e.message ? `${e.name}: ${e.message}` : e.name, { variant: 'error' });
+                //enqueueSnackbar(`Error: ${e}`,{ variant: 'error' });
                 console.log("Error: "+e);
                 //console.log("Error: "+JSON.stringify(e));
             } 
@@ -693,7 +694,7 @@ export function OfferPrompt(props: any) {
                         }, GRAPE_RPC_REFRESH);
                 } catch(e){
                     closeSnackbar();
-                    enqueueSnackbar(`Error: ${e}`,{ variant: 'error' });
+                    enqueueSnackbar(e.message ? `${e.name}: ${e.message}` : e.name, { variant: 'error' });
                     console.log("Error: "+e);
                     //console.log("Error: "+JSON.stringify(e));
                 }
@@ -977,7 +978,7 @@ export default function ItemOffers(props: any) {
                 
         } catch(e){
             closeSnackbar();
-            enqueueSnackbar(`Error: ${(e)}`,{ variant: 'error' });
+            enqueueSnackbar(e.message ? `${e.name}: ${e.message}` : e.name, { variant: 'error' });
             console.log("Error: "+e);
             //console.log("Error: "+JSON.stringify(e));
         }  
@@ -1025,7 +1026,8 @@ export default function ItemOffers(props: any) {
 
         }catch(e){
             closeSnackbar();
-            enqueueSnackbar(`Error: ${(e)}`,{ variant: 'error' });
+            enqueueSnackbar(e.message ? `${e.name}: ${e.message}` : e.name, { variant: 'error' });
+            //enqueueSnackbar(`Error: ${(e)}`,{ variant: 'error' });
             console.log("Error: "+e);
             //console.log("Error: "+JSON.stringify(e));
         }  
@@ -1072,7 +1074,8 @@ export default function ItemOffers(props: any) {
                 AUCTION_HOUSE_ADDRESS, '. New Balance:', currBal - amountAdjusted,);*/
         } catch(e){
             closeSnackbar();
-            enqueueSnackbar(`Error: ${(e)}`,{ variant: 'error' });
+            enqueueSnackbar(e.message ? `${e.name}: ${e.message}` : e.name, { variant: 'error' });
+            //enqueueSnackbar(`Error: ${(e)}`,{ variant: 'error' });
             console.log("Error: "+e);
             //console.log("Error: "+JSON.stringify(e));
         }  
@@ -1120,7 +1123,8 @@ export default function ItemOffers(props: any) {
 
         }catch(e){
             closeSnackbar();
-            enqueueSnackbar(`Error: ${(e)}`,{ variant: 'error' });
+            enqueueSnackbar(e.message ? `${e.name}: ${e.message}` : e.name, { variant: 'error' });
+            //enqueueSnackbar(`Error: ${(e)}`,{ variant: 'error' });
             console.log("Error: "+e);
             //console.log("Error: "+JSON.stringify(e));
         }  
@@ -1579,7 +1583,8 @@ export default function ItemOffers(props: any) {
             }*/
         } catch(e){
             closeSnackbar();
-            enqueueSnackbar(`Error: ${e}`,{ variant: 'error' });
+            enqueueSnackbar(e.message ? `${e.name}: ${e.message}` : e.name, { variant: 'error' });
+            //enqueueSnackbar(`Error: ${e}`,{ variant: 'error' });
             console.log("Error: "+e);
             //console.log("Error: "+JSON.stringify(e));
         }     
