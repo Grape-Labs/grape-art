@@ -34,5 +34,6 @@ HELP SETTING UP:
 TRY IT OUT NOW:
 - https://grape.art
 
+<img width="1309" alt="Screen Shot 2022-05-10 at 1 08 28 PM" src="https://user-images.githubusercontent.com/13381905/167605066-b4f169d4-8a35-48d7-ac96-5abb6d894581.png">
 
-<img width="1219" alt="Screen Shot 2022-02-21 at 2 38 32 AM" src="https://user-images.githubusercontent.com/13381905/154965216-e03620b9-d783-4f7d-9b55-c4e21ec90879.png">
+
