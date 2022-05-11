@@ -58,18 +58,23 @@ export async function makeOffer(offerAmount: number, mint: string, walletPublicK
     //check if escrow amount already exists to determine if we need to deposit amount to grapevine 
     const escrow = (await getAuctionHouseBuyerEscrow(auctionHouseKey, buyerWalletKey))[0];
     const escrow_amount = await getTokenAmount(anchorProgram,escrow,auctionHouseObj.treasuryMint,);
+    
     const escrowSolAmount = convertSolVal(escrow_amount);
     //console.log('escrow_amount:',escrowSolAmount, 'offerAmount:', offerAmount);
     
     const buyerPrice = Number(offerAmount) * LAMPORTS_PER_SOL
-    const auctionHouse = new PublicKey(auctionHouseObj.auctionHouse.address)
-    const authority = new PublicKey(auctionHouseObj.auctionHouse.authority)
+    console.log("buyerPrice: "+buyerPrice);
+    console.log("auctionHouseObj: "+JSON.stringify(auctionHouseObj));
+    const auctionHouse = new PublicKey(auctionHouseKey);//new PublicKey(auctionHouseObj.auctionHouse.address)
+    //console.log("auctionHouse: "+auctionHouseObj.auctionHouse.address);
+    const authority = new PublicKey(auctionHouseObj.authority)
     const auctionHouseFeeAccount = new PublicKey(
-      auctionHouseObj.auctionHouse.auctionHouseFeeAccount
+      auctionHouseObj.auctionHouseFeeAccount
     )
-    const treasuryMint = new PublicKey(auctionHouseObj.auctionHouse.treasuryMint)
+    const treasuryMint = new PublicKey(auctionHouseObj.treasuryMint)
     const tokenMint = mintKey
-    const tokenAccount = new PublicKey(mintOwner.owner.associatedTokenAccountAddress)
+    console.log("mintOwner: "+JSON.stringify(mintOwner));
+    const tokenAccount = new PublicKey(mintOwner)
     
     const [escrowPaymentAccount, escrowPaymentBump] =
       await AuctionHouseProgram.findEscrowPaymentAccountAddress(
@@ -86,8 +91,9 @@ export async function makeOffer(offerAmount: number, mint: string, walletPublicK
         buyerPrice,
         1
       )
-
+    
     const [metadata] = await deprecated.MetadataProgram.findMetadataAccount(tokenMint);
+    //const [metadata] = await MetadataProgram.findMetadataAccount(tokenMint); //.findMetadataAccount(tokenMint);
     const txt = new Transaction()
       
     const depositInstructionAccounts = {
