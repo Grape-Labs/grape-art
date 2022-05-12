@@ -77,7 +77,6 @@ import GavelOutlinedIcon from '@mui/icons-material/GavelOutlined';
 import ArrowCircleLeftOutlinedIcon from '@mui/icons-material/ArrowCircleLeftOutlined';
 import ArrowCircleRightOutlinedIcon from '@mui/icons-material/ArrowCircleRightOutlined';
 import ExploreIcon from '@mui/icons-material/Explore';
-import MessageIcon from '@mui/icons-material/Message';
 import PersonAddOutlinedIcon from '@mui/icons-material/PersonAddOutlined';
 import PersonRemoveOutlinedIcon from '@mui/icons-material/PersonRemoveOutlined';
 import HomeIcon from '@mui/icons-material/Home';
@@ -98,6 +97,7 @@ import OffersView from './OffersView';
 import SocialView from './SocialView';
 import GalleryView from './GalleryView';
 import CurationView from './CurationView';
+import DirectMessageView from '../DirectMessage/DirectMessage';
 import { MakeLinkableAddress, ValidateAddress, trimAddress, timeAgo } from '../utils/grapeTools/WalletAddress'; // global key handling
 
 import { useTranslation } from 'react-i18next';
@@ -492,20 +492,7 @@ const MainMenu = (props:any) => {
                 </ListItem>
     
                 <ListItem disablePadding>
-                    <ListItemButton
-                        title="Message this address"
-                        disabled
-                        sx={{
-                            width:'100%',
-                            borderRadius:'25px',
-                            p: 1
-                        }}
-                    >
-                        <ListItemIcon>
-                            <MessageIcon />
-                        </ListItemIcon>
-                        <ListItemText primary={`Message`} />
-                    </ListItemButton>
+                    <DirectMessageView address={pubkey} />
                 </ListItem>
             </List>
     
