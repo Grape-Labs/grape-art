@@ -13,11 +13,11 @@ import {
   SYSVAR_INSTRUCTIONS_PUBKEY
 } from '@solana/web3.js'
 import { BN, web3 } from '@project-serum/anchor';
-import { GRAPE_RPC_ENDPOINT, OTHER_MARKETPLACES } from '../../utils/grapeTools/constants';
+import { GRAPE_RPC_ENDPOINT, OTHER_MARKETPLACES } from '../grapeTools/constants';
 import {InstructionsAndSignersSet} from "./helpers/types";
 
 import { AuctionHouseProgram } from '@metaplex-foundation/mpl-auction-house'
-//mport { MetadataProgram, Metadata } from '@metaplex-foundation/mpl-token-metadata'
+//import { MetadataProgram, Metadata } from '@metaplex-foundation/mpl-token-metadata'
 import { deprecated } from "@metaplex-foundation/mpl-token-metadata";
 
 import {
@@ -31,7 +31,7 @@ import {
 import { getPriceWithMantissa } from './helpers/various';
 import { ASSOCIATED_TOKEN_PROGRAM_ID, Token } from '@solana/spl-token';
 
-import { TokenAmount } from '../../utils/grapeTools/safe-math';
+import { TokenAmount } from '../grapeTools/safe-math';
 
 const {
   createPublicBuyInstruction,
