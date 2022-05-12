@@ -1,4 +1,4 @@
-import '@dialectlabs/react-ui/index.css';
+import '@dialectlabs/react-ui/lib/index.css';
 import {
     ChatButton,
     NotificationsButton,

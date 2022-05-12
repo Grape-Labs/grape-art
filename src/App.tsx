@@ -49,6 +49,10 @@ import {
   MathWalletAdapter,
   Coin98WalletAdapter,
   SolongWalletAdapter,
+  BitKeepWalletAdapter,
+  TokenPocketWalletAdapter,
+  BitpieWalletAdapter,
+  SafePalWalletAdapter,
 } from '@solana/wallet-adapter-wallets';
 
 
@@ -121,6 +125,10 @@ function DashboardContent() {
     new MathWalletAdapter(),
     new Coin98WalletAdapter(),
     new SolongWalletAdapter(),
+    new BitKeepWalletAdapter(),
+    new TokenPocketWalletAdapter(),
+    new BitKeepWalletAdapter(),
+    new SafePalWalletAdapter(),
   ], [network]);
   
   /*

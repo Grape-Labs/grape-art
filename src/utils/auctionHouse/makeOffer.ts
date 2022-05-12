@@ -184,7 +184,7 @@ export async function makeOffer(offerAmount: number, mint: string, walletPublicK
       amount:buyerPrice // price
     };
 
-
+    
     const instructions = txt.instructions;
 
     instructions.push(
