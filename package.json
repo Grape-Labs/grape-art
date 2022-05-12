@@ -1,6 +1,6 @@
 {
     "name": "@grape-labs/grae-art",
-    "version": "1.1.215",
+    "version": "1.1.216",
     "author": "Grape devDAO",
     "repository": "https://github.com/grape-labs/grape-art",
     "license": "Apache-2.0",
@@ -54,6 +54,8 @@
         "@solana/wallet-adapter-wallets": "^0.16.1",
         "@solana/web3.js": "^1.41.4",
         "@solflare-wallet/pfp": "^0.0.6",
+        "@testing-library/jest-dom": "^5.16.4",
+        "@testing-library/react": "^13.2.0",
         "@types/react-copy-to-clipboard": "^5.0.1",
         "@types/react-router-dom": "^5.1.6",
         "axios": "^0.21.1",
@@ -126,8 +128,6 @@
         "tslib": "^2.3.1"
     },
     "resolutions": {
-        "/@typescript-eslint/eslint-plugin": "^4.25.0",
-        "/@typescript-eslint/parser": "^4.25.0",
         "@types/react": "17.0.40"
     },
     "staticFiles": {

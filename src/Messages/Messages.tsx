@@ -1,12 +1,24 @@
-import '@dialectlabs/react-ui/lib/index.css';
+import React from 'react';
+import '../dialect.css';
+//import '@dialectlabs/react-ui/lib/index.css';
 import {
     ChatButton,
     NotificationsButton,
     IncomingThemeVariables,
     defaultVariables,
+    Inbox as DialectInbox, 
+    ThemeProvider
   } from '@dialectlabs/react-ui';
+import {
+    ApiProvider,
+    connected,
+    DialectProvider,
+    useApi,
+} from '@dialectlabs/react';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { PublicKey } from '@solana/web3.js';
+
+import { GRAPE_RPC_ENDPOINT, TX_RPC_ENDPOINT } from '../utils/grapeTools/constants';
 
 import {
     Box,
@@ -34,6 +46,34 @@ import {
     },
   };
 
+  function AuthedHome() {
+    const wallet = useWallet();
+    const isWalletConnected = connected(wallet);
+    
+
+    const { setNetwork, setRpcUrl, setWallet } = useApi();
+  
+    React.useEffect(
+      () => setWallet(connected(wallet) ? wallet : null),
+      [setWallet, wallet, isWalletConnected]
+    );
+    React.useEffect(() => setNetwork('mainnet'), [setNetwork]);
+    React.useEffect(() => setRpcUrl(null), [setRpcUrl]);
+  
+    return (
+      <div className="dialect">
+        <div className="flex flex-col h-screen bg-black">
+          <div className="w-full lg:max-w-[1048px] px-6 h-[calc(100vh-8rem)] mt-8 mx-auto">
+            <DialectInbox
+              wrapperClassName="p-2 h-full overflow-hidden rounded-2xl shadow-2xl shadow-neutral-800 border border-neutral-600"
+              wallet={wallet}
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
 export function MessagesView(){
     // ...
     const wallet = useWallet();
@@ -44,17 +84,16 @@ export function MessagesView(){
     );
     
     return (
-
         <Box
-                    sx={{ 
-                        p: 1, 
-                        mt: 6, 
-                        mb: 3, 
-                        width: '100%',
-                        background: '#13151C',
-                        borderRadius: '24px'
-                    }}
-                > 
+            sx={{ 
+                p: 1, 
+                mt: 6, 
+                mb: 3, 
+                width: '100%',
+                background: '#13151C',
+                borderRadius: '24px'
+            }}
+        > 
             
             <NotificationsButton
                 wallet={wallet}
@@ -62,12 +101,16 @@ export function MessagesView(){
                 publicKey={DIALECT_PUBLIC_KEY}
                 theme={theme}
                 variables={themeVariables}
+                rpcUrl={GRAPE_RPC_ENDPOINT}
                 notifications={[
                     { name: 'Welcome message', detail: 'On thread creation' },
                 ]}
                 channels={['web3', 'email', 'sms', 'telegram']}
                 />
-            <ChatButton wallet={wallet} network={'mainnet'} theme={theme} />
+            <ChatButton wallet={wallet} network={'mainnet'} theme={theme} rpcUrl={GRAPE_RPC_ENDPOINT} />
         </Box>
+
+
+
     );
 }

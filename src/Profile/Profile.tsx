@@ -493,7 +493,7 @@ const MainMenu = (props:any) => {
     
                 <ListItem disablePadding>
                     <ListItemButton
-                        title="Messaging coming soon"
+                        title="Message this address"
                         disabled
                         sx={{
                             width:'100%',
@@ -504,7 +504,7 @@ const MainMenu = (props:any) => {
                         <ListItemIcon>
                             <MessageIcon />
                         </ListItemIcon>
-                        <ListItemText primary={`Messages`} />
+                        <ListItemText primary={`Message`} />
                     </ListItemButton>
                 </ListItem>
             </List>

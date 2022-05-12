@@ -13,6 +13,25 @@ import { useSnackbar } from 'notistack';
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
 import Snackbar, { SnackbarOrigin } from '@mui/material/Snackbar';
 
+import { PublicKey } from '@solana/web3.js';
+import { useWallet } from '@solana/wallet-adapter-react';
+//import '@dialectlabs/react-ui/lib/index.css';
+import '../dialect.css';
+import {
+    ChatButton,
+    NotificationsButton,
+    IncomingThemeVariables,
+    defaultVariables,
+    Inbox as DialectInbox, 
+    ThemeProvider
+  } from '@dialectlabs/react-ui';
+import {
+    ApiProvider,
+    connected,
+    DialectProvider,
+    useApi,
+} from '@dialectlabs/react';
+
 import { 
     MARKET_LOGO
 } from '../utils/grapeTools/constants';
@@ -23,15 +42,6 @@ import {
     WalletDisconnectButton,
     WalletMultiButton
 } from '@solana/wallet-adapter-material-ui';
-
-//require('@solana/wallet-adapter-react-ui/styles.css');
-/*
-import {
-    WalletModalProvider,
-    WalletDisconnectButton,
-    WalletMultiButton
-} from '@solana/wallet-adapter-react-ui';
-*/
 
 import {
     MenuItem,
@@ -50,7 +60,7 @@ import {
 
 import SearchIcon from '@mui/icons-material/Search';
 
-import { GRAPE_PROFILE, GRAPE_PREVIEW } from '../utils/grapeTools/constants';
+import { GRAPE_PROFILE, GRAPE_PREVIEW, GRAPE_RPC_ENDPOINT } from '../utils/grapeTools/constants';
 import { ValidateAddress } from '../utils/grapeTools/WalletAddress'; // global key handling
 
 import { useTranslation } from 'react-i18next';
@@ -138,6 +148,13 @@ export function Header(props: any) {
     //const currPath = location?.pathname ?? "";
     const { enqueueSnackbar } = useSnackbar();
 
+    const wallet = useWallet();
+    const theme: 'dark' | 'light' = 'dark';
+    //const YOUR_PROJECT_PUBLIC_KEY = new PublicKey(AUCTION_HOUSE_ADDRESS);
+    const DIALECT_PUBLIC_KEY = new PublicKey(
+        'D2pyBevYb6dit1oCx6e8vCxFK9mBeYCRe8TTntk2Tm98'
+    );
+    
     const routes = [
         { name: "Home", path: "/" },
     ]
@@ -270,6 +287,9 @@ export function Header(props: any) {
                 </Container>
 
             </Box>
+            <div className="grape-dialect">
+            <ChatButton wallet={wallet} network={'mainnet'} theme={theme} rpcUrl={GRAPE_RPC_ENDPOINT} bellClassName='grape-chat' />
+            </div>
             <div className="grape-wallet-adapter">
                 <WalletDialogProvider className="grape-wallet-provider">
                     <WalletMultiButton className="grape-wallet-button" />
