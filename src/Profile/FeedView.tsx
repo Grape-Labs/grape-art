@@ -92,7 +92,7 @@ export function MintFlagState(props: any){
         env: Env.PRODUCTION,
         chain: Blockchain.SOLANA,
         provider: solanaProvider,
-        chainRef: solana.SOLANA_MAINNET_CHAIN_REF,
+        chainRef: "",//solana.SOLANA_MAINNET_CHAIN_REF,
         signingMessageEntity: 'Grape' || 'CyberConnect',
     });
 

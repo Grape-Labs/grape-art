@@ -11,7 +11,7 @@ import { Button } from '@mui/material';
 import { useSnackbar } from 'notistack';
 import moment from 'moment';
 
-import { unicastSolflareMessage } from "../utils/walletnotifications/walletnotifications"
+import { unicastGrapeSolflareMessage } from "../utils/walletNotifications/walletNotifications"
 
 import {
     Typography,
@@ -608,6 +608,7 @@ function SellNowPrompt(props:any){
 export function OfferPrompt(props: any) {
     const [open_dialog, setOpenOPDialog] = React.useState(false);
     const [offer_amount, setOfferAmount] = React.useState('');
+    const offers = props.offers || null;
     //const [sol_balance, setSolBalance] = React.useState(props.solBalance);
     const sol_balance = props.solBalance;  
     const mint = props.mint;  
@@ -661,7 +662,7 @@ export function OfferPrompt(props: any) {
                     .add(
                         ...instructionsArray
                     );
-
+                        
                     enqueueSnackbar(`${t('Preparing to make an offer for')} ${+offer_amount} SOL`,{ variant: 'info' });
                     const signedTransaction = await sendTransaction(transaction, connection)
                     const snackprogress = (key:any) => (
@@ -679,8 +680,28 @@ export function OfferPrompt(props: any) {
                     
                     //(title:string,message:string,image:string,publicKey:string,actionUrl:string)
                     
-                    unicastSolflareMessage('Offer Received', offer_amount+' SOL offer made for '+mint+' on grape.art', image, publicKey.toBase58(), `${GRAPE_PREVIEW}${mint}`);
+                    //unicastGrapeSolflareMessage('Offer Received', offer_amount+' SOL offer made for '+mint+' on grape.art', image, publicKey.toBase58(), `${GRAPE_PREVIEW}${mint}`);
+                    //unicastGrapeSolflareMessage('Offer Received', offer_amount+' SOL offer made for '+mint+' on grape.art', image, publicKey.toBase58(), `${GRAPE_PREVIEW}${mint}`);
+                    
+                    // check if outbid
+                    let highest_offer = 0;
+                    let highest_offer_pk = null;
+                    let previous_offer_pk = null;
+                    if (offers){
+                        for (var offer of offers){
+                            if (+offer.offeramount > +highest_offer){
+                                highest_offer = offer.offeramount;
+                                highest_offer_pk = offer.buyeraddress;
+                            } else{
+                                previous_offer_pk = offer.buyeraddress;
+                            }
+                        } 
+                    }
 
+                    if ((highest_offer_pk)&&(offers.length > 1)){
+                        console.log(previous_offer_pk+' you have been outbid');
+                        //unicastGrapeSolflareMessage('Outbid Notice', 'You have been outbid on grape.art', image, highest_offer_pk, `${GRAPE_PREVIEW}${mint}`);
+                    }
                     const eskey = enqueueSnackbar(`${t('Metadata will be refreshed in a few seconds')}`, {
                             anchorOrigin: {
                                 vertical: 'top',
@@ -828,7 +849,7 @@ export function OfferPrompt(props: any) {
                     <Button 
                         type="submit"
                         variant="text" 
-                        disabled={((+offer_amount > sol_balance) || (+offer_amount < 0.001) || (+offer_amount < props.highestOffer))}
+                        disabled={((+offer_amount > sol_balance) || (+offer_amount < 0.001) || (+offer_amount <= props.highestOffer))}
                         title="Submit">
                             {t('SUBMIT')}
                     </Button>
@@ -1339,8 +1360,7 @@ export default function ItemOffers(props: any) {
                                                                         
                                                                         if (!found){
                                                                             //if (amount_on_escrow > highestOffer){
-                                                                                let sol = parseFloat(new TokenAmount(highestOffer, 9).format());
-                                                                                setHighestOffer(sol);
+                                                                                
                                                                             //}
 
                                                                             exists = false;
@@ -1359,10 +1379,16 @@ export default function ItemOffers(props: any) {
                                                                                         open_offers++;
                                                                                     }
 
-                                                                                    if (feePayer.toBase58() === mintOwner)
+                                                                                    if (feePayer.toBase58() === mintOwner){
                                                                                         offerResults.push({buyeraddress: feePayer.toBase58(), offeramount: memo_json?.amount || memo_json?.offer, mint: memo_json?.mint, isowner: true, timestamp: value.blockTime, state: memo_json?.state || memo_json?.status});  
-                                                                                    else   
-                                                                                        offerResults.push({buyeraddress: feePayer.toBase58(), offeramount: memo_json?.amount || memo_json?.offer, mint: memo_json?.mint, isowner: false, timestamp: value.blockTime, state: memo_json?.state || memo_json?.status});  
+                                                                                    }else{   
+                                                                                        offerResults.push({buyeraddress: feePayer.toBase58(), offeramount: memo_json?.amount || memo_json?.offer, mint: memo_json?.mint, isowner: false, timestamp: value.blockTime, state: memo_json?.state || memo_json?.status}); 
+                                                                                        
+                                                                                        if (memo_json?.amount > highestOffer){
+                                                                                            let sol = parseFloat(new TokenAmount(memo_json?.amount, 9).format());
+                                                                                            setHighestOffer(sol);
+                                                                                        }
+                                                                                    } 
                                                                                 }
                                                                             }
                                                                         }
@@ -1841,7 +1867,7 @@ export default function ItemOffers(props: any) {
                                                                     
                                                                     {(ValidateCurve(mintOwner) || (ValidateDAO(mintOwner))) && (
                                                                         <Grid item>
-                                                                            <OfferPrompt mint={mint} image={image} mintOwner={mintOwner} setRefreshOffers={setRefreshOffers} solBalance={sol_portfolio_balance} highestOffer={highestOffer} />
+                                                                            <OfferPrompt mint={mint} image={image} mintOwner={mintOwner} setRefreshOffers={setRefreshOffers} solBalance={sol_portfolio_balance} highestOffer={highestOffer} offers={offers} />
                                                                         </Grid>
                                                                     )}
                                                                     </>
