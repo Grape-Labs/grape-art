@@ -96,10 +96,11 @@ export async function makeOffer(offerAmount: number, mint: string, walletPublicK
       )
     
       const metadata = await getMetadata(tokenMint);
+      
     //const metadata = await Metadata.fromAccountAddress(ggoconnection, tokenMint);
     //const [metadata] = await MetadataProgram.findMetadataAccount(tokenMint); //.findMetadataAccount(tokenMint);
     const txt = new Transaction()
-      
+    
     const depositInstructionAccounts = {
       wallet: new PublicKey(walletPublicKey),
       paymentAccount: new PublicKey(walletPublicKey),
@@ -119,7 +120,7 @@ export async function makeOffer(offerAmount: number, mint: string, walletPublicK
       depositInstructionAccounts,
       depositInstructionArgs
     )
-
+    
     const publicBuyInstruction = createPublicBuyInstruction(
       {
         wallet: new PublicKey(walletPublicKey),
@@ -142,9 +143,11 @@ export async function makeOffer(offerAmount: number, mint: string, walletPublicK
       }
     )
 
+    
     const [receipt, receiptBump] =
       await AuctionHouseProgram.findBidReceiptAddress(buyerTradeState)
-
+    
+    
     const printBidReceiptInstruction = createPrintBidReceiptInstruction(
       {
         receipt,
@@ -159,10 +162,16 @@ export async function makeOffer(offerAmount: number, mint: string, walletPublicK
     txt
       .add(depositInstruction)
       .add(publicBuyInstruction)
-      .add(printBidReceiptInstruction)
+      .add(printBidReceiptInstruction);
+    
+    
+
+      console.log("txt: "+JSON.stringify(txt))
 
     //txt.recentBlockhash = (await connection.getRecentBlockhash()).blockhash
-    //txt.feePayer = new PublicKey(walletPublicKey)
+    txt.feePayer = new PublicKey(walletPublicKey)
+    
+      console.log("with feePayer: "+JSON.stringify(txt))
 
     //let signed: Transaction | undefined = undefined
     /*
@@ -180,7 +189,7 @@ export async function makeOffer(offerAmount: number, mint: string, walletPublicK
     let derivedMintPDA = await web3.PublicKey.findProgramAddress([Buffer.from((mintKey).toBuffer())], auctionHouseKey);
     let derivedBuyerPDA = await web3.PublicKey.findProgramAddress([Buffer.from((buyerWalletKey).toBuffer())], auctionHouseKey);
     let derivedOwnerPDA = await web3.PublicKey.findProgramAddress([Buffer.from((new PublicKey(mintOwner)).toBuffer())], auctionHouseKey);
-  
+    
     const GRAPE_AH_MEMO = {
       state:1, // status (0: withdraw, 1: offer, 2: listing, 3: buy/execute (from listing), 4: buy/execute(accept offer), 5: cancel)
       ah:auctionHouseKey.toString(), // pk
@@ -191,6 +200,11 @@ export async function makeOffer(offerAmount: number, mint: string, walletPublicK
     
     const instructions = txt.instructions;
 
+
+    //console.log("depositInstruction: "+JSON.stringify(depositInstruction));
+    //console.log("publicBuyInstruction: "+JSON.stringify(publicBuyInstruction));
+    //console.log("printBidReceiptInstruction: "+JSON.stringify(printBidReceiptInstruction));
+    
     instructions.push(
       SystemProgram.transfer({
         fromPubkey: buyerWalletKey,
@@ -220,6 +234,9 @@ export async function makeOffer(offerAmount: number, mint: string, walletPublicK
           programId: new PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr"),
       })
     );
+
+    //console.log("instructions: "+JSON.stringify(instructions));
+    
 
     return {
       signers: signers,

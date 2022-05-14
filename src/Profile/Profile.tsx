@@ -581,7 +581,7 @@ const MainPanel = (props: any) => {
     
     if(loading){
         return (
-            <Grid item xs={12} sm={7} md={9} lg={9} xl={10}>
+            <Grid item xs={12} sm={12} md={9} lg={9} xl={10}>
                 <Box
                     alignItems="center"
                     justifyContent="center"
@@ -594,7 +594,7 @@ const MainPanel = (props: any) => {
         )
     } else{
         return (
-            <Grid item xs={12} sm={6} md={9} lg={9} xl={10}>
+            <Grid item xs={12} sm={12} md={9} lg={9} xl={10}>
                 <Box
                     sx={{
                     }}                 > 
@@ -604,7 +604,6 @@ const MainPanel = (props: any) => {
                         <Box
                             sx={{
                                 minHeight: '225px',
-                                ml:2,
                                 p:0,
                             }} 
                         >
@@ -1062,9 +1061,9 @@ const IdentityView = (props: any) => {
 
                                 <Grid 
                                     container 
-                                    rowSpacing={3}
-                                    >  
-                                    <Grid item xs={12} sm={5} md={3} lg={3} xl={2}
+                                    spacing={3}
+                                >  
+                                    <Grid item xs={12} sm={12} md={3} lg={3} xl={2}
                                         sx={{
                                         }}
                                     >

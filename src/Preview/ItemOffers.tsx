@@ -656,7 +656,11 @@ export function OfferPrompt(props: any) {
 			//no need allowing for multiple offers
                 try {
                     const transactionInstr = await submitOffer(+offer_amount, mint, publicKey.toString(), mintOwner);
+                    //console.log("transactionInstr1 submitOffer: "+JSON.stringify(transactionInstr1));
+    
                     //const transactionInstr = await makeOffer(+offer_amount, mint, publicKey.toString(), mintOwner);
+                    //console.log("transactionInstr makeOffer: "+JSON.stringify(transactionInstr));
+    
                     const instructionsArray = [transactionInstr.instructions].flat();        
                     const transaction = new Transaction()
                     .add(
