@@ -505,25 +505,29 @@ export function IdentityView(props: any){
                                                                 </>
                                                                 :
                                                                 <>
-                                                                    <ListItemAvatar>
-                                                                            {item.account.data.parsed.info?.mint && tokenMap.get(item.account.data.parsed.info?.mint)?.logoURI ?
-                                                                                <Avatar
-                                                                                    sx={{backgroundColor:'#222'}}
-                                                                                    src={tokenMap.get(item.account.data.parsed.info.mint)?.logoURI}
-                                                                                    alt={tokenMap.get(item.account.data.parsed.info.mint)?.name || item.account.data.parsed.info.mint}
-                                                                                />
-                                                                            :
-                                                                            <Avatar
-                                                                                sx={{backgroundColor:'#222'}}
-                                                                            >
-                                                                                <QrCode2Icon sx={{color:'white'}} />
-                                                                            </Avatar>
-                                                                            }
-                                                                    </ListItemAvatar>
-                                                                    <ListItemText
-                                                                        primary={((new TokenAmount(item.account.data.parsed.info.tokenAmount.amount, item.account.data.parsed.info.tokenAmount.decimals).format()))}
-                                                                        secondary={`${tokenMap.get(item.account.data.parsed.info.mint)?.name || item.account.data.parsed.info.mint}`}
-                                                                    />
+                                                                    {tokenMap &&
+                                                                        <>
+                                                                            <ListItemAvatar>
+                                                                                    {item.account.data.parsed.info?.mint && tokenMap.get(item.account.data.parsed.info?.mint)?.logoURI ?
+                                                                                        <Avatar
+                                                                                            sx={{backgroundColor:'#222'}}
+                                                                                            src={tokenMap.get(item.account.data.parsed.info.mint)?.logoURI}
+                                                                                            alt={tokenMap.get(item.account.data.parsed.info.mint)?.name || item.account.data.parsed.info.mint}
+                                                                                        />
+                                                                                    :
+                                                                                    <Avatar
+                                                                                        sx={{backgroundColor:'#222'}}
+                                                                                    >
+                                                                                        <QrCode2Icon sx={{color:'white'}} />
+                                                                                    </Avatar>
+                                                                                    }
+                                                                            </ListItemAvatar>
+                                                                            <ListItemText
+                                                                                primary={((new TokenAmount(item.account.data.parsed.info.tokenAmount.amount, item.account.data.parsed.info.tokenAmount.decimals).format()))}
+                                                                                secondary={`${tokenMap.get(item.account.data.parsed.info.mint)?.name || item.account.data.parsed.info.mint}`}
+                                                                            />
+                                                                        </>
+                                                                    }
                                                                 </>
                                                                 }
                                                             </ListItem>
