@@ -178,6 +178,115 @@ export default function HistoryView(props: any){
         if (mint){
             
             const _mint = new PublicKey(mint);
+            
+            /**
+             * Allocated data size on auction_house program per PDA type
+             * CreateAuctionHouse: 459
+             * PrintListingReceipt: 236
+             * PrintBidReceipt: 269
+             * PrintPurchaseReceipt: 193
+             */
+            
+             const PrintListingReceiptSize = 236;
+             const PrintBidReceiptSize = 269;
+             const PrintPurchaseReceiptSize = 193;
+ 
+             const ReceiptAccountSizes = [
+                 PrintListingReceiptSize,
+                 PrintBidReceiptSize,
+                 PrintPurchaseReceiptSize,
+             ] as const;
+             
+             const ReceiptAccounts = await (Promise.all(ReceiptAccountSizes.map(async size => {
+                 const accounts = await ggoconnection.getProgramAccounts(
+                   AUCTION_HOUSE_PROGRAM_ID,
+                   {
+                     commitment: 'confirmed',
+                     filters: [
+                       {
+                         dataSize: size,
+                       },
+                     ],
+                   }
+                 );
+                 
+                 const parsedAccounts = accounts.map(async account => {
+                   switch (size) {
+                    case PrintListingReceiptSize:
+                       const [
+                         ListingReceipt,
+                       ] = AuctionHouseProgram.accounts.ListingReceipt.fromAccountInfo(
+                         account.account
+                       );
+                    
+                       return {
+                         ...ListingReceipt,
+                         receipt_type: ListingReceipt.canceledAt
+                           ? 'cancel_listing_receipt'
+                           : 'listing_receipt',
+                       }; //as TransactionReceipt;
+                       break;
+                    
+                     case PrintBidReceiptSize:
+                       const [
+                         BidReceipt,
+                       ] = AuctionHouseProgram.accounts.BidReceipt.fromAccountInfo(
+                         account.account
+                       );
+                       
+                       return {
+                         ...BidReceipt,
+                         receipt_type: 'bid_receipt',
+                       }; //as TransactionReceipt;
+                       break;
+                     case PrintPurchaseReceiptSize:
+                       const [
+                         PurchaseReceipt,
+                       ] = AuctionHouseProgram.accounts.PurchaseReceipt.fromAccountInfo(
+                         account.account
+                       );
+                       
+                       return {
+                         ...PurchaseReceipt,
+                         receipt_type: 'purchase_receipt',
+                       } //as TransactionReceipt;
+                       break;
+                     default:
+                       return undefined;
+                       break;
+                   }
+                 });
+                 
+                 return await Promise.all(parsedAccounts);
+               })));
+ 
+               const receipts = (await Promise.all(ReceiptAccounts))
+                .flat()
+                .map(receipt => ({
+                     ...receipt,
+                     tokenSize: new BN(receipt.tokenSize).toNumber(),
+                     price: new BN(receipt.price).toNumber() / LAMPORTS_PER_SOL,
+                     createdAt: new BN(receipt.createdAt).toNumber(),
+                     //cancelledAt: receipt?.canceledAt,
+                }))
+                //.filter((receipt) => receipt.auctionHouse.toBase58() === this.auctionHouse!.toBase58())
+                .sort((a, b) => {
+                    if ((a.receipt_type === 'bid_receipt', b.receipt_type === 'purchase_receipt')) {
+                    return 1;
+                    } else if ((a.receipt_type === 'purchase_receipt', b.receipt_type === 'bid_receipt')) {
+                    return -1;
+                    } else {
+                    return 0;
+                    }
+                })
+                .sort((a, b) => b.createdAt - a.createdAt);
+                ;
+
+                 console.log('receipts', receipts);
+             
+             setReceipts(receipts);
+            
+            
             //const metadata = await Metadata.findByMint(ggoconnection, _mint);
             
             //const [metadata_program] = await Metadata.fromAccountAddress(tokenMint)
@@ -198,7 +307,7 @@ export default function HistoryView(props: any){
     React.useEffect(() => {
         if (mint){
             //if (!history){
-                getHistory();
+                //getHistory();
                 //getMEHistory();
             //}
         }

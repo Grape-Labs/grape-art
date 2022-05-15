@@ -49,7 +49,7 @@ function convertSolVal(sol: any){
     return sol;
 }
 
-export async function makeOffer(offerAmount: number, mint: string, walletPublicKey: string, mintOwner: any): Promise<InstructionsAndSignersSet> {
+export async function gah_makeOffer(offerAmount: number, mint: string, walletPublicKey: string, mintOwner: any): Promise<InstructionsAndSignersSet> {
     //const { publicKey, signTransaction } = useWallet();
     let tokenSize = 1;
     const auctionHouseKey = new web3.PublicKey(AUCTION_HOUSE_ADDRESS);
@@ -77,8 +77,10 @@ export async function makeOffer(offerAmount: number, mint: string, walletPublicK
     const treasuryMint = new PublicKey(auctionHouseObj.treasuryMint)
     const tokenMint = mintKey
     console.log("mintOwner: "+JSON.stringify(mintOwner));
-    const tokenAccount = new PublicKey(mintOwner)
-    
+    //const tokenAccount = new PublicKey(mintOwner)
+    const results = await anchorProgram.provider.connection.getTokenLargestAccounts(mintKey);    
+    const tokenAccount: web3.PublicKey = results.value[0].address;
+
     const [escrowPaymentAccount, escrowPaymentBump] =
       await AuctionHouseProgram.findEscrowPaymentAccountAddress(
         auctionHouse,
@@ -164,15 +166,12 @@ export async function makeOffer(offerAmount: number, mint: string, walletPublicK
       .add(publicBuyInstruction)
       .add(printBidReceiptInstruction);
     
-    
-
-      console.log("txt: "+JSON.stringify(txt))
+    //console.log("txt: "+JSON.stringify(txt))
 
     //txt.recentBlockhash = (await connection.getRecentBlockhash()).blockhash
     txt.feePayer = new PublicKey(walletPublicKey)
     
-      console.log("with feePayer: "+JSON.stringify(txt))
-
+    
     //let signed: Transaction | undefined = undefined
     /*
     try {
@@ -197,10 +196,7 @@ export async function makeOffer(offerAmount: number, mint: string, walletPublicK
       amount:buyerPrice // price
     };
 
-    
     const instructions = txt.instructions;
-
-
     //console.log("depositInstruction: "+JSON.stringify(depositInstruction));
     //console.log("publicBuyInstruction: "+JSON.stringify(publicBuyInstruction));
     //console.log("printBidReceiptInstruction: "+JSON.stringify(printBidReceiptInstruction));
@@ -234,9 +230,6 @@ export async function makeOffer(offerAmount: number, mint: string, walletPublicK
           programId: new PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr"),
       })
     );
-
-    //console.log("instructions: "+JSON.stringify(instructions));
-    
 
     return {
       signers: signers,

@@ -307,7 +307,7 @@ export default function OffersView(props:any){
                         }, GRAPE_RPC_REFRESH);
                     } catch(e){
                         closeSnackbar();
-                        enqueueSnackbar(`${t('Error')}: ${(e)}`,{ variant: 'error' });
+                        enqueueSnackbar(e.message ? `${e.name}: ${e.message}` : e.name, { variant: 'error' });
                         console.log("Error: "+e);
                     } 
                 } else{ // no mint then just withdraw
@@ -347,7 +347,7 @@ export default function OffersView(props:any){
                         }, GRAPE_RPC_REFRESH);
                     } catch(e){
                         closeSnackbar();
-                        enqueueSnackbar(`${t('Error')}: ${(e)}`,{ variant: 'error' });
+                        enqueueSnackbar(e.message ? `${e.name}: ${e.message}` : e.name, { variant: 'error' });
                         console.log("Error: "+e);
                     }
                 }
@@ -393,7 +393,7 @@ export default function OffersView(props:any){
                             }
                         } catch(e){
                             closeSnackbar();
-                            enqueueSnackbar(`${t('Error')}: ${(e)}`,{ variant: 'error' });
+                            enqueueSnackbar(e.message ? `${e.name}: ${e.message}` : e.name, { variant: 'error' });
                             console.log("Error: "+e);
                         }
 
@@ -423,7 +423,7 @@ export default function OffersView(props:any){
                             }
                         } catch(e){
                             closeSnackbar();
-                            enqueueSnackbar(`${t('Error')}: ${(e)}`,{ variant: 'error' });
+                            enqueueSnackbar(e.message ? `${e.name}: ${e.message}` : e.name, { variant: 'error' });
                             console.log("Error: "+e);
                         }    
 
@@ -893,14 +893,12 @@ export default function OffersView(props:any){
         
         if (!ahloading){
             setAHLoading(true);
-            let cntr = 0;
-            let amount = 0;
             if (publicKey){
                 const escrow = ( await getAuctionHouseBuyerEscrow(auctionHouseKey, publicKey,))[0];
                 let amount = await getTokenAmount(anchorProgram, escrow, auctionHouseObj.treasuryMint,);
+                console.log("Escrow: "+amount);
+                setAHBalance(amount);
             }
-            setAHBalance(amount);
-
             setAHLoading(false);
             
         }
@@ -919,7 +917,7 @@ export default function OffersView(props:any){
         }
     }, [refresh, thisPublicKey]);
     
-    if (loading){
+    if ((loading)||(ahloading)){
         return (
             <Box
                     sx={{
@@ -949,7 +947,13 @@ export default function OffersView(props:any){
                     p:2
                 }} 
             > 
-                <Grid container >
+                <Grid 
+                    container 
+                    direction="row"
+                    justifyContent='flex-end'
+                    alignContent='flex-end'>
+                    
+                    {/*
                     {(publicKey && publicKey.toBase58() === thisPublicKey && ahbalance && (ahbalance > 0)) ?
                         <Box
                             sx={{
@@ -961,7 +965,7 @@ export default function OffersView(props:any){
                                 mr:0
                             }}
                         >
-
+                            
                             <BootstrapDialog 
                                 fullWidth={true}
                                 maxWidth={"sm"}
@@ -1007,34 +1011,29 @@ export default function OffersView(props:any){
                             </BootstrapDialog>
                             
                             <Grid 
-                                container
-                                direction="row"
-                                justifyContent='flex-end'
-                                alignContent='flex-end'
+                                item
                                 sx={{
                                 }}
                             >
                                 <Typography variant="caption">
-                                    <Button
-                                            title={t('Withdraw from the Grape Auction House')}
+                                    <Tooltip title={t('Withdraw from the Grape Auction House')}>
+                                        <Button
                                             size="small"
                                             variant="text"
                                             onClick={() => (myoffers > 0 ? setAlertWithdrawOpen(true) : handleWithdrawOffer(convertSolVal(ahbalance), null))}
                                             sx={{
-                                                borderRadius: '10px',
-                                                fontSize: '11px',
-                                                ml:1
+                                                borderRadius:'17px'
                                             }}
                                         >
-                                        {convertSolVal(ahbalance)} <SolCurrencyIcon sx={{fontSize:"8px", mr:0.5 }} /> <GrapeIcon sx={{fontSize:"22px", mr:0.5, color:'white' }} />
-                                    
-                                    </Button>
+                                            {convertSolVal(ahbalance)} <SolCurrencyIcon sx={{fontSize:"8px", mr:0.5 }} /> <GrapeIcon sx={{fontSize:"22px", mr:0.5, color:'white' }} />
+                                        </Button>
+                                    </Tooltip>
                                 </Typography>
                             </Grid>
                         </Box>
                     :
                     <Box></Box>
-                    }
+                    }*/}
                     
                     <TableContainer
                         sx={{
@@ -1138,45 +1137,47 @@ export default function OffersView(props:any){
                     p:2
                 }} 
             > 
-                <Grid container >
+                <Grid 
+                    container 
+                    direction="row"
+                    justifyContent='flex-end'
+                    alignContent='flex-end'>
+                    {/*
                     {(publicKey && publicKey.toBase58() === thisPublicKey && ahbalance && (ahbalance > 0)) ?
                         <Box
                             sx={{
                                 background: 'rgba(0, 0, 0, 0.2)',
                                 borderRadius: '17px',
                                 mt:1,
-                                mb:2
+                                mb:2,
                             }}
                         >
+                            
                             <Grid 
-                                container
-                                direction="row"
-                                justifyContent='flex-end'
-                                alignContent='flex-end'
+                                item
                                 sx={{
                                 }}
                             >
                                 <Typography variant="caption">
-                                    <Button
-                                            title={t('Withdraw from the Grape Auction House')}
+                                    <Tooltip title={t('Withdraw from the Grape Auction House')}>
+                                        <Button
                                             size="small"
                                             variant="text"
-                                            onClick={() => handleWithdrawOffer(convertSolVal(ahbalance), null)}
+                                            onClick={() => (myoffers > 0 ? setAlertWithdrawOpen(true) : handleWithdrawOffer(convertSolVal(ahbalance), null))}
                                             sx={{
-                                                borderRadius: '10px',
-                                                fontSize: '11px',
-                                                ml:1
+                                                borderRadius:'17px'
                                             }}
                                         >
-                                        {convertSolVal(ahbalance)} <SolCurrencyIcon sx={{fontSize:"8px", mr:0.5 }} /> <GrapeIcon sx={{fontSize:"22px", mr:0.5, color:'white' }} />
-                                    
-                                    </Button>
+                                            {convertSolVal(ahbalance)} <SolCurrencyIcon sx={{fontSize:"8px", mr:0.5 }} /> <GrapeIcon sx={{fontSize:"22px", mr:0.5, color:'white' }} />
+                                        </Button>
+                                    </Tooltip>
                                 </Typography>
                             </Grid>
                         </Box>
                     :
                     <Box></Box>
                     }
+                    */}
 
                     <TableContainer
                         sx={{

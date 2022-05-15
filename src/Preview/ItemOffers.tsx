@@ -91,7 +91,9 @@ import {
 import { cancelOffer } from '../utils/auctionHouse/cancelOffer';
 import { withdrawOffer } from '../utils/auctionHouse/withdrawOffer';
 import { submitOffer } from '../utils/auctionHouse/submitOffer';
-import { makeOffer } from '../utils/auctionHouse/makeOffer';
+import { gah_makeOffer } from '../utils/auctionHouse/gah_makeOffer';
+import { gah_cancelOffer } from '../utils/auctionHouse/gah_cancelOffer';
+import { gah_acceptOffer } from '../utils/auctionHouse/gah_acceptOffer';
 import { acceptOffer } from '../utils/auctionHouse/acceptOffer';
 import { cancelListing } from '../utils/auctionHouse/cancelListing';
 import { sellNowListing } from '../utils/auctionHouse/sellNowListing';
@@ -658,7 +660,7 @@ export function OfferPrompt(props: any) {
                     const transactionInstr = await submitOffer(+offer_amount, mint, publicKey.toString(), mintOwner);
                     //console.log("transactionInstr1 submitOffer: "+JSON.stringify(transactionInstr1));
     
-                    //const transactionInstr = await makeOffer(+offer_amount, mint, publicKey.toString(), mintOwner);
+                    //const transactionInstr = await gah_makeOffer(+offer_amount, mint, publicKey.toString(), mintOwner);
                     //console.log("transactionInstr makeOffer: "+JSON.stringify(transactionInstr));
     
                     const instructionsArray = [transactionInstr.instructions].flat();        
@@ -692,19 +694,19 @@ export function OfferPrompt(props: any) {
                     let highest_offer_pk = null;
                     let previous_offer_pk = null;
                     if (offers){
+                        var offcnt = 0;
                         for (var offer of offers){
-                            if (+offer.offeramount > +highest_offer){
-                                highest_offer = offer.offeramount;
-                                highest_offer_pk = offer.buyeraddress;
-                            } else{
+                            console.log(offers.length + ": " + offer.offeramount + " - " + offer.buyeraddress);
+                            if (offcnt === 1)
                                 previous_offer_pk = offer.buyeraddress;
-                            }
+                            offcnt++;
                         } 
+                        
                     }
 
-                    if ((highest_offer_pk)&&(offers.length > 1)){
+                    if ((previous_offer_pk)&&(offers.length > 1)){
                         console.log(previous_offer_pk+' you have been outbid');
-                        //unicastGrapeSolflareMessage('Outbid Notice', 'You have been outbid on grape.art', image, highest_offer_pk, `${GRAPE_PREVIEW}${mint}`);
+                        unicastGrapeSolflareMessage('Outbid Notice', 'You have been outbid on grape.art', image, highest_offer_pk, `${GRAPE_PREVIEW}${mint}`);
                     }
                     const eskey = enqueueSnackbar(`${t('Metadata will be refreshed in a few seconds')}`, {
                             anchorOrigin: {
@@ -927,12 +929,13 @@ export default function ItemOffers(props: any) {
 
     const handleAcceptOffer = async (offerAmount: number, buyerAddress: any) => {
         handleAlertClose();
-
+        
         try {
             const transaction = new Transaction();
             
             if (!ValidateDAO(mintOwner)) {
                 const transactionInstr = await acceptOffer(offerAmount, mint, walletPublicKey, buyerAddress.toString());
+                //const transactionInstr = await gah_acceptOffer(offerAmount, mint, walletPublicKey, buyerAddress.toString());
                 const instructionsArray = [transactionInstr.instructions].flat();  
                 transaction.add(
                     ...instructionsArray
@@ -1062,6 +1065,7 @@ export default function ItemOffers(props: any) {
         try {
             //const transactionInstr = await withdrawOffer(offerAmount, mint, walletPublicKey.toString(), mintOwner);
             const transactionInstr = await cancelWithdrawOffer(offerAmount, mint, walletPublicKey, mintOwner);
+            //const transactionInstr = await gah_cancelOffer(offerAmount, mint, walletPublicKey, mintOwner);
             const instructionsArray = [transactionInstr.instructions].flat();        
             const transaction = new Transaction()
             .add(
@@ -1108,9 +1112,9 @@ export default function ItemOffers(props: any) {
 
     const handleCancelOffer = async (offerAmount: number) => {
         try {
-
-            //const transactionInstr = await cancelOffer(offerAmount, mint, walletPublicKey, mintOwner);
-			const transactionInstr = await cancelWithdrawOffer(offerAmount, mint, walletPublicKey, mintOwner);
+            const transactionInstr = await cancelOffer(offerAmount, mint, walletPublicKey, mintOwner);
+			//const transactionInstr = await gah_cancelOffer(offerAmount, mint, walletPublicKey, mintOwner);
+            //const transactionInstr = await cancelWithdrawOffer(offerAmount, mint, walletPublicKey, mintOwner);
             const instructionsArray = [transactionInstr.instructions].flat();        
             const transaction = new Transaction()
             .add(
@@ -1216,6 +1220,7 @@ export default function ItemOffers(props: any) {
         var forSaleTimeAgo = null;
         //console.log('derivedMintPDA[0]: '+derivedMintPDA[0].toString());
         //console.log('result: '+JSON.stringify(result));
+        let ahHighestOffer = 0;
 
         if (!loading){
             setLoading(true);
@@ -1388,9 +1393,12 @@ export default function ItemOffers(props: any) {
                                                                                     }else{   
                                                                                         offerResults.push({buyeraddress: feePayer.toBase58(), offeramount: memo_json?.amount || memo_json?.offer, mint: memo_json?.mint, isowner: false, timestamp: value.blockTime, state: memo_json?.state || memo_json?.status}); 
                                                                                         
-                                                                                        if (memo_json?.amount > highestOffer){
+                                                                                        if (memo_json?.state === 1 || memo_json?.status === 1){
                                                                                             let sol = parseFloat(new TokenAmount(memo_json?.amount, 9).format());
-                                                                                            setHighestOffer(sol);
+                                                                                            if (sol > ahHighestOffer){
+                                                                                                ahHighestOffer = sol;
+                                                                                                setHighestOffer(sol);
+                                                                                            }
                                                                                         }
                                                                                     } 
                                                                                 }
