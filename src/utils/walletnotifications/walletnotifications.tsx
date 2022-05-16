@@ -19,7 +19,8 @@ export async function unicastGrapeSolflareMessage (title:string,message:string,i
             const resp = await window.fetch('https://api.grapes.network/notifications', {
                 method: "POST",
                 body: JSON.stringify(body),
-                headers: { "Content-Type": "application/json" },
+                headers: { 
+                    "Content-Type": "application/json" },
                 //headers: { "Authorization": SOFLARE_NOTIFICATIONS_API_KEY },
             })
             const json = await resp.json();

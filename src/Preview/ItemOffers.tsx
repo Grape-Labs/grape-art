@@ -89,15 +89,16 @@ import {
   } from '../utils/auctionHouse/helpers/accounts';
 
 import { cancelOffer } from '../utils/auctionHouse/cancelOffer';
-import { withdrawOffer } from '../utils/auctionHouse/withdrawOffer';
 import { submitOffer } from '../utils/auctionHouse/submitOffer';
-import { gah_makeOffer } from '../utils/auctionHouse/gah_makeOffer';
-import { gah_cancelOffer } from '../utils/auctionHouse/gah_cancelOffer';
-import { gah_acceptOffer } from '../utils/auctionHouse/gah_acceptOffer';
 import { acceptOffer } from '../utils/auctionHouse/acceptOffer';
 import { cancelListing } from '../utils/auctionHouse/cancelListing';
 import { sellNowListing } from '../utils/auctionHouse/sellNowListing';
 import { buyNowListing } from '../utils/auctionHouse/buyNowListing';
+import { withdrawOffer } from '../utils/auctionHouse/withdrawOffer';
+import { gah_makeOffer } from '../utils/auctionHouse/gah_makeOffer';
+import { gah_cancelOffer } from '../utils/auctionHouse/gah_cancelOffer';
+import { gah_acceptOffer } from '../utils/auctionHouse/gah_acceptOffer';
+import { gah_makeListing } from '../utils/auctionHouse/gah_makeListing';
 import { cancelWithdrawOffer } from '../utils/auctionHouse/cancelWithdrawOffer';
 import { depositInGrapeVine } from '../utils/auctionHouse/depositInGrapeVine';
 import { voteSell } from '../utils/auctionHouse/voteSell';
@@ -282,7 +283,8 @@ function SellNowVotePrompt(props:any){
                         enqueueSnackbar(`Proposal: ${proposalPk} created for accepting Listing Price Set to ${sell_now_amount} SOL`,{ variant: 'success' });
                     }
                 } else {
-                    const transactionInstr = await sellNowListing(+sell_now_amount, mint, publicKey.toString(), mintOwner, weightedScore, daoPublicKey);
+                    //const transactionInstr = await sellNowListing(+sell_now_amount, mint, publicKey.toString(), mintOwner, weightedScore, daoPublicKey);
+                    const transactionInstr = await gah_makeListing(+sell_now_amount, mint, publicKey.toString(), mintOwner, weightedScore, daoPublicKey);
                     const instructionsArray = [transactionInstr.instructions].flat();            
                     transaction.add(
                         ...instructionsArray
@@ -478,7 +480,8 @@ function SellNowPrompt(props:any){
             //const setSellNowPrice = async () => {
             try {
                 //START SELL NOW / LIST
-                const transactionInstr = await sellNowListing(+sell_now_amount, mint, publicKey.toString(), mintOwner, weightedScore, null);
+                //const transactionInstr = await sellNowListing(+sell_now_amount, mint, publicKey.toString(), mintOwner, weightedScore, null);
+                const transactionInstr = await gah_makeListing(+sell_now_amount, mint, publicKey.toString(), mintOwner, weightedScore, null);
                 const instructionsArray = [transactionInstr.instructions].flat();        
                 const transaction = new Transaction()
                 .add(

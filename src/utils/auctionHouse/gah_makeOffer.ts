@@ -66,8 +66,8 @@ export async function gah_makeOffer(offerAmount: number, mint: string, walletPub
     //console.log('escrow_amount:',escrowSolAmount, 'offerAmount:', offerAmount);
     
     const buyerPrice = Number(offerAmount) * LAMPORTS_PER_SOL
-    console.log("buyerPrice: "+buyerPrice);
-    console.log("auctionHouseObj: "+JSON.stringify(auctionHouseObj));
+    //console.log("buyerPrice: "+buyerPrice);
+    //console.log("auctionHouseObj: "+JSON.stringify(auctionHouseObj));
     const auctionHouse = new PublicKey(auctionHouseKey);//new PublicKey(auctionHouseObj.auctionHouse.address)
     //console.log("auctionHouse: "+auctionHouseObj.auctionHouse.address);
     const authority = new PublicKey(auctionHouseObj.authority)
@@ -76,7 +76,7 @@ export async function gah_makeOffer(offerAmount: number, mint: string, walletPub
     )
     const treasuryMint = new PublicKey(auctionHouseObj.treasuryMint)
     const tokenMint = mintKey
-    console.log("mintOwner: "+JSON.stringify(mintOwner));
+    //console.log("mintOwner: "+JSON.stringify(mintOwner));
     //const tokenAccount = new PublicKey(mintOwner)
     const results = await anchorProgram.provider.connection.getTokenLargestAccounts(mintKey);    
     const tokenAccount: web3.PublicKey = results.value[0].address;
