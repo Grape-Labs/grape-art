@@ -225,6 +225,7 @@ function SellNowVotePrompt(props:any){
     const [open_dialog, setOpenSPDialog] = React.useState(false);
     const [sell_now_amount, setSellNowAmount] = React.useState('');
     const mint = props.mint;  
+    const updateAuthority = props.updateAuthority;  
     const mintOwner = props.mintOwner;
     const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
     const { connection } = useConnection();
@@ -266,7 +267,7 @@ function SellNowVotePrompt(props:any){
                 const transaction = new Transaction();
                 if (daoPublicKey){
                     //voteListing2
-                    const daoTransactionInstr = await voteListing(+sell_now_amount, mint, publicKey.toString(), mintOwner, weightedScore, daoPublicKey);
+                    const daoTransactionInstr = await voteListing(+sell_now_amount, mint, publicKey.toString(), mintOwner, weightedScore, daoPublicKey, updateAuthority);
                     //params from original voteListing
                     //const daoTransactionInstr = await voteListing(+sell_now_amount, mint, daoPublicKey.toString(), publicKey);
                     console.log('transactionInstr' +JSON.stringify(daoTransactionInstr));
@@ -277,14 +278,14 @@ function SellNowVotePrompt(props:any){
                     //console.log(daoTransactionInstr);
                     //console.log(daoTransactionInstr.instructions[1].data.buffer.toString());
                     //console.log(Utf8ArrayToStr(daoTransactionInstr.instructions[1].data));
-                    const proposalPk = await createProposal(+sell_now_amount, mint, publicKey.toString(), mintOwner, weightedScore, daoPublicKey, connection, daoTransactionInstr, sendTransaction, anchorWallet, 2);
+                    const proposalPk = await createProposal(+sell_now_amount, mint, publicKey.toString(), mintOwner, weightedScore, daoPublicKey, connection, daoTransactionInstr, sendTransaction, anchorWallet, 2, updateAuthority);
 
                     if (proposalPk){
                         enqueueSnackbar(`Proposal: ${proposalPk} created for accepting Listing Price Set to ${sell_now_amount} SOL`,{ variant: 'success' });
                     }
                 } else {
-                    //const transactionInstr = await sellNowListing(+sell_now_amount, mint, publicKey.toString(), mintOwner, weightedScore, daoPublicKey);
-                    const transactionInstr = await gah_makeListing(+sell_now_amount, mint, publicKey.toString(), mintOwner, weightedScore, daoPublicKey);
+                    const transactionInstr = await sellNowListing(+sell_now_amount, mint, publicKey.toString(), mintOwner, weightedScore, daoPublicKey);
+                    //const transactionInstr = await gah_makeListing(+sell_now_amount, mint, publicKey.toString(), mintOwner, weightedScore, daoPublicKey);
                     const instructionsArray = [transactionInstr.instructions].flat();            
                     transaction.add(
                         ...instructionsArray
@@ -445,6 +446,7 @@ function SellNowPrompt(props:any){
     const [open_dialog, setOpenSPDialog] = React.useState(false);
     const [sell_now_amount, setSellNowAmount] = React.useState('');
     const mint = props.mint;  
+    const updateAuthority = props.updateAuthority;
     const mintOwner = props.mintOwner;
     const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
     const { connection } = useConnection();
@@ -480,8 +482,8 @@ function SellNowPrompt(props:any){
             //const setSellNowPrice = async () => {
             try {
                 //START SELL NOW / LIST
-                //const transactionInstr = await sellNowListing(+sell_now_amount, mint, publicKey.toString(), mintOwner, weightedScore, null);
-                const transactionInstr = await gah_makeListing(+sell_now_amount, mint, publicKey.toString(), mintOwner, weightedScore, null);
+                const transactionInstr = await sellNowListing(+sell_now_amount, mint, publicKey.toString(), mintOwner, weightedScore, null, updateAuthority);
+                //const transactionInstr = await gah_makeListing(+sell_now_amount, mint, publicKey.toString(), mintOwner, weightedScore, null);
                 const instructionsArray = [transactionInstr.instructions].flat();        
                 const transaction = new Transaction()
                 .add(
@@ -618,7 +620,8 @@ export function OfferPrompt(props: any) {
     const sol_balance = props.solBalance;  
     const mint = props.mint;  
     const image = props.image;
-    const mintOwner = props.mintOwner;  
+    const mintOwner = props.mintOwner;
+    const updateAuthority = props.updateAuthority;  
     const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
     const { connection } = useConnection();
     const { publicKey, wallet, sendTransaction } = useWallet();
@@ -660,10 +663,10 @@ export function OfferPrompt(props: any) {
 			*/
 			//no need allowing for multiple offers
                 try {
-                    const transactionInstr = await submitOffer(+offer_amount, mint, publicKey.toString(), mintOwner);
+                    const transactionInstr = await submitOffer(+offer_amount, mint, publicKey.toString(), mintOwner, updateAuthority);
                     //console.log("transactionInstr1 submitOffer: "+JSON.stringify(transactionInstr1));
     
-                    //const transactionInstr = await gah_makeOffer(+offer_amount, mint, publicKey.toString(), mintOwner);
+                    //const transactionInstr = await gah_makeOffer(+offer_amount, mint, publicKey.toString(), mintOwner, updateAuthority);
                     //console.log("transactionInstr makeOffer: "+JSON.stringify(transactionInstr));
     
                     const instructionsArray = [transactionInstr.instructions].flat();        
@@ -877,7 +880,7 @@ export default function ItemOffers(props: any) {
     const [open_offers_collapse, setOpenOffersCollapse] = React.useState(false);
     const pubkey = props.pubkey || null;
     const mintOwner = props.mintOwner;
-    
+    const updateAuthority = props.updateAuthority;
     const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
     const { connection } = useConnection();
     const { publicKey, sendTransaction } = useWallet();
@@ -937,8 +940,8 @@ export default function ItemOffers(props: any) {
             const transaction = new Transaction();
             
             if (!ValidateDAO(mintOwner)) {
-                const transactionInstr = await acceptOffer(offerAmount, mint, walletPublicKey, buyerAddress.toString());
-                //const transactionInstr = await gah_acceptOffer(offerAmount, mint, walletPublicKey, buyerAddress.toString());
+                const transactionInstr = await acceptOffer(offerAmount, mint, walletPublicKey, buyerAddress.toString(), updateAuthority);
+                //const transactionInstr = await gah_acceptOffer(offerAmount, mint, walletPublicKey, buyerAddress.toString(), updateAuthority);
                 const instructionsArray = [transactionInstr.instructions].flat();  
                 transaction.add(
                     ...instructionsArray
@@ -961,7 +964,7 @@ export default function ItemOffers(props: any) {
                 enqueueSnackbar(`${t('NFT transaction completed')} `,{ variant: 'success', action:snackaction });
             } else {
                 //set instruction to sell state before sending proposal to realm
-                const transactionInstrSell = await voteSell(+offerAmount, mint, publicKey.toString(), mintOwner, mintOwner.toString());
+                const transactionInstrSell = await voteSell(+offerAmount, mint, publicKey.toString(), mintOwner, mintOwner.toString(), updateAuthority);
                 const instructionsArray = [transactionInstrSell.instructions].flat();            
                 transaction.add(
                     ...instructionsArray
@@ -981,10 +984,10 @@ export default function ItemOffers(props: any) {
                 );
                 enqueueSnackbar(`Offer state changed. Proceed to acccept proposal creation`,{ variant: 'success', action:snackaction });               
 
-                const transactionInstr = await voteOffer(+offerAmount, mint, mintOwner.toString(), buyerAddress.toString(), publicKey.toString());
+                const transactionInstr = await voteOffer(+offerAmount, mint, mintOwner.toString(), buyerAddress.toString(), publicKey.toString(), updateAuthority);
                 console.log('transactionInstr' +JSON.stringify(transactionInstr));
                 //transactionInstr.add(feePayer: COLLABORATION_SOL_TREASURY);
-                const proposalPk = await createProposal(+offerAmount, mint, publicKey.toString(), mintOwner, 0, mintOwner.toString(), connection, transactionInstr, sendTransaction, anchorWallet, 1);
+                const proposalPk = await createProposal(+offerAmount, mint, publicKey.toString(), mintOwner, 0, mintOwner.toString(), connection, transactionInstr, sendTransaction, anchorWallet, 1, updateAuthority);
                 //const proposalPk = await createProposal(+offerAmount, mint, publicKey.toString(), mintOwner, 0, mintOwner.toString(), ggoconnection, transactionInstr, sendTransaction, anchorWallet, 1);
                 if (proposalPk){
                     enqueueSnackbar(`Proposal: ${proposalPk} created and offer for ${offerAmount} SOL will be voted if to be accepted.`,{ variant: 'success' });
@@ -1019,7 +1022,7 @@ export default function ItemOffers(props: any) {
     const handleCancelListing =  async (salePrice: number) => {
         try {
             //START CANCEL LISTING
-            const transactionInstr = await cancelListing(salePrice, mint, walletPublicKey.toString(), mintOwner);
+            const transactionInstr = await cancelListing(salePrice, mint, walletPublicKey.toString(), mintOwner, updateAuthority);
             const instructionsArray = [transactionInstr.instructions].flat();        
             const transaction = new Transaction()
             .add(
@@ -1066,8 +1069,8 @@ export default function ItemOffers(props: any) {
 
     const handleWithdrawOffer = async (offerAmount: number) => {
         try {
-            //const transactionInstr = await withdrawOffer(offerAmount, mint, walletPublicKey.toString(), mintOwner);
-            const transactionInstr = await cancelWithdrawOffer(offerAmount, mint, walletPublicKey, mintOwner);
+            //const transactionInstr = await withdrawOffer(offerAmount, mint, walletPublicKey.toString(), mintOwner, updateAuthority);
+            const transactionInstr = await cancelWithdrawOffer(offerAmount, mint, walletPublicKey, mintOwner, updateAuthority);
             //const transactionInstr = await gah_cancelOffer(offerAmount, mint, walletPublicKey, mintOwner);
             const instructionsArray = [transactionInstr.instructions].flat();        
             const transaction = new Transaction()
@@ -1115,9 +1118,9 @@ export default function ItemOffers(props: any) {
 
     const handleCancelOffer = async (offerAmount: number) => {
         try {
-            const transactionInstr = await cancelOffer(offerAmount, mint, walletPublicKey, mintOwner);
-			//const transactionInstr = await gah_cancelOffer(offerAmount, mint, walletPublicKey, mintOwner);
-            //const transactionInstr = await cancelWithdrawOffer(offerAmount, mint, walletPublicKey, mintOwner);
+            const transactionInstr = await cancelOffer(offerAmount, mint, walletPublicKey, mintOwner, updateAuthority);
+			//const transactionInstr = await gah_cancelOffer(offerAmount, mint, walletPublicKey, mintOwner, updateAuthority);
+            //const transactionInstr = await cancelWithdrawOffer(offerAmount, mint, walletPublicKey, mintOwner, updateAuthority);
             const instructionsArray = [transactionInstr.instructions].flat();        
             const transaction = new Transaction()
             .add(
@@ -1876,13 +1879,13 @@ export default function ItemOffers(props: any) {
                                                                     <>
                                                                     {!ValidateCurve(mintOwner) && salePrice <= 0 &&
                                                                         <Grid item>
-                                                                            <SellNowVotePrompt mint={mint} mintOwner={mintOwner} salePrice={salePrice} grapeWeightedScore={grape_weighted_score} RefreshOffers={setRefreshOffers} />
+                                                                            <SellNowVotePrompt mint={mint} updateAuthority={updateAuthority} mintOwner={mintOwner} salePrice={salePrice} grapeWeightedScore={grape_weighted_score} RefreshOffers={setRefreshOffers} />
                                                                         </Grid>
                                                                     }
                                                                     
                                                                     {(ValidateCurve(mintOwner) || (ValidateDAO(mintOwner))) && (
                                                                         <Grid item>
-                                                                            <OfferPrompt mint={mint} image={image} mintOwner={mintOwner} setRefreshOffers={setRefreshOffers} solBalance={sol_portfolio_balance} highestOffer={highestOffer} offers={offers} />
+                                                                            <OfferPrompt mint={mint} updateAuthority={updateAuthority} image={image} mintOwner={mintOwner} setRefreshOffers={setRefreshOffers} solBalance={sol_portfolio_balance} highestOffer={highestOffer} offers={offers} />
                                                                         </Grid>
                                                                     )}
                                                                     </>
@@ -1924,7 +1927,7 @@ export default function ItemOffers(props: any) {
                                                         </>
                                                         : 
                                                         <>
-                                                            <SellNowPrompt mint={mint} mintOwner={mintOwner} salePrice={salePrice} grapeWeightedScore={grape_weighted_score} RefreshOffers={setRefreshOffers} />
+                                                            <SellNowPrompt mint={mint} updateAuthority={updateAuthority} mintOwner={mintOwner} salePrice={salePrice} grapeWeightedScore={grape_weighted_score} RefreshOffers={setRefreshOffers} />
                                                         </>
                                                     )}
                                                 </Grid>

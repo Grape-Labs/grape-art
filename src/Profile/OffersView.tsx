@@ -147,14 +147,14 @@ export default function OffersView(props:any){
         setAlertWithdrawOpen(true);
     };
 
-    const handleCancelOffer = async (offerAmount: number, mint: any) => {
+    const handleCancelOffer = async (offerAmount: number, mint: any, updateAuthority: any) => {
         try {
             const mintKey = new web3.PublicKey(mint);
             let tokenAccount =  await ggoconnection.getTokenLargestAccounts(new PublicKey(mintKey));
             const tokenKey = new web3.PublicKey(tokenAccount?.value[0].address.toBase58());
             let mintAccountInfo = await ggoconnection.getAccountInfo(tokenKey);
             const mintAccountInfoDs = deserializeAccount(mintAccountInfo?.data);                
-            const transactionInstr = await cancelWithdrawOffer(offerAmount, mint, publicKey, mintAccountInfoDs.owner);
+            const transactionInstr = await cancelWithdrawOffer(offerAmount, mint, publicKey, mintAccountInfoDs.owner, updateAuthority);
             const instructionsArray = [transactionInstr.instructions].flat();        
             const transaction = new Transaction()
             .add(
@@ -198,14 +198,14 @@ export default function OffersView(props:any){
         }  
     }
 	//handCancelWithdrawOffer was useful when only allowing one offer at a time
-    const handleCancelWithdrawOffer = async (offerAmount: number, mint: any) => {
+    const handleCancelWithdrawOffer = async (offerAmount: number, mint: any, updateAuthority: any) => {
         try {
             const mintKey = new web3.PublicKey(mint);
             let tokenAccount =  await ggoconnection.getTokenLargestAccounts(new PublicKey(mintKey));
             const tokenKey = new web3.PublicKey(tokenAccount?.value[0].address.toBase58());
             let mintAccountInfo = await ggoconnection.getAccountInfo(tokenKey);
             const mintAccountInfoDs = deserializeAccount(mintAccountInfo?.data);
-            const transactionInstr = await cancelWithdrawOffer(offerAmount, mint, publicKey, mintAccountInfoDs.owner);
+            const transactionInstr = await cancelWithdrawOffer(offerAmount, mint, publicKey, mintAccountInfoDs.owner, updateAuthority);
             const instructionsArray = [transactionInstr.instructions].flat();        
             const transaction = new Transaction()
             .add(
@@ -249,7 +249,7 @@ export default function OffersView(props:any){
         }  
     }
     
-    const handleWithdrawOffer = async (offerAmount: number, mint: string) => {
+    const handleWithdrawOffer = async (offerAmount: number, mint: string, updateAuthority: string) => {
 
         try {
             
@@ -272,7 +272,7 @@ export default function OffersView(props:any){
                         const tokenKey = new web3.PublicKey(tokenAccount?.value[0].address.toBase58());
                         let mintAccountInfo = await ggoconnection.getAccountInfo(tokenKey);
                         const mintAccountInfoDs = deserializeAccount(mintAccountInfo?.data);
-                        const transactionInstr = await cancelWithdrawOffer(offerAmount, mint, publicKey, mintAccountInfoDs.owner);
+                        const transactionInstr = await cancelWithdrawOffer(offerAmount, mint, publicKey, mintAccountInfoDs.owner, updateAuthority);
                         const instructionsArray = [transactionInstr.instructions].flat();        
                         const transaction = new Transaction()
                         .add(
@@ -312,7 +312,7 @@ export default function OffersView(props:any){
                     } 
                 } else{ // no mint then just withdraw
                     try {
-                        const transactionInstr = await withdrawOffer(offerAmount, null, publicKey);
+                        const transactionInstr = await withdrawOffer(offerAmount, null, publicKey, updateAuthority);
                         const instructionsArray = [transactionInstr.instructions].flat();        
                         const transaction = new Transaction()
                         .add(
@@ -368,7 +368,7 @@ export default function OffersView(props:any){
                                 let mintAccountInfo = await ggoconnection.getAccountInfo(tokenKey);
                                 const mintAccountInfoDs = deserializeAccount(mintAccountInfo?.data);
                                 //let numericAmmount = item.offerAmount;
-                                const transactionInstr = await cancelOffer(item.offerAmount, item.mint, publicKey, mintAccountInfoDs.owner);
+                                const transactionInstr = await cancelOffer(item.offerAmount, item.mint, publicKey, mintAccountInfoDs.owner, updateAuthority);
                                 const instructionsArray = [transactionInstr.instructions].flat();        
                                 const transaction = new Transaction()
                                 .add(
@@ -399,7 +399,7 @@ export default function OffersView(props:any){
 
                         try{
                             if (cnt === allmints.length){
-                                const transactionInstr = await withdrawOffer(offerAmount, null, publicKey);
+                                const transactionInstr = await withdrawOffer(offerAmount, null, publicKey, updateAuthority);
                                 const instructionsArray = [transactionInstr.instructions].flat();        
                                 const transaction = new Transaction()
                                 .add(
@@ -1039,7 +1039,6 @@ export default function OffersView(props:any){
                         sx={{
                             background: 'rgba(0, 0, 0, 0.6)',
                             borderRadius: '17px',
-
                         }}
                     >
                         <Table size="small" aria-label="offers">
@@ -1105,7 +1104,7 @@ export default function OffersView(props:any){
                                                             color="error"
                                                             variant="text"
                                                             //onClick={() => handleWithdrawOffer(convertSolVal(item.offeramount), item.mint)}
-                                                            onClick={() => handleCancelWithdrawOffer(convertSolVal(item.offeramount), item.mint)}
+                                                            onClick={() => handleCancelWithdrawOffer(convertSolVal(item.offeramount), item.mint, item.updateAuthority)}
                                                             //onClick={() => handleCancelOffer(convertSolVal(item.offeramount), item.mint)}
                                                             sx={{
                                                                 borderRadius: '24px',

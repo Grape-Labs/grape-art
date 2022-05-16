@@ -15,7 +15,7 @@ import {
   } from './helpers/accounts';
 import { getPriceWithMantissa } from './helpers/various';
 
-export async function cancelListing(offerAmount: number, mint: string, walletPublicKey: string, mintOwner: any): Promise<InstructionsAndSignersSet> {
+export async function cancelListing(offerAmount: number, mint: string, walletPublicKey: string, mintOwner: any, updateAuthority: string): Promise<InstructionsAndSignersSet> {
 
     let tokenSize = 1;
     const auctionHouseKey = new web3.PublicKey(AUCTION_HOUSE_ADDRESS);
@@ -90,6 +90,7 @@ export async function cancelListing(offerAmount: number, mint: string, walletPub
       state:5, // status (0: withdraw, 1: offer, 2: listing, 3: buy/execute (from listing), 4: buy/execute(accept offer), 5: cancel)
       ah:auctionHouseKey.toString(), // pk
       mint:mintKey.toString(), // mint
+      ua:updateAuthority, // updateAuthority
       amount:buyPriceAdjusted.toNumber() // price
     };
 

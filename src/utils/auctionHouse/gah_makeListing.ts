@@ -29,7 +29,7 @@ const { createSellInstruction, createPrintListingReceiptInstruction } =
   AuctionHouseProgram.instructions
 
 import { ConstructionOutlined } from '@mui/icons-material';
-  export async function gah_makeListing(offerAmount: number, mint: string, walletPublicKey: string, mintOwner: any, weightedScore: any, daoPublicKey: string): Promise<InstructionsAndSignersSet> {
+  export async function gah_makeListing(offerAmount: number, mint: string, walletPublicKey: string, mintOwner: any, weightedScore: any, daoPublicKey: string, updateAuthority: string): Promise<InstructionsAndSignersSet> {
 
     let tokenSize = 1;
     const auctionHouseKey = new web3.PublicKey(AUCTION_HOUSE_ADDRESS);
@@ -147,6 +147,7 @@ import { ConstructionOutlined } from '@mui/icons-material';
       state:2, // status (0: withdraw, 1: offer, 2: listing, 3: buy/execute (from listing), 4: buy/execute(accept offer), 5: cancel)
       ah:auctionHouseKey.toString(), // pk
       mint:mintKey.toString(), // mint
+      ua:updateAuthority, // updateAuthority
       amount:buyerPrice, // price
       score:weightedScore, // spam protection for our feed/higher score weight higher feed visibility
     };

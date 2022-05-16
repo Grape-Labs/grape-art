@@ -24,7 +24,7 @@ function convertSolVal(sol: any){
   return +sol/1000000000;
 }
 
-export async function cancelWithdrawOffer(offerAmount: number, mint: string, buyerWalletKey: PublicKey, mintOwner: any): Promise<InstructionsAndSignersSet> {
+export async function cancelWithdrawOffer(offerAmount: number, mint: string, buyerWalletKey: PublicKey, mintOwner: any, updateAuthority: string): Promise<InstructionsAndSignersSet> {
     //START CANCEL
     let tokenSize = 1;
     const auctionHouseKey = new web3.PublicKey(AUCTION_HOUSE_ADDRESS);
@@ -167,6 +167,7 @@ export async function cancelWithdrawOffer(offerAmount: number, mint: string, buy
       state:5, // status (0: withdraw, 1: offer, 2: listing, 3: buy/execute (from listing), 4: buy/execute(accept offer), 5: cancel)
       ah:auctionHouseKey.toString(), // pk
       mint:mint.toString(), // mint
+      ua:updateAuthority, // updateAuthority
       amount:buyPriceAdjusted.toNumber() // price
     };
 

@@ -39,7 +39,7 @@ import { sendTransactions, SequenceType, WalletSigner, getWalletPublicKey } from
 //import { SignerWalletAdapter } from '@solana/wallet-adapter-base';
 //import { useAnchorWallet } from "@solana/wallet-adapter-react";
 
-  export async function createProposal(offerAmount: number, mint: string, walletPublicKey: string, mintOwner: any, weightedScore: any, daoPublicKey: string, connection: Connection, transactionInstr: InstructionsAndSignersSet, sendTransaction: any, wallet: WalletSigner, state: number): Promise<PublicKey> {
+  export async function createProposal(offerAmount: number, mint: string, walletPublicKey: string, mintOwner: any, weightedScore: any, daoPublicKey: string, connection: Connection, transactionInstr: InstructionsAndSignersSet, sendTransaction: any, wallet: WalletSigner, state: number, updateAuthority: any): Promise<PublicKey> {
     
     //let instructions: TransactionInstruction[] = [];
     //let signers: any[] = [];

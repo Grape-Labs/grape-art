@@ -49,7 +49,7 @@ function convertSolVal(sol: any){
     return sol;
 }
 
-export async function gah_makeOffer(offerAmount: number, mint: string, walletPublicKey: string, mintOwner: any): Promise<InstructionsAndSignersSet> {
+export async function gah_makeOffer(offerAmount: number, mint: string, walletPublicKey: string, mintOwner: any, updateAuthority: string): Promise<InstructionsAndSignersSet> {
     //const { publicKey, signTransaction } = useWallet();
     let tokenSize = 1;
     const auctionHouseKey = new web3.PublicKey(AUCTION_HOUSE_ADDRESS);
@@ -193,6 +193,7 @@ export async function gah_makeOffer(offerAmount: number, mint: string, walletPub
       state:1, // status (0: withdraw, 1: offer, 2: listing, 3: buy/execute (from listing), 4: buy/execute(accept offer), 5: cancel)
       ah:auctionHouseKey.toString(), // pk
       mint:mintKey.toString(), // mint
+      ua:updateAuthority, // updateAuthority
       amount:buyerPrice // price
     };
 

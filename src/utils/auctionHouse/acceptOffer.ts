@@ -22,7 +22,7 @@ import { getPriceWithMantissa } from './helpers/various';
 import { decodeMetadata, Metadata } from './helpers/schema';
 import { ASSOCIATED_TOKEN_PROGRAM_ID } from '@solana/spl-token';
 
-export async function acceptOffer(offerAmount: number, mint: string, sellerWalletKey: PublicKey, buyerAddress: any): Promise<InstructionsAndSignersSet> {
+export async function acceptOffer(offerAmount: number, mint: string, sellerWalletKey: PublicKey, buyerAddress: any, updateAuthority: string): Promise<InstructionsAndSignersSet> {
   //START SELL
   let tokenSize = 1;
   const auctionHouseKey = new web3.PublicKey(AUCTION_HOUSE_ADDRESS);
@@ -250,6 +250,7 @@ export async function acceptOffer(offerAmount: number, mint: string, sellerWalle
     state:4, // status (0: withdraw, 1: offer, 2: listing, 3: buy/execute (from listing), 4: buy/execute(accept offer), 5: cancel)
     ah:auctionHouseKey.toString(), // pk
     mint:mintKey.toString(), // mint
+    ua:updateAuthority, // updateAuthority
     amount:buyPriceAdjusted.toNumber() // price
   };
 
