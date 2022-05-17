@@ -16,11 +16,11 @@ export async function unicastGrapeSolflareMessage (title:string,message:string,i
                 actionUrl: actionUrl,
                 ahAddress: AUCTION_HOUSE_ADDRESS,
             };
-            const resp = await window.fetch('https://api.grapes.network/notifications', {
+            const resp = await fetch('https://api.grapes.network/notifications', {
+                mode: 'no-cors',
                 method: "POST",
                 body: JSON.stringify(body),
-                headers: { 
-                    "Content-Type": "application/json" },
+                headers: {  },
                 //headers: { "Authorization": SOFLARE_NOTIFICATIONS_API_KEY },
             })
             const json = await resp.json();

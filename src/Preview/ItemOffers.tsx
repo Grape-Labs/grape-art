@@ -699,18 +699,20 @@ export function OfferPrompt(props: any) {
                     let highest_offer = 0;
                     let highest_offer_pk = null;
                     let previous_offer_pk = null;
+                    let offcnt = 0;
                     if (offers){
-                        var offcnt = 0;
+                        //console.log("Offers:"+offers.length);
                         for (var offer of offers){
-                            console.log(offers.length + ": " + offer.offeramount + " - " + offer.buyeraddress);
-                            if (offcnt === 1)
+                            //console.log(offer.offeramount + " - " + offer.buyeraddress + " :: "+(offer?.state));
+                            //if (offer.state === )
+                            if ((offcnt === 1)&&(offer?.state === 1)){
                                 previous_offer_pk = offer.buyeraddress;
+                            }
                             offcnt++;
                         } 
-                        
                     }
 
-                    if ((previous_offer_pk)&&(offers.length > 1)){
+                    if ((previous_offer_pk)&&(offcnt > 1)){
                         console.log(previous_offer_pk+' you have been outbid');
                         unicastGrapeSolflareMessage('Outbid Notice', 'You have been outbid on grape.art', image, highest_offer_pk, `${GRAPE_PREVIEW}${mint}`);
                     }
@@ -1303,7 +1305,7 @@ export default function ItemOffers(props: any) {
                                     for (var memo_item of memo_arr){
                                         try{
                                             const memo_json = JSON.parse(memo_item);
-                                    
+                                            
                                             /*
                                             if ((memo_json?.status === 3) || 
                                                 (memo_json?.status === 4) ||
