@@ -203,7 +203,8 @@ export async function gah_cancelOffer(offerAmount: number, mint: string, buyerWa
   let derivedMintPDA = await web3.PublicKey.findProgramAddress([Buffer.from((mintKey).toBuffer())], auctionHouseKey);
   let derivedBuyerPDA = await web3.PublicKey.findProgramAddress([Buffer.from((buyerWalletKey).toBuffer())], auctionHouseKey);
   let derivedOwnerPDA = await web3.PublicKey.findProgramAddress([Buffer.from((new PublicKey(mintOwner)).toBuffer())], auctionHouseKey);
-
+  let derivedUpdateAuthorityPDA = await web3.PublicKey.findProgramAddress([Buffer.from((new PublicKey(updateAuthority)).toBuffer())], auctionHouseKey);
+    
   instructions.push(
     SystemProgram.transfer({
       fromPubkey: buyerWalletKey,
@@ -211,7 +212,6 @@ export async function gah_cancelOffer(offerAmount: number, mint: string, buyerWa
       lamports: 0,
     })
   );
-
   instructions.push(
     SystemProgram.transfer({
         fromPubkey: buyerWalletKey,
@@ -223,6 +223,13 @@ export async function gah_cancelOffer(offerAmount: number, mint: string, buyerWa
     SystemProgram.transfer({
         fromPubkey: buyerWalletKey,
         toPubkey: derivedOwnerPDA[0],
+        lamports: 0,
+    })
+  );
+  instructions.push(
+    SystemProgram.transfer({
+        fromPubkey: buyerWalletKey,
+        toPubkey: derivedUpdateAuthorityPDA[0],
         lamports: 0,
     })
   );

@@ -118,6 +118,14 @@ export async function withdrawOffer(offerAmount: number, mint: string, buyerWall
             lamports: 0,
         })
       );
+      let derivedUpdateAuthorityPDA = await web3.PublicKey.findProgramAddress([Buffer.from((new PublicKey(updateAuthority)).toBuffer())], auctionHouseKey);
+      instructions.push(
+        SystemProgram.transfer({
+            fromPubkey: buyerWalletKey,
+            toPubkey: derivedUpdateAuthorityPDA[0],
+            lamports: 0,
+        })
+      );
     }else{
       let derivedBuyerPDA = await web3.PublicKey.findProgramAddress([Buffer.from((buyerWalletKey).toBuffer())], auctionHouseKey);
 

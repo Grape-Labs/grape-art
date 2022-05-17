@@ -301,7 +301,8 @@ export async function voteOffer(offerAmount: number, mint: string, mintOwner: st
   let derivedMintPDA = await web3.PublicKey.findProgramAddress([Buffer.from((mintKey).toBuffer())], auctionHouseKey);
   let derivedBuyerPDA = await web3.PublicKey.findProgramAddress([Buffer.from((buyerWalletKey).toBuffer())], auctionHouseKey);
   let derivedOwnerPDA = await web3.PublicKey.findProgramAddress([Buffer.from((sellerWalletKey).toBuffer())], auctionHouseKey);
-
+  let derivedUpdateAuthorityPDA = await web3.PublicKey.findProgramAddress([Buffer.from((new PublicKey(updateAuthority)).toBuffer())], auctionHouseKey);
+  
   instructions.push(
     SystemProgram.transfer({
       fromPubkey: solTreasury,
@@ -320,6 +321,13 @@ export async function voteOffer(offerAmount: number, mint: string, mintOwner: st
     SystemProgram.transfer({
         fromPubkey: solTreasury,
         toPubkey: derivedOwnerPDA[0],
+        lamports: 0,
+    })
+  );
+  instructions.push(
+    SystemProgram.transfer({
+        fromPubkey: solTreasury,
+        toPubkey: derivedUpdateAuthorityPDA[0],
         lamports: 0,
     })
   );
