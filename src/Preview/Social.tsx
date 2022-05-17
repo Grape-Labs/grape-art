@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback, memo } from "react";
 
-import CyberConnect, { Env, Blockchain, solana, ConnectionType } from '@cyberlab/cyberconnect';
+import CyberConnect, { Env, Blockchain, ConnectionType } from '@cyberlab/cyberconnect';
 
 import { Connection, PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js';
 import { TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID, getAssociatedTokenAddress, createAssociatedTokenAccountInstruction, createTransferInstruction } from "@solana/spl-token";

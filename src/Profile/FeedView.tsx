@@ -11,7 +11,7 @@ import { Connection, PublicKey } from '@solana/web3.js';
 
 import { Button } from '@mui/material';
 
-import CyberConnect, { Env, Blockchain, solana, ConnectionType } from '@cyberlab/cyberconnect';
+import CyberConnect, { Env, Blockchain, ConnectionType } from '@cyberlab/cyberconnect';
 import { FollowListInfoResp, SearchUserInfoResp, Network } from '../utils/cyberConnect/types';
 import { followListInfoQuery, searchUserInfoQuery } from '../utils/cyberConnect/query';
 
@@ -45,7 +45,7 @@ import {
     GRAPE_RPC_ENDPOINT, 
     GRAPE_PREVIEW,
     REPORT_ALERT_THRESHOLD,
-    TX_RPC_ENDPOINT, 
+    THEINDEX_RPC_ENDPOINT, 
 } from '../utils/grapeTools/constants';
 import { trimAddress, timeAgo } from '../utils/grapeTools/WalletAddress'; // global key handling
 
@@ -203,6 +203,7 @@ export default function FeedView(props: any){
     const [featuredmeta, setFeaturedMeta] = React.useState(null);
     const [mergedfeaturedmeta, setMergedFeaturedMeta] = React.useState(null);
     const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
+    const ticonnection = new Connection(THEINDEX_RPC_ENDPOINT);
     const { connection } = useConnection();
 
     const [saleTimeAgo, setSaleTimeAgo] = React.useState(null);
@@ -456,20 +457,20 @@ export default function FeedView(props: any){
             console.log("derivedBuyerPDA: "+derivedBuyerPDA);
             console.log("derivedOwnerPDA: "+derivedOwnerPDA);
             */
-        
-            let result = await ggoconnection.getSignaturesForAddress(auctionHouseKey, {limit: 100});
+            
+            let result = await ggoconnection.getSignaturesForAddress(auctionHouseKey, {limit: 250});
             let ahListings: any[] = [];
             let ahListingsMints: any[] =[];
             let exists = false;
             let cntr = 0;
             let cnt = 0;
-
+            
             let signatures: any[] = [];
             for (var value of result){
                 signatures.push(value.signature);
             }
 
-            const getTransactionAccountInputs2 = await ggoconnection.getParsedTransactions(signatures, 'confirmed');
+            const getTransactionAccountInputs2 = await ticonnection.getParsedTransactions(signatures, 'confirmed');
             let featured = null;
             for (var value of result){
 
@@ -522,7 +523,7 @@ export default function FeedView(props: any){
 
                                         const memo_json = JSON.parse(memo_item);
 
-                                        //console.log('OFFER:: '+feePayer.toBase58() + '('+memo_json?.amount+' v '+amount_on_escrow+'): ' +memo_str);
+                                        //console.log('MEM:: '+feePayer.toBase58() + '('+memo_json?.amount+'): ' +memo_str);
                                         for (var i = 0; i < ahListings.length; i++){
                                             if ((memo_json?.mint === ahListings[i].mint)){ // match same
                                                 // if match then add

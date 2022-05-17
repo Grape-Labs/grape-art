@@ -1,6 +1,7 @@
 
 import { SOFLARE_NOTIFICATIONS_API_KEY } from '../grapeTools/constants'; 
 import { AUCTION_HOUSE_ADDRESS } from '../auctionHouse/helpers/constants';
+import { linkSync } from 'fs';
 
 export async function unicastGrapeSolflareMessage (title:string,message:string,image:string,publicKey:string,actionUrl:string) {
     try{
@@ -20,7 +21,7 @@ export async function unicastGrapeSolflareMessage (title:string,message:string,i
                 mode: 'no-cors',
                 method: "POST",
                 body: JSON.stringify(body),
-                headers: {  },
+                headers: { "Content-Type": "application/json" },
                 //headers: { "Authorization": SOFLARE_NOTIFICATIONS_API_KEY },
             })
             const json = await resp.json();
