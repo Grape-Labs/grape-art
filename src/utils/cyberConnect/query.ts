@@ -1,7 +1,9 @@
 import {
+  RankingListInfoArgs,
   LikeListInfoArgs,
   FollowListInfoArgs,
   SearchUserInfoArgs,
+  RankingListResp,
   LikeListInfoResp,
   FollowListInfoResp,
   SearchUserInfoResp,
@@ -152,10 +154,37 @@ export const searchUserInfoSchema = ({
   };
 };
 
+export const rankingInfoSchema = ({
+  namespace,
+  network,
+  type,
+}: RankingListInfoArgs) => {
+  return {
+    operationName: "rankingListInfo",
+    query: `query {
+      rankings(first: 10, $namespace: String, $network: Network, type: FOLLOW) {
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
+        list {
+          address
+          followerCount(type:LIKE)
+          avatar
+        }
+      }
+    }`,
+    variables: {
+      network,
+    },
+  };
+};
+
 export const querySchemas = {
   likeListInfo: likeListInfoSchema,
   followListInfo: followListInfoSchema,
   searchUserInfo: searchUserInfoSchema,
+  rankListInfo: rankingInfoSchema,
 };
 
 export const request = async (url = "", data = {}) => {
@@ -183,6 +212,21 @@ export const handleQuery = (
   url: string
 ) => {
   return request(url, data);
+};
+
+export const rankListInfoQuery = async ({
+  namespace,
+  network,
+  type,
+}: RankingListInfoArgs) => {
+  const schema = querySchemas["rankListInfo"]({
+    namespace,
+    network,
+    type,
+  });
+  const resp = await handleQuery(schema, endPoint);
+
+  return (resp?.data?.identity as RankingListResp) || null;
 };
 
 export const likeListInfoQuery = async ({

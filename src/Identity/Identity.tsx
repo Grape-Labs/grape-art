@@ -557,7 +557,7 @@ export function IdentityView(props: any){
                                                                                 </Tooltip> - {item.type}<br/> 
                                                                                 <ListItemButton 
                                                                                     component="a" 
-                                                                                    href={`https://explorer.solana.com/address/${item.signature}`}
+                                                                                    href={`https://explorer.solana.com/tx/${item.signature}`}
                                                                                     target="_blank"
                                                                                     sx={{borderRadius:'24px'}}
                                                                                 >

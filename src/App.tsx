@@ -6,9 +6,11 @@ import { ProfileView } from "./Profile/Profile";
 import { PreviewView } from "./Preview/Preview";
 import { FeaturedView } from "./Featured/Featured";
 import { IdentityView } from "./Identity/Identity";
+import { DriveView } from "./Drive/Drive";
 import { SplashView } from "./Splash/Splash";
 import { StoreFrontView } from "./StoreFront/StoreFront";
 import { MessagesView } from "./Messages/Messages";
+import { LeaderboardView } from "./Leaderboard/Leaderboard";
 import CssBaseline from '@mui/material/CssBaseline';
 
 import {
@@ -182,6 +184,9 @@ function DashboardContent() {
                                     <Route path="/featured" element={<FeaturedView/>} />
                                     
                                     <Route path="/messages" element={<MessagesView/>} />
+
+                                    <Route path="/drive" element={<DriveView/>} />
+                                    <Route path="/leaderboard" element={<LeaderboardView/>} />
                                     
                                     <Route path="/" element={<ProfileView/>}>
                                       <Route path=":handlekey" element={<ProfileView />} />

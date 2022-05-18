@@ -11,6 +11,7 @@ import {
   SystemProgram, 
   TransactionInstruction,
   SYSVAR_INSTRUCTIONS_PUBKEY,
+  ComputeBudgetProgram,
 } from '@solana/web3.js'
 import { BN, web3 } from '@project-serum/anchor';
 import { GRAPE_RPC_ENDPOINT, OTHER_MARKETPLACES } from '../../utils/grapeTools/constants';
@@ -236,7 +237,13 @@ export async function gah_acceptOffer(offerAmount: number, mint: string, sellerW
     const metadataDecoded: Metadata = decodeMetadata(Buffer.from(metadataObj.data),);
     const nft = metadataDecoded.data;
     
+    const additionalComputeBudgetInstruction = ComputeBudgetProgram.requestUnits({
+      units: 400000,
+      additionalFee: 1
+    });
+
     txt
+      //.add(additionalComputeBudgetInstruction)
       .add(createListingInstruction)
       .add(createPrintListingInstruction)
       .add(
@@ -297,6 +304,7 @@ export async function gah_acceptOffer(offerAmount: number, mint: string, sellerW
         createCancelListingReceiptInstruction(cancelListingReceiptAccounts)
 
       txt.add(cancelListingInstruction).add(cancelListingReceiptInstruction)
+      
     }
 
   //txt.recentBlockhash = (await connection.getRecentBlockhash()).blockhash
@@ -355,7 +363,6 @@ export async function gah_acceptOffer(offerAmount: number, mint: string, sellerW
         programId: new PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr"),
     })
   );
-  
 
   return {
     signers: signers,

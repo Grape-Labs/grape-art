@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback, memo } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 
-import CyberConnect, { Env, Blockchain, solana, ConnectionType } from '@cyberlab/cyberconnect';
+import CyberConnect, { Env, Blockchain, ConnectionType } from '@cyberlab/cyberconnect';
 
 import { Connection, ParsedAccountData, PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js'
 import { Token, TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID } from "@solana/spl-token";
@@ -61,11 +61,6 @@ import {
 
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
 
-
-import FlagIcon from '@mui/icons-material/Flag';
-import EmojiFlagsIcon from '@mui/icons-material/EmojiFlags';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import PersonAddOutlinedIcon from '@mui/icons-material/PersonAddOutlined';
 import PersonRemoveOutlinedIcon from '@mui/icons-material/PersonRemoveOutlined';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';

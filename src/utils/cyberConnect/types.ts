@@ -1,3 +1,9 @@
+export interface RankingListInfoArgs {
+  namespace?: string;
+  network?: string;
+  type?: string;
+}
+
 export interface LikeListInfoArgs {
   address: string;
   namespace?: string;
@@ -42,6 +48,12 @@ export interface FollowListInfoArgs {
     list: BasicUserInfo[];
   }
   
+  export interface RankingListResp {
+    namespace?: string;
+    network?: string;
+    type?: ConnectionType,
+  }
+
   export interface LikeListInfoResp {
     likeCount: number;
     likedCount: number;
