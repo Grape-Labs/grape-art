@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import CyberConnect, { Env, Blockchain } from '@cyberlab/cyberconnect';
 import { RankingListResp, Network } from '../utils/cyberConnect/types';
-import { rankListInfoQuery } from '../utils/cyberConnect/query';
+import { rankingListInfoQuery } from '../utils/cyberConnect/query';
 
 import {
     Box,
@@ -15,8 +15,8 @@ export function LeaderboardView(props: any){
     const [accounts, setAccounts] = React.useState(null);
     const solanaProvider = useWallet();
     const [loading, setLoading] = React.useState(false);
-    const [rankingsListInfo, setRankingsListInfo] = React.useState(null);
-    
+    const [rankingsList, setRankingsList] = React.useState(null);
+
     const NAME_SPACE = 'Grape';
     const GLOBAL_NAME_SPACE = '';
     const NETWORK = Network.SOLANA;
@@ -35,13 +35,14 @@ export function LeaderboardView(props: any){
     const initRankingsListInfo = async () => {
         setLoading(true);
         
-        const resp = await rankListInfoQuery({
+        const resp = await rankingListInfoQuery({
             namespace: GLOBAL_NAME_SPACE,
             network: NETWORK,
             type: 'FOLLOW'
         });
+        console.log("rsp: "+JSON.stringify(resp));
         if (resp) {
-            setRankingsListInfo(resp);
+            setRankingsList(resp);
         }
         
         setLoading(false);
@@ -50,18 +51,15 @@ export function LeaderboardView(props: any){
     useEffect(() => {
 		(async () => {
 			initRankingsListInfo();
-            //if (wallet?.publicKey) {
-				// do something here...
-			//}
 		})();
-	}, []);//[wallet?.publicKey])
+	}, []);
 	
     return (
         <Box
             sx={{mt:10}}
         >
-            {accounts ?
-                <>{JSON.stringify(rankingsListInfo)}!</>
+            {!loading && rankingsList ?
+                <>{JSON.stringify(rankingsList)}!</>
             :
                 <>loading...</>
             }

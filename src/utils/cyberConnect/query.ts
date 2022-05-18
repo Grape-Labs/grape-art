@@ -160,22 +160,25 @@ export const rankingInfoSchema = ({
   type,
 }: RankingListInfoArgs) => {
   return {
-    operationName: "rankingListInfo",
+    operationName: 'rankings',
     query: `query {
-      rankings(first: 10, $namespace: String, $network: Network, type: FOLLOW) {
+      rankings(first: 10, namespace: "Grape", network: SOLANA, type: FOLLOW) {
         pageInfo {
           hasNextPage
           endCursor
         }
         list {
           address
-          followerCount(type:LIKE)
+          followerCount(type:FOLLOW)
+          followingCount(type:FOLLOW)
           avatar
         }
       }
     }`,
     variables: {
+      namespace,
       network,
+      type,
     },
   };
 };
@@ -184,7 +187,7 @@ export const querySchemas = {
   likeListInfo: likeListInfoSchema,
   followListInfo: followListInfoSchema,
   searchUserInfo: searchUserInfoSchema,
-  rankListInfo: rankingInfoSchema,
+  rankings: rankingInfoSchema,
 };
 
 export const request = async (url = "", data = {}) => {
@@ -214,12 +217,12 @@ export const handleQuery = (
   return request(url, data);
 };
 
-export const rankListInfoQuery = async ({
+export const rankingListInfoQuery = async ({
   namespace,
   network,
   type,
 }: RankingListInfoArgs) => {
-  const schema = querySchemas["rankListInfo"]({
+  const schema = querySchemas["rankings"]({
     namespace,
     network,
     type,

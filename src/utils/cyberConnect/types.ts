@@ -49,8 +49,12 @@ export interface FollowListInfoArgs {
   }
   
   export interface RankingListResp {
-    namespace?: string;
-    network?: string;
+    followingCount: number;
+    followerCount: number;
+    like?: string,
+    liked?: string,
+    report?: string,
+    reported?: string, 
     type?: ConnectionType,
   }
 

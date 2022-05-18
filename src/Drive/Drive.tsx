@@ -1,15 +1,35 @@
 import React, { useEffect } from "react";
 import { ShdwDrive } from "@shadow-drive/sdk";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
-
 import { Connection, PublicKey } from '@solana/web3.js'
+import moment from 'moment';
+
 import { 
     GRAPE_RPC_ENDPOINT
 } from '../utils/grapeTools/constants';
 import {
     Box,
     Grid,
+    List,
+    ListItem,
+    ListItemText,
+    ListItemAvatar,
+    Avatar,
 } from '@mui/material';
+
+import CloudCircleIcon from '@mui/icons-material/CloudCircle';
+
+function formatBytes(bytes, decimals = 2) {
+    if (bytes === 0) return '0 Bytes';
+
+    const k = 1024;
+    const dm = decimals < 0 ? 0 : decimals;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+}
 
 export function DriveView(props: any){
 	const { connection } = useConnection();
@@ -24,11 +44,11 @@ export function DriveView(props: any){
                 
                 const asa = await drive.getStorageAccounts(); // .getStorageAccount(wallet.publicKey);
                 console.log("all storage accounts: "+JSON.stringify(asa))
-                const sa = await drive.getStorageAccount(new PublicKey('4qJn9DbegUmQfP8bsgpUWZQWN4SeMu4S2EcNhSPk5cBf'))
-                console.log("existing storage account: "+JSON.stringify(sa))
+                //const sa = await drive.getStorageAccount(new PublicKey('...'))
+                //console.log("existing storage account: "+JSON.stringify(sa))
                 
-                if (sa){
-                    setAccount(sa);
+                if (asa){
+                    setAccount(asa);
                 } else{
                     const storage = await drive.createStorageAccount('grape-test-storage', '1MB')
                     const storedAccount = await drive.getStorageAccounts();
@@ -66,7 +86,20 @@ export function DriveView(props: any){
                         >
 
                             {account ?
-                                <>{JSON.stringify(account)}</>
+                                <List sx={{ width: '100%' }}>
+                                {account.map((storageAccount: any, key: number) => (
+                                    <ListItem>
+                                      <ListItemAvatar>
+                                        <Avatar>
+                                          <CloudCircleIcon />
+                                        </Avatar>
+                                      </ListItemAvatar>
+                                      <ListItemText 
+                                      primary={`${storageAccount.account.identifier} ${storageAccount.publicKey}`} 
+                                      secondary={`${formatBytes(storageAccount.account.storageAvailable)} of ${formatBytes(storageAccount.account.storage)} - ${moment.unix(+storageAccount.account.creationTime).format("MMMM Do YYYY, h:mm a")}`} />
+                                    </ListItem>
+                                ))}
+                                </List>
                             :
                                 <>loading...</>
                             }
