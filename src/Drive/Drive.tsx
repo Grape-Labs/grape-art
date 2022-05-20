@@ -4,6 +4,8 @@ import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { LAMPORTS_PER_SOL, Connection, PublicKey } from '@solana/web3.js';
 import { TokenAmount } from '../utils/grapeTools/safe-math';
 
+import {CopyToClipboard} from 'react-copy-to-clipboard';
+
 import { useSnackbar } from 'notistack';
 import { WalletError } from '@solana/wallet-adapter-base';
 import { WalletConnectButton } from "@solana/wallet-adapter-material-ui";
@@ -48,6 +50,8 @@ import {
 
 import { SelectChangeEvent } from '@mui/material/Select';
 
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import WarningIcon from '@mui/icons-material/Warning';
 import RestoreIcon from '@mui/icons-material/Restore';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
@@ -77,6 +81,11 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     },
   }));
 
+function isImage(url:string) {
+    return /\.(jpg|jpeg|png|webp|avif|gif|svg)$/.test(url);
+}
+  
+
 function formatBytes(bytes: any, decimals = 2) {
     if (bytes === 0) return '0 Bytes';
 
@@ -91,7 +100,7 @@ function formatBytes(bytes: any, decimals = 2) {
 
 function calculateStorageUsed(available: any, allocated: any){
     const percentage = 100-(+available.toNumber()/+allocated.toNumber()*100);
-    const storage_string = percentage + "% of " + formatBytes(allocated);
+    const storage_string = percentage.toFixed(2) + "% of " + formatBytes(allocated);
     return storage_string;
 }
 
@@ -162,6 +171,35 @@ export function DriveView(props: any){
             setTimeout(function() {
                 fetchStorageAccounts();
             }, 2000);
+        }catch(e){
+            closeSnackbar();
+            enqueueSnackbar(`${e}`,{ variant: 'error' });
+            console.log("Error: "+e);
+            //console.log("Error: "+JSON.stringify(e));
+        } 
+    }
+
+    const deleteStoragePoolFile = async (storagePublicKey: PublicKey, file: string) => { 
+        try{
+            enqueueSnackbar(`Preparing to delete ${file}`,{ variant: 'info' });
+            const snackprogress = (key:any) => (
+                <CircularProgress sx={{padding:'10px'}} />
+            );
+            const cnfrmkey = enqueueSnackbar(`Confirming transaction`,{ variant: 'info', action:snackprogress, persist: true });
+            //console.log(storagePublicKey + "/"+storageAccount+" - file: "+file);
+            const signedTransaction = await thisDrive.deleteFile(storagePublicKey, 'https://shdw-drive.genesysgo.net/'+storagePublicKey.toBase58()+'/'+file);
+            await connection.confirmTransaction(signedTransaction.txid, 'processed');
+            closeSnackbar(cnfrmkey);
+            const snackaction = (key:any) => (
+                <Button href={`https://explorer.solana.com/tx/${signedTransaction.txid}`} target='_blank'  sx={{color:'white'}}>
+                    {signedTransaction.txid}
+                </Button>
+            );
+            enqueueSnackbar(`Transaction Confirmed`,{ variant: 'success', action:snackaction });
+            setTimeout(function() {
+                fetchStorageAccounts();
+            }, 2000);
+            
         }catch(e){
             closeSnackbar();
             enqueueSnackbar(`${e}`,{ variant: 'error' });
@@ -355,10 +393,8 @@ export function DriveView(props: any){
                                     <MenuItem value={'KB'}>KB</MenuItem>
                                     <MenuItem value={'MB'}>MB</MenuItem>
                                     <MenuItem value={'GB'}>GB</MenuItem>
-                                    <MenuItem value={'TB'}>GB</MenuItem>
                                 </Select>
                             </FormControl>
-                            
                             
                         </DialogContent> 
                         <DialogActions>
@@ -376,6 +412,63 @@ export function DriveView(props: any){
             </>
             
         ); 
+    }
+
+    function FileItem(props: any){
+        const storageAccount = props.storageAccount;
+        const file = props.file;
+
+        const handleCopyClick = () => {
+            enqueueSnackbar(`Copied!`,{ variant: 'success' });
+        };
+
+        const HandleDeleteStoragePoolFile = (event: any) => {
+            event.preventDefault();
+            deleteStoragePoolFile(new PublicKey(storageAccount.publicKey), file);
+        };
+
+        return (
+
+            <ListItemButton sx={{ pl: 4, borderRadius:'17px' }}>
+                <ListItemIcon>
+                    {isImage(`https://shdw-drive.genesysgo.net/${storageAccount.publicKey}/${file}`) ?
+                        <Avatar src={`https://shdw-drive.genesysgo.net/${storageAccount.publicKey}/${file}`} />
+                        :
+                        <TextSnippetIcon />
+                    }
+
+
+                    
+                </ListItemIcon>
+                <ListItemText>
+                    {file}
+                    <CopyToClipboard 
+                        text={`https://shdw-drive.genesysgo.net/${storageAccount.publicKey}/${file}`} 
+                        onCopy={handleCopyClick}
+                        >
+                        <Button sx={{borderRadius:'24px', color:'white'}}>
+                            <ContentCopyIcon fontSize="small" sx={{color:'white',mr:1}} />
+                            Copy   
+                        </Button>
+                    </CopyToClipboard> 
+
+                    <Button 
+                        sx={{borderRadius:'24px', color:'white'}} 
+                        component="a" 
+                        href={`https://shdw-drive.genesysgo.net/${storageAccount.publicKey}/${file}`}
+                        target="_blank"
+                    >   
+                            <OpenInNewIcon fontSize="small" sx={{color:'white',mr:1}} />
+                            View   
+                    </Button>
+                    <Button onClick={HandleDeleteStoragePoolFile} color="error" sx={{borderRadius:'17px'}}>
+                        <DeleteIcon sx={{mr:1}} /> Delete
+                    </Button>
+
+                </ListItemText>
+            </ListItemButton>
+        )
+
     }
 
     function RenderStorageRow(props: any){
@@ -399,7 +492,8 @@ export function DriveView(props: any){
             });
           
             const json = await response.json();
-            setCurrentFiles(json);
+            console.log("files: "+JSON.stringify(json.keys))
+            setCurrentFiles(json.keys);
         }
 
         const handleClickExpandRow = () => {
@@ -565,16 +659,9 @@ export function DriveView(props: any){
                             </Paper>
                         </Grid>
                         </ListSubheader>
-                    
 
-                        {currentFiles.map((file: any, key: number) => (
-
-                            <ListItemButton sx={{ pl: 4, borderRadius:'17px' }}>
-                                <ListItemIcon>
-                                    <TextSnippetIcon />
-                                </ListItemIcon>
-                                <ListItemText primary={JSON.stringify(file)} />
-                            </ListItemButton>
+                        {currentFiles && currentFiles.map((file: any, key: number) => (
+                            <FileItem storageAccount={storageAccount} file={file} />
                         ))}
 
                         
