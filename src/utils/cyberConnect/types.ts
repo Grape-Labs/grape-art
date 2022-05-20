@@ -55,7 +55,6 @@ export interface FollowListInfoArgs {
     liked?: string,
     report?: string,
     reported?: string, 
-    type?: ConnectionType,
   }
 
   export interface LikeListInfoResp {

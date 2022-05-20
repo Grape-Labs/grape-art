@@ -161,8 +161,8 @@ export const rankingInfoSchema = ({
 }: RankingListInfoArgs) => {
   return {
     operationName: 'rankings',
-    query: `query {
-      rankings(first: 10, namespace: "Grape", network: SOLANA, type: FOLLOW) {
+    query: `query rankings($namespace: String!, $network: Network, $type: ConnectionType!){
+      rankings(first: 10, namespace: $namespace, network: $network, type: $type) {
         pageInfo {
           hasNextPage
           endCursor
