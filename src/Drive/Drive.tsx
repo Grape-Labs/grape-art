@@ -179,6 +179,35 @@ export function DriveView(props: any){
         } 
     }
 
+    const cancelDeleteStoragePoolFile = async (storagePublicKey: PublicKey, file: string) => { 
+        try{
+            enqueueSnackbar(`Preparing to restore ${file}`,{ variant: 'info' });
+            const snackprogress = (key:any) => (
+                <CircularProgress sx={{padding:'10px'}} />
+            );
+            const cnfrmkey = enqueueSnackbar(`Confirming transaction`,{ variant: 'info', action:snackprogress, persist: true });
+            //console.log(storagePublicKey + "/"+storageAccount+" - file: "+file);
+            const signedTransaction = await thisDrive.cancelDeleteFile(storagePublicKey, 'https://shdw-drive.genesysgo.net/'+storagePublicKey.toBase58()+'/'+file);
+            await connection.confirmTransaction(signedTransaction.txid, 'processed');
+            closeSnackbar(cnfrmkey);
+            const snackaction = (key:any) => (
+                <Button href={`https://explorer.solana.com/tx/${signedTransaction.txid}`} target='_blank'  sx={{color:'white'}}>
+                    {signedTransaction.txid}
+                </Button>
+            );
+            enqueueSnackbar(`Transaction Confirmed`,{ variant: 'success', action:snackaction });
+            setTimeout(function() {
+                fetchStorageAccounts();
+            }, 2000);
+            
+        }catch(e){
+            closeSnackbar();
+            enqueueSnackbar(`${e}`,{ variant: 'error' });
+            console.log("Error: "+e);
+            //console.log("Error: "+JSON.stringify(e));
+        } 
+    }
+    
     const deleteStoragePoolFile = async (storagePublicKey: PublicKey, file: string) => { 
         try{
             enqueueSnackbar(`Preparing to delete ${file}`,{ variant: 'info' });
@@ -370,7 +399,7 @@ export function DriveView(props: any){
                                     autoComplete='off'
                                     margin="dense"
                                     id=""
-                                    label={t('Set your storage size in kb')}
+                                    label={t('Set your storage size')}
                                     type="number"
                                     variant="standard"
                                     value={storageSize}
