@@ -248,7 +248,7 @@ export function DriveView(props: any){
 	
     function AddStoragePool(props:any){
         const { t, i18n } = useTranslation();
-        const storageAccount = props.storageAccount;
+        //const storageAccount = props.storageAccount;
         const [storageSize, setStorageSize] = React.useState(1);
         const [storageSizeUnits, setStorageSizeUnits] = React.useState('MB');
         const [storageLabel, setStorageLabel] = React.useState('My Storage');
@@ -383,9 +383,28 @@ export function DriveView(props: any){
         const [filesToUpload, setFilesToUpload] = React.useState(null);
         const key = props.key;
         const [open, setOpen] = React.useState(false);
-        
+        const [currentFiles, setCurrentFiles] = React.useState(null);
+
+        const getStorageFiles = async (storagePublicKey: PublicKey) => { 
+            const asa = await thisDrive.getStorageAccount(storagePublicKey);
+
+            const body = {
+                storageAccount: storagePublicKey.toString()
+            };
+
+            const response = await window.fetch('https://shadow-storage.genesysgo.net/list-objects', {
+                method: "POST",
+                body: JSON.stringify(body),
+                headers: { "Content-Type": "application/json" },
+            });
+          
+            const json = await response.json();
+            setCurrentFiles(json);
+        }
+
         const handleClickExpandRow = () => {
             setOpen(!open);
+            getStorageFiles(storageAccount.publicKey);
         };
 
         const uploadToStoragePool = async (files: any, storagePublicKey: PublicKey) => { 
@@ -418,7 +437,7 @@ export function DriveView(props: any){
 
         const handleFileUpload = (e:any) => {
             const file = e.target.files;
-            console.log("Clouds are boring...")
+            console.log("Web2 clouds are centralized...")
             if (file){
                 console.log("Taking this to web3...")
                 uploadToStoragePool(file, storageAccount.publicKey)
@@ -547,13 +566,18 @@ export function DriveView(props: any){
                         </Grid>
                         </ListSubheader>
                     
+
+                        {currentFiles.map((file: any, key: number) => (
+
+                            <ListItemButton sx={{ pl: 4, borderRadius:'17px' }}>
+                                <ListItemIcon>
+                                    <TextSnippetIcon />
+                                </ListItemIcon>
+                                <ListItemText primary={JSON.stringify(file)} />
+                            </ListItemButton>
+                        ))}
+
                         
-                        <ListItemButton sx={{ pl: 4, borderRadius:'17px' }}>
-                            <ListItemIcon>
-                                <TextSnippetIcon />
-                            </ListItemIcon>
-                            <ListItemText primary="Test" />
-                        </ListItemButton>
                     </List>
                 </Collapse>
             </Box>
@@ -609,7 +633,15 @@ export function DriveView(props: any){
                                 </>
                                 :
                                 <>
-                                    <WalletConnectButton />
+                                    
+                                    {wallet.publicKey ?
+                                        <ListSubheader component="div" id="nested-list-subheader" sx={{borderRadius:'17px'}}>
+                                            SHDW Storage Allocation
+                                            <AddStoragePool />
+                                        </ListSubheader>
+                                    :
+                                        <WalletConnectButton />
+                                    }
                                 </>
                             }
                             </>
