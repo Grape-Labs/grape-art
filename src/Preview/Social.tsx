@@ -396,7 +396,7 @@ export function SocialFlags(props: any){
 
                 enqueueSnackbar(`Sent ${amountToSend} ${tokenMintName} to ${toaddress}`,{ variant: 'success', action });
             }catch(e){
-                enqueueSnackbar(`Error: ${(e)}`,{ variant: 'error' });
+                enqueueSnackbar(e.message ? `${e.name}: ${e.message}` : e.name, { variant: 'error' });
             } 
         } else{
             const accountInfo = await connection.getParsedAccountInfo(tokenAccount);
@@ -472,7 +472,7 @@ export function SocialFlags(props: any){
                     enqueueSnackbar(`Sent ${amountToSend} ${tokenMintName} to ${toaddress}`,{ variant: 'success', action });
                 }catch(e){
                     closeSnackbar();
-                    enqueueSnackbar(`Error: ${(e)}`,{ variant: 'error' });
+                    enqueueSnackbar(e.message ? `${e.name}: ${e.message}` : e.name, { variant: 'error' });
                 } 
             } else{ // token already in wallet
                 const transaction = new Transaction()
@@ -514,7 +514,7 @@ export function SocialFlags(props: any){
                     enqueueSnackbar(`Sent ${amountToSend} ${tokenMintName} to ${toaddress}`,{ variant: 'success', action });
                 }catch(e){
                     closeSnackbar();
-                    enqueueSnackbar(`Error: ${(e)}`,{ variant: 'error' });
+                    enqueueSnackbar(e.message ? `${e.name}: ${e.message}` : e.name, { variant: 'error' });
                 } 
             }
         }

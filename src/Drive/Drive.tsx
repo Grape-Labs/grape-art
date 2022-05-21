@@ -772,9 +772,25 @@ export function DriveView(props: any){
                             <Paper
                                 sx={{background:'#000'}}
                             >
-                                <Typography variant="caption">
-                                    Storage Cost: {(storageAccount.account.totalCostOfCurrentStorage/LAMPORTS_PER_SOL)}
-                                </Typography>
+                                <Grid container>
+                                    <Grid item xs={12}>    
+                                        <Typography variant="caption">
+                                            Storage Cost: {(storageAccount.account.totalCostOfCurrentStorage/LAMPORTS_PER_SOL)}
+                                        </Typography>
+                                    </Grid>
+                                </Grid>
+                                <Grid container>
+                                    <Grid item xs={6}>  
+                                        <Typography variant="caption">
+                                            Creation: {(storageAccount.account.creationEpoch)}
+                                        </Typography>
+                                    </Grid>
+                                    <Grid item xs={6} alignItems="right">    
+                                        <Typography variant="caption">
+                                            Last Fee: {(storageAccount.account.lastFeeEpoch)}
+                                        </Typography>
+                                    </Grid>
+                                </Grid>
                             </Paper>
                         </Grid>
                         </ListSubheader>

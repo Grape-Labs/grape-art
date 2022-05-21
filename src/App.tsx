@@ -184,8 +184,9 @@ function DashboardContent() {
                                     <Route path="/featured" element={<FeaturedView/>} />
                                     
                                     <Route path="/messages" element={<MessagesView/>} />
-
+                                    
                                     <Route path="/drive" element={<DriveView/>} />
+                                    
                                     <Route path="/leaderboard" element={<LeaderboardView/>} />
                                     
                                     <Route path="/" element={<ProfileView/>}>

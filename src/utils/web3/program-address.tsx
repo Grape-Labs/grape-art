@@ -9,13 +9,17 @@ import { ethers } from "ethers";
 export const MAX_SEED_LENGTH = 32;
 
 export const toBuffer = (arr: Buffer | Uint8Array | Array<number>): Buffer => {
-  if (Buffer.isBuffer(arr)) {
-    return arr;
-  } else if (arr instanceof Uint8Array) {
-    return Buffer.from(arr.buffer, arr.byteOffset, arr.byteLength);
-  } else {
-    return Buffer.from(arr);
-  }
+  //try{
+    if (Buffer.isBuffer(arr)) {
+      return arr;
+    } else if (arr instanceof Uint8Array) {
+      return Buffer.from(arr.buffer, arr.byteOffset, arr.byteLength);
+    } else {
+      return Buffer.from(arr);
+    }
+  //}catch(e){
+  //  return Buffer.from(arr);
+  //}
 };
 
 export async function createProgramAddress(
