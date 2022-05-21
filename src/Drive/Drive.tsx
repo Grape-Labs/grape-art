@@ -48,11 +48,13 @@ import {
     MenuItem,
     InputLabel,
     Paper,
+    Container,
 } from '@mui/material';
 
 import { SelectChangeEvent } from '@mui/material/Select';
 
 import GrapeIcon from "../components/static/GrapeIcon";
+import SolanaIcon from "../components/static/SolIcon";
 
 import SaveIcon from '@mui/icons-material/Save';
 import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
@@ -386,13 +388,25 @@ export function DriveView(props: any){
     
         return (
             <>
-                <Tooltip title={t('Create new storage pool')}>
-  
-                    <Button variant="outlined" onClick={handleClickOpen} sx={{ml:1,borderRadius:'17px'}}>
-                        <AddCircleIcon sx={{mr:1}} /> Storage
-                    </Button>
-                    
-                </Tooltip>
+                <Grid item xs={6}>
+                    <Box
+                        m={1}
+                        display = "flex"
+                        justifyContent='flex-end'
+                        alignItems='center'
+                    >
+                        <Tooltip title={t('Create new storage pool')}>
+
+                            <Button 
+                                variant="outlined" 
+                                onClick={handleClickOpen} 
+                                sx={{borderRadius:'17px',}}>
+                                <AddCircleIcon sx={{mr:1}} /> Storage
+                            </Button>
+                            
+                        </Tooltip>
+                    </Box>
+                </Grid>
                 <BootstrapDialog 
                     maxWidth={"lg"}
                     open={open} onClose={handleClose}
@@ -648,9 +662,9 @@ export function DriveView(props: any){
                 <ListItemButton key={key} sx={{borderRadius:'17px'}} onClick={handleClickExpandRow}>
                     <ListItemAvatar>
                     <Avatar>
-                        <GrapeIcon sx={{fontSize:"34px",ml:1,mt:0.5}} />
+                        {/*<SolanaIcon sx={{fontSize:"30px",ml:0.45,mt:1}} />*/}
                         
-                        {/*<CloudCircleIcon />*/}
+                        <CloudCircleIcon />
                     </Avatar>
                     </ListItemAvatar>
                     <ListItemText>
@@ -698,16 +712,18 @@ export function DriveView(props: any){
                                     <Grid 
                                         item xs={12}
                                     >
-                                            {uploadFiles && uploadFiles.path}
+                                            {/*uploadFiles && (uploadFiles.length > 0) && uploadFiles.length*/}
                                     </Grid>
                                     <Grid 
                                         item xs={12}
                                     >
                                             <Button 
+                                                disabled={!uploadFiles ||(uploadFiles.length < 1)}
+                                                variant="outlined"
                                                 component="span" 
                                                 onClick={handleFileUpload}
                                                 sx={{borderRadius:'17px'}}>
-                                                    <SaveIcon /> Save File
+                                                    <SaveIcon sx={{mr:1}} /> Save File
                                             </Button>
                                     </Grid>
                                 </>
@@ -806,8 +822,7 @@ export function DriveView(props: any){
                                     sx={{ width: '100%' }}
                                     subheader={
                                         <>
-                                        
-
+                                        {/*
                                             <ListSubheader component="div" id="nested-list-subheader" sx={{borderRadius:'17px'}}>
                                             Athens DAO/Hacker HouseX
                                                 <Button
@@ -818,13 +833,16 @@ export function DriveView(props: any){
                                                     <LocalFireDepartmentIcon sx={{mr:1}} /> START
                                                 </Button>
                                             </ListSubheader>
-                                        {/*
-                                        
-                                        <ListSubheader component="div" id="nested-list-subheader" sx={{borderRadius:'17px'}}>
-                                          SHDW Storage Allocation
-                                            <AddStoragePool account={account} />
-                                        </ListSubheader>
                                         */}
+                                        <ListSubheader component="div" id="nested-list-subheader" sx={{borderRadius:'17px'}}>
+                                          <Grid container direction="row">
+                                                <Grid item xs={6}>
+                                                    SHDW Storage
+                                                </Grid>
+                                                <AddStoragePool account={account} />
+                                            </Grid>
+                                        </ListSubheader>
+                                        
                                         </>
                                     }>
                                     {account.map((storageAccount: any, key: number) => (
@@ -842,8 +860,12 @@ export function DriveView(props: any){
                                     
                                     {wallet.publicKey ?
                                         <ListSubheader component="div" id="nested-list-subheader" sx={{borderRadius:'17px'}}>
-                                            SHDW Storage Allocation
-                                            <AddStoragePool />
+                                            <Grid container direction="row">
+                                                <Grid item xs={6}>
+                                                    SHDW Storage Allocation
+                                                </Grid>
+                                                <AddStoragePool account={account} />
+                                            </Grid>
                                         </ListSubheader>
                                     :
                                         <WalletConnectButton />
