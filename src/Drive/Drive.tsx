@@ -1,9 +1,11 @@
-import React, { useEffect, useCallback } from "react";
+import React, { useEffect, useCallback, useRef } from "react";
 import { ShdwDrive } from "@shadow-drive/sdk";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { LAMPORTS_PER_SOL, Connection, PublicKey } from '@solana/web3.js';
+import { BN } from '@project-serum/anchor';
 import { TokenAmount } from '../utils/grapeTools/safe-math';
 
+import FileUpload from "react-material-file-upload";
 import {CopyToClipboard} from 'react-copy-to-clipboard';
 
 import { useSnackbar } from 'notistack';
@@ -50,6 +52,12 @@ import {
 
 import { SelectChangeEvent } from '@mui/material/Select';
 
+import GrapeIcon from "../components/static/GrapeIcon";
+
+import SaveIcon from '@mui/icons-material/Save';
+import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
+import FileUploadIcon from '@mui/icons-material/FileUpload';
+import DownloadIcon from '@mui/icons-material/Download';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import WarningIcon from '@mui/icons-material/Warning';
@@ -292,6 +300,33 @@ export function DriveView(props: any){
         } 
     }
 
+    const claimStake = async (storagePublicKey: PublicKey) => { 
+        try{
+            enqueueSnackbar(`Preparing to claim stake ${storagePublicKey.toString()}`,{ variant: 'info' });
+            const snackprogress = (key:any) => (
+                <CircularProgress sx={{padding:'10px'}} />
+            );
+            const cnfrmkey = enqueueSnackbar(`Confirming transaction`,{ variant: 'info', action:snackprogress, persist: true });
+            const signedTransaction = await thisDrive.claimStake(storagePublicKey);
+            await connection.confirmTransaction(signedTransaction.txid, 'processed');
+            closeSnackbar(cnfrmkey);
+            const snackaction = (key:any) => (
+                <Button href={`https://explorer.solana.com/tx/${signedTransaction.txid}`} target='_blank'  sx={{color:'white'}}>
+                    {signedTransaction.txid}
+                </Button>
+            );
+            enqueueSnackbar(`Transaction Confirmed`,{ variant: 'success', action:snackaction });
+            setTimeout(function() {
+                fetchStorageAccounts();
+            }, 2000);
+        }catch(e){
+            closeSnackbar();
+            enqueueSnackbar(`${e}`,{ variant: 'error' });
+            console.log("Error: "+e);
+            //console.log("Error: "+JSON.stringify(e));
+        } 
+    }
+
     useEffect(() => {
 		(async () => {
 			if (wallet?.publicKey) {
@@ -502,13 +537,33 @@ export function DriveView(props: any){
 
     function RenderStorageRow(props: any){
         const storageAccount = props.storageAccount;
-        const [filesToUpload, setFilesToUpload] = React.useState(null);
+        const [uploadFiles, setUploadFiles] = React.useState(null);
         const key = props.key;
         const [open, setOpen] = React.useState(false);
         const [currentFiles, setCurrentFiles] = React.useState(null);
+        const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
 
         const getStorageFiles = async (storagePublicKey: PublicKey) => { 
             const asa = await thisDrive.getStorageAccount(storagePublicKey);
+
+            const accountInfo = await ggoconnection.getAccountInfo(storagePublicKey);
+            console.log("accountInfo: "+JSON.stringify(accountInfo));
+            //.getMultipleAccountsInfo(storagePublicKey);
+            
+            /*
+            for (const storageAccount of accountInfo) {
+                let fileAccounts = []
+                let fileCounter = new BN(storageAccount.account.initCounter).toNumber() - 1;
+                for (let counter = 0; counter <= fileCounter; counter++) {
+                  let fileSeed = new BN(counter).toTwos(64).toArrayLike(Buffer, "le", 4);
+                  let [file, fileBump] = await anchor.web3.PublicKey.findProgramAddress(
+                    [storageAccount.publicKey.toBytes(), fileSeed],
+                    programClient.programId
+                  );
+                  fileAccounts.push(file)
+                }
+            }
+            */
 
             const body = {
                 storageAccount: storagePublicKey.toString()
@@ -541,6 +596,7 @@ export function DriveView(props: any){
                 //const signedTransaction = await thisDrive.uploadFile(storagePublicKey, files[0]);
                 await connection.confirmTransaction(signedTransaction.txid, 'processed');
                 closeSnackbar(cnfrmkey);
+                console.log("TX: "+JSON.stringify(signedTransaction))
                 const snackaction = (key:any) => (
                     <Button href={`https://explorer.solana.com/tx/${signedTransaction.txid}`} target='_blank'  sx={{color:'white'}}>
                         {signedTransaction.txid}
@@ -557,13 +613,13 @@ export function DriveView(props: any){
                 //console.log("Error: "+JSON.stringify(e));
             } 
         }
+        
 
         const handleFileUpload = (e:any) => {
-            const file = e.target.files;
-            console.log("Web2 clouds are centralized...")
-            if (file){
-                console.log("Taking this to web3...")
-                uploadToStoragePool(file, storageAccount.publicKey)
+            console.log(">> Checking: "+JSON.stringify(uploadFiles))
+            if (uploadFiles){
+                console.log("Uploading file...")
+                uploadToStoragePool(uploadFiles, storageAccount.publicKey);
             }
         }
 
@@ -577,6 +633,11 @@ export function DriveView(props: any){
             cancelDeleteStoragePool(new PublicKey(storageAccount.publicKey));
         };
 
+        const HandleClaimStake = (event: any) => {
+            event.preventDefault();
+            claimStake(new PublicKey(storageAccount.publicKey));
+        };
+
         const HandleLockStoragePool = (event: any) => {
             event.preventDefault();
             lockStoragePool(new PublicKey(storageAccount.publicKey));
@@ -587,7 +648,9 @@ export function DriveView(props: any){
                 <ListItemButton key={key} sx={{borderRadius:'17px'}} onClick={handleClickExpandRow}>
                     <ListItemAvatar>
                     <Avatar>
-                        <CloudCircleIcon />
+                        <GrapeIcon sx={{fontSize:"34px",ml:1,mt:0.5}} />
+                        
+                        {/*<CloudCircleIcon />*/}
                     </Avatar>
                     </ListItemAvatar>
                     <ListItemText>
@@ -626,24 +689,28 @@ export function DriveView(props: any){
                                 </Typography>
                             </Paper>
                             {!storageAccount.account.toBeDeleted &&
-                                <Grid 
-                                    item xs={12}
-                                >
-                                    <label htmlFor="contained-shdw-file">
-                                        <Input 
-                                            //accept="image/*" 
-                                            id="contained-shdw-file" 
-                                            onChange={handleFileUpload}
-                                            //multiple 
-                                            type="file" />
-                                        <Button 
-                                            variant="outlined" 
-                                            component="span" 
-                                            sx={{borderRadius:'17px'}}>
-                                            <AddCircleIcon sx={{mr:1}} /> File
-                                        </Button>
-                                    </label>
-                                </Grid>
+                                <>
+                                    <Grid 
+                                        item xs={12}
+                                    >
+                                            <FileUpload value={uploadFiles} onChange={setUploadFiles} />
+                                    </Grid>
+                                    <Grid 
+                                        item xs={12}
+                                    >
+                                            {uploadFiles && uploadFiles.path}
+                                    </Grid>
+                                    <Grid 
+                                        item xs={12}
+                                    >
+                                            <Button 
+                                                component="span" 
+                                                onClick={handleFileUpload}
+                                                sx={{borderRadius:'17px'}}>
+                                                    <SaveIcon /> Save File
+                                            </Button>
+                                    </Grid>
+                                </>
                             }
                             <Grid 
                                 item xs={12}
@@ -671,9 +738,16 @@ export function DriveView(props: any){
                                             <DeleteIcon sx={{mr:1}} /> Delete
                                         </Button>
                                     :
-                                        <Button onClick={HandleCancelDeleteStoragePool} color="warning" sx={{borderRadius:'17px'}}>
-                                            <RestoreIcon sx={{mr:1}} /> Restore
-                                        </Button>
+                                        <>
+                                            <Button onClick={HandleCancelDeleteStoragePool} color="warning" sx={{borderRadius:'17px'}}>
+                                                <RestoreIcon sx={{mr:1}} /> Restore
+                                            </Button>
+                                            {/*
+                                            <Button onClick={HandleClaimStake} color="warning" sx={{borderRadius:'17px'}}>
+                                                <DownloadIcon sx={{mr:1}} /> Claim Stake
+                                            </Button>
+                                            */}
+                                        </>
                                     }
 
                                 </ButtonGroup>
@@ -688,12 +762,11 @@ export function DriveView(props: any){
                             </Paper>
                         </Grid>
                         </ListSubheader>
-
+                        
                         {currentFiles && currentFiles.map((file: any, key: number) => (
                             <FileItem storageAccount={storageAccount} file={file} />
                         ))}
 
-                        
                     </List>
                 </Collapse>
             </Box>
@@ -732,10 +805,27 @@ export function DriveView(props: any){
                                     component="nav" 
                                     sx={{ width: '100%' }}
                                     subheader={
+                                        <>
+                                        
+
+                                            <ListSubheader component="div" id="nested-list-subheader" sx={{borderRadius:'17px'}}>
+                                            Athens DAO/Hacker HouseX
+                                                <Button
+                                                    variant="outlined"
+                                                    color="warning"
+                                                    sx={{borderRadius:'17px',ml:1}}
+                                                >
+                                                    <LocalFireDepartmentIcon sx={{mr:1}} /> START
+                                                </Button>
+                                            </ListSubheader>
+                                        {/*
+                                        
                                         <ListSubheader component="div" id="nested-list-subheader" sx={{borderRadius:'17px'}}>
                                           SHDW Storage Allocation
                                             <AddStoragePool account={account} />
                                         </ListSubheader>
+                                        */}
+                                        </>
                                     }>
                                     {account.map((storageAccount: any, key: number) => (
                                         <RenderStorageRow storageAccount={storageAccount} key={key}/>

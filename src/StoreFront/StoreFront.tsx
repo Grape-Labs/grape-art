@@ -14,7 +14,7 @@ import {
     getTwitterRegistry,
   } from "@bonfida/spl-name-service";
 
-import CyberConnect, { Env, Blockchain, solana, ConnectionType } from '@cyberlab/cyberconnect';
+import CyberConnect, { Env, Blockchain, ConnectionType } from '@cyberlab/cyberconnect';
 import { FollowListInfoResp, SearchUserInfoResp, Network } from '../utils/cyberConnect/types';
 import { formatAddress, removeDuplicate, isValidAddr } from '../utils/cyberConnect/helper';
 import { followListInfoQuery, searchUserInfoQuery } from '../utils/cyberConnect/query';
