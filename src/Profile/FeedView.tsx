@@ -204,7 +204,7 @@ export default function FeedView(props: any){
     const [mergedfeaturedmeta, setMergedFeaturedMeta] = React.useState(null);
     const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
     const ticonnection = new Connection(THEINDEX_RPC_ENDPOINT);
-    const { connection } = useConnection();
+    //const { connection } = useConnection();
 
     const [saleTimeAgo, setSaleTimeAgo] = React.useState(null);
     const MD_PUBKEY = METAPLEX_PROGRAM_ID;
@@ -445,9 +445,9 @@ export default function FeedView(props: any){
         
         if (!loading){
             setLoading(true);
-            const anchorProgram = await loadAuctionHouseProgram(null, ENV_AH, GRAPE_RPC_ENDPOINT);
+            //const anchorProgram = await loadAuctionHouseProgram(null, ENV_AH, GRAPE_RPC_ENDPOINT);
             const auctionHouseKey = new web3.PublicKey(AUCTION_HOUSE_ADDRESS);
-            const auctionHouseObj = await anchorProgram.account.auctionHouse.fetch(auctionHouseKey,);
+            //const auctionHouseObj = await anchorProgram.account.auctionHouse.fetch(auctionHouseKey,);
             //let derivedMintPDA = await web3.PublicKey.findProgramAddress([Buffer.from((new PublicKey(mint)).toBuffer())], auctionHouseKey);
             //let derivedBuyerPDA = await web3.PublicKey.findProgramAddress([Buffer.from((publicKey).toBuffer())], auctionHouseKey);
             //let derivedOwnerPDA = await web3.PublicKey.findProgramAddress([Buffer.from((new PublicKey(mintOwner)).toBuffer())], auctionHouseKey);
@@ -469,11 +469,10 @@ export default function FeedView(props: any){
             for (var value of result){
                 signatures.push(value.signature);
             }
-
             const getTransactionAccountInputs2 = await ticonnection.getParsedTransactions(signatures, 'confirmed');
             let featured = null;
             for (var value of result){
-
+                
                 if (value.err === null){
                     try{
                         //console.log('value: '+JSON.stringify(value));
