@@ -78,6 +78,7 @@ export default function SocialView(props: any){
             followingFirst: FIRST,
             followerFirst: FIRST,
         });
+        
         if (resp) {
             setFollowListInfo(resp);
         }

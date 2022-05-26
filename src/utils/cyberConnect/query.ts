@@ -160,9 +160,9 @@ export const rankingInfoSchema = ({
   type,
 }: RankingListInfoArgs) => {
   return {
-    operationName: 'rankings',
-    query: `query rankings($namespace: String!, $network: Network, $type: ConnectionType!){
-      rankings(first: 10, namespace: $namespace, network: $network, type: $type) {
+    operationName: 'rankingsInfo',
+    query: `query rankingsInfo($namespace: [String!], $network: Network, $type: ConnectionType){
+      rankings(first: 10, namespaces: $namespace, network: $network, type: $type) {
         pageInfo {
           hasNextPage
           endCursor
@@ -187,7 +187,7 @@ export const querySchemas = {
   likeListInfo: likeListInfoSchema,
   followListInfo: followListInfoSchema,
   searchUserInfo: searchUserInfoSchema,
-  rankings: rankingInfoSchema,
+  rankingsInfo: rankingInfoSchema,
 };
 
 export const request = async (url = "", data = {}) => {
@@ -220,16 +220,14 @@ export const handleQuery = (
 export const rankingListInfoQuery = async ({
   namespace,
   network,
-  type,
 }: RankingListInfoArgs) => {
-  const schema = querySchemas["rankings"]({
+  const schema = querySchemas["rankingsInfo"]({
     namespace,
     network,
-    type,
   });
   const resp = await handleQuery(schema, endPoint);
 
-  return (resp?.data?.identity as RankingListResp) || null;
+  return (resp?.data?.rankings as RankingListResp) || null;
 };
 
 export const likeListInfoQuery = async ({

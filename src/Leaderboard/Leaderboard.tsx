@@ -18,7 +18,7 @@ export function LeaderboardView(props: any){
     const [rankingsList, setRankingsList] = React.useState(null);
 
     const NAME_SPACE = 'Grape';
-    const GLOBAL_NAME_SPACE = '';
+    const GLOBAL_NAME_SPACE = ['Grape'];
     const NETWORK = Network.SOLANA;
     const FIRST = 12; // The number of users in followings/followers list for each fetch
 
@@ -40,7 +40,8 @@ export function LeaderboardView(props: any){
             network: NETWORK,
             type: 'FOLLOW'
         });
-        console.log("rsp: "+JSON.stringify(resp));
+
+        console.log("resp: "+JSON.stringify(resp));
         if (resp) {
             setRankingsList(resp);
         }

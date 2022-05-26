@@ -1,5 +1,5 @@
 export interface RankingListInfoArgs {
-  namespace?: string;
+  namespace?: string[];
   network?: string;
   type?: string;
 }
@@ -49,6 +49,8 @@ export interface FollowListInfoArgs {
   }
   
   export interface RankingListResp {
+    address: string;
+    avatar: string;
     followingCount: number;
     followerCount: number;
     like?: string,

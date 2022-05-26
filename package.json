@@ -1,6 +1,6 @@
 {
     "name": "@grape-labs/grape-art",
-    "version": "1.1.231",
+    "version": "1.1.232",
     "author": "Grape devDAO",
     "repository": "https://github.com/grape-labs/grape-art",
     "license": "Apache-2.0",
@@ -97,10 +97,10 @@
         "zustand": "^3.6.8"
     },
     "devDependencies": {
-        "@parcel/packager-raw-url": "2.5.0",
+        "@parcel/packager-raw-url": "2.6.0",
         "@parcel/resolver-glob": "^2.5.0",
-        "@parcel/transformer-less": "2.5.0",
-        "@parcel/transformer-webmanifest": "2.5.0",
+        "@parcel/transformer-less": "2.6.0",
+        "@parcel/transformer-webmanifest": "2.6.0",
         "@types/bn.js": "^5.1.0",
         "@types/bs58": "^4.0.1",
         "@types/eslint": "^8.2.2",
