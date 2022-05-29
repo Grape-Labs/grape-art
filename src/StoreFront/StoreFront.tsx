@@ -6,26 +6,13 @@ import fetch from 'node-fetch';
 import BN from "bn.js";
 
 import { findDisplayName } from '../utils/name-service';
-//import { performReverseLookup } from '../utils/web3/naming';
-import {
-    getHashedName,
-    getNameAccountKey,
-    NameRegistryState,
-    getTwitterRegistry,
-  } from "@bonfida/spl-name-service";
-
-import CyberConnect, { Env, Blockchain, ConnectionType } from '@cyberlab/cyberconnect';
 import { FollowListInfoResp, SearchUserInfoResp, Network } from '../utils/cyberConnect/types';
-import { formatAddress, removeDuplicate, isValidAddr } from '../utils/cyberConnect/helper';
-import { followListInfoQuery, searchUserInfoQuery } from '../utils/cyberConnect/query';
 
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { getProfilePicture } from '@solflare-wallet/pfp';
 
 import { TokenAmount, lt } from '../utils/grapeTools/safe-math';
 import { Connection, PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js';
-
-import Jazzicon, { jsNumberForAddress } from 'react-jazzicon'
 
 import { useNavigate } from 'react-router';
 import { styled } from '@mui/material/styles';

@@ -40,8 +40,6 @@ export function LeaderboardView(props: any){
             network: NETWORK,
             type: 'FOLLOW'
         });
-
-        console.log("resp: "+JSON.stringify(resp));
         if (resp) {
             setRankingsList(resp);
         }

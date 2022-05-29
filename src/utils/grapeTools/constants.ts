@@ -26,7 +26,8 @@ export const REPORT_ALERT_THRESHOLD = 1;
 export const TOKEN_REALM_ID = 'By2sVGZXwfQq6rAiAM3rNPJ9iQfb5e2QhnF4YjJ4Bip';
 export const TOKEN_REALM_PROGRAM_ID = 'GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw';
 
-export const GRAPE_COLLECTIONS_DATA = 'https://raw.githubusercontent.com/Grape-Labs/api.grape.io/main/collections/';
+//export const GRAPE_COLLECTIONS_DATA = 'https://raw.githubusercontent.com/Grape-Labs/api.grape.io/main/collections/';
+export const GRAPE_COLLECTIONS_DATA = 'https://shdw-drive.genesysgo.net/6MM7GSocTFnAtwevaeyzj4eB1TSYKwx17cduKXExZAut/';
 
 export const VERIFIED_DAO_ARRAY = [
     {

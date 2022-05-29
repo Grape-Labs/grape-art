@@ -89,9 +89,29 @@ export default function GalleryView(props: any){
     const isparent = props?.isparent || false;
     const groupbysymbol = props?.groupbysymbol || null;
     //const walletCollection = props.walletCollection;
+    const [foundList, setFoundList] = React.useState(collectionMintList);
+    const [name, setName] = React.useState('');
 
     // If a gallery item is groupBySymbol > 0
     // start searching how many are grouped so we can do this as a collective :) 
+
+    const filter = (keyword:any) => {
+        //const keyword = e.target.value;
+        if (keyword !== '') {
+          const results = collectionMintList.filter((listitem:any) => {
+            //return listitem.name.toLowerCase().startsWith(keyword.toLowerCase())
+            return listitem.name.toLowerCase().includes(keyword.toLowerCase())
+            // Use the toLowerCase() method to make it case-insensitive
+          });
+
+          setFoundList(results);
+        } else {
+          setFoundList(collectionMintList);
+          // If the text field is empty, show all users
+        }
+    
+        setName(keyword);
+    };
 
     return (
         <>
@@ -125,7 +145,7 @@ export default function GalleryView(props: any){
                                         >
                                             <option value={0}>Price Ascending</option>
                                             <option value={1}>Price Descending</option>
-                                            <option value={1}>Date Descending</option>
+                                            <option value={1}>Recently listed</option>
                                         </NativeSelect>
                                     </FormControl>
                                 </Grid>    
@@ -136,7 +156,6 @@ export default function GalleryView(props: any){
                                         //onSubmit={handlePublicKeySubmit}
                                         sx={{background:'none'}}
                                     >
-                                        
                                         <Tooltip title='Filter Collection'>
                                             <Search
                                                 sx={{height:'40px'}}
@@ -148,8 +167,8 @@ export default function GalleryView(props: any){
                                                     sx={{height:'40px', width:'100%'}}
                                                     placeholder='Filter Collection'
                                                     inputProps={{ 'aria-label': 'search' }}
-                                                    //value={newinputpkvalue}
-                                                    //onChange={(e) => setNewInputPKValue(e.target.value)}
+                                                    onChange={(e) => filter(e.target.value)}
+                                                    value={name}
                                                 />
                                             </Search>
                                         </Tooltip>
@@ -178,8 +197,8 @@ export default function GalleryView(props: any){
                                         justifyContent="center"
                                         alignItems="center">
                                         
-                                        { (collectionMintList.length > 0 ? collectionMintList
-                                        .slice((page - 1) * rowsperpage, page * rowsperpage):collectionMintList)
+                                        { (foundList.length > 0 ? foundList
+                                        .slice((page - 1) * rowsperpage, page * rowsperpage):foundList)
                                         .map((collectionInfo: any, key: number) => {
                                             return(
                                                 <Grid item xs={12} sm={12} md={4} lg={3} xl={2}>
