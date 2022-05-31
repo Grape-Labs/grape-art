@@ -9,6 +9,7 @@ import { PublicKey } from '@solana/web3.js';
 import {
     Pagination,
     Stack,
+    Tooltip,
     Typography,
     Grid,
     Box,
@@ -275,20 +276,33 @@ export default function GalleryItem(props: any){
                                                         {collectionitem?.name}
                                                     </Typography> 
                                                 </Grid>
-                                            
+                                                
                                                 <Grid item xs={6}>
-                                                    <Typography variant="h6">
-                                                    {collectionitem?.price}  <SolCurrencyIcon sx={{fontSize:"16px"}} />
-                                                    </Typography>
+                                                    
+                                                    {collectionitem?.price ?
+                                                        
+                                                        <Tooltip title={collectionitem?.listedTimestamp}> 
+                                                            <Button sx={{color:'white',borderRadius:'17px'}}>  
+                                                            <Typography variant="h6">
+                                                            {collectionitem?.price}  <SolCurrencyIcon sx={{fontSize:"16px"}} />
+                                                            </Typography>
+                                                            </Button>
+                                                        </Tooltip>
+                                                    :
+                                                        <Typography variant="caption" sx={{color:'#666'}}>
+                                                            Not listed
+                                                        </Typography>
+                                                    }
+                                                    
                                                 </Grid>
                                                 <Grid item xs={6}>
                                                     {collectionitem?.highest_offer>0 &&
                                                         <>
                                                             <Typography variant="body2" textAlign="right">
-                                                            Offer for
+                                                                Offer for
                                                             </Typography>
                                                             <Typography variant="body1" textAlign="right" sx={{color:'yellow'}}>
-                                                            {collectionitem?.highest_offer} <SolCurrencyIcon sx={{fontSize:"11px"}} />
+                                                                {collectionitem?.highest_offer} <SolCurrencyIcon sx={{fontSize:"11px"}} />
                                                             </Typography>
                                                         </>
                                                     }

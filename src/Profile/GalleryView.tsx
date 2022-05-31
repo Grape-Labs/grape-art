@@ -113,6 +113,47 @@ export default function GalleryView(props: any){
         setName(keyword);
     };
 
+    const handleSortChange = (type:any) => {
+        //const keyword = e.target.value;
+        if (type !== '') {
+            sortMintList(type);
+        } 
+    };
+
+    function sortMintList(type:number){
+        
+        if (+type === 0){
+            collectionMintList.sort((a:any,b:any) => (a.price < b.price) ? 1 : -1);
+            //collectionMintList.sort((a:any,b:any) => ((a.price - b.price) ));
+            // now inverse the list
+            Array.prototype.reverse.call(collectionMintList);
+            
+            setFoundList(collectionMintList);
+        } else if (+type === 1){
+            collectionMintList.sort((a:any,b:any) => (a.listedBlockTime < b.listedBlockTime) ? 1 : -1);
+            // now inverse the list
+            Array.prototype.reverse.call(collectionMintList);
+
+            setFoundList(collectionMintList);
+        } else if (+type === 2){ // by offers
+            //collectionMintList.sort((a:any,b:any) => (a.offerCount > b.offerCount) ? 1 : -1);
+            // now inverse the list
+            //Array.prototype.reverse.call(collectionMintList);
+            
+            setFoundList(collectionMintList);
+        } else if (+type === 3){ // by highest offers
+            collectionMintList.sort((a:any,b:any) => (a.highest_offer > b.highest_offer) ? 1 : -1);
+            // now inverse the list
+            Array.prototype.reverse.call(collectionMintList);
+            
+            setFoundList(collectionMintList);
+        } else if (+type === 4){ // by alphabetical
+            collectionMintList.sort((a:any,b:any) => (a.name.toLowerCase().trim() > b.name.toLowerCase().trim())  ? 1 : -1 );
+            setFoundList(collectionMintList);
+            console.log("sorted: "+JSON.stringify(collectionMintList));
+        }
+    }
+
     return (
         <>
             {mode === 1 ?
@@ -139,13 +180,15 @@ export default function GalleryView(props: any){
                                                 name: 'Sorting',
                                                 id: 'uncontrolled-native',
                                               }}
-                                            id="demo-simple-select"
-                                            //onChange={handleChange}
+                                            id="filter-select"
+                                            onChange={(e) => handleSortChange(e.target.value)}
                                             sx={{borderRadius:'17px', height:'40px'}}
                                         >
                                             <option value={0}>Price Ascending</option>
-                                            <option value={1}>Price Descending</option>
-                                            <option value={1}>Recently listed</option>
+                                            <option value={1} disabled>Recently listed</option>
+                                            <option value={2} disabled>Most Offers</option>
+                                            <option value={3} disabled>Highest Offers</option>
+                                            <option value={4} disabled>Alphabetical</option>
                                         </NativeSelect>
                                     </FormControl>
                                 </Grid>    

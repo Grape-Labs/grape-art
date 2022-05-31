@@ -80,15 +80,24 @@ import CircularProgress from '@mui/material/CircularProgress';
 
 import {
     METAPLEX_PROGRAM_ID,
+    AUCTION_HOUSE_ADDRESS,
 } from '../utils/auctionHouse/helpers/constants';
 
-import { GRAPE_RPC_ENDPOINT, GRAPE_PREVIEW, GRAPE_PROFILE, FEATURED_DAO_ARRAY, GRAPE_COLLECTIONS_DATA } from '../utils/grapeTools/constants';
+import { 
+    GRAPE_RPC_ENDPOINT, 
+    GRAPE_PREVIEW,
+    REPORT_ALERT_THRESHOLD,
+    THEINDEX_RPC_ENDPOINT, 
+    GRAPE_PROFILE, 
+    FEATURED_DAO_ARRAY, 
+    GRAPE_COLLECTIONS_DATA
+} from '../utils/grapeTools/constants';
 import ShareSocialURL from '../utils/grapeTools/ShareUrl';
 
 import GalleryView from '../Profile/GalleryView';
 
 import { MakeLinkableAddress, ValidateAddress, trimAddress, timeAgo } from '../utils/grapeTools/WalletAddress'; // global key handling
-import { ConstructionOutlined } from "@mui/icons-material";
+import { ConstructionOutlined, SettingsRemoteOutlined } from "@mui/icons-material";
 
 import { useTranslation } from 'react-i18next';
 
@@ -744,6 +753,8 @@ export async function findOwnedNameAccountsForUser(
 }
 
 export function StoreFrontView(this: any, props: any) {
+    const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
+    const ticonnection = new Connection(THEINDEX_RPC_ENDPOINT);
     //const [provider, setProvider] = React.useState(getParam('provider'));
     const [gallery, setGallery] = React.useState(null);
     const [collectionMintList, setCollectionMintList] = React.useState(null);
@@ -753,6 +764,7 @@ export function StoreFrontView(this: any, props: any) {
     const [final_collection, setCollectionMetaFinal] = React.useState(null);
     //const isConnected = session && session.isConnected;
     const [loading, setLoading] = React.useState(false);
+    const [stateLoading, setStateLoading] = React.useState(false);
     const [rdloading, setRDLoading] = React.useState(false);
     const [loadCount, setLoadCount] = React.useState(0);
     //const [success, setSuccess] = React.useState(false);
@@ -809,6 +821,13 @@ export function StoreFrontView(this: any, props: any) {
               setCollectionMintList(json);   
               return json;
             
+        } catch(e){console.log("ERR: "+e)}
+        
+    }
+
+    const fetchMintStates = async(address:string) => {
+        try{
+            await getCollectionStates(address);
         } catch(e){console.log("ERR: "+e)}
         
     }
@@ -930,13 +949,188 @@ export function StoreFrontView(this: any, props: any) {
 
     React.useEffect(() => { 
         if (collectionAuthority){
-            //console.log("with collectionAuthority: "+JSON.stringify(collectionAuthority));
+            console.log("with collectionAuthority: "+JSON.stringify(collectionAuthority));
             //if (ValidateAddress(collectionAuthority.address)){
-                if (collectionMintList)
+                if (collectionMintList){
                     getCollectionMeta(0);
+                    fetchMintStates(collectionAuthority);
+                }
             //}
         }
     }, [collectionMintList]);
+
+    const getCollectionStates = async (address:string) => {
+        
+        if (!loading){
+            setStateLoading(true);
+            //const anchorProgram = await loadAuctionHouseProgram(null, ENV_AH, GRAPE_RPC_ENDPOINT);
+            const auctionHouseKey = new PublicKey(AUCTION_HOUSE_ADDRESS);
+            //const auctionHouseObj = await anchorProgram.account.auctionHouse.fetch(auctionHouseKey,);
+            //let derivedMintPDA = await web3.PublicKey.findProgramAddress([Buffer.from((new PublicKey(mint)).toBuffer())], auctionHouseKey);
+            //let derivedBuyerPDA = await web3.PublicKey.findProgramAddress([Buffer.from((publicKey).toBuffer())], auctionHouseKey);
+            //let derivedOwnerPDA = await web3.PublicKey.findProgramAddress([Buffer.from((new PublicKey(mintOwner)).toBuffer())], auctionHouseKey);
+            
+            address = "8749adNqCXzVjdYVCUFcjUUxsPcHuCW482roGqsxtMRX";
+            
+            let derivedUAPDA = await PublicKey.findProgramAddress([Buffer.from((new PublicKey(address)).toBuffer())], auctionHouseKey);
+            /*
+            console.log("derivedMintPDA: "+derivedMintPDA);
+            console.log("derivedBuyerPDA: "+derivedBuyerPDA);
+            console.log("derivedOwnerPDA: "+derivedOwnerPDA);
+            */
+            let result = await ggoconnection.getSignaturesForAddress(derivedUAPDA[0], {limit: 250});
+            let ahListings: any[] = [];
+            let ahListingsMints: any[] =[];
+            let exists = false;
+            let cntr = 0;
+            let cnt = 0;
+            
+            let signatures: any[] = [];
+            for (var value of result){
+                signatures.push(value.signature);
+            }
+            const getTransactionAccountInputs2 = await ticonnection.getParsedTransactions(signatures, 'confirmed');
+            let featured = null;
+            for (var value of result){
+                
+                if (value.err === null){
+                    try{
+                        //console.log('value: '+JSON.stringify(value));
+                        const getTransactionAccountInputs = getTransactionAccountInputs2[cnt];
+                        
+                        if (getTransactionAccountInputs?.transaction && getTransactionAccountInputs?.transaction?.message){
+                            
+                            let feePayer = new PublicKey(getTransactionAccountInputs?.transaction.message.accountKeys[0].pubkey); // .feePayer.toBase58();                            
+                            let progAddress = getTransactionAccountInputs.meta.logMessages[0];
+
+                            exists = false;
+                            if ((value) && (value.memo)){
+                                
+                                let memo_arr: any[] = [];
+                                let memo_str = value.memo;
+                                let memo_instances = ((value.memo.match(/{/g)||[]).length);
+                                if (memo_instances > 0) {
+                                    // multi memo
+                                    let mcnt = 0;
+                                    let submemo = memo_str;
+                                    //console.log("STR full (instance "+memo_instances+"): "+submemo);
+                                    for (var mx=0;mx<memo_instances;mx++){
+                                        let init = submemo.indexOf('{');
+                                        let fin = submemo.indexOf('}');
+                                        memo_str = submemo.slice(init,fin+1); // include brackets
+                                        memo_arr.push(memo_str);
+                                        submemo = submemo.replace(memo_str, "");
+                                        //console.log("pushed ("+mx+"):: "+memo_str + " init: "+init+" fin: "+fin);
+                                        //console.log("submemo: "+submemo);
+                                    }
+                                } else{
+                                    let init = memo_str.indexOf('{');
+                                    let fin = memo_str.indexOf('}');
+                                    memo_str = memo_str.slice(init,fin+1); // include brackets
+                                    memo_arr.push(memo_str);
+                                }
+                                
+                                for (var memo_item of memo_arr){
+                                    try{
+
+                                        const memo_json = JSON.parse(memo_item);
+
+                                        console.log('MEM:: ('+memo_json?.amount+'): ' +memo_str);
+                                        for (var i = 0; i < ahListings.length; i++){
+                                            if ((memo_json?.mint === ahListings[i].mint)){ // match same
+                                                // if match then add
+                                                if (memo_json.state === 1)
+                                                    ahListings[i].offers = ahListings[i].offers+1;
+                                                exists = true;
+                                            }
+                                        }
+
+                                        if (!exists){
+                                            let forSaleDate = ''+value.blockTime;
+                                            if (forSaleDate){
+                                                let timeago = timeAgo(''+value.blockTime);
+                                                forSaleDate = timeago;
+                                            }
+
+                                            let solvalue = convertSolVal(memo_json?.amount || memo_json?.offer);
+                                            if (memo_json?.mint){
+                                                let offer = 0;
+                                                if (memo_json.state === 1)
+                                                    offer = 1;
+                                                // 1. score will need to be decayed according to time
+                                                // 2. score will need to be decayed if reported and if reported > threshhold dont show
+                                                ahListings.push({amount: solvalue, mint: memo_json?.mint, timestamp: forSaleDate, blockTime:value.blockTime, state: memo_json?.state || memo_json?.status, offers: offer, score: memo_json?.score || 0});  
+                                                ahListingsMints.push(memo_json.mint);
+                                                
+                                            }
+                                        }
+                                    }catch(merr){console.log("ERR: "+merr + " - "+memo_item)}
+                                }
+                            }
+                        }
+                    } catch (e){console.log("ERR: "+e)}
+                }
+            } 
+
+
+
+
+            
+            // IMPORTANT
+            // loop and set the list price, highest offer, and date of the listing
+            for (var listing of ahListings){
+                Object.keys(collectionMintList).map(function(key) {
+                    if (collectionMintList[key].address === listing.mint){
+                        console.log("found ahListings "+JSON.stringify(ahListings));
+                        if (listing.state === 1){
+                            if ((!collectionMintList[key]?.highest_offer) || (listing.amount > +collectionMintList[key]?.highest_offer))
+                                collectionMintList[key].highest_offer = listing.amount;
+                                // add offer count?
+                        } else if (listing.state === 2){
+                            collectionMintList[key].price = listing.amount;
+                            collectionMintList[key].listedTimestamp = listing.timestamp;
+                            collectionMintList[key].listedBlockTime = listing.blockTime;
+                        }
+                    }
+                });
+            }
+            
+            collectionMintList.sort((a:any,b:any) => (a.price < b.price) ? 1 : -1);
+            //collectionMintList.sort((a:any,b:any) => ((a.price - b.price) ));
+            // now inverse the list
+            Array.prototype.reverse.call(collectionMintList);
+
+            /*
+            let collectionmeta = await getCollectionData(ahListingsMints);
+
+            setFeaturedMeta(collectionmeta);
+            setFeatured(ahListings);
+
+            for (var i = 0; i < collectionmeta.length; i++){
+                collectionmeta[i]["memo"] = ahListings[i];
+            }
+            
+            try{
+                let finalmeta = JSON.parse(JSON.stringify(collectionmeta));
+
+                for (var item_meta of finalmeta){
+                    let meta_primer = item_meta.data;
+                    let buf = Buffer.from(meta_primer.data, 'base64');
+                    let meta_final = decodeMetadata(buf);
+                    //console.log(JSON.stringify(meta_final));
+                }
+                
+                //finalmeta.sort((a:any,b:any) => (b.memo.score - a.memo.score) || (b.memo.blockTime - a.memo.blockTime));
+                //setMergedFeaturedMeta(finalmeta);
+            }catch(e){
+                //setMergedFeaturedMeta(collectionmeta);
+            }
+            */
+            
+            
+            setStateLoading(false);                                      
+        }
+    }
 
     React.useEffect(() => { 
         if ((verifiedCollectionArray)&&(!collectionAuthority)){
@@ -969,8 +1163,9 @@ export function StoreFrontView(this: any, props: any) {
     }, [verifiedCollectionArray]);
 
     React.useEffect(() => { 
-        if ((withPubKey)&&(!verifiedCollectionArray))
+        if ((withPubKey)&&(!verifiedCollectionArray)){
             fetchVerifiedCollection(withPubKey); 
+        }
     }, [withPubKey]);
 
     React.useEffect(() => { 
@@ -1022,7 +1217,7 @@ export function StoreFrontView(this: any, props: any) {
             )
         }
     }
-    
+
     return (
         <React.Fragment>
             {collectionAuthority &&
