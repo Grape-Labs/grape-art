@@ -1083,8 +1083,8 @@ export function StoreFrontView(this: any, props: any) {
                     if (collectionMintList[key].address === listing.mint){
                         console.log("found ahListings "+JSON.stringify(ahListings));
                         if (listing.state === 1){
-                            if ((!collectionMintList[key]?.highest_offer) || (listing.amount > +collectionMintList[key]?.highest_offer))
-                                collectionMintList[key].highest_offer = listing.amount;
+                            if ((!collectionMintList[key]?.highestOffer) || (listing.amount > +collectionMintList[key]?.highestOffer))
+                                collectionMintList[key].highestOffer = listing.amount;
                                 // add offer count?
                         } else if (listing.state === 2){
                             collectionMintList[key].price = listing.amount;
@@ -1094,7 +1094,7 @@ export function StoreFrontView(this: any, props: any) {
                     }
                 });
             }
-            
+
             collectionMintList.sort((a:any,b:any) => (a.price < b.price) ? 1 : -1);
             //collectionMintList.sort((a:any,b:any) => ((a.price - b.price) ));
             // now inverse the list

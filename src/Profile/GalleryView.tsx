@@ -124,48 +124,42 @@ export default function GalleryView(props: any){
         
         if (+type === 0){
             console.log("back to 0")
-            const newCollection = collectionMintList.sort((a:any,b:any) => (a.price < b.price) ? 1 : -1);
+            //collectionMintList.sort((a:any,b:any) => (a.price < b.price) ? 1 : -1);
             // now inverse the list
-            Array.prototype.reverse.call(newCollection);
-            const results = collectionMintList.filter((listitem:any) => {
-                //return listitem.name.toLowerCase().startsWith(keyword.toLowerCase())
-                return listitem;
-            });
-
-            setFoundList(results);
+            //Array.prototype.reverse.call(collectionMintList);
+            
+            console.log("results: "+JSON.stringify(collectionMintList));
+            setFoundList(collectionMintList);
         } else if (+type === 1){
             const results = collectionMintList.filter((listitem:any) => {
                 //return listitem.name.toLowerCase().startsWith(keyword.toLowerCase())
                 return listitem.listedBlockTime > 0;
             });
-            results.sort((a:any,b:any) => (a.listedBlockTime < b.listedBlockTime) ? 1 : -1);
+            results.sort((a:any,b:any) => (a.listedBlockTime - b.listedBlockTime) ? 1 : -1);
             setFoundList(results);
 
-        } else if (+type === 2){ // by offers
-            //collectionMintList.sort((a:any,b:any) => (a.offerCount > b.offerCount) ? 1 : -1);
-            // now inverse the list
-            //Array.prototype.reverse.call(collectionMintList);
+        } else if (+type === 2){ // by offer count
             const results = collectionMintList.filter((listitem:any) => {
-                //return listitem.name.toLowerCase().startsWith(keyword.toLowerCase())
-                return listitem.listedBlockTime > 0;
+                //return rea().startsWith(keyword.toLowerCase())
+                return listitem.offerCount > 0;
             });
-            results.sort((a:any,b:any) => (a.offerCount < b.offerCount) ? 1 : -1);
+            results.sort((a:any,b:any) => (a.offerCount - b.offerCount) ? 1 : -1);
             setFoundList(results);
         } else if (+type === 3){ // by highest offers
             const results = collectionMintList.filter((listitem:any) => {
-                //return listitem.name.toLowerCase().startsWith(keyword.toLowerCase())
-                return listitem.highest_offer > 0;
+                //return rea().startsWith(keyword.toLowerCase())
+                return listitem.highestOffer > 0;
             });
-            results.sort((a:any,b:any) => (a.highest_offer < b.highest_offer) ? 1 : -1);
+            results.sort((a:any,b:any) => (a.highestOffer - b.highestOffer) ? 1 : -1);
             setFoundList(results);
         } else if (+type === 4){ // by alphabetical
-            const tmpCollectionMintList = collectionMintList;
-            tmpCollectionMintList.sort((a:any,b:any) => (a.name.toLowerCase().trim() > b.name.toLowerCase().trim())  ? 1 : -1 );
-            const results = tmpCollectionMintList.filter((listitem:any) => {
+            const results = collectionMintList.filter((listitem:any) => {
                 //return listitem.name.toLowerCase().startsWith(keyword.toLowerCase())
                 return listitem;
             });
+            results.sort((a:any,b:any) => (a.name.toLowerCase().trim() > b.name.toLowerCase().trim()) ? 1 : -1);
             setFoundList(results);
+            
             /*
             const keyword = '2';
             const results = collectionMintList.filter((listitem:any) => {
@@ -253,7 +247,7 @@ export default function GalleryView(props: any){
                                     {collectionAuthority && collectionAuthority?.attributes &&
                                         <>  
                                             {Object.keys(collectionAuthority.attributes).map(key => 
-                                                <Button variant="outlined" sx={{m:1,color:'white',borderColor:'white',borderRadius:'17px'}}>{key}</Button>
+                                                <Button variant="outlined" sx={{m:1,color:'white',borderColor:'white',borderRadius:'17px'}} disabled>{key}</Button>
                                             )/* {JSON.stringify(collectionAuthority.attributes[key])} */}
                                         </>
                                     }
