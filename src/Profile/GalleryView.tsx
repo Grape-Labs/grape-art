@@ -86,11 +86,11 @@ export default function GalleryView(props: any){
     const collectionAuthority = props?.collectionAuthority || null;
     const collectionMintList = props?.collectionMintList || null;
     const finalCollection = props?.finalCollection || null;
+    const [filterVal, setFilterVal] = React.useState("");
     const isparent = props?.isparent || false;
     const groupbysymbol = props?.groupbysymbol || null;
     //const walletCollection = props.walletCollection;
     const [foundList, setFoundList] = React.useState(collectionMintList);
-    const [name, setName] = React.useState('');
 
     // If a gallery item is groupBySymbol > 0
     // start searching how many are grouped so we can do this as a collective :) 
@@ -110,7 +110,7 @@ export default function GalleryView(props: any){
           // If the text field is empty, show all users
         }
     
-        setName(keyword);
+        setFilterVal(keyword);
     };
 
     const handleSortChange = (type:any) => {
@@ -121,16 +121,15 @@ export default function GalleryView(props: any){
     };
 
     function sortMintList(type:number){
-        
+        setFilterVal("");
         if (+type === 0){
-            console.log("back to 0")
             //collectionMintList.sort((a:any,b:any) => (a.price < b.price) ? 1 : -1);
             // now inverse the list
             //Array.prototype.reverse.call(collectionMintList);
-            
             console.log("results: "+JSON.stringify(collectionMintList));
             setFoundList(collectionMintList);
         } else if (+type === 1){
+            
             const results = collectionMintList.filter((listitem:any) => {
                 //return listitem.name.toLowerCase().startsWith(keyword.toLowerCase())
                 return listitem.listedBlockTime > 0;
@@ -230,7 +229,7 @@ export default function GalleryView(props: any){
                                                     placeholder='Filter Collection'
                                                     inputProps={{ 'aria-label': 'search' }}
                                                     onChange={(e) => filter(e.target.value)}
-                                                    value={name}
+                                                    value={filterVal}
                                                 />
                                             </Search>
                                         </Tooltip>
