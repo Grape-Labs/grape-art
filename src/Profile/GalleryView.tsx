@@ -123,34 +123,59 @@ export default function GalleryView(props: any){
     function sortMintList(type:number){
         
         if (+type === 0){
-            collectionMintList.sort((a:any,b:any) => (a.price < b.price) ? 1 : -1);
-            //collectionMintList.sort((a:any,b:any) => ((a.price - b.price) ));
+            console.log("back to 0")
+            const newCollection = collectionMintList.sort((a:any,b:any) => (a.price < b.price) ? 1 : -1);
             // now inverse the list
-            Array.prototype.reverse.call(collectionMintList);
-            
-            setFoundList(collectionMintList);
-        } else if (+type === 1){
-            collectionMintList.sort((a:any,b:any) => (a.listedBlockTime < b.listedBlockTime) ? 1 : -1);
-            // now inverse the list
-            Array.prototype.reverse.call(collectionMintList);
+            Array.prototype.reverse.call(newCollection);
+            const results = collectionMintList.filter((listitem:any) => {
+                //return listitem.name.toLowerCase().startsWith(keyword.toLowerCase())
+                return listitem;
+            });
 
-            setFoundList(collectionMintList);
+            setFoundList(results);
+        } else if (+type === 1){
+            const results = collectionMintList.filter((listitem:any) => {
+                //return listitem.name.toLowerCase().startsWith(keyword.toLowerCase())
+                return listitem.listedBlockTime > 0;
+            });
+            results.sort((a:any,b:any) => (a.listedBlockTime < b.listedBlockTime) ? 1 : -1);
+            setFoundList(results);
+
         } else if (+type === 2){ // by offers
             //collectionMintList.sort((a:any,b:any) => (a.offerCount > b.offerCount) ? 1 : -1);
             // now inverse the list
             //Array.prototype.reverse.call(collectionMintList);
-            
-            setFoundList(collectionMintList);
+            const results = collectionMintList.filter((listitem:any) => {
+                //return listitem.name.toLowerCase().startsWith(keyword.toLowerCase())
+                return listitem.listedBlockTime > 0;
+            });
+            results.sort((a:any,b:any) => (a.offerCount < b.offerCount) ? 1 : -1);
+            setFoundList(results);
         } else if (+type === 3){ // by highest offers
-            collectionMintList.sort((a:any,b:any) => (a.highest_offer > b.highest_offer) ? 1 : -1);
-            // now inverse the list
-            Array.prototype.reverse.call(collectionMintList);
-            
-            setFoundList(collectionMintList);
+            const results = collectionMintList.filter((listitem:any) => {
+                //return listitem.name.toLowerCase().startsWith(keyword.toLowerCase())
+                return listitem.highest_offer > 0;
+            });
+            results.sort((a:any,b:any) => (a.highest_offer < b.highest_offer) ? 1 : -1);
+            setFoundList(results);
         } else if (+type === 4){ // by alphabetical
-            collectionMintList.sort((a:any,b:any) => (a.name.toLowerCase().trim() > b.name.toLowerCase().trim())  ? 1 : -1 );
-            setFoundList(collectionMintList);
-            console.log("sorted: "+JSON.stringify(collectionMintList));
+            const tmpCollectionMintList = collectionMintList;
+            tmpCollectionMintList.sort((a:any,b:any) => (a.name.toLowerCase().trim() > b.name.toLowerCase().trim())  ? 1 : -1 );
+            const results = tmpCollectionMintList.filter((listitem:any) => {
+                //return listitem.name.toLowerCase().startsWith(keyword.toLowerCase())
+                return listitem;
+            });
+            setFoundList(results);
+            /*
+            const keyword = '2';
+            const results = collectionMintList.filter((listitem:any) => {
+                //return listitem.name.toLowerCase().startsWith(keyword.toLowerCase())
+                return listitem.name.toLowerCase().includes(keyword.toLowerCase())
+                // Use the toLowerCase() method to make it case-insensitive
+              });
+    
+            setFoundList(results);
+            */
         }
     }
 
@@ -185,10 +210,10 @@ export default function GalleryView(props: any){
                                             sx={{borderRadius:'17px', height:'40px'}}
                                         >
                                             <option value={0}>Price Ascending</option>
-                                            <option value={1} disabled>Recently listed</option>
+                                            <option value={1}>Recently Listed</option>
                                             <option value={2} disabled>Most Offers</option>
-                                            <option value={3} disabled>Highest Offers</option>
-                                            <option value={4} disabled>Alphabetical</option>
+                                            <option value={3}>Highest Offers</option>
+                                            <option value={4}>Alphabetical</option>
                                         </NativeSelect>
                                     </FormControl>
                                 </Grid>    
