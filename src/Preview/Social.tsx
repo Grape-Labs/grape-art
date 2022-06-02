@@ -83,7 +83,7 @@ export function SocialLikes(props: any){
     const solanaProvider = useWallet();
     const mint = props.mint;
     
-    const NAME_SPACE = 'Grape';
+    const NAME_SPACE = '';
     const NETWORK = Network.SOLANA;
     const FIRST = 10; // The number of users in followings/followers list for each fetch
 
@@ -105,7 +105,7 @@ export function SocialLikes(props: any){
     setLoading(true);
     const resp = await followListInfoQuery({
         address:mint,
-        namespace: '',
+        namespace: NAME_SPACE,
         network: NETWORK,
         followingFirst: FIRST,
         followerFirst: FIRST,
@@ -141,7 +141,7 @@ export function SocialLikes(props: any){
         const resp = await searchUserInfoQuery({
             fromAddr:fromAddr,
             toAddr,
-            namespace: 'Grape',
+            namespace: NAME_SPACE,
             network: Network.SOLANA,
             type: 'LIKE',
         });
@@ -260,7 +260,7 @@ export function SocialFlags(props: any){
     );
     
     const cyberConnect = new CyberConnect({
-        namespace: 'Grape',
+        namespace: NAME_SPACE,
         env: Env.PRODUCTION,
         chain: Blockchain.SOLANA,
         provider: solanaProvider,
@@ -300,7 +300,7 @@ export function SocialFlags(props: any){
         const resp = await searchUserInfoQuery({
             fromAddr:fromAddr,
             toAddr,
-            namespace: 'Grape',
+            namespace: NAME_SPACE,
             network: Network.SOLANA,
             type: 'REPORT',
         });
@@ -320,7 +320,7 @@ export function SocialFlags(props: any){
         setLoading(true);
         const resp = await followListInfoQuery({
             address:mint,
-            namespace: '',
+            namespace: NAME_SPACE,
             network: NETWORK,
             followingFirst: FIRST,
             followerFirst: FIRST,
