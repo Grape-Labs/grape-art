@@ -306,7 +306,7 @@ const GalleryItem = (props: any) => {
                 
                 return metadata;
             } catch (e) { // Handle errors from invalid calls
-                console.log(e);
+                //console.log("err... "+e);
                 return null;
             }
         }
@@ -915,36 +915,40 @@ export function StoreFrontView(this: any, props: any) {
     const getCollectionMeta = async (start:number) => {
         const wallet_collection = collectionMintList;//likeListInfo.likes.list;
         
+        
         let tmpcollectionmeta = await getCollectionData(start);
         setCollectionMeta(tmpcollectionmeta);
         
         let final_collection_meta: any[] = [];
-        for (var i = 0; i < tmpcollectionmeta.length; i++){
-            //console.log(i+": "+JSON.stringify(collectionmeta[i])+" --- with --- "+JSON.stringify(wallet_collection[i]));
-            if (tmpcollectionmeta[i]){
-                tmpcollectionmeta[i]["wallet"] = wallet_collection[i].address;
-                try{
-                    
-                    let meta_primer = tmpcollectionmeta[i];
-                    let buf = meta_primer.data;
-                    //Buffer.from(meta_primer.data, 'base64');
-                    let meta_final = decodeMetadata(buf);
-                    tmpcollectionmeta[i]["meta"] = meta_final;
-                    tmpcollectionmeta[i]["groupBySymbol"] = 0;
-                    tmpcollectionmeta[i]["floorPrice"] = 0;
-                    final_collection_meta.push(tmpcollectionmeta[i]);
-                    
-                }catch(e){
-                    console.log("ERR:"+e)
+        
+        if (tmpcollectionmeta){
+            for (var i = 0; i < tmpcollectionmeta.length; i++){
+                //console.log(i+": "+JSON.stringify(collectionmeta[i])+" --- with --- "+JSON.stringify(wallet_collection[i]));
+                if (tmpcollectionmeta[i]){
+                    tmpcollectionmeta[i]["wallet"] = wallet_collection[i].address;
+                    try{
+                        
+                        let meta_primer = tmpcollectionmeta[i];
+                        let buf = meta_primer.data;
+                        //Buffer.from(meta_primer.data, 'base64');
+                        let meta_final = decodeMetadata(buf);
+                        tmpcollectionmeta[i]["meta"] = meta_final;
+                        tmpcollectionmeta[i]["groupBySymbol"] = 0;
+                        tmpcollectionmeta[i]["floorPrice"] = 0;
+                        final_collection_meta.push(tmpcollectionmeta[i]);
+                        
+                    }catch(e){
+                        console.log("ERR:"+e)
+                    }
                 }
             }
-        }
-        let finalmeta = final_collection_meta;//JSON.parse(JSON.stringify(final_collection_meta));
-        try{
-            finalmeta.sort((a:any, b:any) => a?.meta.data.name.toLowerCase().trim() > b?.meta.data.name.toLowerCase().trim() ? 1 : -1);   
-        }catch(e){console.log("Sort ERR: "+e)}
+            let finalmeta = final_collection_meta;//JSON.parse(JSON.stringify(final_collection_meta));
+            try{
+                finalmeta.sort((a:any, b:any) => a?.meta.data.name.toLowerCase().trim() > b?.meta.data.name.toLowerCase().trim() ? 1 : -1);   
+            }catch(e){console.log("Sort ERR: "+e)}
 
-        setCollectionMetaFinal(finalmeta);
+            setCollectionMetaFinal(finalmeta);
+        }
     }
 
     React.useEffect(() => { 

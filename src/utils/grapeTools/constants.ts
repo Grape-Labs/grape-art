@@ -5,13 +5,13 @@ export const GRAPE_RPC_ENDPOINT = process.env.REACT_APP_API_GRAPE_RPC_ENDPOINT |
 export const THEINDEX_RPC_ENDPOINT = process.env.REACT_APP_API_THEINDEX_RPC_ENDPOINT || 'https://api.mainnet-beta.solana.com';
 export const SOFLARE_NOTIFICATIONS_API_KEY = process.env.REACT_APP_API_KEY_SOLFLARE_NOTIFICATIONS || '';
 
-//export const GRAPE_PREVIEW = '/preview/';
-//export const GRAPE_PROFILE = '/profile/';
-//export const GRAPE_IDENTITY = '/identity/';
+export const GRAPE_PREVIEW = '/preview/';
+export const GRAPE_PROFILE = '/profile/';
+export const GRAPE_IDENTITY = '/identity/';
 
-export const GRAPE_PREVIEW = '/preview?pkey=';
-export const GRAPE_PROFILE = '/profile?pkey=';
-export const GRAPE_IDENTITY = '/identity?pkey=';
+//export const GRAPE_PREVIEW = '/preview?pkey=';
+//export const GRAPE_PROFILE = '/profile?pkey=';
+//export const GRAPE_IDENTITY = '/identity?pkey=';
 
 export const GRAPE_RPC_REFRESH = 25000;
 export const GRAPE_TREASURY = 'GrapevviL94JZRiZwn2LjpWtmDacXU8QhAJvzpUMMFdL';
