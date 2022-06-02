@@ -369,8 +369,10 @@ function GalleryItemMeta(props: any) {
     const [searchAddrInfo, setSearchAddrInfo] = useState<SearchUserInfoResp | null>(null);
     const solanaProvider = useWallet();
 
+    const NAME_SPACE = 'Grape';
+
     const cyberConnect = new CyberConnect({
-        namespace: 'Grape',
+        namespace: NAME_SPACE,
         env: Env.PRODUCTION,
         chain: Blockchain.SOLANA,
         provider: solanaProvider,
@@ -382,7 +384,7 @@ function GalleryItemMeta(props: any) {
         const resp = await searchUserInfoQuery({
             fromAddr:fromAddr,
             toAddr,
-            namespace: 'Grape',
+            //namespace: NAME_SPACE,
             network: Network.SOLANA,
             type: 'FOLLOW',
         });

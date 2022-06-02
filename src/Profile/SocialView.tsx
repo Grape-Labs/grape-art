@@ -73,7 +73,7 @@ export default function SocialView(props: any){
 
         const resp = await followListInfoQuery({
             address:pubkey,
-            namespace: GLOBAL_NAME_SPACE,
+            //namespace: GLOBAL_NAME_SPACE,
             network: NETWORK,
             followingFirst: FIRST,
             followerFirst: FIRST,
@@ -94,14 +94,14 @@ export default function SocialView(props: any){
       type === 'followers'
         ? {
             address:pubkey,
-            namespace: GLOBAL_NAME_SPACE,
+            //namespace: GLOBAL_NAME_SPACE,
             network: NETWORK,
             followerFirst: FIRST,
             followerAfter: followListInfo.followers.pageInfo.endCursor,
           }
         : {
             address:pubkey,
-            namespace: GLOBAL_NAME_SPACE,
+            //namespace: GLOBAL_NAME_SPACE,
             network: NETWORK,
             followingFirst: FIRST,
             followingAfter: followListInfo.followings.pageInfo.endCursor,

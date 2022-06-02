@@ -83,7 +83,7 @@ export function SocialLikes(props: any){
     const solanaProvider = useWallet();
     const mint = props.mint;
     
-    const NAME_SPACE = '';
+    const NAME_SPACE = 'Grape';
     const NETWORK = Network.SOLANA;
     const FIRST = 10; // The number of users in followings/followers list for each fetch
 

@@ -712,7 +712,7 @@ const IdentityView = (props: any) => {
     setLoading(true);
     const resp = await followListInfoQuery({
         address:pubkey,
-        namespace: '',
+        //namespace: NAME_SPACE,
         network: NETWORK,
         followingFirst: FIRST,
         followerFirst: FIRST
@@ -732,7 +732,7 @@ const IdentityView = (props: any) => {
       type === 'followers'
         ? {
             address:pubkey,
-            namespace: '',
+            //namespace: NAME_SPACE,
             network: NETWORK,
             followerFirst: FIRST,
             followerAfter: followListInfo.followers.pageInfo.endCursor,
@@ -774,7 +774,7 @@ const IdentityView = (props: any) => {
         const resp = await searchUserInfoQuery({
             fromAddr:fromAddr,
             toAddr,
-            namespace: NAME_SPACE,
+            //namespace: NAME_SPACE,
             network: NETWORK,
             type: 'FOLLOW',
         });

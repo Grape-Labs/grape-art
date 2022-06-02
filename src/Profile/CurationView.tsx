@@ -77,7 +77,7 @@ export default function CurationView(props: any){
 
         const resp = await likeListInfoQuery({
             address:pubkey,
-            namespace: GLOBAL_NAME_SPACE,
+            //namespace: GLOBAL_NAME_SPACE,
             network: NETWORK,
             likeFirst: FIRST,
             likedFirst: FIRST,
@@ -97,14 +97,14 @@ export default function CurationView(props: any){
       type === 'likeds'
         ? {
             address:pubkey,
-            namespace: GLOBAL_NAME_SPACE,
+            //namespace: GLOBAL_NAME_SPACE,
             network: NETWORK,
             followerFirst: FIRST,
             followerAfter: likeListInfo.likeds.pageInfo.endCursor,
           }
         : {
             address:pubkey,
-            namespace: GLOBAL_NAME_SPACE,
+            //namespace: GLOBAL_NAME_SPACE,
             network: NETWORK,
             followingFirst: FIRST,
             followingAfter: likeListInfo.likes.pageInfo.endCursor,
