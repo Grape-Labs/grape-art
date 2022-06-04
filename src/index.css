@@ -41,7 +41,7 @@ code {
   background: linear-gradient(to bottom, #36325d 0%, #251A3A 48.6%, #251A3A 90.62%, #251A3A 10%);
   border-radius: 17px;
   min-height: 225px;
-  min-width:250px;
+  min-width: 200px;
   overflow:hidden;
   padding-bottom:2em;
   position:relative;

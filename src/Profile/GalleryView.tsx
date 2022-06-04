@@ -6,6 +6,7 @@ import { decodeMetadata } from '../utils/grapeTools/utils'
 // @ts-ignore
 import fetch from 'node-fetch'
 import { PublicKey } from '@solana/web3.js';
+import InfiniteScroll from 'react-infinite-scroll-component';
 
 import {
     Pagination,
@@ -21,7 +22,8 @@ import {
     Button,
     FormControl,
     NativeSelect,
-    InputLabel
+    InputLabel,
+    LinearProgress
 } from '@mui/material';
 
 
@@ -105,8 +107,10 @@ export default function GalleryView(props: any){
           });
 
           setFoundList(results);
+          setScrollData(results);
         } else {
           setFoundList(collectionMintList);
+          setScrollData(collectionMintList);
           // If the text field is empty, show all users
         }
     
@@ -128,6 +132,7 @@ export default function GalleryView(props: any){
             //Array.prototype.reverse.call(collectionMintList);
             console.log("results: "+JSON.stringify(collectionMintList));
             setFoundList(collectionMintList);
+            setScrollData(collectionMintList);
         } else if (+type === 1){
             
             const results = collectionMintList.filter((listitem:any) => {
@@ -136,7 +141,7 @@ export default function GalleryView(props: any){
             });
             results.sort((a:any,b:any) => (a.listedBlockTime - b.listedBlockTime) ? 1 : -1);
             setFoundList(results);
-
+            setScrollData(results);
         } else if (+type === 2){ // by offer count
             const results = collectionMintList.filter((listitem:any) => {
                 //return rea().startsWith(keyword.toLowerCase())
@@ -144,6 +149,7 @@ export default function GalleryView(props: any){
             });
             results.sort((a:any,b:any) => (a.offerCount - b.offerCount) ? 1 : -1);
             setFoundList(results);
+            setScrollData(results);
         } else if (+type === 3){ // by highest offers
             const results = collectionMintList.filter((listitem:any) => {
                 //return rea().startsWith(keyword.toLowerCase())
@@ -151,6 +157,7 @@ export default function GalleryView(props: any){
             });
             results.sort((a:any,b:any) => (a.highestOffer - b.highestOffer) ? 1 : -1);
             setFoundList(results);
+            setScrollData(results);
         } else if (+type === 4){ // by alphabetical
             const results = collectionMintList.filter((listitem:any) => {
                 //return listitem.name.toLowerCase().startsWith(keyword.toLowerCase())
@@ -158,6 +165,7 @@ export default function GalleryView(props: any){
             });
             results.sort((a:any,b:any) => (a.name.toLowerCase().trim() > b.name.toLowerCase().trim()) ? 1 : -1);
             setFoundList(results);
+            setScrollData(results);
             
             /*
             const keyword = '2';
@@ -171,6 +179,26 @@ export default function GalleryView(props: any){
             */
         }
     }
+
+    const [scrollData, setScrollData] = React.useState(foundList.slice(0, 20));
+    const [hasMoreValue, setHasMoreValue] = React.useState(true);
+
+    const loadScrollData = async () => {
+        try {
+            setScrollData(foundList.slice(0, scrollData.length + 20));
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
+    const handleOnRowsScrollEnd = () => {
+        if (scrollData.length < foundList.length) {
+          setHasMoreValue(true);
+          loadScrollData();
+        } else {
+          setHasMoreValue(false);
+        }
+    };
 
     return (
         <>
@@ -253,30 +281,36 @@ export default function GalleryView(props: any){
                                 </Grid>
 
                                 <Grid item xs={12} sm={10}>
-                                    <Grid container 
-                                        spacing={{ xs: 2, md: 3 }} 
-                                        justifyContent="center"
-                                        alignItems="center">
-                                        
-                                        { (foundList.length > 0 ? foundList
-                                        .slice((page - 1) * rowsperpage, page * rowsperpage):foundList)
-                                        .map((collectionInfo: any, key: number) => {
-                                            return(
-                                                <Grid item xs={12} sm={12} md={4} lg={3} xl={2}>
-                                                    <Box
-                                                        sx={{
-                                                            background: 'rgba(0, 0, 0, 0.6)',
-                                                            borderRadius: '26px',
-                                                            minWidth: '175px'
-                                                        }} 
-                                                    >
-                                                        <GalleryItem collectionitem={collectionInfo} mode={mode} groupbysymbol={collectionInfo.groupBySymbol} isparent={false} listed={true} count={key} />
-                                                    </Box>
-                                                </Grid>
-                                            )
-                                        })}
-
-                                    </Grid>
+                                    <InfiniteScroll
+                                        dataLength={scrollData.length}
+                                        next={handleOnRowsScrollEnd}
+                                        hasMore={hasMoreValue}
+                                        scrollThreshold={1}
+                                        loader={<p><LinearProgress /></p>}
+                                        // Let's get rid of second scroll bar
+                                        style={{ overflow: "unset" }}
+                                    >
+                                        <Grid container 
+                                            spacing={{ xs: 2, md: 3 }} 
+                                            justifyContent="center"
+                                            alignItems="center">
+                                            {scrollData.map((collectionInfo:any, key:number) => {
+                                                return(
+                                                    <Grid item xs={12} sm={12} md={4} lg={3} xl={2}>
+                                                        <Box
+                                                            sx={{
+                                                                background: 'rgba(0, 0, 0, 0.6)',
+                                                                borderRadius: '26px',
+                                                                minWidth: '175px'
+                                                            }} 
+                                                        >
+                                                            <GalleryItem collectionitem={collectionInfo} mode={mode} groupbysymbol={collectionInfo.groupBySymbol} isparent={false} listed={true} count={key} />
+                                                        </Box>
+                                                    </Grid>
+                                                )
+                                            })}
+                                        </Grid>
+                                    </InfiniteScroll>
                                 </Grid>
                             </Grid>
                         </Box>
