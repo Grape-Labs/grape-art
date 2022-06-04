@@ -37,7 +37,7 @@ import { useTranslation } from 'react-i18next';
 
 
 import {
-  //LedgerWalletAdapter,
+  LedgerWalletAdapter,
   PhantomWalletAdapter,
   GlowWalletAdapter,
   SolflareWalletAdapter,
@@ -53,20 +53,8 @@ import {
   TokenPocketWalletAdapter,
   BitpieWalletAdapter,
   SafePalWalletAdapter,
+  ExodusWalletAdapter
 } from '@solana/wallet-adapter-wallets';
-
-
-/*
-import {
-    getLedgerWallet,
-    getPhantomWallet,
-    getSlopeWallet,
-    getSolflareWallet,
-    getSolletExtensionWallet,
-    getSolletWallet,
-    //getTorusWallet,
-  } from '@solana/wallet-adapter-wallets';
-*/
 
 //import { mainListItems, secondaryListItems } from './components/SidebarList/SidebarList';
 import grapeTheme from  './utils/config/theme'
@@ -101,24 +89,12 @@ function DashboardContent() {
   //const endpoint =  GRAPE_RPC_ENDPOINT;
   const endpoint =  TX_RPC_ENDPOINT;
   const wallets = useMemo(() => [
-  /*
-    getPhantomWallet(),
-    getSolflareWallet(),
-    getSlopeWallet(),
-    getSolletWallet({ network }),
-    getSolletExtensionWallet({ network }),
-    getLedgerWallet(),
-  
-    //getTorusWallet({
-    //  options: { clientId: 'BCX2hQWDez2_qJhmSuQC7DXD4OG0VfGEFjCZfLar2EA5NvKyudCxOOlOcQ4YZbPGQhdwLonSXZr3i_siIJVhtwI' }
-    //}),
-  */  
     new PhantomWalletAdapter(),
     new GlowWalletAdapter(),
     new SolflareWalletAdapter(),
     new SlopeWalletAdapter(),
     new TorusWalletAdapter(),
-    //new LedgerWalletAdapter(),
+    new LedgerWalletAdapter(),
     new SolletWalletAdapter({ network }),
     new SolletExtensionWalletAdapter({ network }),
     new CloverWalletAdapter(),
@@ -129,6 +105,8 @@ function DashboardContent() {
     new TokenPocketWalletAdapter(),
     new BitKeepWalletAdapter(),
     new SafePalWalletAdapter(),
+    new BitpieWalletAdapter(),
+    new ExodusWalletAdapter()
   ], [network]);
   
   /*
