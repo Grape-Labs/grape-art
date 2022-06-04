@@ -180,7 +180,8 @@ export default function GalleryView(props: any){
         }
     }
 
-    const [scrollData, setScrollData] = React.useState(foundList.slice(0, 20));
+    //const [scrollData, setScrollData] = React.useState(null);
+    const [scrollData, setScrollData] = React.useState((foundList && foundList?.length > 19) ? foundList.slice(0, 20) : collectionMintList)
     const [hasMoreValue, setHasMoreValue] = React.useState(true);
 
     const loadScrollData = async () => {
