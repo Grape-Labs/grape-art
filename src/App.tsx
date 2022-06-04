@@ -95,6 +95,7 @@ function DashboardContent() {
     new SlopeWalletAdapter(),
     new TorusWalletAdapter(),
     new LedgerWalletAdapter(),
+    new ExodusWalletAdapter(),
     new SolletWalletAdapter({ network }),
     new SolletExtensionWalletAdapter({ network }),
     new CloverWalletAdapter(),
@@ -105,8 +106,7 @@ function DashboardContent() {
     new TokenPocketWalletAdapter(),
     new BitKeepWalletAdapter(),
     new SafePalWalletAdapter(),
-    new BitpieWalletAdapter(),
-    new ExodusWalletAdapter()
+    new BitpieWalletAdapter()
   ], [network]);
   
   /*
