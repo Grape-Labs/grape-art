@@ -201,6 +201,26 @@ export default function GalleryView(props: any){
         }
     };
 
+    const [scrollProfileData, setScrollProfileData] = React.useState((finalCollection && finalCollection?.length > 49) ? finalCollection.slice(0, 50) : collectionMintList)
+    const [hasMoreProfileValue, setHasMoreProfileValue] = React.useState(finalCollection?.length > 49 ? true : false);
+
+    const loadScrollProfileData = async () => {
+        try {
+            setScrollProfileData(foundList.slice(0, scrollData.length + 20));
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
+    const handleOnRowsScrollProfileEnd = () => {
+        if (scrollData.length < foundList.length) {
+          setHasMoreProfileValue(true);
+          loadScrollProfileData();
+        } else {
+          setHasMoreProfileValue(false);
+        }
+    };
+
     return (
         <>
             {mode === 1 ?
@@ -327,11 +347,58 @@ export default function GalleryView(props: any){
                             p:4
                         }} 
                     > 
+
+                        {/*
+                        <InfiniteScroll
+                            dataLength={scrollProfileData?.length}
+                            next={handleOnRowsScrollProfileEnd}
+                            hasMore={hasMoreProfileValue}
+                            scrollThreshold={1}
+                            loader={<p><LinearProgress /></p>}
+                            // Let's get rid of second scroll bar
+                            style={{ overflow: "unset" }}
+                        >
+                            <Grid container 
+                                spacing={{ xs: 2, md: 3 }} 
+                                justifyContent="center"
+                                alignItems="center">
+                                {scrollProfileData && scrollProfileData.map((collectionInfo:any, key:number) => {
+                                    return(
+                                        <>
+                                            {(collectionInfo.groupBySymbol > 1) ? (
+                                                <>
+                                                {(collectionInfo.groupBySymbolIndex === 0) && (
+                                                    <GalleryGroupItem groupCollection={finalCollection} mode={mode} symbol={collectionInfo.meta.data.symbol} isparent={true} key={key} />
+                                                )}
+                                                </>
+                                            ):(
+                                                <Grid item xs={12} sm={12} md={4} lg={3} xl={2} key={key}>
+                                                    <Box
+                                                        sx={{
+                                                            background: 'rgba(0, 0, 0, 0.6)',
+                                                            borderRadius: '26px',
+                                                            minWidth: '175px'
+                                                        }} 
+                                                    >
+                                                        <GalleryItem collectionitem={collectionInfo} mode={mode} groupbysymbol={collectionInfo.groupBySymbol} isparent={false} finalCollection={finalCollection} listed={true} count={key} />
+                                                    </Box>
+                                                </Grid>
+                                            )}
+                                        </>   
+                                    )
+                                })}
+                            </Grid>
+                        </InfiniteScroll>
+                        */}
+
+
                         <Grid container 
                             spacing={{ xs: 2, md: 3 }} 
                             justifyContent="center"
                             alignItems="center">
                             
+
+
                             { (finalCollection.length > 0 ? finalCollection
                                 .slice((page - 1) * rowsperpage, page * rowsperpage):finalCollection)
                                 .map((collectionInfo: any, key: any) => {
@@ -360,25 +427,9 @@ export default function GalleryView(props: any){
                                     )
                                 }
                             )}
+
+
                         </Grid>
-                        
-                        { finalCollection.length > rowsperpage && 
-                            <Grid container justifyContent="flex-end" sx={{ mt: 2 }}>
-                                <Stack spacing={2}>
-                                    <Pagination
-                                        count={(Math.ceil(finalCollection.length / rowsperpage))}
-                                        page={page}
-                                        //onChange={handlePageChange}
-                                        defaultPage={1}
-                                        color="primary"
-                                        size="small"
-                                        showFirstButton
-                                        showLastButton
-                                        //classes={{ ul: classes.paginator }}
-                                        />
-                                </Stack>
-                            </Grid>
-                        }
                     </Box>
                     
                 )}

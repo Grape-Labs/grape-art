@@ -284,7 +284,7 @@ function SellNowVotePrompt(props:any){
                         enqueueSnackbar(`Proposal: ${proposalPk} created for accepting Listing Price Set to ${sell_now_amount} SOL`,{ variant: 'success' });
                     }
                 } else {
-                    const transactionInstr = await sellNowListing(+sell_now_amount, mint, publicKey.toString(), mintOwner, weightedScore, daoPublicKey);
+                    const transactionInstr = await sellNowListing(+sell_now_amount, mint, publicKey.toString(), mintOwner, weightedScore, daoPublicKey, updateAuthority);
                     //const transactionInstr = await gah_makeListing(+sell_now_amount, mint, publicKey.toString(), mintOwner, weightedScore, daoPublicKey);
                     const instructionsArray = [transactionInstr.instructions].flat();            
                     transaction.add(
@@ -1551,7 +1551,7 @@ export default function ItemOffers(props: any) {
             const amount = await getTokenAmount(anchorProgram,escrow,auctionHouseObj.treasuryMint,);
 			const escrowAmount = convertSolVal(amount);
             //if (amount === 0){
-                const transactionInstr = await buyNowListing(salePrice, mint, sellerWalletKey.toString(), buyerPublicKey);
+                const transactionInstr = await buyNowListing(salePrice, mint, sellerWalletKey.toString(), buyerPublicKey, updateAuthority);
                 const instructionsArray = [transactionInstr.instructions].flat();        
                 const transaction = new Transaction()
                 .add(

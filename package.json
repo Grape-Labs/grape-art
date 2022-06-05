@@ -1,6 +1,6 @@
 {
     "name": "@grape-labs/grape-art",
-    "version": "1.1.245",
+    "version": "1.1.247",
     "author": "Grape devDAO",
     "repository": "https://github.com/grape-labs/grape-art",
     "license": "Apache-2.0",
@@ -55,7 +55,7 @@
         "@solana/wallet-adapter-material-ui": "^0.16.5",
         "@solana/wallet-adapter-react": "^0.15.4",
         "@solana/wallet-adapter-wallets": "^0.16.1",
-        "@solana/web3.js": "^1.43.4",
+        "@solana/web3.js": "^1.43.5",
         "@solflare-wallet/pfp": "^0.0.6",
         "@testing-library/jest-dom": "^5.16.4",
         "@testing-library/react": "^13.3.0",
