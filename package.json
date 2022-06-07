@@ -35,7 +35,7 @@
         "@bonfida/spl-name-service": "^0.1.31",
         "@cyberlab/cyberconnect": "^4.4.2",
         "@dialectlabs/react": "^0.5.4",
-        "@dialectlabs/react-ui": "^0.8.8",
+        "@dialectlabs/react-ui": "^0.8.9",
         "@emotion/react": "^11.4.1",
         "@emotion/styled": "^11.8.1",
         "@google/model-viewer": "^1.12.0",
