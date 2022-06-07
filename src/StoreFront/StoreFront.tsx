@@ -95,6 +95,7 @@ import {
 import ShareSocialURL from '../utils/grapeTools/ShareUrl';
 
 import GalleryView from '../Profile/GalleryView';
+import ListForCollectionView from './ListForCollection';
 
 import { MakeLinkableAddress, ValidateAddress, trimAddress, timeAgo } from '../utils/grapeTools/WalletAddress'; // global key handling
 import { ConstructionOutlined, SettingsRemoteOutlined } from "@mui/icons-material";
@@ -799,11 +800,10 @@ export function StoreFrontView(this: any, props: any) {
               const string = await response.text();
               const json = string === "" ? {} : JSON.parse(string);
               //console.log(">>> "+JSON.stringify(json));
-              setVerifiedCollectionArray(json);   
+              setVerifiedCollectionArray(json); 
               return json;
             
         } catch(e){console.log("ERR: "+e)}
-        
     }
 
     const fetchMintList = async(address:string) => {
@@ -1083,9 +1083,10 @@ export function StoreFrontView(this: any, props: any) {
             // IMPORTANT
             // loop and set the list price, highest offer, and date of the listing
             for (var listing of ahListings){
+                let exists = false;
                 Object.keys(collectionMintList).map(function(key) {
                     if (collectionMintList[key].address === listing.mint){
-                        console.log("found ahListings "+JSON.stringify(ahListings));
+                        exists = true;
                         if (listing.state === 1){
                             if ((!collectionMintList[key]?.highestOffer) || (listing.amount > +collectionMintList[key]?.highestOffer))
                                 collectionMintList[key].highestOffer = listing.amount;
@@ -1097,8 +1098,61 @@ export function StoreFrontView(this: any, props: any) {
                         }
                     }
                 });
+                if (!exists){
+                    //console.log("not exists ahListings "+JSON.stringify(listing));
+                    if (listing.state === 1){
+                        collectionMintList.push({
+                            address: listing.mint,
+                            highestOffer: listing.amount,
+                            name:null,
+                            image:'',
+                        })
+                    } else if (listing.state === 2){
+                        collectionMintList.push({
+                            address: listing.mint,
+                            price: listing.amount,
+                            listedTimestamp: listing.timestamp,
+                            listedBlockTime: listing.blockTime,
+                            name:null,
+                            image:'',
+                        })
+                    }
+                }
             }
 
+            //console.log("collectionMintList "+JSON.stringify(collectionMintList));
+
+            // check all that do not have an image or name and group them
+            const mintsToGet = new Array();
+            for (var mintListItem of collectionMintList){
+                if (!mintListItem.name){
+                    mintsToGet.push({address:mintListItem.address})
+                }
+            }
+            // Now we should get the metadata for all the addresses and then load it back to the collectionMintList
+            // like we are doing with the likes
+
+            const missing_meta = await getMissingCollectionData(0, mintsToGet);
+            
+            console.log("missing_meta: "+JSON.stringify(missing_meta));
+
+            /*
+            let finalmeta = missing_meta;//JSON.parse(JSON.stringify(final_collection_meta));
+            try{
+                finalmeta.sort((a:any, b:any) => a?.meta.data.name.toLowerCase().trim() > b?.meta.data.name.toLowerCase().trim() ? 1 : -1);   
+            }catch(e){console.log("Sort ERR: "+e)}
+            */
+
+            for (var mintListItem of collectionMintList){
+                for (var missed of missing_meta){
+                    if (mintListItem.address === missed.mint){
+                        //console.log("pushing: "+JSON.stringify(missed));
+                        mintListItem.name = missed.name,
+                        mintListItem.image = missed.image
+                    }
+                }
+            }
+            // now with missing meta populate it to collectionMintList
             collectionMintList.sort((a:any,b:any) => (a.price < b.price) ? 1 : -1);
             //collectionMintList.sort((a:any,b:any) => ((a.price - b.price) ));
             // now inverse the list
@@ -1136,6 +1190,97 @@ export function StoreFrontView(this: any, props: any) {
         }
     }
 
+    const getMissingCollectionData = async (start:number, missing_collection:any) => {
+        const MD_PUBKEY = METAPLEX_PROGRAM_ID;
+        const rpclimit = 100;
+        const wallet_collection = missing_collection;
+        
+        if (wallet_collection){
+            try {
+                let mintsPDAs = new Array();
+                //console.log("RPClim: "+rpclimit);
+                //console.log("Paging "+(rpclimit*(start))+" - "+(rpclimit*(start+1)));
+                
+                let mintarr = wallet_collection.slice(rpclimit*(start), rpclimit*(start+1)).map((value:any, index:number) => {
+                    //console.log("mint: "+JSON.stringify(value.address));
+                    //return value.account.data.parsed.info.mint;
+                    console.log("value "+JSON.stringify(value))
+                    return value.address;
+                });
+                
+                for (var value of mintarr){
+                    if (value){
+                        let mint_address = new PublicKey(value);
+                        let [pda, bump] = await PublicKey.findProgramAddress([
+                            Buffer.from("metadata"),
+                            MD_PUBKEY.toBuffer(),
+                            new PublicKey(mint_address).toBuffer(),
+                        ], MD_PUBKEY)
+
+                        if (pda){
+                            //console.log("pda: "+pda.toString());
+                            mintsPDAs.push(pda);
+                        }
+                    }
+                }
+
+                //console.log("pushed pdas: "+JSON.stringify(mintsPDAs));
+                const metadata = await ggoconnection.getMultipleAccountsInfo(mintsPDAs);
+                //console.log("returned: "+JSON.stringify(metadata));
+                // LOOP ALL METADATA WE HAVE
+                const finalData = new Array();
+                for (var metavalue of metadata){
+                    //console.log("Metaplex val: "+JSON.stringify(metavalue));
+                    if (metavalue?.data){
+                        try{
+                            let meta_primer = metavalue;
+                            let buf = Buffer.from(metavalue.data);
+                            let meta_final = decodeMetadata(buf);
+                            console.log("meta_final: "+JSON.stringify(meta_final));
+                            
+                            if (meta_final){
+                                try {
+                                    //let meta_primer = collectionitem;
+                                    //let buf = Buffer.from(meta_primer.data, 'base64');
+                                    //let meta_final = decodeMetadata(buf);
+                                    try{
+                                        const metadata = await window.fetch(meta_final.data.uri)
+                                        .then(
+                                            (res: any) => res.json()
+                                        );
+                                        
+                                        const newObj = {...meta_final, ...metadata};
+                                        finalData.push(
+                                            newObj
+                                        );
+                                    }catch(ie){
+                                        // not on Arweave:
+                                        //console.log("ERR: "+JSON.stringify(meta_final));
+                                        return null;
+                                    }
+                                } catch (e) { // Handle errors from invalid calls
+                                    console.log(e);
+                                    return null;
+                                }
+                            }
+                            
+                            
+                        }catch(etfm){console.log("ERR: "+etfm + " for "+ JSON.stringify(metavalue));}
+                    } else{
+                        console.log("Something not right...");
+                    }
+                }
+                console.log("... " + JSON.stringify(finalData));
+                return finalData;
+            } catch (e) { // Handle errors from invalid calls
+                console.log(e);
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
+
     React.useEffect(() => { 
         if ((verifiedCollectionArray)&&(!collectionAuthority)){
             if (withPubKey){
@@ -1168,7 +1313,8 @@ export function StoreFrontView(this: any, props: any) {
 
     React.useEffect(() => { 
         if ((withPubKey)&&(!verifiedCollectionArray)){
-            fetchVerifiedCollection(withPubKey); 
+            fetchVerifiedCollection(withPubKey);
+            
         }
     }, [withPubKey]);
 
@@ -1331,6 +1477,14 @@ export function StoreFrontView(this: any, props: any) {
                                         <TwitterIcon sx={{m:0.75,color:'white'}} />
                                     </Button>
                                 }
+
+                                <ListForCollectionView 
+                                    logo={GRAPE_COLLECTIONS_DATA+collectionAuthority.logo} 
+                                    entangleTo={collectionAuthority.entangleTo} 
+                                    entangleFrom={collectionAuthority.entangleFrom} 
+                                    entangled={collectionAuthority.entangled} 
+                                    enforceEntangle={collectionAuthority.entangleEnforce}
+                                    entangleUrl={collectionAuthority.entangleUrl} />
                             </Box>
                         </Box>
                         

@@ -16,7 +16,7 @@ import { Connection, PublicKey} from '@solana/web3.js';
 
 import {
     METAPLEX_PROGRAM_ID,
-  } from '../utils/auctionHouse/helpers/constants';
+} from '../utils/auctionHouse/helpers/constants';
 
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon'
 
@@ -181,7 +181,7 @@ export default function CurationView(props: any){
                     console.log("Something not right...");
                 }
             }
-            console.log(JSON.stringify(metadata));
+            console.log("HERE" +JSON.stringify(metadata));
             return metadata;
         } catch (e) { // Handle errors from invalid calls
             console.log(e);

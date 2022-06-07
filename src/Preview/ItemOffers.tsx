@@ -62,6 +62,7 @@ import {
     TOKEN_VERIFICATION_NAME,
     TOKEN_VERIFICATION_AMOUNT,
     TOKEN_VERIFICATION_ADDRESS,
+    GRAPE_COLLECTIONS_DATA,
     GRAPE_RPC_ENDPOINT, 
     OTHER_MARKETPLACES, 
     GRAPE_RPC_REFRESH, 
@@ -872,7 +873,6 @@ export function OfferPrompt(props: any) {
             </BootstrapDialog>   
         </React.Fragment>
     );
-
 }
 
 export default function ItemOffers(props: any) {
@@ -901,6 +901,7 @@ export default function ItemOffers(props: any) {
     const [saleTimeAgo, setSaleTimeAgo] = React.useState(null);
     const [highestOffer, setHighestOffer] = React.useState(0);
     const [openOffers, setOpenOffers] = React.useState(0);
+    const [verifiedCollectionArray, setVerifiedCollectionArray] = React.useState(null);
     const grape_governance_balance = props.grape_governance_balance;
     const grape_offer_threshhold = props.grape_offer_threshhold;
     const grape_member_balance = props.grape_member_balance;
@@ -1196,6 +1197,23 @@ export default function ItemOffers(props: any) {
         const resultValues = json.result
         return resultValues;
     };
+    
+    const fetchVerifiedCollection = async(address:string) => {
+        try{
+            const url = GRAPE_COLLECTIONS_DATA+'verified_collections.json';
+            const response = await window.fetch(url, {
+                method: 'GET',
+                headers: {
+                }
+              });
+              const string = await response.text();
+              const json = string === "" ? {} : JSON.parse(string);
+              //console.log(">>> "+JSON.stringify(json));
+              setVerifiedCollectionArray(json); 
+              return json;
+            
+        } catch(e){console.log("ERR: "+e)}
+    }
 
     const getOffers = async () => {
         const anchorProgram = await loadAuctionHouseProgram(pubkey, ENV_AH, GRAPE_RPC_ENDPOINT);
@@ -1212,7 +1230,6 @@ export default function ItemOffers(props: any) {
         console.log("derivedOwnerPDA: "+derivedOwnerPDA);
         */
 
-        
         //console.log(mint + " - derivedMintPDA: "+derivedMintPDA);
         
         let [result] = await Promise.all([GetSignatureOffers(derivedMintPDA[0].toString(),'', 25)]);
@@ -1689,7 +1706,16 @@ export default function ItemOffers(props: any) {
     const { t, i18n } = useTranslation();
 
     const ItemTools = (props: any) => {
-        
+        const [collection, setCollection] = React.useState(null);
+
+        for (var verified of verifiedCollectionArray){
+            //if (verified.address === mintOwner){
+            if (verified.address === updateAuthority){
+                // IMPORTANT HERE TO REMOVE BUY and OFFERS for SOLBEARS
+            }
+        }
+
+
         return (
             <>
             {(OTHER_MARKETPLACES.filter(e => e.address === mintOwner).length > 0) ? (
@@ -1785,156 +1811,158 @@ export default function ItemOffers(props: any) {
                                     
                                     {publicKey ?
                                         <>
-                                        {publicKey.toString() !== mintOwner ? (
+                                            
+
+                                            {publicKey.toString() !== mintOwner ? (
+                                                    <Grid 
+                                                    container
+                                                    spacing={2}
+                                                    alignItems="center"
+                                                    justifyContent="center">
+                                                        <>
+                                                                    <BootstrapDialog 
+                                                                        fullWidth={true}
+                                                                        maxWidth={"sm"}
+                                                                        PaperProps={{
+                                                                            style: {
+                                                                                background: '#13151C',
+                                                                                border: '1px solid rgba(255,255,255,0.05)',
+                                                                                borderTop: '1px solid rgba(255,255,255,0.1)',
+                                                                                borderRadius: '20px'
+                                                                            }
+                                                                        }}
+                                                                        open={alertbuynowopen}
+                                                                        onClose={handleAlertBuyNowClose}
+                                                                        aria-labelledby="alert-bn-dialog-title"
+                                                                        aria-describedby="alert-bn-dialog-description"
+                                                                        >
+                                                                        <DialogTitle id="alert-bn-dialog-title">
+                                                                            <Typography>
+                                                                                {t('BUY NOW CONFIRMATION')}
+                                                                            </Typography>
+                                                                        </DialogTitle>
+                                                                        <DialogContent>
+                                                                            <DialogContentText id="alert-bn-dialog-description">
+                                                                            <br />
+                                                                            <Alert 
+                                                                                severity="info" variant="outlined"
+                                                                                sx={{backgroundColor:'black'}}
+                                                                                >
+                                                                                {t('Amount')}: {salePrice}<SolCurrencyIcon sx={{fontSize:"12px"}} /><br/>
+                                                                                {t('Mint')}: <MakeLinkableAddress addr={mint} trim={0} hasextlink={true} hascopy={false} fontsize={16} /> <br/>
+                                                                                {t('Owner')}: <MakeLinkableAddress addr={mintOwner} trim={0} hasextlink={true} hascopy={false} fontsize={16} /><br/>
+                                                                                <Typography sx={{textAlign:'center'}}>
+                                                                                {t('Make sure the above is correct')}<br/>{t('press Accept to proceed')}
+                                                                                </Typography>
+                                                                            </Alert>
+                                                                            
+                                                                            </DialogContentText>
+                                                                        </DialogContent>
+                                                                        <DialogActions>
+                                                                            <Button onClick={handleAlertBuyNowClose}>Cancel</Button>
+                                                                            <Button 
+                                                                                onClick={() => handleBuyNow(salePrice)}
+                                                                                autoFocus>
+                                                                            {t('Accept')}
+                                                                            </Button>
+                                                                        </DialogActions>
+                                                                    </BootstrapDialog>
+                                                                    
+                                                                    <Grid item>
+                                                                        {( (salePrice > 0) ?
+                                                                            <>
+                                                                                {/*
+                                                                                <Button 
+                                                                                    size="large" 
+                                                                                    variant="contained" 
+                                                                                    value="Use Solana Pay" 
+                                                                                    onClick={() => setSolanaPay(true)}
+                                                                                    sx={{
+                                                                                        background: 'linear-gradient(268.11deg, #00F0DD 3.12%, #DC1FFF 96.88%)',
+                                                                                        borderRadius: '10px',
+                                                                                        color: '#fff',
+                                                                                        mr:1,
+                                                                                    }}
+                                                                                >
+                                                                                    <QrCodeIcon />
+                                                                                </Button>
+                                                                                */}
+                                                                                <Button 
+                                                                                    size="large" 
+                                                                                    variant="contained" 
+                                                                                    value="Buy Now" 
+                                                                                    className="buyNowButton"
+                                                                                    onClick={() => setAlertBuyNowOpen(true)}
+                                                                                    sx={{
+                                                                                        
+                                                                                    }}
+                                                                                >
+                                                                                    <AccountBalanceWalletIcon sx={{mr:1}}/> {t('Buy Now')}
+
+                                                                                </Button>
+                                                                            </>
+                                                                        :<></>)}
+                                                                    </Grid>
+
+                                                                {((grape_whitelisted > -1) ||
+                                                                    (grape_member_balance > grape_offer_threshhold)) ? (
+                                                                        <>
+                                                                        {!ValidateCurve(mintOwner) && salePrice <= 0 &&
+                                                                            <Grid item>
+                                                                                <SellNowVotePrompt mint={mint} updateAuthority={updateAuthority} mintOwner={mintOwner} salePrice={salePrice} grapeWeightedScore={grape_weighted_score} RefreshOffers={setRefreshOffers} />
+                                                                            </Grid>
+                                                                        }
+                                                                        
+                                                                        {(ValidateCurve(mintOwner) || (ValidateDAO(mintOwner))) && (
+                                                                            <Grid item>
+                                                                                <OfferPrompt mint={mint} updateAuthority={updateAuthority} image={image} mintOwner={mintOwner} setRefreshOffers={setRefreshOffers} solBalance={sol_portfolio_balance} highestOffer={highestOffer} offers={offers} />
+                                                                            </Grid>
+                                                                        )}
+                                                                        </>
+                                                                ) : (
+                                                                    <Grid item>
+                                                                        <Tooltip title={`${t('The Marketplace requires')} ${TOKEN_VERIFICATION_AMOUNT} ${TOKEN_VERIFICATION_NAME} ${t('to make an offer')}`}>
+                                                                            <Button sx={{borderRadius:'10px'}}>
+                                                                                <Alert severity="warning" sx={{borderRadius:'10px'}}>
+                                                                                {t('Offers limited to')} {TOKEN_VERIFICATION_NAME} {t('holders')}
+                                                                                </Alert>
+                                                                            </Button>
+                                                                        </Tooltip>
+                                                                    </Grid>
+                                                                )}
+                                                        </>
+                                                    </Grid>
+                                            )
+                                            :
                                                 <Grid 
                                                 container
                                                 spacing={2}
                                                 alignItems="center"
                                                 justifyContent="center">
-                                                    <>
-                                                                <BootstrapDialog 
-                                                                    fullWidth={true}
-                                                                    maxWidth={"sm"}
-                                                                    PaperProps={{
-                                                                        style: {
-                                                                            background: '#13151C',
-                                                                            border: '1px solid rgba(255,255,255,0.05)',
-                                                                            borderTop: '1px solid rgba(255,255,255,0.1)',
-                                                                            borderRadius: '20px'
-                                                                        }
+                                                    <Grid item>
+                                                        
+                                                        {( (salePrice > 0) ?
+                                                            <>
+                                                                <Button 
+                                                                    size="large" 
+                                                                    color="error"
+                                                                    variant='outlined'
+                                                                    onClick={() => handleCancelListing(salePrice)}
+                                                                    sx={{
+                                                                        borderRadius: '10px',
                                                                     }}
-                                                                    open={alertbuynowopen}
-                                                                    onClose={handleAlertBuyNowClose}
-                                                                    aria-labelledby="alert-bn-dialog-title"
-                                                                    aria-describedby="alert-bn-dialog-description"
-                                                                    >
-                                                                    <DialogTitle id="alert-bn-dialog-title">
-                                                                        <Typography>
-                                                                            {t('BUY NOW CONFIRMATION')}
-                                                                        </Typography>
-                                                                    </DialogTitle>
-                                                                    <DialogContent>
-                                                                        <DialogContentText id="alert-bn-dialog-description">
-                                                                        <br />
-                                                                        <Alert 
-                                                                            severity="info" variant="outlined"
-                                                                            sx={{backgroundColor:'black'}}
-                                                                            >
-                                                                            {t('Amount')}: {salePrice}<SolCurrencyIcon sx={{fontSize:"12px"}} /><br/>
-                                                                            {t('Mint')}: <MakeLinkableAddress addr={mint} trim={0} hasextlink={true} hascopy={false} fontsize={16} /> <br/>
-                                                                            {t('Owner')}: <MakeLinkableAddress addr={mintOwner} trim={0} hasextlink={true} hascopy={false} fontsize={16} /><br/>
-                                                                            <Typography sx={{textAlign:'center'}}>
-                                                                            {t('Make sure the above is correct')}<br/>{t('press Accept to proceed')}
-                                                                            </Typography>
-                                                                        </Alert>
-                                                                        
-                                                                        </DialogContentText>
-                                                                    </DialogContent>
-                                                                    <DialogActions>
-                                                                        <Button onClick={handleAlertBuyNowClose}>Cancel</Button>
-                                                                        <Button 
-                                                                            onClick={() => handleBuyNow(salePrice)}
-                                                                            autoFocus>
-                                                                        {t('Accept')}
-                                                                        </Button>
-                                                                    </DialogActions>
-                                                                </BootstrapDialog>
-                                                                
-                                                                <Grid item>
-                                                                    {( (salePrice > 0) ?
-                                                                        <>
-                                                                            {/*
-                                                                            <Button 
-                                                                                size="large" 
-                                                                                variant="contained" 
-                                                                                value="Use Solana Pay" 
-                                                                                onClick={() => setSolanaPay(true)}
-                                                                                sx={{
-                                                                                    background: 'linear-gradient(268.11deg, #00F0DD 3.12%, #DC1FFF 96.88%)',
-                                                                                    borderRadius: '10px',
-                                                                                    color: '#fff',
-                                                                                    mr:1,
-                                                                                }}
-                                                                            >
-                                                                                <QrCodeIcon />
-                                                                            </Button>
-                                                                            */}
-                                                                            <Button 
-                                                                                size="large" 
-                                                                                variant="contained" 
-                                                                                value="Buy Now" 
-                                                                                className="buyNowButton"
-                                                                                onClick={() => setAlertBuyNowOpen(true)}
-                                                                                sx={{
-                                                                                    
-                                                                                }}
-                                                                            >
-                                                                                <AccountBalanceWalletIcon sx={{mr:1}}/> {t('Buy Now')}
-
-                                                                            </Button>
-                                                                        </>
-                                                                    :<></>)}
-                                                                </Grid>
-
-                                                            {((grape_whitelisted > -1) ||
-                                                                (grape_member_balance > grape_offer_threshhold)) ? (
-                                                                    <>
-                                                                    {!ValidateCurve(mintOwner) && salePrice <= 0 &&
-                                                                        <Grid item>
-                                                                            <SellNowVotePrompt mint={mint} updateAuthority={updateAuthority} mintOwner={mintOwner} salePrice={salePrice} grapeWeightedScore={grape_weighted_score} RefreshOffers={setRefreshOffers} />
-                                                                        </Grid>
-                                                                    }
-                                                                    
-                                                                    {(ValidateCurve(mintOwner) || (ValidateDAO(mintOwner))) && (
-                                                                        <Grid item>
-                                                                            <OfferPrompt mint={mint} updateAuthority={updateAuthority} image={image} mintOwner={mintOwner} setRefreshOffers={setRefreshOffers} solBalance={sol_portfolio_balance} highestOffer={highestOffer} offers={offers} />
-                                                                        </Grid>
-                                                                    )}
-                                                                    </>
-                                                            ) : (
-                                                                <Grid item>
-                                                                    <Tooltip title={`${t('The Marketplace requires')} ${TOKEN_VERIFICATION_AMOUNT} ${TOKEN_VERIFICATION_NAME} ${t('to make an offer')}`}>
-                                                                        <Button sx={{borderRadius:'10px'}}>
-                                                                            <Alert severity="warning" sx={{borderRadius:'10px'}}>
-                                                                            {t('Offers limited to')} {TOKEN_VERIFICATION_NAME} {t('holders')}
-                                                                            </Alert>
-                                                                        </Button>
-                                                                    </Tooltip>
-                                                                </Grid>
-                                                            )}
-                                                    </>
+                                                                >
+                                                                    <CancelIcon sx={{mr:1}}/> {t('Cancel Listing')}
+                                                                </Button>   
+                                                            </>
+                                                            : 
+                                                            <>
+                                                                <SellNowPrompt mint={mint} updateAuthority={updateAuthority} mintOwner={mintOwner} salePrice={salePrice} grapeWeightedScore={grape_weighted_score} RefreshOffers={setRefreshOffers} />
+                                                            </>
+                                                        )}
+                                                    </Grid>
                                                 </Grid>
-                                        )
-                                        :
-                                            <Grid 
-                                            container
-                                            spacing={2}
-                                            alignItems="center"
-                                            justifyContent="center">
-                                                <Grid item>
-                                                    
-                                                    {( (salePrice > 0) ?
-                                                        <>
-                                                            <Button 
-                                                                size="large" 
-                                                                color="error"
-                                                                variant='outlined'
-                                                                onClick={() => handleCancelListing(salePrice)}
-                                                                sx={{
-                                                                    borderRadius: '10px',
-                                                                }}
-                                                            >
-                                                                <CancelIcon sx={{mr:1}}/> {t('Cancel Listing')}
-                                                            </Button>   
-                                                        </>
-                                                        : 
-                                                        <>
-                                                            <SellNowPrompt mint={mint} updateAuthority={updateAuthority} mintOwner={mintOwner} salePrice={salePrice} grapeWeightedScore={grape_weighted_score} RefreshOffers={setRefreshOffers} />
-                                                        </>
-                                                    )}
-                                                </Grid>
-                                            </Grid>
-                                        }
+                                            }
                                         </>
                                     :(
                                         <Grid
@@ -1966,6 +1994,7 @@ export default function ItemOffers(props: any) {
         }
 
         if (mintAta){
+            fetchVerifiedCollection(updateAuthority);
             //if (!offers){
                 getOffers();
             //}
