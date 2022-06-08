@@ -717,6 +717,7 @@ export function OfferPrompt(props: any) {
                         } 
                     }
 
+                    console.log("offcnt: "+offcnt);
                     if ((previous_offer_pk)&&(offcnt > 1)){
                         console.log(previous_offer_pk+' you have been outbid');
                         unicastGrapeSolflareMessage('Outbid Notice', 'You have been outbid on grape.art', image, highest_offer_pk, `${GRAPE_PREVIEW}${mint}`);
@@ -1079,6 +1080,7 @@ export default function ItemOffers(props: any) {
     const handleWithdrawOffer = async (offerAmount: number) => {
         try {
             //const transactionInstr = await withdrawOffer(offerAmount, mint, walletPublicKey.toString(), mintOwner, updateAuthority);
+            
             const transactionInstr = await cancelWithdrawOffer(offerAmount, mint, walletPublicKey, mintOwner, updateAuthority, collectionAuctionHouse);
             //const transactionInstr = await gah_cancelOffer(offerAmount, mint, walletPublicKey, mintOwner);
             const instructionsArray = [transactionInstr.instructions].flat();        
@@ -1127,8 +1129,9 @@ export default function ItemOffers(props: any) {
 
     const handleCancelOffer = async (offerAmount: number) => {
         try {
+            console.log("with updateAuthority/collectionAuctionHouse: "+updateAuthority+" / "+collectionAuctionHouse);
             const transactionInstr = await cancelOffer(offerAmount, mint, walletPublicKey, mintOwner, updateAuthority, collectionAuctionHouse);
-			//const transactionInstr = await gah_cancelOffer(offerAmount, mint, walletPublicKey, mintOwner, updateAuthority);
+			//const transactionInstr = await gah_cancelOffer(offerAmount, mint, walletPublicKey, mintOwner, updateAuthority, collectionAuctionHouse);
             //const transactionInstr = await cancelWithdrawOffer(offerAmount, mint, walletPublicKey, mintOwner, updateAuthority);
             const instructionsArray = [transactionInstr.instructions].flat();        
             const transaction = new Transaction()

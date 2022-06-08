@@ -12,7 +12,7 @@ import {
   WRAPPED_SOL_MINT
 } from "./constants";
 import {Connection, PublicKey} from "@solana/web3.js";
-import {Token} from "@solana/spl-token";
+import {getMint} from "@solana/spl-token";
 import {AnchorWallet} from "@solana/wallet-adapter-react";
 import {Metadata, METADATA_SCHEMA,METADATA_REPLACE} from "./types";
 import {deserializeUnchecked} from "borsh";
@@ -77,7 +77,22 @@ export const getMetadata = async (
   )[0];
 };
 
+export const getPriceWithMantissa = async (
+  price: number,
+  mint: web3.PublicKey,
+  walletKeyPair: any,
+  anchorProgram: Program,
+): Promise<number> => {
+  const mintInfo = await getMint(
+      anchorProgram.provider.connection,
+      new web3.PublicKey(mint),
+      walletKeyPair
+  );
+  const mantissa = 10 ** mintInfo.decimals;
+  return Math.ceil(price * mantissa);
+};
 
+/*
 export const getPriceWithMantissa = async (
   price: number,
   mint: web3.PublicKey,
@@ -94,7 +109,7 @@ export const getPriceWithMantissa = async (
   const mintInfo = await token.getMintInfo();
   const mantissa = 10 ** mintInfo.decimals;
   return Math.ceil(price * mantissa);
-};
+};*/
 
 export async function getTokenAmount(
   anchorProgram: anchor.Program,

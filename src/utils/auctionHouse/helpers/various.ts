@@ -296,8 +296,23 @@ export const getPriceWithMantissa = async (
   walletKeyPair: any,
   anchorProgram: Program,
 ): Promise<number> => {
-  
-  /*
+  const mintInfo = await getMint(
+      anchorProgram.provider.connection,
+      new web3.PublicKey(mint),
+      walletKeyPair
+  );
+  const mantissa = 10 ** mintInfo.decimals;
+  return Math.ceil(price * mantissa);
+};
+
+/*
+export const getPriceWithMantissa = async (
+  price: number,
+  mint: web3.PublicKey,
+  walletKeyPair: any,
+  anchorProgram: Program,
+): Promise<number> => {
+  console.log("wutmint: "+JSON.stringify(mint));
   const token = new Token(
     anchorProgram.provider.connection,
     new web3.PublicKey(mint),
@@ -306,14 +321,7 @@ export const getPriceWithMantissa = async (
   );
   
   const mintInfo = await token.getMintInfo();
-    */
-  
-  const mintInfo = await getMint(
-      anchorProgram.provider.connection,
-      new web3.PublicKey(mint),
-      walletKeyPair
-  );
+  console.log("mintInfo: "+JSON.stringify(mintInfo));
   const mantissa = 10 ** mintInfo.decimals;
-
   return Math.ceil(price * mantissa);
-};
+};*/

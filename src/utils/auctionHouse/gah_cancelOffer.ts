@@ -191,7 +191,7 @@ export async function gah_cancelOffer(offerAmount: number, mint: string, buyerWa
   const transferAuthority = web3.Keypair.generate();
   const signers = true ? [] : [transferAuthority];
   const instructions = txt.instructions;
-
+  
   const GRAPE_AH_MEMO = {
     state:5, // status (0: withdraw, 1: offer, 2: listing, 3: buy/execute (from listing), 4: buy/execute(accept offer), 5: cancel)
     ah:auctionHouseKey.toString(), // pk

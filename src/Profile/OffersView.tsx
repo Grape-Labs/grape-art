@@ -265,6 +265,12 @@ export default function OffersView(props:any){
             }
 
             if (allmints.length <= 1){
+                console.log("mint: "+mint);
+                // get updateAuthority
+                // get auctionHouse
+
+
+
                 if (mint){ // with mint allow calling cancel withdraw combo
                     try {
                         const mintKey = new web3.PublicKey(mint);
@@ -272,7 +278,8 @@ export default function OffersView(props:any){
                         const tokenKey = new web3.PublicKey(tokenAccount?.value[0].address.toBase58());
                         let mintAccountInfo = await ggoconnection.getAccountInfo(tokenKey);
                         const mintAccountInfoDs = deserializeAccount(mintAccountInfo?.data);
-                        const transactionInstr = await cancelWithdrawOffer(offerAmount, mint, publicKey, mintAccountInfoDs.owner, updateAuthority);
+                        
+                        const transactionInstr = await cancelWithdrawOffer(offerAmount, mint, publicKey, mintAccountInfoDs.owner, updateAuthority, null);
                         const instructionsArray = [transactionInstr.instructions].flat();        
                         const transaction = new Transaction()
                         .add(
@@ -308,11 +315,11 @@ export default function OffersView(props:any){
                     } catch(e){
                         closeSnackbar();
                         enqueueSnackbar(e.message ? `${e.name}: ${e.message}` : e.name, { variant: 'error' });
-                        console.log("Error: "+e);
+                        console.log("Error: "+JSON.stringify(e));
                     } 
                 } else{ // no mint then just withdraw
                     try {
-                        const transactionInstr = await withdrawOffer(offerAmount, null, publicKey, updateAuthority);
+                        const transactionInstr = await withdrawOffer(offerAmount, null, publicKey, updateAuthority, null);
                         const instructionsArray = [transactionInstr.instructions].flat();        
                         const transaction = new Transaction()
                         .add(
@@ -953,7 +960,7 @@ export default function OffersView(props:any){
                     justifyContent='flex-end'
                     alignContent='flex-end'>
                     
-                    {/*
+                    
                     {(publicKey && publicKey.toBase58() === thisPublicKey && ahbalance && (ahbalance > 0)) ?
                         <Box
                             sx={{
@@ -1003,7 +1010,7 @@ export default function OffersView(props:any){
                                 <DialogActions>
                                     <Button onClick={handleAlertWithdrawClose}>{t('Cancel')}</Button>
                                     <Button 
-                                        onClick={() => handleWithdrawOffer(convertSolVal(ahbalance), null)}
+                                        onClick={() => handleWithdrawOffer(convertSolVal(ahbalance), null, null)}
                                         autoFocus>
                                     {t('Withdraw')}
                                     </Button>
@@ -1020,7 +1027,7 @@ export default function OffersView(props:any){
                                         <Button
                                             size="small"
                                             variant="text"
-                                            onClick={() => (myoffers > 0 ? setAlertWithdrawOpen(true) : handleWithdrawOffer(convertSolVal(ahbalance), null))}
+                                            onClick={() => (myoffers > 0 ? setAlertWithdrawOpen(true) : handleWithdrawOffer(convertSolVal(ahbalance), null, null))}
                                             sx={{
                                                 borderRadius:'17px'
                                             }}
@@ -1033,7 +1040,7 @@ export default function OffersView(props:any){
                         </Box>
                     :
                     <Box></Box>
-                    }*/}
+                    }
                     
                     <TableContainer
                         sx={{
@@ -1141,7 +1148,7 @@ export default function OffersView(props:any){
                     direction="row"
                     justifyContent='flex-end'
                     alignContent='flex-end'>
-                    {/*
+                    
                     {(publicKey && publicKey.toBase58() === thisPublicKey && ahbalance && (ahbalance > 0)) ?
                         <Box
                             sx={{
@@ -1162,7 +1169,7 @@ export default function OffersView(props:any){
                                         <Button
                                             size="small"
                                             variant="text"
-                                            onClick={() => (myoffers > 0 ? setAlertWithdrawOpen(true) : handleWithdrawOffer(convertSolVal(ahbalance), null))}
+                                            onClick={() => (myoffers > 0 ? setAlertWithdrawOpen(true) : handleWithdrawOffer(convertSolVal(ahbalance), null, null))}
                                             sx={{
                                                 borderRadius:'17px'
                                             }}
@@ -1176,7 +1183,7 @@ export default function OffersView(props:any){
                     :
                     <Box></Box>
                     }
-                    */}
+                    
 
                     <TableContainer
                         sx={{

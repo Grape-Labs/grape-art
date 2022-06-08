@@ -136,7 +136,7 @@ export async function cancelWithdrawOffer(offerAmount: number, mint: string, buy
       //@ts-ignore
       auctionHouseObj.treasuryMint,
     ); 
-
+      
     const instruction2 = anchorProgram.instruction.withdraw(
       bump,
       new BN(amountAdjusted),
@@ -174,7 +174,9 @@ export async function cancelWithdrawOffer(offerAmount: number, mint: string, buy
     let derivedMintPDA = await web3.PublicKey.findProgramAddress([Buffer.from((mintKey).toBuffer())], auctionHouseKey);
     let derivedBuyerPDA = await web3.PublicKey.findProgramAddress([Buffer.from((buyerWalletKey).toBuffer())], auctionHouseKey);
     let derivedOwnerPDA = await web3.PublicKey.findProgramAddress([Buffer.from((new PublicKey(mintOwner)).toBuffer())], auctionHouseKey);
-    let derivedUpdateAuthorityPDA = await web3.PublicKey.findProgramAddress([Buffer.from((new PublicKey(updateAuthority)).toBuffer())], auctionHouseKey);
+    let derivedUpdateAuthorityPDA = null;
+    if (updateAuthority && updateAuthority.length > 0)
+      derivedUpdateAuthorityPDA = await web3.PublicKey.findProgramAddress([Buffer.from((new PublicKey(updateAuthority)).toBuffer())], auctionHouseKey);
   
     instructions.push(
       SystemProgram.transfer({
@@ -197,13 +199,16 @@ export async function cancelWithdrawOffer(offerAmount: number, mint: string, buy
           lamports: 0,
       })
     );
-    instructions.push(
-      SystemProgram.transfer({
-          fromPubkey: buyerWalletKey,
-          toPubkey: derivedUpdateAuthorityPDA[0],
-          lamports: 0,
-      })
-    );
+    if (derivedUpdateAuthorityPDA){
+      instructions.push(
+        SystemProgram.transfer({
+            fromPubkey: buyerWalletKey,
+            toPubkey: derivedUpdateAuthorityPDA[0],
+            lamports: 0,
+        })
+      );
+    }
+
     instructions.push(
       new TransactionInstruction({
           keys: [{ pubkey: buyerWalletKey, isSigner: true, isWritable: true }],

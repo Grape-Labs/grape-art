@@ -19,10 +19,13 @@ export async function cancelOffer(offerAmount: number, mint: string, buyerWallet
 
     let tokenSize = 1;
     const auctionHouseKey = new web3.PublicKey(collectionAuctionHouse || AUCTION_HOUSE_ADDRESS);
+    console.log("with AUCTION_HOUSE_ADDRESS/collectionAuctionHouse: "+AUCTION_HOUSE_ADDRESS+" / "+collectionAuctionHouse + " : "+auctionHouseKey.toBase58());
     const mintKey = new web3.PublicKey(mint);
     let anchorProgram = await loadAuctionHouseProgram(null, ENV_AH, GRAPE_RPC_ENDPOINT);
     const auctionHouseObj = await anchorProgram.account.auctionHouse.fetch(auctionHouseKey,);
     const sellerWalletKey = new web3.PublicKey(mintOwner);
+
+    console.log('offerAmount:', offerAmount);
     const buyPriceAdjusted = new BN(
       await getPriceWithMantissa(
         offerAmount,
@@ -32,7 +35,7 @@ export async function cancelOffer(offerAmount: number, mint: string, buyerWallet
         anchorProgram,
       ),
     );
-    //console.log('buyPriceAdjusted:', buyPriceAdjusted);
+    
     const tokenSizeAdjusted = new BN(
       await getPriceWithMantissa(
         tokenSize,
@@ -41,6 +44,9 @@ export async function cancelOffer(offerAmount: number, mint: string, buyerWallet
         anchorProgram,
       ),
     );
+
+    
+
     //const tokenAccountKey = (await getAtaForMint(mintKey, buyerWalletKey))[0];
     const tokenAccountKey = (await getAtaForMint(mintKey, sellerWalletKey))[0];
     const tradeState = (
@@ -57,7 +63,10 @@ export async function cancelOffer(offerAmount: number, mint: string, buyerWallet
     )[0];  
     //console.log('tradeState:', tradeState.toBase58());
     const signers: any[] = [];
-
+    
+    console.log('buyPriceAdjusted:', buyPriceAdjusted.toNumber());
+    console.log("tokenSizeAdjusted: "+JSON.stringify(tokenSizeAdjusted));
+    
     const instruction = anchorProgram.instruction.cancel(
       buyPriceAdjusted,
       tokenSizeAdjusted,
@@ -129,6 +138,9 @@ export async function cancelOffer(offerAmount: number, mint: string, buyerWallet
           programId: new PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr"),
       })
     );
+
+
+    console.log("instructions: "+JSON.stringify(instructions));
 
     return {
       signers: signers,
