@@ -29,10 +29,10 @@ const { createSellInstruction, createPrintListingReceiptInstruction } =
   AuctionHouseProgram.instructions
 
 import { ConstructionOutlined } from '@mui/icons-material';
-  export async function gah_makeListing(offerAmount: number, mint: string, walletPublicKey: string, mintOwner: any, weightedScore: any, daoPublicKey: string, updateAuthority: string): Promise<InstructionsAndSignersSet> {
+  export async function gah_makeListing(offerAmount: number, mint: string, walletPublicKey: string, mintOwner: any, weightedScore: any, daoPublicKey: string, updateAuthority: string, collectionAuctionHouse: string): Promise<InstructionsAndSignersSet> {
 
     let tokenSize = 1;
-    const auctionHouseKey = new web3.PublicKey(AUCTION_HOUSE_ADDRESS);
+    const auctionHouseKey = new web3.PublicKey(collectionAuctionHouse || AUCTION_HOUSE_ADDRESS);
     const mintKey = new web3.PublicKey(mint);
     let anchorProgram = await loadAuctionHouseProgram(null, ENV_AH, GRAPE_RPC_ENDPOINT);
     const auctionHouseObj = await anchorProgram.account.auctionHouse.fetch(auctionHouseKey,);    

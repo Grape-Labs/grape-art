@@ -982,7 +982,7 @@ export function StoreFrontView(this: any, props: any) {
             console.log("derivedBuyerPDA: "+derivedBuyerPDA);
             console.log("derivedOwnerPDA: "+derivedOwnerPDA);
             */
-            let result = await ggoconnection.getSignaturesForAddress(derivedUAPDA[0], {limit: 250});
+            let result = await ggoconnection.getSignaturesForAddress(derivedUAPDA[0], {limit: 500});
             let ahListings: any[] = [];
             let ahListingsMints: any[] =[];
             let exists = false;

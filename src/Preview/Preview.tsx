@@ -101,6 +101,7 @@ import {
     FEATURED_DAO_ARRAY,
     GRAPE_TREASURY,
     TOKEN_REPORT_AMOUNT,
+    GRAPE_COLLECTIONS_DATA,
 } from '../utils/grapeTools/constants';
 
 import {
@@ -335,6 +336,7 @@ function GalleryItemMeta(props: any) {
     const collectionrawprimer = props.collectionrawdata.meta_primer || [];
     const collectionrawdata = props.collectionrawdata.meta_final || [];
     const collectionitem = props.collectionitem.collectionmeta || [];
+    const collectionAuctionHouse = props.collectionAuctionHouse || null;
     const [mint, setMint] = React.useState(props.mint || null);
     const [refreshOwner, setRefreshOwner] = React.useState(false);
     const [loadingOwner, setLoadingOwner] = React.useState(false);
@@ -1525,11 +1527,12 @@ function GalleryItemMeta(props: any) {
                                         </Box>
                                     </ListItemText>
                                 </List>
-                                
+
                                 {tokenOwners?.data.parsed.info.owner &&
                                     <ItemOffers
                                         mintAta={mintAta} 
                                         updateAuthority={collectionrawdata?.updateAuthority}
+                                        collectionAuctionHouse={collectionAuctionHouse}
                                         mintOwner={tokenOwners?.data.parsed.info.owner} 
                                         mint={mint} 
                                         image={collectionitem.image}
@@ -1660,7 +1663,6 @@ export function PreviewView(this: any, props: any) {
     //const [success, setSuccess] = React.useState(false);
     const [mint, setMintPubkey] = React.useState(null);
     const [refresh, setRefresh] = React.useState(false);
-    
     const {handlekey} = useParams<{ handlekey: string }>();
     const [searchParams, setSearchParams] = useSearchParams();
 
@@ -1701,6 +1703,8 @@ export function PreviewView(this: any, props: any) {
         const [loading, setLoading] = React.useState(false);
         const [collectionmeta, setCollectionMeta] = React.useState(null);
         const [collectionrawdata, setCollectionRaw] = React.useState(null);
+        const [collectionAuctionHouse, setCollectionAuctionHouse] = React.useState(null);
+        const [vcLoading, setVcLoading] = React.useState(false);
         const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
         const { connection } = useConnection();
         const MD_PUBKEY = METAPLEX_PROGRAM_ID;
@@ -1733,6 +1737,34 @@ export function PreviewView(this: any, props: any) {
                 return null;
             }
         }
+
+        const fetchVerifiedCollection = async(address:string) => {
+            try{
+                const url = GRAPE_COLLECTIONS_DATA+'verified_collections.json';
+                const response = await window.fetch(url, {
+                    method: 'GET',
+                    headers: {
+                    }
+                  });
+                  const string = await response.text();
+                  const json = string === "" ? {} : JSON.parse(string);
+                  //console.log(">>> "+JSON.stringify(json));
+                  // filter to get only this ua
+                  for (var item of json){
+                    if (item.address === address){
+                        //setVerifiedCollection(verified);
+                        //console.log("found: "+item.address);
+                        //console.log("auctionHouse: "+item.auctionHouse);
+                        return item;
+                    }
+                  }
+                return null;
+            } catch(e){
+                console.log("ERR: "+e)
+                return null;
+            }
+        }
+    
         
         const getCollectionMeta = async () => {
             if (!loading){
@@ -1741,10 +1773,27 @@ export function PreviewView(this: any, props: any) {
                 setCollectionMeta({
                     collectionmeta
                 });
-    
                 setLoading(false);
             }
         }
+
+        const getVerifiedCollection = async () => {
+            if (!vcLoading){
+                setVcLoading(true);
+                let [vcFinal] = await Promise.all([fetchVerifiedCollection(collectionrawdata?.meta_final?.updateAuthority)]);
+                if (vcFinal)
+                    setCollectionAuctionHouse(vcFinal?.auctionHouse);
+                setVcLoading(false);
+            }
+        }
+
+        useEffect(() => {
+            if ((collectionrawdata?.meta_final?.updateAuthority)&&(!vcLoading)){
+                const interval = setTimeout(() => {
+                    getVerifiedCollection();
+                }, 500);
+            }
+        }, [collectionrawdata?.meta_final?.updateAuthority]);
     
         useEffect(() => {
             const interval = setTimeout(() => {
@@ -1754,7 +1803,8 @@ export function PreviewView(this: any, props: any) {
         }, [thismint]);
         
         if((!collectionmeta)||
-            (loading)){
+            (loading)||
+            (vcLoading)){
             
             return (
                 <Card
@@ -1781,7 +1831,7 @@ export function PreviewView(this: any, props: any) {
             //if ((collectionmeta)&&(!loading)){
             //if (image){
                 return (
-                        <GalleryItemMeta collectionitem={collectionmeta} collectionrawdata={collectionrawdata} mint={mint} setRefresh={setRefresh} setMintPubkey={setMintPubkey} />
+                        <GalleryItemMeta collectionitem={collectionmeta} collectionrawdata={collectionrawdata} mint={mint} setRefresh={setRefresh} setMintPubkey={setMintPubkey} collectionAuctionHouse={collectionAuctionHouse} />
                 );
             }
             //}

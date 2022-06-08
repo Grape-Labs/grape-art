@@ -19,9 +19,9 @@ import {
 import { getPriceWithMantissa } from './helpers/various';
 import { ASSOCIATED_TOKEN_PROGRAM_ID } from '@solana/spl-token';
 
-export async function withdrawOffer(offerAmount: number, mint: string, buyerWalletKey: PublicKey, updateAuthority: string): Promise<InstructionsAndSignersSet> {
+export async function withdrawOffer(offerAmount: number, mint: string, buyerWalletKey: PublicKey, updateAuthority: string, collectionAuctionHouse: string): Promise<InstructionsAndSignersSet> {
   
-    const auctionHouseKey = new web3.PublicKey(AUCTION_HOUSE_ADDRESS);  
+    const auctionHouseKey = new web3.PublicKey(collectionAuctionHouse || AUCTION_HOUSE_ADDRESS);  
 
     let anchorProgram = await loadAuctionHouseProgram(null, ENV_AH, GRAPE_RPC_ENDPOINT);
     const auctionHouseObj = await anchorProgram.account.auctionHouse.fetch(auctionHouseKey,);    

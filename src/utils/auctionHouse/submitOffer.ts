@@ -27,10 +27,10 @@ function convertSolVal(sol: any){
     return sol;
 }
 
-  export async function submitOffer(offerAmount: number, mint: string, walletPublicKey: string, mintOwner: any, updateAuthority: any): Promise<InstructionsAndSignersSet> {
+  export async function submitOffer(offerAmount: number, mint: string, walletPublicKey: string, mintOwner: any, updateAuthority: any, collectionAuctionHouse: string): Promise<InstructionsAndSignersSet> {
 
     let tokenSize = 1;
-    const auctionHouseKey = new web3.PublicKey(AUCTION_HOUSE_ADDRESS);
+    const auctionHouseKey = new web3.PublicKey(collectionAuctionHouse || AUCTION_HOUSE_ADDRESS);
     const mintKey = new web3.PublicKey(mint);
     let anchorProgram = await loadAuctionHouseProgram(null, ENV_AH, GRAPE_RPC_ENDPOINT);
     const auctionHouseObj = await anchorProgram.account.auctionHouse.fetch(auctionHouseKey,);    

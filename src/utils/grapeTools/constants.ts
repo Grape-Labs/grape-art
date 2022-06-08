@@ -8,6 +8,7 @@ export const SOFLARE_NOTIFICATIONS_API_KEY = process.env.REACT_APP_API_KEY_SOLFL
 export const GRAPE_PREVIEW = '/preview/';
 export const GRAPE_PROFILE = '/profile/';
 export const GRAPE_IDENTITY = '/identity/';
+export const GRAPE_COLLECTION = '/collection/';
 
 //export const GRAPE_PREVIEW = '/preview?pkey=';
 //export const GRAPE_PROFILE = '/profile?pkey=';

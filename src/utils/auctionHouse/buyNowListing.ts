@@ -22,10 +22,10 @@ import { getPriceWithMantissa } from './helpers/various';
 import { decodeMetadata, Metadata } from './helpers/schema';
 import { ASSOCIATED_TOKEN_PROGRAM_ID, createApproveInstruction, createRevokeInstruction } from '@solana/spl-token';
 
-export async function buyNowListing(offerAmount: number, mint: string, walletPublicKey: string, buyerAddress: PublicKey, updateAuthority: string): Promise<InstructionsAndSignersSet> {
+export async function buyNowListing(offerAmount: number, mint: string, walletPublicKey: string, buyerAddress: PublicKey, updateAuthority: string, collectionAuctionHouse: string): Promise<InstructionsAndSignersSet> {
   //START BUY
   let tokenSize = 1;
-  const auctionHouseKey = new web3.PublicKey(AUCTION_HOUSE_ADDRESS);
+  const auctionHouseKey = new web3.PublicKey(collectionAuctionHouse || AUCTION_HOUSE_ADDRESS);
   const mintKey = new web3.PublicKey(mint);
   let anchorProgram = await loadAuctionHouseProgram(null, ENV_AH, GRAPE_RPC_ENDPOINT);
   const auctionHouseObj = await anchorProgram.account.auctionHouse.fetch(auctionHouseKey,);    
@@ -210,6 +210,8 @@ export async function buyNowListing(offerAmount: number, mint: string, walletPub
   const metadataObj = await anchorProgram.provider.connection.getAccountInfo(metadata,);
   const metadataDecoded: Metadata = decodeMetadata(Buffer.from(metadataObj.data),);
   
+  console.log("metadataDecoded: "+JSON.stringify(metadataDecoded));
+
   const remainingAccounts = [];
   for (let i = 0; i < metadataDecoded.data.creators.length; i++) {
     remainingAccounts.push({
@@ -232,6 +234,10 @@ export async function buyNowListing(offerAmount: number, mint: string, walletPub
   }
 
   const tMint: web3.PublicKey = auctionHouseObj.treasuryMint;
+
+  console.log("freeTradeStateBump "+JSON.stringify(freeTradeStateBump));
+  console.log("buyPriceAdjusted2 "+JSON.stringify(buyPriceAdjusted2.toNumber()));
+  console.log("escrowBump "+JSON.stringify(escrowBump));
 
   const instruction2 = anchorProgram.instruction.executeSale(
     escrowBump,

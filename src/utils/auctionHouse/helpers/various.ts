@@ -307,6 +307,7 @@ export const getPriceWithMantissa = async (
   
   const mintInfo = await token.getMintInfo();
     */
+  
   const mintInfo = await getMint(
       anchorProgram.provider.connection,
       new web3.PublicKey(mint),

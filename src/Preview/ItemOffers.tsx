@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 import { Connection, PublicKey, Transaction } from '@solana/web3.js';
 // @ts-ignore
-import fetch from 'node-fetch';
+//import fetch from 'node-fetch';
 
 import { TokenAmount } from '../utils/grapeTools/safe-math';
 import { styled } from '@mui/material/styles';
@@ -11,7 +11,7 @@ import { Button } from '@mui/material';
 import { useSnackbar } from 'notistack';
 import moment from 'moment';
 
-import { unicastGrapeSolflareMessage } from "../utils/walletNotifications/walletNotifications"
+import { unicastGrapeSolflareMessage } from "../utils/walletNotifications/walletNotifications";
 
 import {
     Typography,
@@ -235,6 +235,7 @@ function SellNowVotePrompt(props:any){
     const [daoPublicKey, setDaoPublicKey] = React.useState(null);
     const salePrice = props.salePrice || null;
     const weightedScore = props.grapeWeightedScore || 0;
+    const collectionAuctionHouse = props.collectionAuctionHouse || null; 
     //const salePrice = React.useState(props.salePrice);
 
     const handleClickOpenDialog = () => {
@@ -268,7 +269,7 @@ function SellNowVotePrompt(props:any){
                 const transaction = new Transaction();
                 if (daoPublicKey){
                     //voteListing2
-                    const daoTransactionInstr = await voteListing(+sell_now_amount, mint, publicKey.toString(), mintOwner, weightedScore, daoPublicKey, updateAuthority);
+                    const daoTransactionInstr = await voteListing(+sell_now_amount, mint, publicKey.toString(), mintOwner, weightedScore, daoPublicKey, updateAuthority, collectionAuctionHouse);
                     //params from original voteListing
                     //const daoTransactionInstr = await voteListing(+sell_now_amount, mint, daoPublicKey.toString(), publicKey);
                     console.log('transactionInstr' +JSON.stringify(daoTransactionInstr));
@@ -279,13 +280,13 @@ function SellNowVotePrompt(props:any){
                     //console.log(daoTransactionInstr);
                     //console.log(daoTransactionInstr.instructions[1].data.buffer.toString());
                     //console.log(Utf8ArrayToStr(daoTransactionInstr.instructions[1].data));
-                    const proposalPk = await createProposal(+sell_now_amount, mint, publicKey.toString(), mintOwner, weightedScore, daoPublicKey, connection, daoTransactionInstr, sendTransaction, anchorWallet, 2, updateAuthority);
+                    const proposalPk = await createProposal(+sell_now_amount, mint, publicKey.toString(), mintOwner, weightedScore, daoPublicKey, connection, daoTransactionInstr, sendTransaction, anchorWallet, 2, updateAuthority, collectionAuctionHouse);
 
                     if (proposalPk){
                         enqueueSnackbar(`Proposal: ${proposalPk} created for accepting Listing Price Set to ${sell_now_amount} SOL`,{ variant: 'success' });
                     }
                 } else {
-                    const transactionInstr = await sellNowListing(+sell_now_amount, mint, publicKey.toString(), mintOwner, weightedScore, daoPublicKey, updateAuthority);
+                    const transactionInstr = await sellNowListing(+sell_now_amount, mint, publicKey.toString(), mintOwner, weightedScore, daoPublicKey, updateAuthority, collectionAuctionHouse);
                     //const transactionInstr = await gah_makeListing(+sell_now_amount, mint, publicKey.toString(), mintOwner, weightedScore, daoPublicKey);
                     const instructionsArray = [transactionInstr.instructions].flat();            
                     transaction.add(
@@ -454,6 +455,7 @@ function SellNowPrompt(props:any){
     const { publicKey, wallet, sendTransaction } = useWallet();
     const salePrice = props.salePrice || null;
     const weightedScore = props.grapeWeightedScore || 0;
+    const collectionAuctionHouse = props.collectionAuctionHouse || null;
     //const salePrice = React.useState(props.salePrice);
 
     const handleClickOpenDialog = () => {
@@ -483,7 +485,7 @@ function SellNowPrompt(props:any){
             //const setSellNowPrice = async () => {
             try {
                 //START SELL NOW / LIST
-                const transactionInstr = await sellNowListing(+sell_now_amount, mint, publicKey.toString(), mintOwner, weightedScore, null, updateAuthority);
+                const transactionInstr = await sellNowListing(+sell_now_amount, mint, publicKey.toString(), mintOwner, weightedScore, null, updateAuthority, collectionAuctionHouse);
                 //const transactionInstr = await gah_makeListing(+sell_now_amount, mint, publicKey.toString(), mintOwner, weightedScore, null);
                 const instructionsArray = [transactionInstr.instructions].flat();        
                 const transaction = new Transaction()
@@ -622,7 +624,8 @@ export function OfferPrompt(props: any) {
     const mint = props.mint;  
     const image = props.image;
     const mintOwner = props.mintOwner;
-    const updateAuthority = props.updateAuthority;  
+    const updateAuthority = props.updateAuthority; 
+    const collectionAuctionHouse = props.collectionAuctionHouse;  
     const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
     const { connection } = useConnection();
     const { publicKey, wallet, sendTransaction } = useWallet();
@@ -651,6 +654,7 @@ export function OfferPrompt(props: any) {
     const { t, i18n } = useTranslation();
 
     async function HandleOfferSubmit(event: any) {
+        console.log("collectionAuctionHouse: "+collectionAuctionHouse)
         event.preventDefault();
         if (+offer_amount > 0) {
             handleCloseDialog();
@@ -664,7 +668,7 @@ export function OfferPrompt(props: any) {
 			*/
 			//no need allowing for multiple offers
                 try {
-                    const transactionInstr = await submitOffer(+offer_amount, mint, publicKey.toString(), mintOwner, updateAuthority);
+                    const transactionInstr = await submitOffer(+offer_amount, mint, publicKey.toString(), mintOwner, updateAuthority, collectionAuctionHouse);
                     //console.log("transactionInstr1 submitOffer: "+JSON.stringify(transactionInstr1));
     
                     //const transactionInstr = await gah_makeOffer(+offer_amount, mint, publicKey.toString(), mintOwner, updateAuthority);
@@ -883,6 +887,7 @@ export default function ItemOffers(props: any) {
     const pubkey = props.pubkey || null;
     const mintOwner = props.mintOwner;
     const updateAuthority = props.updateAuthority;
+    const collectionAuctionHouse = props.collectionAuctionHouse;
     const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
     const { connection } = useConnection();
     const { publicKey, sendTransaction } = useWallet();
@@ -901,7 +906,8 @@ export default function ItemOffers(props: any) {
     const [saleTimeAgo, setSaleTimeAgo] = React.useState(null);
     const [highestOffer, setHighestOffer] = React.useState(0);
     const [openOffers, setOpenOffers] = React.useState(0);
-    const [verifiedCollectionArray, setVerifiedCollectionArray] = React.useState(null);
+    const [verifiedCollection, setVerifiedCollection] = React.useState(null);
+    const [verifiedCollectionLoaded, setVerifiedCollectionLoaded] = React.useState(false);
     const grape_governance_balance = props.grape_governance_balance;
     const grape_offer_threshhold = props.grape_offer_threshhold;
     const grape_member_balance = props.grape_member_balance;
@@ -943,7 +949,7 @@ export default function ItemOffers(props: any) {
             const transaction = new Transaction();
             
             if (!ValidateDAO(mintOwner)) {
-                const transactionInstr = await acceptOffer(offerAmount, mint, walletPublicKey, buyerAddress.toString(), updateAuthority);
+                const transactionInstr = await acceptOffer(offerAmount, mint, walletPublicKey, buyerAddress.toString(), updateAuthority, collectionAuctionHouse);
                 //const transactionInstr = await gah_acceptOffer(offerAmount, mint, walletPublicKey, buyerAddress.toString(), updateAuthority);
                 const instructionsArray = [transactionInstr.instructions].flat();  
                 transaction.add(
@@ -1073,7 +1079,7 @@ export default function ItemOffers(props: any) {
     const handleWithdrawOffer = async (offerAmount: number) => {
         try {
             //const transactionInstr = await withdrawOffer(offerAmount, mint, walletPublicKey.toString(), mintOwner, updateAuthority);
-            const transactionInstr = await cancelWithdrawOffer(offerAmount, mint, walletPublicKey, mintOwner, updateAuthority);
+            const transactionInstr = await cancelWithdrawOffer(offerAmount, mint, walletPublicKey, mintOwner, updateAuthority, collectionAuctionHouse);
             //const transactionInstr = await gah_cancelOffer(offerAmount, mint, walletPublicKey, mintOwner);
             const instructionsArray = [transactionInstr.instructions].flat();        
             const transaction = new Transaction()
@@ -1121,7 +1127,7 @@ export default function ItemOffers(props: any) {
 
     const handleCancelOffer = async (offerAmount: number) => {
         try {
-            const transactionInstr = await cancelOffer(offerAmount, mint, walletPublicKey, mintOwner, updateAuthority);
+            const transactionInstr = await cancelOffer(offerAmount, mint, walletPublicKey, mintOwner, updateAuthority, collectionAuctionHouse);
 			//const transactionInstr = await gah_cancelOffer(offerAmount, mint, walletPublicKey, mintOwner, updateAuthority);
             //const transactionInstr = await cancelWithdrawOffer(offerAmount, mint, walletPublicKey, mintOwner, updateAuthority);
             const instructionsArray = [transactionInstr.instructions].flat();        
@@ -1198,28 +1204,14 @@ export default function ItemOffers(props: any) {
         return resultValues;
     };
     
-    const fetchVerifiedCollection = async(address:string) => {
-        try{
-            const url = GRAPE_COLLECTIONS_DATA+'verified_collections.json';
-            const response = await window.fetch(url, {
-                method: 'GET',
-                headers: {
-                }
-              });
-              const string = await response.text();
-              const json = string === "" ? {} : JSON.parse(string);
-              //console.log(">>> "+JSON.stringify(json));
-              setVerifiedCollectionArray(json); 
-              return json;
-            
-        } catch(e){console.log("ERR: "+e)}
-    }
-
     const getOffers = async () => {
         const anchorProgram = await loadAuctionHouseProgram(pubkey, ENV_AH, GRAPE_RPC_ENDPOINT);
-        const auctionHouseKey = new web3.PublicKey(AUCTION_HOUSE_ADDRESS);
+        console.log("with "+collectionAuctionHouse);
+        const auctionHouseKey = new web3.PublicKey(collectionAuctionHouse || AUCTION_HOUSE_ADDRESS);
+        
         const auctionHouseObj = await anchorProgram.account.auctionHouse.fetch(auctionHouseKey,);
         let derivedMintPDA = await web3.PublicKey.findProgramAddress([Buffer.from((new PublicKey(mint)).toBuffer())], auctionHouseKey);
+        console.log("sigs from derivedMintPDA "+derivedMintPDA);
         
         //let derivedBuyerPDA = await web3.PublicKey.findProgramAddress([Buffer.from((publicKey).toBuffer())], auctionHouseKey);
         //let derivedOwnerPDA = await web3.PublicKey.findProgramAddress([Buffer.from((new PublicKey(mintOwner)).toBuffer())], auctionHouseKey);
@@ -1232,7 +1224,7 @@ export default function ItemOffers(props: any) {
 
         //console.log(mint + " - derivedMintPDA: "+derivedMintPDA);
         
-        let [result] = await Promise.all([GetSignatureOffers(derivedMintPDA[0].toString(),'', 25)]);
+        let [result] = await Promise.all([GetSignatureOffers(derivedMintPDA[0].toString(),'', 100)]);
         let offerResults: any[] = [];
 		let offerResultsCancelled: any[] = [];
 		let exists = false;
@@ -1322,7 +1314,6 @@ export default function ItemOffers(props: any) {
                                     for (var memo_item of memo_arr){
                                         try{
                                             const memo_json = JSON.parse(memo_item);
-                                            
                                             /*
                                             if ((memo_json?.status === 3) || 
                                                 (memo_json?.status === 4) ||
@@ -1334,7 +1325,7 @@ export default function ItemOffers(props: any) {
                                                     offerResults.push({buyeraddress: feePayer, offeramount: memo_json?.amount, mint: getTransactionAccountInputs.meta.preTokenBalances[0].mint, isowner: false, timestamp: value.blockTime, state: memo_json?.state || memo_json?.status});  
                                                 }
                                             }*/
-
+                                            
                                             //console.log('OFFER:: '+feePayer.toBase58() + '('+memo_json?.amount+'): ' +memo_str);
                                             if ( feePayer.toBase58() !== mintOwner && progAddress.search(AUCTION_HOUSE_PROGRAM_ID.toBase58())>0 && feePayer != null){
                                                 
@@ -1554,7 +1545,7 @@ export default function ItemOffers(props: any) {
         }
     }
 
-    const handleBuyNow =  async (salePrice: number) => {
+    const handleBuyNow =  async (salePrice: number, collectionAuctionHouse: string) => {
 
         const buyerPublicKey = publicKey;
         const sellerWalletKey = new web3.PublicKey(mintOwner);
@@ -1562,13 +1553,13 @@ export default function ItemOffers(props: any) {
 
         try {
             const anchorProgram = await loadAuctionHouseProgram(null, ENV_AH, GRAPE_RPC_ENDPOINT);
-            const auctionHouseKey = new web3.PublicKey(AUCTION_HOUSE_ADDRESS);
+            const auctionHouseKey = new web3.PublicKey(collectionAuctionHouse || AUCTION_HOUSE_ADDRESS);
             const auctionHouseObj = await anchorProgram.account.auctionHouse.fetch(auctionHouseKey,);
             const escrow = (await getAuctionHouseBuyerEscrow(auctionHouseKey, publicKey))[0];
             const amount = await getTokenAmount(anchorProgram,escrow,auctionHouseObj.treasuryMint,);
 			const escrowAmount = convertSolVal(amount);
             //if (amount === 0){
-                const transactionInstr = await buyNowListing(salePrice, mint, sellerWalletKey.toString(), buyerPublicKey, updateAuthority);
+                const transactionInstr = await buyNowListing(salePrice, mint, sellerWalletKey.toString(), buyerPublicKey, updateAuthority, auctionHouseKey.toBase58());
                 const instructionsArray = [transactionInstr.instructions].flat();        
                 const transaction = new Transaction()
                 .add(
@@ -1707,14 +1698,7 @@ export default function ItemOffers(props: any) {
 
     const ItemTools = (props: any) => {
         const [collection, setCollection] = React.useState(null);
-
-        for (var verified of verifiedCollectionArray){
-            //if (verified.address === mintOwner){
-            if (verified.address === updateAuthority){
-                // IMPORTANT HERE TO REMOVE BUY and OFFERS for SOLBEARS
-            }
-        }
-
+        const collectionAuctionHouse = props.collectionAuctionHouse;
 
         return (
             <>
@@ -1737,7 +1721,6 @@ export default function ItemOffers(props: any) {
                         component="nav"
                         >       
                         <ListItemText>
-                        
                         
                             <>
                                 
@@ -1811,8 +1794,6 @@ export default function ItemOffers(props: any) {
                                     
                                     {publicKey ?
                                         <>
-                                            
-
                                             {publicKey.toString() !== mintOwner ? (
                                                     <Grid 
                                                     container
@@ -1861,7 +1842,7 @@ export default function ItemOffers(props: any) {
                                                                         <DialogActions>
                                                                             <Button onClick={handleAlertBuyNowClose}>Cancel</Button>
                                                                             <Button 
-                                                                                onClick={() => handleBuyNow(salePrice)}
+                                                                                onClick={() => handleBuyNow(salePrice, collectionAuctionHouse)}
                                                                                 autoFocus>
                                                                             {t('Accept')}
                                                                             </Button>
@@ -1909,13 +1890,13 @@ export default function ItemOffers(props: any) {
                                                                         <>
                                                                         {!ValidateCurve(mintOwner) && salePrice <= 0 &&
                                                                             <Grid item>
-                                                                                <SellNowVotePrompt mint={mint} updateAuthority={updateAuthority} mintOwner={mintOwner} salePrice={salePrice} grapeWeightedScore={grape_weighted_score} RefreshOffers={setRefreshOffers} />
+                                                                                <SellNowVotePrompt mint={mint} updateAuthority={updateAuthority} mintOwner={mintOwner} salePrice={salePrice} grapeWeightedScore={grape_weighted_score} RefreshOffers={setRefreshOffers} collectionAuctionHouse={collectionAuctionHouse} />
                                                                             </Grid>
                                                                         }
                                                                         
                                                                         {(ValidateCurve(mintOwner) || (ValidateDAO(mintOwner))) && (
                                                                             <Grid item>
-                                                                                <OfferPrompt mint={mint} updateAuthority={updateAuthority} image={image} mintOwner={mintOwner} setRefreshOffers={setRefreshOffers} solBalance={sol_portfolio_balance} highestOffer={highestOffer} offers={offers} />
+                                                                                <OfferPrompt mint={mint} updateAuthority={updateAuthority} image={image} mintOwner={mintOwner} setRefreshOffers={setRefreshOffers} solBalance={sol_portfolio_balance} highestOffer={highestOffer} offers={offers} collectionAuctionHouse={collectionAuctionHouse} />
                                                                             </Grid>
                                                                         )}
                                                                         </>
@@ -1957,7 +1938,7 @@ export default function ItemOffers(props: any) {
                                                             </>
                                                             : 
                                                             <>
-                                                                <SellNowPrompt mint={mint} updateAuthority={updateAuthority} mintOwner={mintOwner} salePrice={salePrice} grapeWeightedScore={grape_weighted_score} RefreshOffers={setRefreshOffers} />
+                                                                <SellNowPrompt mint={mint} updateAuthority={updateAuthority} mintOwner={mintOwner} salePrice={salePrice} grapeWeightedScore={grape_weighted_score} RefreshOffers={setRefreshOffers} collectionAuctionHouse={collectionAuctionHouse} />
                                                             </>
                                                         )}
                                                     </Grid>
@@ -1994,10 +1975,9 @@ export default function ItemOffers(props: any) {
         }
 
         if (mintAta){
-            fetchVerifiedCollection(updateAuthority);
-            //if (!offers){
+            if (!offers){
                 getOffers();
-            //}
+            }
         }
     }, [mintAta, refreshOffers]);
 
@@ -2023,7 +2003,7 @@ export default function ItemOffers(props: any) {
     } else{      
         return ( 
             <>
-                <ItemTools />
+                <ItemTools collectionAuctionHouse={collectionAuctionHouse} />
                 <Box
                     sx={{ 
                         p: 1, 
