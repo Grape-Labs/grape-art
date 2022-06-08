@@ -22,7 +22,6 @@ export async function unicastGrapeSolflareMessage (title:string,message:string,i
                 method: "POST",
                 body: JSON.stringify(body),
                 headers: { "Content-Type": "application/json" },
-                //headers: { "Authorization": SOFLARE_NOTIFICATIONS_API_KEY },
             })
             const json = await resp.json();
             return json;

@@ -99,7 +99,7 @@ export async function cancelOffer(offerAmount: number, mint: string, buyerWallet
         buyerWalletKey,
       )
     )[0];
-    
+
     const [escrowPaymentAccount, bump] = await getAuctionHouseBuyerEscrow(
       auctionHouseKey,
       buyerWalletKey,
@@ -134,11 +134,13 @@ export async function cancelOffer(offerAmount: number, mint: string, buyerWallet
     //console.log("instruction: "+JSON.stringify(instruction));
     const instructions = [instruction];
     instructions.push(instruction2);
-
+    
     let derivedMintPDA = await web3.PublicKey.findProgramAddress([Buffer.from((mintKey).toBuffer())], auctionHouseKey);
     let derivedBuyerPDA = await web3.PublicKey.findProgramAddress([Buffer.from((buyerWalletKey).toBuffer())], auctionHouseKey);
     let derivedOwnerPDA = await web3.PublicKey.findProgramAddress([Buffer.from((new PublicKey(mintOwner)).toBuffer())], auctionHouseKey);
-    let derivedUpdateAuthorityPDA = await web3.PublicKey.findProgramAddress([Buffer.from((new PublicKey(updateAuthority)).toBuffer())], auctionHouseKey);
+    let derivedUpdateAuthorityPDA = null;
+    if (updateAuthority && updateAuthority.length > 0)
+      derivedUpdateAuthorityPDA = await web3.PublicKey.findProgramAddress([Buffer.from((new PublicKey(updateAuthority)).toBuffer())], auctionHouseKey);
   
     const GRAPE_AH_MEMO = {
       state:5, // status (0: withdraw, 1: offer, 2: listing, 3: buy/execute (from listing), 4: buy/execute(accept offer), 5: cancel)
@@ -169,13 +171,15 @@ export async function cancelOffer(offerAmount: number, mint: string, buyerWallet
           lamports: 0,
       })
     );
-    instructions.push(
-      SystemProgram.transfer({
-          fromPubkey: buyerWalletKey,
-          toPubkey: derivedUpdateAuthorityPDA[0],
-          lamports: 0,
-      })
-    );
+    if (derivedUpdateAuthorityPDA){
+      instructions.push(
+        SystemProgram.transfer({
+            fromPubkey: buyerWalletKey,
+            toPubkey: derivedUpdateAuthorityPDA[0],
+            lamports: 0,
+        })
+      );
+    }
     instructions.push(
       new TransactionInstruction({
           keys: [{ pubkey: buyerWalletKey, isSigner: true, isWritable: true }],

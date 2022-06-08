@@ -84,7 +84,9 @@ export async function cancelListing(offerAmount: number, mint: string, walletPub
     let derivedMintPDA = await web3.PublicKey.findProgramAddress([Buffer.from((mintKey).toBuffer())], auctionHouseKey);
     let derivedBuyerPDA = await web3.PublicKey.findProgramAddress([Buffer.from((sellerWalletKey).toBuffer())], auctionHouseKey);
     let derivedOwnerPDA = await web3.PublicKey.findProgramAddress([Buffer.from((new PublicKey(mintOwner)).toBuffer())], auctionHouseKey);
-    let derivedUpdateAuthorityPDA = await web3.PublicKey.findProgramAddress([Buffer.from((new PublicKey(updateAuthority)).toBuffer())], auctionHouseKey);
+    let derivedUpdateAuthorityPDA = null;
+    if (updateAuthority && updateAuthority.length > 0)
+      derivedUpdateAuthorityPDA = await web3.PublicKey.findProgramAddress([Buffer.from((new PublicKey(updateAuthority)).toBuffer())], auctionHouseKey);
   
     //is it withdraw here or cancel (we are removing the listing we made)
     const GRAPE_AH_MEMO = {
@@ -117,13 +119,15 @@ export async function cancelListing(offerAmount: number, mint: string, walletPub
           lamports: 0,
       })
     );
-    instructions.push(
-      SystemProgram.transfer({
-          fromPubkey: sellerWalletKey,
-          toPubkey: derivedUpdateAuthorityPDA[0],
-          lamports: 0,
-      })
-    );
+    if (derivedUpdateAuthorityPDA){
+      instructions.push(
+        SystemProgram.transfer({
+            fromPubkey: sellerWalletKey,
+            toPubkey: derivedUpdateAuthorityPDA[0],
+            lamports: 0,
+        })
+      );
+    }
     instructions.push(
       new TransactionInstruction({
           keys: [{ pubkey: sellerWalletKey, isSigner: true, isWritable: true }],

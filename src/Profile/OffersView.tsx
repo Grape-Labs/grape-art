@@ -65,7 +65,12 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import CircularProgress from '@mui/material/CircularProgress';
 import CancelIcon from '@mui/icons-material/Cancel';
 
-import { GRAPE_RPC_ENDPOINT, GRAPE_RPC_REFRESH, GRAPE_PREVIEW, GRAPE_PROFILE, FEATURED_DAO_ARRAY } from '../utils/grapeTools/constants';
+import { 
+    GRAPE_RPC_ENDPOINT, 
+    GRAPE_RPC_REFRESH, 
+    GRAPE_PREVIEW, 
+    GRAPE_PROFILE, 
+    GRAPE_COLLECTIONS_DATA } from '../utils/grapeTools/constants';
 import { trimAddress, timeAgo } from '../utils/grapeTools/WalletAddress'; // global key handling
 import { cancelWithdrawOffer } from '../utils/auctionHouse/cancelWithdrawOffer';
 import { cancelOffer } from '../utils/auctionHouse/cancelOffer';
@@ -136,7 +141,6 @@ export default function OffersView(props:any){
     const [beforeSignature, setBeforeSignature] = React.useState(null);
     const [page, setPage] = React.useState(1);
     const [alertwithdrawopen, setAlertWithdrawOpen] = React.useState(false);
-    
     const rowsperpage = 1500;
     const selectedstate = props.selectedstate;
 
@@ -146,6 +150,38 @@ export default function OffersView(props:any){
     const handleAlertWithdrawOpen = () => {
         setAlertWithdrawOpen(true);
     };
+
+    const fetchVerifiedCollection = async(address:string) => {
+        try{
+            const url = GRAPE_COLLECTIONS_DATA+'verified_collections.json';
+            const response = await window.fetch(url, {
+                method: 'GET',
+                headers: {
+                }
+              });
+              const string = await response.text();
+              const json = string === "" ? {} : JSON.parse(string);
+              //console.log(">>> "+JSON.stringify(json));
+              // filter to get only this ua
+              for (var item of json){
+                if (address){
+                    if (item.address === address){
+                        //setVerifiedCollection(verified);
+                        //console.log("found: "+item.address);
+                        //console.log("auctionHouse: "+item.auctionHouse);
+                        return item;
+                    }
+                }
+              }
+            if (!address)
+                return json;
+            else    
+              return null;
+        } catch(e){
+            console.log("ERR: "+e)
+            return null;
+        }
+    }
 
     const handleCancelOffer = async (offerAmount: number, mint: any, updateAuthority: any) => {
         try {
@@ -200,12 +236,14 @@ export default function OffersView(props:any){
 	//handCancelWithdrawOffer was useful when only allowing one offer at a time
     const handleCancelWithdrawOffer = async (offerAmount: number, mint: any, updateAuthority: any) => {
         try {
+            let [vcFinal] = await Promise.all([fetchVerifiedCollection(updateAuthority)]);
+
             const mintKey = new web3.PublicKey(mint);
             let tokenAccount =  await ggoconnection.getTokenLargestAccounts(new PublicKey(mintKey));
             const tokenKey = new web3.PublicKey(tokenAccount?.value[0].address.toBase58());
             let mintAccountInfo = await ggoconnection.getAccountInfo(tokenKey);
             const mintAccountInfoDs = deserializeAccount(mintAccountInfo?.data);
-            const transactionInstr = await cancelWithdrawOffer(offerAmount, mint, publicKey, mintAccountInfoDs.owner, updateAuthority, null);
+            const transactionInstr = await cancelWithdrawOffer(offerAmount, mint, publicKey, mintAccountInfoDs.owner, updateAuthority, vcFinal?.auctionHouse);
             const instructionsArray = [transactionInstr.instructions].flat();        
             const transaction = new Transaction()
             .add(
@@ -252,7 +290,6 @@ export default function OffersView(props:any){
     const handleWithdrawOffer = async (offerAmount: number, mint: string, updateAuthority: string) => {
 
         try {
-            
             var allmints: any[] = [];
             if (!mint){
                 for (var item of offers){
@@ -269,9 +306,9 @@ export default function OffersView(props:any){
                 // get updateAuthority
                 // get auctionHouse
                 
-
-
+                
                 if (mint){ // with mint allow calling cancel withdraw combo
+                    let [vcFinal] = await Promise.all([fetchVerifiedCollection(updateAuthority)]);
                     try {
                         const mintKey = new web3.PublicKey(mint);
                         let tokenAccount =  await ggoconnection.getTokenLargestAccounts(new PublicKey(mintKey));
@@ -279,7 +316,7 @@ export default function OffersView(props:any){
                         let mintAccountInfo = await ggoconnection.getAccountInfo(tokenKey);
                         const mintAccountInfoDs = deserializeAccount(mintAccountInfo?.data);
                         
-                        const transactionInstr = await cancelWithdrawOffer(offerAmount, mint, publicKey, mintAccountInfoDs.owner, updateAuthority, null);
+                        const transactionInstr = await cancelWithdrawOffer(offerAmount, mint, publicKey, mintAccountInfoDs.owner, updateAuthority, vcFinal?.auctionHouse);
                         const instructionsArray = [transactionInstr.instructions].flat();        
                         const transaction = new Transaction()
                         .add(
@@ -318,8 +355,9 @@ export default function OffersView(props:any){
                         console.log("Error: "+JSON.stringify(e));
                     } 
                 } else{ // no mint then just withdraw
+                    let [vcFinal] = await Promise.all([fetchVerifiedCollection(updateAuthority)]);
                     try {
-                        const transactionInstr = await withdrawOffer(offerAmount, null, publicKey, updateAuthority, null);
+                        const transactionInstr = await withdrawOffer(offerAmount, null, publicKey, updateAuthority, vcFinal?.auctionHouse);
                         const instructionsArray = [transactionInstr.instructions].flat();        
                         const transaction = new Transaction()
                         .add(
@@ -363,8 +401,15 @@ export default function OffersView(props:any){
                 //several mints to cancel and finally withdraw
                 
                     let cnt = 1;
+                    let [vcFinal] = await Promise.all([fetchVerifiedCollection(null)]);
 
                     for (var item of allmints){  
+                        
+                        console.log("updateAuthority: " + JSON.stringify(updateAuthority))
+                        for (var verified of vcFinal){
+                            console.log("verified: "+verified)
+                        }
+                        
                         console.log(JSON.stringify(allmints));  
                         try{ 
                             if (cnt <= allmints.length){
@@ -375,13 +420,14 @@ export default function OffersView(props:any){
                                 let mintAccountInfo = await ggoconnection.getAccountInfo(tokenKey);
                                 const mintAccountInfoDs = deserializeAccount(mintAccountInfo?.data);
                                 //let numericAmmount = item.offerAmount;
-                                const transactionInstr = await cancelOffer(item.offerAmount, item.mint, publicKey, mintAccountInfoDs.owner, updateAuthority, null);
+                                
+                                const transactionInstr = await cancelOffer(item.offerAmount, item.mint, publicKey, mintAccountInfoDs.owner, updateAuthority, vcFinal?.auctionHouse);
                                 const instructionsArray = [transactionInstr.instructions].flat();        
                                 const transaction = new Transaction()
                                 .add(
                                     ...instructionsArray
                                 );
-                            
+                                
                                 enqueueSnackbar(`${t('Preparing to cancel offer for')} ${item.offerAmount} SOL ${t('on')} ${t('mint')} ${item.mint}`,{ variant: 'info' });
                                 const signedTransaction = await sendTransaction(transaction, connection)
                                 
@@ -403,10 +449,12 @@ export default function OffersView(props:any){
                             enqueueSnackbar(e.message ? `${e.name}: ${e.message}` : e.name, { variant: 'error' });
                             console.log("Error: "+e);
                         }
-
+                        
                         try{
                             if (cnt === allmints.length){
-                                const transactionInstr = await withdrawOffer(offerAmount, null, publicKey, updateAuthority);
+                                
+                                const transactionInstr = await withdrawOffer(offerAmount, null, publicKey, updateAuthority, vcFinal?.auctionHouse);
+                                console.log("here...")
                                 const instructionsArray = [transactionInstr.instructions].flat();        
                                 const transaction = new Transaction()
                                 .add(
@@ -432,7 +480,7 @@ export default function OffersView(props:any){
                             closeSnackbar();
                             enqueueSnackbar(e.message ? `${e.name}: ${e.message}` : e.name, { variant: 'error' });
                             console.log("Error: "+e);
-                        }    
+                        }  
 
                         cnt++;
                     }

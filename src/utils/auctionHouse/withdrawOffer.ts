@@ -127,15 +127,19 @@ export async function withdrawOffer(offerAmount: number, mint: string, buyerWall
         })
       );
     }else{
-      let derivedBuyerPDA = await web3.PublicKey.findProgramAddress([Buffer.from((buyerWalletKey).toBuffer())], auctionHouseKey);
-
-      instructions.push(
-        SystemProgram.transfer({
-            fromPubkey: buyerWalletKey,
-            toPubkey: derivedBuyerPDA[0],
-            lamports: 0,
-        })
-      );
+      let derivedUpdateAuthorityPDA = null;
+      if (updateAuthority && updateAuthority.length > 0)
+        derivedUpdateAuthorityPDA = await web3.PublicKey.findProgramAddress([Buffer.from((new PublicKey(updateAuthority)).toBuffer())], auctionHouseKey);
+      
+      if (derivedUpdateAuthorityPDA){
+        instructions.push(
+          SystemProgram.transfer({
+              fromPubkey: buyerWalletKey,
+              toPubkey: derivedUpdateAuthorityPDA[0],
+              lamports: 0,
+          })
+        );
+      }
     }
     /*
     instructions.push(
