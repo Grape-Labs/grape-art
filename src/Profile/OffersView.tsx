@@ -205,7 +205,7 @@ export default function OffersView(props:any){
             const tokenKey = new web3.PublicKey(tokenAccount?.value[0].address.toBase58());
             let mintAccountInfo = await ggoconnection.getAccountInfo(tokenKey);
             const mintAccountInfoDs = deserializeAccount(mintAccountInfo?.data);
-            const transactionInstr = await cancelWithdrawOffer(offerAmount, mint, publicKey, mintAccountInfoDs.owner, updateAuthority);
+            const transactionInstr = await cancelWithdrawOffer(offerAmount, mint, publicKey, mintAccountInfoDs.owner, updateAuthority, null);
             const instructionsArray = [transactionInstr.instructions].flat();        
             const transaction = new Transaction()
             .add(
