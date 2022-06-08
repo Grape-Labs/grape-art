@@ -21,8 +21,8 @@ export async function unicastGrapeSolflareMessage (title:string,message:string,i
                 mode: 'no-cors',
                 method: "POST",
                 body: JSON.stringify(body),
-                //headers: { "Content-Type": "application/json" },
-                headers: { "Content-Type": "text/plain;charset=UTF-8" },
+                headers: { "Content-Type": "application/json" },
+                //headers: { "Content-Type": "text/plain;charset=UTF-8" },
             })
             const json = await resp.json();
             return json;
