@@ -138,8 +138,7 @@ export async function cancelOffer(offerAmount: number, mint: string, buyerWallet
           programId: new PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr"),
       })
     );
-
-
+      
     console.log("instructions: "+JSON.stringify(instructions));
 
     return {
