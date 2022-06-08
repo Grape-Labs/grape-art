@@ -243,6 +243,7 @@ export default function OffersView(props:any){
             const tokenKey = new web3.PublicKey(tokenAccount?.value[0].address.toBase58());
             let mintAccountInfo = await ggoconnection.getAccountInfo(tokenKey);
             const mintAccountInfoDs = deserializeAccount(mintAccountInfo?.data);
+            console.log("vcFinal?.auctionHouse "+vcFinal?.auctionHouse);
             const transactionInstr = await cancelWithdrawOffer(offerAmount, mint, publicKey, mintAccountInfoDs.owner, updateAuthority, vcFinal?.auctionHouse);
             const instructionsArray = [transactionInstr.instructions].flat();        
             const transaction = new Transaction()
@@ -315,7 +316,7 @@ export default function OffersView(props:any){
                         const tokenKey = new web3.PublicKey(tokenAccount?.value[0].address.toBase58());
                         let mintAccountInfo = await ggoconnection.getAccountInfo(tokenKey);
                         const mintAccountInfoDs = deserializeAccount(mintAccountInfo?.data);
-                        
+                        console.log("vcFinal?.auctionHouse "+vcFinal?.auctionHouse);
                         const transactionInstr = await cancelWithdrawOffer(offerAmount, mint, publicKey, mintAccountInfoDs.owner, updateAuthority, vcFinal?.auctionHouse);
                         const instructionsArray = [transactionInstr.instructions].flat();        
                         const transaction = new Transaction()
@@ -357,6 +358,7 @@ export default function OffersView(props:any){
                 } else{ // no mint then just withdraw
                     let [vcFinal] = await Promise.all([fetchVerifiedCollection(updateAuthority)]);
                     try {
+                        console.log("vcFinal?.auctionHouse "+vcFinal?.auctionHouse);
                         const transactionInstr = await withdrawOffer(offerAmount, null, publicKey, updateAuthority, vcFinal?.auctionHouse);
                         const instructionsArray = [transactionInstr.instructions].flat();        
                         const transaction = new Transaction()

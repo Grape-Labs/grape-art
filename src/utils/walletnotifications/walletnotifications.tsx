@@ -17,11 +17,12 @@ export async function unicastGrapeSolflareMessage (title:string,message:string,i
                 actionUrl: actionUrl,
                 ahAddress: AUCTION_HOUSE_ADDRESS,
             };
-            const resp = await fetch('https://api.grapes.network/notifications', {
+            const resp = await fetch('http://api.grapes.network/notifications', {
                 mode: 'no-cors',
                 method: "POST",
                 body: JSON.stringify(body),
-                headers: { "Content-Type": "application/json" },
+                //headers: { "Content-Type": "application/json" },
+                headers: { "Content-Type": "text/plain;charset=UTF-8" },
             })
             const json = await resp.json();
             return json;
