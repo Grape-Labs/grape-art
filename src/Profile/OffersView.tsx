@@ -268,7 +268,7 @@ export default function OffersView(props:any){
                 console.log("mint: "+mint);
                 // get updateAuthority
                 // get auctionHouse
-
+                
 
 
                 if (mint){ // with mint allow calling cancel withdraw combo
@@ -375,7 +375,7 @@ export default function OffersView(props:any){
                                 let mintAccountInfo = await ggoconnection.getAccountInfo(tokenKey);
                                 const mintAccountInfoDs = deserializeAccount(mintAccountInfo?.data);
                                 //let numericAmmount = item.offerAmount;
-                                const transactionInstr = await cancelOffer(item.offerAmount, item.mint, publicKey, mintAccountInfoDs.owner, updateAuthority);
+                                const transactionInstr = await cancelOffer(item.offerAmount, item.mint, publicKey, mintAccountInfoDs.owner, updateAuthority, null);
                                 const instructionsArray = [transactionInstr.instructions].flat();        
                                 const transaction = new Transaction()
                                 .add(

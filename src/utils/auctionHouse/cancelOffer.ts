@@ -2,6 +2,7 @@ import {
     ENV_AH,
     AUCTION_HOUSE_ADDRESS,
     TOKEN_PROGRAM_ID,
+    WRAPPED_SOL_MINT,
   } from './helpers/constants';
 import { PublicKey, SystemProgram, TransactionInstruction } from '@solana/web3.js'
 import { BN, web3 } from '@project-serum/anchor';
@@ -12,8 +13,10 @@ import {
     loadAuctionHouseProgram,
     getAuctionHouseTradeState,
     getAtaForMint,
+    getAuctionHouseBuyerEscrow,
   } from './helpers/accounts';
 import { getPriceWithMantissa } from './helpers/various';
+import { ASSOCIATED_TOKEN_PROGRAM_ID } from '@solana/spl-token';
 
 export async function cancelOffer(offerAmount: number, mint: string, buyerWalletKey: PublicKey, mintOwner: any, updateAuthority: string, collectionAuctionHouse:string): Promise<InstructionsAndSignersSet> {
 
@@ -86,9 +89,51 @@ export async function cancelOffer(offerAmount: number, mint: string, buyerWallet
         signers,
       },
     );
+
+    const isNative = auctionHouseObj.treasuryMint.equals(WRAPPED_SOL_MINT);
+
+    const ata = (
+      await getAtaForMint(
+        //@ts-ignore
+        auctionHouseObj.treasuryMint,
+        buyerWalletKey,
+      )
+    )[0];
+    
+    const [escrowPaymentAccount, bump] = await getAuctionHouseBuyerEscrow(
+      auctionHouseKey,
+      buyerWalletKey,
+    );
+
+    const instruction2 = anchorProgram.instruction.withdraw(
+      bump,
+      new BN(buyPriceAdjusted),
+      {
+        accounts: {
+          wallet: buyerWalletKey,
+          receiptAccount: isNative ? buyerWalletKey : ata,
+          escrowPaymentAccount,
+          //@ts-ignore
+          treasuryMint: auctionHouseObj.treasuryMint,
+          //@ts-ignore
+          authority: auctionHouseObj.authority,
+          auctionHouse: auctionHouseKey,
+          //@ts-ignore
+          auctionHouseFeeAccount: auctionHouseObj.auctionHouseFeeAccount,
+          tokenProgram: TOKEN_PROGRAM_ID,
+          systemProgram: web3.SystemProgram.programId,
+          rent: web3.SYSVAR_RENT_PUBKEY,
+          ataProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+        },
+        signers,
+      },
+    );
+
+
     //console.log('instruction:', instruction);
     //console.log("instruction: "+JSON.stringify(instruction));
     const instructions = [instruction];
+    instructions.push(instruction2);
 
     let derivedMintPDA = await web3.PublicKey.findProgramAddress([Buffer.from((mintKey).toBuffer())], auctionHouseKey);
     let derivedBuyerPDA = await web3.PublicKey.findProgramAddress([Buffer.from((buyerWalletKey).toBuffer())], auctionHouseKey);
@@ -138,7 +183,7 @@ export async function cancelOffer(offerAmount: number, mint: string, buyerWallet
           programId: new PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr"),
       })
     );
-      
+
     console.log("instructions: "+JSON.stringify(instructions));
 
     return {

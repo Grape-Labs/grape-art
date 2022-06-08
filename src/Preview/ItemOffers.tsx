@@ -460,7 +460,6 @@ function SellNowPrompt(props:any){
 
     const handleClickOpenDialog = () => {
         setSellNowAmount('');
-        //console.log('SalePrice in handleSellNow:' ,salePrice);
         setOpenSPDialog(true);
     };
     
@@ -717,6 +716,8 @@ export function OfferPrompt(props: any) {
                         } 
                     }
 
+                    unicastGrapeSolflareMessage('Bid Notice', 'You have received a on grape.art', image, mintOwner, `${GRAPE_PREVIEW}${mint}`);
+                    
                     console.log("offcnt: "+offcnt);
                     if ((previous_offer_pk)&&(offcnt > 1)){
                         console.log(previous_offer_pk+' you have been outbid');
