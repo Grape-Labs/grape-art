@@ -17,8 +17,37 @@ export async function unicastGrapeSolflareMessage (title:string,message:string,i
                 actionUrl: actionUrl,
                 ahAddress: AUCTION_HOUSE_ADDRESS,
             };
-            const resp = await fetch('http://api.grapes.network/notifications', {
+            const resp = await fetch('https://api.grapes.network/notifications', {
                 mode: 'no-cors',
+                method: "POST",
+                body: JSON.stringify(body),
+                headers: { "Content-Type": "application/json" },
+                //headers: { "Content-Type": "text/plain;charset=UTF-8" },
+            })
+            const json = await resp.json();
+            return json;
+        } else{
+            return null;
+        }
+    }catch(e){
+        return null;
+    }
+}
+export async function unicastGrapeSolflareMessage2 (title:string,message:string,image:string,publicKey:string,actionUrl:string) {
+    try{
+        if (SOFLARE_NOTIFICATIONS_API_KEY){
+            const body = {
+                title: title,
+                body: message,
+                icon: 'https://raw.githubusercontent.com/Grape-Labs/grape-art/main/public/apple-touch-icon.png',
+                image: image,
+                publicKey: publicKey,
+                platform: "all",
+                topic: "general",
+                actionUrl: actionUrl,
+                ahAddress: AUCTION_HOUSE_ADDRESS,
+            };
+            const resp = await fetch('https://api.grapes.network/notifications', {
                 method: "POST",
                 body: JSON.stringify(body),
                 headers: { "Content-Type": "application/json" },

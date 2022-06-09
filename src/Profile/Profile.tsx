@@ -20,8 +20,6 @@ import { FollowListInfoResp, SearchUserInfoResp, Network } from '../utils/cyberC
 import { formatAddress, removeDuplicate, isValidAddr } from '../utils/cyberConnect/helper';
 import { followListInfoQuery, searchUserInfoQuery } from '../utils/cyberConnect/query';
 
-import { unicastGrapeSolflareMessage } from "../utils/walletNotifications/walletNotifications";
-
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { getProfilePicture } from '@solflare-wallet/pfp';
 
@@ -795,7 +793,6 @@ const IdentityView = (props: any) => {
         .catch(function (error) {
             console.log(error);
         });
-        unicastGrapeSolflareMessage('Follow Notice', 'You have a new follower you on Grape.art', '', followAddress, `${GRAPE_PROFILE}${followAddress}`);
         getFollowStatus();
     };
     const followWalletDisconnect = async (followAddress:string) => {
