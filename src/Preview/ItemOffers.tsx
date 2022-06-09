@@ -707,20 +707,28 @@ export function OfferPrompt(props: any) {
                     let offcnt = 0;
                     if (offers){
                         //console.log("Offers:"+offers.length);
+                        offers.sort((a:any,b:any) => (a.offeramount < b.offeramount) ? 1 : -1);
+                        offcnt = offers.length;
+                        if (offcnt > 1){
+                            previous_offer_pk = offers[1].buyeraddress;
+                        }
+                        
+                        /*
                         for (var offer of offers){
-                            //console.log(offer.offeramount + " - " + offer.buyeraddress + " :: "+(offer?.state));
+                            console.log(offer.offeramount + " - " + offer.buyeraddress + " :: "+(offer?.state));
                             //if (offer.state === )
-                            if ((offcnt === 1)&&(offer?.state === 1)){
+                            if ((offcnt >= 1)){//&&(offer?.state === 1)){
                                 previous_offer_pk = offer.buyeraddress;
+                                console.log("previous offer: "+previous_offer_pk)
                             }
                             offcnt++;
-                        } 
+                        } */
                     }
 
                     console.log("offcnt: "+offcnt);
                     if ((previous_offer_pk)&&(offcnt > 0)){
                         console.log(previous_offer_pk+' you have been outbid');
-                        unicastGrapeSolflareMessage(`Outbid Notice ${name}`, 'You have been outbid on grape.art', image, previous_offer_pk, `https://grape.art${GRAPE_PREVIEW}${mint}`);
+                        unicastGrapeSolflareMessage(`Outbid Notice ${name}`, 'You have been outbid on grape.art', image, previous_offer_pk, `https://grape.art${GRAPE_PREVIEW}${mint}`, signedTransaction, collectionAuctionHouse);
                     }
                     const eskey = enqueueSnackbar(`${t('Metadata will be refreshed in a few seconds')}`, {
                             anchorOrigin: {
