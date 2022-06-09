@@ -96,6 +96,7 @@ import ShareSocialURL from '../utils/grapeTools/ShareUrl';
 
 import GalleryView from '../Profile/GalleryView';
 import ListForCollectionView from './ListForCollection';
+import ActivityView from './Activity';
 
 import { MakeLinkableAddress, ValidateAddress, trimAddress, timeAgo } from '../utils/grapeTools/WalletAddress'; // global key handling
 import { ConstructionOutlined, SettingsRemoteOutlined } from "@mui/icons-material";
@@ -1477,22 +1478,27 @@ export function StoreFrontView(this: any, props: any) {
                                         <TwitterIcon sx={{m:0.75,color:'white'}} />
                                     </Button>
                                 }
-
-                                <ListForCollectionView 
-                                    logo={GRAPE_COLLECTIONS_DATA+collectionAuthority.logo} 
-                                    entangleTo={collectionAuthority.entangleTo} 
-                                    entangleFrom={collectionAuthority.entangleFrom} 
-                                    entangled={collectionAuthority.entangled} 
-                                    enforceEntangle={collectionAuthority.entangleEnforce}
-                                    entangleUrl={collectionAuthority.entangleUrl} />
+                                
                             </Box>
+                        </Box>
+
+                        <Box
+                            sx={{m:2}}
+                        >
+                            <ListForCollectionView 
+                                logo={GRAPE_COLLECTIONS_DATA+collectionAuthority.logo} 
+                                entangleTo={collectionAuthority.entangleTo} 
+                                entangleFrom={collectionAuthority.entangleFrom} 
+                                entangled={collectionAuthority.entangled} 
+                                enforceEntangle={collectionAuthority.entangleEnforce}
+                                entangleUrl={collectionAuthority.entangleUrl} />
                         </Box>
                         
                         <Grid container spacing={0} sx={{mt:-2}}>
                             <Grid item xs={12} sm={12} md={4} key={1}>
                                 <Box
                                     className='grape-store-stat-item'
-                                    sx={{borderRadius:'24px',m:2,p:2}}
+                                    sx={{borderRadius:'24px',m:2,p:1}}
                                 >
                                     <Typography variant="body2" sx={{color:'yellow'}}>
                                         ITEMS
@@ -1505,7 +1511,7 @@ export function StoreFrontView(this: any, props: any) {
                             <Grid item xs={12} sm={12} md={4} key={1}>
                                 <Box
                                     className='grape-store-stat-item'
-                                    sx={{borderRadius:'24px',m:2,p:2}}
+                                    sx={{borderRadius:'24px',m:2,p:1}}
                                 >
                                     <Typography variant="body2" sx={{color:'yellow'}}>
                                         OWNERS
@@ -1516,17 +1522,7 @@ export function StoreFrontView(this: any, props: any) {
                                 </Box>
                             </Grid>
                             <Grid item xs={12} sm={12} md={4} key={1}>
-                                <Box
-                                    className='grape-store-stat-item'
-                                    sx={{borderRadius:'24px',m:2,p:2}}
-                                >
-                                    <Typography variant="body2" sx={{color:'yellow'}}>
-                                        VOLUME
-                                    </Typography>
-                                    <Typography variant="subtitle2">
-                                        {(collectionAuthority.volume/1000).toFixed(1)}k SOL
-                                    </Typography>
-                                </Box>
+                                <ActivityView collectionAuthority={collectionAuthority} />
                             </Grid>
                         </Grid>
                     </Box>

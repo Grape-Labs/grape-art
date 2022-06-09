@@ -2,8 +2,6 @@ import React, { useEffect, useState, useCallback, memo, Suspense } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import { decodeMetadata } from '../utils/grapeTools/utils';
 // @ts-ignore
-import fetch from 'node-fetch';
-import BN from "bn.js";
 
 import { findDisplayName } from '../utils/name-service';
 //import { performReverseLookup } from '../utils/web3/naming';
@@ -70,7 +68,6 @@ import {
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
 
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import ArtTrackOutlinedIcon from '@mui/icons-material/ArtTrackOutlined';
 import CollectionsOutlinedIcon from '@mui/icons-material/CollectionsOutlined';
 import RssFeedOutlinedIcon from '@mui/icons-material/RssFeedOutlined';
 import GavelOutlinedIcon from '@mui/icons-material/GavelOutlined';
@@ -83,7 +80,6 @@ import HomeIcon from '@mui/icons-material/Home';
 import SolCurrencyIcon from '../components/static/SolCurrencyIcon';
 import IconButton, { IconButtonProps } from '@mui/material/IconButton';
 import SearchIcon from '@mui/icons-material/Search';
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import CircularProgress from '@mui/material/CircularProgress';
 
 import { 

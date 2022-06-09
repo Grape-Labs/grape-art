@@ -1955,7 +1955,7 @@ export default function ItemOffers(props: any) {
                                             justifyContent="center"
                                         >
                                             <Grid item>
-                                            <WalletConnectButton />
+                                                <WalletConnectButton />
                                             </Grid>
                                         </Grid>
                                     )

@@ -5,6 +5,7 @@ import { Link, useLocation, NavLink } from 'react-router-dom';
 
 import {
     Button,
+    ButtonGroup,
     Avatar,
     Dialog,
     DialogTitle,
@@ -20,7 +21,10 @@ import {
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 
+import MyActivityView from './MyActivity';
+
 import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
+import { WalletConnectButton } from "@solana/wallet-adapter-material-ui";
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { Connection, PublicKey } from '@solana/web3.js';
 
@@ -225,27 +229,29 @@ export default function ListForCollectionView(props: any){
 
     return (
         <>
-            <Button 
-                variant="outlined"
-                onClick={handleClickOpenDialog}
-                sx={{
-                    color:'white',
-                    verticalAlign: 'middle',
-                    display: 'inline-flex',
-                    borderRadius:'17px'
-                }}
-            >
-                {t('Just list it')}
-                <Avatar
-                    variant="square"
-                    src={logo}
+            <ButtonGroup variant="outlined" aria-label="outlined primary button group">
+                <Button 
+                    onClick={handleClickOpenDialog}
                     sx={{
-                        ml:1,
-                        width: 24, 
-                        height: 24
+                        color:'white',
+                        verticalAlign: 'middle',
+                        display: 'inline-flex',
+                        borderRadius:'17px'
                     }}
-                ></Avatar>
-            </Button>
+                >
+                    {t('Just list it')}
+                    <Avatar
+                        variant="square"
+                        src={logo}
+                        sx={{
+                            ml:1,
+                            width: 24, 
+                            height: 24
+                        }}
+                    ></Avatar>
+                </Button>
+                <MyActivityView collectionAuthority={updateAuthority} logo={logo} />
+            </ButtonGroup>
             <BootstrapDialog 
                 fullWidth={true}
                 maxWidth={"sm"}
@@ -264,8 +270,18 @@ export default function ListForCollectionView(props: any){
                 </DialogTitle>
                 <DialogContent>
                     <List>
-                    {loading ?
-                        <>loading</>
+                    {!publicKey || loading ?
+                        <>
+                            {publicKey ?
+                            <>
+                                loading
+                            </>
+                            :
+                            <>
+                                <WalletConnectButton />
+                            </>
+                            }
+                        </>
                     : 
                         <>
                             {collectionMetaFinal && collectionMetaFinal.map((item: any) => (
@@ -291,7 +307,7 @@ export default function ListForCollectionView(props: any){
                                         {(item.decoded.updateAuthority === entangleFrom) && (enforceEntangle) ?
                                             <Typography
                                                 variant='subtitle2'>
-                                                You need to entangle this NFT first to list
+                                                You need to reload this Bear first to list
                                                 <Button
                                                     component="a" href={entangleUrl} target="_blank"
                                                     size="large" 
@@ -302,7 +318,7 @@ export default function ListForCollectionView(props: any){
                                                         color:'white'
                                                     }}
                                                 >
-                                                    <SwapHorizIcon sx={{mr:1}}/> Entangle
+                                                    <SwapHorizIcon sx={{mr:1}}/> Reload
                                                 </Button>
                                             </Typography>
                                         :

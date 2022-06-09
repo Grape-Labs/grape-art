@@ -6,7 +6,6 @@ import CyberConnect, { Env, Blockchain, ConnectionType } from '@cyberlab/cyberco
 import { Connection, ParsedAccountData, PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js'
 import { Token, TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID } from "@solana/spl-token";
 // @ts-ignore
-import fetch from 'node-fetch'
 import ImageViewer from 'react-simple-image-viewer';
 import { Helmet } from 'react-helmet';
 
@@ -120,7 +119,6 @@ import { decodeMetadata } from '../utils/auctionHouse/helpers/schema';
 import GrapeIcon from "../components/static/GrapeIcon";
 
 import { useTranslation } from 'react-i18next';
-import { JavascriptRounded } from "@mui/icons-material";
 
 const StyledTable = styled(Table)(({ theme }) => ({
     '& .MuiTableCell-root': {
