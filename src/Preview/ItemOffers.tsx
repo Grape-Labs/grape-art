@@ -620,6 +620,7 @@ export function OfferPrompt(props: any) {
     const offers = props.offers || null;
     //const [sol_balance, setSolBalance] = React.useState(props.solBalance);
     const sol_balance = props.solBalance;  
+    const name = props.mintName;  
     const mint = props.mint;  
     const image = props.image;
     const mintOwner = props.mintOwner;
@@ -717,9 +718,9 @@ export function OfferPrompt(props: any) {
                     }
 
                     console.log("offcnt: "+offcnt);
-                    if ((previous_offer_pk)&&(offcnt > 1)){
+                    if ((previous_offer_pk)&&(offcnt > 0)){
                         console.log(previous_offer_pk+' you have been outbid');
-                        unicastGrapeSolflareMessage('Outbid Notice', 'You have been outbid on grape.art', image, highest_offer_pk, `${GRAPE_PREVIEW}${mint}`);
+                        unicastGrapeSolflareMessage(`Outbid Notice ${name}`, 'You have been outbid on grape.art', image, previous_offer_pk, `https://grape.art${GRAPE_PREVIEW}${mint}`);
                     }
                     const eskey = enqueueSnackbar(`${t('Metadata will be refreshed in a few seconds')}`, {
                             anchorOrigin: {
@@ -886,6 +887,7 @@ export default function ItemOffers(props: any) {
     const [open_offers_collapse, setOpenOffersCollapse] = React.useState(false);
     const pubkey = props.pubkey || null;
     const mintOwner = props.mintOwner;
+    const mintName = props.mintName;
     const updateAuthority = props.updateAuthority;
     const collectionAuctionHouse = props.collectionAuctionHouse;
     const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
@@ -996,7 +998,7 @@ export default function ItemOffers(props: any) {
                 const transactionInstr = await voteOffer(+offerAmount, mint, mintOwner.toString(), buyerAddress.toString(), publicKey.toString(), updateAuthority);
                 console.log('transactionInstr' +JSON.stringify(transactionInstr));
                 //transactionInstr.add(feePayer: COLLABORATION_SOL_TREASURY);
-                const proposalPk = await createProposal(+offerAmount, mint, publicKey.toString(), mintOwner, 0, mintOwner.toString(), connection, transactionInstr, sendTransaction, anchorWallet, 1, updateAuthority);
+                const proposalPk = await createProposal(+offerAmount, mint, publicKey.toString(), mintOwner, 0, mintOwner.toString(), connection, transactionInstr, sendTransaction, anchorWallet, 1, updateAuthority, collectionAuctionHouse);
                 //const proposalPk = await createProposal(+offerAmount, mint, publicKey.toString(), mintOwner, 0, mintOwner.toString(), ggoconnection, transactionInstr, sendTransaction, anchorWallet, 1);
                 if (proposalPk){
                     enqueueSnackbar(`Proposal: ${proposalPk} created and offer for ${offerAmount} SOL will be voted if to be accepted.`,{ variant: 'success' });
@@ -1031,7 +1033,7 @@ export default function ItemOffers(props: any) {
     const handleCancelListing =  async (salePrice: number) => {
         try {
             //START CANCEL LISTING
-            const transactionInstr = await cancelListing(salePrice, mint, walletPublicKey.toString(), mintOwner, updateAuthority);
+            const transactionInstr = await cancelListing(salePrice, mint, walletPublicKey.toString(), mintOwner, updateAuthority, collectionAuctionHouse);
             const instructionsArray = [transactionInstr.instructions].flat();        
             const transaction = new Transaction()
             .add(
@@ -1898,7 +1900,7 @@ export default function ItemOffers(props: any) {
                                                                         
                                                                         {(ValidateCurve(mintOwner) || (ValidateDAO(mintOwner))) && (
                                                                             <Grid item>
-                                                                                <OfferPrompt mint={mint} updateAuthority={updateAuthority} image={image} mintOwner={mintOwner} setRefreshOffers={setRefreshOffers} solBalance={sol_portfolio_balance} highestOffer={highestOffer} offers={offers} collectionAuctionHouse={collectionAuctionHouse} />
+                                                                                <OfferPrompt mintName={mintName} mint={mint} updateAuthority={updateAuthority} image={image} mintOwner={mintOwner} setRefreshOffers={setRefreshOffers} solBalance={sol_portfolio_balance} highestOffer={highestOffer} offers={offers} collectionAuctionHouse={collectionAuctionHouse} />
                                                                             </Grid>
                                                                         )}
                                                                         </>
@@ -2104,7 +2106,6 @@ export default function ItemOffers(props: any) {
 
                                             {offers && offers.map((item: any) => (
                                                 <>
-
                                                     {(item.state === 1) ? (
                                                         <TableRow>
                                                             <TableCell><Typography variant="body2">

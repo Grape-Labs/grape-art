@@ -161,7 +161,7 @@ function DashboardContent() {
                                     <Route path="/featured" element={<FeaturedView/>} />
                                     
                                     <Route path="/messages" element={<MessagesView/>} />
-                                    
+
                                     <Route path="/solflaretest" element={<NotificationsView/>} />
                                     
                                     <Route path="/" element={<ProfileView/>}>

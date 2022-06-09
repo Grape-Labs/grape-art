@@ -9,7 +9,7 @@ export async function unicastGrapeSolflareMessage (title:string,message:string,i
             const body = {
                 title: title,
                 body: message,
-                icon: 'https://raw.githubusercontent.com/Grape-Labs/grape-art/main/public/apple-touch-icon.png',
+                icon: image || 'https://raw.githubusercontent.com/Grape-Labs/api.grape.io/main/apple-touch-icon.png',
                 image: image,
                 publicKey: publicKey,
                 platform: "all",
@@ -39,7 +39,7 @@ export async function unicastGrapeSolflareMessage2 (title:string,message:string,
             const body = {
                 title: title,
                 body: message,
-                icon: 'https://raw.githubusercontent.com/Grape-Labs/grape-art/main/public/apple-touch-icon.png',
+                icon: image || 'https://raw.githubusercontent.com/Grape-Labs/api.grape.io/main/apple-touch-icon.png',
                 image: image,
                 publicKey: publicKey,
                 platform: "all",
@@ -69,7 +69,7 @@ export async function unicastSolflareMessage (title:string,message:string,image:
             const body = {
                 title: title,
                 body: message,
-                icon: 'https://raw.githubusercontent.com/Grape-Labs/grape-art/main/public/apple-touch-icon.png',
+                icon: image || 'https://raw.githubusercontent.com/Grape-Labs/api.grape.io/main/apple-touch-icon.png',
                 image: image,
                 publicKey: publicKey,
                 platform: "all",

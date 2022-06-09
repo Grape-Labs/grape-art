@@ -1533,6 +1533,7 @@ function GalleryItemMeta(props: any) {
                                         collectionAuctionHouse={collectionAuctionHouse}
                                         mintOwner={tokenOwners?.data.parsed.info.owner} 
                                         mint={mint} 
+                                        mintName={collectionitem.name}
                                         image={collectionitem.image}
                                         refreshOwner={refreshOwner}
                                         setRefreshOwner={setRefreshOwner} 
