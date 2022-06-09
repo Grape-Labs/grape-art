@@ -17,7 +17,7 @@ export async function unicastGrapeSolflareMessage (title:string,message:string,i
                 actionUrl: actionUrl,
                 ahAddress: AUCTION_HOUSE_ADDRESS,
             };
-            const resp = await fetch('https://api.grapes.network/notifications', {
+            const resp = await fetch('https://api.grapes.network/notifications/', {
                 mode: 'no-cors',
                 method: "POST",
                 body: JSON.stringify(body),
@@ -47,7 +47,7 @@ export async function unicastGrapeSolflareMessage2 (title:string,message:string,
                 actionUrl: actionUrl,
                 ahAddress: AUCTION_HOUSE_ADDRESS,
             };
-            const resp = await fetch('https://api.grapes.network/notifications', {
+            const resp = await fetch('https://api.grapes.network/notifications/', {
                 method: "POST",
                 body: JSON.stringify(body),
                 headers: { "Content-Type": "application/json" },
