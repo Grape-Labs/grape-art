@@ -709,7 +709,7 @@ export function OfferPrompt(props: any) {
                         //console.log("Offers:"+offers.length);
                         offers.sort((a:any,b:any) => (a.offeramount < b.offeramount) ? 1 : -1);
                         offcnt = offers?.length || 1;
-                        if (offcnt >= 1){
+                        if (offcnt > 1){
                             previous_offer_pk = offers[1].buyeraddress;
                         }
                         
@@ -959,21 +959,29 @@ export default function ItemOffers(props: any) {
             const transaction = new Transaction();
             
             if (!ValidateDAO(mintOwner)) {
+                console.log("Here 1")
                 const transactionInstr = await acceptOffer(offerAmount, mint, walletPublicKey, buyerAddress.toString(), updateAuthority, collectionAuctionHouse);
+                console.log("here 2")
                 //const transactionInstr = await gah_acceptOffer(offerAmount, mint, walletPublicKey, buyerAddress.toString(), updateAuthority);
                 const instructionsArray = [transactionInstr.instructions].flat();  
                 transaction.add(
                     ...instructionsArray
                 );  
-
+                
                 enqueueSnackbar(`${t('Preparing to accept offer of')}: ${offerAmount} SOL ${t('from')}: ${buyerAddress.toString()}`,{ variant: 'info' });
                 const signedTransaction2 = await sendTransaction(transaction, connection);
-            
+                    
                 const snackprogress = (key:any) => (
                     <CircularProgress sx={{padding:'10px'}} />
                 );
                 const cnfrmkey = enqueueSnackbar(`${t('Confirming transaction')}`,{ variant: 'info', action:snackprogress, persist: true });
-                await ggoconnection.confirmTransaction(signedTransaction2, 'processed');
+                const latestBlockHash = await connection.getLatestBlockhash();
+                await ggoconnection.confirmTransaction({
+                    blockhash: latestBlockHash.blockhash,
+                    lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+                    signature: signedTransaction2}, 
+                    'processed'
+                );
                 closeSnackbar(cnfrmkey);
                 const snackaction = (key:any) => (
                     <Button href={`https://explorer.solana.com/tx/${signedTransaction2}`} target='_blank'  sx={{color:'white'}}>

@@ -92,7 +92,7 @@ export default function ActivityView(props: any){
                 //let derivedMintPDA = await web3.PublicKey.findProgramAddress([Buffer.from((new PublicKey(mint)).toBuffer())], auctionHouseKey);
                 //let derivedBuyerPDA = await web3.PublicKey.findProgramAddress([Buffer.from((new PublicKey(thisPublicKey)).toBuffer())], auctionHouseKey);
                 //let derivedOwnerPDA = await web3.PublicKey.findProgramAddress([Buffer.from((new PublicKey(mintOwner)).toBuffer())], auctionHouseKey);
-                let derivedUpdateAuthorityPDA = await web3.PublicKey.findProgramAddress([Buffer.from((new PublicKey(collectionAuthority)).toBuffer())], auctionHouseKey);
+                let derivedUpdateAuthorityPDA = await web3.PublicKey.findProgramAddress([Buffer.from((new PublicKey(collectionAuthority.address)).toBuffer())], auctionHouseKey);
                 
                 /*
                 console.log("derivedMintPDA: "+derivedMintPDA);

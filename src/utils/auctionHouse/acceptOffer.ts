@@ -70,7 +70,7 @@ export async function acceptOffer(offerAmount: number, mint: string, sellerWalle
   );
 
   const signers: any[] = [];
-
+  
   const instruction = anchorProgram.instruction.sell(
     tradeBump,
     freeTradeBump,
@@ -98,10 +98,10 @@ export async function acceptOffer(offerAmount: number, mint: string, sellerWalle
     },
   ); 
 
-  if (AUCTION_HOUSE_ADDRESS) {
+  if (auctionHouseKey) {
     //signers.push(auctionHouseKeypairLoaded);
     instruction.keys
-      .filter(k => k.pubkey.equals(new PublicKey(AUCTION_HOUSE_ADDRESS)))
+      .filter(k => k.pubkey.equals(auctionHouseKey))
       .map(k => (k.isSigner = false));
   }
 
@@ -175,24 +175,36 @@ export async function acceptOffer(offerAmount: number, mint: string, sellerWalle
   
   const remainingAccounts = [];
 
-  for (let i = 0; i < metadataDecoded.data.creators.length; i++) {
+  for (let i = 0; i < metadataDecoded.data.creators?.length || 0; i++) {
     remainingAccounts.push({
         pubkey: new web3.PublicKey(metadataDecoded.data.creators[i].address),
         isWritable: true,
         isSigner: false,
     });
+
     if (!isNative) {
+
         remainingAccounts.push({
             pubkey: (await getAtaForMint(
                         //@ts-ignore
                         auctionHouseObj.treasuryMint,
-                        remainingAccounts[remainingAccounts.length - 1].pubkey,
+                        remainingAccounts[remainingAccounts?.length - 1].pubkey || null,
                         )
                     )[0],
             isWritable: true,
             isSigner: false,
         });
     }
+  }
+  
+  if (!metadataDecoded.data?.creators?.length){
+    /*
+    remainingAccounts.push({
+        pubkey: null,
+        isWritable: true,
+        isSigner: false,
+    });
+    */
   }
 
   const tMint: web3.PublicKey = auctionHouseObj.treasuryMint;
@@ -237,19 +249,19 @@ export async function acceptOffer(offerAmount: number, mint: string, sellerWalle
       remainingAccounts,
       signers,
     },
-  );    
-
-  if (AUCTION_HOUSE_ADDRESS) {
+  );  
+  
+  if (auctionHouseKey) {
     //signers.push(auctionHouseKeypairLoaded);
     instruction2.keys
-      .filter(k => k.pubkey.equals(new PublicKey(AUCTION_HOUSE_ADDRESS)))
+      .filter(k => k.pubkey.equals(auctionHouseKey))
       .map(k => (k.isSigner = false));
   }
-
+  console.log("no creator1... () "+JSON.stringify(metadataDecoded.data?.creators)); 
   const GRAPE_AH_MEMO = {
     state:4, // status (0: withdraw, 1: offer, 2: listing, 3: buy/execute (from listing), 4: buy/execute(accept offer), 5: cancel)
-    ah:auctionHouseKey.toString(), // pk
-    mint:mintKey.toString(), // mint
+    ah:auctionHouseKey.toBase58(), // pk
+    mint:mintKey.toBase58(), // mint
     ua:updateAuthority, // updateAuthority
     amount:buyPriceAdjusted.toNumber() // price
   };
@@ -282,7 +294,6 @@ export async function acceptOffer(offerAmount: number, mint: string, sellerWalle
     })
   );*/
   instructions.push(instruction2);
-
   instructions.push(
     new TransactionInstruction({
         keys: [{ pubkey: sellerWalletKey, isSigner: true, isWritable: true }],

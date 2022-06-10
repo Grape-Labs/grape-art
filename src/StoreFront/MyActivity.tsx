@@ -82,26 +82,28 @@ export default function MyActivityView(props: any){
     const handleCloseDialog = () => {
         setOpenDialog(false);
     };
-
+    
     const fetchAllActivity = async () => {
         
         try {
             if (!recentActivity){
+                console.log("collectionAuthority: "+JSON.stringify(collectionAuthority))
                 const anchorProgram = await loadAuctionHouseProgram(null, ENV_AH, GRAPE_RPC_ENDPOINT);
                 const auctionHouseKey = new web3.PublicKey(AUCTION_HOUSE_ADDRESS);
                 const auctionHouseObj = await anchorProgram.account.auctionHouse.fetch(auctionHouseKey,);
                 //let derivedMintPDA = await web3.PublicKey.findProgramAddress([Buffer.from((new PublicKey(mint)).toBuffer())], auctionHouseKey);
-                //let derivedBuyerPDA = await web3.PublicKey.findProgramAddress([Buffer.from((new PublicKey(thisPublicKey)).toBuffer())], auctionHouseKey);
+                let derivedBuyerPDA = await web3.PublicKey.findProgramAddress([Buffer.from((publicKey).toBuffer())], auctionHouseKey);
                 //let derivedOwnerPDA = await web3.PublicKey.findProgramAddress([Buffer.from((new PublicKey(mintOwner)).toBuffer())], auctionHouseKey);
-                let derivedUpdateAuthorityPDA = await web3.PublicKey.findProgramAddress([Buffer.from((new PublicKey(collectionAuthority)).toBuffer())], auctionHouseKey);
+                //let derivedUpdateAuthorityPDA = await web3.PublicKey.findProgramAddress([Buffer.from((new PublicKey(collectionAuthority)).toBuffer())], auctionHouseKey);
                 
                 /*
                 console.log("derivedMintPDA: "+derivedMintPDA);
                 console.log("derivedBuyerPDA: "+derivedBuyerPDA);
                 console.log("derivedOwnerPDA: "+derivedOwnerPDA);
                 */
+                console.log("derivedBuyerPDA: "+derivedBuyerPDA);
                 
-                let result = await ggoconnection.getSignaturesForAddress(derivedUpdateAuthorityPDA[0], {limit: 500});
+                let result = await ggoconnection.getSignaturesForAddress(derivedBuyerPDA[0], {limit: 500});
                 
                 let activityResults: any[] = [];
                 let cancelStateResults: any[] = [];
@@ -274,7 +276,13 @@ export default function MyActivityView(props: any){
                     borderRadius:'17px'
                 }}
             >
-                {t('My Activity')}
+                {publicKey ?
+                    <>
+                    {t('My Activity')}
+                    </>
+                :
+                    <>Connect your wallet</>
+                }   
             </Button>
             <BootstrapDialog 
                 fullWidth={true}

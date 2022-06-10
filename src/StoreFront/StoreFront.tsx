@@ -809,7 +809,7 @@ export function StoreFrontView(this: any, props: any) {
 
     const fetchMintList = async(address:string) => {
         try{
-            const url = GRAPE_COLLECTIONS_DATA+address+'.json';
+            const url = GRAPE_COLLECTIONS_DATA+address.substring(0,9)+'.json';
             console.log("with: "+url);
             const response = await window.fetch(url, {
                 method: 'GET',
@@ -1292,13 +1292,16 @@ export function StoreFrontView(this: any, props: any) {
                 // check if this is a valid address using VERIFIED_COLLECTION_ARRAY
                 // check both .name and .address
                 for (var verified of verifiedCollectionArray){
+                    
+                    console.log("verified checking: "+verified.name.replaceAll(" ", "").toLowerCase() + " vs "+withPubKey.replaceAll(" ", "").toLowerCase());
                     //if (verified.address === mintOwner){
                     if (verified.address === withPubKey){
                         setCollectionAuthority(verified);
                         // get collection mint list
                         const fml = fetchMintList(verified.address);
                         break;
-                    } else if (verified.name.replaceAll("\\s", "").toLowerCase().localeCompare(withPubKey.replaceAll("\\s", "").toLowerCase())){ // REMOVE SPACES FROM verified.name
+                    } else if (verified.name.replaceAll(" ", "").toLowerCase() === (withPubKey.replaceAll(" ", "").toLowerCase())){ // REMOVE SPACES FROM verified.name
+                        console.log("found: "+verified.name);
                         setCollectionAuthority(verified);
                         // get collection mint list
                         console.log("f ADDRESS: "+verified.address)
@@ -1491,7 +1494,8 @@ export function StoreFrontView(this: any, props: any) {
                                 entangleFrom={collectionAuthority.entangleFrom} 
                                 entangled={collectionAuthority.entangled} 
                                 enforceEntangle={collectionAuthority.entangleEnforce}
-                                entangleUrl={collectionAuthority.entangleUrl} />
+                                entangleUrl={collectionAuthority.entangleUrl}
+                                updateAuthority={collectionAuthority.address} />
                         </Box>
                         
                         <Grid container spacing={0} sx={{mt:-2}}>
@@ -1533,7 +1537,8 @@ export function StoreFrontView(this: any, props: any) {
                         
                     }}
                 >
-                    <Box>  
+                    <Box> 
+
                         {collectionMintList &&  
                             <GalleryView mode={1} collectionMintList={collectionMintList} collectionAuthority={collectionAuthority}/>
                         }

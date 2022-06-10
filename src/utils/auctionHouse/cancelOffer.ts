@@ -28,7 +28,7 @@ export async function cancelOffer(offerAmount: number, mint: string, buyerWallet
     const auctionHouseObj = await anchorProgram.account.auctionHouse.fetch(auctionHouseKey,);
     const sellerWalletKey = new web3.PublicKey(mintOwner);
 
-    console.log('offerAmount:', offerAmount);
+    //console.log('offerAmount:', offerAmount);
     const buyPriceAdjusted = new BN(
       await getPriceWithMantissa(
         offerAmount,
@@ -67,8 +67,8 @@ export async function cancelOffer(offerAmount: number, mint: string, buyerWallet
     //console.log('tradeState:', tradeState.toBase58());
     const signers: any[] = [];
     
-    console.log('buyPriceAdjusted:', buyPriceAdjusted.toNumber());
-    console.log("tokenSizeAdjusted: "+JSON.stringify(tokenSizeAdjusted));
+    //console.log('buyPriceAdjusted:', buyPriceAdjusted.toNumber());
+    //console.log("tokenSizeAdjusted: "+JSON.stringify(tokenSizeAdjusted));
     
     const instruction = anchorProgram.instruction.cancel(
       buyPriceAdjusted,
@@ -188,7 +188,7 @@ export async function cancelOffer(offerAmount: number, mint: string, buyerWallet
       })
     );
 
-    console.log("instructions: "+JSON.stringify(instructions));
+    //console.log("instructions: "+JSON.stringify(instructions));
 
     return {
       signers: signers,
