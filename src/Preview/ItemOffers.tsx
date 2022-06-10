@@ -708,8 +708,8 @@ export function OfferPrompt(props: any) {
                     if (offers){
                         //console.log("Offers:"+offers.length);
                         offers.sort((a:any,b:any) => (a.offeramount < b.offeramount) ? 1 : -1);
-                        offcnt = offers.length;
-                        if (offcnt > 1){
+                        offcnt = offers?.length || 1;
+                        if (offcnt >= 1){
                             previous_offer_pk = offers[1].buyeraddress;
                         }
                         
