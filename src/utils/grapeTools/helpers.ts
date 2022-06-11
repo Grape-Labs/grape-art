@@ -28,9 +28,9 @@ export async function getMintFromMetadata(updateAuthority:string, metadata:strin
     
 }
 
-export async function getReceiptsFromAuctionHouse(auctionHouse: PublicKey) {
+export async function getReceiptsFromAuctionHouse(auctionHouse: string) {
     const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);    
-    const collectionAuctionHouse = auctionHouse || AUCTION_HOUSE_PROGRAM_ID;
+    const collectionAuctionHouse = auctionHouse || AUCTION_HOUSE_ADDRESS;
 
     //const AuctionHouseProgram = await ggoconnection.AuctionHouseProgram(new PublicKey(ENV_AH)); // loadAuctionHouseProgram(null, ENV_AH, GRAPE_RPC_ENDPOINT);
         //const AuctionHouseProgram =  AuctionHouse.fromAccountAddress(ggoconnection, new PublicKey(ENV_AH)); //.fromAccountInfo(info)[0];
@@ -62,7 +62,7 @@ export async function getReceiptsFromAuctionHouse(auctionHouse: PublicKey) {
             //const AH_PK = new web3.PublicKey(AUCTION_HOUSE_ADDRESS);
             const ReceiptAccounts = await (Promise.all(ReceiptAccountSizes.map(async size => {
                 const accounts = await ggoconnection.getProgramAccounts(
-                    collectionAuctionHouse,
+                    AUCTION_HOUSE_PROGRAM_ID,
                   {
                     commitment: 'confirmed',
                     filters: [
@@ -72,7 +72,7 @@ export async function getReceiptsFromAuctionHouse(auctionHouse: PublicKey) {
                       {
                         memcmp: {
                             offset: 72,
-                            bytes: AUCTION_HOUSE_ADDRESS,
+                            bytes: collectionAuctionHouse,
                         },
                       },
                     ],
@@ -161,7 +161,7 @@ export async function getReceiptsFromAuctionHouse(auctionHouse: PublicKey) {
               );
               console.log('myTest:', (await myTest).toString());*/
               //console.log(testing[0]);
-
+            
               //  return ReceiptAccounts;
               const receipts = (await Promise.all(ReceiptAccounts))
                 .flat()
@@ -174,8 +174,6 @@ export async function getReceiptsFromAuctionHouse(auctionHouse: PublicKey) {
                     //mint: getMintFromReceipt(receipt.tradeState.toBase58()),
                     //cancelledAt: receipt?.canceledAt,
                 }));
-
-                console.log("receipts: "+JSON.stringify(receipts));
             return (receipts);
             
         }

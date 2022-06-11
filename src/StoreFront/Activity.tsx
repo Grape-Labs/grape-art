@@ -145,18 +145,19 @@ export default function ActivityView(props: any){
         try {
             
             if (!recentActivity){
-                console.log("with aH: "+ collectionAuthority.auctionHouse+" - "+JSON.stringify(collectionAuthority))
+                //console.log("with aH: "+ collectionAuthority.auctionHouse+" - "+JSON.stringify(collectionAuthority))
 
-                const results = await getReceiptsFromAuctionHouse(new web3.PublicKey(collectionAuthority.auctionHouse || AUCTION_HOUSE_ADDRESS));
+                const results = await getReceiptsFromAuctionHouse(collectionAuthority.auctionHouse || AUCTION_HOUSE_ADDRESS);
 
-                console.log("results: "+JSON.stringify(results));
-                /*
+                const activityResults = new Array();
+
                 for (var item of results){
-                    activityResults.push({buyeraddress: item.bookkeeper, amount: item.price, mint: item?.mint , isowner: false, timestamp: item.createdAt, blockTime: item.createdAt, state: item?.receipt_type});
-                }*/
+                    console.log("item: "+JSON.stringify(item))
+                    //activityResults.push({buyeraddress: item.bookkeeper, amount: item.price, mint: "5XdghzBiKqnUfWSUwHRC3PWYwyVXhLAxT7JiSWeye4fs", isowner: false, timestamp: item.createdAt, blockTime: item.createdAt, state: item?.receipt_type});
+                }
 
                 //activityResults.push({buyeraddress: feePayer.toBase58(), amount: memo_json?.amount || memo_json?.offer, mint: memo_json?.mint, isowner: false, timestamp: forSaleDate, blockTime: value.blockTime, state: memo_json?.state || memo_json?.status});
-                
+                //return activityResults;
 
 
             }
@@ -182,7 +183,7 @@ export default function ActivityView(props: any){
                 activityResults.push({
                     buyeraddress: item.buyeraddress, 
                     amount: item.amount, 
-                    mint: item?.mint, 
+                    mint: item?.mint || "5XdghzBiKqnUfWSUwHRC3PWYwyVXhLAxT7JiSWeye4fs", 
                     isowner: false, 
                     blockTime: item.blockTime, 
                     timestamp: item.timestamp, 
@@ -328,9 +329,11 @@ export default function ActivityView(props: any){
                                                             {item.state === 3 && <>Sale</>}
                                                             {item.state === 4 && <>Sale</>}
                                                             {item.state === 5 && <>Cancel</>}
+
+                                                            {item.state === "bid_receipt" && <>Offer</>}
                                                         </Typography></TableCell>
                                                         <TableCell  align="center"><Typography variant="h6">
-                                                            {convertSolVal(item.amount)} <SolCurrencyIcon sx={{fontSize:"10.5px"}} />
+                                                            {(item.amount)} <SolCurrencyIcon sx={{fontSize:"10.5px"}} />
                                                         </Typography></TableCell>
                                                         <TableCell align="right">
                                                             <Tooltip title={t('View NFT')}>
@@ -341,7 +344,7 @@ export default function ActivityView(props: any){
                                                                 >
                                                                     <ImageOutlinedIcon sx={{fontSize:"14px", mr:1}}/>
                                                                     <Typography variant="caption">
-                                                                        {trimAddress(item.mint, 3)}
+                                                                        {/*trimAddress(item.mint, 3)*/}
                                                                     </Typography>
                                                                 </Button>
                                                             </Tooltip>
