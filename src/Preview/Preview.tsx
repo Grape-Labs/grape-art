@@ -331,6 +331,7 @@ function GrapeVerified(props:any){
 }
 
 function GalleryItemMeta(props: any) {
+    const handlekey = props.handlekey || null;
     const collectionrawprimer = props.collectionrawdata.meta_primer || [];
     const collectionrawdata = props.collectionrawdata.meta_final || [];
     const collectionitem = props.collectionitem.collectionmeta || [];
@@ -897,19 +898,23 @@ function GalleryItemMeta(props: any) {
                         }}
                         >
                             <Grid container direction="row" spacing={{ xs: 2, md: 3 }}>
-                                <Grid item xs={6} md={8}>
-                                    <ButtonGroup variant="text">
-                                        <Button
-                                            className="button icon-left"
-                                            onClick={() => navigate(-1)}
-                                            sx={{color:'white',borderRadius:'24px'}}
-                                        >
-                                            <ArrowBackIosIcon />
-                                            {t('Back')}
-                                        </Button>
-                                        <SearchForMint setMintPubkey={props.setMintPubkey} />
-                                    </ButtonGroup>
-                                </Grid>
+                                {handlekey ?
+                                    <Grid item xs={6} md={8}>
+                                        <ButtonGroup variant="text">
+                                            <Button
+                                                className="button icon-left"
+                                                onClick={() => navigate(-1)}
+                                                sx={{color:'white',borderRadius:'24px'}}
+                                            >
+                                                <ArrowBackIosIcon />
+                                                {t('Back')}
+                                            </Button>
+                                            <SearchForMint setMintPubkey={props.setMintPubkey} />
+                                        </ButtonGroup>
+                                    </Grid>
+                                :
+                                    <Grid item xs={6} md={8}></Grid>
+                                }
                                 <Grid item  xs={6} md={4}>
                                     <Box display="flex" justifyContent="flex-end">
                                         <ButtonGroup variant="text">
@@ -925,7 +930,7 @@ function GalleryItemMeta(props: any) {
                                                     ></Avatar>
                                                 </Grid>
                                                 <Grid item>        
-                                                    <ShareSocialURL fontSize={'24px'} url={window.location.href} title={'Grape DEX | '+trimAddress(mint,4)} />
+                                                    <ShareSocialURL fontSize={'24px'} url={`https://grape.art${GRAPE_PREVIEW}${mint}`} title={'Grape DEX | '+trimAddress(mint,4)} />
                                                 </Grid>
 
                                         </ButtonGroup>
@@ -1660,13 +1665,13 @@ export function PreviewView(this: any, props: any) {
     //const isConnected = session && session.isConnected;
     const [loading, setLoading] = React.useState(false);
     //const [success, setSuccess] = React.useState(false);
-    const [mint, setMintPubkey] = React.useState(null);
+    const [mint, setMintPubkey] = React.useState(props.handlekey || null);
     const [refresh, setRefresh] = React.useState(false);
-    const {handlekey} = useParams<{ handlekey: string }>();
+    const {handlekey} = props.handlekey || useParams<{ handlekey: string }>();
     const [searchParams, setSearchParams] = useSearchParams();
 
     const urlParams = searchParams.get("pkey") || searchParams.get("mint") || handlekey;
-
+    console.log("HERE: " + urlParams);
     //const [pubkey, setPubkey] = React.useState(null);
     const [walletPKId, setInputPKValue] = React.useState(null);
     
@@ -1830,7 +1835,7 @@ export function PreviewView(this: any, props: any) {
             //if ((collectionmeta)&&(!loading)){
             //if (image){
                 return (
-                        <GalleryItemMeta collectionitem={collectionmeta} collectionrawdata={collectionrawdata} mint={mint} setRefresh={setRefresh} setMintPubkey={setMintPubkey} collectionAuctionHouse={collectionAuctionHouse} />
+                        <GalleryItemMeta collectionitem={collectionmeta} collectionrawdata={collectionrawdata} mint={mint} setRefresh={setRefresh} setMintPubkey={setMintPubkey} collectionAuctionHouse={collectionAuctionHouse} handlekey={handlekey} />
                 );
             }
             //}
@@ -1841,20 +1846,22 @@ export function PreviewView(this: any, props: any) {
         if (refresh)
             setRefresh(!refresh);
         
-        if (mint && ValidateAddress(mint)){
-            //props.history.push({
-            history({
-                pathname: GRAPE_PREVIEW+mint
-            },
-                { replace: true }
-            );
-        } else {
-            history({
-                pathname: '/preview'
-            },
-                { replace: true }
-            );
-        } 
+        if (!props?.handlekey){
+            if (mint && ValidateAddress(mint)){
+                //props.history.push({
+                history({
+                    pathname: GRAPE_PREVIEW+mint
+                },
+                    { replace: true }
+                );
+            } else {
+                history({
+                    pathname: '/preview'
+                },
+                    { replace: true }
+                );
+            } 
+        }
         
     }, [mint, refresh]);
 

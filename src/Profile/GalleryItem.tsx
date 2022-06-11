@@ -6,6 +6,8 @@ import { decodeMetadata } from '../utils/grapeTools/utils'
 import fetch from 'node-fetch'
 import { PublicKey } from '@solana/web3.js';
 
+import { styled, alpha } from '@mui/material/styles';
+
 import {
     Pagination,
     Stack,
@@ -18,6 +20,9 @@ import {
     ImageListItemBar,
     IconButton,
     Button,
+    Dialog,
+    DialogTitle,
+    DialogContent
 } from '@mui/material';
 
 import {
@@ -28,17 +33,37 @@ import SolCurrencyIcon from '../components/static/SolCurrencyIcon';
 import { GRAPE_PREVIEW } from '../utils/grapeTools/constants';
 import { getImageOrFallback } from '../utils/grapeTools/WalletAddress';
 
+import { PreviewView } from "../Preview/Preview";
+
+const BootstrapDialog = styled(Dialog)(({ theme }) => ({
+    '& .MuDialogContent-root': {
+      padding: theme.spacing(2),
+    },
+    '& .MuDialogActions-root': {
+      padding: theme.spacing(1),
+    },
+}));
+
 export default function GalleryItem(props: any){
     const MD_PUBKEY = METAPLEX_PROGRAM_ID;
     const collectionitem = props.collectionitem || [];
     const mode = props?.mode || 0;
     const mint = collectionitem?.wallet?.account?.data.parsed.info.mint || collectionitem?.wallet?.address || collectionitem?.meta?.mint || null;
     const [expanded, setExpanded] = React.useState(false);
+    const [open, setOpenDialog] = React.useState(false);
     const [loading, setLoading] = React.useState(false);
     const [collectionmeta, setCollectionMeta] = React.useState(null);
     const isparent = props?.isparent || false;
         //const [collectionrawdata, setCollectionRaw] = React.useState(props.collectionitemmeta || null);
         
+        const handleClickOpenDialog = () => {
+            setOpenDialog(true);
+        };
+        
+        const handleCloseDialog = () => {
+            setOpenDialog(false);
+        };
+
         const handleExpandClick = () => {
             setExpanded(!expanded);
         };
@@ -124,7 +149,9 @@ export default function GalleryItem(props: any){
             try{
                 if (image){
                     if ((image?.toLocaleUpperCase().indexOf('?EXT=PNG') > -1) ||
-                        (image?.toLocaleUpperCase().indexOf('?EXT=JPEG') > -1)){
+                        (image?.toLocaleUpperCase().indexOf('?EXT=JPEG') > -1) ||
+                        (image?.toLocaleUpperCase().indexOf('.JPEG') > -1) ||
+                        (image?.toLocaleUpperCase().indexOf('.PNG') > -1)){
                             let image_url = 'https://solana-cdn.com/cdn-cgi/image/width=256/'+image;
                             image = image_url;
                             //image = setImageUrl(image_url, image);
@@ -173,7 +200,7 @@ export default function GalleryItem(props: any){
                                                 </ListItemButton>
                                             </Grid>
                                         ):(
-                                            
+                                            <>
                                                 <ListItemButton
                                                     sx={{
                                                         width:'100%',
@@ -216,6 +243,8 @@ export default function GalleryItem(props: any){
                                                     />
                                                 )}
                                                 </ListItemButton>
+                                            </>
+
                                         )}
                                         <Grid item sx={{display:'flex'}}>
                                             <Box
@@ -245,7 +274,8 @@ export default function GalleryItem(props: any){
                                     justifyContent="center">
                                         <Grid item sx={{display:'flex',justifyContent:'center',alignItems:'center'}}>
                                             <ListItemButton
-                                                component={Link} to={`${GRAPE_PREVIEW}${collectionitem?.address}`}
+                                                //component={Link} to={`${GRAPE_PREVIEW}${collectionitem?.address}`}
+                                                onClick={handleClickOpenDialog}
                                                 sx={{
                                                     width:'100%',
                                                     borderRadius:'25px',
@@ -311,6 +341,23 @@ export default function GalleryItem(props: any){
                                         </Box>
                                     </Grid>
                                 </Grid>
+                                <BootstrapDialog 
+                                    fullWidth={true}
+                                    maxWidth={"lg"}
+                                    open={open} onClose={handleCloseDialog}
+                                    PaperProps={{
+                                        style: {
+                                            background: '#13151C',
+                                            border: '1px solid rgba(255,255,255,0.05)',
+                                            borderTop: '1px solid rgba(255,255,255,0.1)',
+                                            borderRadius: '20px'
+                                        }
+                                    }}
+                                >
+                                    <DialogContent>
+                                        <PreviewView handlekey={collectionitem?.address} />
+                                    </DialogContent>
+                                </BootstrapDialog>
                             </>
                             }
                         </>

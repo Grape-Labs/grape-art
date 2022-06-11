@@ -23,6 +23,8 @@ import {
     Tooltip,
 } from '@mui/material';
 
+import { PreviewView } from "../Preview/Preview";
+
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
@@ -103,9 +105,9 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 
 export default function ActivityView(props: any){
     const collectionAuthority = props.collectionAuthority;
-
     const MD_PUBKEY = METAPLEX_PROGRAM_ID;
     const [open, setOpenDialog] = React.useState(false);
+    const [openPreviewDialog, setOpenPreviewDialog] = React.useState(false);
     const { t, i18n } = useTranslation();
     const { publicKey } = useWallet();
     const [walletCollection, setWalletCollection] = React.useState(null);
@@ -115,6 +117,14 @@ export default function ActivityView(props: any){
     const [recentActivity, setRecentActivity] = React.useState(null);
     const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
     const rpclimit = 100;
+
+    const handleClickOpenPreviewDialog = () => {
+        setOpenPreviewDialog(true);
+    };
+    
+    const handleClosePreviewDialog = () => {
+        setOpenPreviewDialog(false);
+    };
 
     const handleClickOpenDialog = () => {
         setOpenDialog(true);
@@ -345,7 +355,7 @@ export default function ActivityView(props: any){
                 </DialogTitle>
                 <DialogContent>
                     <List>
-                    {/* !publicKey || loading ?
+                    { !publicKey || loading ?
                         <>
                             {publicKey ?
                             <>
@@ -356,11 +366,6 @@ export default function ActivityView(props: any){
                                 <WalletConnectButton />
                             </>
                             }
-                        </>
-                    */}
-                    {loading ?
-                        <>
-                            loading
                         </>
                     : 
                         <>
@@ -430,7 +435,8 @@ export default function ActivityView(props: any){
                                                     <Button 
                                                         color="error"
                                                         variant="text"
-                                                        component={Link} to={`${GRAPE_PREVIEW}${item.mint}`}
+                                                        //component={Link} to={`${GRAPE_PREVIEW}${item.mint}`}
+                                                        onClick={handleClickOpenPreviewDialog}
                                                         //onClick={() => handleCancelWithdrawOffer(convertSolVal(item.offeramount), item.mint, item.updateAuthority)}
                                                         sx={{
                                                             borderRadius: '24px',
@@ -441,6 +447,23 @@ export default function ActivityView(props: any){
                                                 </Tooltip>
                                             </TableCell>
                                     </TableRow>
+                                    <BootstrapDialog 
+                                        fullWidth={true}
+                                        maxWidth={"lg"}
+                                        open={openPreviewDialog} onClose={handleClosePreviewDialog}
+                                        PaperProps={{
+                                            style: {
+                                                background: '#13151C',
+                                                border: '1px solid rgba(255,255,255,0.05)',
+                                                borderTop: '1px solid rgba(255,255,255,0.1)',
+                                                borderRadius: '20px'
+                                            }
+                                        }}
+                                    >
+                                        <DialogContent>
+                                            <PreviewView handlekey={item.mint} />
+                                        </DialogContent>
+                                    </BootstrapDialog>
                                 </>
                             ))}
                         </Table>

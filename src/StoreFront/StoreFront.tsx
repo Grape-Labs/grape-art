@@ -284,129 +284,6 @@ type Props = {
     waitBeforeShow?: number;
 };
 
-const GalleryItem = (props: any) => {
-    const collectionitem = props.collectionitem || [];
-    const mint = collectionitem?.wallet?.account.data.parsed.info.mint || null;
-    const [expanded, setExpanded] = React.useState(false);
-    const [loading, setLoading] = React.useState(false);
-    const [collectionmeta, setCollectionMeta] = React.useState(null);
-        //const [collectionrawdata, setCollectionRaw] = React.useState(props.collectionitemmeta || null);
-        
-        const handleExpandClick = () => {
-            setExpanded(!expanded);
-        };
-
-        const MD_PUBKEY = new PublicKey("metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s");
-        const getCollectionData = async () => {
-            try {
-                let meta_primer = collectionitem;
-                let buf = Buffer.from(meta_primer.data, 'base64');
-                let meta_final = decodeMetadata(buf);
-                
-                const metadata = await window.fetch(meta_final.data.uri).then(
-                    (res: any) => res.json());
-                
-                return metadata;
-            } catch (e) { // Handle errors from invalid calls
-                //console.log("err... "+e);
-                return null;
-            }
-        }
-
-        const getCollectionMeta = async () => {
-            if (!loading){
-                setLoading(true);
-                let [collectionmeta] = await Promise.all([getCollectionData()]);
-                setCollectionMeta({
-                    collectionmeta
-                });
-                setLoading(false);
-            }
-        }
-
-        useEffect(() => {
-            const interval = setTimeout(() => {
-                if (mint)
-                    getCollectionMeta();
-            }, 500);
-            return () => clearInterval(interval); 
-        }, [collectionitem]);
-        
-        if((!collectionmeta)||
-            (loading)){
-            //getCollectionMeta();
-            //setTimeout(getCollectionMeta(), 250);
-            return (
-                <ListItemButton
-                    sx={{
-                        width:'100%',
-                        borderRadius:'25px',
-                        p: '2px',
-                        mb: 5
-                    }}
-                >
-                    <Skeleton 
-                        sx={{
-                            borderRadius:'25px',
-                        }}
-                        variant="rectangular" width={325} height={325} />
-                </ListItemButton>
-            )
-        } //else{
-        {   
-            let image = collectionmeta.collectionmeta?.image || null;
-            if (!image){
-                console.log("ERR: " + JSON.stringify(collectionmeta));
-                return null;
-            }else{
-            //console.log("Mint: "+mint);
-            //if ((collectionmeta)&&(!loading)){
-            //if (image){
-                return (
-                    
-                        <Grid 
-                            container 
-                            alignItems="center"
-                            justifyContent="center">
-                            <Grid item sx={{display:'flex',justifyContent:'center',alignItems:'center'}}>
-                                <ListItemButton
-                                    component={Link} to={`${GRAPE_PREVIEW}${mint}`}
-                                    sx={{
-                                        width:'100%',
-                                        borderRadius:'25px',
-                                        p: '2px'
-                                    }}
-                                >
-                                    <img
-                                        src={`${image}`}
-                                        srcSet={`${image}`}
-                                        alt={collectionmeta.collectionmeta?.name}
-                                        //onClick={ () => openImageViewer(0) }
-                                        loading="lazy"
-                                        height="auto"
-                                        style={{
-                                            width:'100%',
-                                            borderRadius:'24px'
-                                        }}
-                                    />
-                                </ListItemButton>
-                            </Grid>
-                            <Grid item sx={{display:'flex'}}>
-                                <Box
-                                    sx={{p:1}}
-                                >
-                                    <Typography variant="caption">
-                                        {collectionmeta.collectionmeta?.name}
-                                    </Typography>
-                                </Box>
-                            </Grid>
-                        </Grid>
-                );
-            }
-            //}
-        }
-}
-
 interface TabPanelProps {
     children?: React.ReactNode;
     index: number;
@@ -1509,7 +1386,7 @@ export function StoreFrontView(this: any, props: any) {
                                         ITEMS
                                     </Typography>
                                     <Typography variant="subtitle2">
-                                        {(collectionAuthority.size/1000).toFixed(1)}k
+                                        {collectionMintList?.length || `${(collectionAuthority.size/1000).toFixed(1)}k`}
                                     </Typography>
                                 </Box>
                             </Grid>

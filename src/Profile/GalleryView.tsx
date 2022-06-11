@@ -92,7 +92,7 @@ export default function GalleryView(props: any){
     const isparent = props?.isparent || false;
     const groupbysymbol = props?.groupbysymbol || null;
     //const walletCollection = props.walletCollection;
-    const [foundList, setFoundList] = React.useState(collectionMintList);
+    const [foundList, setFoundList] = React.useState();
 
     // If a gallery item is groupBySymbol > 0
     // start searching how many are grouped so we can do this as a collective :) 
@@ -127,7 +127,8 @@ export default function GalleryView(props: any){
     function sortMintList(type:number){
         setFilterVal("");
         if (+type === 0){
-            //collectionMintList.sort((a:any,b:any) => (a.price < b.price) ? 1 : -1);
+            
+            collectionMintList.sort((a:any,b:any) => (a.price < b.price) ? 1 : -1);
             // now inverse the list
             //Array.prototype.reverse.call(collectionMintList);
             console.log("results: "+JSON.stringify(collectionMintList));
@@ -186,18 +187,21 @@ export default function GalleryView(props: any){
 
     const loadScrollData = async () => {
         try {
-            setScrollData(foundList.slice(0, scrollData.length + 20));
+            if (foundList)
+                setScrollData(foundList.slice(0, scrollData.length + 20));
         } catch (err) {
             console.log(err);
         }
     };
 
     const handleOnRowsScrollEnd = () => {
-        if (scrollData.length < foundList.length) {
-          setHasMoreValue(true);
-          loadScrollData();
-        } else {
-          setHasMoreValue(false);
+        if (foundList){
+            if (scrollData.length < foundList.length) {
+            setHasMoreValue(true);
+            loadScrollData();
+            } else {
+            setHasMoreValue(false);
+            }
         }
     };
 
@@ -206,20 +210,28 @@ export default function GalleryView(props: any){
 
     const loadScrollProfileData = async () => {
         try {
-            setScrollProfileData(foundList.slice(0, scrollData.length + 20));
+            if (foundList)
+                setScrollProfileData(foundList.slice(0, scrollData.length + 20));
         } catch (err) {
             console.log(err);
         }
     };
 
     const handleOnRowsScrollProfileEnd = () => {
-        if (scrollData.length < foundList.length) {
-          setHasMoreProfileValue(true);
-          loadScrollProfileData();
-        } else {
-          setHasMoreProfileValue(false);
+        if (foundList){
+            if (scrollData.length < foundList.length) {
+            setHasMoreProfileValue(true);
+            loadScrollProfileData();
+            } else {
+            setHasMoreProfileValue(false);
+            }
         }
     };
+
+    React.useEffect(() => {
+        setFoundList(collectionMintList)
+        console.log("REDRAW...");
+    }, [collectionMintList])
 
     return (
         <>
