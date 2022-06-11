@@ -473,8 +473,8 @@ export default function ActivityView(props: any){
                                                             src={item.metadataParsed?.image}
                                                             sx={{
                                                                 backgroundColor:'#222',
-                                                                width: 25, 
-                                                                height: 25,
+                                                                width: 40, 
+                                                                height: 40,
                                                                 mr:1
                                                             }}
                                                         ></Avatar>
