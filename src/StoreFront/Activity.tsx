@@ -145,10 +145,10 @@ export default function ActivityView(props: any){
         try {
             
             if (!recentActivity){
-
+                console.log("with aH: "+ collectionAuthority.auctionHouse)
 
                 const results = getReceiptsFromAuctionHouse(new web3.PublicKey(collectionAuthority.auctionHouse || AUCTION_HOUSE_ADDRESS));
-                
+
                 console.log("results: "+JSON.stringify(results));
                 /*
                 for (var item of results){
