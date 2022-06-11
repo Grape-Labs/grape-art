@@ -966,7 +966,7 @@ export function StoreFrontView(this: any, props: any) {
 
     const getCollectionStates = async (address:string) => {
         
-        if (!loading){
+        if (!stateLoading){
             setStateLoading(true);
             //const anchorProgram = await loadAuctionHouseProgram(null, ENV_AH, GRAPE_RPC_ENDPOINT);
             const auctionHouseKey = new PublicKey(AUCTION_HOUSE_ADDRESS);
@@ -974,16 +974,13 @@ export function StoreFrontView(this: any, props: any) {
             //let derivedMintPDA = await web3.PublicKey.findProgramAddress([Buffer.from((new PublicKey(mint)).toBuffer())], auctionHouseKey);
             //let derivedBuyerPDA = await web3.PublicKey.findProgramAddress([Buffer.from((publicKey).toBuffer())], auctionHouseKey);
             //let derivedOwnerPDA = await web3.PublicKey.findProgramAddress([Buffer.from((new PublicKey(mintOwner)).toBuffer())], auctionHouseKey);
-            
-            address = "8749adNqCXzVjdYVCUFcjUUxsPcHuCW482roGqsxtMRX";
-            
-            let derivedUAPDA = await PublicKey.findProgramAddress([Buffer.from((new PublicKey(address)).toBuffer())], auctionHouseKey);
+            let derivedUAPDA = await PublicKey.findProgramAddress([Buffer.from((new PublicKey(collectionAuthority.address)).toBuffer())], auctionHouseKey);
             /*
             console.log("derivedMintPDA: "+derivedMintPDA);
             console.log("derivedBuyerPDA: "+derivedBuyerPDA);
             console.log("derivedOwnerPDA: "+derivedOwnerPDA);
             */
-            let result = await ggoconnection.getSignaturesForAddress(derivedUAPDA[0], {limit: 500});
+            let result = await ggoconnection.getSignaturesForAddress(derivedUAPDA[0], {limit: 250});
             let ahListings: any[] = [];
             let ahListingsMints: any[] =[];
             let exists = false;
@@ -994,10 +991,11 @@ export function StoreFrontView(this: any, props: any) {
             for (var value of result){
                 signatures.push(value.signature);
             }
+            
             const getTransactionAccountInputs2 = await ticonnection.getParsedTransactions(signatures, 'confirmed');
             let featured = null;
             for (var value of result){
-                
+            
                 if (value.err === null){
                     try{
                         //console.log('value: '+JSON.stringify(value));
@@ -1077,10 +1075,6 @@ export function StoreFrontView(this: any, props: any) {
                 }
             } 
 
-
-
-
-            
             // IMPORTANT
             // loop and set the list price, highest offer, and date of the listing
             for (var listing of ahListings){
@@ -1107,6 +1101,7 @@ export function StoreFrontView(this: any, props: any) {
                             highestOffer: listing.amount,
                             name:null,
                             image:'',
+                            price:0,
                         })
                     } else if (listing.state === 2){
                         collectionMintList.push({
@@ -1135,8 +1130,6 @@ export function StoreFrontView(this: any, props: any) {
 
             const missing_meta = await getMissingCollectionData(0, mintsToGet);
             
-            console.log("missing_meta: "+JSON.stringify(missing_meta));
-
             /*
             let finalmeta = missing_meta;//JSON.parse(JSON.stringify(final_collection_meta));
             try{
@@ -1154,10 +1147,15 @@ export function StoreFrontView(this: any, props: any) {
                 }
             }
             // now with missing meta populate it to collectionMintList
+            //collectionMintList.sort((a:any,b:any) => (a?.price < b?.price) ? 1 : -1);
             collectionMintList.sort((a:any,b:any) => (a.price < b.price) ? 1 : -1);
+
+            console.log("collection sorted: "+JSON.stringify(collectionMintList));
+             
             //collectionMintList.sort((a:any,b:any) => ((a.price - b.price) ));
             // now inverse the list
             Array.prototype.reverse.call(collectionMintList);
+            console.log("collection reversed: "+JSON.stringify(collectionMintList));
 
             /*
             let collectionmeta = await getCollectionData(ahListingsMints);
