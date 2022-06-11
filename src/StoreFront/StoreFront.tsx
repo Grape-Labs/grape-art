@@ -92,6 +92,11 @@ import {
     FEATURED_DAO_ARRAY, 
     GRAPE_COLLECTIONS_DATA
 } from '../utils/grapeTools/constants';
+
+import { 
+    getReceiptsFromAuctionHouse
+} from '../utils/grapeTools/helpers';
+
 import ShareSocialURL from '../utils/grapeTools/ShareUrl';
 
 import GalleryView from '../Profile/GalleryView';

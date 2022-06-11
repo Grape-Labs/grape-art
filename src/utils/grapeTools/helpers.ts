@@ -162,7 +162,7 @@ export async function getReceiptsFromAuctionHouse(auctionHouse: PublicKey) {
               console.log('myTest:', (await myTest).toString());*/
               //console.log(testing[0]);
 
-
+              //  return ReceiptAccounts;
               const receipts = (await Promise.all(ReceiptAccounts))
                 .flat()
                 .map(receipt => ({
@@ -174,6 +174,8 @@ export async function getReceiptsFromAuctionHouse(auctionHouse: PublicKey) {
                     //mint: getMintFromReceipt(receipt.tradeState.toBase58()),
                     //cancelledAt: receipt?.canceledAt,
                 }));
+
+                console.log("receipts: "+JSON.stringify(receipts));
             return (receipts);
             
         }

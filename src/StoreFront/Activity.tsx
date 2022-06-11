@@ -59,11 +59,13 @@ import {
     getAtaForMint,
   } from '../utils/auctionHouse/helpers/accounts';
 
+
 import {
     METAPLEX_PROGRAM_ID,
 } from '../utils/auctionHouse/helpers/constants';
 
 import { decodeMetadata } from '../utils/grapeTools/utils';
+import { getReceiptsFromAuctionHouse } from '../utils/grapeTools/helpers';
 import { 
     GRAPE_RPC_ENDPOINT, 
     GRAPE_PREVIEW, 
@@ -143,107 +145,20 @@ export default function ActivityView(props: any){
         try {
             
             if (!recentActivity){
-                const anchorProgram = await loadAuctionHouseProgram(null, ENV_AH, GRAPE_RPC_ENDPOINT);
 
-                const auctionHouseKey = new web3.PublicKey(collectionAuthority.auctionHouse || AUCTION_HOUSE_ADDRESS);
-                
-                const auctionHouseObj = await anchorProgram.account.auctionHouse.fetch(auctionHouseKey,);
-                //let derivedMintPDA = await web3.PublicKey.findProgramAddress([Buffer.from((new PublicKey(mint)).toBuffer())], auctionHouseKey);
-                //let derivedBuyerPDA = await web3.PublicKey.findProgramAddress([Buffer.from((publicKey).toBuffer())], auctionHouseKey);
-                //let derivedOwnerPDA = await web3.PublicKey.findProgramAddress([Buffer.from((new PublicKey(mintOwner)).toBuffer())], auctionHouseKey);
-                let derivedUpdateAuthorityPDA = await web3.PublicKey.findProgramAddress([Buffer.from((new PublicKey(collectionAuthority.address)).toBuffer())], auctionHouseKey);
-                
-                let derivedPDA = derivedUpdateAuthorityPDA;
-                if ((mode === 1) && (publicKey))
-                    derivedPDA = await web3.PublicKey.findProgramAddress([Buffer.from((publicKey).toBuffer())], auctionHouseKey);
 
+                const results = getReceiptsFromAuctionHouse(new web3.PublicKey(collectionAuthority.auctionHouse || AUCTION_HOUSE_ADDRESS));
+                
+                console.log("results: "+JSON.stringify(results));
                 /*
-                console.log("derivedMintPDA: "+derivedMintPDA);
-                console.log("derivedBuyerPDA: "+derivedBuyerPDA);
-                console.log("derivedOwnerPDA: "+derivedOwnerPDA);
-                */
-                
-                let result = await ggoconnection.getSignaturesForAddress(derivedPDA[0], {limit: 500});
-                
-                let activityResults: any[] = [];
-                let cnt = 0;
-                let signatures: any[] = [];
-                for (var value of result){
-                    signatures.push(value.signature);
-                }
-    
-                const getTransactionAccountInputs2 = await ggoconnection.getParsedTransactions(signatures, 'confirmed');
-                
-                for (var value of result){
-                    console.log("value "+JSON.stringify(value));
-                    if (value.err === null){
-                        
-                        try{
-                            console.log('value: '+JSON.stringify(value));
-                            const getTransactionAccountInputs = getTransactionAccountInputs2[cnt];
-                            
-                            if (getTransactionAccountInputs?.transaction && getTransactionAccountInputs?.transaction?.message){
-                                let feePayer = new PublicKey(getTransactionAccountInputs?.transaction.message.accountKeys[0].pubkey); // .feePayer.toBase58();    
-                                
-                                //console.log('VAL '+JSON.stringify(value));
-                                if ((value) && (value.memo)){
-                                    console.log('RAW:: ('+derivedUpdateAuthorityPDA[0]+'): ' +JSON.stringify(value));
+                for (var item of results){
+                    activityResults.push({buyeraddress: item.bookkeeper, amount: item.price, mint: item?.mint , isowner: false, timestamp: item.createdAt, blockTime: item.createdAt, state: item?.receipt_type});
+                }*/
 
-                                    let memo_arr: any[] = [];
-                                    let memo_str = value.memo;
-                                    let memo_instances = ((value.memo.match(/{/g)||[]).length);
-                                    if (memo_instances > 0) {
-                                        // multi memo
-                                        let mcnt = 0;
-                                        let submemo = memo_str;
-                                        console.log("STR full (instance "+memo_instances+"): "+submemo);
-                                        for (var mx=0;mx<memo_instances;mx++){
-                                            let init = submemo.indexOf('{');
-                                            let fin = submemo.indexOf('}');
-                                            memo_str = submemo.substring(init,fin+1); // include brackets
-                                            memo_arr.push(memo_str);
-                                            submemo = submemo.replace(memo_str, "");
-                                        }
-                                    } else{
-                                        let init = memo_str.indexOf('{');
-                                        let fin = memo_str.indexOf('}');
-                                        memo_str = memo_str.substring(init,fin); // include brackets
-                                        memo_arr.push(memo_str);
-                                    }
-                                    
-                                    for (var memo_item of memo_arr){
-                                        try{
-                                            const memo_json = JSON.parse(memo_item);
-                                            
-                                            console.log('OFFER:: ('+derivedUpdateAuthorityPDA[0]+'): ' +JSON.stringify(memo_item));
-                                            let forSaleDate = ''+value.blockTime;
-                                            if (forSaleDate){
-                                                let timeago = timeAgo(''+value.blockTime);
-                                                forSaleDate = timeago;
-                                            }
-                                            //console.log(memo_json);
-                                            if ((memo_json?.state === 0) || // withdraw
-                                                (memo_json?.state === 1) || // offer
-                                                (memo_json?.state === 2) || // sale
-                                                (memo_json?.state === 3) || // listing/accept
-                                                (memo_json?.state === 4) || // buy now
-                                                (memo_json?.state === 5)){ // cancel
-                                                    activityResults.push({buyeraddress: feePayer.toBase58(), amount: memo_json?.amount || memo_json?.offer, mint: memo_json?.mint, isowner: false, timestamp: forSaleDate, blockTime: value.blockTime, state: memo_json?.state || memo_json?.status});
-                                            }
-                                        } catch(er){
-                                            console.log("ERR: "+er)
-                                        }
-                                    }
-                                    
-                                    return activityResults;
-                                    
-                                }
-                            }
-                        } catch(err){
-                            console.log("ERR: "+err)
-                        }
-                    }
-                }
+                //activityResults.push({buyeraddress: feePayer.toBase58(), amount: memo_json?.amount || memo_json?.offer, mint: memo_json?.mint, isowner: false, timestamp: forSaleDate, blockTime: value.blockTime, state: memo_json?.state || memo_json?.status});
+                
+
+
             }
             return null;
         } catch (e) { // Handle errors from invalid calls

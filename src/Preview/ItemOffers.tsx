@@ -286,8 +286,8 @@ function SellNowVotePrompt(props:any){
                         enqueueSnackbar(`Proposal: ${proposalPk} created for accepting Listing Price Set to ${sell_now_amount} SOL`,{ variant: 'success' });
                     }
                 } else {
-                    const transactionInstr = await sellNowListing(+sell_now_amount, mint, publicKey.toString(), mintOwner, weightedScore, daoPublicKey, updateAuthority, collectionAuctionHouse);
-                    //const transactionInstr = await gah_makeListing(+sell_now_amount, mint, publicKey.toString(), mintOwner, weightedScore, daoPublicKey);
+                    //const transactionInstr = await sellNowListing(+sell_now_amount, mint, publicKey.toString(), mintOwner, weightedScore, daoPublicKey, updateAuthority, collectionAuctionHouse);
+                    const transactionInstr = await gah_makeListing(+sell_now_amount, mint, publicKey.toString(), mintOwner, weightedScore, daoPublicKey, updateAuthority, collectionAuctionHouse);
                     const instructionsArray = [transactionInstr.instructions].flat();            
                     transaction.add(
                         ...instructionsArray
@@ -484,8 +484,8 @@ function SellNowPrompt(props:any){
             //const setSellNowPrice = async () => {
             try {
                 //START SELL NOW / LIST
-                const transactionInstr = await sellNowListing(+sell_now_amount, mint, publicKey.toString(), mintOwner, weightedScore, null, updateAuthority, collectionAuctionHouse);
-                //const transactionInstr = await gah_makeListing(+sell_now_amount, mint, publicKey.toString(), mintOwner, weightedScore, null);
+                //const transactionInstr = await sellNowListing(+sell_now_amount, mint, publicKey.toString(), mintOwner, weightedScore, null, updateAuthority, collectionAuctionHouse);
+                const transactionInstr = await gah_makeListing(+sell_now_amount, mint, publicKey.toString(), mintOwner, weightedScore, null, updateAuthority, collectionAuctionHouse);
                 const instructionsArray = [transactionInstr.instructions].flat();        
                 const transaction = new Transaction()
                 .add(
@@ -668,10 +668,10 @@ export function OfferPrompt(props: any) {
 			*/
 			//no need allowing for multiple offers
                 try {
-                    const transactionInstr = await submitOffer(+offer_amount, mint, publicKey.toString(), mintOwner, updateAuthority, collectionAuctionHouse);
+                    //const transactionInstr = await submitOffer(+offer_amount, mint, publicKey.toString(), mintOwner, updateAuthority, collectionAuctionHouse);
                     //console.log("transactionInstr1 submitOffer: "+JSON.stringify(transactionInstr1));
     
-                    //const transactionInstr = await gah_makeOffer(+offer_amount, mint, publicKey.toString(), mintOwner, updateAuthority);
+                    const transactionInstr = await gah_makeOffer(+offer_amount, mint, publicKey.toString(), mintOwner, updateAuthority, collectionAuctionHouse);
                     //console.log("transactionInstr makeOffer: "+JSON.stringify(transactionInstr));
     
                     const instructionsArray = [transactionInstr.instructions].flat();        
@@ -959,10 +959,8 @@ export default function ItemOffers(props: any) {
             const transaction = new Transaction();
             
             if (!ValidateDAO(mintOwner)) {
-                console.log("Here 1")
-                const transactionInstr = await acceptOffer(offerAmount, mint, walletPublicKey, buyerAddress.toString(), updateAuthority, collectionAuctionHouse);
-                console.log("here 2")
-                //const transactionInstr = await gah_acceptOffer(offerAmount, mint, walletPublicKey, buyerAddress.toString(), updateAuthority);
+                //const transactionInstr = await acceptOffer(offerAmount, mint, walletPublicKey, buyerAddress.toString(), updateAuthority, collectionAuctionHouse);
+                const transactionInstr = await gah_acceptOffer(offerAmount, mint, walletPublicKey, buyerAddress.toString(), updateAuthority, collectionAuctionHouse);
                 const instructionsArray = [transactionInstr.instructions].flat();  
                 transaction.add(
                     ...instructionsArray
@@ -1050,6 +1048,7 @@ export default function ItemOffers(props: any) {
         try {
             //START CANCEL LISTING
             const transactionInstr = await cancelListing(salePrice, mint, walletPublicKey.toString(), mintOwner, updateAuthority, collectionAuctionHouse);
+            //const transactionInstr = await gah_cancelListing(salePrice, mint, walletPublicKey.toString(), mintOwner, updateAuthority, collectionAuctionHouse);
             const instructionsArray = [transactionInstr.instructions].flat();        
             const transaction = new Transaction()
             .add(
@@ -1098,8 +1097,8 @@ export default function ItemOffers(props: any) {
         try {
             //const transactionInstr = await withdrawOffer(offerAmount, mint, walletPublicKey.toString(), mintOwner, updateAuthority);
             
-            const transactionInstr = await cancelWithdrawOffer(offerAmount, mint, walletPublicKey, mintOwner, updateAuthority, collectionAuctionHouse);
-            //const transactionInstr = await gah_cancelOffer(offerAmount, mint, walletPublicKey, mintOwner);
+            //const transactionInstr = await cancelWithdrawOffer(offerAmount, mint, walletPublicKey, mintOwner, updateAuthority, collectionAuctionHouse);
+            const transactionInstr = await gah_cancelOffer(offerAmount, mint, walletPublicKey, mintOwner, updateAuthority, collectionAuctionHouse);
             const instructionsArray = [transactionInstr.instructions].flat();        
             const transaction = new Transaction()
             .add(
@@ -1147,8 +1146,8 @@ export default function ItemOffers(props: any) {
     const handleCancelOffer = async (offerAmount: number) => {
         try {
             console.log("with updateAuthority/collectionAuctionHouse: "+updateAuthority+" / "+collectionAuctionHouse);
-            const transactionInstr = await cancelOffer(offerAmount, mint, walletPublicKey, mintOwner, updateAuthority, collectionAuctionHouse);
-			//const transactionInstr = await gah_cancelOffer(offerAmount, mint, walletPublicKey, mintOwner, updateAuthority, collectionAuctionHouse);
+            //const transactionInstr = await cancelOffer(offerAmount, mint, walletPublicKey, mintOwner, updateAuthority, collectionAuctionHouse);
+			const transactionInstr = await gah_cancelOffer(offerAmount, mint, walletPublicKey, mintOwner, updateAuthority, collectionAuctionHouse);
             //const transactionInstr = await cancelWithdrawOffer(offerAmount, mint, walletPublicKey, mintOwner, updateAuthority, collectionAuctionHouse);
             const instructionsArray = [transactionInstr.instructions].flat();        
             const transaction = new Transaction()
