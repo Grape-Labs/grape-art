@@ -1091,6 +1091,8 @@ export function StoreFrontView(this: any, props: any) {
                             collectionMintList[key].listedTimestamp = listing.timestamp;
                             collectionMintList[key].listedBlockTime = listing.blockTime;
                         }
+                    } else{
+                        collectionMintList[key].price = 0;
                     }
                 });
                 if (!exists){
@@ -1146,16 +1148,17 @@ export function StoreFrontView(this: any, props: any) {
                     }
                 }
             }
+
             // now with missing meta populate it to collectionMintList
             //collectionMintList.sort((a:any,b:any) => (a?.price < b?.price) ? 1 : -1);
             collectionMintList.sort((a:any,b:any) => (a.price < b.price) ? 1 : -1);
 
-            console.log("collection sorted: "+JSON.stringify(collectionMintList));
+            //console.log("collection sorted: "+JSON.stringify(collectionMintList));
              
             //collectionMintList.sort((a:any,b:any) => ((a.price - b.price) ));
             // now inverse the list
-            Array.prototype.reverse.call(collectionMintList);
-            console.log("collection reversed: "+JSON.stringify(collectionMintList));
+            //Array.prototype.reverse.call(collectionMintList);
+            //console.log("collection reversed: "+JSON.stringify(collectionMintList));
 
             /*
             let collectionmeta = await getCollectionData(ahListingsMints);

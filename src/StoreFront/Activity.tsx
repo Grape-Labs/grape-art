@@ -2,6 +2,7 @@ import * as React from 'react';
 import { styled } from '@mui/material/styles';
 
 import { Link, useLocation, NavLink } from 'react-router-dom';
+import { TokenAmount } from '../utils/grapeTools/safe-math';
 
 import {
     Box,
@@ -15,17 +16,32 @@ import {
     ListItem,
     ListItemText,
     ListItemAvatar,
-    Typography
+    Typography,
+    Table,
+    TableCell,
+    TableRow,
+    Tooltip,
 } from '@mui/material';
 
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
+import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
+import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
+import SolCurrencyIcon from '../components/static/SolCurrencyIcon';
+import GrapeIcon from '../components/static/GrapeIcon';
+import IconButton, { IconButtonProps } from '@mui/material/IconButton';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import CircularProgress from '@mui/material/CircularProgress';
+import CancelIcon from '@mui/icons-material/Cancel';
 
 import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import { WalletConnectButton } from "@solana/wallet-adapter-material-ui";
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { Connection, PublicKey } from '@solana/web3.js';
 import { BN, web3 } from '@project-serum/anchor';
+
+import { red } from '@mui/material/colors';
 
 import {
     AUCTION_HOUSE_PROGRAM_ID,
@@ -46,9 +62,35 @@ import {
 } from '../utils/auctionHouse/helpers/constants';
 
 import { decodeMetadata } from '../utils/grapeTools/utils';
-import { GRAPE_RPC_ENDPOINT, GRAPE_PREVIEW } from '../utils/grapeTools/constants';
+import { 
+    GRAPE_RPC_ENDPOINT, 
+    GRAPE_PREVIEW, 
+    GRAPE_PROFILE, 
+} from '../utils/grapeTools/constants';
+
+import { MakeLinkableAddress, ValidateCurve, trimAddress, timeAgo } from '../utils/grapeTools/WalletAddress'; // global key handling
 
 import { useTranslation } from 'react-i18next';
+
+function convertSolVal(sol: any){
+    sol = parseFloat(new TokenAmount(sol, 9).format());
+    return sol;
+}
+
+function formatBlockTime(date: string, epoch: boolean, time: boolean){
+    // TODO: make a clickable date to change from epoch, to time from, to UTC, to local date
+    let date_str = new Date(date).toLocaleDateString(); //.toUTCString();
+    if (time)
+        date_str = new Date(date).toLocaleString();
+    if (epoch){
+        date_str = new Date(+date * 1000).toLocaleDateString(); //.toUTCString();
+        if (time)
+            date_str = new Date(+date * 1000).toLocaleString(); //.toUTCString();
+    }
+    return (
+        <>{date_str}</>
+    );
+}
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     '& .MuDialogContent-root': {
@@ -87,7 +129,7 @@ export default function ActivityView(props: any){
         try {
             if (!recentActivity){
                 const anchorProgram = await loadAuctionHouseProgram(null, ENV_AH, GRAPE_RPC_ENDPOINT);
-                const auctionHouseKey = new web3.PublicKey(AUCTION_HOUSE_ADDRESS);
+                const auctionHouseKey = new web3.PublicKey(collectionAuthority.auctionHouse || AUCTION_HOUSE_ADDRESS);
                 const auctionHouseObj = await anchorProgram.account.auctionHouse.fetch(auctionHouseKey,);
                 //let derivedMintPDA = await web3.PublicKey.findProgramAddress([Buffer.from((new PublicKey(mint)).toBuffer())], auctionHouseKey);
                 //let derivedBuyerPDA = await web3.PublicKey.findProgramAddress([Buffer.from((new PublicKey(thisPublicKey)).toBuffer())], auctionHouseKey);
@@ -290,7 +332,7 @@ export default function ActivityView(props: any){
             </Button>
             <BootstrapDialog 
                 fullWidth={true}
-                maxWidth={"sm"}
+                maxWidth={"lg"}
                 open={open} onClose={handleCloseDialog}
                 PaperProps={{
                     style: {
@@ -329,11 +371,77 @@ export default function ActivityView(props: any){
                                 <>no activity</>
                             }
 
-                            {recentActivity && recentActivity.map((item: any) => (
+                            
+                            <Table size="small" aria-label="offers">
+
+                            {recentActivity && recentActivity.map((item: any,key:number) => (
                                 <>
-                                    {JSON.stringify(item)}
+                                    
+                                    <>
+                                        <TableRow sx={{border:'none'}} key={key}>
+                                            <TableCell>
+                                                <Tooltip title={t('Visit Profile')}>
+                                                    <Button
+                                                        component={Link} to={`${GRAPE_PROFILE}${item.buyeraddress}`}
+                                                        sx={{borderRadius:'24px'}}
+                                                    >
+                                                        <AccountCircleOutlinedIcon sx={{fontSize:"14px", mr:1}} />
+                                                        <Typography variant="caption">
+                                                            {trimAddress(item.buyeraddress, 3)}
+                                                        </Typography>
+                                                    </Button>
+                                                </Tooltip>
+                                            </TableCell>
+                                            <TableCell  align="center"><Typography variant="h6">
+                                                {item.state === 1 && <>Offer</>}
+                                                {item.state === 2 && <>Listed</>}
+                                                {item.state === 3 && <>Sale</>}
+                                                {item.state === 4 && <>Sale</>}
+                                            </Typography></TableCell>
+                                            <TableCell  align="center"><Typography variant="h6">
+                                                {convertSolVal(item.offeramount)} <SolCurrencyIcon sx={{fontSize:"10.5px"}} />
+                                            </Typography></TableCell>
+                                            <TableCell align="right">
+                                                <Tooltip title={t('View NFT')}>
+                                                    <Button
+                                                        component={Link} to={`${GRAPE_PREVIEW}${item.mint}`}
+                                                        sx={{borderRadius:'24px'}}
+                                                    >
+                                                        <ImageOutlinedIcon sx={{fontSize:"14px", mr:1}}/>
+                                                        <Typography variant="caption">
+                                                            {trimAddress(item.mint, 3)}
+                                                        </Typography>
+                                                    </Button>
+                                                </Tooltip>
+                                            </TableCell>
+                                            <TableCell align="right">
+                                                <Typography variant="caption">
+                                                    <Tooltip title={formatBlockTime(item.timestamp, true, true)}>
+                                                        <Button size='small' sx={{borderRadius:'24px'}}>{timeAgo(item.timestamp)}</Button>
+                                                    </Tooltip>
+                                                </Typography>
+                                            </TableCell>
+                                            <TableCell align="center"> 
+                                                <Tooltip title={t('View')}>
+                                                    <Button 
+                                                        color="error"
+                                                        variant="text"
+                                                        component={Link} to={`${GRAPE_PREVIEW}${item.mint}`}
+                                                        //onClick={() => handleCancelWithdrawOffer(convertSolVal(item.offeramount), item.mint, item.updateAuthority)}
+                                                        sx={{
+                                                            borderRadius: '24px',
+                                                        }}
+                                                    >
+                                                        <ArrowForwardIcon />
+                                                    </Button>
+                                                </Tooltip>
+                                            </TableCell>
+                                        </TableRow>
+                                        </>
                                 </>
                             ))}
+                        </Table>
+
                         </>
                     }
                     </List>
