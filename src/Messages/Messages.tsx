@@ -18,7 +18,7 @@ import {
 import { useWallet } from '@solana/wallet-adapter-react';
 import { PublicKey } from '@solana/web3.js';
 
-import { GRAPE_RPC_ENDPOINT, TX_RPC_ENDPOINT } from '../utils/grapeTools/constants';
+import { GRAPE_RPC_ENDPOINT, TX_RPC_ENDPOINT, GENSYSGO_RPC_ENDPOINT } from '../utils/grapeTools/constants';
 
 import {
     Box,
@@ -101,13 +101,13 @@ export function MessagesView(){
                 publicKey={DIALECT_PUBLIC_KEY}
                 theme={theme}
                 variables={themeVariables}
-                rpcUrl={GRAPE_RPC_ENDPOINT}
+                rpcUrl={GENSYSGO_RPC_ENDPOINT}
                 notifications={[
                     { name: 'Welcome message', detail: 'On thread creation' },
                 ]}
                 channels={['web3', 'email', 'sms', 'telegram']}
                 />
-            <ChatButton wallet={wallet} network={'mainnet'} theme={theme} rpcUrl={GRAPE_RPC_ENDPOINT} />
+            <ChatButton wallet={wallet} network={'mainnet'} theme={theme} rpcUrl={GENSYSGO_RPC_ENDPOINT} />
         </Box>
 
 

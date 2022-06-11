@@ -60,7 +60,7 @@ import {
 
 import SearchIcon from '@mui/icons-material/Search';
 
-import { GRAPE_PROFILE, GRAPE_PREVIEW, GRAPE_RPC_ENDPOINT } from '../utils/grapeTools/constants';
+import { GRAPE_PROFILE, GRAPE_PREVIEW, GRAPE_RPC_ENDPOINT, GENSYSGO_RPC_ENDPOINT } from '../utils/grapeTools/constants';
 import { ValidateAddress } from '../utils/grapeTools/WalletAddress'; // global key handling
 
 import { useTranslation } from 'react-i18next';
@@ -288,7 +288,7 @@ export function Header(props: any) {
 
             </Box>
             <div className="grape-dialect">
-            <ChatButton wallet={wallet} network={'mainnet'} theme={theme} rpcUrl={GRAPE_RPC_ENDPOINT} bellClassName='grape-chat' />
+            <ChatButton wallet={wallet} network={'mainnet'} theme={theme} rpcUrl={GENSYSGO_RPC_ENDPOINT} bellClassName='grape-chat' />
             </div>
             <div className="grape-wallet-adapter">
                 <WalletDialogProvider className="grape-wallet-provider">

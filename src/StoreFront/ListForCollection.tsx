@@ -131,7 +131,7 @@ export default function ListForCollectionView(props: any){
         const wallet_collection = new Array();
         
         for (var item of collection){
-            console.log('item '+JSON.stringify(item))
+            //console.log('item '+JSON.stringify(item))
             wallet_collection.push(item.account.data.parsed.info.mint);
         }
 
