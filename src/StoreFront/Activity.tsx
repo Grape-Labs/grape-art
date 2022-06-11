@@ -304,7 +304,7 @@ export default function ActivityView(props: any){
                                     
                                     
                                     <Table size="small" aria-label="offers">
-
+                                        
                                         {recentActivity && recentActivity.map((item: any,key:number) => (
                                         <>
                                                 <>
@@ -313,12 +313,12 @@ export default function ActivityView(props: any){
                                                             <Tooltip title={t('Visit Profile')}>
                                                                 <Button
                                                                     variant="text"
-                                                                    component={Link} to={`${GRAPE_PROFILE}${item.buyeraddress}`}
+                                                                    component={Link} to={`${GRAPE_PROFILE}${item.bookkeeper}`}
                                                                     sx={{borderRadius:'24px'}}
                                                                 >
                                                                     <AccountCircleOutlinedIcon sx={{fontSize:"14px", mr:1}} />
                                                                     <Typography variant="caption">
-                                                                        {trimAddress(item.buyeraddress, 3)}
+                                                                        {trimAddress(item.bookkeeper, 3)}
                                                                     </Typography>
                                                                 </Button>
                                                             </Tooltip>
@@ -333,7 +333,7 @@ export default function ActivityView(props: any){
                                                             {item.state === "bid_receipt" && <>Offer</>}
                                                         </Typography></TableCell>
                                                         <TableCell  align="center"><Typography variant="h6">
-                                                            {(item.amount)} <SolCurrencyIcon sx={{fontSize:"10.5px"}} />
+                                                            {(item.price)} <SolCurrencyIcon sx={{fontSize:"10.5px"}} />
                                                         </Typography></TableCell>
                                                         <TableCell align="right">
                                                             <Tooltip title={t('View NFT')}>
@@ -421,31 +421,12 @@ export default function ActivityView(props: any){
                             
                             
                             <Table size="small" aria-label="offers">
-
-                                {recentActivity && recentActivity.map((item: any,key:number) => (
-                                <>
-                                        <>
-                                            <TableRow sx={{border:'none'}} key={key}>
-                                               {JSON.stringify(item)}
-                                            </TableRow>
-                                        </>
-                                        <BootstrapDialog 
-                                            fullWidth={true}
-                                            maxWidth={"lg"}
-                                            open={openPreviewDialog} onClose={handleClosePreviewDialog}
-                                            PaperProps={{
-                                                style: {
-                                                    background: '#13151C',
-                                                    border: '1px solid rgba(255,255,255,0.05)',
-                                                    borderTop: '1px solid rgba(255,255,255,0.1)',
-                                                    borderRadius: '20px'
-                                                }
-                                            }}
-                                        >
-                                            <DialogContent>
-                                                <PreviewView handlekey={item?.mint} />
-                                            </DialogContent>
-                                        </BootstrapDialog>
+                                {JSON.stringify(recentActivity)}
+                                {recentActivity && recentActivity.map((item: any, key:number) => (
+                                    <>
+                                        {JSON.stringify(item)}
+                                        ...
+                                        {JSON.stringify(item.buyeraddress)}
                                     </>
                                 ))}
                             </Table>
