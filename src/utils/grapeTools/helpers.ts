@@ -20,7 +20,6 @@ export async function getMintFromMetadataWithVerifiedCollection(updateAuthority:
 
 }
 
-
 export async function getMintFromMetadata(updateAuthority:string, metadata:string) {
     
     // add a helper function to get Metadata
@@ -28,7 +27,6 @@ export async function getMintFromMetadata(updateAuthority:string, metadata:strin
     // returns the mint address
     
 }
-
 
 export async function getReceiptsFromAuctionHouse(auctionHouse: PublicKey) {
     const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);    
