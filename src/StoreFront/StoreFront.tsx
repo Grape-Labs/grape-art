@@ -957,6 +957,10 @@ export function StoreFrontView(this: any, props: any) {
 
             // IMPORTANT
             // loop and set the list price, highest offer, and date of the listing
+            // sort first by blockTime
+            collectionMintList.sort((a:any,b:any) => (a.blockTime > b.blockTime) ? 1 : -1);
+
+            // we need to remove listing history for those that have been sold
             for (var listing of ahListings){
                 let exists = false;
                 Object.keys(collectionMintList).map(function(key) {
@@ -964,13 +968,18 @@ export function StoreFrontView(this: any, props: any) {
                     if (collectionMintList[key].address === listing.mint){
                         exists = true;
                         if (listing.state === 1){
-                            if ((!collectionMintList[key]?.highestOffer) || (listing.solvalue > +collectionMintList[key]?.highestOffer))
-                                collectionMintList[key].highestOffer = listing.solvalue;
+                            if ((!collectionMintList[key]?.highestOffer) || (listing.solvalue > +collectionMintList[key]?.highestOffer)){
+                                if ((!collectionMintList[key]?.soldBlockTime) || (listing.blockTime > +collectionMintList[key]?.soldBlockTime))
+                                    collectionMintList[key].highestOffer = listing.solvalue;
                                 // add offer count?
+                            }
                         } else if (listing.state === 2){
                             collectionMintList[key].price = listing.solvalue;
                             collectionMintList[key].listedTimestamp = listing.timestamp;
                             collectionMintList[key].listedBlockTime = listing.blockTime;
+                        } else if (listing.state === 3){
+                            if ((!collectionMintList[key]?.soldBlockTime) || (listing.blockTime > +collectionMintList[key]?.soldBlockTime))
+                                collectionMintList[key].soldBlockTime = listing.blockTime;
                         }
                     }
                 });

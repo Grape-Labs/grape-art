@@ -43,6 +43,8 @@ import {
     TOKEN_PROGRAM_ID,
 } from '../utils/auctionHouse/helpers/constants';
 
+import { getMetadata } from '../utils/auctionHouse/helpers/accounts';
+
 import { AuctionHouseProgram  } from '@metaplex-foundation/mpl-auction-house';
 import { Metadata } from '@metaplex-foundation/mpl-token-metadata';
 
@@ -67,6 +69,7 @@ import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import CircularProgress from '@mui/material/CircularProgress';
 import CancelIcon from '@mui/icons-material/Cancel';
 import { ConstructionOutlined, SentimentSatisfiedSharp } from "@mui/icons-material";
+import { accountSize } from "@project-serum/anchor/dist/cjs/coder";
 
 function convertSolVal(sol: any){
     try{
@@ -74,6 +77,22 @@ function convertSolVal(sol: any){
     }catch(e){console.log("ERR: "+e)}
     return sol;
 }
+
+export async function getMintFromMetadata (
+    metaData: web3.PublicKey,
+  ): Promise<string> {
+    let value = 'N/A';
+    const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
+    const metaSignature = await ggoconnection.getConfirmedSignaturesForAddress2(metaData, {limit:2});
+    const mintPk = (await ggoconnection.getParsedTransaction(metaSignature[0].signature, 'confirmed'));
+    console.log('metaData:', metaData, 'JSON FILE:' +JSON.stringify(mintPk));
+    console.log('MINTPK:',mintPk.meta.preTokenBalances[0]?.mint.toString());
+    let mintExists = mintPk.meta.preTokenBalances[0]?.mint; 
+    if (mintExists) {
+        value = mintPk.meta.preTokenBalances[0]?.mint.toString();
+    }
+    return (value);   
+  };
 
 export default function GlobalView(props: any){
     const [history, setHistory] = React.useState(null);
@@ -120,6 +139,7 @@ export default function GlobalView(props: any){
                 PrintPurchaseReceiptSize,
             ] as const;
             
+            //const AH_PK = new web3.PublicKey(AUCTION_HOUSE_ADDRESS);
             const ReceiptAccounts = await (Promise.all(ReceiptAccountSizes.map(async size => {
                 const accounts = await ggoconnection.getProgramAccounts(
                   AUCTION_HOUSE_PROGRAM_ID,
@@ -129,10 +149,20 @@ export default function GlobalView(props: any){
                       {
                         dataSize: size,
                       },
+                      {
+                        memcmp: {
+                            offset: 72,
+                            bytes: AUCTION_HOUSE_ADDRESS,
+                        },
+                      },
                     ],
                   }
                 );
-                
+                /*if (accounts[0]) {
+                    console.log('accounts all:', accounts);
+                    console.log('accounts:' + JSON.stringify(accounts[0].account.data));
+                    console.log('accounts pubkey:', accounts[0].pubkey.toBase58());
+                }*/
                 const parsedAccounts = accounts.map(async account => {
                   switch (size) {
                     case PrintListingReceiptSize:
@@ -141,12 +171,16 @@ export default function GlobalView(props: any){
                       ] = AuctionHouseProgram.accounts.ListingReceipt.fromAccountInfo(
                         account.account
                       );
+                      //const ListingMint = getMintFromMetadata(ListingReceipt.metadata);
                        
                       return {
                         ...ListingReceipt,
                         receipt_type: ListingReceipt.canceledAt
                           ? 'cancel_listing_receipt'
                           : 'listing_receipt',
+                        //mintPk: ListingMint,/*ListingReceipt.purchaseReceipt 
+                           // ? 'LR'
+                            //:*/getMintFromMetadata(ListingReceipt.metadata),
                       }; //as TransactionReceipt;
                       break;
                     case PrintBidReceiptSize:
@@ -159,6 +193,7 @@ export default function GlobalView(props: any){
                       return {
                         ...BidReceipt,
                         receipt_type: 'bid_receipt',
+                        //mintPk: 'BR',//getMintFromMetadata(BidReceipt.metadata),
                       }; //as TransactionReceipt;
                       break;
                     case PrintPurchaseReceiptSize:
@@ -171,6 +206,7 @@ export default function GlobalView(props: any){
                       return {
                         ...PurchaseReceipt,
                         receipt_type: 'purchase_receipt',
+                        //mintPk: 'PR'
                       } //as TransactionReceipt;
                       break;
                     default:
@@ -181,6 +217,31 @@ export default function GlobalView(props: any){
                 
                 return await Promise.all(parsedAccounts);
               })));
+              /*const metaTest = ReceiptAccounts[0][0].metadata;
+              console.log('metaTest:', metaTest.toBase58());
+              const testMeta = (await ggoconnection.getConfirmedSignaturesForAddress2(metaTest, {limit:2}));
+              console.log(JSON.stringify(testMeta[0].signature));
+              const testMeta2 = (await ggoconnection.getParsedTransaction(testMeta[0].signature, 'confirmed'));
+              console.log(testMeta2.meta.preTokenBalances[0].mint.toString());
+              */
+              //const getMetaData = (await getMetadata(ReceiptAccounts[0][0].metadata));
+              //console.log('getmetadata;'+ JSON.stringify(getMetaData));
+              //console.log(JSON.stringify(testMeta2));
+              //const test = ReceiptAccounts[0][0].tradeState;
+              //const test2 = ReceiptAccounts[0][0].tokenAccount;
+              //console.log('test:', test.toBase58());
+              //console.log('test2:', ReceiptAccounts[0][0]);
+              //const testing = (await ggoconnection.getSignaturesForAddress(test, {limit:25}));
+              /*let sellerTradeState = 'HroJg9tfuScDS1eEfDf4Xz4iH6V2mTMmzZhuWrvhpzEy';
+              const sellerTradeStratePK = new web3.PublicKey(sellerTradeState);
+              const 
+                myTest
+              = AuctionHouseProgram.findListingReceiptAddress(
+                sellerTradeStratePK
+              );
+              console.log('myTest:', (await myTest).toString());*/
+              //console.log(testing[0]);
+
 
               const receipts = (await Promise.all(ReceiptAccounts))
                 .flat()
@@ -189,9 +250,10 @@ export default function GlobalView(props: any){
                     tokenSize: new BN(receipt.tokenSize).toNumber(),
                     price: new BN(receipt.price).toNumber() / LAMPORTS_PER_SOL,
                     createdAt: new BN(receipt.createdAt).toNumber(),
+                    mintpk: getMintFromMetadata(receipt.metadata),
+                    //mint: getMintFromReceipt(receipt.tradeState.toBase58()),
                     //cancelledAt: receipt?.canceledAt,
                 }));
-            
             setReceipts(receipts);
             
         }
@@ -247,11 +309,13 @@ export default function GlobalView(props: any){
                                                     <TableCell><Typography variant="caption">bookkeeper</Typography></TableCell>
                                                     <TableCell align="center"><Typography variant="caption">auctionHouse</Typography></TableCell>
                                                     <TableCell align="center"><Typography variant="caption">seller</Typography></TableCell>
+                                                    <TableCell align="center"><Typography variant="caption">buyer</Typography></TableCell>
                                                     <TableCell align="center"><Typography variant="caption">metadata</Typography></TableCell>
                                                     <TableCell align="center"><Typography variant="caption">price</Typography></TableCell>
                                                     <TableCell align="center"><Typography variant="caption">createdAt</Typography></TableCell>
                                                     <TableCell align="center"><Typography variant="caption">purchaseReceipt</Typography></TableCell>
                                                     <TableCell align="center"><Typography variant="caption">receipt_type</Typography></TableCell>
+                                                    <TableCell align="center"><Typography variant="caption">mint</Typography></TableCell>
                                                 </TableRow>
 
                                             </TableHead>
@@ -290,9 +354,16 @@ export default function GlobalView(props: any){
                                                             }  
                                                         </TableCell>
                                                         <TableCell>
+                                                            {item?.buyer &&
+                                                                <>
+                                                                {trimAddress(item?.buyer.toBase58(),3)}
+                                                                </>
+                                                            }  
+                                                        </TableCell>
+                                                        <TableCell>
                                                             {item?.metadata &&
                                                                 <>
-                                                                {trimAddress(item?.metadata.toBase58(),3)}
+                                                                {item?.metadata.toBase58()}
                                                                 </>
                                                             }  
                                                         </TableCell>
@@ -324,7 +395,13 @@ export default function GlobalView(props: any){
                                                                 </>
                                                             }  
                                                         </TableCell>
-                                                        
+                                                        <TableCell>
+                                                            {item?.mintPk &&
+                                                                <>
+                                                                {item?.mintPk}
+                                                                </>
+                                                            }  
+                                                        </TableCell>
                                                     </TableRow>
                                                 ))}
                                             </TableBody>
