@@ -333,7 +333,6 @@ function GrapeVerified(props:any){
 function GalleryItemMeta(props: any) {
     const viewMode = props.viewMode;
     const handlekey = props.handlekey || null;
-    console.log("here props?.handlekey " + props?.handlekey)
     let mode_margin = 0;
     if (viewMode===0)
         mode_margin = 10;
@@ -1536,7 +1535,7 @@ function GalleryItemMeta(props: any) {
                                         </Box>
                                     </ListItemText>
                                 </List>
-
+                                
                                 {tokenOwners?.data.parsed.info.owner &&
                                     <ItemOffers
                                         mintAta={mintAta} 
@@ -1768,7 +1767,7 @@ export function PreviewView(this: any, props: any) {
                     if (item.address === address){
                         //setVerifiedCollection(verified);
                         //console.log("found: "+item.address);
-                        //console.log("auctionHouse: "+item.auctionHouse);
+                        //console.log("auctionHouse: "+JSON.stringify(item));
                         return item;
                     }
                   }
@@ -1797,6 +1796,7 @@ export function PreviewView(this: any, props: any) {
                 let [vcFinal] = await Promise.all([fetchVerifiedCollection(collectionrawdata?.meta_final?.updateAuthority)]);
                 if (vcFinal)
                     setCollectionAuctionHouse(vcFinal?.auctionHouse);
+
                 setVcLoading(false);
             }
         }
@@ -1833,8 +1833,7 @@ export function PreviewView(this: any, props: any) {
                         variant="rectangular" width="100%" height={325} />
                 </Card>
             )
-        } //else{
-        {   
+        } else{  
             let image = collectionmeta.collectionmeta?.image || null;
             if (!image){
                 console.log("ERR: " + JSON.stringify(collectionmeta));

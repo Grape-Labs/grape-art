@@ -51,6 +51,7 @@ function convertSolVal(sol: any){
 
 export async function gah_makeOffer(offerAmount: number, mint: string, walletPublicKey: string, mintOwner: any, updateAuthority: string, collectionAuctionHouse: string): Promise<InstructionsAndSignersSet> {
     //const { publicKey, signTransaction } = useWallet();
+    console.log("collectionAuctionHouse " + JSON.stringify(collectionAuctionHouse));
     let tokenSize = 1;
     const auctionHouseKey = new web3.PublicKey(collectionAuctionHouse || AUCTION_HOUSE_ADDRESS);
     const mintKey = new web3.PublicKey(mint);

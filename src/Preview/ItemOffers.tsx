@@ -670,7 +670,7 @@ export function OfferPrompt(props: any) {
                 try {
                     //const transactionInstr = await submitOffer(+offer_amount, mint, publicKey.toString(), mintOwner, updateAuthority, collectionAuctionHouse);
                     //console.log("transactionInstr1 submitOffer: "+JSON.stringify(transactionInstr1));
-    
+                    
                     const transactionInstr = await gah_makeOffer(+offer_amount, mint, publicKey.toString(), mintOwner, updateAuthority, collectionAuctionHouse);
                     //console.log("transactionInstr makeOffer: "+JSON.stringify(transactionInstr));
     

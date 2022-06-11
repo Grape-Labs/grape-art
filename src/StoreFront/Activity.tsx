@@ -145,9 +145,9 @@ export default function ActivityView(props: any){
         try {
             
             if (!recentActivity){
-                console.log("with aH: "+ collectionAuthority.auctionHouse)
+                console.log("with aH: "+ collectionAuthority.auctionHouse+" - "+JSON.stringify(collectionAuthority))
 
-                const results = getReceiptsFromAuctionHouse(new web3.PublicKey(collectionAuthority.auctionHouse || AUCTION_HOUSE_ADDRESS));
+                const results = await getReceiptsFromAuctionHouse(new web3.PublicKey(collectionAuthority.auctionHouse || AUCTION_HOUSE_ADDRESS));
 
                 console.log("results: "+JSON.stringify(results));
                 /*
