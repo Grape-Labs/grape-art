@@ -152,12 +152,11 @@ export default function ActivityView(props: any){
                 const activityResults = new Array();
 
                 for (var item of results){
-                    console.log("item: "+JSON.stringify(item))
-                    //activityResults.push({buyeraddress: item.bookkeeper, amount: item.price, mint: "5XdghzBiKqnUfWSUwHRC3PWYwyVXhLAxT7JiSWeye4fs", isowner: false, timestamp: item.createdAt, blockTime: item.createdAt, state: item?.receipt_type});
+                    activityResults.push({buyeraddress: item.bookkeeper, bookkeeper: item.bookkeeper, amount: item.price, price: item.price, mint: "5XdghzBiKqnUfWSUwHRC3PWYwyVXhLAxT7JiSWeye4fs", isowner: false, createdAt: item.createdAt, timestamp: item.createdAt, blockTime: item.createdAt, state: item?.receipt_type});
                 }
 
                 //activityResults.push({buyeraddress: feePayer.toBase58(), amount: memo_json?.amount || memo_json?.offer, mint: memo_json?.mint, isowner: false, timestamp: forSaleDate, blockTime: value.blockTime, state: memo_json?.state || memo_json?.status});
-                //return activityResults;
+                return activityResults;
 
 
             }
@@ -174,6 +173,7 @@ export default function ActivityView(props: any){
         if (!auctionHouseListings){
             console.log("fetching recent activity");
             const [activityResults] = await Promise.all([fetchAllActivity()]);
+            console.log("activityResults: "+JSON.stringify(activityResults));
             setRecentActivity(activityResults);
         } else{
             console.log("using recent activity");
@@ -351,7 +351,7 @@ export default function ActivityView(props: any){
                                                         </TableCell>
                                                         <TableCell align="right">
                                                             <Typography variant="caption">
-                                                                <Tooltip title={formatBlockTime(item.blockTime, true, true)}>
+                                                                <Tooltip title={item.timestamp}>
                                                                     <Button 
                                                                     variant="text" size='small' sx={{borderRadius:'24px'}}>{item.timestamp}</Button>
                                                                 </Tooltip>
@@ -426,64 +426,7 @@ export default function ActivityView(props: any){
                                 <>
                                         <>
                                             <TableRow sx={{border:'none'}} key={key}>
-                                                <TableCell>
-                                                    <Tooltip title={t('Visit Profile')}>
-                                                        <Button
-                                                            component={Link} to={`${GRAPE_PROFILE}${item.buyeraddress}`}
-                                                            sx={{borderRadius:'24px'}}
-                                                        >
-                                                            <AccountCircleOutlinedIcon sx={{fontSize:"14px", mr:1}} />
-                                                            <Typography variant="caption">
-                                                                {trimAddress(item.buyeraddress, 3)}
-                                                            </Typography>
-                                                        </Button>
-                                                    </Tooltip>
-                                                </TableCell>
-                                                <TableCell  align="center"><Typography variant="h6">
-                                                    {item.state === 1 && <>Offer</>}
-                                                    {item.state === 2 && <>Listed</>}
-                                                    {item.state === 3 && <>Sale</>}
-                                                    {item.state === 4 && <>Sale</>}
-                                                </Typography></TableCell>
-                                                <TableCell  align="center"><Typography variant="h6">
-                                                    {convertSolVal(item.amount)} <SolCurrencyIcon sx={{fontSize:"10.5px"}} />
-                                                </Typography></TableCell>
-                                                <TableCell align="right">
-                                                    <Tooltip title={t('View NFT')}>
-                                                        <Button
-                                                            component={Link} to={`${GRAPE_PREVIEW}${item.mint}`}
-                                                            sx={{borderRadius:'24px'}}
-                                                        >
-                                                            <ImageOutlinedIcon sx={{fontSize:"14px", mr:1}}/>
-                                                            <Typography variant="caption">
-                                                                {trimAddress(item.mint, 3)}
-                                                            </Typography>
-                                                        </Button>
-                                                    </Tooltip>
-                                                </TableCell>
-                                                <TableCell align="right">
-                                                    <Typography variant="caption">
-                                                        <Tooltip title={formatBlockTime(item.blockTime, true, true)}>
-                                                            <Button size='small' sx={{borderRadius:'24px'}}>{item.timestamp}</Button>
-                                                        </Tooltip>
-                                                    </Typography>
-                                                </TableCell>
-                                                <TableCell align="center"> 
-                                                    <Tooltip title={t('View')}>
-                                                        <Button 
-                                                            color="error"
-                                                            variant="text"
-                                                            onClick={handleClickOpenPreviewDialog}
-                                                            //component={Link} to={`${GRAPE_PREVIEW}${item.mint}`}
-                                                            //onClick={() => handleCancelWithdrawOffer(convertSolVal(item.offeramount), item.mint, item.updateAuthority)}
-                                                            sx={{
-                                                                borderRadius: '24px',
-                                                            }}
-                                                        >
-                                                            <ArrowForwardIcon />
-                                                        </Button>
-                                                    </Tooltip>
-                                                </TableCell>
+                                               {JSON.stringify(item)}
                                             </TableRow>
                                         </>
                                         <BootstrapDialog 
@@ -500,7 +443,7 @@ export default function ActivityView(props: any){
                                             }}
                                         >
                                             <DialogContent>
-                                                <PreviewView handlekey={item.mint} />
+                                                <PreviewView handlekey={item?.mint} />
                                             </DialogContent>
                                         </BootstrapDialog>
                                     </>
