@@ -297,9 +297,10 @@ export async function buyNowListing(offerAmount: number, mint: string, walletPub
   };
 
 
-//  let derivedMintPDA = await web3.PublicKey.findProgramAddress([Buffer.from((mintKey).toBuffer())], auctionHouseKey);
-//  let derivedBuyerPDA = await web3.PublicKey.findProgramAddress([Buffer.from((buyerWalletKey).toBuffer())], auctionHouseKey);
-//  let derivedOwnerPDA = await web3.PublicKey.findProgramAddress([Buffer.from((new PublicKey(mintOwner)).toBuffer())], auctionHouseKey);
+  let derivedMintPDA = await web3.PublicKey.findProgramAddress([Buffer.from((mintKey).toBuffer())], auctionHouseKey);
+  let derivedBuyerPDA = await web3.PublicKey.findProgramAddress([Buffer.from((buyerAddress).toBuffer())], auctionHouseKey);
+  let derivedOwnerPDA = await web3.PublicKey.findProgramAddress([Buffer.from((new PublicKey(walletPublicKey)).toBuffer())], auctionHouseKey);
+  let derivedUpdateAuthorityPDA = await web3.PublicKey.findProgramAddress([Buffer.from((new PublicKey(updateAuthority)).toBuffer())], auctionHouseKey);
 /*
   instructions.push(
     SystemProgram.transfer({
@@ -323,6 +324,28 @@ export async function buyNowListing(offerAmount: number, mint: string, walletPub
         lamports: 0,
     })
   );*/
+    
+  //if the sellerWallet and the mintOwner are not the same thne push the pda for the mintOwner as well
+  if (derivedOwnerPDA[0].toBase58() != derivedBuyerPDA[0].toBase58()) {
+    instructions.push(
+      SystemProgram.transfer({
+          fromPubkey: sellerWalletKey,
+          //fromPubkey: solTreasury,
+          toPubkey: derivedOwnerPDA[0],
+          lamports: 0,
+      })
+    );
+  }
+  if (derivedUpdateAuthorityPDA){
+    instructions.push(
+      SystemProgram.transfer({
+          fromPubkey: sellerWalletKey,
+          toPubkey: derivedUpdateAuthorityPDA[0],
+          lamports: 0,
+      })
+    );
+  }
+
   instructions.push(instruction2);
 
   instructions.push(

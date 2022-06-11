@@ -18,10 +18,12 @@ import {
     Typography
 } from '@mui/material';
 
+import { PreviewView } from "../Preview/Preview";
+
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 
-import MyActivityView from './MyActivity';
+import ActivityView from './Activity';
 
 import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import { WalletConnectButton } from "@solana/wallet-adapter-material-ui";
@@ -48,7 +50,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 
 export default function ListForCollectionView(props: any){
     const logo = props.logo;
-    const updateAuthority = props.updateAuthority;
+    const collectionAuthority = props.collectionAuthority;
     const entangleFrom = props.entangleFrom;
     const entangleTo = props.entangleTo;
     const enforceEntangle = props.enforceEntangle;
@@ -61,8 +63,17 @@ export default function ListForCollectionView(props: any){
     const [walletCollection, setWalletCollection] = React.useState(null);
     const [collectionMetaFinal,setCollectionMetaFinal] = React.useState(null);
     const [loading, setLoading] = React.useState(false);
+    const [openPreviewDialog, setOpenPreviewDialog] = React.useState(false);
     const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
     const rpclimit = 100;
+
+    const handleClickOpenPreviewDialog = () => {
+        setOpenPreviewDialog(true);
+    };
+    
+    const handleClosePreviewDialog = () => {
+        setOpenPreviewDialog(false);
+    };
 
     const handleClickOpenDialog = () => {
         setOpenDialog(true);
@@ -250,7 +261,7 @@ export default function ListForCollectionView(props: any){
                         }}
                     ></Avatar>
                 </Button>
-                <MyActivityView collectionAuthority={updateAuthority} logo={logo} />
+                <ActivityView collectionAuthority={collectionAuthority} logo={logo} mode={1} />
             </ButtonGroup>
             <BootstrapDialog 
                 fullWidth={true}
@@ -322,10 +333,12 @@ export default function ListForCollectionView(props: any){
                                                 </Button>
                                             </Typography>
                                         :
+                                            <>
                                             <Typography
                                                 variant='subtitle2'>
                                                 <Button
-                                                    component={Link} to={`${GRAPE_PREVIEW}${item.decoded?.mint}`}
+                                                    onClick={handleClickOpenPreviewDialog}
+                                                    //component={Link} to={`${GRAPE_PREVIEW}${item.decoded?.mint}`}
                                                     size="large"
                                                     variant="outlined"
                                                     sx={{
@@ -336,6 +349,24 @@ export default function ListForCollectionView(props: any){
                                                     <AccountBalanceWalletIcon sx={{mr:1}}/>Sell Now
                                                 </Button>
                                             </Typography>
+                                                <BootstrapDialog 
+                                                    fullWidth={true}
+                                                    maxWidth={"lg"}
+                                                    open={openPreviewDialog} onClose={handleClosePreviewDialog}
+                                                    PaperProps={{
+                                                        style: {
+                                                            background: '#13151C',
+                                                            border: '1px solid rgba(255,255,255,0.05)',
+                                                            borderTop: '1px solid rgba(255,255,255,0.1)',
+                                                            borderRadius: '20px'
+                                                        }
+                                                    }}
+                                                >
+                                                    <DialogContent>
+                                                        <PreviewView handlekey={item.decoded?.mint} />
+                                                    </DialogContent>
+                                                </BootstrapDialog>
+                                            </>
                                         }
 
                                     </ListItemText>

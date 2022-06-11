@@ -60,7 +60,7 @@ import { ConstructionOutlined } from '@mui/icons-material';
     if (daoPublicKey){
       sellerWalletKey = new web3.PublicKey(daoPublicKey);
     }
-
+    
     const [sellerTradeState, sellerTradeStateBump] =
       await AuctionHouseProgram.findTradeStateAddress(
         sellerWalletKey,//publicKey,

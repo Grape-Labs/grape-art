@@ -332,7 +332,7 @@ export default function GalleryItem(props: any){
                                                                 Offer for
                                                             </Typography>
                                                             <Typography variant="body1" textAlign="right" sx={{color:'yellow'}}>
-                                                                {collectionitem?.highestOffer} <SolCurrencyIcon sx={{fontSize:"11px"}} />
+                                                                {collectionitem?.highestOffer.toFixed(3)} <SolCurrencyIcon sx={{fontSize:"11px"}} />
                                                             </Typography>
                                                         </>
                                                     }

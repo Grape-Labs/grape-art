@@ -260,17 +260,17 @@ export async function acceptOffer(offerAmount: number, mint: string, sellerWalle
   console.log("no creator1... () "+JSON.stringify(metadataDecoded.data?.creators)); 
   const GRAPE_AH_MEMO = {
     state:4, // status (0: withdraw, 1: offer, 2: listing, 3: buy/execute (from listing), 4: buy/execute(accept offer), 5: cancel)
-    ah:auctionHouseKey.toBase58(), // pk
+    //ah:auctionHouseKey.toBase58(), // pk
     mint:mintKey.toBase58(), // mint
-    ua:updateAuthority, // updateAuthority
+    //ua:updateAuthority, // updateAuthority
     amount:buyPriceAdjusted.toNumber() // price
   };
 
-  
-//  let derivedMintPDA = await web3.PublicKey.findProgramAddress([Buffer.from((mintKey).toBuffer())], auctionHouseKey);
-//  let derivedBuyerPDA = await web3.PublicKey.findProgramAddress([Buffer.from((sellerWalletKey).toBuffer())], auctionHouseKey);
-//  let derivedOwnerPDA = await web3.PublicKey.findProgramAddress([Buffer.from((new PublicKey(mintOwner)).toBuffer())], auctionHouseKey);
-/*
+  let derivedMintPDA = await web3.PublicKey.findProgramAddress([Buffer.from((mintKey).toBuffer())], auctionHouseKey);
+  let derivedBuyerPDA = await web3.PublicKey.findProgramAddress([Buffer.from((new PublicKey(buyerAddress)).toBuffer())], auctionHouseKey);
+  let derivedOwnerPDA = await web3.PublicKey.findProgramAddress([Buffer.from((new PublicKey(sellerWalletKey)).toBuffer())], auctionHouseKey);
+  let derivedUpdateAuthorityPDA = await web3.PublicKey.findProgramAddress([Buffer.from((new PublicKey(updateAuthority)).toBuffer())], auctionHouseKey);
+
   instructions.push(
     SystemProgram.transfer({
       fromPubkey: sellerWalletKey,
@@ -278,7 +278,7 @@ export async function acceptOffer(offerAmount: number, mint: string, sellerWalle
       lamports: 0,
     })
   );
-
+  /*
   instructions.push(
     SystemProgram.transfer({
         fromPubkey: sellerWalletKey,
@@ -292,7 +292,18 @@ export async function acceptOffer(offerAmount: number, mint: string, sellerWalle
         toPubkey: derivedOwnerPDA[0],
         lamports: 0,
     })
-  );*/
+  );
+  */
+  if (derivedUpdateAuthorityPDA){
+    instructions.push(
+      SystemProgram.transfer({
+          fromPubkey: sellerWalletKey,
+          toPubkey: derivedUpdateAuthorityPDA[0],
+          lamports: 0,
+      })
+    );
+  }
+  
   instructions.push(instruction2);
   instructions.push(
     new TransactionInstruction({

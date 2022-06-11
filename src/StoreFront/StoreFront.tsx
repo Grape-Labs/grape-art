@@ -144,7 +144,7 @@ function getParam(param: string) {
     return new URLSearchParams(document.location.search).get(param);
 }
 
-function convertSolVal(sol: any){
+function convertSolVal(sol: any, precision: number){
     return parseFloat(new TokenAmount(sol, 9).format());
 }
 
@@ -639,6 +639,7 @@ export function StoreFrontView(this: any, props: any) {
     const [collectionMintList, setCollectionMintList] = React.useState(null);
     const [collectionAuthority, setCollectionAuthority] = React.useState(null);
     const [verifiedCollectionArray, setVerifiedCollectionArray] = React.useState(null);
+    const [auctionHouseListings, setAuctionHouseListings] = React.useState(null);
     const [wallet_collection_meta, setCollectionMeta] = React.useState(null);
     const [final_collection, setCollectionMetaFinal] = React.useState(null);
     //const isConnected = session && session.isConnected;
@@ -870,6 +871,7 @@ export function StoreFrontView(this: any, props: any) {
             }
             
             const getTransactionAccountInputs2 = await ticonnection.getParsedTransactions(signatures, 'confirmed');
+            
             let featured = null;
             for (var value of result){
             
@@ -881,7 +883,7 @@ export function StoreFrontView(this: any, props: any) {
                         if (getTransactionAccountInputs?.transaction && getTransactionAccountInputs?.transaction?.message){
                             
                             let feePayer = new PublicKey(getTransactionAccountInputs?.transaction.message.accountKeys[0].pubkey); // .feePayer.toBase58();                            
-                            let progAddress = getTransactionAccountInputs.meta.logMessages[0];
+                            //let progAddress = getTransactionAccountInputs.meta.logMessages[0];
 
                             exists = false;
                             if ((value) && (value.memo)){
@@ -925,27 +927,28 @@ export function StoreFrontView(this: any, props: any) {
                                             }
                                         }
 
-                                        if (!exists){
+                                        //if (!exists){
                                             let forSaleDate = ''+value.blockTime;
                                             if (forSaleDate){
                                                 let timeago = timeAgo(''+value.blockTime);
                                                 forSaleDate = timeago;
                                             }
 
-                                            let solvalue = convertSolVal(memo_json?.amount || memo_json?.offer);
+                                            let solvalue = convertSolVal(memo_json?.amount || memo_json?.offer, null);
                                             if (memo_json?.mint){
                                                 let offer = 0;
                                                 if (memo_json.state === 1)
                                                     offer = 1;
                                                 // 1. score will need to be decayed according to time
                                                 // 2. score will need to be decayed if reported and if reported > threshhold dont show
-                                                ahListings.push({amount: solvalue, mint: memo_json?.mint, timestamp: forSaleDate, blockTime:value.blockTime, state: memo_json?.state || memo_json?.status, offers: offer, score: memo_json?.score || 0});  
+                                                ahListings.push({buyeraddress: feePayer.toBase58(), amount: memo_json?.amount || memo_json?.offer, solvalue: solvalue, mint: memo_json?.mint, timestamp: forSaleDate, blockTime:value.blockTime, state: memo_json?.state || memo_json?.status, offers: offer, score: memo_json?.score || 0});  
                                                 ahListingsMints.push(memo_json.mint);
                                                 
                                             }
-                                        }
+                                        //}
                                     }catch(merr){console.log("ERR: "+merr + " - "+memo_item)}
                                 }
+                                setAuctionHouseListings(ahListings);
                             }
                         }
                     } catch (e){console.log("ERR: "+e)}
@@ -957,19 +960,18 @@ export function StoreFrontView(this: any, props: any) {
             for (var listing of ahListings){
                 let exists = false;
                 Object.keys(collectionMintList).map(function(key) {
+                    collectionMintList[key].price = 0;
                     if (collectionMintList[key].address === listing.mint){
                         exists = true;
                         if (listing.state === 1){
-                            if ((!collectionMintList[key]?.highestOffer) || (listing.amount > +collectionMintList[key]?.highestOffer))
-                                collectionMintList[key].highestOffer = listing.amount;
+                            if ((!collectionMintList[key]?.highestOffer) || (listing.solvalue > +collectionMintList[key]?.highestOffer))
+                                collectionMintList[key].highestOffer = listing.solvalue;
                                 // add offer count?
                         } else if (listing.state === 2){
-                            collectionMintList[key].price = listing.amount;
+                            collectionMintList[key].price = listing.solvalue;
                             collectionMintList[key].listedTimestamp = listing.timestamp;
                             collectionMintList[key].listedBlockTime = listing.blockTime;
                         }
-                    } else{
-                        collectionMintList[key].price = 0;
                     }
                 });
                 if (!exists){
@@ -977,7 +979,7 @@ export function StoreFrontView(this: any, props: any) {
                     if (listing.state === 1){
                         collectionMintList.push({
                             address: listing.mint,
-                            highestOffer: listing.amount,
+                            highestOffer: listing.solvalue,
                             name:null,
                             image:'',
                             price:0,
@@ -985,7 +987,7 @@ export function StoreFrontView(this: any, props: any) {
                     } else if (listing.state === 2){
                         collectionMintList.push({
                             address: listing.mint,
-                            price: listing.amount,
+                            price: listing.solvalue,
                             listedTimestamp: listing.timestamp,
                             listedBlockTime: listing.blockTime,
                             name:null,
@@ -1373,7 +1375,7 @@ export function StoreFrontView(this: any, props: any) {
                                 entangled={collectionAuthority.entangled} 
                                 enforceEntangle={collectionAuthority.entangleEnforce}
                                 entangleUrl={collectionAuthority.entangleUrl}
-                                updateAuthority={collectionAuthority.address} />
+                                collectionAuthority={collectionAuthority} />
                         </Box>
                         
                         <Grid container spacing={0} sx={{mt:-2}}>
@@ -1404,7 +1406,9 @@ export function StoreFrontView(this: any, props: any) {
                                 </Box>
                             </Grid>
                             <Grid item xs={12} sm={12} md={4} key={1}>
-                                <ActivityView collectionAuthority={collectionAuthority} />
+                                {!stateLoading &&
+                                    <ActivityView collectionAuthority={collectionAuthority} activity={auctionHouseListings} mode={0} />
+                                }
                             </Grid>
                         </Grid>
                     </Box>

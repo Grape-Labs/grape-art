@@ -331,7 +331,13 @@ function GrapeVerified(props:any){
 }
 
 function GalleryItemMeta(props: any) {
+    const viewMode = props.viewMode;
     const handlekey = props.handlekey || null;
+    console.log("here props?.handlekey " + props?.handlekey)
+    let mode_margin = 0;
+    if (viewMode===0)
+        mode_margin = 10;
+    
     const collectionrawprimer = props.collectionrawdata.meta_primer || [];
     const collectionrawdata = props.collectionrawdata.meta_final || [];
     const collectionitem = props.collectionitem.collectionmeta || [];
@@ -852,7 +858,7 @@ function GalleryItemMeta(props: any) {
     try{
         return (
             <Grid
-                sx={{mt:6}}
+                sx={{mt:{mode_margin}}}
             >
                 <Helmet>
                     <title>{`${collectionitem.name} | ${t('Grape Social. Stateless. Marketplace.')}`}</title>
@@ -882,7 +888,7 @@ function GalleryItemMeta(props: any) {
 
                 <Box
                     sx={{
-                        mt: 2,
+                        mt: {mode_margin},
                         
                     }}
                 >
@@ -898,7 +904,7 @@ function GalleryItemMeta(props: any) {
                         }}
                         >
                             <Grid container direction="row" spacing={{ xs: 2, md: 3 }}>
-                                {handlekey ?
+                                {(viewMode===0) ?
                                     <Grid item xs={6} md={8}>
                                         <ButtonGroup variant="text">
                                             <Button
@@ -1671,13 +1677,17 @@ export function PreviewView(this: any, props: any) {
     const [searchParams, setSearchParams] = useSearchParams();
 
     const urlParams = searchParams.get("pkey") || searchParams.get("mint") || handlekey;
-    console.log("HERE: " + urlParams);
+    
     //const [pubkey, setPubkey] = React.useState(null);
     const [walletPKId, setInputPKValue] = React.useState(null);
     
     const history = useNavigate();
     //const location = useLocation();
-    
+
+    let viewMode = 0;
+    if (props?.handlekey)
+        viewMode = 1;
+
     function HandlePKSubmit(event: any) {
         event.preventDefault();
         console.log("Sending: "+walletPKId);
@@ -1813,7 +1823,6 @@ export function PreviewView(this: any, props: any) {
             return (
                 <Card
                     sx={{
-                        mt:4,
                         borderRadius: '20px',
                     }}
                 >
@@ -1835,7 +1844,7 @@ export function PreviewView(this: any, props: any) {
             //if ((collectionmeta)&&(!loading)){
             //if (image){
                 return (
-                        <GalleryItemMeta collectionitem={collectionmeta} collectionrawdata={collectionrawdata} mint={mint} setRefresh={setRefresh} setMintPubkey={setMintPubkey} collectionAuctionHouse={collectionAuctionHouse} handlekey={handlekey} />
+                        <GalleryItemMeta collectionitem={collectionmeta} collectionrawdata={collectionrawdata} mint={mint} setRefresh={setRefresh} setMintPubkey={setMintPubkey} collectionAuctionHouse={collectionAuctionHouse} handlekey={handlekey} viewMode={viewMode} />
                 );
             }
             //}
@@ -1876,7 +1885,17 @@ export function PreviewView(this: any, props: any) {
     return (
         <React.Fragment>
                 { mint && ValidateAddress(mint) ?
-                    <PreviewItem mint={mint} />
+                    <>
+                    {viewMode === 0 ?
+                        <Box
+                            sx={{mt:6}}
+                        >
+                            <PreviewItem mint={mint} />
+                        </Box>
+                    :
+                        <PreviewItem mint={mint} />
+                    }    
+                    </>
                 : 
                 <>
                     <React.Fragment>
