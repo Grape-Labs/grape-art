@@ -108,6 +108,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 export default function ActivityView(props: any){
     const mode = props.mode;
     const collectionAuthority = props.collectionAuthority;
+    const collectionMintList = props.collectionMintList;
     const auctionHouseListings = props.activity;
 
     const MD_PUBKEY = METAPLEX_PROGRAM_ID;
@@ -140,19 +141,29 @@ export default function ActivityView(props: any){
         setOpenDialog(false);
     };
 
+    const getMintFromVerifiedMetadata = async (metadata:string) => {
+        for (var item of collectionMintList){
+            if (item.metadata === metadata){
+                console.log("found: "+JSON.stringify(item))
+                return item;
+            }
+        }
+        return null;
+    }
+
     const fetchAllActivity = async () => {
         
         try {
             
             if (!recentActivity){
                 //console.log("with aH: "+ collectionAuthority.auctionHouse+" - "+JSON.stringify(collectionAuthority))
-
                 const results = await getReceiptsFromAuctionHouse(collectionAuthority.auctionHouse || AUCTION_HOUSE_ADDRESS);
 
                 const activityResults = new Array();
 
                 for (var item of results){
-                    activityResults.push({buyeraddress: item.bookkeeper.toBase58(), bookkeeper: item.bookkeeper.toBase58(), amount: item.price, price: item.price, mint: "5XdghzBiKqnUfWSUwHRC3PWYwyVXhLAxT7JiSWeye4fs", isowner: false, createdAt: item.createdAt, timestamp: item.createdAt, blockTime: item.createdAt, state: item?.receipt_type});
+                    const mintitem = await getMintFromVerifiedMetadata(item.metadata.toBase58());
+                    activityResults.push({buyeraddress: item.bookkeeper.toBase58(), bookkeeper: item.bookkeeper.toBase58(), amount: item.price, price: item.price, mint: mintitem.address, metadataParsed:mintitem, isowner: false, createdAt: item.createdAt, timestamp: item.createdAt, blockTime: item.createdAt, state: item?.receipt_type});
                 }
 
                 //activityResults.push({buyeraddress: feePayer.toBase58(), amount: memo_json?.amount || memo_json?.offer, mint: memo_json?.mint, isowner: false, timestamp: forSaleDate, blockTime: value.blockTime, state: memo_json?.state || memo_json?.status});
@@ -423,8 +434,7 @@ export default function ActivityView(props: any){
                             
                             <Table size="small" aria-label="offers">
                                 {recentActivity && recentActivity.map((item: any, key:number) => (
-                                    <>
-                                                
+                                    <>    
                                         <TableRow sx={{border:'none'}} key={key}>
                                             <TableCell>
                                                 <Tooltip title={t('Visit Profile')}>
@@ -459,18 +469,27 @@ export default function ActivityView(props: any){
                                                         component={Link} to={`${GRAPE_PREVIEW}${item.mint}`}
                                                         sx={{borderRadius:'24px'}}
                                                     >
-                                                        <ImageOutlinedIcon sx={{fontSize:"14px", mr:1}}/>
+                                                        <Avatar
+                                                            src={item.metadataParsed?.image}
+                                                            sx={{
+                                                                backgroundColor:'#222',
+                                                                width: 25, 
+                                                                height: 25,
+                                                                mr:1
+                                                            }}
+                                                        ></Avatar>
+
                                                         <Typography variant="caption">
-                                                            {/*trimAddress(item.mint, 3)*/}
+                                                            {trimAddress(item.mint, 3)}
                                                         </Typography>
                                                     </Button>
                                                 </Tooltip>
                                             </TableCell>
                                             <TableCell align="right">
                                                 <Typography variant="caption">
-                                                    <Tooltip title={item.timestamp}>
+                                                    <Tooltip title={formatBlockTime(item.timestamp, true, true)}>
                                                         <Button 
-                                                        variant="text" size='small' sx={{borderRadius:'24px'}}>{item.timestamp}</Button>
+                                                        variant="text" size='small' sx={{borderRadius:'24px'}}>{timeAgo(item.timestamp)}</Button>
                                                     </Tooltip>
                                                 </Typography>
                                             </TableCell>

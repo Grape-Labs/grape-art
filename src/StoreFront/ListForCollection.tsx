@@ -51,6 +51,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 export default function ListForCollectionView(props: any){
     const logo = props.logo;
     const collectionAuthority = props.collectionAuthority;
+    const collectionMintList = props.collectionMintList;
     const entangleFrom = props.entangleFrom;
     const entangleTo = props.entangleTo;
     const enforceEntangle = props.enforceEntangle;
@@ -261,7 +262,7 @@ export default function ListForCollectionView(props: any){
                         }}
                     ></Avatar>
                 </Button>
-                <ActivityView collectionAuthority={collectionAuthority} logo={logo} mode={1} />
+                <ActivityView collectionAuthority={collectionAuthority} collectionMintList={collectionMintList} logo={logo} mode={1} />
             </ButtonGroup>
             <BootstrapDialog 
                 fullWidth={true}

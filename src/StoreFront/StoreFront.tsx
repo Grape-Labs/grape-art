@@ -705,8 +705,7 @@ export function StoreFrontView(this: any, props: any) {
               setCollectionMintList(json);   
               return json;
             
-        } catch(e){console.log("ERR: "+e)}
-        
+        } catch(e){console.log("ERR: "+e)}   
     }
 
     const fetchMintStates = async(address:string) => {
@@ -1389,7 +1388,8 @@ export function StoreFrontView(this: any, props: any) {
                                 entangled={collectionAuthority.entangled} 
                                 enforceEntangle={collectionAuthority.entangleEnforce}
                                 entangleUrl={collectionAuthority.entangleUrl}
-                                collectionAuthority={collectionAuthority} />
+                                collectionAuthority={collectionAuthority}
+                                collectionMintList={collectionMintList} />
                         </Box>
                         
                         <Grid container spacing={0} sx={{mt:-2}}>
@@ -1421,7 +1421,7 @@ export function StoreFrontView(this: any, props: any) {
                             </Grid>
                             <Grid item xs={12} sm={12} md={4} key={1}>
                                 {!stateLoading &&
-                                    <ActivityView collectionAuthority={collectionAuthority} activity={auctionHouseListings} mode={0} />
+                                    <ActivityView collectionAuthority={collectionAuthority} collectionMintList={collectionMintList} activity={auctionHouseListings} mode={0} />
                                 }
                             </Grid>
                         </Grid>

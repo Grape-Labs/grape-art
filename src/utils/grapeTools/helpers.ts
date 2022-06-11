@@ -15,7 +15,7 @@ import { AuctionHouseProgram  } from '@metaplex-foundation/mpl-auction-house';
 export async function getMintFromMetadataWithVerifiedCollection(updateAuthority:string, metadata:string) {
     
     // add a helper function to get Metadata from Grape Verified Collection
-
+    
     // returns the mint address
 
 }
