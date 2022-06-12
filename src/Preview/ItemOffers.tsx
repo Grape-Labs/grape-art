@@ -1894,7 +1894,7 @@ export default function ItemOffers(props: any) {
                                                             </Typography></TableCell>
                                                             <TableCell  align="right">
                                                                 <Typography variant="body2">
-                                                                    {convertSolVal(item.offeramount)} <SolCurrencyIcon sx={{fontSize:"10.5px"}} />
+                                                                    {(item.price)} <SolCurrencyIcon sx={{fontSize:"10.5px"}} />
                                                                 </Typography>
                                                             </TableCell>
                                                             <TableCell align="right">
