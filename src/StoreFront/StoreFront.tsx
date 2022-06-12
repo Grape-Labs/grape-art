@@ -1070,7 +1070,7 @@ export function StoreFrontView(this: any, props: any) {
                         const fml = fetchMintList(verified.address);
                         break;
                     } else if (verified.name.replaceAll(" ", "").toLowerCase() === (withPubKey.replaceAll(" ", "").toLowerCase())){ // REMOVE SPACES FROM verified.name
-                        console.log("found: "+verified.name);
+                        //console.log("found: "+verified.name);
                         setCollectionAuthority(verified);
                         // get collection mint list
                         console.log("f ADDRESS: "+verified.address)

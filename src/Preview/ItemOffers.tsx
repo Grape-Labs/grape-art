@@ -72,8 +72,7 @@ import {
     VERIFIED_DAO_ARRAY,
 } from '../utils/grapeTools/constants';
 
-import { 
-    
+import {  
     getReceiptsFromAuctionHouse,
     getMintFromVerifiedMetadata } from '../utils/grapeTools/helpers';
 

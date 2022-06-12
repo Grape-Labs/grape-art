@@ -26,22 +26,26 @@ export async function getMintFromMetadataWithVerifiedCollection(updateAuthority:
 export async function getMintFromMetadata(updateAuthority:string, metaData:web3.PublicKey): Promise<string>{
   let value = ' ';
   let mintPk: any;
-  const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
-  const metaSignature = await ggoconnection.getConfirmedSignaturesForAddress2(metaData, {limit:1});
-  /*for (var i = 0; i < metaSignature.length; i++) {
-    console.log('METASIGNATURE:', metaSignature[i].signature);
-    mintPk = (await ggoconnection.getParsedTransaction(metaSignature[i].signature, 'confirmed'));
-    //console.log('all mintPk:' +JSON.stringify(mintPk));
-    console.log('MINTPK:',mintPk.meta.preTokenBalances[0]?.mint.toString());
-  }*/
-  mintPk = (await ggoconnection.getParsedTransaction(metaSignature[0].signature, 'confirmed'));
-  //console.log('MINTPK:',mintPk.meta.preTokenBalances[0]?.mint.toString());
-  let mintExists = mintPk.meta.preTokenBalances[0]?.mint; 
-  //console.log('mintExists:', mintExists);
-  if (mintExists) {
-      value = mintPk.meta.preTokenBalances[0]?.mint.toString();
-  }
-  return (value); 
+    const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
+    try{
+        const metaSignature = await ggoconnection.getConfirmedSignaturesForAddress2(metaData, {limit:1});
+        /*for (var i = 0; i < metaSignature.length; i++) {
+            console.log('METASIGNATURE:', metaSignature[i].signature);
+            mintPk = (await ggoconnection.getParsedTransaction(metaSignature[i].signature, 'confirmed'));
+            //console.log('all mintPk:' +JSON.stringify(mintPk));
+            console.log('MINTPK:',mintPk.meta.preTokenBalances[0]?.mint.toString());
+        }*/
+        mintPk = (await ggoconnection.getParsedTransaction(metaSignature[0].signature, 'confirmed'));
+        //console.log('MINTPK:',mintPk.meta.preTokenBalances[0]?.mint.toString());
+        let mintExists = mintPk.meta.preTokenBalances[0]?.mint; 
+        //console.log('mintExists:', mintExists);
+        if (mintExists) {
+            value = mintPk.meta.preTokenBalances[0]?.mint.toString();
+        }
+        return (value); 
+    }catch(e){
+        return null
+    }
 }
 
 export async function getMintFromVerifiedMetadata(metadata:string, collectionMintList: any){
