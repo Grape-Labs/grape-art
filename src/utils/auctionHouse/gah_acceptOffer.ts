@@ -84,7 +84,7 @@ export async function gah_acceptOffer(offerAmount: number, mint: string, sellerW
   const buyerPubkey = new PublicKey(buyerAddress)
     //const [metadata] = await MetadataProgram.findMetadataAccount(tokenMint)
     const metadata = await getMetadata(tokenMint);
-      
+    
     const [sellerTradeState, sellerTradeStateBump] =
       await AuctionHouseProgram.findTradeStateAddress(
         sellerWalletKey,//publicKey,
@@ -237,11 +237,6 @@ export async function gah_acceptOffer(offerAmount: number, mint: string, sellerW
     const metadataDecoded: Metadata = decodeMetadata(Buffer.from(metadataObj.data),);
     const nft = metadataDecoded.data;
     
-    const additionalComputeBudgetInstruction = ComputeBudgetProgram.requestUnits({
-      units: 400000,
-      additionalFee: 1
-    });
-
     txt
       //.add(additionalComputeBudgetInstruction)
       .add(createListingInstruction)
@@ -262,7 +257,7 @@ export async function gah_acceptOffer(offerAmount: number, mint: string, sellerW
         })
       )
       .add(executePrintPurchaseReceiptInstruction)
-
+     
     if (mint) {
       
       const [tradeState, tradeStateBump] =
@@ -274,8 +269,7 @@ export async function gah_acceptOffer(offerAmount: number, mint: string, sellerW
         buyerPrice,
         1
       )
-      console.log("tradeState: "+JSON.stringify(tradeState));
-
+      
       const cancelInstructionAccounts = {
         wallet: sellerWalletKey,
         tokenAccount,
@@ -290,8 +284,11 @@ export async function gah_acceptOffer(offerAmount: number, mint: string, sellerW
         tokenSize: 1,
       }
 
+      const [receipt, receiptBump] =
+          await AuctionHouseProgram.findListingReceiptAddress(tradeState)
+
       const cancelListingReceiptAccounts = {
-        receipt: new PublicKey(mint),
+        receipt,
         instruction: SYSVAR_INSTRUCTIONS_PUBKEY,
       }
 
