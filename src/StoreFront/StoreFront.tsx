@@ -865,7 +865,7 @@ export function StoreFrontView(this: any, props: any) {
             }
 
             // sort by date
-            ahListings.sort((a:any,b:any) => (a.blockTime < b.blockTime) ? 1 : -1);
+            ahListings.sort((a:any,b:any) => (a.createdAt < b.createdAt) ? 1 : -1);
 
             setAuctionHouseListings(ahListings);
             //activityResults.push({buyeraddress: feePayer.toBase58(), amount: memo_json?.amount || memo_json?.offer, mint: memo_json?.mint, isowner: false, timestamp: forSaleDate, blockTime: value.blockTime, state: memo_json?.state || memo_json?.status});
@@ -888,11 +888,12 @@ export function StoreFrontView(this: any, props: any) {
                                 // add offer count?
                             }
                         } else if (listing.state === 'listing_receipt'){
-
                             if (!listing?.cancelledAt){
-                                mintElement.listingPrice = +listing.price;
-                                mintElement.listedTimestamp = listing.timestamp;
-                                mintElement.listedBlockTime = listing.blockTime;
+                                if ((!mintElement?.listedBlockTime) || (+listing.createdAt > +mintElement?.listedBlockTime)){
+                                    mintElement.listingPrice = +listing.price;
+                                    mintElement.listedTimestamp = listing.timestamp;
+                                    mintElement.listedBlockTime = listing.blockTime;
+                                }
                             }
                         } else if (listing.state === 3){
                             //if ((!collectionMintList[key]?.soldBlockTime) || (listing.blockTime > +collectionMintList[key]?.soldBlockTime))
@@ -1061,7 +1062,7 @@ export function StoreFrontView(this: any, props: any) {
                 // check both .name and .address
                 for (var verified of verifiedCollectionArray){
                     
-                    console.log("verified checking: "+verified.name.replaceAll(" ", "").toLowerCase() + " vs "+withPubKey.replaceAll(" ", "").toLowerCase());
+                    //console.log("verified checking: "+verified.name.replaceAll(" ", "").toLowerCase() + " vs "+withPubKey.replaceAll(" ", "").toLowerCase());
                     //if (verified.address === mintOwner){
                     if (verified.address === withPubKey){
                         setCollectionAuthority(verified);

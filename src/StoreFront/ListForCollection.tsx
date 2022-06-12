@@ -64,12 +64,16 @@ export default function ListForCollectionView(props: any){
     const [walletCollection, setWalletCollection] = React.useState(null);
     const [collectionMetaFinal,setCollectionMetaFinal] = React.useState(null);
     const [loading, setLoading] = React.useState(false);
+    const [selectedMint, setSelectedMint] = React.useState(null);
     const [openPreviewDialog, setOpenPreviewDialog] = React.useState(false);
     const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
     const rpclimit = 100;
 
-    const handleClickOpenPreviewDialog = () => {
-        setOpenPreviewDialog(true);
+    const handleClickOpenPreviewDialog = (mint:string) => {
+        if (mint){
+            setSelectedMint(mint)
+            setOpenPreviewDialog(true);
+        }
     };
     
     const handleClosePreviewDialog = () => {
@@ -338,7 +342,7 @@ export default function ListForCollectionView(props: any){
                                             <Typography
                                                 variant='subtitle2'>
                                                 <Button
-                                                    onClick={handleClickOpenPreviewDialog}
+                                                    onClick={() => handleClickOpenPreviewDialog(item.decoded?.mint)}
                                                     //component={Link} to={`${GRAPE_PREVIEW}${item.decoded?.mint}`}
                                                     size="large"
                                                     variant="outlined"
@@ -350,6 +354,7 @@ export default function ListForCollectionView(props: any){
                                                     <AccountBalanceWalletIcon sx={{mr:1}}/>Sell Now
                                                 </Button>
                                             </Typography>
+                                            {selectedMint &&
                                                 <BootstrapDialog 
                                                     fullWidth={true}
                                                     maxWidth={"lg"}
@@ -364,12 +369,13 @@ export default function ListForCollectionView(props: any){
                                                     }}
                                                 >
                                                     <DialogContent>
-                                                        <PreviewView handlekey={item.decoded?.mint} />
+                                                        <PreviewView handlekey={selectedMint} />
                                                     </DialogContent>
                                                     <DialogActions>
                                                         <Button variant="text" onClick={handleClosePreviewDialog}>{t('Close')}</Button>
                                                     </DialogActions>
                                                 </BootstrapDialog>
+                                            }
                                             </>
                                         }
 

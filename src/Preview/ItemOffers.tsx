@@ -1257,7 +1257,7 @@ export default function ItemOffers(props: any) {
 
                 //activityResults.push({buyeraddress: feePayer.toBase58(), amount: memo_json?.amount || memo_json?.offer, mint: memo_json?.mint, isowner: false, timestamp: forSaleDate, blockTime: value.blockTime, state: memo_json?.state || memo_json?.status});
                 //return activityResults;
-                
+
                 
                 // now show with filtering offerResults
                 let forSale = 0;
@@ -1271,7 +1271,8 @@ export default function ItemOffers(props: any) {
                         listing_count++
                         if (offer.state === 'listing_receipt'){ // exit on first receipt
                             if (forSaleDate < offer.blockTime){
-                                if (offer.bookkeerper === mintOwner){
+                                console.log("checking: "+offer.bookkeeper+" vs "+mintOwner)
+                                if (offer.bookkeeper === mintOwner){
                                     forSale = offer.price;
                                     forSaleDate = offer.blockTime;
                                 }
