@@ -76,7 +76,6 @@ import { ConstructionOutlined } from '@mui/icons-material';
         1
       )
       */
-     console.log("buyerPrice: "+buyerPrice);
       const [tradeState, tradeStateBump] = 
         await AuctionHouseProgram.findTradeStateAddress(
           sellerWalletKey,
@@ -87,8 +86,7 @@ import { ConstructionOutlined } from '@mui/icons-material';
           buyerPrice,
           1
         )
-      console.log("tradeState: "+JSON.stringify(tradeState));
-
+      
       const cancelInstructionAccounts = {
         wallet: sellerWalletKey,
         tokenAccount,
@@ -96,18 +94,18 @@ import { ConstructionOutlined } from '@mui/icons-material';
         authority,
         auctionHouse,
         auctionHouseFeeAccount,
-        tradeState: tradeState,
+        tradeState,
       }
       const cancelListingInstructionArgs = {
-        buyerPrice: buyerPrice,//listing.price,
+        buyerPrice,
         tokenSize: 1,
       }
 
       const [receipt, receiptBump] =
-          await AuctionHouseProgram.findBidReceiptAddress(tradeState)
+          await AuctionHouseProgram.findListingReceiptAddress(tradeState)
 
       const cancelListingReceiptAccounts = {
-        receipt: receipt,
+        receipt,
         instruction: SYSVAR_INSTRUCTIONS_PUBKEY,
       }
 

@@ -1113,8 +1113,7 @@ export default function ItemOffers(props: any) {
             .add(
                 ...instructionsArray
             );
-
-
+            
             enqueueSnackbar(`${t('Preparing to withdraw offer for')} ${offerAmount} SOL`,{ variant: 'info' });
             const signedTransaction = await sendTransaction(transaction, connection)
            
