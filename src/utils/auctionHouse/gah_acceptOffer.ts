@@ -285,7 +285,7 @@ export async function gah_acceptOffer(offerAmount: number, mint: string, sellerW
         buyerPrice: buyerPrice,
         tokenSize: 1,
       }
-      
+
       const [receipt, receiptBump] =
           await AuctionHouseProgram.findListingReceiptAddress(tradeState)
 
@@ -306,7 +306,7 @@ export async function gah_acceptOffer(offerAmount: number, mint: string, sellerW
       
     }
 
-  txt.feePayer = new PublicKey(sellerWalletKey)
+  txt.feePayer = buyerPubkey
 
   const transferAuthority = web3.Keypair.generate();
   const signers = true ? [] : [transferAuthority];

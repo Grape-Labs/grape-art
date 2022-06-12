@@ -185,7 +185,9 @@ export async function gah_makeOffer(offerAmount: number, mint: string, walletPub
     let signature: string | undefined = undefined
     const transferAuthority = web3.Keypair.generate();
     const signers = true ? [] : [transferAuthority];
+    const instructions = txt.instructions;
 
+/*
     let derivedMintPDA = await web3.PublicKey.findProgramAddress([Buffer.from((mintKey).toBuffer())], auctionHouseKey);
     let derivedBuyerPDA = await web3.PublicKey.findProgramAddress([Buffer.from((buyerWalletKey).toBuffer())], auctionHouseKey);
     let derivedOwnerPDA = await web3.PublicKey.findProgramAddress([Buffer.from((new PublicKey(mintOwner)).toBuffer())], auctionHouseKey);
@@ -199,7 +201,7 @@ export async function gah_makeOffer(offerAmount: number, mint: string, walletPub
       amount:buyerPrice // price
     };
 
-    const instructions = txt.instructions;
+    
     //console.log("depositInstruction: "+JSON.stringify(depositInstruction));
     //console.log("publicBuyInstruction: "+JSON.stringify(publicBuyInstruction));
     //console.log("printBidReceiptInstruction: "+JSON.stringify(printBidReceiptInstruction));
@@ -239,7 +241,7 @@ export async function gah_makeOffer(offerAmount: number, mint: string, walletPub
           programId: new PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr"),
       })
     );
-
+*/
     return {
       signers: signers,
       instructions: instructions

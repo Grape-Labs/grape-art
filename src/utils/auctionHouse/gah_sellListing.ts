@@ -35,20 +35,19 @@ const {
 } = AuctionHouseProgram.instructions
 
 import { ConstructionOutlined } from '@mui/icons-material';
-  export async function gah_sellListing(offerAmount: number, mint: string, walletPublicKey: string, mintOwner: any, weightedScore: any, daoPublicKey: string, updateAuthority: string, collectionAuctionHouse: string): Promise<InstructionsAndSignersSet> {
+  export async function gah_sellListing(offerAmount: number, mint: string, buyerPublicKey: string, mintOwner: any, weightedScore: any, daoPublicKey: string, updateAuthority: string, collectionAuctionHouse: string): Promise<InstructionsAndSignersSet> {
 
     let tokenSize = 1;
     const auctionHouseKey = new web3.PublicKey(collectionAuctionHouse || AUCTION_HOUSE_ADDRESS);
     const mintKey = new web3.PublicKey(mint);
     let anchorProgram = await loadAuctionHouseProgram(null, ENV_AH, GRAPE_RPC_ENDPOINT);
-    const auctionHouseObj = await anchorProgram.account.auctionHouse.fetch(auctionHouseKey,);    
-    const buyerAddress = new web3.PublicKey(walletPublicKey);
+    const auctionHouseObj = await anchorProgram.account.auctionHouse.fetch(auctionHouseKey,);  
+    const buyerAddress = new web3.PublicKey(buyerPublicKey);
     const sellerAddress = new web3.PublicKey(mintOwner);
     //check if escrow amount already exists to determine if we need to deposit amount to grapevine 
     
     const buyerPrice = Number(offerAmount) * LAMPORTS_PER_SOL
     //console.log("buyerPrice: "+buyerPrice);
-    //console.log("auctionHouseObj: "+JSON.stringify(auctionHouseObj));
     const auctionHouse = new PublicKey(auctionHouseKey);//new PublicKey(auctionHouseObj.auctionHouse.address)
     //console.log("auctionHouse: "+auctionHouseObj.auctionHouse.address);
     const authority = new PublicKey(auctionHouseObj.authority)
@@ -66,7 +65,7 @@ import { ConstructionOutlined } from '@mui/icons-material';
     const tokenAccount: web3.PublicKey = results.value[0].address;
 
 
-    let sellerWalletKey = new PublicKey(walletPublicKey);
+    let sellerWalletKey = new PublicKey(mintOwner);
     if (daoPublicKey){
       sellerWalletKey = new web3.PublicKey(daoPublicKey);
     }
@@ -228,7 +227,7 @@ import { ConstructionOutlined } from '@mui/icons-material';
         buyerTradeState
       )
 
-      const [listingReceipt, listingReceiptBump] =
+    const [listingReceipt, listingReceiptBump] =
       await AuctionHouseProgram.findListingReceiptAddress(sellerTradeState)
 
     const printPurchaseReceiptAccounts = {
@@ -265,6 +264,10 @@ import { ConstructionOutlined } from '@mui/icons-material';
     const metadataDecoded: Metadata = decodeMetadata(Buffer.from(metadataObj.data),);
     const nft = metadataDecoded.data;
 
+    console.log("executeSaleInstruction.keys "+JSON.stringify(executeSaleInstruction.keys))
+    console.log("creators "+JSON.stringify(nft.creators))
+    console.log("AuctionHouseProgram.PUBKEY "+AuctionHouseProgram.PUBKEY)
+
 
       txt
         .add(publicBuyInstruction)
@@ -287,9 +290,9 @@ import { ConstructionOutlined } from '@mui/icons-material';
   
     
     //txt.add(publicBuyInstruction).add(printPurchaseReceiptInstruction)
-
+    
     //txt.recentBlockhash = (await connection.getRecentBlockhash()).blockhash
-    txt.feePayer = sellerWalletKey;
+    txt.feePayer = buyerAddress;
 
 
     const transferAuthority = web3.Keypair.generate();

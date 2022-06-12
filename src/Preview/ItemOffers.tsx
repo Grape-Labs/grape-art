@@ -1254,7 +1254,7 @@ export default function ItemOffers(props: any) {
                 }
 
                 // sort by date
-                allResults.sort((a:any,b:any) => (a.blockTime < b.blockTime) ? 1 : -1);
+                allResults.sort((a:any,b:any) => (a.blockTime > b.blockTime) ? 1 : -1);
 
                 //activityResults.push({buyeraddress: feePayer.toBase58(), amount: memo_json?.amount || memo_json?.offer, mint: memo_json?.mint, isowner: false, timestamp: forSaleDate, blockTime: value.blockTime, state: memo_json?.state || memo_json?.status});
                 //return activityResults;
