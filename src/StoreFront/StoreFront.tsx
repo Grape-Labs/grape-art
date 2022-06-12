@@ -852,7 +852,7 @@ export function StoreFrontView(this: any, props: any) {
         if (!stateLoading){
             setStateLoading(true);
 
-            const results = await getReceiptsFromAuctionHouse(collectionAuthority.auctionHouse || AUCTION_HOUSE_ADDRESS, null);
+            const results = await getReceiptsFromAuctionHouse(collectionAuthority.auctionHouse || AUCTION_HOUSE_ADDRESS, null, null, null);
 
             const ahListings = new Array();
             const ahListingsMints = new Array();

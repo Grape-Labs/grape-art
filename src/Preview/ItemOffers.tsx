@@ -71,6 +71,11 @@ import {
     FEATURED_DAO_ARRAY,
     VERIFIED_DAO_ARRAY,
 } from '../utils/grapeTools/constants';
+
+import { 
+    getReceiptsFromAuctionHouse,
+    getMintFromVerifiedMetadata } from '../utils/grapeTools/helpers';
+
 import { RegexTextField } from '../utils/grapeTools/RegexTextField';
 import { MakeLinkableAddress, ValidateCurve, trimAddress, timeAgo } from '../utils/grapeTools/WalletAddress'; // global key handling
 
@@ -87,6 +92,7 @@ import {
     getTokenAmount,
     getAuctionHouseTradeState,
     getAtaForMint,
+    getMetadata,
   } from '../utils/auctionHouse/helpers/accounts';
 
 import { cancelOffer } from '../utils/auctionHouse/cancelOffer';
@@ -1224,344 +1230,98 @@ export default function ItemOffers(props: any) {
     };
     
     const getOffers = async () => {
-        const anchorProgram = await loadAuctionHouseProgram(pubkey, ENV_AH, GRAPE_RPC_ENDPOINT);
-        console.log("with "+collectionAuctionHouse);
-        const auctionHouseKey = new web3.PublicKey(collectionAuctionHouse || AUCTION_HOUSE_ADDRESS);
         
-        const auctionHouseObj = await anchorProgram.account.auctionHouse.fetch(auctionHouseKey,);
-        let derivedMintPDA = await web3.PublicKey.findProgramAddress([Buffer.from((new PublicKey(mint)).toBuffer())], auctionHouseKey);
-        console.log("sigs from derivedMintPDA "+derivedMintPDA);
         
-        //let derivedBuyerPDA = await web3.PublicKey.findProgramAddress([Buffer.from((publicKey).toBuffer())], auctionHouseKey);
-        //let derivedOwnerPDA = await web3.PublicKey.findProgramAddress([Buffer.from((new PublicKey(mintOwner)).toBuffer())], auctionHouseKey);
-        
-        /*
-        console.log("derivedMintPDA: "+derivedMintPDA);
-        console.log("derivedBuyerPDA: "+derivedBuyerPDA);
-        console.log("derivedOwnerPDA: "+derivedOwnerPDA);
-        */
+        try {
+            //getMetadata
+            if (!openOffers){
+                //console.log("with aH: "+ collectionAuthority.auctionHouse+" - "+JSON.stringify(collectionAuthority))
+                const results = await getReceiptsFromAuctionHouse(collectionAuctionHouse || AUCTION_HOUSE_ADDRESS, null, mint, 'bid_receipt');
+                // we need to get listing_receipt too to show the latest price listed, do in two calls or in one with a filter????
 
-        //console.log(mint + " - derivedMintPDA: "+derivedMintPDA);
-        
-        let [result] = await Promise.all([GetSignatureOffers(derivedMintPDA[0].toString(),'', 100)]);
-        let offerResults: any[] = [];
-		let offerResultsCancelled: any[] = [];
-		let exists = false;
-        //let salePrice = 0;
-        let existSaleCancelAction = 0;
-        let cnt = 0;
-        let open_offers = 0;
-        var forSale = 0;
-        var forSaleDate = null;
-        var forSaleTimeAgo = null;
-        //console.log('derivedMintPDA[0]: '+derivedMintPDA[0].toString());
-        //console.log('result: '+JSON.stringify(result));
-        let ahHighestOffer = 0;
+                const open_offers = 0;
+                let allResults: any[] = [];
+                let offerResults: any[] = [];
 
-        if (!loading){
-            setLoading(true);
-            
-            let signatures: any[] = [];
-            for (var value of result){
-                signatures.push(value.signature);
-            }
-            
-            const getTransactionAccountInputs2 = await ggoconnection.getParsedTransactions(signatures, 'confirmed');
-            setOpenOffers(0);
-            for (var value of result){
-                if (value.err === null){                   
-                    
-                    const getTransactionAccountInputs = getTransactionAccountInputs2[cnt];
+                for (var item of results){
+                    const mintitem = await getMintFromVerifiedMetadata(item.metadata.toBase58(), null);
+                    console.log("item: "+JSON.stringify(item));
+                    // check if bid_receipt is for offers only
+                    allResults.push({buyeraddress: item.bookkeeper.toBase58(), bookkeeper: item.bookkeeper.toBase58(), amount: item.price, price: item.price, mint: mintitem?.address || mint, metadataParsed:mintitem, isowner: false, createdAt: item.createdAt, cancelledAt: item.canceledAt, timestamp: item.createdAt, blockTime: item.createdAt, state: item?.receipt_type});
+                }
 
-                    try{
-                        //console.log("value: "+JSON.stringify(value));
-                        //console.log("gtai ("+getTransactionAccountInputs2.length+"): "+JSON.stringify(getTransactionAccountInputs2[cnt]));
-                        
-                        if (getTransactionAccountInputs?.transaction && getTransactionAccountInputs?.transaction?.message){
-                            
-                            let feePayer = new PublicKey(getTransactionAccountInputs?.transaction.message.accountKeys[0].pubkey); // .feePayer.toBase58();
-                            let progAddress = getTransactionAccountInputs.meta.logMessages[0];
-                            let instructionType = getTransactionAccountInputs.meta.logMessages[1];
-                            let allLogMessages = getTransactionAccountInputs.meta.logMessages;
+                // sort by date
+                allResults.sort((a:any,b:any) => (a.blockTime < b.blockTime) ? 1 : -1);
 
-                            //console.log('getTransactionAccountInputs:', getTransactionAccountInputs);
-                            //console.log("escrow: "+JSON.stringify(getTransactionAccountInputs.meta.preTokenBalances));
-                            let auctionMint = getTransactionAccountInputs.meta.preTokenBalances[0]?.mint;                        
-                            //console.log("escrow: "+JSON.stringify(auctionMint) + " ::: value "+JSON.stringify(value));
-                            //if (auctionMint){
+                //activityResults.push({buyeraddress: feePayer.toBase58(), amount: memo_json?.amount || memo_json?.offer, mint: memo_json?.mint, isowner: false, timestamp: forSaleDate, blockTime: value.blockTime, state: memo_json?.state || memo_json?.status});
+                //return activityResults;
 
-                            let withMemo = value?.memo;
+                
+                // now show with filtering offerResults
+                let forSale = 0;
+                let forSaleDate = null;
+                let bid_count = 0;
+                let listing_count = 0;
+                let highest_offer = 0;
 
-                            if (withMemo === null){ // loop inner instructions
-                                for (var instruction of getTransactionAccountInputs.meta?.innerInstructions){
-                                    
-                                    for (var iinstruction of (instruction.instructions)){
-                                        if (iinstruction?.programId.toBase58() === 'MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr'){
-                                            withMemo = JSON.parse(JSON.stringify(iinstruction))?.parsed;
-                                        }
-                                    }
-                                }
-                            }
-                            
-                            {
-                                //if ((value) && (value?.memo)){
-                                if (withMemo){
-                                    let memo_arr: any[] = [];
-                                    let memo_str = withMemo;
-                                    let memo_instances = ((withMemo.match(/{/g)||[]).length);
-                                    if (memo_instances > 0) {
-                                        // multi memo
-                                        let mcnt = 0;
-                                        let submemo = memo_str;
-                                        //console.log("STR full (instance "+memo_instances+"): "+submemo);
-                                        for (var mx=0;mx<memo_instances;mx++){
-                                            let init = submemo.indexOf('{');
-                                            let fin = submemo.indexOf('}');
-                                            memo_str = submemo.substring(init,fin+1); // include brackets
-                                            memo_arr.push(memo_str);
-                                            submemo = submemo.replace(memo_str, "");
-                                            //console.log("pushed ("+mx+"):: "+memo_str + " init: "+init+" fin: "+fin);
-                                            //console.log("submemo: "+submemo);
-                                        }
-                                    } else{
-                                        let init = memo_str.indexOf('{');
-                                        let fin = memo_str.indexOf('}');
-                                        memo_str = memo_str.substring(init,fin+1); // include brackets
-                                        memo_arr.push(memo_str);
-                                    }
-                                    
-                                    for (var memo_item of memo_arr){
-                                        try{
-                                            const memo_json = JSON.parse(memo_item);
-                                            /*
-                                            if ((memo_json?.status === 3) || 
-                                                (memo_json?.status === 4) ||
-                                                (memo_json?.state === 3) ||
-                                                (memo_json?.state === 4)){
-                                                if ((memo_json?.sellPrice)||(memo_json?.amount)){
-                                                    //let sol = parseFloat(new TokenAmount(memo_json?.amount, 9).format());
-                                                    //console.log("Sold for: "+sol);
-                                                    offerResults.push({buyeraddress: feePayer, offeramount: memo_json?.amount, mint: getTransactionAccountInputs.meta.preTokenBalances[0].mint, isowner: false, timestamp: value.blockTime, state: memo_json?.state || memo_json?.status});  
-                                                }
-                                            }*/
-                                            
-                                            //console.log('OFFER:: '+feePayer.toBase58() + '('+memo_json?.amount+'): ' +memo_str);
-                                            if ( feePayer.toBase58() !== mintOwner && progAddress.search(AUCTION_HOUSE_PROGRAM_ID.toBase58())>0 && feePayer != null){
-                                                
-                                                //console.log("value: "+JSON.stringify(value));
-                                                const escrow = ( await getAuctionHouseBuyerEscrow(auctionHouseKey, feePayer,))[0];
-                                                let amount_on_escrow = await getTokenAmount(anchorProgram, escrow, auctionHouseObj.treasuryMint,); // total amount on escrow
-                                                // we need to now get the amount of the offer
-                                                //console.log(amount);
-                                                //let amount = await getTokenAmount(anchorProgram, escrow, new PublicKey(auctionMint),);
-                                                // we need to filter to find the amount that was offered to the specific mint
-                                                
-                                                if (amount_on_escrow >= 0) {
-                                                //{
-                                                    //let [inner_result] = await Promise.all([GetSignatureOffers(mintAta, '')]); // making this call again to get the memos                                       
-                                                    exists = false;                   
-                                                    {
-                                                        try{    
-                                                            if ((memo_json?.status === 0)||
-                                                                (memo_json?.status === 5) ||
-                                                                (memo_json?.state === 0)||
-                                                                (memo_json?.state === 5)){ // add to an array to search against other offers and cancel them out
-                                                                offerResultsCancelled.push({buyeraddress: feePayer, offeramount: memo_json?.amount, mint: memo_json.mint, isowner: false, timestamp: withMemo.blockTime, state: memo_json?.state || memo_json?.status});  
-                                                            }
-                                                            
-                                                            //console.log('memo_json: ' + memo_str);
-                                                            
-                                                            //if (memo_json.mint === getTransactionAccountInputs.meta.preTokenBalances[0].mint){
-                                                            {  
-                                                                //console.log('OFFER:: '+feePayer.toBase58() + '('+memo_json?.amount+'): ' +memo_str);
-
-                                                                if ((memo_json?.status === 0) || // withdraw
-                                                                    (memo_json?.status === 1) || // offer
-                                                                    (memo_json?.status === 2) || // sale
-                                                                    (memo_json?.status === 3) || // listing/accept
-                                                                    //(memo_json?.status === 4) || // buy now
-                                                                    (memo_json?.status === 5) ||
-                                                                    (memo_json?.state === 0) || // withdraw
-                                                                    (memo_json?.state === 1) || // offer
-                                                                    (memo_json?.state === 2) || // sale
-                                                                    (memo_json?.state === 3) || // listing/accept
-                                                                    //(memo_json?.state === 4) || // buy now
-                                                                    (memo_json?.state === 5)){ // cancel
-                                                                    
-                                                                    //console.log(feePayer.toBase58() + ": "+memo_str);
-
-                                                                    /*if ((memo_json?.amount <= amount_on_escrow)||
-                                                                        (memo_json?.offer <= amount_on_escrow)){ //.offer used in beta*/
-                                                                        
-                                                                        let found = false;
-                                                                        //console.log(feePayer+": "+JSON.stringify(memo_str));
-                                                                        for (var cancelled of offerResultsCancelled){
-                                                                            if ((cancelled.buyeraddress === feePayer.toBase58())&&
-                                                                                (cancelled.offeramount === amount_on_escrow)){
-                                                                                    found = true;
-                                                                            }
-                                                                        }
-                                                                        
-                                                                        if (!found){
-                                                                            //if (amount_on_escrow > highestOffer){
-                                                                                
-                                                                            //}
-
-                                                                            exists = false;
-                                                                            //console.log('OFFER:: '+feePayer.toBase58() + '('+memo_json?.amount+' v '+amount_on_escrow+'): ' +memo_str);
-                                                                            for (var i = 0; i < offerResults.length; i++){
-                                                                                if ((feePayer.toBase58() === offerResults[i].buyeraddress)){
-                                                                                    exists = true;
-                                                                                }
-                                                                            }
-                                                                            
-                                                                            if (!exists){
-                                                                                if (amount_on_escrow > 0){ // here check if the feePayer is good for the offer
-                                                                                    //console.log('PUSH '+memo_json?.state+':: '+feePayer.toBase58() + '('+memo_json?.amount+' v '+amount_on_escrow+'): ' +memo_str);
-                                                                                    
-                                                                                    if (memo_json?.state === 1 || memo_json?.status === 1){
-                                                                                        open_offers++;
-                                                                                    }
-
-                                                                                    if (feePayer.toBase58() === mintOwner){
-                                                                                        offerResults.push({buyeraddress: feePayer.toBase58(), offeramount: memo_json?.amount || memo_json?.offer, mint: memo_json?.mint, isowner: true, timestamp: value.blockTime, state: memo_json?.state || memo_json?.status});  
-                                                                                    }else{   
-                                                                                        offerResults.push({buyeraddress: feePayer.toBase58(), offeramount: memo_json?.amount || memo_json?.offer, mint: memo_json?.mint, isowner: false, timestamp: value.blockTime, state: memo_json?.state || memo_json?.status}); 
-                                                                                        
-                                                                                        if (memo_json?.state === 1 || memo_json?.status === 1){
-                                                                                            let sol = parseFloat(new TokenAmount(memo_json?.amount, 9).format());
-                                                                                            if (sol > ahHighestOffer){
-                                                                                                ahHighestOffer = sol;
-                                                                                                setHighestOffer(sol);
-                                                                                            }
-                                                                                        }
-                                                                                    } 
-                                                                                }
-                                                                            }
-                                                                        }
-                                                                    // }
-                                                                }
-                                                            }
-                                                        }catch(e){console.log("ERR: "+e)}
-                                                    }
-                                                }
-                                            }
-                                            //CHECK IF OWNER HAS AN ACTIVE SELL NOW PRICE
-                                            //console.log(feePayer.toBase58() + " vs "+ mintOwner);
-                                            
-                                            let feePayerMatched = false;
-                                            if (feePayer.toBase58() === mintOwner){
-                                                feePayerMatched = true;
-                                            } else {
-                                                for (var fpayer of getTransactionAccountInputs?.transaction.message.accountKeys){
-                                                    if (fpayer.pubkey.toBase58() === mintOwner){
-                                                        feePayerMatched = true;
-                                                        feePayer = fpayer.pubkey;
-                                                    }
-                                                }
-                                            }
-
-                                            let paSearch = progAddress.search(AUCTION_HOUSE_PROGRAM_ID.toBase58());
-                                            if (paSearch != 0){
-                                                if (ValidateDAO(mintOwner))
-                                                    paSearch = 1;
-                                            }
-                                            
-                                            if ( feePayerMatched && paSearch && feePayer != null && existSaleCancelAction === 0){
-                                                //console.log('PUSH '+memo_json?.state+':: '+feePayer.toBase58() + '('+memo_json?.amount+'): ' +memo_str);
-                                                
-                                                for (var i = 0; i < offerResults.length; i++){
-                                                    if ((feePayer.toBase58() === offerResults[i].buyeraddress)){
-                                                        exists = true;
-                                                    }
-                                                }
-
-                                                if (!exists){
-                                                    //console.log(feePayer+": "+JSON.stringify(memo_str)); 
-                                                    if ((memo_json?.status === 2) ||
-                                                        (memo_json?.state === 2)) {
-                                                            console.log(memo_json);
-														    //make a final check for seller trade state
-                                                            const mintOwnerPK = new PublicKey(mintOwner);
-                                                            const mintKey = new PublicKey(mint);
-                                                            const tokenAccountKey = (await getAtaForMint(mintKey, mintOwnerPK))[0];
-                                                            const tokenSizeAdjusted = new BN(
-                                                                await getPriceWithMantissa(
-                                                                  1,
-                                                                  mintKey,
-                                                                  mintOwnerPK, 
-                                                                  anchorProgram,
-                                                                ),
-                                                            );
-                                                            let offerAmount = memo_json?.amount || memo_json?.sellPrice;
-                                                            //console.log('offerAmount', offerAmount);
-                                                            const buyPriceAdjusted = new BN(
-                                                                await getPriceWithMantissa(
-                                                                  convertSolVal(offerAmount),
-                                                                  //@ts-ignore
-                                                                  auctionHouseObj.treasuryMint,
-                                                                  mintOwnerPK, 
-                                                                  anchorProgram,
-                                                                ),
-                                                            );
-
-                                                            const sellerTradeState = (
-                                                                await getAuctionHouseTradeState(
-                                                                  auctionHouseKey,
-                                                                  mintOwnerPK,
-                                                                  tokenAccountKey,
-                                                                  //@ts-ignore
-                                                                  auctionHouseObj.treasuryMint,
-                                                                  mintKey,
-                                                                  tokenSizeAdjusted,
-                                                                  buyPriceAdjusted,
-                                                                )
-                                                            )[0];
-                                                            const sellerTradeStateInfo = await ggoconnection.getAccountInfo(sellerTradeState);        
-                                                            //console.log('sellerTradeStateInfo:', sellerTradeStateInfo);
-                                                            if (sellerTradeStateInfo != null){
-																forSale = memo_json?.amount || memo_json?.sellPrice;
-																forSaleDate = value.blockTime;
-															}
-                                                        //console.log('Saleprice:', salePrice);
-                                                    }
-                                                }
-                                                existSaleCancelAction = 1;
-                                            }
-                                        } catch(ert){console.log("ERR: "+ert);}
-                                    }
-                                }
+                for (var offer of allResults){
+                    if (!item?.cancelledAt){
+                        listing_count++
+                        if (offer.state === 'listing_receipt'){ // exit on first receipt
+                            if (forSaleDate < offer.blockTime){
+                                forSale = offer.price;
+                                forSaleDate = offer.blockTime;
                             }
                         }
-                    }catch(er){console.log("ERR: "+er)}
-                    cnt++;
+                    }
                 }
-            }
 
-            setOpenOffers(open_offers);
-            // sort offers by highest offeramount
-            //console.log("offerResults pre: "+JSON.stringify(offerResults));
-            offerResults.sort((a,b) => (a.offeramount < b.offeramount) ? 1 : -1);
-            //console.log("offerResults post: "+JSON.stringify(offerResults));
-            setOffers(
-                offerResults
-            );
-            setSalePrice(
-                convertSolVal(forSale)
-            );
-        
-            if (forSaleDate){
-                let prettyForSaleDate = moment.unix(+forSaleDate).format("MMMM Do YYYY, h:mm a");
-                setSaleDate(
-                    prettyForSaleDate
+                for (var offer of allResults){
+                    if (!item?.cancelledAt){
+                        bid_count++
+                        console.log("offer.state: "+offer.state + " - "+item.price)
+                        if (offer.state === 'bid_receipt'){ // exit on first receipt
+                            offerResults.push(item);
+                            if (highest_offer < item.price)
+                                highest_offer = item.price;
+                        }
+                    }
+                }                
+
+                setHighestOffer(forSale);
+                setOpenOffers(bid_count);
+
+
+                setOpenOffers(open_offers);
+                // sort offers by highest offeramount
+                //console.log("offerResults pre: "+JSON.stringify(offerResults));
+                offerResults.sort((a,b) => (a.offeramount < b.offeramount) ? 1 : -1);
+                //console.log("offerResults post: "+JSON.stringify(offerResults));
+                setOffers(
+                    offerResults
                 );
+                setSalePrice(
+                    forSale
+                );
+                    
                 if (forSaleDate){
-                    let timeago = timeAgo(forSaleDate);
-                    setSaleTimeAgo(timeago);                                          
+                    let prettyForSaleDate = moment.unix(+forSaleDate).format("MMMM Do YYYY, h:mm a");
+                    setSaleDate(
+                        prettyForSaleDate
+                    );
+                    if (forSaleDate){
+                        let timeago = timeAgo(forSaleDate);
+                        setSaleTimeAgo(timeago);                                          
+                    }
                 }
+
             }
-            setLoading(false);
+            return null;
+        } catch (e) { // Handle errors from invalid calls
+            console.log(e);
+            return null;
         }
+        
     }
 
     const handleBuyNow =  async (salePrice: number, collectionAuctionHouse: string) => {

@@ -29,19 +29,21 @@ export async function getMintFromMetadata(updateAuthority:string, metadata:strin
 }
 
 export async function getMintFromVerifiedMetadata(metadata:string, collectionMintList: any){
-    for (var item of collectionMintList){
-        if (item.metadata === metadata){
-            return item;
+    if (collectionMintList){
+        for (var item of collectionMintList){
+            if (item.metadata === metadata){
+                return item;
+            }
         }
     }
     return null;
 }
 
-export async function getReceiptsFromAuctionHouse(auctionHouse: string, wallet: string) {
+export async function getReceiptsFromAuctionHouse(auctionHouse_filter: string, wallet_filter: string, mint_filter: string, bid_receipt_filter:string) {
     // if wallet is set we should also filter by wallet address
-    
+
     const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);    
-    const collectionAuctionHouse = auctionHouse || AUCTION_HOUSE_ADDRESS;
+    const collectionAuctionHouse = auctionHouse_filter || AUCTION_HOUSE_ADDRESS;
 
     //const AuctionHouseProgram = await ggoconnection.AuctionHouseProgram(new PublicKey(ENV_AH)); // loadAuctionHouseProgram(null, ENV_AH, GRAPE_RPC_ENDPOINT);
         //const AuctionHouseProgram =  AuctionHouse.fromAccountAddress(ggoconnection, new PublicKey(ENV_AH)); //.fromAccountInfo(info)[0];
