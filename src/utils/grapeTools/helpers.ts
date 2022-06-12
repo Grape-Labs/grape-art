@@ -87,7 +87,7 @@ export async function getReceiptsFromAuctionHouse(auctionHouse_filter: string, w
               //console.log('retrieveMint: ', retrieveMint.toString());
             }
             const ReceiptAccounts = await (Promise.all(ReceiptAccountSizes.map(async size => {
-                if (wallet_filter != null && mintMetadata === null){
+                if (wallet_filter != null && mint_filter === null){
                   console.log('execute with wallet_filter');
                   accounts = await ggoconnection.getProgramAccounts(
                     AUCTION_HOUSE_PROGRAM_ID,
@@ -112,7 +112,7 @@ export async function getReceiptsFromAuctionHouse(auctionHouse_filter: string, w
                     ],
                   }
                 );
-                } else if (wallet_filter != null && mintMetadata != null) {
+                } else if (wallet_filter != null && mint_filter != null) {
                   console.log('execute with all filters');
                   accounts = await ggoconnection.getProgramAccounts(
                     AUCTION_HOUSE_PROGRAM_ID,
