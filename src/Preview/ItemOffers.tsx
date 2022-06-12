@@ -1878,7 +1878,7 @@ export default function ItemOffers(props: any) {
 
                                             {offers && offers.map((item: any) => (
                                                 <>
-                                                    {(item.state === 1) ? (
+                                                    {(item.state === 'bid_receipt') ? (
                                                         <TableRow>
                                                             <TableCell><Typography variant="body2">
                                                                 <Tooltip title={t('View Profile')}>
@@ -1917,7 +1917,7 @@ export default function ItemOffers(props: any) {
                                                                                 color="error"
                                                                                 variant="text"
                                                                                 //onClick={() => handleWithdrawOffer(convertSolVal(item.offeramount))}
-                                                                                onClick={() => handleCancelOffer(convertSolVal(item.offeramount))}
+                                                                                onClick={() => handleCancelOffer((item.price))}
                                                                                 sx={{
                                                                                     borderRadius: '10px',
                                                                                 }}
@@ -1945,7 +1945,7 @@ export default function ItemOffers(props: any) {
                                                                     <>
                                                                     {publicKey && publicKey.toBase58() === mintOwner && (
                                                                         <Button
-                                                                            onClick={() => setAcceptPrompt(convertSolVal(item.offeramount), item.buyeraddress)} //acceptOfferWrapper(convertSolVal(item.offeramount), item.buyeraddress)} //handleAcceptOffer(convertSolVal(item.offeramount), item.buyeraddress)}
+                                                                            onClick={() => setAcceptPrompt((item.price), item.buyeraddress)} //acceptOfferWrapper(convertSolVal(item.offeramount), item.buyeraddress)} //handleAcceptOffer(convertSolVal(item.offeramount), item.buyeraddress)}
                                                                             className='buyNowButton'
                                                                             sx={{
                                                                             }}
@@ -1959,7 +1959,7 @@ export default function ItemOffers(props: any) {
                                                                             color="error"
                                                                             variant="text"
                                                                             //onClick={() => handleWithdrawOffer(convertSolVal(item.offeramount))}
-                                                                            onClick={() => handleCancelOffer(convertSolVal(item.offeramount))}
+                                                                            onClick={() => handleCancelOffer((item.price))}
                                                                             sx={{
                                                                                 borderRadius: '10px',
                                                                             }}
