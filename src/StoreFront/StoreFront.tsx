@@ -873,6 +873,7 @@ export function StoreFrontView(this: any, props: any) {
 
             for (var mintElement of collectionMintList){
                 mintElement.listingPrice = 0;
+                mintElement.listingCancelled = false;
             }
 
             // we need to remove listing history for those that have been sold
@@ -889,15 +890,23 @@ export function StoreFrontView(this: any, props: any) {
                             }
                         } else if (listing.state === 'listing_receipt'){
                             if (!listing?.cancelledAt){
-                                if ((!mintElement?.listedBlockTime) || (+listing.createdAt > +mintElement?.listedBlockTime)){
-                                    mintElement.listingPrice = +listing.price;
-                                    mintElement.listedTimestamp = listing.timestamp;
-                                    mintElement.listedBlockTime = listing.blockTime;
+                                if (!mintElement?.listingCancelled){
+                                    if ((!mintElement?.listedBlockTime) || (+listing.createdAt > +mintElement?.listedBlockTime)){
+                                        mintElement.listingPrice = +listing.price;
+                                        mintElement.listedTimestamp = listing.timestamp;
+                                        mintElement.listedBlockTime = listing.blockTime;
+                                    }
                                 }
                             }
-                        } else if (listing.state === 3){
-                            //if ((!collectionMintList[key]?.soldBlockTime) || (listing.blockTime > +collectionMintList[key]?.soldBlockTime))
-                            mintElement.soldBlockTime = listing.blockTime;
+                        } else if (listing.state === 'cancel_listing_receipt'){
+                            if (!listing?.cancelledAt){
+                                if ((!mintElement?.listedBlockTime) || (+listing.createdAt > +mintElement?.listedBlockTime)){
+                                    mintElement.listingPrice = 0;
+                                    mintElement.listedTimestamp = listing.timestamp;
+                                    mintElement.listedBlockTime = listing.blockTime;
+                                    mintElement.listingCancelled = true;
+                                }
+                            }
                         }
                     }
                 }
@@ -915,13 +924,27 @@ export function StoreFrontView(this: any, props: any) {
                         }
                     } else if (listing.state === 'listing_receipt'){
                         if (!listing?.cancelledAt){
+                            if (!mintElement?.listingCancelled){
+                                collectionMintList.push({
+                                    address: listing.mint,
+                                    listingPrice: listing.price,
+                                    listedTimestamp: listing.timestamp,
+                                    listedBlockTime: listing.blockTime,
+                                    name:null,
+                                    image:'',
+                                })
+                            }
+                        }
+                    } else if (listing.state === 'cancel_listing_receipt'){
+                        if (!listing?.cancelledAt){
                             collectionMintList.push({
                                 address: listing.mint,
-                                listingPrice: listing.price,
+                                listingPrice: 0,
                                 listedTimestamp: listing.timestamp,
                                 listedBlockTime: listing.blockTime,
                                 name:null,
                                 image:'',
+                                listingCancelled: true
                             })
                         }
                     }
@@ -1296,8 +1319,10 @@ export function StoreFrontView(this: any, props: any) {
                                 </Box>
                             </Grid>
                             <Grid item xs={12} sm={12} md={4} key={1}>
-                                {!stateLoading &&
+                                {!stateLoading ?
                                     <ActivityView collectionAuthority={collectionAuthority} collectionMintList={collectionMintList} activity={auctionHouseListings} mode={0} />
+                                :
+                                    <CircularProgress />
                                 }
                             </Grid>
                         </Grid>

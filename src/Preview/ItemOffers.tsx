@@ -1266,18 +1266,22 @@ export default function ItemOffers(props: any) {
                 let bid_count = 0;
                 let listing_count = 0;
                 let highest_offer = 0;
+                let isCancelled = false;
 
                 for (var offer of allResults){
                     if (!offer?.cancelledAt){
                         listing_count++
                         if (offer.state === 'listing_receipt'){ // exit on first receipt
-                            if (forSaleDate < offer.blockTime){
+                            if (forSaleDate > offer.blockTime){
                                 console.log("checking: "+offer.bookkeeper+" vs "+mintOwner)
                                 if (offer.bookkeeper === mintOwner){
                                     forSale = offer.price;
                                     forSaleDate = offer.blockTime;
                                 }
                             }
+                        } else if (offer.state === 'cancel_listing_receipt'){ // exit on first receipt
+                            isCancelled = true;
+                            break;
                         }
                     }
                 }
