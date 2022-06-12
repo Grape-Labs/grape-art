@@ -1254,7 +1254,7 @@ export default function ItemOffers(props: any) {
                 }
 
                 // sort by date
-                allResults.sort((a:any,b:any) => (a.blockTime > b.blockTime) ? 1 : -1);
+                allResults.sort((a:any,b:any) => (a.blockTime < b.blockTime) ? 1 : -1);
 
                 //activityResults.push({buyeraddress: feePayer.toBase58(), amount: memo_json?.amount || memo_json?.offer, mint: memo_json?.mint, isowner: false, timestamp: forSaleDate, blockTime: value.blockTime, state: memo_json?.state || memo_json?.status});
                 //return activityResults;
@@ -1272,8 +1272,8 @@ export default function ItemOffers(props: any) {
                     if (!offer?.cancelledAt){
                         listing_count++
                         if (offer.state === 'listing_receipt'){ // exit on first receipt
-                            if (forSaleDate > offer.blockTime){
-                                console.log("checking: "+offer.bookkeeper+" vs "+mintOwner)
+                            if (!forSaleDate || forSaleDate < offer.blockTime){
+                                //console.log("checking: "+JSON.stringify(offer))
                                 if (offer.bookkeeper === mintOwner){
                                     forSale = offer.price;
                                     forSaleDate = offer.blockTime;

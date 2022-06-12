@@ -168,7 +168,7 @@ export default function ActivityView(props: any){
                     for (var item of results){
                         const mintitem = await getMintFromVerifiedMetadata(item.metadata.toBase58(), collectionMintList);
                         console.log("item: "+JSON.stringify(item));
-                        activityResults.push({buyeraddress: item.bookkeeper.toBase58(), bookkeeper: item.bookkeeper.toBase58(), amount: item.price, price: item.price, mint: mintitem.address, metadataParsed:mintitem, isowner: false, createdAt: item.createdAt, cancelledAt: item.canceledAt, timestamp: item.createdAt, blockTime: item.createdAt, state: item?.receipt_type});
+                        activityResults.push({buyeraddress: item.bookkeeper.toBase58(), bookkeeper: item.bookkeeper.toBase58(), amount: item.price, price: item.price, mint: mintitem.address, metadataParsed:mintitem, isowner: false, createdAt: item.createdAt, cancelledAt: item.canceledAt, timestamp: timeAgo(item.createdAt), blockTime: item.createdAt, state: item?.receipt_type});
                     }
 
                     // sort by date
@@ -306,9 +306,9 @@ export default function ActivityView(props: any){
                     </TableCell>
                     <TableCell align="right">
                         <Typography variant="caption">
-                            <Tooltip title={formatBlockTime(item.timestamp, true, true)}>
+                            <Tooltip title={formatBlockTime(item.blockTime, true, true)}>
                                 <Button 
-                                variant="text" size='small' sx={{borderRadius:'24px'}}>{timeAgo(item.timestamp)}</Button>
+                                variant="text" size='small' sx={{borderRadius:'24px'}}>{(item.timestamp)}</Button>
                             </Tooltip>
                         </Typography>
                     </TableCell>

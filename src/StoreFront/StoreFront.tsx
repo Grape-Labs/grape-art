@@ -860,7 +860,7 @@ export function StoreFrontView(this: any, props: any) {
             for (var item of results){
                 const mintitem = await getMintFromVerifiedMetadata(item.metadata.toBase58(), collectionMintList);
                 console.log("item: "+JSON.stringify(item));
-                ahListings.push({buyeraddress: item.bookkeeper.toBase58(), bookkeeper: item.bookkeeper.toBase58(), amount: item.price, price: item.price, mint: mintitem.address, metadataParsed:mintitem, isowner: false, createdAt: item.createdAt, cancelledAt: item.canceledAt, timestamp: item.createdAt, blockTime: item.createdAt, state: item?.receipt_type});
+                ahListings.push({buyeraddress: item.bookkeeper.toBase58(), bookkeeper: item.bookkeeper.toBase58(), amount: item.price, price: item.price, mint: mintitem.address, metadataParsed:mintitem, isowner: false, createdAt: item.createdAt, cancelledAt: item.canceledAt, timestamp: timeAgo(item.createdAt), blockTime: item.createdAt, state: item?.receipt_type});
                 ahListingsMints.push(mintitem.address);
             }
 
