@@ -49,7 +49,7 @@ const {
   createPrintPurchaseReceiptInstruction,
 } = AuctionHouseProgram.instructions
 
-export async function gah_acceptOffer(offerAmount: number, mint: string, sellerWalletKey: PublicKey, buyerAddress: any, updateAuthority: string, collectionAuctionHouse: string): Promise<InstructionsAndSignersSet> {
+export async function gah_acceptOffer(offerAmount: number, mint: string, sellerWalletKey: PublicKey, buyerAddress: any, updateAuthority: string, collectionAuctionHouse: string, listingTradeState: PublicKey): Promise<InstructionsAndSignersSet> {
   //START CANCEL
   let tokenSize = 1;
   const auctionHouseKey = new web3.PublicKey(collectionAuctionHouse || AUCTION_HOUSE_ADDRESS);
@@ -248,7 +248,6 @@ export async function gah_acceptOffer(offerAmount: number, mint: string, sellerW
           data: executeSaleInstruction.data,
           keys: concat(
             executeSaleInstruction.keys,
-           
             nft.creators.map((creator: any) => ({
               pubkey: new PublicKey(creator.address),
               isSigner: false,
@@ -261,16 +260,18 @@ export async function gah_acceptOffer(offerAmount: number, mint: string, sellerW
      
     if (mint) {
       
+      const tradeState = listingTradeState;
+      /*
       const [tradeState, tradeStateBump] =
       await AuctionHouseProgram.findPublicBidTradeStateAddress(
-        sellerWalletKey,
+        buyerPubkey,
         auctionHouse,
         auctionHouseObj.treasuryMint,
         tokenMint,
         buyerPrice,
         1
-      )
-      
+      )*/
+
       const cancelInstructionAccounts = {
         wallet: sellerWalletKey,
         tokenAccount,
@@ -278,13 +279,13 @@ export async function gah_acceptOffer(offerAmount: number, mint: string, sellerW
         authority,
         auctionHouse,
         auctionHouseFeeAccount,
-        tradeState: new PublicKey(tradeState),
+        tradeState: listingTradeState,
       }
       const cancelListingInstructionArgs = {
         buyerPrice: buyerPrice,
         tokenSize: 1,
       }
-
+      
       const [receipt, receiptBump] =
           await AuctionHouseProgram.findListingReceiptAddress(tradeState)
 
@@ -300,7 +301,7 @@ export async function gah_acceptOffer(offerAmount: number, mint: string, sellerW
 
       const cancelListingReceiptInstruction =
         createCancelListingReceiptInstruction(cancelListingReceiptAccounts)
-
+      
       txt.add(cancelListingInstruction).add(cancelListingReceiptInstruction)
       
     }
@@ -310,57 +311,6 @@ export async function gah_acceptOffer(offerAmount: number, mint: string, sellerW
   const transferAuthority = web3.Keypair.generate();
   const signers = true ? [] : [transferAuthority];
   const instructions = txt.instructions;
-/*
-  const GRAPE_AH_MEMO = {
-    state:5, // status (0: withdraw, 1: offer, 2: listing, 3: buy/execute (from listing), 4: buy/execute(accept offer), 5: cancel)
-    ah:auctionHouseKey.toString(), // pk
-    mint:mint.toString(), // mint
-    ua:updateAuthority, // updateAuthority
-    amount:buyerPrice // price
-  };
-
-  let derivedMintPDA = await web3.PublicKey.findProgramAddress([Buffer.from((mintKey).toBuffer())], auctionHouseKey);
-  let derivedBuyerPDA = await web3.PublicKey.findProgramAddress([Buffer.from((sellerWalletKey).toBuffer())], auctionHouseKey);
-  let derivedOwnerPDA = await web3.PublicKey.findProgramAddress([Buffer.from((new PublicKey(buyerAddress)).toBuffer())], auctionHouseKey);
-  let derivedUpdateAuthorityPDA = await web3.PublicKey.findProgramAddress([Buffer.from((new PublicKey(updateAuthority)).toBuffer())], auctionHouseKey);
-  
-  instructions.push(
-    SystemProgram.transfer({
-      fromPubkey: sellerWalletKey,
-      toPubkey: derivedMintPDA[0],
-      lamports: 0,
-    })
-  );
-  instructions.push(
-    SystemProgram.transfer({
-        fromPubkey: sellerWalletKey,
-        toPubkey: derivedBuyerPDA[0],
-        lamports: 0,
-    })
-  );
-  instructions.push(
-    SystemProgram.transfer({
-        fromPubkey: sellerWalletKey,
-        toPubkey: derivedOwnerPDA[0],
-        lamports: 0,
-    })
-  );
-  instructions.push(
-    SystemProgram.transfer({
-        fromPubkey: sellerWalletKey,
-        toPubkey: derivedUpdateAuthorityPDA[0],
-        lamports: 0,
-    })
-  );
-  
-  instructions.push(
-    new TransactionInstruction({
-        keys: [{ pubkey: sellerWalletKey, isSigner: true, isWritable: true }],
-        data: Buffer.from(JSON.stringify(GRAPE_AH_MEMO), 'utf-8'),
-        programId: new PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr"),
-    })
-  );
-  */
 
   return {
     signers: signers,

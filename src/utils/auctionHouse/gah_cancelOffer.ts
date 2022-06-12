@@ -87,19 +87,6 @@ export async function gah_cancelOffer(offerAmount: number, mint: string, buyerWa
     //const tokenAccountKey = (await getAtaForMint(mintKey, buyerWalletKey))[0];
     
     const tokenAccountKey = (await getAtaForMint(mintKey, sellerWalletKey))[0];
-    
-    const tradeState2 = (
-          await getAuctionHouseTradeState(
-              auctionHouseKey,
-              buyerWalletKey,
-              tokenAccountKey,
-              //@ts-ignore
-              auctionHouseObj.treasuryMint,
-              mintKey,
-              new BN(1),//tokenSizeAdjusted,
-              new BN(buyerPrice),
-          )
-    )[0];  
             
     const [tradeState, tradeStateBump] =
       await AuctionHouseProgram.findPublicBidTradeStateAddress(

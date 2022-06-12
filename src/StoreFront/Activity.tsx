@@ -141,22 +141,41 @@ export default function ActivityView(props: any){
         try {
             
             if (!recentActivity){
-                //console.log("with aH: "+ collectionAuthority.auctionHouse+" - "+JSON.stringify(collectionAuthority))
-                const results = await getReceiptsFromAuctionHouse(collectionAuthority.auctionHouse || AUCTION_HOUSE_ADDRESS, null, null, null);
+                if (mode === 0){
+                    //console.log("with aH: "+ collectionAuthority.auctionHouse+" - "+JSON.stringify(collectionAuthority))
+                    const results = await getReceiptsFromAuctionHouse(collectionAuthority.auctionHouse || AUCTION_HOUSE_ADDRESS, null, null, null);
 
-                const activityResults = new Array();
+                    const activityResults = new Array();
 
-                for (var item of results){
-                    const mintitem = await getMintFromVerifiedMetadata(item.metadata.toBase58(), collectionMintList);
-                    console.log("item: "+JSON.stringify(item));
-                    activityResults.push({buyeraddress: item.bookkeeper.toBase58(), bookkeeper: item.bookkeeper.toBase58(), amount: item.price, price: item.price, mint: mintitem.address, metadataParsed:mintitem, isowner: false, createdAt: item.createdAt, cancelledAt: item.canceledAt, timestamp: item.createdAt, blockTime: item.createdAt, state: item?.receipt_type});
+                    for (var item of results){
+                        const mintitem = await getMintFromVerifiedMetadata(item.metadata.toBase58(), collectionMintList);
+                        console.log("item: "+JSON.stringify(item));
+                        activityResults.push({buyeraddress: item.bookkeeper.toBase58(), bookkeeper: item.bookkeeper.toBase58(), amount: item.price, price: item.price, mint: mintitem.address, metadataParsed:mintitem, isowner: false, createdAt: item.createdAt, cancelledAt: item.canceledAt, timestamp: item.createdAt, blockTime: item.createdAt, state: item?.receipt_type});
+                    }
+
+                    // sort by date
+                    activityResults.sort((a:any,b:any) => (a.blockTime < b.blockTime) ? 1 : -1);
+
+                    //activityResults.push({buyeraddress: feePayer.toBase58(), amount: memo_json?.amount || memo_json?.offer, mint: memo_json?.mint, isowner: false, timestamp: forSaleDate, blockTime: value.blockTime, state: memo_json?.state || memo_json?.status});
+                    return activityResults;
+                } else {
+                    //console.log("with aH: "+ collectionAuthority.auctionHouse+" - "+JSON.stringify(collectionAuthority))
+                    const results = await getReceiptsFromAuctionHouse(collectionAuthority.auctionHouse || AUCTION_HOUSE_ADDRESS, publicKey.toBase58(), null, null);
+
+                    const activityResults = new Array();
+
+                    for (var item of results){
+                        const mintitem = await getMintFromVerifiedMetadata(item.metadata.toBase58(), collectionMintList);
+                        console.log("item: "+JSON.stringify(item));
+                        activityResults.push({buyeraddress: item.bookkeeper.toBase58(), bookkeeper: item.bookkeeper.toBase58(), amount: item.price, price: item.price, mint: mintitem.address, metadataParsed:mintitem, isowner: false, createdAt: item.createdAt, cancelledAt: item.canceledAt, timestamp: item.createdAt, blockTime: item.createdAt, state: item?.receipt_type});
+                    }
+
+                    // sort by date
+                    activityResults.sort((a:any,b:any) => (a.blockTime < b.blockTime) ? 1 : -1);
+
+                    //activityResults.push({buyeraddress: feePayer.toBase58(), amount: memo_json?.amount || memo_json?.offer, mint: memo_json?.mint, isowner: false, timestamp: forSaleDate, blockTime: value.blockTime, state: memo_json?.state || memo_json?.status});
+                    return activityResults;
                 }
-
-                // sort by date
-                activityResults.sort((a:any,b:any) => (a.blockTime < b.blockTime) ? 1 : -1);
-
-                //activityResults.push({buyeraddress: feePayer.toBase58(), amount: memo_json?.amount || memo_json?.offer, mint: memo_json?.mint, isowner: false, timestamp: forSaleDate, blockTime: value.blockTime, state: memo_json?.state || memo_json?.status});
-                return activityResults;
 
             }
             return null;

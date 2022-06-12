@@ -141,8 +141,8 @@ import { ConstructionOutlined } from '@mui/icons-material';
         buyerPubkey
       )
 
-      /*
-    const executeSaleInstructionAccounts = {
+      
+    const executeSaleInstructionAccounts2 = {
       buyer: buyerAddress,
       sellerAddress,
       tokenAccount,
@@ -160,7 +160,8 @@ import { ConstructionOutlined } from '@mui/icons-material';
       sellerTradeState,
       freeTradeState,
       programAsSigner,
-    }*/
+    }
+
     const executeSaleInstructionAccounts = {
       buyer: buyerPubkey,
       seller: sellerWalletKey,
@@ -180,6 +181,26 @@ import { ConstructionOutlined } from '@mui/icons-material';
       auctionHouseTreasury,
       programAsSigner,
     }
+    /*
+    const executeSaleInstructionAccounts = {
+      buyer: buyerPubkey,
+      seller: sellerWalletKey,
+      auctionHouse,
+      tokenAccount,
+      tokenMint,
+      treasuryMint,
+      metadata,
+      authority,
+      sellerTradeState,
+      buyerTradeState,
+      freeTradeState,
+      sellerPaymentReceiptAccount: sellerWalletKey,
+      escrowPaymentAccount,
+      buyerReceiptTokenAccount,
+      auctionHouseFeeAccount,
+      auctionHouseTreasury,
+      programAsSigner,
+    }*/
 
     const executeSaleInstructionArgs = {
       escrowPaymentBump,
@@ -254,7 +275,6 @@ import { ConstructionOutlined } from '@mui/icons-material';
             data: executeSaleInstruction.data,
             keys: concat(
               executeSaleInstruction.keys,
-             
               nft.creators.map((creator: any) => ({
                 pubkey: new PublicKey(creator.address),
                 isSigner: false,
