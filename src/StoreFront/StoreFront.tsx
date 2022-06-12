@@ -953,11 +953,8 @@ export function StoreFrontView(this: any, props: any) {
             collectionMintList.sort((a:any,b:any) => (+a.listingPrice < +b.listingPrice) ? 1 : -1); 
             
             setTimeout(function() {
-                
-                console.log("sorted collectionMintList: "+JSON.stringify(collectionMintList));
-
                 setStateLoading(false);                                      
-            }, 2000); 
+            }, 500); 
             
         }
     }

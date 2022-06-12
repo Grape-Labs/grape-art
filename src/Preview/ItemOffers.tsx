@@ -106,6 +106,7 @@ import { gah_makeOffer } from '../utils/auctionHouse/gah_makeOffer';
 import { gah_cancelOffer } from '../utils/auctionHouse/gah_cancelOffer';
 import { gah_acceptOffer } from '../utils/auctionHouse/gah_acceptOffer';
 import { gah_makeListing } from '../utils/auctionHouse/gah_makeListing';
+import { gah_sellListing } from '../utils/auctionHouse/gah_sellListing';
 import { cancelWithdrawOffer } from '../utils/auctionHouse/cancelWithdrawOffer';
 import { depositInGrapeVine } from '../utils/auctionHouse/depositInGrapeVine';
 import { voteSell } from '../utils/auctionHouse/voteSell';
@@ -1335,7 +1336,8 @@ export default function ItemOffers(props: any) {
             const amount = await getTokenAmount(anchorProgram,escrow,auctionHouseObj.treasuryMint,);
 			const escrowAmount = convertSolVal(amount);
             //if (amount === 0){
-                const transactionInstr = await buyNowListing(salePrice, mint, sellerWalletKey.toString(), buyerPublicKey, updateAuthority, auctionHouseKey.toBase58());
+                //const transactionInstr = await buyNowListing(salePrice, mint, sellerWalletKey.toString(), buyerPublicKey, updateAuthority, auctionHouseKey.toBase58());
+                const transactionInstr = await gah_sellListing(salePrice, mint, buyerPublicKey.toBase58(), sellerWalletKey.toBase58(), null, null, updateAuthority, auctionHouseKey.toBase58());
                 const instructionsArray = [transactionInstr.instructions].flat();        
                 const transaction = new Transaction()
                 .add(

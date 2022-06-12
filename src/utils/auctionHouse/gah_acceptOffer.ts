@@ -211,8 +211,8 @@ export async function gah_acceptOffer(offerAmount: number, mint: string, sellerW
       purchaseReceiptBump: purchaseReceiptBump,
     }
 
-    console.log("executePrintPurchaseReceiptInstructionAccounts: "+JSON.stringify(executePrintPurchaseReceiptInstructionAccounts));
-    console.log("executePrintPurchaseReceiptInstructionArgs: "+JSON.stringify(executePrintPurchaseReceiptInstructionArgs));
+    //console.log("executePrintPurchaseReceiptInstructionAccounts: "+JSON.stringify(executePrintPurchaseReceiptInstructionAccounts));
+    //console.log("executePrintPurchaseReceiptInstructionArgs: "+JSON.stringify(executePrintPurchaseReceiptInstructionArgs));
 
     const createListingInstruction = createSellInstruction(
       sellInstructionAccounts,
