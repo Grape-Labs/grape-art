@@ -1376,7 +1376,7 @@ export default function ItemOffers(props: any) {
                     </Button>
                 );
                 enqueueSnackbar(`${t('NFT transaction complete')} `,{ variant: 'success', action:snackaction });
-                
+                /*
                 if (escrowAmount > 0){
                     //check the amount to redeposit 
                     let depositAmount = 0;
@@ -1408,6 +1408,7 @@ export default function ItemOffers(props: any) {
                     );
                     enqueueSnackbar(`${t('Deposit back to GrapeVine completed')}`,{ variant: 'success', action:snackaction });
                 }
+                */
                 const eskey = enqueueSnackbar(`${t('Metadata will be refreshed in a few seconds')}`, {
                         anchorOrigin: {
                             vertical: 'top',

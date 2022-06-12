@@ -87,7 +87,7 @@ export async function gah_acceptOffer(offerAmount: number, mint: string, sellerW
     
     const [sellerTradeState, sellerTradeStateBump] =
       await AuctionHouseProgram.findTradeStateAddress(
-        sellerWalletKey,//publicKey,
+        sellerWalletKey,
         auctionHouse,
         tokenAccount,
         treasuryMint,
