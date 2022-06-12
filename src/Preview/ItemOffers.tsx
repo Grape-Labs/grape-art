@@ -107,6 +107,7 @@ import { gah_cancelOffer } from '../utils/auctionHouse/gah_cancelOffer';
 import { gah_acceptOffer } from '../utils/auctionHouse/gah_acceptOffer';
 import { gah_makeListing } from '../utils/auctionHouse/gah_makeListing';
 import { gah_sellListing } from '../utils/auctionHouse/gah_sellListing';
+import { gah_cancelListing } from '../utils/auctionHouse/gah_cancelListing';
 import { cancelWithdrawOffer } from '../utils/auctionHouse/cancelWithdrawOffer';
 import { depositInGrapeVine } from '../utils/auctionHouse/depositInGrapeVine';
 import { voteSell } from '../utils/auctionHouse/voteSell';
@@ -1054,8 +1055,8 @@ export default function ItemOffers(props: any) {
     const handleCancelListing =  async (salePrice: number) => {
         try {
             //START CANCEL LISTING
-            const transactionInstr = await cancelListing(salePrice, mint, walletPublicKey.toString(), mintOwner, updateAuthority, collectionAuctionHouse);
-            //const transactionInstr = await gah_cancelListing(salePrice, mint, walletPublicKey.toString(), mintOwner, updateAuthority, collectionAuctionHouse);
+            //const transactionInstr = await cancelListing(salePrice, mint, walletPublicKey.toString(), mintOwner, updateAuthority, collectionAuctionHouse);
+            const transactionInstr = await gah_cancelListing(salePrice, mint, walletPublicKey.toString(), mintOwner, null, null, updateAuthority, collectionAuctionHouse);
             const instructionsArray = [transactionInstr.instructions].flat();        
             const transaction = new Transaction()
             .add(
