@@ -94,7 +94,8 @@ import {
 } from '../utils/grapeTools/constants';
 
 import { 
-    getReceiptsFromAuctionHouse
+    getReceiptsFromAuctionHouse,
+    getMintFromVerifiedMetadata
 } from '../utils/grapeTools/helpers';
 
 import ShareSocialURL from '../utils/grapeTools/ShareUrl';
@@ -850,120 +851,25 @@ export function StoreFrontView(this: any, props: any) {
         
         if (!stateLoading){
             setStateLoading(true);
-            //const anchorProgram = await loadAuctionHouseProgram(null, ENV_AH, GRAPE_RPC_ENDPOINT);
-            const auctionHouseKey = new PublicKey(AUCTION_HOUSE_ADDRESS);
-            //const auctionHouseObj = await anchorProgram.account.auctionHouse.fetch(auctionHouseKey,);
-            //let derivedMintPDA = await web3.PublicKey.findProgramAddress([Buffer.from((new PublicKey(mint)).toBuffer())], auctionHouseKey);
-            //let derivedBuyerPDA = await web3.PublicKey.findProgramAddress([Buffer.from((publicKey).toBuffer())], auctionHouseKey);
-            //let derivedOwnerPDA = await web3.PublicKey.findProgramAddress([Buffer.from((new PublicKey(mintOwner)).toBuffer())], auctionHouseKey);
-            let derivedUAPDA = await PublicKey.findProgramAddress([Buffer.from((new PublicKey(collectionAuthority.address)).toBuffer())], auctionHouseKey);
-            /*
-            console.log("derivedMintPDA: "+derivedMintPDA);
-            console.log("derivedBuyerPDA: "+derivedBuyerPDA);
-            console.log("derivedOwnerPDA: "+derivedOwnerPDA);
-            */
-            let result = await ggoconnection.getSignaturesForAddress(derivedUAPDA[0], {limit: 250});
-            let ahListings: any[] = [];
-            let ahListingsMints: any[] =[];
-            let exists = false;
-            let cntr = 0;
-            let cnt = 0;
-            
-            let signatures: any[] = [];
-            for (var value of result){
-                signatures.push(value.signature);
+
+            const results = await getReceiptsFromAuctionHouse(collectionAuthority.auctionHouse || AUCTION_HOUSE_ADDRESS, null);
+
+            const ahListings = new Array();
+            const ahListingsMints = new Array();
+
+            for (var item of results){
+                const mintitem = await getMintFromVerifiedMetadata(item.metadata.toBase58(), collectionMintList);
+                console.log("item: "+JSON.stringify(item));
+                ahListings.push({buyeraddress: item.bookkeeper.toBase58(), bookkeeper: item.bookkeeper.toBase58(), amount: item.price, price: item.price, mint: mintitem.address, metadataParsed:mintitem, isowner: false, createdAt: item.createdAt, cancelledAt: item.canceledAt, timestamp: item.createdAt, blockTime: item.createdAt, state: item?.receipt_type});
+                ahListingsMints.push(mintitem.address);
             }
+
+            // sort by date
+            ahListings.sort((a:any,b:any) => (a.blockTime < b.blockTime) ? 1 : -1);
+
+            setAuctionHouseListings(ahListings);
+            //activityResults.push({buyeraddress: feePayer.toBase58(), amount: memo_json?.amount || memo_json?.offer, mint: memo_json?.mint, isowner: false, timestamp: forSaleDate, blockTime: value.blockTime, state: memo_json?.state || memo_json?.status});
             
-            const getTransactionAccountInputs2 = await ticonnection.getParsedTransactions(signatures, 'confirmed');
-            
-            let featured = null;
-            for (var value of result){
-            
-                if (value.err === null){
-                    try{
-                        //console.log('value: '+JSON.stringify(value));
-                        const getTransactionAccountInputs = getTransactionAccountInputs2[cnt];
-                        
-                        if (getTransactionAccountInputs?.transaction && getTransactionAccountInputs?.transaction?.message){
-                            
-                            let feePayer = new PublicKey(getTransactionAccountInputs?.transaction.message.accountKeys[0].pubkey); // .feePayer.toBase58();                            
-                            //let progAddress = getTransactionAccountInputs.meta.logMessages[0];
-
-                            exists = false;
-                            if ((value) && (value.memo)){
-                                
-                                let memo_arr: any[] = [];
-                                let memo_str = value.memo;
-                                let memo_instances = ((value.memo.match(/{/g)||[]).length);
-                                if (memo_instances > 0) {
-                                    // multi memo
-                                    let mcnt = 0;
-                                    let submemo = memo_str;
-                                    //console.log("STR full (instance "+memo_instances+"): "+submemo);
-                                    for (var mx=0;mx<memo_instances;mx++){
-                                        let init = submemo.indexOf('{');
-                                        let fin = submemo.indexOf('}');
-                                        memo_str = submemo.slice(init,fin+1); // include brackets
-                                        memo_arr.push(memo_str);
-                                        submemo = submemo.replace(memo_str, "");
-                                        //console.log("pushed ("+mx+"):: "+memo_str + " init: "+init+" fin: "+fin);
-                                        //console.log("submemo: "+submemo);
-                                    }
-                                } else{
-                                    let init = memo_str.indexOf('{');
-                                    let fin = memo_str.indexOf('}');
-                                    memo_str = memo_str.slice(init,fin+1); // include brackets
-                                    memo_arr.push(memo_str);
-                                }
-                                
-                                for (var memo_item of memo_arr){
-                                    try{
-
-                                        const memo_json = JSON.parse(memo_item);
-
-                                        console.log('MEM:: ('+memo_json?.amount+'): ' +memo_str);
-                                        for (var i = 0; i < ahListings.length; i++){
-                                            if ((memo_json?.mint === ahListings[i].mint)){ // match same
-                                                // if match then add
-                                                if (memo_json.state === 1)
-                                                    ahListings[i].offers = ahListings[i].offers+1;
-                                                exists = true;
-                                            }
-                                        }
-
-                                        //if (!exists){
-                                            let forSaleDate = ''+value.blockTime;
-                                            if (forSaleDate){
-                                                let timeago = timeAgo(''+value.blockTime);
-                                                forSaleDate = timeago;
-                                            }
-
-                                            let solvalue = convertSolVal(memo_json?.amount || memo_json?.offer, null);
-                                            if (memo_json?.mint){
-                                                let offer = 0;
-                                                if (memo_json.state === 1)
-                                                    offer = 1;
-                                                // 1. score will need to be decayed according to time
-                                                // 2. score will need to be decayed if reported and if reported > threshhold dont show
-                                                ahListings.push({buyeraddress: feePayer.toBase58(), amount: memo_json?.amount || memo_json?.offer, solvalue: solvalue, mint: memo_json?.mint, timestamp: forSaleDate, blockTime:value.blockTime, state: memo_json?.state || memo_json?.status, offers: offer, score: memo_json?.score || 0});  
-                                                ahListingsMints.push(memo_json.mint);
-                                                
-                                            }
-                                        //}
-                                    }catch(merr){console.log("ERR: "+merr + " - "+memo_item)}
-                                }
-                                setAuctionHouseListings(ahListings);
-                            }
-                        }
-                    } catch (e){console.log("ERR: "+e)}
-                }
-            } 
-
-            // IMPORTANT
-            // loop and set the list price, highest offer, and date of the listing
-            // sort first by blockTime
-            collectionMintList.sort((a:any,b:any) => (a.blockTime > b.blockTime) ? 1 : -1);
-
             // we need to remove listing history for those that have been sold
             for (var listing of ahListings){
                 let exists = false;
@@ -971,47 +877,64 @@ export function StoreFrontView(this: any, props: any) {
                     collectionMintList[key].price = 0;
                     if (collectionMintList[key].address === listing.mint){
                         exists = true;
-                        if (listing.state === 1){
-                            if ((!collectionMintList[key]?.highestOffer) || (listing.solvalue > +collectionMintList[key]?.highestOffer)){
-                                if ((!collectionMintList[key]?.soldBlockTime) || (listing.blockTime > +collectionMintList[key]?.soldBlockTime))
-                                    collectionMintList[key].highestOffer = listing.solvalue;
+                        if (listing.state === 'bid_receipt'){
+                            if ((!collectionMintList[key]?.highestOffer) || (listing.price > +collectionMintList[key]?.highestOffer)){
+                                if (!listing?.cancelledAt)
+                                    collectionMintList[key].highestOffer = listing.price;
                                 // add offer count?
                             }
-                        } else if (listing.state === 2){
-                            collectionMintList[key].price = listing.solvalue;
-                            collectionMintList[key].listedTimestamp = listing.timestamp;
-                            collectionMintList[key].listedBlockTime = listing.blockTime;
+                        } else if (listing.state === 'listing_receipt'){
+                            if (!listing?.cancelledAt){
+                                collectionMintList[key].price = +listing.price;
+                                collectionMintList[key].listingPrice = +listing.price;
+                                collectionMintList[key].listedTimestamp = listing.timestamp;
+                                collectionMintList[key].listedBlockTime = listing.blockTime;
+                            }
+                            console.log(" price set for ("+key+") "+collectionMintList[key].price)
+                            
                         } else if (listing.state === 3){
-                            if ((!collectionMintList[key]?.soldBlockTime) || (listing.blockTime > +collectionMintList[key]?.soldBlockTime))
+                            //if ((!collectionMintList[key]?.soldBlockTime) || (listing.blockTime > +collectionMintList[key]?.soldBlockTime))
                                 collectionMintList[key].soldBlockTime = listing.blockTime;
                         }
                     }
                 });
                 if (!exists){
                     //console.log("not exists ahListings "+JSON.stringify(listing));
-                    if (listing.state === 1){
-                        collectionMintList.push({
-                            address: listing.mint,
-                            highestOffer: listing.solvalue,
-                            name:null,
-                            image:'',
-                            price:0,
-                        })
-                    } else if (listing.state === 2){
-                        collectionMintList.push({
-                            address: listing.mint,
-                            price: listing.solvalue,
-                            listedTimestamp: listing.timestamp,
-                            listedBlockTime: listing.blockTime,
-                            name:null,
-                            image:'',
-                        })
+                    //if (listing.state === 1){
+                    if (listing.state === 'bid_receipt'){
+                        if (!listing?.cancelledAt){
+                            collectionMintList.push({
+                                address: listing.mint,
+                                highestOffer: listing.price,
+                                name:null,
+                                image:'',
+                            })
+                        }
+                    } 
+                    //else if (listing.state === 2){
+                    else if (listing.state === 'listing_receipt'){
+                        if (!listing?.cancelledAt){
+                            collectionMintList.push({
+                                address: listing.mint,
+                                price: +listing.price,
+                                listingPrice: +listing.price,
+                                listedTimestamp: listing.timestamp,
+                                listedBlockTime: listing.blockTime,
+                                name:null,
+                                image:'',
+                            })
+                        }
                     }
                 }
             }
 
-            //console.log("collectionMintList "+JSON.stringify(collectionMintList));
-
+            Object.keys(collectionMintList).map(function(key) {
+                if (+collectionMintList[key].listingPrice > 0)
+                    console.log("collectionMintList "+collectionMintList[key].listingPrice)
+                if (collectionMintList[key].highestOffer > 0)
+                    console.log("highestOffer "+collectionMintList[key].highestOffer)
+            });
+            
             // check all that do not have an image or name and group them
             const mintsToGet = new Array();
             for (var mintListItem of collectionMintList){
@@ -1024,13 +947,6 @@ export function StoreFrontView(this: any, props: any) {
 
             const missing_meta = await getMissingCollectionData(0, mintsToGet);
             
-            /*
-            let finalmeta = missing_meta;//JSON.parse(JSON.stringify(final_collection_meta));
-            try{
-                finalmeta.sort((a:any, b:any) => a?.meta.data.name.toLowerCase().trim() > b?.meta.data.name.toLowerCase().trim() ? 1 : -1);   
-            }catch(e){console.log("Sort ERR: "+e)}
-            */
-
             for (var mintListItem of collectionMintList){
                 for (var missed of missing_meta){
                     if (mintListItem.address === missed.mint){
@@ -1042,43 +958,7 @@ export function StoreFrontView(this: any, props: any) {
             }
 
             // now with missing meta populate it to collectionMintList
-            //collectionMintList.sort((a:any,b:any) => (a?.price < b?.price) ? 1 : -1);
-            collectionMintList.sort((a:any,b:any) => (a.price < b.price) ? 1 : -1);
-
-            //console.log("collection sorted: "+JSON.stringify(collectionMintList));
-             
-            //collectionMintList.sort((a:any,b:any) => ((a.price - b.price) ));
-            // now inverse the list
-            //Array.prototype.reverse.call(collectionMintList);
-            //console.log("collection reversed: "+JSON.stringify(collectionMintList));
-
-            /*
-            let collectionmeta = await getCollectionData(ahListingsMints);
-
-            setFeaturedMeta(collectionmeta);
-            setFeatured(ahListings);
-
-            for (var i = 0; i < collectionmeta.length; i++){
-                collectionmeta[i]["memo"] = ahListings[i];
-            }
-            
-            try{
-                let finalmeta = JSON.parse(JSON.stringify(collectionmeta));
-
-                for (var item_meta of finalmeta){
-                    let meta_primer = item_meta.data;
-                    let buf = Buffer.from(meta_primer.data, 'base64');
-                    let meta_final = decodeMetadata(buf);
-                    //console.log(JSON.stringify(meta_final));
-                }
-                
-                //finalmeta.sort((a:any,b:any) => (b.memo.score - a.memo.score) || (b.memo.blockTime - a.memo.blockTime));
-                //setMergedFeaturedMeta(finalmeta);
-            }catch(e){
-                //setMergedFeaturedMeta(collectionmeta);
-            }
-            */
-            
+            collectionMintList.sort((a:any,b:any) => (a.listingPrice < b.listingPrice) ? 1 : -1); 
             
             setStateLoading(false);                                      
         }

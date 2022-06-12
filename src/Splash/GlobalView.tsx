@@ -152,7 +152,7 @@ export default function GlobalView(props: any){
                       {
                         memcmp: {
                             offset: 72,
-                            bytes: AUCTION_HOUSE_ADDRESS,
+                            bytes: "7bgahjaMKFgwK3jSx5RQjdxSQ67wkfPWMCNCmtiPy65L",
                         },
                       },
                     ],

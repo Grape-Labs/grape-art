@@ -366,6 +366,9 @@ export default function ListForCollectionView(props: any){
                                                     <DialogContent>
                                                         <PreviewView handlekey={item.decoded?.mint} />
                                                     </DialogContent>
+                                                    <DialogActions>
+                                                        <Button variant="text" onClick={handleClosePreviewDialog}>{t('Close')}</Button>
+                                                    </DialogActions>
                                                 </BootstrapDialog>
                                             </>
                                         }

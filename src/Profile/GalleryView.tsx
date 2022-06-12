@@ -92,7 +92,7 @@ export default function GalleryView(props: any){
     const isparent = props?.isparent || false;
     const groupbysymbol = props?.groupbysymbol || null;
     //const walletCollection = props.walletCollection;
-    const [foundList, setFoundList] = React.useState();
+    const [foundList, setFoundList] = React.useState(null);
 
     // If a gallery item is groupBySymbol > 0
     // start searching how many are grouped so we can do this as a collective :) 
@@ -128,10 +128,10 @@ export default function GalleryView(props: any){
         setFilterVal("");
         if (+type === 0){
             
-            collectionMintList.sort((a:any,b:any) => (a.price < b.price) ? 1 : -1);
+            collectionMintList.sort((a:any,b:any) => (a.listingPrice < b.listingPrice) ? 1 : -1);
             // now inverse the list
             //Array.prototype.reverse.call(collectionMintList);
-            console.log("results: "+JSON.stringify(collectionMintList));
+            //console.log("results: "+JSON.stringify(collectionMintList));
             setFoundList(collectionMintList);
             setScrollData(collectionMintList);
         } else if (+type === 1){
@@ -196,7 +196,7 @@ export default function GalleryView(props: any){
 
     const handleOnRowsScrollEnd = () => {
         if (foundList){
-            if (scrollData.length < foundList.length) {
+            if (scrollData.length < foundList?.length) {
             setHasMoreValue(true);
             loadScrollData();
             } else {

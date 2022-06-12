@@ -15,7 +15,7 @@ import { AuctionHouseProgram  } from '@metaplex-foundation/mpl-auction-house';
 export async function getMintFromMetadataWithVerifiedCollection(updateAuthority:string, metadata:string) {
     
     // add a helper function to get Metadata from Grape Verified Collection
-    
+
     // returns the mint address
 
 }
@@ -28,7 +28,18 @@ export async function getMintFromMetadata(updateAuthority:string, metadata:strin
     
 }
 
-export async function getReceiptsFromAuctionHouse(auctionHouse: string) {
+export async function getMintFromVerifiedMetadata(metadata:string, collectionMintList: any){
+    for (var item of collectionMintList){
+        if (item.metadata === metadata){
+            return item;
+        }
+    }
+    return null;
+}
+
+export async function getReceiptsFromAuctionHouse(auctionHouse: string, wallet: string) {
+    // if wallet is set we should also filter by wallet address
+    
     const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);    
     const collectionAuctionHouse = auctionHouse || AUCTION_HOUSE_ADDRESS;
 

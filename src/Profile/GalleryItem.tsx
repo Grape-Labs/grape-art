@@ -22,7 +22,8 @@ import {
     Button,
     Dialog,
     DialogTitle,
-    DialogContent
+    DialogContent,
+    DialogActions
 } from '@mui/material';
 
 import {
@@ -309,12 +310,12 @@ export default function GalleryItem(props: any){
                                                 
                                                 <Grid item xs={6}>
                                                     
-                                                    {collectionitem?.price ?
+                                                    {collectionitem?.listingPrice ?
                                                         
                                                         <Tooltip title={collectionitem?.listedTimestamp}> 
                                                             <Button sx={{color:'white',borderRadius:'17px'}}>  
                                                             <Typography variant="h6">
-                                                            {collectionitem?.price}  <SolCurrencyIcon sx={{fontSize:"16px"}} />
+                                                            {collectionitem?.listingPrice}  <SolCurrencyIcon sx={{fontSize:"16px"}} />
                                                             </Typography>
                                                             </Button>
                                                         </Tooltip>
@@ -357,6 +358,9 @@ export default function GalleryItem(props: any){
                                     <DialogContent>
                                         <PreviewView handlekey={collectionitem?.address} />
                                     </DialogContent>
+                                    <DialogActions>
+                                        <Button variant="text" onClick={handleCloseDialog}>Close</Button>
+                                    </DialogActions>
                                 </BootstrapDialog>
                             </>
                             }
