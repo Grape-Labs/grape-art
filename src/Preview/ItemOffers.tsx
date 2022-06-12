@@ -1265,7 +1265,7 @@ export default function ItemOffers(props: any) {
                 let highest_offer = 0;
 
                 for (var offer of allResults){
-                    if (!item?.cancelledAt){
+                    if (!offer?.cancelledAt){
                         listing_count++
                         if (offer.state === 'listing_receipt'){ // exit on first receipt
                             if (forSaleDate < offer.blockTime){
@@ -1277,13 +1277,14 @@ export default function ItemOffers(props: any) {
                 }
 
                 for (var offer of allResults){
-                    if (!item?.cancelledAt){
-                        bid_count++
-                        console.log("offer.state: "+offer.state + " - "+item.price)
+                    if (!offer?.cancelledAt){
+                        
+                        console.log("offer.state: "+offer.state + " - "+offer.price)
                         if (offer.state === 'bid_receipt'){ // exit on first receipt
-                            offerResults.push(item);
-                            if (highest_offer < item.price)
-                                highest_offer = item.price;
+                            bid_count++
+                            offerResults.push(offer);
+                            if (highest_offer < offer.price)
+                                highest_offer = offer.price;
                         }
                     }
                 }                
