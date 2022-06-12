@@ -105,6 +105,7 @@ export async function gah_acceptOffer(offerAmount: number, mint: string, sellerW
         buyerPrice,//offer.price.toNumber(),
         1
       )
+
       const [bidReceipt, receiptBump] =
         await AuctionHouseProgram.findBidReceiptAddress(buyerTradeState)
 
@@ -196,7 +197,7 @@ export async function gah_acceptOffer(offerAmount: number, mint: string, sellerW
       escrowPaymentBump,
       freeTradeStateBump,
       programAsSignerBump,
-      buyerPrice: buyerPrice,//offer.price,
+      buyerPrice: buyerPrice,
       tokenSize: 1,
     }
     const executePrintPurchaseReceiptInstructionAccounts = {
@@ -262,7 +263,7 @@ export async function gah_acceptOffer(offerAmount: number, mint: string, sellerW
       
       const [tradeState, tradeStateBump] =
       await AuctionHouseProgram.findPublicBidTradeStateAddress(
-        new PublicKey(sellerWalletKey),
+        sellerWalletKey,
         auctionHouse,
         auctionHouseObj.treasuryMint,
         tokenMint,
@@ -280,7 +281,7 @@ export async function gah_acceptOffer(offerAmount: number, mint: string, sellerW
         tradeState: new PublicKey(tradeState),
       }
       const cancelListingInstructionArgs = {
-        buyerPrice: buyerPrice,//listing.price,
+        buyerPrice: buyerPrice,
         tokenSize: 1,
       }
 
@@ -300,17 +301,16 @@ export async function gah_acceptOffer(offerAmount: number, mint: string, sellerW
       const cancelListingReceiptInstruction =
         createCancelListingReceiptInstruction(cancelListingReceiptAccounts)
 
-      txt.add(cancelListingInstruction).add(cancelListingReceiptInstruction)
+      //txt.add(cancelListingInstruction).add(cancelListingReceiptInstruction)
       
     }
 
-  //txt.recentBlockhash = (await connection.getRecentBlockhash()).blockhash
   txt.feePayer = new PublicKey(sellerWalletKey)
 
   const transferAuthority = web3.Keypair.generate();
   const signers = true ? [] : [transferAuthority];
   const instructions = txt.instructions;
-
+/*
   const GRAPE_AH_MEMO = {
     state:5, // status (0: withdraw, 1: offer, 2: listing, 3: buy/execute (from listing), 4: buy/execute(accept offer), 5: cancel)
     ah:auctionHouseKey.toString(), // pk
@@ -360,6 +360,7 @@ export async function gah_acceptOffer(offerAmount: number, mint: string, sellerW
         programId: new PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr"),
     })
   );
+  */
 
   return {
     signers: signers,
