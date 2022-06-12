@@ -1253,11 +1253,11 @@ export default function ItemOffers(props: any) {
                 }
 
                 // sort by date
-                allResults.sort((a:any,b:any) => (a.blockTime < b.blockTime) ? 1 : -1);
+                allResults.sort((a:any,b:any) => (a.blockTime > b.blockTime) ? 1 : -1);
 
                 //activityResults.push({buyeraddress: feePayer.toBase58(), amount: memo_json?.amount || memo_json?.offer, mint: memo_json?.mint, isowner: false, timestamp: forSaleDate, blockTime: value.blockTime, state: memo_json?.state || memo_json?.status});
                 //return activityResults;
-
+                
                 
                 // now show with filtering offerResults
                 let forSale = 0;
@@ -1271,11 +1271,18 @@ export default function ItemOffers(props: any) {
                         listing_count++
                         if (offer.state === 'listing_receipt'){ // exit on first receipt
                             if (forSaleDate < offer.blockTime){
-                                forSale = offer.price;
-                                forSaleDate = offer.blockTime;
+                                if (offer.bookkeerper === mintOwner){
+                                    forSale = offer.price;
+                                    forSaleDate = offer.blockTime;
+                                }
                             }
                         }
                     }
+                }
+
+                if (forSale){
+                    // check here if this is actually still for sale...
+
                 }
 
                 for (var offer of allResults){
@@ -1289,12 +1296,12 @@ export default function ItemOffers(props: any) {
                     }
                 }                
 
-                setHighestOffer(forSale);
+                setHighestOffer(highest_offer);
                 setOpenOffers(bid_count);
                 // sort offers by highest offeramount
                 //console.log("offerResults pre: "+JSON.stringify(offerResults));
                 offerResults.sort((a,b) => (a.offeramount < b.offeramount) ? 1 : -1);
-                console.log("offerResults post: "+JSON.stringify(offerResults));
+                //console.log("offerResults post: "+JSON.stringify(offerResults));
                 setOffers(
                     offerResults
                 );

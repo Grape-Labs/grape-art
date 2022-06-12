@@ -301,7 +301,7 @@ export async function gah_acceptOffer(offerAmount: number, mint: string, sellerW
       const cancelListingReceiptInstruction =
         createCancelListingReceiptInstruction(cancelListingReceiptAccounts)
 
-      //txt.add(cancelListingInstruction).add(cancelListingReceiptInstruction)
+      txt.add(cancelListingInstruction).add(cancelListingReceiptInstruction)
       
     }
 
