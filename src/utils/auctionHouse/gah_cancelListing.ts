@@ -31,17 +31,16 @@ const {
   AuctionHouseProgram.instructions
 
 import { ConstructionOutlined } from '@mui/icons-material';
-  export async function gah_cancelListing(offerAmount: number, mint: string, walletPublicKey: string, mintOwner: any, weightedScore: any, daoPublicKey: string, updateAuthority: string, collectionAuctionHouse: string): Promise<InstructionsAndSignersSet> {
-
+  export async function gah_cancelListing(price: number, mint: string, walletPublicKey: string, mintOwner: any, weightedScore: any, daoPublicKey: string, updateAuthority: string, collectionAuctionHouse: string): Promise<InstructionsAndSignersSet> {
+    console.log("collectionAuctionHouse " + JSON.stringify(collectionAuctionHouse));
     let tokenSize = 1;
     const auctionHouseKey = new web3.PublicKey(collectionAuctionHouse || AUCTION_HOUSE_ADDRESS);
     const mintKey = new web3.PublicKey(mint);
     let anchorProgram = await loadAuctionHouseProgram(null, ENV_AH, GRAPE_RPC_ENDPOINT);
     const auctionHouseObj = await anchorProgram.account.auctionHouse.fetch(auctionHouseKey,);    
-    const buyerWalletKey = new web3.PublicKey(walletPublicKey);
     //check if escrow amount already exists to determine if we need to deposit amount to grapevine 
     
-    const buyerPrice = Number(offerAmount) * LAMPORTS_PER_SOL
+    const buyerPrice = Number(price) * LAMPORTS_PER_SOL
     //console.log("buyerPrice: "+buyerPrice);
     //console.log("auctionHouseObj: "+JSON.stringify(auctionHouseObj));
     const auctionHouse = new PublicKey(auctionHouseKey);//new PublicKey(auctionHouseObj.auctionHouse.address)
@@ -66,52 +65,70 @@ import { ConstructionOutlined } from '@mui/icons-material';
     }
     
     const txt = new Transaction()
+    /*
+    const [tradeState, tradeStateBump] =
+      await AuctionHouseProgram.findPublicBidTradeStateAddress(
+        sellerWalletKey,
+        auctionHouse,
+        auctionHouseObj.treasuryMint,
+        tokenMint,
+        buyerPrice,
+        1
+      )
+      */
+     console.log("buyerPrice: "+buyerPrice);
+      const [tradeState, tradeStateBump] = 
+        await AuctionHouseProgram.findTradeStateAddress(
+          sellerWalletKey,
+          auctionHouse,
+          tokenAccount,
+          treasuryMint,
+          tokenMint,
+          buyerPrice,
+          1
+        )
+      console.log("tradeState: "+JSON.stringify(tradeState));
 
-    const [tradeState] = await AuctionHouseProgram.findTradeStateAddress(
-      sellerWalletKey,
-      auctionHouse,
-      tokenAccount,
-      treasuryMint,
-      tokenMint,
-      buyerPrice,
-      1
-    )
+      const cancelInstructionAccounts = {
+        wallet: sellerWalletKey,
+        tokenAccount,
+        tokenMint,
+        authority,
+        auctionHouse,
+        auctionHouseFeeAccount,
+        tradeState: tradeState,
+      }
+      const cancelListingInstructionArgs = {
+        buyerPrice: buyerPrice,//listing.price,
+        tokenSize: 1,
+      }
+
+      const [receipt, receiptBump] =
+          await AuctionHouseProgram.findBidReceiptAddress(tradeState)
+
+      const cancelListingReceiptAccounts = {
+        receipt: receipt,
+        instruction: SYSVAR_INSTRUCTIONS_PUBKEY,
+      }
+
+      const cancelListingInstruction = createCancelInstruction(
+        cancelInstructionAccounts,
+        cancelListingInstructionArgs
+      )
+
+      const cancelListingReceiptInstruction =
+        createCancelListingReceiptInstruction(cancelListingReceiptAccounts)
+
+    txt.add(cancelListingInstruction).add(cancelListingReceiptInstruction)
     
-    const cancelInstructionAccounts = {
-      wallet: sellerWalletKey,
-      tokenAccount,
-      tokenMint,
-      authority,
-      auctionHouse,
-      auctionHouseFeeAccount,
-      tradeState,
-    }
-    const cancelInstructionArgs = {
-      buyerPrice,
-      tokenSize: 1,
-    }
-
-    const cancelListingReceiptAccounts = {
-      receipt: new PublicKey(mint),
-      instruction: SYSVAR_INSTRUCTIONS_PUBKEY,
-    }
-
-    const cancelInstruction = createCancelInstruction(
-      cancelInstructionAccounts,
-      cancelInstructionArgs
-    )
-    const cancelListingReceiptInstruction =
-      createCancelListingReceiptInstruction(cancelListingReceiptAccounts)
-
-    txt.add(cancelInstruction).add(cancelListingReceiptInstruction)
-
     //txt.recentBlockhash = (await connection.getRecentBlockhash()).blockhash
     txt.feePayer = sellerWalletKey;
-
+    
     const transferAuthority = web3.Keypair.generate();
     const signers = true ? [] : [transferAuthority];
     const instructions = txt.instructions;
     
+    /*
     let derivedMintPDA = await web3.PublicKey.findProgramAddress([Buffer.from((mintKey).toBuffer())], auctionHouseKey);
     let derivedBuyerPDA = await web3.PublicKey.findProgramAddress([Buffer.from((sellerWalletKey).toBuffer())], auctionHouseKey);
     let derivedOwnerPDA = await web3.PublicKey.findProgramAddress([Buffer.from((new PublicKey(mintOwner)).toBuffer())], auctionHouseKey);
@@ -161,6 +178,7 @@ import { ConstructionOutlined } from '@mui/icons-material';
           programId: new PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr"),
       })
     );
+    */
 
     return {
       signers: signers,
