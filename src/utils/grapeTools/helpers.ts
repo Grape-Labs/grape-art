@@ -8,7 +8,10 @@ import {
 import {
     AUCTION_HOUSE_PROGRAM_ID,
     AUCTION_HOUSE_ADDRESS,
+    TOKEN_METADATA_PROGRAM_ID,
 } from '../auctionHouse/helpers/constants';
+
+import { getMetadata } from '../auctionHouse/helpers/accounts';
 
 import { AuctionHouseProgram  } from '@metaplex-foundation/mpl-auction-house';
 
@@ -20,12 +23,25 @@ export async function getMintFromMetadataWithVerifiedCollection(updateAuthority:
 
 }
 
-export async function getMintFromMetadata(updateAuthority:string, metadata:string) {
-    
-    // add a helper function to get Metadata
-
-    // returns the mint address
-    
+export async function getMintFromMetadata(updateAuthority:string, metaData:web3.PublicKey): Promise<string>{
+  let value = ' ';
+  let mintPk: any;
+  const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
+  const metaSignature = await ggoconnection.getConfirmedSignaturesForAddress2(metaData, {limit:1});
+  /*for (var i = 0; i < metaSignature.length; i++) {
+    console.log('METASIGNATURE:', metaSignature[i].signature);
+    mintPk = (await ggoconnection.getParsedTransaction(metaSignature[i].signature, 'confirmed'));
+    //console.log('all mintPk:' +JSON.stringify(mintPk));
+    console.log('MINTPK:',mintPk.meta.preTokenBalances[0]?.mint.toString());
+  }*/
+  mintPk = (await ggoconnection.getParsedTransaction(metaSignature[0].signature, 'confirmed'));
+  //console.log('MINTPK:',mintPk.meta.preTokenBalances[0]?.mint.toString());
+  let mintExists = mintPk.meta.preTokenBalances[0]?.mint; 
+  //console.log('mintExists:', mintExists);
+  if (mintExists) {
+      value = mintPk.meta.preTokenBalances[0]?.mint.toString();
+  }
+  return (value); 
 }
 
 export async function getMintFromVerifiedMetadata(metadata:string, collectionMintList: any){
@@ -44,24 +60,7 @@ export async function getReceiptsFromAuctionHouse(auctionHouse_filter: string, w
 
     const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);    
     const collectionAuctionHouse = auctionHouse_filter || AUCTION_HOUSE_ADDRESS;
-
-    //const AuctionHouseProgram = await ggoconnection.AuctionHouseProgram(new PublicKey(ENV_AH)); // loadAuctionHouseProgram(null, ENV_AH, GRAPE_RPC_ENDPOINT);
-        //const AuctionHouseProgram =  AuctionHouse.fromAccountAddress(ggoconnection, new PublicKey(ENV_AH)); //.fromAccountInfo(info)[0];
-        
-        //AuctionHouseProgram.LISTINE_RECEIPT
-
-        //const AHP = await AuctionHouseProgram;
-        //spok(t, AuctionHouseProgram, expected);
-        
         {    
-            /**
-             * Allocated data size on auction_house program per PDA type
-             * CreateAuctionHouse: 459
-             * PrintListingReceipt: 236
-             * PrintBidReceipt: 269
-             * PrintPurchaseReceipt: 193
-             */
-            
             const PrintListingReceiptSize = 236;
             const PrintBidReceiptSize = 269;
             const PrintPurchaseReceiptSize = 193;
@@ -72,9 +71,103 @@ export async function getReceiptsFromAuctionHouse(auctionHouse_filter: string, w
                 PrintPurchaseReceiptSize,
             ] as const;
             
+            let accounts: any;
             //const AH_PK = new web3.PublicKey(AUCTION_HOUSE_ADDRESS);
+            let mintMetadata: any;
+            let retrieveMint: any;
+            if (mint_filter!=null){
+              mintMetadata = await getMetadata(new PublicKey(mint_filter));
+              //console.log('metadata: ', mintMetadata.toString());
+              //let testMint = new PublicKey(mint_filter);
+              //retrieveMint = await getMintFromMetadata(null, new PublicKey(mintMetadata));
+              //console.log('retrieveMint: ', retrieveMint.toString());
+            }
             const ReceiptAccounts = await (Promise.all(ReceiptAccountSizes.map(async size => {
-                const accounts = await ggoconnection.getProgramAccounts(
+                if (wallet_filter != null && mintMetadata === null){
+                  console.log('execute with wallet_filter');
+                  accounts = await ggoconnection.getProgramAccounts(
+                    AUCTION_HOUSE_PROGRAM_ID,
+                  {
+                    commitment: 'confirmed',
+                    filters: [
+                      {
+                        dataSize: size,
+                      },
+                      {
+                        memcmp: {
+                            offset: 40,
+                            bytes: wallet_filter,
+                        },
+                      },
+                      {
+                        memcmp: {
+                            offset: 72,
+                            bytes: collectionAuctionHouse,
+                        },
+                      },
+                    ],
+                  }
+                );
+                } else if (wallet_filter != null && mintMetadata != null) {
+                  console.log('execute with all filters');
+                  accounts = await ggoconnection.getProgramAccounts(
+                    AUCTION_HOUSE_PROGRAM_ID,
+                  {
+                    commitment: 'confirmed',
+                    filters: [
+                      {
+                        dataSize: size,
+                      },
+                      {
+                        memcmp: {
+                            offset: 40,
+                            bytes: wallet_filter,
+                        },
+                      },
+                      {
+                        memcmp: {
+                            offset: 72,
+                            bytes: collectionAuctionHouse,
+                        },
+                      },
+                      {
+                        memcmp: {
+                            offset: 136,
+                            bytes: mintMetadata,
+                        },
+                      },
+                    ],
+                  }
+                );
+              } else if (wallet_filter === null && mintMetadata != null) {
+                console.log('execute with mint_filter');
+                accounts = await ggoconnection.getProgramAccounts(
+                  AUCTION_HOUSE_PROGRAM_ID,
+                {
+                  commitment: 'confirmed',
+                  filters: [
+                    {
+                      dataSize: size,
+                    },
+                    {
+                      memcmp: {
+                          offset: 72,
+                          bytes: collectionAuctionHouse,
+                      },
+                    },
+                    {
+                      memcmp: {
+                          offset: 136,
+                          bytes: mintMetadata,
+                      },
+                    },
+                  ],
+                }
+              );
+
+              } else {
+                  console.log('execute default only AH');
+                  accounts = await ggoconnection.getProgramAccounts(
                     AUCTION_HOUSE_PROGRAM_ID,
                   {
                     commitment: 'confirmed',
@@ -91,11 +184,7 @@ export async function getReceiptsFromAuctionHouse(auctionHouse_filter: string, w
                     ],
                   }
                 );
-                /*if (accounts[0]) {
-                    console.log('accounts all:', accounts);
-                    console.log('accounts:' + JSON.stringify(accounts[0].account.data));
-                    console.log('accounts pubkey:', accounts[0].pubkey.toBase58());
-                }*/
+                }
                 const parsedAccounts = accounts.map(async account => {
                   switch (size) {
                     case PrintListingReceiptSize:
@@ -104,17 +193,13 @@ export async function getReceiptsFromAuctionHouse(auctionHouse_filter: string, w
                       ] = AuctionHouseProgram.accounts.ListingReceipt.fromAccountInfo(
                         account.account
                       );
-                      //const ListingMint = getMintFromMetadata(ListingReceipt.metadata);
                        
                       return {
                         ...ListingReceipt,
                         receipt_type: ListingReceipt.canceledAt
                           ? 'cancel_listing_receipt'
                           : 'listing_receipt',
-                        //mintPk: ListingMint,/*ListingReceipt.purchaseReceipt 
-                           // ? 'LR'
-                            //:*/getMintFromMetadata(ListingReceipt.metadata),
-                      }; //as TransactionReceipt;
+                      }; 
                       break;
                     case PrintBidReceiptSize:
                       const [
@@ -126,8 +211,7 @@ export async function getReceiptsFromAuctionHouse(auctionHouse_filter: string, w
                       return {
                         ...BidReceipt,
                         receipt_type: 'bid_receipt',
-                        //mintPk: 'BR',//getMintFromMetadata(BidReceipt.metadata),
-                      }; //as TransactionReceipt;
+                      };
                       break;
                     case PrintPurchaseReceiptSize:
                       const [
@@ -139,8 +223,7 @@ export async function getReceiptsFromAuctionHouse(auctionHouse_filter: string, w
                       return {
                         ...PurchaseReceipt,
                         receipt_type: 'purchase_receipt',
-                        //mintPk: 'PR'
-                      } //as TransactionReceipt;
+                      } 
                       break;
                     default:
                       return undefined;
@@ -150,32 +233,6 @@ export async function getReceiptsFromAuctionHouse(auctionHouse_filter: string, w
                 
                 return await Promise.all(parsedAccounts);
               })));
-              /*const metaTest = ReceiptAccounts[0][0].metadata;
-              console.log('metaTest:', metaTest.toBase58());
-              const testMeta = (await ggoconnection.getConfirmedSignaturesForAddress2(metaTest, {limit:2}));
-              console.log(JSON.stringify(testMeta[0].signature));
-              const testMeta2 = (await ggoconnection.getParsedTransaction(testMeta[0].signature, 'confirmed'));
-              console.log(testMeta2.meta.preTokenBalances[0].mint.toString());
-              */
-              //const getMetaData = (await getMetadata(ReceiptAccounts[0][0].metadata));
-              //console.log('getmetadata;'+ JSON.stringify(getMetaData));
-              //console.log(JSON.stringify(testMeta2));
-              //const test = ReceiptAccounts[0][0].tradeState;
-              //const test2 = ReceiptAccounts[0][0].tokenAccount;
-              //console.log('test:', test.toBase58());
-              //console.log('test2:', ReceiptAccounts[0][0]);
-              //const testing = (await ggoconnection.getSignaturesForAddress(test, {limit:25}));
-              /*let sellerTradeState = 'HroJg9tfuScDS1eEfDf4Xz4iH6V2mTMmzZhuWrvhpzEy';
-              const sellerTradeStratePK = new web3.PublicKey(sellerTradeState);
-              const 
-                myTest
-              = AuctionHouseProgram.findListingReceiptAddress(
-                sellerTradeStratePK
-              );
-              console.log('myTest:', (await myTest).toString());*/
-              //console.log(testing[0]);
-            
-              //  return ReceiptAccounts;
               const receipts = (await Promise.all(ReceiptAccounts))
                 .flat()
                 .map(receipt => ({
@@ -187,9 +244,15 @@ export async function getReceiptsFromAuctionHouse(auctionHouse_filter: string, w
                     //mint: getMintFromReceipt(receipt.tradeState.toBase58()),
                     //cancelledAt: receipt?.canceledAt,
                 }));
+                /*let mintResults: any[] = [];
+                    for (var receiptMetadata of receipts.flat()){
+                        let mintPk = await getMintFromMetadata(null, receiptMetadata.metadata);
+                        let recMetadata = receiptMetadata.metadata;
+                        if (mintPk){
+                            mintResults.push({metadata: recMetadata, mint: mintPk});
+                        }
+                    }*/
             return (receipts);
             
         }
 }
-
-
