@@ -534,6 +534,7 @@ export default function OffersView(props:any){
                     
                     if (!item?.canceledAt){
                         if (mintitem && mintitem.length > 3){
+                            console.log("item: "+JSON.stringify(item));
                             if (item.receipt_type==='bid_receipt'){
                                 offerResults.push({buyeraddress: item.bookkeeper.toBase58(), bookkeeper: item.bookkeeper.toBase58(), amount: item.price, price: item.price, mint: mintitem, metadataParsed:mintitem, isowner: false, createdAt: item.createdAt, cancelledAt: item.canceledAt, timestamp: item.createdAt, blockTime: item.createdAt, state: item?.receipt_type});
                             } else if (item.receipt_type==='listing_receipt'){
@@ -544,7 +545,7 @@ export default function OffersView(props:any){
                 }
 
                 // sort by date
-                offerResults.sort((a:any,b:any) => (a.blockTime < b.blockTime) ? 1 : -1);
+                offerResults.sort((a:any,b:any) => (a.blockTime > b.blockTime) ? 1 : -1);
             //setMyOffers(myoffers+j);
 
             
