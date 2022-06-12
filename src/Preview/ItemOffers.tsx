@@ -1278,8 +1278,6 @@ export default function ItemOffers(props: any) {
 
                 for (var offer of allResults){
                     if (!offer?.cancelledAt){
-                        
-                        console.log("offer.state: "+offer.state + " - "+offer.price)
                         if (offer.state === 'bid_receipt'){ // exit on first receipt
                             bid_count++
                             offerResults.push(offer);
@@ -1291,13 +1289,10 @@ export default function ItemOffers(props: any) {
 
                 setHighestOffer(forSale);
                 setOpenOffers(bid_count);
-
-
-                setOpenOffers(open_offers);
                 // sort offers by highest offeramount
                 //console.log("offerResults pre: "+JSON.stringify(offerResults));
                 offerResults.sort((a,b) => (a.offeramount < b.offeramount) ? 1 : -1);
-                //console.log("offerResults post: "+JSON.stringify(offerResults));
+                console.log("offerResults post: "+JSON.stringify(offerResults));
                 setOffers(
                     offerResults
                 );
@@ -1317,6 +1312,7 @@ export default function ItemOffers(props: any) {
                 }
 
             }
+            
             return null;
         } catch (e) { // Handle errors from invalid calls
             console.log(e);
