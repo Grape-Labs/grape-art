@@ -870,34 +870,36 @@ export function StoreFrontView(this: any, props: any) {
             setAuctionHouseListings(ahListings);
             //activityResults.push({buyeraddress: feePayer.toBase58(), amount: memo_json?.amount || memo_json?.offer, mint: memo_json?.mint, isowner: false, timestamp: forSaleDate, blockTime: value.blockTime, state: memo_json?.state || memo_json?.status});
             
+
+            for (var mintElement of collectionMintList){
+                mintElement.listingPrice = 0;
+            }
+
             // we need to remove listing history for those that have been sold
             for (var listing of ahListings){
                 let exists = false;
-                Object.keys(collectionMintList).map(function(key) {
-                    collectionMintList[key].price = 0;
-                    if (collectionMintList[key].address === listing.mint){
+                for (var mintElement of collectionMintList){
+                    if (mintElement.address === listing.mint){
                         exists = true;
                         if (listing.state === 'bid_receipt'){
-                            if ((!collectionMintList[key]?.highestOffer) || (listing.price > +collectionMintList[key]?.highestOffer)){
+                            if ((!mintElement?.highestOffer) || (+listing.price > +mintElement?.highestOffer)){
                                 if (!listing?.cancelledAt)
-                                    collectionMintList[key].highestOffer = listing.price;
+                                    mintElement.highestOffer = +listing.price;
                                 // add offer count?
                             }
                         } else if (listing.state === 'listing_receipt'){
+
                             if (!listing?.cancelledAt){
-                                collectionMintList[key].price = +listing.price;
-                                collectionMintList[key].listingPrice = +listing.price;
-                                collectionMintList[key].listedTimestamp = listing.timestamp;
-                                collectionMintList[key].listedBlockTime = listing.blockTime;
+                                mintElement.listingPrice = +listing.price;
+                                mintElement.listedTimestamp = listing.timestamp;
+                                mintElement.listedBlockTime = listing.blockTime;
                             }
-                            console.log(" price set for ("+key+") "+collectionMintList[key].price)
-                            
                         } else if (listing.state === 3){
                             //if ((!collectionMintList[key]?.soldBlockTime) || (listing.blockTime > +collectionMintList[key]?.soldBlockTime))
-                                collectionMintList[key].soldBlockTime = listing.blockTime;
+                            mintElement.soldBlockTime = listing.blockTime;
                         }
                     }
-                });
+                }
                 if (!exists){
                     //console.log("not exists ahListings "+JSON.stringify(listing));
                     //if (listing.state === 1){
@@ -910,14 +912,11 @@ export function StoreFrontView(this: any, props: any) {
                                 image:'',
                             })
                         }
-                    } 
-                    //else if (listing.state === 2){
-                    else if (listing.state === 'listing_receipt'){
+                    } else if (listing.state === 'listing_receipt'){
                         if (!listing?.cancelledAt){
                             collectionMintList.push({
                                 address: listing.mint,
-                                price: +listing.price,
-                                listingPrice: +listing.price,
+                                listingPrice: listing.price,
                                 listedTimestamp: listing.timestamp,
                                 listedBlockTime: listing.blockTime,
                                 name:null,
@@ -927,13 +926,6 @@ export function StoreFrontView(this: any, props: any) {
                     }
                 }
             }
-
-            Object.keys(collectionMintList).map(function(key) {
-                if (+collectionMintList[key].listingPrice > 0)
-                    console.log("collectionMintList "+collectionMintList[key].listingPrice)
-                if (collectionMintList[key].highestOffer > 0)
-                    console.log("highestOffer "+collectionMintList[key].highestOffer)
-            });
             
             // check all that do not have an image or name and group them
             const mintsToGet = new Array();
@@ -958,9 +950,15 @@ export function StoreFrontView(this: any, props: any) {
             }
 
             // now with missing meta populate it to collectionMintList
-            collectionMintList.sort((a:any,b:any) => (a.listingPrice < b.listingPrice) ? 1 : -1); 
+            collectionMintList.sort((a:any,b:any) => (+a.listingPrice < +b.listingPrice) ? 1 : -1); 
             
-            setStateLoading(false);                                      
+            setTimeout(function() {
+                
+                console.log("sorted collectionMintList: "+JSON.stringify(collectionMintList));
+
+                setStateLoading(false);                                      
+            }, 2000); 
+            
         }
     }
 
