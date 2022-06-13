@@ -1238,8 +1238,9 @@ export default function ItemOffers(props: any) {
         try {
             //getMetadata
             if (!openOffers){
-                //console.log("with aH: "+ collectionAuthority.auctionHouse+" - "+JSON.stringify(collectionAuthority))
-                const results = await getReceiptsFromAuctionHouse(collectionAuctionHouse || AUCTION_HOUSE_ADDRESS, null, mint, 'bid_receipt');
+                console.log("with aH: "+ collectionAuctionHouse)
+                
+                const results = await getReceiptsFromAuctionHouse(collectionAuctionHouse || AUCTION_HOUSE_ADDRESS, null, mint, null);
                 // we need to get listing_receipt too to show the latest price listed, do in two calls or in one with a filter????
 
                 const open_offers = 0;
@@ -1248,58 +1249,76 @@ export default function ItemOffers(props: any) {
 
                 for (var item of results){
                     const mintitem = await getMintFromVerifiedMetadata(item.metadata.toBase58(), null);
-                    console.log(mintOwner + " ditem: "+JSON.stringify(item));
+                    //if (item.receipt_type === 'listing_receipt')
+                    //    console.log("listing_receipt: "+JSON.stringify(item))
+                    //if (item.receipt_type === 'bid_receipt')
+                    //    console.log("bid_receipt: "+JSON.stringify(item))
                     // check if bid_receipt is for offers only
 
-                    if (item.bookkeeper.toBase58() !== mintOwner)
+                    console.log(mintOwner + " checking if bid_receipt")
+                    if (item.receipt_type === 'bid_receipt' && item.bookkeeper.toBase58() === mintOwner){;}
+                    else{
                         allResults.push({buyeraddress: item.bookkeeper.toBase58(), bookkeeper: item.bookkeeper.toBase58(), amount: item.price, price: item.price, mint: mintitem?.address || mint, metadataParsed:mintitem, isowner: false, createdAt: item.createdAt, cancelledAt: item.canceledAt, timestamp: item.createdAt, blockTime: item.createdAt, state: item?.receipt_type, tradeState: item.tradeState});
+                    }
                 }
 
-                // sort by date
-                allResults.sort((a:any,b:any) => (a.blockTime > b.blockTime) ? 1 : -1);
-
-                //activityResults.push({buyeraddress: feePayer.toBase58(), amount: memo_json?.amount || memo_json?.offer, mint: memo_json?.mint, isowner: false, timestamp: forSaleDate, blockTime: value.blockTime, state: memo_json?.state || memo_json?.status});
-                //return activityResults;
-
-                
                 // now show with filtering offerResults
                 let forSale = 0;
                 let forSaleDate = null;
+                let forSaleCancelDate = null;
                 let bid_count = 0;
                 let listing_count = 0;
                 let highest_offer = 0;
                 let isCancelled = false;
 
                 for (var offer of allResults){
-                    if (!offer?.cancelledAt){
-                        listing_count++
-                        if (offer.state === 'listing_receipt'){ // exit on first receipt
-                            if (!forSaleDate || forSaleDate < offer.blockTime){
-                                //console.log("checking: "+JSON.stringify(offer))
-                                if (offer.bookkeeper === mintOwner){
-                                    forSale = offer.price;
-                                    forSaleDate = offer.blockTime;
+                    listing_count++
+                    //console.log("all: "+JSON.stringify(offer))
+                    if (offer.state === 'listing_receipt'){ // exit on first receipt
+                        if (!offer?.cancelledAt){
+                            if (!offer?.purchaseReceipt){
+                                if (!forSaleDate || forSaleDate < offer.blockTime){
+                                    if (!forSaleCancelDate || forSaleCancelDate < offer.blockTime){
+                                        //console.log("checking: "+JSON.stringify(offer))
+                                        //console.log("listing: "+JSON.stringify(offer))
+                                        if (offer.bookkeeper === mintOwner){
+                                            forSale = offer.price;
+                                            forSaleDate = offer.blockTime;
+                                        }
+                                    }
                                 }
                             }
-                        } else if (offer.state === 'cancel_listing_receipt'){ // exit on first receipt
-                            isCancelled = true;
-                            break;
                         }
+                    } else if (offer.state === 'cancel_listing_receipt'){ // exit on first receipt
+                        //console.log("cancel: "+JSON.stringify(offer))
+                        if (forSaleDate <= offer.blockTime)
+                            forSale = 0;
+                            forSaleCancelDate = offer.blockTime;
+                        // if sorted array then we can use break
+                        //isCancelled = true;
+                        //break;
                     }
                 }
 
                 if (forSale){
                     // check here if this is actually still for sale...
-
+                    
                 }
+
+                let highest_offer_date = null;
 
                 for (var offer of allResults){
                     if (!offer?.cancelledAt){
                         if (offer.state === 'bid_receipt'){ // exit on first receipt
-                            bid_count++
-                            offerResults.push(offer);
-                            if (highest_offer < offer.price)
-                                highest_offer = offer.price;
+                            
+                            //if (!highest_offer_date || highest_offer_date < offer.blockTime){
+                                bid_count++
+                                offerResults.push(offer);
+                                if (highest_offer < offer.price){
+                                    highest_offer = offer.price;
+                                    highest_offer_date = offer.blockTime;
+                                }
+                            //}
                         }
                     }
                 }                
@@ -1308,7 +1327,7 @@ export default function ItemOffers(props: any) {
                 setOpenOffers(bid_count);
                 // sort offers by highest offeramount
                 //console.log("offerResults pre: "+JSON.stringify(offerResults));
-                offerResults.sort((a,b) => (a.offeramount < b.offeramount) ? 1 : -1);
+                offerResults.sort((a,b) => (a.blockTime < b.blockTime) ? 1 : -1);
                 //console.log("offerResults post: "+JSON.stringify(offerResults));
                 setOffers(
                     offerResults

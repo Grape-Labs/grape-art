@@ -539,13 +539,16 @@ export default function OffersView(props:any){
                                 offerResults.push({buyeraddress: item.bookkeeper.toBase58(), bookkeeper: item.bookkeeper.toBase58(), amount: item.price, price: item.price, mint: mintitem, metadataParsed:mintitem, isowner: false, createdAt: item.createdAt, cancelledAt: item.canceledAt, timestamp: item.createdAt, blockTime: item.createdAt, state: item?.receipt_type});
                             } else if (item.receipt_type==='listing_receipt'){
                                 listingResults.push({buyeraddress: item.bookkeeper.toBase58(), bookkeeper: item.bookkeeper.toBase58(), amount: item.price, price: item.price, mint: mintitem, metadataParsed:mintitem, isowner: false, createdAt: item.createdAt, cancelledAt: item.canceledAt, timestamp: item.createdAt, blockTime: item.createdAt, state: item?.receipt_type});
+                            } else if (item.receipt_type==='cancel_listing_receipt'){
+                                listingResults.push({buyeraddress: item.bookkeeper.toBase58(), bookkeeper: item.bookkeeper.toBase58(), amount: item.price, price: item.price, mint: mintitem, metadataParsed:mintitem, isowner: false, createdAt: item.createdAt, cancelledAt: item.canceledAt, timestamp: item.createdAt, blockTime: item.createdAt, state: item?.receipt_type});
                             }
                         }
                     }
                 }
 
                 // sort by date
-                offerResults.sort((a:any,b:any) => (a.blockTime > b.blockTime) ? 1 : -1);
+                offerResults.sort((a:any,b:any) => (a.blockTime < b.blockTime) ? 1 : -1);
+                listingResults.sort((a:any,b:any) => (a.blockTime < b.blockTime) ? 1 : -1);
             //setMyOffers(myoffers+j);
 
             
@@ -860,6 +863,39 @@ export default function OffersView(props:any){
                                             <TableCell  align="right"><Typography variant="caption">
                                             </Typography></TableCell>
                                             <TableCell  align="right"><Typography variant="h6">
+                                                {(item.amount)} <SolCurrencyIcon sx={{fontSize:"10.5px"}} />
+                                            </Typography></TableCell>
+                                            <TableCell align="right">
+                                                <Tooltip title={t('View NFT')}>
+                                                    <Button
+                                                        component={Link} to={`${GRAPE_PREVIEW}${item.mint}`}
+                                                        sx={{borderRadius:'24px'}}
+                                                    >
+                                                        <ImageOutlinedIcon sx={{fontSize:"14px", mr:1}}/>
+                                                        <Typography variant="caption">
+                                                            {trimAddress(item.mint, 4)}
+                                                        </Typography>
+                                                    </Button>
+                                                </Tooltip>
+                                            </TableCell>
+                                            <TableCell align="right">
+                                                <Typography variant="caption">
+                                                    <Tooltip title={formatBlockTime(item.timestamp, true, true)}>
+                                                        <Button size='small' sx={{borderRadius:'24px'}}>{timeAgo(item.timestamp)}</Button>
+                                                    </Tooltip>
+                                                </Typography>
+                                            </TableCell>
+                                            <TableCell align="center">
+                                            </TableCell>
+                                        </TableRow>
+                                    </>
+                                    )}
+                                    {item.state === 'cancel_listing_receipt' && (
+                                    <>
+                                        <TableRow sx={{p:1}} key={key}>
+                                            <TableCell  align="right"><Typography variant="caption">
+                                            </Typography></TableCell>
+                                            <TableCell  align="right"><Typography variant="h6" sx={{color:'red'}}>
                                                 {(item.amount)} <SolCurrencyIcon sx={{fontSize:"10.5px"}} />
                                             </Typography></TableCell>
                                             <TableCell align="right">
