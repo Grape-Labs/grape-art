@@ -255,16 +255,8 @@ export default function GlobalView(props: any){
                     //cancelledAt: receipt?.canceledAt,
                 }));
             
-            
-            
-            const allReceipts = new Array();
-
-            for (var item of receipts){
-                allReceipts.push(item);
-            }
-            allReceipts.sort((a:any,b:any) => (a.createdAt < b.createdAt) ? 1 : -1); 
-            //console.log("allReceipts: "+JSON.stringify(allReceipts))
-            setReceipts(allReceipts);
+            receipts.sort((a:any,b:any) => (a.createdAt < b.createdAt) ? 1 : -1); 
+            setReceipts(receipts);
             
         }
         setLoading(false);
@@ -373,7 +365,7 @@ export default function GlobalView(props: any){
                                                         <TableCell>
                                                             {item?.metadata &&
                                                                 <>
-                                                                {item?.metadata.toBase58()}
+                                                                {trimAddress(item?.metadata.toBase58(),3)}
                                                                 </>
                                                             }  
                                                         </TableCell>
