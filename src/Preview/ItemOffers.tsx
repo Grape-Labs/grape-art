@@ -1002,12 +1002,13 @@ export default function ItemOffers(props: any) {
                     },
                     persist: true,
                 });
+                
                 setTimeout(function() {
                     closeSnackbar(eskey);
-                    setRefreshOffers(true);
+                    //setRefreshOffers(true);
                 }, GRAPE_RPC_REFRESH);
-                
                 await handleAcceptOffer(offerAmount, buyerAddress, tradeState);
+                
             }catch(e){
                 closeSnackbar();
                 enqueueSnackbar(e.message ? `${e.name}: ${e.message}` : e.name, { variant: 'error' });
