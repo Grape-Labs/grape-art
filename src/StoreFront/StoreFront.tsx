@@ -863,7 +863,7 @@ export function StoreFrontView(this: any, props: any) {
                 console.log("item: "+JSON.stringify(item));
                 console.log("mintitem: "+JSON.stringify(mintitem));
                 if (mintitem){
-                    ahListings.push({buyeraddress: item.bookkeeper.toBase58(), bookkeeper: item.bookkeeper.toBase58(), amount: item.price, price: item.price, mint: mintitem?.address, metadataParsed:mintitem, isowner: false, createdAt: item.createdAt, cancelledAt: item.canceledAt, timestamp: timeAgo(item.createdAt), blockTime: item.createdAt, state: item?.receipt_type});
+                    ahListings.push({buyeraddress: item.bookkeeper.toBase58(), bookkeeper: item.bookkeeper.toBase58(), amount: item.price, price: item.price, mint: mintitem?.address, metadataParsed:mintitem, isowner: false, createdAt: item.createdAt, cancelledAt: item.canceledAt, timestamp: timeAgo(item.createdAt), blockTime: item.createdAt, state: item?.receipt_type, purchaseReceipt: item?.purchaseReceipt});
                     ahListingsMints.push(mintitem.address);
                 }
             }

@@ -256,6 +256,7 @@ export default function GlobalView(props: any){
                 }));
             
             receipts.sort((a:any,b:any) => (a.createdAt < b.createdAt) ? 1 : -1); 
+            
             setReceipts(receipts);
             
         }

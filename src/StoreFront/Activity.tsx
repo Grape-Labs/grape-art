@@ -151,14 +151,31 @@ export default function ActivityView(props: any){
                         const mintitem = await getMintFromVerifiedMetadata(item.metadata.toBase58(), collectionMintList);
                         //console.log("> item: "+JSON.stringify(item));
                         //console.log("mintitem: "+JSON.stringify(mintitem));
-                        activityResults.push({buyeraddress: item.bookkeeper.toBase58(), bookkeeper: item.bookkeeper.toBase58(), amount: item.price, price: item.price, mint: mintitem?.address, metadataParsed:mintitem, isowner: false, createdAt: item.createdAt, cancelledAt: item.canceledAt, timestamp: item.createdAt, blockTime: item.createdAt, state: item?.receipt_type, tradeState: item.tradeState});
+                        activityResults.push({
+                            buyeraddress: item.bookkeeper.toBase58(), 
+                            bookkeeper: item.bookkeeper.toBase58(), 
+                            amount: item.price, 
+                            price: item.price, 
+                            mint: mintitem?.address, 
+                            metadataParsed:mintitem, 
+                            isowner: false, 
+                            createdAt: item.createdAt, 
+                            cancelledAt: item.canceledAt, 
+                            timestamp: item.createdAt, 
+                            blockTime: item.createdAt, 
+                            state: item?.receipt_type, 
+                            tradeState: item.tradeState, 
+                            purchaseReceipt: item.purchaseReceipt, 
+                            seller: item.seller, 
+                            buyer: item.buyer});
                     }
 
                     // sort by date
                     activityResults.sort((a:any,b:any) => (a.blockTime < b.blockTime) ? 1 : -1);
+                    const dupRemovedResults = activityResults.filter( (ele, ind) => ind === activityResults.findIndex( elem => elem.purchaseReceipt === ele.purchaseReceipt))
 
                     //activityResults.push({buyeraddress: feePayer.toBase58(), amount: memo_json?.amount || memo_json?.offer, mint: memo_json?.mint, isowner: false, timestamp: forSaleDate, blockTime: value.blockTime, state: memo_json?.state || memo_json?.status});
-                    return activityResults;
+                    return dupRemovedResults;
                 } else if (mode === 1){
 
                     //console.log("with aH: "+ collectionAuthority.auctionHouse+" - "+JSON.stringify(collectionAuthority))
@@ -170,14 +187,30 @@ export default function ActivityView(props: any){
                         const mintitem = await getMintFromVerifiedMetadata(item.metadata.toBase58(), collectionMintList);
                         //console.log("> item: "+JSON.stringify(item));
                         //console.log("mintitem: "+JSON.stringify(mintitem));
-                        activityResults.push({buyeraddress: item.bookkeeper.toBase58(), bookkeeper: item.bookkeeper.toBase58(), amount: item.price, price: item.price, mint: mintitem?.address, metadataParsed:mintitem, isowner: false, createdAt: item.createdAt, cancelledAt: item.canceledAt, timestamp: timeAgo(item.createdAt), blockTime: item.createdAt, state: item?.receipt_type});
+                        activityResults.push({
+                            buyeraddress: item.bookkeeper.toBase58(), 
+                            bookkeeper: item.bookkeeper.toBase58(), 
+                            amount: item.price, 
+                            price: item.price, 
+                            mint: mintitem?.address, 
+                            metadataParsed:mintitem, 
+                            isowner: false, 
+                            createdAt: item.createdAt, 
+                            cancelledAt: item.canceledAt, 
+                            timestamp: timeAgo(item.createdAt), 
+                            blockTime: item.createdAt, 
+                            state: item?.receipt_type, 
+                            purchaseReceipt: item.purchaseReceipt, 
+                            seller: item.seller, 
+                            buyer: item.buyer});
                     }
 
                     // sort by date
                     activityResults.sort((a:any,b:any) => (a.blockTime < b.blockTime) ? 1 : -1);
-
+                    const dupRemovedResults = activityResults.filter( (ele, ind) => ind === activityResults.findIndex( elem => elem.purchaseReceipt === ele.purchaseReceipt))
+                    console.log("HERE...");
                     //activityResults.push({buyeraddress: feePayer.toBase58(), amount: memo_json?.amount || memo_json?.offer, mint: memo_json?.mint, isowner: false, timestamp: forSaleDate, blockTime: value.blockTime, state: memo_json?.state || memo_json?.status});
-                    return activityResults;
+                    return dupRemovedResults;
                 }
 
             }
@@ -192,13 +225,13 @@ export default function ActivityView(props: any){
         setLoading(true);
         
         if (!auctionHouseListings){
-            console.log("fetching recent activity");
+            console.log("Fetching on chain recent activity");
             const [activityResults] = await Promise.all([fetchAllActivity()]);
             //console.log("activityResults: "+JSON.stringify(activityResults));
             //setRecentActivity(JSON.parse(JSON.stringify(activityResults)));
             setRecentActivity(activityResults);
         } else{
-            console.log("using recent activity");
+            console.log("With recent activity");
             // transpose auctionHouseListings
             const activityResults = new Array();
             for (var item of auctionHouseListings){
@@ -209,13 +242,16 @@ export default function ActivityView(props: any){
                     isowner: false, 
                     blockTime: item.blockTime, 
                     timestamp: item.timestamp, 
-                    state: item?.state
+                    state: item?.state, 
+                    purchaseReceipt: item?.purchaseReceipt, 
+                    seller: item?.seller, 
+                    buyer: item?.buyer
                 })
             }
             
             setRecentActivity(auctionHouseListings);
             
-            console.log("auctionHouseListings "+JSON.stringify(auctionHouseListings))
+            //console.log("auctionHouseListings "+JSON.stringify(auctionHouseListings))
         }
 
         setLoading(false);
@@ -251,28 +287,35 @@ export default function ActivityView(props: any){
                             </Button>
                         </Tooltip>
                     </TableCell>
-                    <TableCell  align="center"><Typography variant="h6">
-                        {item.state === 1 && <>Offer</>}
-                        {item.state === 2 && <>Listed</>}
-                        {item.state === 3 && <>Sale</>}
-                        {item.state === 4 && <>Sale</>}
-                        {item.state === 5 && <>Cancel</>}
-
-                        {item.state === "bid_receipt" && 
-                            <>Offer
-                            {item?.cancelledAt &&
-                                <> Cancelled</>
-                            }</>
-                        }
-                        {item.state === "listing_receipt" && 
-                            <>Listing
-                            {item?.cancelledAt &&
-                                <> Cancelled</>
+                    <TableCell  align="center"><Typography variant="h6" title={JSON.stringify(item)}>
+                        
+                        {item.purchaseReceipt ?
+                            <>Sale</>
+                        :
+                            <>
+                            {item.state === "bid_receipt" && 
+                                <>Offer
+                                {item?.cancelledAt &&
+                                    <> Cancelled</>
+                                }</>
                             }
-                            </>}
-                        {item.state === "cancel_listing_receipt" && 
-                            <>Listing Cancelled</>
-                        }
+                            {item.state === "listing_receipt" && 
+                                <>Listing
+                                {item?.cancelledAt &&
+                                    <> Cancelled</>
+                                }
+                                </>}
+                            {item.state === "cancel_listing_receipt" && 
+                                <>Listing Cancelled</>
+                            }
+
+                            {item.state === "purchase_receipt" && 
+                                <>Listing Cancelled</>
+                            }
+                            </>
+                        } 
+
+                        
                     </Typography></TableCell>
                     <TableCell  align="center"><Typography variant="h6">
                         {(item.price)} <SolCurrencyIcon sx={{fontSize:"10.5px"}} />

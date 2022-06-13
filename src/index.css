@@ -23,7 +23,9 @@ html, body {
   -moz-osx-font-smoothing: grayscale;
   
   background: #4e8ebf;  /* fallback for old browsers */
-  background: radial-gradient(88.33% 113.42% at 71.34% 83.89%, #4e8ebf 0%,  #5671be 32.29%,  #713585 58.85%,  #36325d 85.5%,  #251a3a 98.96%);
+  background: radial-gradient(at right bottom, rgb(255, 196, 195), rgb(152, 79, 172), rgb(68, 39, 156));
+  /*
+  background: radial-gradient(88.33% 113.42% at 71.34% 83.89%, #4e8ebf 0%,  #5671be 32.29%,  #713585 58.85%,  #36325d 85.5%,  #251a3a 98.96%);*/
   height:100%;
   background-attachment: fixed;
 }

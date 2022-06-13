@@ -69,11 +69,20 @@ export async function getReceiptsFromAuctionHouse(auctionHouse_filter: string, w
             const PrintBidReceiptSize = 269;
             const PrintPurchaseReceiptSize = 193;
 
+            const AhLocation1 = 72;
+            const AhLocation2 = 104;
+
             const ReceiptAccountSizes = [
                 PrintListingReceiptSize,
                 PrintBidReceiptSize,
                 PrintPurchaseReceiptSize,
             ] as const;
+
+            const ReceiptAccountSizes2 = [
+              {size: PrintListingReceiptSize, ahPosition: AhLocation1},
+              {size: PrintBidReceiptSize, ahPosition: AhLocation1},
+              {size: PrintPurchaseReceiptSize, ahPosition: AhLocation2}
+            ]
             
             let accounts: any;
             //const AH_PK = new web3.PublicKey(AUCTION_HOUSE_ADDRESS);
@@ -86,7 +95,8 @@ export async function getReceiptsFromAuctionHouse(auctionHouse_filter: string, w
               //retrieveMint = await getMintFromMetadata(null, new PublicKey(mintMetadata));
               //console.log('retrieveMint: ', retrieveMint.toString());
             }
-            const ReceiptAccounts = await (Promise.all(ReceiptAccountSizes.map(async size => {
+            //const ReceiptAccounts = await (Promise.all(ReceiptAccountSizes.map(async size => {
+            const ReceiptAccounts = await (Promise.all(ReceiptAccountSizes2.map(async ({size, ahPosition}) => {
                 if (wallet_filter != null && mint_filter === null){
                   console.log('execute with wallet_filter');
                   accounts = await ggoconnection.getProgramAccounts(
@@ -105,7 +115,7 @@ export async function getReceiptsFromAuctionHouse(auctionHouse_filter: string, w
                       },
                       {
                         memcmp: {
-                            offset: 72,
+                            offset: ahPosition,
                             bytes: collectionAuctionHouse,
                         },
                       },
@@ -130,7 +140,7 @@ export async function getReceiptsFromAuctionHouse(auctionHouse_filter: string, w
                       },
                       {
                         memcmp: {
-                            offset: 72,
+                            offset: ahPosition,
                             bytes: collectionAuctionHouse,
                         },
                       },
@@ -155,7 +165,7 @@ export async function getReceiptsFromAuctionHouse(auctionHouse_filter: string, w
                     },
                     {
                       memcmp: {
-                          offset: 72,
+                          offset: ahPosition,
                           bytes: collectionAuctionHouse,
                       },
                     },
@@ -181,7 +191,7 @@ export async function getReceiptsFromAuctionHouse(auctionHouse_filter: string, w
                       },
                       {
                         memcmp: {
-                            offset: 72,
+                            offset: ahPosition,
                             bytes: collectionAuctionHouse,
                         },
                       },
