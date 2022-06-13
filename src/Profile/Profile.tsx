@@ -1609,7 +1609,7 @@ export function ProfileView(this: any, props: any) {
                         <>
                             <React.Fragment>
                                 <Box
-                                    className="grape-art-generic-placeholder-container"
+                                    className=""
                                 > 
                                         <Grid 
                                             container 
@@ -1619,7 +1619,7 @@ export function ProfileView(this: any, props: any) {
                                             rowSpacing={8}
                                         >
                                             
-                                            <Grid 
+                                    <Grid 
                                         item xs={12}
                                         alignItems="center"
                                     >
@@ -1641,34 +1641,16 @@ export function ProfileView(this: any, props: any) {
                                                 variant="h6"
                                                 color="inherit"
                                                 display='flex'
-                                                sx={{mb:3}}
                                             >{t('Social. Stateless. Marketplace.')}</Typography>
 
                                         </Grid>
                                             
-                                        <Grid>
-                                            <Tooltip title={t('Search by mint address by entering: mint:address')}>
-                                                <Paper
-                                                    component="form"
-                                                    onSubmit={handlePublicKeySubmit}
-                                                    sx={{ m:2, p: 1, display: 'flex', alignItems: 'center', borderRadius: '24px' }}
-                                                >    
-                                                        <InputBase
-                                                            fullWidth
-                                                            sx={{ ml: 1, flex: 1 }}
-                                                            placeholder={t('Enter a solana address')}
-                                                            inputProps={{ 'aria-label': 'solana address' }}
-                                                            value={newinputpkvalue}
-                                                            onChange={(e) => setNewInputPKValue(e.target.value)}
-                                                        />
-                                                        <IconButton type="submit" sx={{ p: '10px' }} aria-label="search">
-                                                            <SearchIcon />
-                                                        </IconButton>
-                                                
-                                                </Paper>
-                                            </Tooltip>
-                                        </Grid>
+                                        
+                                        
+
                                     </Grid>
+
+                                    <MarketplaceView />
                                 </Box>
                             </React.Fragment>
                         </>

@@ -148,6 +148,7 @@ export default function ActivityView(props: any){
                     const activityResults = new Array();
 
                     for (var item of results){
+
                         const mintitem = await getMintFromVerifiedMetadata(item.metadata.toBase58(), collectionMintList);
                         //console.log("> item: "+JSON.stringify(item));
                         //console.log("mintitem: "+JSON.stringify(mintitem));
@@ -166,8 +167,7 @@ export default function ActivityView(props: any){
                             state: item?.receipt_type, 
                             tradeState: item.tradeState, 
                             purchaseReceipt: item.purchaseReceipt, 
-                            seller: item.seller, 
-                            buyer: item.buyer});
+                            seller: item.seller.toBase58()});
                     }
 
                     // sort by date
@@ -201,8 +201,7 @@ export default function ActivityView(props: any){
                             blockTime: item.createdAt, 
                             state: item?.receipt_type, 
                             purchaseReceipt: item.purchaseReceipt, 
-                            seller: item.seller, 
-                            buyer: item.buyer});
+                            seller: item.seller.toBase58()});
                     }
 
                     // sort by date
@@ -244,8 +243,7 @@ export default function ActivityView(props: any){
                     timestamp: item.timestamp, 
                     state: item?.state, 
                     purchaseReceipt: item?.purchaseReceipt, 
-                    seller: item?.seller, 
-                    buyer: item?.buyer
+                    seller: item?.seller
                 })
             }
             
@@ -274,7 +272,7 @@ export default function ActivityView(props: any){
             <>
                 <TableRow sx={{border:'none'}} key={key}>
                     <TableCell>
-                        <Tooltip title={t('Visit Profile')}>
+                        <Tooltip title={t('Visit Bookkeeper Profile')}>
                             <Button
                                 variant="text"
                                 component={Link} to={`${GRAPE_PROFILE}${item.bookkeeper}`}
@@ -290,7 +288,7 @@ export default function ActivityView(props: any){
                     <TableCell  align="center"><Typography variant="h6">
                         
                         {item?.purchaseReceipt ?
-                            <>Sale <Typography variant="caption">({item.purchaseReceipt.toBase58()})</Typography></>
+                            <>Sale <Typography variant="caption">({trimAddress(item.purchaseReceipt.toBase58(),3)})</Typography></>
                         :
                             <>
                             {item.state === "bid_receipt" && 

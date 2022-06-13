@@ -729,7 +729,7 @@ function GalleryItemMeta(props: any) {
             enqueueSnackbar(`${t('Your avatar has been set')} `,{ variant: 'success', action:snackaction });
         } catch(e){
             closeSnackbar();
-            enqueueSnackbar(`${t('Error')}: ${e}`,{ variant: 'error' });
+            enqueueSnackbar(e.message ? `${e.name}: ${e.message}` : e.name, { variant: 'error' });
             console.log("Error: "+e);
         } 
     }

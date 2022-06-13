@@ -9,7 +9,6 @@ import { findDisplayName } from '../utils/name-service';
 import { FollowListInfoResp, SearchUserInfoResp, Network } from '../utils/cyberConnect/types';
 
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
-import { getProfilePicture } from '@solflare-wallet/pfp';
 
 import { TokenAmount, lt } from '../utils/grapeTools/safe-math';
 import { Connection, PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js';
@@ -98,6 +97,7 @@ import {
     getMintFromVerifiedMetadata
 } from '../utils/grapeTools/helpers';
 
+import { getProfilePicture } from '@solflare-wallet/pfp';
 import ShareSocialURL from '../utils/grapeTools/ShareUrl';
 
 import GalleryView from '../Profile/GalleryView';
@@ -444,178 +444,6 @@ export const TabActiveProvider = ({ children, initialActiveKey }) => {
     );
 };
 
-const StoreIdentityView = (props: any) => {
-    const [expanded_collection, setExpandedCollection] = React.useState(true);
-    const [pubkey, setPubKey] = React.useState<string>(props.pubkey || null);
-    const [loading, setLoading] = React.useState(false);
-    const [page, setPage] = React.useState(1);
-    const rowsperpage = 1500;
-    const rpclimit = 100;
-    //const [wallet_collection, setCollectionArray] = React.useState(props.collection.collection)
-    //const [wallet_collection] = React.useState(props.collection.collection);
-    //const [wallet_collection, setCollectionArray] = React.useState(props.collection.collection);
-    //const [wallet_collection_meta, setCollectionMeta] = React.useState(null);
-    //const [final_collection, setCollectionMetaFinal] = React.useState(null);
-    const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
-    const { connection } = useConnection();
-    const [featuredObj, setFeaturedObj] = React.useState(null);
-    const [profilePictureUrl, setProfilePictureUrl] = React.useState(null);
-    const [hasProfilePicture, setHasProfilePicture] = React.useState(false);
-    const [solanaDomain, setSolanaDomain] = React.useState(null);
-    const [loadCount, setLoadCount] = React.useState(0);
-    const [searchAddrInfo, setSearchAddrInfo] = useState<SearchUserInfoResp | null>(null);
-    const solanaProvider = useWallet();
-    const { publicKey } = useWallet();
-    
-    let ref = React.createRef()
-    
-    const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
-        setPage(value);
-        //getCollectionMeta(value);
-        //count={(Math.ceil(wallet_collection.length / rowsperpage))}
-    };
-
-    const handleExpandCollectionClick = () => {
-        setExpandedCollection(!expanded_collection);
-    };
-    
-    const fetchProfilePicture = async () => {
-        const { isAvailable, url } = await getProfilePicture(ggoconnection, new PublicKey(pubkey));
-
-        let img_url = url;
-        if (url)
-            img_url = url.replace(/width=100/g, 'width=256');
-        setProfilePictureUrl(img_url);
-        setHasProfilePicture(isAvailable);
-    }
-
-    const fetchSolanaDomain = async () => {
-        const domain = await findDisplayName(ggoconnection, pubkey);
-        if (domain){
-            if (domain[0] !== pubkey){
-                setSolanaDomain(domain[0]);
-            }
-        }
-    }
-
-    const { t, i18n } = useTranslation();
-    
-    React.useEffect(() => { 
-        if (pubkey){
-            if (ValidateAddress(pubkey)){
-                if (loadCount < 1){
-                    fetchProfilePicture();
-                    //getCollectionMeta(0);
-                    fetchSolanaDomain();
-
-                    // get featured
-                    for (var featured of FEATURED_DAO_ARRAY){
-                        if (featured.address === pubkey){
-                            setFeaturedObj(featured);
-                        }
-                    }
-                }
-            }
-        }
-    }, [pubkey]);
-
-    /*
-    React.useEffect(() => {
-        if (publicKey){
-            if (pubkey === publicKey.toBase58()){
-                if (solanaDomain){
-                    let sppicon = '';
-                    if (profilePictureUrl)
-                        sppicon = '<i class="wallet-adapter-button-start-icon"><img style="border-radius:24px" src="'+profilePictureUrl+'" alt="Solana Profile Icon"></i>';
-                    document.getElementsByClassName("wallet-adapter-button")[0].innerHTML = sppicon+'<span class="wallet-adapter-solana-domain">'+solanaDomain+'</span>';
-                }
-            }
-        }
-    }, [solanaDomain, profilePictureUrl])
-    */
-
-    if (loading){
-        return <>{t('Loading...')}</>
-    } else {
-
-        return (
-            <React.Fragment>
-                <Box>
-                    
-                        <Box
-                            sx={{
-                                mb:4,
-                                mt:3,
-                                //background:'green'
-                            }}
-                        >
-                            {featuredObj && (
-                                <Card sx={{borderRadius:'26px',mb:2}}>
-
-                                        {/*component={Link} to={`${GRAPE_PROFILE}${featuredObj.address}`}*/}
-                                    <CardActionArea
-                                        component="a" href={`${featuredObj.daourl}`} target="_blank"
-                                    >
-                                        <CardMedia
-                                        component="img"
-                                        image={featuredObj.img}
-                                        alt={featuredObj.title}
-                                            sx={{
-                                                maxHeight: '250',
-                                                background: 'rgba(0, 0, 0, 1)',
-                                                m:0,
-                                                p:0,
-                                            }} 
-                                        />
-                                    </CardActionArea>
-                                </Card>
-                            )}
-
-
-                                <Grid 
-                                    container 
-                                    spacing={2}
-                                    rowSpacing={3}
-                                    >    
-                                    <Grid item xs={12} sm={5} md={3} lg={3} xl={3}
-                                    sx={{
-                                    }}
-                                    >
-                                    
-                                        <Box
-                                            className='grape-profile-background'
-                                        >
-                                            TEST
-                                        </Box>
-                                        <MainMenu pubkey={pubkey} />
-
-                                    </Grid>
-                                    <Grid item xs={12} sm={7} md={9} lg={9} xl={9}
-                                    sx={{
-                                    }}
-                                    >
-                                    
-                                        <Container
-                                            sx={{
-                                                minHeight: '225px',
-                                                m:0,
-                                                p:0,
-                                            }} 
-                                        >
-                                            TEST
-                                        </Container>
-                                    </Grid>
-                                
-                                
-                            </Grid>
-                        </Box>
-                        
-                    </Box>
-            </React.Fragment>
-        );
-    }
-    
-}
 
 export async function findOwnedNameAccountsForUser(
     connection: Connection,
@@ -661,6 +489,11 @@ export function StoreFrontView(this: any, props: any) {
     const [solWebUrl, setSolWebUrl] = React.useState(null);
     const { connection } = useConnection();
     const { publicKey } = useWallet();
+    
+    const [profilePictureUrl, setProfilePictureUrl] = React.useState(null);
+    const [hasProfilePicture, setHasProfilePicture] = React.useState(false);
+    const [solanaDomain, setSolanaDomain] = React.useState(null);
+
     //const { handlekey } = useParams() as { 
     //    handlekey: string;
     //}
@@ -715,30 +548,6 @@ export function StoreFrontView(this: any, props: any) {
             await getCollectionStates(address);
         } catch(e){console.log("ERR: "+e)}
         
-    }
-
-    const StoreProfile = (props: any) => {
-        return (
-            <Grid 
-                container 
-                direction="column" 
-                spacing={2} 
-                alignItems="center"
-                rowSpacing={8}
-            >
-                <Grid 
-                    item xs={12}
-                >
-                    <Box
-                        height="100%"
-                        display="flex-grow"
-                        justifyContent="center"
-                    >
-                        <StoreIdentityView collectionMintList={collectionMintList} />
-                    </Box>
-                </Grid>
-            </Grid>
-        );
     }
 
     const getCollectionData = async (start:number) => {
@@ -906,7 +715,7 @@ export function StoreFrontView(this: any, props: any) {
                                     // if there is a cancelled offer though?
                                     if (mintElement.listedTimestampCheck && mintElement.listedBookkeeperCheck){
                                         mintElement.highestOffer = 0;
-                                        console.log("found dup bid_receipt: "+JSON.stringify(listing));
+                                    //    console.log("found dup bid_receipt: "+JSON.stringify(listing));
                                     } else{
                                         mintElement.highestOffer = +listing.price;
                                     }
@@ -919,9 +728,11 @@ export function StoreFrontView(this: any, props: any) {
                             if (!listing?.cancelledAt){                                
                                 if (!mintElement?.listingCancelled){
                                     if ((!mintElement?.listedBlockTime) || (+listing.createdAt > +mintElement?.listedBlockTime)){
-                                        mintElement.listingPrice = +listing.price;
-                                        mintElement.listedTimestamp = listing.timestamp;
-                                        mintElement.listedBlockTime = listing.blockTime;
+                                        if (!listing?.purchaseReceipt){
+                                            mintElement.listingPrice = +listing.price;
+                                            mintElement.listedTimestamp = listing.timestamp;
+                                            mintElement.listedBlockTime = listing.blockTime;
+                                        }
                                     }
                                 }
                             }
@@ -1137,6 +948,49 @@ export function StoreFrontView(this: any, props: any) {
             }
         }
     }, [verifiedCollectionArray]);
+
+    const fetchProfilePicture = async () => {
+        const { isAvailable, url } = await getProfilePicture(ggoconnection, publicKey);
+
+        let img_url = url;
+        if (url)
+            img_url = url.replace(/width=100/g, 'width=256');
+        setProfilePictureUrl(img_url);
+        setHasProfilePicture(isAvailable);
+    }
+
+    const fetchSolanaDomain = async () => {
+        const domain = await findDisplayName(ggoconnection, publicKey.toBase58());
+        if (domain){
+            if (domain[0] !== publicKey.toBase58()){
+                setSolanaDomain(domain[0]);
+            }
+        }
+    }
+
+    React.useEffect(() => {
+        if (publicKey){
+            if (solanaDomain){
+                let sppicon = '';
+                try{
+                    if (profilePictureUrl)
+                        sppicon = '<i class="wallet-adapter-button-start-icon"><img style="border-radius:24px;margin-right:1"" src="'+profilePictureUrl+'" alt="Solana Profile Icon"></i>';
+                    document.getElementsByClassName("grape-wallet-button")[0].innerHTML = sppicon+'<span class="wallet-adapter-solana-domain">'+solanaDomain+'</span>';
+                }catch(e){
+
+                }
+            }
+        }
+    }, [solanaDomain, profilePictureUrl])
+
+    React.useEffect(() => {
+        if (publicKey){
+            
+            fetchProfilePicture();
+            fetchSolanaDomain();
+        }
+    }, [publicKey])
+
 
     React.useEffect(() => { 
         if ((withPubKey)&&(!verifiedCollectionArray)){

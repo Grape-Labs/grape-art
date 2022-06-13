@@ -304,8 +304,8 @@ export default function GalleryItem(props: any){
                                             <Grid container spacing={2} alignItems="center">
                                                 <Grid item xs={12}>
                                                     <Typography variant="subtitle1" textAlign="center">
-                                                        {collectionitem.name.length > 22 ?
-                                                            <>{collectionitem?.name.substring(0,20)+'...'}</>
+                                                        {collectionitem.name.length > 20 ?
+                                                            <>{collectionitem?.name.substring(0,18)+'...'}</>
                                                         :
                                                             <>{collectionitem?.name}</>
                                                         }
