@@ -48,14 +48,13 @@ export default function MarketplaceView(props: any) {
         fetchVerifiedCollection("");
     }, []);
 
-
     return (
         <Grid container spacing={2} sx={{mt:6}}>
             {verifiedCollectionArray && verifiedCollectionArray.map((featured: any, key: number) => (
-                <Grid item>
+                <Grid item xs={12} sm={6}>
                     <>
                         <Card sx={{borderRadius:'26px',mb:2}}>
-                            
+                            {featured.vanityUrl ?
                                 <CardActionArea
                                     component={Link} to={`${GRAPE_COLLECTION}${featured.vanityUrl}`}
                                 >
@@ -65,7 +64,6 @@ export default function MarketplaceView(props: any) {
                                         image={GRAPE_COLLECTIONS_DATA+featured.splash}
                                         alt={featured.name}
                                             sx={{
-                                                maxHeight: '200px',
                                                 background: 'rgba(0, 0, 0, 1)',
                                                 m:0,
                                                 p:0,
@@ -116,7 +114,64 @@ export default function MarketplaceView(props: any) {
                                         />
                                     </CardContent>
                                 </CardActionArea>
-
+                            :
+                            <CardActionArea>
+                                <CardMedia
+                                    component="img"
+                                    image={GRAPE_COLLECTIONS_DATA+featured.splash}
+                                    alt={featured.name}
+                                        sx={{
+                                            background: 'rgba(0, 0, 0, 1)',
+                                            m:0,
+                                            p:0,
+                                        }} 
+                                    />
+                                    
+                                <CardContent
+                                    sx={{
+                                        background: 'none',
+                                    }}
+                                >
+                                <Typography gutterBottom variant="h5" component="div">
+                                    <Grid container>
+                                        <Grid item>
+                                            <Avatar
+                                                variant="square"
+                                                src={GRAPE_COLLECTIONS_DATA+featured.logo}
+                                                sx={{
+                                                    ml:1,
+                                                    mr:1,
+                                                    width: 24, 
+                                                    height: 24
+                                                }}
+                                            ></Avatar>
+                                        </Grid>
+                                        <Grid item>
+                                            {featured.name}
+                                        </Grid>
+                                    </Grid>
+                                </Typography>
+                                <Typography variant="body2" color="text.primary">
+                                    {featured.description}
+                                </Typography>
+                                    <img
+                                        src={GRAPE_COLLECTIONS_DATA+featured.splash}
+                                        srcSet={GRAPE_COLLECTIONS_DATA+featured.splash}
+                                        alt=""
+                                        style={{
+                                            opacity: '0.025',
+                                            position: 'absolute',
+                                            marginTop:2,
+                                            marginBottom:2,
+                                            padding:1,
+                                            top:'-20%',
+                                            left:'-20%',
+                                            width:'150%'
+                                        }}
+                                    />
+                                </CardContent>
+                            </CardActionArea>
+                            }
                             <CardActions>
                                 <Grid 
                                     container

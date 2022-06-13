@@ -1329,7 +1329,24 @@ export default function ItemOffers(props: any) {
                     //console.log(mintOwner + " checking if bid_receipt")
                     if (item.receipt_type === 'bid_receipt' && item.bookkeeper.toBase58() === mintOwner){
                     }else{
-                        allResults.push({buyeraddress: item.bookkeeper.toBase58(), bookkeeper: item.bookkeeper.toBase58(), amount: item.price, price: item.price, mint: mintitem?.address || mint, metadataParsed:mintitem, isowner: false, createdAt: item.createdAt, cancelledAt: item.canceledAt, timestamp: item.createdAt, blockTime: item.createdAt, state: item?.receipt_type, tradeState: item.tradeState, purchaseReceipt: item.purchaseReceipt});
+                        allResults.push({
+                            buyeraddress: item.bookkeeper.toBase58(), 
+                            bookkeeper: item.bookkeeper.toBase58(), 
+                            amount: item.price, 
+                            price: item.price, 
+                            mint: mintitem?.address || mint, 
+                            metadataParsed:mintitem, 
+                            isowner: false, 
+                            createdAt: item.createdAt, 
+                            cancelledAt: item.canceledAt, 
+                            timestamp: item.createdAt, 
+                            blockTime: item.createdAt, 
+                            state: item?.receipt_type, 
+                            tradeState: item.tradeState, 
+                            purchaseReceipt: item.purchaseReceipt,
+                            seller: item.seller,
+                            buyer: item.buyer
+                        });
                     }
                 }
 
@@ -1417,10 +1434,10 @@ export default function ItemOffers(props: any) {
                 
                 let highest_offer_date = null;
                 
-                for (var offer of dupRemovedResults){
+                for (var offer of offerResults){
                     if (!offer?.cancelledAt){
                         if (offer.state === 'bid_receipt'){ // exit on first receipt
-                            
+                            if (!offer?.purchaseReceipt){
                             //if (!highest_offer_date || highest_offer_date < offer.blockTime){
                                 bid_count++
                                 finalOfferResults.push(offer);
@@ -1429,6 +1446,7 @@ export default function ItemOffers(props: any) {
                                     highest_offer_date = offer.blockTime;
                                 }
                             //}
+                            }
                         }
                     }
                 }                

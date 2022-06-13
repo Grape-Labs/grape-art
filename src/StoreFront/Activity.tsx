@@ -287,10 +287,10 @@ export default function ActivityView(props: any){
                             </Button>
                         </Tooltip>
                     </TableCell>
-                    <TableCell  align="center"><Typography variant="h6" title={JSON.stringify(item)}>
+                    <TableCell  align="center"><Typography variant="h6">
                         
-                        {item.purchaseReceipt ?
-                            <>Sale</>
+                        {item?.purchaseReceipt ?
+                            <>Sale <Typography variant="caption">({item.purchaseReceipt.toBase58()})</Typography></>
                         :
                             <>
                             {item.state === "bid_receipt" && 
@@ -310,7 +310,7 @@ export default function ActivityView(props: any){
                             }
 
                             {item.state === "purchase_receipt" && 
-                                <>Listing Cancelled</>
+                                <>Sale</>
                             }
                             </>
                         } 

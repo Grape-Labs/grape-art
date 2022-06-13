@@ -646,6 +646,7 @@ export function StoreFrontView(this: any, props: any) {
     const [collectionAuthority, setCollectionAuthority] = React.useState(null);
     const [verifiedCollectionArray, setVerifiedCollectionArray] = React.useState(null);
     const [auctionHouseListings, setAuctionHouseListings] = React.useState(null);
+    const [auctionHouseActivity, setAuctionHouseActivity] = React.useState(null);
     const [wallet_collection_meta, setCollectionMeta] = React.useState(null);
     const [final_collection, setCollectionMetaFinal] = React.useState(null);
     //const isConnected = session && session.isConnected;
@@ -855,7 +856,7 @@ export function StoreFrontView(this: any, props: any) {
 
             const results = await getReceiptsFromAuctionHouse(collectionAuthority.auctionHouse || AUCTION_HOUSE_ADDRESS, null, null, null);
 
-            const ahListings = new Array();
+            const ahActivity = new Array();
             const ahListingsMints = new Array();
 
             for (var item of results){
@@ -863,21 +864,26 @@ export function StoreFrontView(this: any, props: any) {
                 console.log("item: "+JSON.stringify(item));
                 console.log("mintitem: "+JSON.stringify(mintitem));
                 if (mintitem){
-                    ahListings.push({buyeraddress: item.bookkeeper.toBase58(), bookkeeper: item.bookkeeper.toBase58(), amount: item.price, price: item.price, mint: mintitem?.address, metadataParsed:mintitem, isowner: false, createdAt: item.createdAt, cancelledAt: item.canceledAt, timestamp: timeAgo(item.createdAt), blockTime: item.createdAt, state: item?.receipt_type, purchaseReceipt: item?.purchaseReceipt});
+                    ahActivity.push({buyeraddress: item.bookkeeper.toBase58(), bookkeeper: item.bookkeeper.toBase58(), amount: item.price, price: item.price, mint: mintitem?.address, metadataParsed:mintitem, isowner: false, createdAt: item.createdAt, cancelledAt: item.canceledAt, timestamp: timeAgo(item.createdAt), blockTime: item.createdAt, state: item?.receipt_type, purchaseReceipt: item?.purchaseReceipt});
                     ahListingsMints.push(mintitem.address);
                 }
             }
 
             // sort by date
-            ahListings.sort((a:any,b:any) => (a.createdAt < b.createdAt) ? 1 : -1);
+            ahActivity.sort((a:any,b:any) => (a.createdAt < b.createdAt) ? 1 : -1);
 
             // remove duplicate offers
             //const dupRemovedResults = ahListings;
-            //const offerListings = ahListings.filter( (ele, ind) => ind === ahListings.findIndex( elem => (elem.bookkeeper === ele.bookkeeper && elem.bookkeeper=== 'bid_receipt')))
-
+            
+            
             //console.log("offerListings: "+JSON.stringify(offerListings));
+            //setAuctionHouseActivity(ahActivity);
 
-            setAuctionHouseListings(ahListings);
+            // remove all with purchaseReceipt
+            //const ahListings = ahActivity.filter( (ele, ind) => ind === ahListings.findIndex( elem => (elem.purchaseReceipt === ele.purchaseReceipt && elem.bookkeeper=== 'bid_receipt')))
+            
+            setAuctionHouseListings(ahActivity);
+
             //activityResults.push({buyeraddress: feePayer.toBase58(), amount: memo_json?.amount || memo_json?.offer, mint: memo_json?.mint, isowner: false, timestamp: forSaleDate, blockTime: value.blockTime, state: memo_json?.state || memo_json?.status});
             
 
@@ -887,7 +893,7 @@ export function StoreFrontView(this: any, props: any) {
             }
 
             // we need to remove listing history for those that have been sold
-            for (var listing of ahListings){
+            for (var listing of ahActivity){
                 let exists = false;
                 let offer_exists = false;
                 for (var mintElement of collectionMintList){
@@ -936,24 +942,28 @@ export function StoreFrontView(this: any, props: any) {
                     //if (listing.state === 1){
                     if (listing.state === 'bid_receipt'){
                         if (!listing?.cancelledAt){
-                            collectionMintList.push({
-                                address: listing.mint,
-                                highestOffer: listing.price,
-                                name:null,
-                                image:'',
-                            })
+                            if (!listing?.purchaseReceipt){
+                                collectionMintList.push({
+                                    address: listing.mint,
+                                    highestOffer: listing.price,
+                                    name:null,
+                                    image:'',
+                                })
+                            }
                         }
                     } else if (listing.state === 'listing_receipt'){
                         if (!listing?.cancelledAt){
                             if (!mintElement?.listingCancelled){
-                                collectionMintList.push({
-                                    address: listing.mint,
-                                    listingPrice: listing.price,
-                                    listedTimestamp: listing.timestamp,
-                                    listedBlockTime: listing.blockTime,
-                                    name:null,
-                                    image:'',
-                                })
+                                if (!listing?.purchaseReceipt){
+                                    collectionMintList.push({
+                                        address: listing.mint,
+                                        listingPrice: listing.price,
+                                        listedTimestamp: listing.timestamp,
+                                        listedBlockTime: listing.blockTime,
+                                        name:null,
+                                        image:'',
+                                    })
+                                }
                             }
                         }
                     } else if (listing.state === 'cancel_listing_receipt'){
