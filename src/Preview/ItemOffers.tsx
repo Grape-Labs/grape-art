@@ -1261,16 +1261,17 @@ export default function ItemOffers(props: any) {
                     // check if bid_receipt is for offers only
 
                     //console.log(mintOwner + " checking if bid_receipt")
-                    if (item.receipt_type === 'bid_receipt' && item.bookkeeper.toBase58() === mintOwner){;}
-                    else{
-                        if (!item.purchaseReceipt && !item.canceledAt)
-                            allResults.push({buyeraddress: item.bookkeeper.toBase58(), bookkeeper: item.bookkeeper.toBase58(), amount: item.price, price: item.price, mint: mintitem?.address || mint, metadataParsed:mintitem, isowner: false, createdAt: item.createdAt, cancelledAt: item.canceledAt, timestamp: item.createdAt, blockTime: item.createdAt, state: item?.receipt_type, tradeState: item.tradeState, purchaseReceipt: item.purchaseReceipt});
+                    if (item.receipt_type === 'bid_receipt' && item.bookkeeper.toBase58() === mintOwner){
+
+                    }else{
+                        allResults.push({buyeraddress: item.bookkeeper.toBase58(), bookkeeper: item.bookkeeper.toBase58(), amount: item.price, price: item.price, mint: mintitem?.address || mint, metadataParsed:mintitem, isowner: false, createdAt: item.createdAt, cancelledAt: item.canceledAt, timestamp: item.createdAt, blockTime: item.createdAt, state: item?.receipt_type, tradeState: item.tradeState, purchaseReceipt: item.purchaseReceipt});
                     }
                 }
 
                 // now show with filtering offerResults
                 let forSale = 0;
                 let forSaleDate = null;
+                let soldDate = null;
                 let forSaleCancelDate = null;
                 let bid_count = 0;
                 let listing_count = 0;
@@ -1282,19 +1283,28 @@ export default function ItemOffers(props: any) {
                     listing_count++
                     //console.log("all: "+JSON.stringify(offer))
                     if (offer.state === 'listing_receipt'){ // exit on first receipt
-                        if (!offer?.cancelledAt){
-                            if (!offer?.purchaseReceipt){
+                        //console.log("listing: "+JSON.stringify(offer))
+                    
+                        if (offer.purchaseReceipt)
+                            if (!soldDate || soldDate < offer.blockTime)
+                                soldDate = offer.blockTime;
+
+                        if (!offer.purchaseReceipt && !offer.canceledAt){
+                        //if (!offer?.cancelledAt){
+                        //    if (!offer?.purchaseReceipt){
                                 if (!forSaleDate || forSaleDate < offer.blockTime){
                                     if (!forSaleCancelDate || forSaleCancelDate < offer.blockTime){
                                         //console.log("checking: "+JSON.stringify(offer))
                                         //console.log("listing: "+JSON.stringify(offer))
-                                        if (offer.bookkeeper === mintOwner){
-                                            forSale = offer.price;
-                                            forSaleDate = offer.blockTime;
+                                        if (soldDate < offer.blockTime){
+                                            if (offer.bookkeeper === mintOwner){
+                                                forSale = offer.price;
+                                                forSaleDate = offer.blockTime;
+                                            }
                                         }
                                     }
                                 }
-                            }
+                        //    }
                         }
                     } else if (offer.state === 'cancel_listing_receipt'){ // exit on first receipt
                         //console.log("cancel: "+JSON.stringify(offer))
@@ -1340,7 +1350,6 @@ export default function ItemOffers(props: any) {
                 for (var offer of allResults){
                     if (!offer?.cancelledAt){
                         if (offer.state === 'bid_receipt'){ // exit on first receipt
-                            
                             //if (!highest_offer_date || highest_offer_date < offer.blockTime){
                                 bid_count++
                                 offerResults.push(offer);
@@ -1354,13 +1363,20 @@ export default function ItemOffers(props: any) {
                 }                
 
                 setHighestOffer(highest_offer);
-                setOpenOffers(bid_count);
+                
                 // sort offers by highest offeramount
                 //console.log("offerResults pre: "+JSON.stringify(offerResults));
                 offerResults.sort((a,b) => (a.blockTime < b.blockTime) ? 1 : -1);
                 //console.log("offerResults post: "+JSON.stringify(offerResults));
+
+
+                let finalOfferResults = offerResults.filter( (ele, ind) => ind === offerResults.findIndex( elem => elem.bookkeeper === ele.bookkeeper))
+
+                if (finalOfferResults)
+                    setOpenOffers(finalOfferResults.length);
+
                 setOffers(
-                    offerResults
+                    finalOfferResults
                 );
                 setSalePrice(
                     forSale
