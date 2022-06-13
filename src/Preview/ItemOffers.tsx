@@ -970,8 +970,9 @@ export default function ItemOffers(props: any) {
             const transaction = new Transaction();
             
             if (!ValidateDAO(mintOwner)) {
+                const listed = salePrice && salePrice > 0 ? true : false;  
                 //const transactionInstr = await acceptOffer(offerAmount, mint, walletPublicKey, buyerAddress.toString(), updateAuthority, collectionAuctionHouse);
-                const transactionInstr = await gah_acceptOffer(offerAmount, mint, walletPublicKey, buyerAddress.toString(), updateAuthority, collectionAuctionHouse, tradeState);
+                const transactionInstr = await gah_acceptOffer(offerAmount, mint, walletPublicKey, buyerAddress.toString(), updateAuthority, collectionAuctionHouse, tradeState, listed);
                 const instructionsArray = [transactionInstr.instructions].flat();  
                 transaction.add(
                     ...instructionsArray

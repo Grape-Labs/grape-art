@@ -49,7 +49,7 @@ const {
   createPrintPurchaseReceiptInstruction,
 } = AuctionHouseProgram.instructions
 
-export async function gah_acceptOffer(offerAmount: number, mint: string, sellerPublicKey: PublicKey, buyerPublicKey: any, updateAuthority: string, collectionAuctionHouse: string, listingTradeState: PublicKey): Promise<InstructionsAndSignersSet> {
+export async function gah_acceptOffer(offerAmount: number, mint: string, sellerPublicKey: PublicKey, buyerPublicKey: any, updateAuthority: string, collectionAuctionHouse: string, listingTradeState: PublicKey, listed: boolean): Promise<InstructionsAndSignersSet> {
   //START CANCEL
   let tokenSize = 1;
   const auctionHouseKey = new web3.PublicKey(collectionAuctionHouse || AUCTION_HOUSE_ADDRESS);
@@ -277,19 +277,62 @@ export async function gah_acceptOffer(offerAmount: number, mint: string, sellerP
       )
       .add(executePrintPurchaseReceiptInstruction)
      
-    if (mint) {
+    if (listed) {
       
-      const tradeState = listingTradeState;
+      const [tradeState, tradeStateBump] = 
+        await AuctionHouseProgram.findTradeStateAddress(
+          sellerAddress,
+          auctionHouse,
+          tokenAccount,
+          treasuryMint,
+          tokenMint,
+          buyerPrice,
+          1
+        )
+      
+      const cancelInstructionAccounts = {
+        wallet: sellerAddress,
+        tokenAccount,
+        tokenMint,
+        authority,
+        auctionHouse,
+        auctionHouseFeeAccount,
+        tradeState,
+      }
+      const cancelListingInstructionArgs = {
+        buyerPrice,
+        tokenSize: 1,
+      }
+
+      const [receipt, receiptBump] =
+          await AuctionHouseProgram.findListingReceiptAddress(tradeState)
+
+      const cancelListingReceiptAccounts = {
+        receipt,
+        instruction: SYSVAR_INSTRUCTIONS_PUBKEY,
+      }
+
+      const cancelListingInstruction = createCancelInstruction(
+        cancelInstructionAccounts,
+        cancelListingInstructionArgs
+      )
+
+      const cancelListingReceiptInstruction =
+        createCancelListingReceiptInstruction(cancelListingReceiptAccounts)
+
+      txt.add(cancelListingInstruction).add(cancelListingReceiptInstruction)
+      //const tradeState = listingTradeState;
+      
       /*
       const [tradeState, tradeStateBump] =
       await AuctionHouseProgram.findPublicBidTradeStateAddress(
-        buyerPubkey,
+        sellerAddress,
         auctionHouse,
         auctionHouseObj.treasuryMint,
         tokenMint,
         buyerPrice,
         1
-      )*/
+      )
 
       const cancelInstructionAccounts = {
         wallet: sellerAddress,
@@ -298,7 +341,7 @@ export async function gah_acceptOffer(offerAmount: number, mint: string, sellerP
         authority,
         auctionHouse,
         auctionHouseFeeAccount,
-        tradeState: listingTradeState,
+        tradeState: tradeState,
       }
       const cancelListingInstructionArgs = {
         buyerPrice: buyerPrice,
@@ -322,6 +365,7 @@ export async function gah_acceptOffer(offerAmount: number, mint: string, sellerP
         createCancelListingReceiptInstruction(cancelListingReceiptAccounts)
       
       txt.add(cancelListingInstruction).add(cancelListingReceiptInstruction)
+      */
       
     }
 
