@@ -49,14 +49,20 @@ const {
   createPrintPurchaseReceiptInstruction,
 } = AuctionHouseProgram.instructions
 
-export async function gah_acceptOffer(offerAmount: number, mint: string, sellerWalletKey: PublicKey, buyerAddress: any, updateAuthority: string, collectionAuctionHouse: string, listingTradeState: PublicKey): Promise<InstructionsAndSignersSet> {
+export async function gah_acceptOffer(offerAmount: number, mint: string, sellerPublicKey: PublicKey, buyerPublicKey: any, updateAuthority: string, collectionAuctionHouse: string, listingTradeState: PublicKey): Promise<InstructionsAndSignersSet> {
   //START CANCEL
   let tokenSize = 1;
   const auctionHouseKey = new web3.PublicKey(collectionAuctionHouse || AUCTION_HOUSE_ADDRESS);
   const mintKey = new web3.PublicKey(mint);
   let anchorProgram = await loadAuctionHouseProgram(null, ENV_AH, GRAPE_RPC_ENDPOINT);
   const auctionHouseObj = await anchorProgram.account.auctionHouse.fetch(auctionHouseKey,);
-  //const sellerWalletKey = new web3.PublicKey(mintOwner);
+  const buyerAddress = new web3.PublicKey(buyerPublicKey);
+  const sellerAddress = new web3.PublicKey(sellerPublicKey);
+
+  //console.log("buyerAddress: " + buyerAddress.toBase58());
+  //console.log("sellerAddress: " + sellerAddress.toBase58());
+  //console.log(mint);
+  //console.log(offerAmount)
   
   //check if escrow amount already exists to determine if we need to deposit amount to grapevine 
   //const escrow = (await getAuctionHouseBuyerEscrow(auctionHouseKey, buyerAddress))[0];
@@ -81,13 +87,12 @@ export async function gah_acceptOffer(offerAmount: number, mint: string, sellerW
   
   //const bidReceipt = new PublicKey(buyerAddress)//new PublicKey(offer.address)
   
-  const buyerPubkey = new PublicKey(buyerAddress)
     //const [metadata] = await MetadataProgram.findMetadataAccount(tokenMint)
     const metadata = await getMetadata(tokenMint);
     
     const [sellerTradeState, sellerTradeStateBump] =
       await AuctionHouseProgram.findTradeStateAddress(
-        sellerWalletKey,
+        sellerAddress,
         auctionHouse,
         tokenAccount,
         treasuryMint,
@@ -96,15 +101,21 @@ export async function gah_acceptOffer(offerAmount: number, mint: string, sellerW
         1
       )
 
+    
+    //const buyerTradeState = new PublicKey(listingTradeState)
+    
     const [buyerTradeState] =
       await AuctionHouseProgram.findPublicBidTradeStateAddress(
-        buyerPubkey,
+        buyerAddress,
         auctionHouse,
         treasuryMint,
         tokenMint,
         buyerPrice,//offer.price.toNumber(),
         1
       )
+    
+      //console.log("buyerTradeState: "+JSON.stringify(buyerTradeState))
+      //console.log("listingTradeState: "+JSON.stringify(listingTradeState))
 
       const [bidReceipt, receiptBump] =
         await AuctionHouseProgram.findBidReceiptAddress(buyerTradeState)
@@ -115,18 +126,23 @@ export async function gah_acceptOffer(offerAmount: number, mint: string, sellerW
         buyerTradeState
       )
 
+
+    console.log("purchaseReceipt: "+JSON.stringify(purchaseReceipt))
+
     const [escrowPaymentAccount, escrowPaymentBump] =
       await AuctionHouseProgram.findEscrowPaymentAccountAddress(
         auctionHouse,
-        buyerPubkey
+        buyerAddress
       )
 
     const [programAsSigner, programAsSignerBump] =
       await AuctionHouseProgram.findAuctionHouseProgramAsSignerAddress()
 
+    console.log("programAsSigner: "+JSON.stringify(programAsSigner))
+
     const [freeTradeState, freeTradeStateBump] =
       await AuctionHouseProgram.findTradeStateAddress(
-        sellerWalletKey,
+        sellerAddress,
         auctionHouse,
         tokenAccount,
         treasuryMint,
@@ -135,17 +151,20 @@ export async function gah_acceptOffer(offerAmount: number, mint: string, sellerW
         1
       )
 
+    console.log("freeTradeState: "+JSON.stringify(freeTradeState))
+
+
     const [buyerReceiptTokenAccount] =
       await AuctionHouseProgram.findAssociatedTokenAccountAddress(
         tokenMint,
-        buyerPubkey
+        buyerAddress
       )
 
     const [listingReceipt, listingReceiptBump] =
       await AuctionHouseProgram.findListingReceiptAddress(sellerTradeState)
       
     const sellInstructionAccounts = {
-      wallet: sellerWalletKey,
+      wallet: sellerAddress,
       tokenAccount,
       metadata,
       authority,
@@ -166,7 +185,7 @@ export async function gah_acceptOffer(offerAmount: number, mint: string, sellerW
 
     const printListingReceiptInstructionAccounts = {
       receipt: listingReceipt,
-      bookkeeper: sellerWalletKey,
+      bookkeeper: sellerAddress,
       instruction: SYSVAR_INSTRUCTIONS_PUBKEY,
     }
 
@@ -175,8 +194,8 @@ export async function gah_acceptOffer(offerAmount: number, mint: string, sellerW
     }
 
     const executeSaleInstructionAccounts = {
-      buyer: buyerPubkey,
-      seller: sellerWalletKey,
+      buyer: buyerAddress,
+      seller: sellerAddress,
       auctionHouse,
       tokenAccount,
       tokenMint,
@@ -186,7 +205,7 @@ export async function gah_acceptOffer(offerAmount: number, mint: string, sellerW
       sellerTradeState,
       buyerTradeState,
       freeTradeState,
-      sellerPaymentReceiptAccount: sellerWalletKey,
+      sellerPaymentReceiptAccount: sellerAddress,
       escrowPaymentAccount,
       buyerReceiptTokenAccount,
       auctionHouseFeeAccount,
@@ -204,7 +223,7 @@ export async function gah_acceptOffer(offerAmount: number, mint: string, sellerW
       purchaseReceipt,
       listingReceipt,
       bidReceipt,
-      bookkeeper: sellerWalletKey,
+      bookkeeper: sellerAddress,
       instruction: SYSVAR_INSTRUCTIONS_PUBKEY,
     }
 
@@ -273,7 +292,7 @@ export async function gah_acceptOffer(offerAmount: number, mint: string, sellerW
       )*/
 
       const cancelInstructionAccounts = {
-        wallet: sellerWalletKey,
+        wallet: sellerAddress,
         tokenAccount,
         tokenMint,
         authority,
@@ -306,7 +325,7 @@ export async function gah_acceptOffer(offerAmount: number, mint: string, sellerW
       
     }
 
-  txt.feePayer = buyerPubkey
+  txt.feePayer = sellerAddress
 
   const transferAuthority = web3.Keypair.generate();
   const signers = true ? [] : [transferAuthority];
