@@ -963,6 +963,16 @@ export default function ItemOffers(props: any) {
         handleAlertClickOpen();
     }
 
+    const handleAcceptOfferAncCancelListing = async (offerAmount: number, buyerAddress: any, tradeState: PublicKey) => {
+        handleAlertClose();
+        const listed = salePrice && salePrice > 0 ? true : false;  
+        //const transactionInstr = await acceptOffer(offerAmount, mint, walletPublicKey, buyerAddress.toString(), updateAuthority, collectionAuctionHouse);
+        if (listed){
+            await handleCancelListing(salePrice)
+        }
+        await handleAcceptOffer(offerAmount, buyerAddress, tradeState);
+    }
+
     const handleAcceptOffer = async (offerAmount: number, buyerAddress: any, tradeState: PublicKey) => {
         handleAlertClose();
         
@@ -972,6 +982,14 @@ export default function ItemOffers(props: any) {
             if (!ValidateDAO(mintOwner)) {
                 const listed = salePrice && salePrice > 0 ? true : false;  
                 //const transactionInstr = await acceptOffer(offerAmount, mint, walletPublicKey, buyerAddress.toString(), updateAuthority, collectionAuctionHouse);
+                if (listed){
+                    const transactionCancelInstr = await gah_cancelOffer(offerAmount, mint, walletPublicKey, buyerAddress.toString(), updateAuthority, collectionAuctionHouse);
+                    const instructionsCancelArray = [transactionCancelInstr.instructions].flat();  
+                    /*
+                    transaction.add(
+                        ...instructionsCancelArray
+                    );*/ 
+                }
                 const transactionInstr = await gah_acceptOffer(offerAmount, mint, walletPublicKey, buyerAddress.toString(), updateAuthority, collectionAuctionHouse, tradeState, listed);
                 const instructionsArray = [transactionInstr.instructions].flat();  
                 transaction.add(
@@ -1954,7 +1972,8 @@ export default function ItemOffers(props: any) {
                                                     <DialogActions>
                                                         <Button onClick={handleAlertClose}>{t('Cancel')}</Button>
                                                         <Button 
-                                                            onClick={() => handleAcceptOffer(final_offeramount, final_offerfrom, tradeState)}
+                                                            //onClick={() => handleAcceptOffer(final_offeramount, final_offerfrom, tradeState)}
+                                                            onClick={() => handleAcceptOfferAncCancelListing(final_offeramount, final_offerfrom, tradeState)}
                                                             autoFocus>
                                                         {t('Accept')}
                                                         </Button>
