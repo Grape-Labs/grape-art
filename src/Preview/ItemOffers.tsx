@@ -1303,7 +1303,6 @@ export default function ItemOffers(props: any) {
     
     const getOffers = async () => {
         
-        
         try {
             //getMetadata
             if (!openOffers){

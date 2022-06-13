@@ -254,7 +254,17 @@ export default function GlobalView(props: any){
                     //mint: getMintFromReceipt(receipt.tradeState.toBase58()),
                     //cancelledAt: receipt?.canceledAt,
                 }));
-            setReceipts(receipts);
+            
+            
+            
+            const allReceipts = new Array();
+
+            for (var item of receipts){
+                allReceipts.push(item);
+            }
+            allReceipts.sort((a:any,b:any) => (a.createdAt < b.createdAt) ? 1 : -1); 
+            //console.log("allReceipts: "+JSON.stringify(allReceipts))
+            setReceipts(allReceipts);
             
         }
         setLoading(false);

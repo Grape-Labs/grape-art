@@ -841,6 +841,7 @@ export function StoreFrontView(this: any, props: any) {
             //if (ValidateAddress(collectionAuthority.address)){
                 if (collectionMintList){
                     getCollectionMeta(0);
+                    console.log("collectionAuthority: "+JSON.stringify(collectionAuthority))
                     fetchMintStates(collectionAuthority);
                 }
             //}
@@ -860,12 +861,21 @@ export function StoreFrontView(this: any, props: any) {
             for (var item of results){
                 const mintitem = await getMintFromVerifiedMetadata(item.metadata.toBase58(), collectionMintList);
                 console.log("item: "+JSON.stringify(item));
-                ahListings.push({buyeraddress: item.bookkeeper.toBase58(), bookkeeper: item.bookkeeper.toBase58(), amount: item.price, price: item.price, mint: mintitem.address, metadataParsed:mintitem, isowner: false, createdAt: item.createdAt, cancelledAt: item.canceledAt, timestamp: timeAgo(item.createdAt), blockTime: item.createdAt, state: item?.receipt_type});
-                ahListingsMints.push(mintitem.address);
+                console.log("mintitem: "+JSON.stringify(mintitem));
+                if (mintitem){
+                    ahListings.push({buyeraddress: item.bookkeeper.toBase58(), bookkeeper: item.bookkeeper.toBase58(), amount: item.price, price: item.price, mint: mintitem?.address, metadataParsed:mintitem, isowner: false, createdAt: item.createdAt, cancelledAt: item.canceledAt, timestamp: timeAgo(item.createdAt), blockTime: item.createdAt, state: item?.receipt_type});
+                    ahListingsMints.push(mintitem.address);
+                }
             }
 
             // sort by date
             ahListings.sort((a:any,b:any) => (a.createdAt < b.createdAt) ? 1 : -1);
+
+            // remove duplicate offers
+            //const dupRemovedResults = ahListings;
+            //const offerListings = ahListings.filter( (ele, ind) => ind === ahListings.findIndex( elem => (elem.bookkeeper === ele.bookkeeper && elem.bookkeeper=== 'bid_receipt')))
+
+            //console.log("offerListings: "+JSON.stringify(offerListings));
 
             setAuctionHouseListings(ahListings);
             //activityResults.push({buyeraddress: feePayer.toBase58(), amount: memo_json?.amount || memo_json?.offer, mint: memo_json?.mint, isowner: false, timestamp: forSaleDate, blockTime: value.blockTime, state: memo_json?.state || memo_json?.status});
@@ -879,17 +889,28 @@ export function StoreFrontView(this: any, props: any) {
             // we need to remove listing history for those that have been sold
             for (var listing of ahListings){
                 let exists = false;
+                let offer_exists = false;
                 for (var mintElement of collectionMintList){
                     if (mintElement.address === listing.mint){
                         exists = true;
                         if (listing.state === 'bid_receipt'){
+                            
                             if ((!mintElement?.highestOffer) || (+listing.price > +mintElement?.highestOffer)){
-                                if (!listing?.cancelledAt)
-                                    mintElement.highestOffer = +listing.price;
+                                if (!listing?.cancelledAt){
+                                    // if there is a cancelled offer though?
+                                    if (mintElement.listedTimestampCheck && mintElement.listedBookkeeperCheck){
+                                        mintElement.highestOffer = 0;
+                                        console.log("found dup bid_receipt: "+JSON.stringify(listing));
+                                    } else{
+                                        mintElement.highestOffer = +listing.price;
+                                    }
+                                }
                                 // add offer count?
                             }
+                            mintElement.listedTimestampCheck = listing.timestamp;
+                            mintElement.listedBookkeeperCheck = listing.bookkeeper;
                         } else if (listing.state === 'listing_receipt'){
-                            if (!listing?.cancelledAt){
+                            if (!listing?.cancelledAt){                                
                                 if (!mintElement?.listingCancelled){
                                     if ((!mintElement?.listedBlockTime) || (+listing.createdAt > +mintElement?.listedBlockTime)){
                                         mintElement.listingPrice = +listing.price;
