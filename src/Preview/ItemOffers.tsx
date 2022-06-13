@@ -968,9 +968,57 @@ export default function ItemOffers(props: any) {
         const listed = salePrice && salePrice > 0 ? true : false;  
         //const transactionInstr = await acceptOffer(offerAmount, mint, walletPublicKey, buyerAddress.toString(), updateAuthority, collectionAuctionHouse);
         if (listed){
-            await handleCancelListing(salePrice)
+            try {
+                //START CANCEL LISTING
+                //const transactionInstr = await cancelListing(salePrice, mint, walletPublicKey.toString(), mintOwner, updateAuthority, collectionAuctionHouse);
+                const transactionInstr = await gah_cancelListing(salePrice, mint, walletPublicKey.toString(), mintOwner, null, null, updateAuthority, collectionAuctionHouse);
+                const instructionsArray = [transactionInstr.instructions].flat();        
+                const transaction = new Transaction()
+                .add(
+                    ...instructionsArray
+                );
+    
+                enqueueSnackbar(`${t('Canceling Listing for')} ${salePrice} SOL`,{ variant: 'info' });
+                const signedTransaction = await sendTransaction(transaction, connection);
+                
+                const snackprogress = (key:any) => (
+                    <CircularProgress sx={{padding:'10px'}} />
+                );
+                const cnfrmkey = enqueueSnackbar(`${t('Confirming transaction')}`,{ variant: 'info', action:snackprogress, persist: true });
+                await ggoconnection.confirmTransaction(signedTransaction, 'processed');
+                closeSnackbar(cnfrmkey);
+                const snackaction = (key:any) => (
+                    <Button href={`https://explorer.solana.com/tx/${signedTransaction}`} target='_blank'  sx={{color:'white'}}>
+                        {signedTransaction}
+                    </Button>
+                );
+                enqueueSnackbar(`${t('Listing Cancelled')} `,{ variant: 'success', action:snackaction });
+                //END CANCEL LISTING
+                
+                const eskey = enqueueSnackbar(`${t('Metadata will be refreshed in a few seconds')}`, {
+                    anchorOrigin: {
+                        vertical: 'top',
+                        horizontal: 'center',
+                    },
+                    persist: true,
+                });
+                setTimeout(function() {
+                    closeSnackbar(eskey);
+                    setRefreshOffers(true);
+                }, GRAPE_RPC_REFRESH);
+                
+                await handleAcceptOffer(offerAmount, buyerAddress, tradeState);
+            }catch(e){
+                closeSnackbar();
+                enqueueSnackbar(e.message ? `${e.name}: ${e.message}` : e.name, { variant: 'error' });
+                //enqueueSnackbar(`Error: ${(e)}`,{ variant: 'error' });
+                console.log("Error: "+e);
+                //console.log("Error: "+JSON.stringify(e));
+            }  
+        } else{
+            await handleAcceptOffer(offerAmount, buyerAddress, tradeState);
         }
-        await handleAcceptOffer(offerAmount, buyerAddress, tradeState);
+        
     }
 
     const handleAcceptOffer = async (offerAmount: number, buyerAddress: any, tradeState: PublicKey) => {
@@ -1085,7 +1133,7 @@ export default function ItemOffers(props: any) {
                 ...instructionsArray
             );
 
-            enqueueSnackbar(`${t('Canceling Sell Now Price for')} ${salePrice} SOL`,{ variant: 'info' });
+            enqueueSnackbar(`${t('Canceling Listing for')} ${salePrice} SOL`,{ variant: 'info' });
             const signedTransaction = await sendTransaction(transaction, connection);
             
             const snackprogress = (key:any) => (
@@ -1099,7 +1147,7 @@ export default function ItemOffers(props: any) {
                     {signedTransaction}
                 </Button>
             );
-            enqueueSnackbar(`${t('Sell Now Price Removed')} `,{ variant: 'success', action:snackaction });
+            enqueueSnackbar(`${t('Listing Cancelled')} `,{ variant: 'success', action:snackaction });
             //END CANCEL LISTING
             
             const eskey = enqueueSnackbar(`${t('Metadata will be refreshed in a few seconds')}`, {
