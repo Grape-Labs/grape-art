@@ -72,6 +72,7 @@ import {
     VERIFIED_DAO_ARRAY,
 } from '../utils/grapeTools/constants';
 
+import { AuctionHouseProgram } from '@metaplex-foundation/mpl-auction-house'
 import {  
     getReceiptsFromAuctionHouse,
     getMintFromVerifiedMetadata } from '../utils/grapeTools/helpers';
@@ -1240,7 +1241,8 @@ export default function ItemOffers(props: any) {
             if (!openOffers){
                 console.log("with aH: "+ collectionAuctionHouse)
                 
-                const results = await getReceiptsFromAuctionHouse(collectionAuctionHouse || AUCTION_HOUSE_ADDRESS, null, mint, null);
+                const auctionHouseKey = collectionAuctionHouse || AUCTION_HOUSE_ADDRESS;
+                const results = await getReceiptsFromAuctionHouse(auctionHouseKey, null, mint, null);
                 // we need to get listing_receipt too to show the latest price listed, do in two calls or in one with a filter????
 
                 const open_offers = 0;
@@ -1271,6 +1273,7 @@ export default function ItemOffers(props: any) {
                 let highest_offer = 0;
                 let isCancelled = false;
 
+
                 for (var offer of allResults){
                     listing_count++
                     //console.log("all: "+JSON.stringify(offer))
@@ -1300,9 +1303,32 @@ export default function ItemOffers(props: any) {
                     }
                 }
 
-                if (forSale){
+                if (forSale && forSale > 0){
+                    /*
                     // check here if this is actually still for sale...
+                    let anchorProgram = await loadAuctionHouseProgram(null, ENV_AH, GRAPE_RPC_ENDPOINT);
+                    const auctionHouseObj = await anchorProgram.account.auctionHouse.fetch(auctionHouseKey,); 
+                    const treasuryMint = new PublicKey(auctionHouseObj.treasuryMint)
+                    const tokenMint = new PublicKey(mint)
+                    const results = await anchorProgram.provider.connection.getTokenLargestAccounts(tokenMint);    
+                    const tokenAccount: web3.PublicKey = results.value[0].address;
+                    const [sellerTradeState, sellerTradeStateBump] =
+                        await AuctionHouseProgram.findTradeStateAddress(
+                            new PublicKey(mintOwner),
+                            new PublicKey(auctionHouseKey),//new PublicKey(auctionHouseObj.auctionHouse.address),
+                            tokenAccount,
+                            treasuryMint,
+                            tokenMint,
+                            forSale,//offer.price.toNumber(),
+                            1
+                        )
+                        console.log("sellerTradeState "+sellerTradeState);
                     
+                        const [sellerReceipt, sellerReceiptBump] =
+                            await AuctionHouseProgram.findBidReceiptAddress(sellerTradeState)
+                        
+                        console.log("sellerReceipt "+JSON.stringify(sellerReceipt));
+                    */
                 }
 
                 let highest_offer_date = null;
