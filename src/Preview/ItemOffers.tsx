@@ -1251,16 +1251,20 @@ export default function ItemOffers(props: any) {
 
                 for (var item of results){
                     const mintitem = await getMintFromVerifiedMetadata(item.metadata.toBase58(), null);
+                    
+                    //if (!item.purchaseReceipt && !item.canceledAt)
+                    //    console.log("open receipts: "+JSON.stringify(item))
                     //if (item.receipt_type === 'listing_receipt')
                     //    console.log("listing_receipt: "+JSON.stringify(item))
                     //if (item.receipt_type === 'bid_receipt')
                     //    console.log("bid_receipt: "+JSON.stringify(item))
                     // check if bid_receipt is for offers only
 
-                    console.log(mintOwner + " checking if bid_receipt")
+                    //console.log(mintOwner + " checking if bid_receipt")
                     if (item.receipt_type === 'bid_receipt' && item.bookkeeper.toBase58() === mintOwner){;}
                     else{
-                        allResults.push({buyeraddress: item.bookkeeper.toBase58(), bookkeeper: item.bookkeeper.toBase58(), amount: item.price, price: item.price, mint: mintitem?.address || mint, metadataParsed:mintitem, isowner: false, createdAt: item.createdAt, cancelledAt: item.canceledAt, timestamp: item.createdAt, blockTime: item.createdAt, state: item?.receipt_type, tradeState: item.tradeState});
+                        if (!item.purchaseReceipt && !item.canceledAt)
+                            allResults.push({buyeraddress: item.bookkeeper.toBase58(), bookkeeper: item.bookkeeper.toBase58(), amount: item.price, price: item.price, mint: mintitem?.address || mint, metadataParsed:mintitem, isowner: false, createdAt: item.createdAt, cancelledAt: item.canceledAt, timestamp: item.createdAt, blockTime: item.createdAt, state: item?.receipt_type, tradeState: item.tradeState, purchaseReceipt: item.purchaseReceipt});
                     }
                 }
 
