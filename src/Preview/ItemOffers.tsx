@@ -1314,8 +1314,7 @@ export default function ItemOffers(props: any) {
                 // we need to get listing_receipt too to show the latest price listed, do in two calls or in one with a filter????
 
                 const open_offers = 0;
-                let allResults: any[] = [];
-                let offerResults: any[] = [];
+                const allResults: any[] = [];
 
                 for (var item of results){
                     const mintitem = await getMintFromVerifiedMetadata(item.metadata.toBase58(), null);
@@ -1330,7 +1329,6 @@ export default function ItemOffers(props: any) {
 
                     //console.log(mintOwner + " checking if bid_receipt")
                     if (item.receipt_type === 'bid_receipt' && item.bookkeeper.toBase58() === mintOwner){
-
                     }else{
                         allResults.push({buyeraddress: item.bookkeeper.toBase58(), bookkeeper: item.bookkeeper.toBase58(), amount: item.price, price: item.price, mint: mintitem?.address || mint, metadataParsed:mintitem, isowner: false, createdAt: item.createdAt, cancelledAt: item.canceledAt, timestamp: item.createdAt, blockTime: item.createdAt, state: item?.receipt_type, tradeState: item.tradeState, purchaseReceipt: item.purchaseReceipt});
                     }
@@ -1413,14 +1411,20 @@ export default function ItemOffers(props: any) {
                     */
                 }
 
+                const offerResults = allResults.sort((a,b) => (a.blockTime < b.blockTime) ? 1 : -1);
+                const dupRemovedResults = offerResults.filter( (ele, ind) => ind === offerResults.findIndex( elem => elem.bookkeeper === ele.bookkeeper))
+                
+                const finalOfferResults = new Array();
+                
                 let highest_offer_date = null;
-
-                for (var offer of allResults){
+                
+                for (var offer of dupRemovedResults){
                     if (!offer?.cancelledAt){
                         if (offer.state === 'bid_receipt'){ // exit on first receipt
+                            
                             //if (!highest_offer_date || highest_offer_date < offer.blockTime){
                                 bid_count++
-                                offerResults.push(offer);
+                                finalOfferResults.push(offer);
                                 if (highest_offer < offer.price){
                                     highest_offer = offer.price;
                                     highest_offer_date = offer.blockTime;
@@ -1434,12 +1438,9 @@ export default function ItemOffers(props: any) {
                 
                 // sort offers by highest offeramount
                 //console.log("offerResults pre: "+JSON.stringify(offerResults));
-                offerResults.sort((a,b) => (a.blockTime < b.blockTime) ? 1 : -1);
+                //offerResults.sort((a,b) => (a.blockTime < b.blockTime) ? 1 : -1);
                 //console.log("offerResults post: "+JSON.stringify(offerResults));
-
-
-                let finalOfferResults = offerResults.filter( (ele, ind) => ind === offerResults.findIndex( elem => elem.bookkeeper === ele.bookkeeper))
-
+                
                 if (finalOfferResults)
                     setOpenOffers(finalOfferResults.length);
 
@@ -1493,7 +1494,7 @@ export default function ItemOffers(props: any) {
                     ...instructionsArray
                 );
                 
-                enqueueSnackbar(`${t('Preparing to BUY NOW')}: ${salePrice} SOL ${t('from')}: ${buyerPublicKey.toBase58()}`,{ variant: 'info' });
+                enqueueSnackbar(`${t('Preparing to Buy Now')}: ${salePrice} SOL ${t('from')}: ${buyerPublicKey.toBase58()}`,{ variant: 'info' });
                 //const signedTransaction = await sendTransaction(transaction, connection);
                 //await connection.confirmTransaction(signedTransaction, 'processed');
                 enqueueSnackbar(`${t('Executing transfer for')}: ${mint.toString()}`,{ variant: 'info' });
@@ -1510,7 +1511,7 @@ export default function ItemOffers(props: any) {
                         {signedTransaction2}
                     </Button>
                 );
-                enqueueSnackbar(`${t('NFT transaction complete')} `,{ variant: 'success', action:snackaction });
+                enqueueSnackbar(`${t('Transaction Complete')} `,{ variant: 'success', action:snackaction });
                 /*
                 if (escrowAmount > 0){
                     //check the amount to redeposit 
@@ -1577,18 +1578,18 @@ export default function ItemOffers(props: any) {
             console.log('2. 🛍 Simulate a customer checkout \n');
             const amount = new BigNumber(20);
             const reference = new Keypair().publicKey;
-            const label = 'Jungle Cats store';
-            const message = 'Jungle Cats store - your order - #001234';
-            const memo = 'JC#4098';
+            const label = 'Marketplace store';
+            const message = 'Marketplace store - your order - #001234';
+            const memo = 'SOME#MEMO;
         */
 
         /* // SPL TOKEN
         console.log('2. 🛍 Simulate a customer checkout \n');
         const amount = new BigNumber(20);
         const reference = new Keypair().publicKey;
-        const label = 'Jungle Cats store';
-        const message = 'Jungle Cats store - your order - #001234';
-        const memo = 'JC#4098';
+        const label = 'Marketplace store';
+        const message = 'Marketplace store - your order - #001234';
+        const memo = 'SOME#MEMO';
         const splToken = new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v)';
         
         */
