@@ -1440,7 +1440,7 @@ export default function ItemOffers(props: any) {
                 //console.log("offerResults pre: "+JSON.stringify(offerResults));
                 //offerResults.sort((a,b) => (a.blockTime < b.blockTime) ? 1 : -1);
                 //console.log("offerResults post: "+JSON.stringify(offerResults));
-                
+
                 if (finalOfferResults)
                     setOpenOffers(finalOfferResults.length);
 
@@ -2014,6 +2014,11 @@ export default function ItemOffers(props: any) {
                                                             {t('From')}: <MakeLinkableAddress addr={final_offerfrom} trim={0} hasextlink={true} hascopy={false} fontsize={16} /><br/>
                                                             <Typography sx={{textAlign:'center'}}>
                                                             {t('Make sure the above is correct')}<br/>{t('press Accept to proceed')}
+
+                                                            {salePrice && salePrice > 0 && (
+                                                                <Typography variant="body2"><br/><br/>IMPORTANT: Your NFT is currently listed, you will need to accept <strong>two</strong> wallet transactions to cancel the listing and then accept the offer</Typography>    
+                                                                )
+                                                            }
                                                             </Typography><br/>
                                                         </Alert>
                                                         
