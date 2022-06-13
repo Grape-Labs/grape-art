@@ -1248,9 +1248,11 @@ export default function ItemOffers(props: any) {
 
                 for (var item of results){
                     const mintitem = await getMintFromVerifiedMetadata(item.metadata.toBase58(), null);
-                    console.log("item: "+JSON.stringify(item));
+                    console.log(mintOwner + " ditem: "+JSON.stringify(item));
                     // check if bid_receipt is for offers only
-                    allResults.push({buyeraddress: item.bookkeeper.toBase58(), bookkeeper: item.bookkeeper.toBase58(), amount: item.price, price: item.price, mint: mintitem?.address || mint, metadataParsed:mintitem, isowner: false, createdAt: item.createdAt, cancelledAt: item.canceledAt, timestamp: item.createdAt, blockTime: item.createdAt, state: item?.receipt_type, tradeState: item.tradeState});
+
+                    if (item.bookkeeper.toBase58() !== mintOwner)
+                        allResults.push({buyeraddress: item.bookkeeper.toBase58(), bookkeeper: item.bookkeeper.toBase58(), amount: item.price, price: item.price, mint: mintitem?.address || mint, metadataParsed:mintitem, isowner: false, createdAt: item.createdAt, cancelledAt: item.canceledAt, timestamp: item.createdAt, blockTime: item.createdAt, state: item?.receipt_type, tradeState: item.tradeState});
                 }
 
                 // sort by date
