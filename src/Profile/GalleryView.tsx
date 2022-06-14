@@ -160,8 +160,8 @@ export default function GalleryView(props: any){
             
             collectionMintList.sort((a:any, b:any) => (a.highestOffer != null ? a.highestOffer : Infinity) + (b.highestOffer != null ? b.highestOffer : Infinity)) 
             
-            setFoundList(results);
-            setScrollData(results);
+            setFoundList(collectionMintList);
+            setScrollData(collectionMintList);
         } else if (+type === 4){ // by alphabetical
             const results = collectionMintList.filter((listitem:any) => {
                 //return listitem.name.toLowerCase().startsWith(keyword.toLowerCase())
