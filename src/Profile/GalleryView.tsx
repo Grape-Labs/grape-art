@@ -127,14 +127,16 @@ export default function GalleryView(props: any){
     function sortMintList(type:number){
         setFilterVal("");
         if (+type === 0){
-            
             //collectionMintList.sort((a:any,b:any) => (a.listingPrice < b.listingPrice) ? 1 : -1);
             const sortedResults = collectionMintList.sort((a:any, b:any) => (a.listingPrice != null ? a.listingPrice : Infinity) - (b.listingPrice != null ? b.listingPrice : Infinity)) 
-
             //console.log("results: "+JSON.stringify(collectionMintList));
             setFoundList(sortedResults);
             setScrollData(sortedResults);
         } else if (+type === 1){
+            const sortedResults = collectionMintList.sort((a:any, b:any) => (b.listingPrice != null ? b.listingPrice : Infinity) - (a.listingPrice != null ? a.listingPrice : Infinity)) 
+            setFoundList(sortedResults);
+            setScrollData(sortedResults);
+        } else if (+type === 2){
             
             const results = collectionMintList.filter((listitem:any) => {
                 //return listitem.name.toLowerCase().startsWith(keyword.toLowerCase())
@@ -143,44 +145,29 @@ export default function GalleryView(props: any){
             const sortedResults = results.sort((a:any,b:any) => (b.listedBlockTime != null ? b.listedBlockTime : Infinity) - (a.listedBlockTime != null ? a.listedBlockTime : Infinity));
             setFoundList(sortedResults);
             setScrollData(sortedResults);
-        } else if (+type === 2){ // by offer count
+        } else if (+type === 3){ // by offer count
             const results = collectionMintList.filter((listitem:any) => {
-                //return rea().startsWith(keyword.toLowerCase())
                 return listitem.offerCount > 0;
             });
             results.sort((a:any,b:any) => (a.offerCount - b.offerCount) ? 1 : -1);
             setFoundList(results);
             setScrollData(results);
-        } else if (+type === 3){ // by highest offers
+        } else if (+type === 4){ // by highest offers
             const results = collectionMintList.filter((listitem:any) => {
-                //return rea().startsWith(keyword.toLowerCase())
                 return listitem.highestOffer > 0;
             });
-            //results.sort((a:any,b:any) => (a.highestOffer - b.highestOffer) ? 1 : -1);
             
             const sortedResults = results.sort((a:any, b:any) => (b.highestOffer != null ? b.highestOffer : Infinity) - (a.highestOffer != null ? a.highestOffer : Infinity)) 
             
             setFoundList(sortedResults);
             setScrollData(sortedResults);
-        } else if (+type === 4){ // by alphabetical
+        } else if (+type === 5){ // by alphabetical
             const results = collectionMintList.filter((listitem:any) => {
-                //return listitem.name.toLowerCase().startsWith(keyword.toLowerCase())
                 return listitem;
             });
             const sortedResults = results.sort((a:any,b:any) => (a.name.toLowerCase().trim() > b.name.toLowerCase().trim()) ? 1 : -1);
             setFoundList(sortedResults);
             setScrollData(sortedResults);
-            
-            /*
-            const keyword = '2';
-            const results = collectionMintList.filter((listitem:any) => {
-                //return listitem.name.toLowerCase().startsWith(keyword.toLowerCase())
-                return listitem.name.toLowerCase().includes(keyword.toLowerCase())
-                // Use the toLowerCase() method to make it case-insensitive
-              });
-    
-            setFoundList(results);
-            */
         }
     }
 
@@ -267,10 +254,11 @@ export default function GalleryView(props: any){
                                             sx={{borderRadius:'17px', height:'40px'}}
                                         >
                                             <option value={0}>Price Ascending</option>
-                                            <option value={1}>Recently Listed</option>
-                                            <option value={2} disabled>Most Offers</option>
-                                            <option value={3}>Highest Offers</option>
-                                            <option value={4}>Alphabetical</option>
+                                            <option value={1}>Price Descending</option>
+                                            <option value={2}>Recently Listed</option>
+                                            <option value={3} disabled>Most Offers</option>
+                                            <option value={4}>Highest Offers</option>
+                                            <option value={5}>Alphabetical</option>
                                         </NativeSelect>
                                     </FormControl>
                                 </Grid>    
