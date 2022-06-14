@@ -15,7 +15,8 @@ import {
     ListItem,
     ListItemText,
     ListItemAvatar,
-    Typography
+    Typography,
+    LinearProgress
 } from '@mui/material';
 
 import { PreviewView } from "../Preview/Preview";
@@ -147,8 +148,8 @@ export default function ListForCollectionView(props: any){
         const wallet_collection = new Array();
         
         for (var item of collection){
-            //console.log('item '+JSON.stringify(item))
             wallet_collection.push(item.account.data.parsed.info.mint);
+            //console.log("pushed: "+item.account.data.parsed.info.mint)
         }
 
         try {
@@ -290,7 +291,7 @@ export default function ListForCollectionView(props: any){
                         <>
                             {publicKey ?
                             <>
-                                loading
+                                <LinearProgress />
                             </>
                             :
                             <>
