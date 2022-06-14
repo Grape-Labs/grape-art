@@ -670,32 +670,40 @@ export function StoreFrontView(this: any, props: any) {
 
             for (var item of results){
                 const mintitem = await getMintFromVerifiedMetadata(item.metadata.toBase58(), collectionMintList);
-                console.log("item: "+JSON.stringify(item));
-                console.log("mintitem: "+JSON.stringify(mintitem));
+                //console.log("item: "+JSON.stringify(item));
+                //console.log("mintitem: "+JSON.stringify(mintitem));
                 if (mintitem){
-                    ahActivity.push({buyeraddress: item.bookkeeper.toBase58(), bookkeeper: item.bookkeeper.toBase58(), amount: item.price, price: item.price, mint: mintitem?.address, metadataParsed:mintitem, isowner: false, createdAt: item.createdAt, cancelledAt: item.canceledAt, timestamp: timeAgo(item.createdAt), blockTime: item.createdAt, state: item?.receipt_type, purchaseReceipt: item?.purchaseReceipt});
-                    ahListingsMints.push(mintitem.address);
+                    let purchaseReceipt = item?.purchaseReceipt;
+                    if (purchaseReceipt){ // do this in order to filter out sold items but show the sale
+                        if (purchaseReceipt.toBase58().length <= 0)
+                            purchaseReceipt = null; 
+                        console.log("found: "+purchaseReceipt.toBase58().length+": "+purchaseReceipt.toBase58());
+                    }
+                    if (!purchaseReceipt){ // push only null receipts
+                        ahActivity.push({
+                            buyeraddress: item.bookkeeper.toBase58(), 
+                            bookkeeper: item.bookkeeper.toBase58(), 
+                            amount: item.price, 
+                            price: item.price, 
+                            mint: mintitem?.address, 
+                            metadataParsed:mintitem, 
+                            isowner: false, 
+                            createdAt: item.createdAt, 
+                            cancelledAt: item.canceledAt, 
+                            timestamp: timeAgo(item.createdAt), 
+                            blockTime: item.createdAt, 
+                            state: item?.receipt_type, 
+                            purchaseReceipt: purchaseReceipt});
+                        ahListingsMints.push(mintitem.address);
+                    }
                 }
             }
 
             // sort by date
             ahActivity.sort((a:any,b:any) => (a.createdAt < b.createdAt) ? 1 : -1);
-
-            // remove duplicate offers
-            //const dupRemovedResults = ahListings;
-            
-            
-            //console.log("offerListings: "+JSON.stringify(offerListings));
-            //setAuctionHouseActivity(ahActivity);
-
-            // remove all with purchaseReceipt
-            //const ahListings = ahActivity.filter( (ele, ind) => ind === ahListings.findIndex( elem => (elem.purchaseReceipt === ele.purchaseReceipt && elem.bookkeeper=== 'bid_receipt')))
             
             setAuctionHouseListings(ahActivity);
-
-            //activityResults.push({buyeraddress: feePayer.toBase58(), amount: memo_json?.amount || memo_json?.offer, mint: memo_json?.mint, isowner: false, timestamp: forSaleDate, blockTime: value.blockTime, state: memo_json?.state || memo_json?.status});
             
-
             for (var mintElement of collectionMintList){
                 mintElement.listingPrice = null;
                 mintElement.listingCancelled = false;
@@ -816,7 +824,7 @@ export function StoreFrontView(this: any, props: any) {
             }
 
             // now with missing meta populate it to collectionMintList
-            //collectionMintList.sort((a:any,b:any) => (+a.listingPrice > +b.listingPrice) ? 1 : -1); 
+            //collectionMintList.sort((a:any,b:any) => (+a.listingPrice > +b.listingPrice) ? 1 : -1); // this will sort descending
             
             collectionMintList.sort((a:any, b:any) => (a.listingPrice != null ? a.listingPrice : Infinity) - (b.listingPrice != null ? b.listingPrice : Infinity)) 
             
