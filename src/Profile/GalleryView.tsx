@@ -133,7 +133,10 @@ export default function GalleryView(props: any){
             setFoundList(sortedResults);
             setScrollData(sortedResults);
         } else if (+type === 1){
-            const sortedResults = collectionMintList.sort((a:any, b:any) => (b.listingPrice != null ? b.listingPrice : Infinity) - (a.listingPrice != null ? a.listingPrice : Infinity)) 
+            const results = collectionMintList.filter((listitem:any) => {
+                return listitem?.listingPrice > 0;
+            });
+            const sortedResults = results.sort((a:any, b:any) => (a.listingPrice < b.listingPrice ? 1 : -1));
             setFoundList(sortedResults);
             setScrollData(sortedResults);
         } else if (+type === 2){
