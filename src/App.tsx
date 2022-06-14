@@ -105,7 +105,6 @@ function DashboardContent() {
     new SolongWalletAdapter(),
     new BitKeepWalletAdapter(),
     new TokenPocketWalletAdapter(),
-    new BitKeepWalletAdapter(),
     new SafePalWalletAdapter(),
     new BitpieWalletAdapter()
   ], [network]);
