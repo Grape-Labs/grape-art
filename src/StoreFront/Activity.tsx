@@ -21,6 +21,7 @@ import {
     TableCell,
     TableRow,
     Tooltip,
+    LinearProgress,
 } from '@mui/material';
 
 import { PreviewView } from "../Preview/Preview";
@@ -128,7 +129,6 @@ export default function ActivityView(props: any){
     const rpclimit = 100;
 
     const handleClickOpenDialog = () => {
-
         getAllActivity();
         setOpenDialog(true);
     };
@@ -141,41 +141,43 @@ export default function ActivityView(props: any){
         
         try {
             
-            if (!recentActivity){
+            //if (!recentActivity){
                 if (mode === 0){
-                    //console.log("with aH: "+ collectionAuthority.auctionHouse+" - "+JSON.stringify(collectionAuthority))
-                    const results = await getReceiptsFromAuctionHouse(collectionAuthority.auctionHouse || AUCTION_HOUSE_ADDRESS, null, null, null);
+                    if (!recentActivity){
+                        //console.log("with aH: "+ collectionAuthority.auctionHouse+" - "+JSON.stringify(collectionAuthority))
+                        const results = await getReceiptsFromAuctionHouse(collectionAuthority.auctionHouse || AUCTION_HOUSE_ADDRESS, null, null, null);
 
-                    const activityResults = new Array();
+                        const activityResults = new Array();
 
-                    for (var item of results){
+                        for (var item of results){
 
-                        const mintitem = await getMintFromVerifiedMetadata(item.metadata.toBase58(), collectionMintList);
-                        //console.log("> item: "+JSON.stringify(item));
-                        //console.log("mintitem: "+JSON.stringify(mintitem));
-                        activityResults.push({
-                            buyeraddress: item.bookkeeper.toBase58(), 
-                            bookkeeper: item.bookkeeper.toBase58(), 
-                            amount: item.price, 
-                            price: item.price, 
-                            mint: mintitem?.address, 
-                            metadataParsed:mintitem, 
-                            isowner: false, 
-                            createdAt: item.createdAt, 
-                            cancelledAt: item.canceledAt, 
-                            timestamp: item.createdAt, 
-                            blockTime: item.createdAt, 
-                            state: item?.receipt_type, 
-                            tradeState: item.tradeState, 
-                            purchaseReceipt: item.purchaseReceipt, 
-                            seller: item.seller.toBase58()});
+                            const mintitem = await getMintFromVerifiedMetadata(item.metadata.toBase58(), collectionMintList);
+                            //console.log("> item: "+JSON.stringify(item));
+                            //console.log("mintitem: "+JSON.stringify(mintitem));
+                            activityResults.push({
+                                buyeraddress: item.bookkeeper.toBase58(), 
+                                bookkeeper: item.bookkeeper.toBase58(), 
+                                amount: item.price, 
+                                price: item.price, 
+                                mint: mintitem?.address, 
+                                metadataParsed:mintitem, 
+                                isowner: false, 
+                                createdAt: item.createdAt, 
+                                cancelledAt: item.canceledAt, 
+                                timestamp: item.createdAt, 
+                                blockTime: item.createdAt, 
+                                state: item?.receipt_type, 
+                                tradeState: item.tradeState, 
+                                purchaseReceipt: item.purchaseReceipt, 
+                                seller: item.seller.toBase58()});
+                        }
+
+                        // sort by date
+                        activityResults.sort((a:any,b:any) => (a.blockTime < b.blockTime) ? 1 : -1);
+                        const dupRemovedResults = activityResults.filter( activity => !activity.purchaseReceipt)
+                        //activityResults.push({buyeraddress: feePayer.toBase58(), amount: memo_json?.amount || memo_json?.offer, mint: memo_json?.mint, isowner: false, timestamp: forSaleDate, blockTime: value.blockTime, state: memo_json?.state || memo_json?.status});
+                        return dupRemovedResults;
                     }
-
-                    // sort by date
-                    activityResults.sort((a:any,b:any) => (a.blockTime < b.blockTime) ? 1 : -1);
-                    const dupRemovedResults = activityResults.filter( activity => !activity.purchaseReceipt)
-                    //activityResults.push({buyeraddress: feePayer.toBase58(), amount: memo_json?.amount || memo_json?.offer, mint: memo_json?.mint, isowner: false, timestamp: forSaleDate, blockTime: value.blockTime, state: memo_json?.state || memo_json?.status});
-                    return dupRemovedResults;
                 } else if (mode === 1){
 
                     //console.log("with aH: "+ collectionAuthority.auctionHouse+" - "+JSON.stringify(collectionAuthority))
@@ -213,7 +215,7 @@ export default function ActivityView(props: any){
                     return dupRemovedResults;
                 }
 
-            }
+            //}
             return null;
         } catch (e) { // Handle errors from invalid calls
             console.log(e);
@@ -412,9 +414,11 @@ export default function ActivityView(props: any){
 
     /*
     React.useEffect(() => {
-        getAllActivity();
-    }, []);
+        if (refresh)
+            getAllActivity();
+    }, [refresh]);
     */
+
     return (
         <>
 
@@ -510,14 +514,13 @@ export default function ActivityView(props: any){
                             <>
                                 {loading ?
                                     <>
-                                        loading...
+                                        <LinearProgress />
                                     </>
                                 : 
                                 <>
                                     {!recentActivity &&
                                         <>no activity</>
                                     }
-                                    
                                     
                                     <RecentActivity recentActivity={recentActivity}/>
 
@@ -530,7 +533,7 @@ export default function ActivityView(props: any){
                             <>
                                 {publicKey ?
                                 <>
-                                    loading
+                                    <LinearProgress />
                                 </>
                                 :
                                 <>
