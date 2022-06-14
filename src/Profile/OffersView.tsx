@@ -211,7 +211,13 @@ export default function OffersView(props:any){
                 <CircularProgress sx={{padding:'10px'}} />
             );
             const cnfrmkey = enqueueSnackbar(`${t('Confirming transaction')}`,{ variant: 'info', action:snackprogress, persist: true });
-            await connection.confirmTransaction(signedTransaction, 'processed');
+            const latestBlockHash = await connection.getLatestBlockhash();
+            await ggoconnection.confirmTransaction({
+                blockhash: latestBlockHash.blockhash,
+                lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+                signature: signedTransaction}, 
+                'processed'
+            );
             closeSnackbar(cnfrmkey);
             const snackaction = (key:any) => (
                 <Button href={`https://explorer.solana.com/tx/${signedTransaction}`} target='_blank'  sx={{color:'white'}}>
@@ -263,7 +269,13 @@ export default function OffersView(props:any){
                 <CircularProgress sx={{padding:'10px'}} />
             );
             const cnfrmkey = enqueueSnackbar(`${t('Confirming transaction')}`,{ variant: 'info', action:snackprogress, persist: true });
-            await ggoconnection.confirmTransaction(signedTransaction, 'processed');
+            const latestBlockHash = await connection.getLatestBlockhash();
+            await ggoconnection.confirmTransaction({
+                blockhash: latestBlockHash.blockhash,
+                lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+                signature: signedTransaction}, 
+                'processed'
+            );
             closeSnackbar(cnfrmkey);
             const snackaction = (key:any) => (
                 <Button href={`https://explorer.solana.com/tx/${signedTransaction}`} target='_blank'  sx={{color:'white'}}>
@@ -336,7 +348,13 @@ export default function OffersView(props:any){
                             <CircularProgress sx={{padding:'10px'}} />
                         );
                         const cnfrmkey = enqueueSnackbar(`${t('Confirming transaction')}`,{ variant: 'info', action:snackprogress, persist: true });
-                        await ggoconnection.confirmTransaction(signedTransaction, 'processed');
+                        const latestBlockHash = await connection.getLatestBlockhash();
+                        await ggoconnection.confirmTransaction({
+                            blockhash: latestBlockHash.blockhash,
+                            lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+                            signature: signedTransaction}, 
+                            'processed'
+                        );
                         closeSnackbar(cnfrmkey);
                         const snackaction = (key:any) => (
                             <Button href={`https://explorer.solana.com/tx/${signedTransaction}`} target='_blank'  sx={{color:'white'}}>
@@ -378,7 +396,13 @@ export default function OffersView(props:any){
                             <CircularProgress sx={{padding:'10px'}} />
                         );
                         const cnfrmkey = enqueueSnackbar(`${t('Confirming transaction')}`,{ variant: 'info', action:snackprogress, persist: true });
-                        await ggoconnection.confirmTransaction(signedTransaction, 'processed');
+                        const latestBlockHash = await connection.getLatestBlockhash();
+                        await ggoconnection.confirmTransaction({
+                            blockhash: latestBlockHash.blockhash,
+                            lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+                            signature: signedTransaction}, 
+                            'processed'
+                        );
                         closeSnackbar(cnfrmkey);
                         const snackaction = (key:any) => (
                             <Button href={`https://explorer.solana.com/tx/${signedTransaction}`} target='_blank'  sx={{color:'white'}}>
@@ -443,7 +467,13 @@ export default function OffersView(props:any){
                                     <CircularProgress sx={{padding:'10px'}} />
                                 );
                                 const cnfrmkey = enqueueSnackbar(`${t('Confirming transaction')}`,{ variant: 'info', action:snackprogress, persist: true });
-                                await ggoconnection.confirmTransaction(signedTransaction, 'processed');
+                                const latestBlockHash = await connection.getLatestBlockhash();
+                                await ggoconnection.confirmTransaction({
+                                    blockhash: latestBlockHash.blockhash,
+                                    lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+                                    signature: signedTransaction}, 
+                                    'processed'
+                                );
                                 closeSnackbar(cnfrmkey);
                                 const snackaction = (key:any) => (
                                     <Button href={`https://explorer.solana.com/tx/${signedTransaction}`} target='_blank'  sx={{color:'white'}}>
@@ -475,7 +505,13 @@ export default function OffersView(props:any){
                                     <CircularProgress sx={{padding:'10px'}} />
                                 );
                                 const cnfrmkey = enqueueSnackbar(`${t('Confirming transaction')}`,{ variant: 'info', action:snackprogress, persist: true });
-                                await ggoconnection.confirmTransaction(signedTransaction, 'processed');
+                                const latestBlockHash = await connection.getLatestBlockhash();
+                                await ggoconnection.confirmTransaction({
+                                    blockhash: latestBlockHash.blockhash,
+                                    lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+                                    signature: signedTransaction}, 
+                                    'processed'
+                                );
                                 closeSnackbar(cnfrmkey);
                                 const snackaction = (key:any) => (
                                     <Button href={`https://explorer.solana.com/tx/${signedTransaction}`} target='_blank'  sx={{color:'white'}}>
