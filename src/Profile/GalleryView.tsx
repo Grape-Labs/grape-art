@@ -200,10 +200,10 @@ export default function GalleryView(props: any){
     const handleOnRowsScrollEnd = () => {
         if (foundList){
             if (scrollData.length < foundList?.length) {
-            setHasMoreValue(true);
-            loadScrollData();
+                setHasMoreValue(true);
+                loadScrollData();
             } else {
-            setHasMoreValue(false);
+                setHasMoreValue(false);
             }
         }
     };
@@ -322,7 +322,7 @@ export default function GalleryView(props: any){
                                         next={handleOnRowsScrollEnd}
                                         hasMore={hasMoreValue}
                                         scrollThreshold={1}
-                                        loader={<p><LinearProgress /></p>}
+                                        loader={!scrollData && <p><LinearProgress /></p>}
                                         // Let's get rid of second scroll bar
                                         style={{ overflow: "unset" }}
                                     >
