@@ -2,7 +2,11 @@ import React from "react"
 import {CopyToClipboard} from 'react-copy-to-clipboard';
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
 
-import { Button, CardActionArea } from '@mui/material';
+import { 
+    Button, 
+    CardActionArea,
+    Typography
+} from '@mui/material';
 import Snackbar, { SnackbarOrigin } from '@mui/material/Snackbar';
 
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
@@ -207,7 +211,7 @@ export function MakeLinkableAddress(props:any){
                 <React.Fragment>
                     <ClipboardAction />
                     {isDNS ?
-                        <>{addr}</>
+                        <Typography>{addr}</Typography>
                     :
                     <Button size="small" variant="text" component="a" href={`https://explorer.solana.com/address/${addr}`} target="_blank">{stri_addr}</Button>
                     }

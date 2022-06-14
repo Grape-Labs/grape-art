@@ -643,7 +643,10 @@ export default function OffersView(props:any){
                     justifyContent='flex-end'
                     alignContent='flex-end'>
                     
-                    {(publicKey && publicKey.toBase58() === thisPublicKey && ahbalance && (ahbalance > 0)) ?
+                    <Typography variant="caption">*Displaying from the Grape Auction House, for Marketplaces please visit the respective marketplace</Typography>
+                    <br/>
+
+                    {(publicKey && publicKey.toBase58() === thisPublicKey && ahbalance && (ahbalance > 0.001)) ?
                         <Box
                             sx={{
                                 background: 'rgba(0, 0, 0, 0.2)',
@@ -705,11 +708,11 @@ export default function OffersView(props:any){
                                 }}
                             >
                                 <Typography variant="caption">
-                                    <Tooltip title={t('Withdraw from the Grape Auction House')}>
+                                    <Tooltip title={`In the Grape Auction House ${AUCTION_HOUSE_ADDRESS}`}>
                                         <Button
                                             size="small"
                                             variant="text"
-                                            onClick={() => (myoffers > 0 ? setAlertWithdrawOpen(true) : handleWithdrawOffer(convertSolVal(ahbalance), null, null))}
+                                            //onClick={() => (myoffers > 0 ? setAlertWithdrawOpen(true) : handleWithdrawOffer(convertSolVal(ahbalance), null, null))}
                                             sx={{
                                                 borderRadius:'17px'
                                             }}
@@ -812,7 +815,10 @@ export default function OffersView(props:any){
                     justifyContent='flex-end'
                     alignContent='flex-end'>
                     
-                    {(publicKey && publicKey.toBase58() === thisPublicKey && ahbalance && (ahbalance > 0)) ?
+                    <Typography variant="caption">*Displaying from the Grape Auction House, for Marketplaces please visit the respective marketplace</Typography>
+                    <br/>
+
+                    {(publicKey && publicKey.toBase58() === thisPublicKey && ahbalance && (ahbalance > 0.001)) ?
                         <Box
                             sx={{
                                 background: 'rgba(0, 0, 0, 0.2)',
@@ -828,11 +834,11 @@ export default function OffersView(props:any){
                                 }}
                             >
                                 <Typography variant="caption">
-                                    <Tooltip title={t('Withdraw from the Grape Auction House')}>
+                                    <Tooltip title={`In the Grape Auction House ${AUCTION_HOUSE_ADDRESS}`}>
                                         <Button
                                             size="small"
                                             variant="text"
-                                            onClick={() => (myoffers > 0 ? setAlertWithdrawOpen(true) : handleWithdrawOffer(convertSolVal(ahbalance), null, null))}
+                                            //onClick={() => (myoffers > 0 ? setAlertWithdrawOpen(true) : handleWithdrawOffer(convertSolVal(ahbalance), null, null))}
                                             sx={{
                                                 borderRadius:'17px'
                                             }}

@@ -733,11 +733,16 @@ export function OfferPrompt(props: any) {
                             offcnt++;
                         } */
                     }
+                    
+                    if (publicKey)
+                        unicastGrapeSolflareMessage(`Bid ${name}`, 'You have placed a bid on grape.art', image, publicKey.toString(), `https://grape.art${GRAPE_PREVIEW}${mint}`, signedTransaction, collectionAuctionHouse);
+                    if (mintOwner)
+                        unicastGrapeSolflareMessage(`Bid ${name}`, 'You have received a bid on grape.art', image, mintOwner, `https://grape.art${GRAPE_PREVIEW}${mint}`, signedTransaction, collectionAuctionHouse);
 
                     console.log("offcnt: "+offcnt);
                     if ((previous_offer_pk)&&(offcnt > 0)){
                         console.log(previous_offer_pk+' you have been outbid');
-                        unicastGrapeSolflareMessage(`Outbid Notice ${name}`, 'You have been outbid on grape.art', image, previous_offer_pk, `https://grape.art${GRAPE_PREVIEW}${mint}`, signedTransaction, collectionAuctionHouse);
+                        unicastGrapeSolflareMessage(`Outbid ${name}`, 'You have been outbid on grape.art', image, previous_offer_pk, `https://grape.art${GRAPE_PREVIEW}${mint}`, signedTransaction, collectionAuctionHouse);
                     }
                     const eskey = enqueueSnackbar(`${t('Metadata will be refreshed in a few seconds')}`, {
                             anchorOrigin: {
@@ -1771,17 +1776,21 @@ export default function ItemOffers(props: any) {
                                                                         <DialogContent>
                                                                             <DialogContentText id="alert-bn-dialog-description">
                                                                             <br />
-                                                                            <Alert 
-                                                                                severity="info" variant="outlined"
-                                                                                sx={{backgroundColor:'black'}}
-                                                                                >
-                                                                                {t('Amount')}: {salePrice}<SolCurrencyIcon sx={{fontSize:"12px"}} /><br/>
-                                                                                {t('Mint')}: <MakeLinkableAddress addr={mint} trim={0} hasextlink={true} hascopy={false} fontsize={16} /> <br/>
-                                                                                {t('Owner')}: <MakeLinkableAddress addr={mintOwner} trim={0} hasextlink={true} hascopy={false} fontsize={16} /><br/>
-                                                                                <Typography sx={{textAlign:'center'}}>
-                                                                                {t('Make sure the above is correct')}<br/>{t('press Accept to proceed')}
-                                                                                </Typography>
-                                                                            </Alert>
+                                                                                <Alert 
+                                                                                    severity="info" variant="outlined"
+                                                                                    sx={{backgroundColor:'black'}}
+                                                                                    >
+                                                                                        <Box sx={{width:'100%'}}>
+                                                                                            {t('Amount')}: <strong>{salePrice}<SolCurrencyIcon sx={{ml:1,fontSize:"10px"}} /></strong><br/>
+                                                                                            {t('Mint')}: <MakeLinkableAddress addr={mint} trim={0} hasextlink={true} hascopy={false} fontsize={16} /> <br/>
+                                                                                            {t('Owner')}: <MakeLinkableAddress addr={mintOwner} trim={0} hasextlink={true} hascopy={false} fontsize={16} /><br/>
+                                                                                            {t('Auction House')}: <MakeLinkableAddress addr={collectionAuctionHouse || AUCTION_HOUSE_ADDRESS} trim={9} hasextlink={true} hascopy={false} fontsize={16} /><br/>
+                                                                                    
+                                                                                            <Typography sx={{textAlign:'center'}}>
+                                                                                                {t('Make sure the above is correct')}<br/>{t('press Accept to proceed')}
+                                                                                            </Typography>   
+                                                                                        </Box>
+                                                                                </Alert>
                                                                             
                                                                             </DialogContentText>
                                                                         </DialogContent>
@@ -2026,9 +2035,10 @@ export default function ItemOffers(props: any) {
                                                         <DialogContentText id="alert-dialog-description">
                                                         <br />
                                                         <Alert severity="info" variant="outlined" sx={{backgroundColor:'black'}} >
-                                                            {t('Amount')}: {final_offeramount}<SolCurrencyIcon sx={{fontSize:"12px"}} /><br/>
+                                                            {t('Amount')}: <strong>{final_offeramount}<SolCurrencyIcon sx={{ml:1,fontSize:"10px"}} /></strong><br/>
                                                             {t('Mint')}: <MakeLinkableAddress addr={mint} trim={0} hasextlink={true} hascopy={false} fontsize={16} /> <br/>
                                                             {t('From')}: <MakeLinkableAddress addr={final_offerfrom} trim={0} hasextlink={true} hascopy={false} fontsize={16} /><br/>
+                                                            {t('Auction House')}: <MakeLinkableAddress addr={collectionAuctionHouse || AUCTION_HOUSE_ADDRESS} trim={9} hasextlink={true} hascopy={false} fontsize={16} /><br/>
                                                             <Typography sx={{textAlign:'center'}}>
                                                             {t('Make sure the above is correct')}<br/>{t('press Accept to proceed')}
 

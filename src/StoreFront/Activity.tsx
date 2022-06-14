@@ -36,6 +36,7 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import CircularProgress from '@mui/material/CircularProgress';
 import CancelIcon from '@mui/icons-material/Cancel';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
 import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import { WalletConnectButton } from "@solana/wallet-adapter-material-ui";
@@ -200,7 +201,9 @@ export default function ActivityView(props: any){
                             blockTime: item.createdAt, 
                             state: item?.receipt_type, 
                             purchaseReceipt: item.purchaseReceipt, 
-                            seller: item.seller.toBase58()});
+                            seller: item?.seller, 
+                            buyer: item?.buyer
+                        });
                     }
 
                     // sort by date
@@ -494,6 +497,11 @@ export default function ActivityView(props: any){
             >
                 <DialogTitle>
                     {t('Recent Activity')}
+                        <Tooltip title={`Auction House ${collectionAuthority.auctionHouse || AUCTION_HOUSE_ADDRESS}`}>
+                            <Button sx={{color:'white',borderRadius:'17px'}} variant="text" size="small">
+                                <InfoOutlinedIcon fontSize='small' />
+                            </Button>
+                        </Tooltip>
                 </DialogTitle>
                 <DialogContent>
                     <List>

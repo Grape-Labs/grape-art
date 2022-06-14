@@ -2,7 +2,8 @@ import { BN, web3 } from '@project-serum/anchor';
 import { Connection, PublicKey, Transaction, LAMPORTS_PER_SOL } from '@solana/web3.js'
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { 
-    GRAPE_RPC_ENDPOINT,
+  GRAPE_RPC_ENDPOINT,
+  THEINDEX_RPC_ENDPOINT,
 } from './constants';
 
 import {
@@ -62,7 +63,7 @@ export async function getMintFromVerifiedMetadata(metadata:string, collectionMin
 export async function getReceiptsFromAuctionHouse(auctionHouse_filter: string, wallet_filter: string, mint_filter: string, bid_receipt_filter:string) {
     // if wallet is set we should also filter by wallet address
 
-    const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);    
+    const ggoconnection = new Connection(THEINDEX_RPC_ENDPOINT);    
     const collectionAuctionHouse = auctionHouse_filter || AUCTION_HOUSE_ADDRESS;
         {    
             const PrintListingReceiptSize = 236;
@@ -102,7 +103,7 @@ export async function getReceiptsFromAuctionHouse(auctionHouse_filter: string, w
                   accounts = await ggoconnection.getProgramAccounts(
                     AUCTION_HOUSE_PROGRAM_ID,
                   {
-                    commitment: 'confirmed',
+                    //commitment: 'confirmed',
                     filters: [
                       {
                         dataSize: size,
@@ -127,7 +128,7 @@ export async function getReceiptsFromAuctionHouse(auctionHouse_filter: string, w
                   accounts = await ggoconnection.getProgramAccounts(
                     AUCTION_HOUSE_PROGRAM_ID,
                   {
-                    commitment: 'confirmed',
+                    //commitment: 'confirmed',
                     filters: [
                       {
                         dataSize: size,
@@ -158,7 +159,7 @@ export async function getReceiptsFromAuctionHouse(auctionHouse_filter: string, w
                 accounts = await ggoconnection.getProgramAccounts(
                   AUCTION_HOUSE_PROGRAM_ID,
                 {
-                  commitment: 'confirmed',
+                  //commitment: 'confirmed',
                   filters: [
                     {
                       dataSize: size,
@@ -184,7 +185,7 @@ export async function getReceiptsFromAuctionHouse(auctionHouse_filter: string, w
                   accounts = await ggoconnection.getProgramAccounts(
                     AUCTION_HOUSE_PROGRAM_ID,
                   {
-                    commitment: 'confirmed',
+                    //commitment: 'confirmed',
                     filters: [
                       {
                         dataSize: size,

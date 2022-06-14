@@ -984,7 +984,7 @@ export function StoreFrontView(this: any, props: any) {
                 let sppicon = '';
                 try{
                     if (profilePictureUrl)
-                        sppicon = '<i class="wallet-adapter-button-start-icon"><img style="border-radius:24px"" src="'+profilePictureUrl+'" alt="Solana Profile Icon"></i>';
+                        sppicon = '<i class="wallet-adapter-button-start-icon"><img class="css-9uy14h" style="border-radius:24px;margin-right:2px!important;margin-top:2px!important;" src="'+profilePictureUrl+'" alt="Solana Profile Icon"></i>';
                     document.getElementsByClassName("grape-wallet-button")[0].innerHTML = sppicon+'<span class="wallet-adapter-solana-domain">'+solanaDomain+'</span>';
                 }catch(e){
 
