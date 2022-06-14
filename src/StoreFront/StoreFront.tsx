@@ -697,7 +697,7 @@ export function StoreFrontView(this: any, props: any) {
             
 
             for (var mintElement of collectionMintList){
-                mintElement.listingPrice = 0;
+                mintElement.listingPrice = null;
                 mintElement.listingCancelled = false;
             }
 
@@ -781,7 +781,7 @@ export function StoreFrontView(this: any, props: any) {
                         if (!listing?.cancelledAt){
                             collectionMintList.push({
                                 address: listing.mint,
-                                listingPrice: 0,
+                                listingPrice: null,
                                 listedTimestamp: listing.timestamp,
                                 listedBlockTime: listing.blockTime,
                                 name:null,
@@ -816,7 +816,9 @@ export function StoreFrontView(this: any, props: any) {
             }
 
             // now with missing meta populate it to collectionMintList
-            collectionMintList.sort((a:any,b:any) => (+a.listingPrice < +b.listingPrice) ? 1 : -1); 
+            //collectionMintList.sort((a:any,b:any) => (+a.listingPrice > +b.listingPrice) ? 1 : -1); 
+            
+            collectionMintList.sort((a:any, b:any) => (a.listingPrice != null ? a.listingPrice : Infinity) - (b.listingPrice != null ? b.listingPrice : Infinity)) 
             
             setTimeout(function() {
                 setStateLoading(false);                                      
@@ -839,7 +841,7 @@ export function StoreFrontView(this: any, props: any) {
                 let mintarr = wallet_collection.slice(rpclimit*(start), rpclimit*(start+1)).map((value:any, index:number) => {
                     //console.log("mint: "+JSON.stringify(value.address));
                     //return value.account.data.parsed.info.mint;
-                    console.log("value "+JSON.stringify(value))
+                    //console.log("value "+JSON.stringify(value))
                     return value.address;
                 });
                 
@@ -871,7 +873,7 @@ export function StoreFrontView(this: any, props: any) {
                             let meta_primer = metavalue;
                             let buf = Buffer.from(metavalue.data);
                             let meta_final = decodeMetadata(buf);
-                            console.log("meta_final: "+JSON.stringify(meta_final));
+                            //console.log("meta_final: "+JSON.stringify(meta_final));
                             
                             if (meta_final){
                                 try {
@@ -905,7 +907,7 @@ export function StoreFrontView(this: any, props: any) {
                         console.log("Something not right...");
                     }
                 }
-                console.log("... " + JSON.stringify(finalData));
+                //console.log("... " + JSON.stringify(finalData));
                 return finalData;
             } catch (e) { // Handle errors from invalid calls
                 console.log(e);
@@ -974,7 +976,7 @@ export function StoreFrontView(this: any, props: any) {
                 let sppicon = '';
                 try{
                     if (profilePictureUrl)
-                        sppicon = '<i class="wallet-adapter-button-start-icon"><img style="border-radius:24px;margin-right:1"" src="'+profilePictureUrl+'" alt="Solana Profile Icon"></i>';
+                        sppicon = '<i class="wallet-adapter-button-start-icon"><img style="border-radius:24px"" src="'+profilePictureUrl+'" alt="Solana Profile Icon"></i>';
                     document.getElementsByClassName("grape-wallet-button")[0].innerHTML = sppicon+'<span class="wallet-adapter-solana-domain">'+solanaDomain+'</span>';
                 }catch(e){
 

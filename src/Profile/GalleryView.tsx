@@ -128,9 +128,9 @@ export default function GalleryView(props: any){
         setFilterVal("");
         if (+type === 0){
             
-            collectionMintList.sort((a:any,b:any) => (a.listingPrice < b.listingPrice) ? 1 : -1);
-            // now inverse the list
-            //Array.prototype.reverse.call(collectionMintList);
+            //collectionMintList.sort((a:any,b:any) => (a.listingPrice < b.listingPrice) ? 1 : -1);
+            collectionMintList.sort((a:any, b:any) => (a.listingPrice != null ? a.listingPrice : Infinity) - (b.listingPrice != null ? b.listingPrice : Infinity)) 
+
             //console.log("results: "+JSON.stringify(collectionMintList));
             setFoundList(collectionMintList);
             setScrollData(collectionMintList);
@@ -156,7 +156,10 @@ export default function GalleryView(props: any){
                 //return rea().startsWith(keyword.toLowerCase())
                 return listitem.highestOffer > 0;
             });
-            results.sort((a:any,b:any) => (a.highestOffer - b.highestOffer) ? 1 : -1);
+            //results.sort((a:any,b:any) => (a.highestOffer - b.highestOffer) ? 1 : -1);
+            
+            collectionMintList.sort((a:any, b:any) => (a.highestOffer != null ? a.highestOffer : Infinity) + (b.highestOffer != null ? b.highestOffer : Infinity)) 
+            
             setFoundList(results);
             setScrollData(results);
         } else if (+type === 4){ // by alphabetical

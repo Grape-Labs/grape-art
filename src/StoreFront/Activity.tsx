@@ -172,8 +172,7 @@ export default function ActivityView(props: any){
 
                     // sort by date
                     activityResults.sort((a:any,b:any) => (a.blockTime < b.blockTime) ? 1 : -1);
-                    const dupRemovedResults = activityResults.filter( (ele, ind) => ind === activityResults.findIndex( elem => elem.purchaseReceipt === ele.purchaseReceipt))
-
+                    const dupRemovedResults = activityResults.filter( activity => !activity.purchaseReceipt)
                     //activityResults.push({buyeraddress: feePayer.toBase58(), amount: memo_json?.amount || memo_json?.offer, mint: memo_json?.mint, isowner: false, timestamp: forSaleDate, blockTime: value.blockTime, state: memo_json?.state || memo_json?.status});
                     return dupRemovedResults;
                 } else if (mode === 1){
@@ -206,8 +205,7 @@ export default function ActivityView(props: any){
 
                     // sort by date
                     activityResults.sort((a:any,b:any) => (a.blockTime < b.blockTime) ? 1 : -1);
-                    const dupRemovedResults = activityResults.filter( (ele, ind) => ind === activityResults.findIndex( elem => elem.purchaseReceipt === ele.purchaseReceipt))
-                    console.log("HERE...");
+                    const dupRemovedResults = activityResults.filter( activity => !activity.purchaseReceipt)
                     //activityResults.push({buyeraddress: feePayer.toBase58(), amount: memo_json?.amount || memo_json?.offer, mint: memo_json?.mint, isowner: false, timestamp: forSaleDate, blockTime: value.blockTime, state: memo_json?.state || memo_json?.status});
                     return dupRemovedResults;
                 }
