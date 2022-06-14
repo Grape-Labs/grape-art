@@ -23,7 +23,7 @@ import { PreviewView } from "../Preview/Preview";
 
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
-
+import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import ActivityView from './Activity';
 
 import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
@@ -39,6 +39,7 @@ import { decodeMetadata } from '../utils/grapeTools/utils';
 import { GRAPE_RPC_ENDPOINT, GRAPE_PREVIEW } from '../utils/grapeTools/constants';
 
 import { useTranslation } from 'react-i18next';
+import SolCurrencyIcon from '../components/static/SolCurrencyIcon';
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     '& .MuDialogContent-root': {
@@ -244,6 +245,53 @@ export default function ListForCollectionView(props: any){
         getCollectionGallery();
     }, [publicKey]);
 
+    function SellNowButton(props:any){
+        const item = props.item;
+        const [isListed, setIsListed] = React.useState(false);
+        const [listedPrice, setListedPrice] = React.useState(null);
+        
+        React.useEffect(() => {
+            if (item){
+                for (var mintItem of collectionMintList){
+                    if (mintItem.address === item.decoded?.mint){
+                        if (mintItem?.listingPrice){
+                            setIsListed(true)
+                            setListedPrice(mintItem?.listingPrice)
+                        }
+                    }
+                }
+            }
+        }, [item]);
+
+        
+
+
+        return(
+            
+            <Button
+                onClick={() => handleClickOpenPreviewDialog(item.decoded?.mint)}
+                //component={Link} to={`${GRAPE_PREVIEW}${item.decoded?.mint}`}
+                size="large"
+                variant="outlined"
+                sx={{
+                    borderRadius: '17px',
+                    color:'white'
+                }}
+            >
+                {isListed ?
+                    <>
+                        <LocalOfferIcon sx={{mr:1, color:'green'}}/> Listed {listedPrice} <SolCurrencyIcon sx={{ml:1,fontSize:'12px'}} />
+                    </>
+                :
+                    <>
+                        <AccountBalanceWalletIcon sx={{mr:1}}/> Sell Now
+                    </>
+                }
+            </Button>
+        )
+    }
+
+
     return (
         <>
             <ButtonGroup variant="outlined" aria-label="outlined primary button group">
@@ -342,18 +390,7 @@ export default function ListForCollectionView(props: any){
                                             <>
                                             <Typography
                                                 variant='subtitle2'>
-                                                <Button
-                                                    onClick={() => handleClickOpenPreviewDialog(item.decoded?.mint)}
-                                                    //component={Link} to={`${GRAPE_PREVIEW}${item.decoded?.mint}`}
-                                                    size="large"
-                                                    variant="outlined"
-                                                    sx={{
-                                                        borderRadius: '17px',
-                                                        color:'white'
-                                                    }}
-                                                >
-                                                    <AccountBalanceWalletIcon sx={{mr:1}}/>Sell Now
-                                                </Button>
+                                                <SellNowButton item={item} />
                                             </Typography>
                                             {selectedMint &&
                                                 <BootstrapDialog 

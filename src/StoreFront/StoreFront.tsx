@@ -479,6 +479,7 @@ export function StoreFrontView(this: any, props: any) {
     const [final_collection, setCollectionMetaFinal] = React.useState(null);
     //const isConnected = session && session.isConnected;
     const [loading, setLoading] = React.useState(false);
+    const [floorPrice, setFloorPrice] = React.useState(0);
     const [stateLoading, setStateLoading] = React.useState(false);
     const [rdloading, setRDLoading] = React.useState(false);
     const [loadCount, setLoadCount] = React.useState(0);
@@ -710,6 +711,7 @@ export function StoreFrontView(this: any, props: any) {
             }
 
             // we need to remove listing history for those that have been sold
+            let thisFloorPrice = null;
             for (var listing of ahActivity){
                 let exists = false;
                 let offer_exists = false;
@@ -717,7 +719,6 @@ export function StoreFrontView(this: any, props: any) {
                     if (mintElement.address === listing.mint){
                         exists = true;
                         if (listing.state === 'bid_receipt'){
-                            
                             if ((!mintElement?.highestOffer) || (+listing.price > +mintElement?.highestOffer)){
                                 if (!listing?.cancelledAt){
                                     // if there is a cancelled offer though?
@@ -740,6 +741,11 @@ export function StoreFrontView(this: any, props: any) {
                                             mintElement.listingPrice = +listing.price;
                                             mintElement.listedTimestamp = listing.timestamp;
                                             mintElement.listedBlockTime = listing.blockTime;
+                                            if (!thisFloorPrice)
+                                                thisFloorPrice = +listing.price;
+                                            else if (thisFloorPrice > +listing.price)
+                                                thisFloorPrice = +listing.price;
+
                                         }
                                     }
                                 }
@@ -782,6 +788,10 @@ export function StoreFrontView(this: any, props: any) {
                                         name:null,
                                         image:'',
                                     })
+                                    if (!thisFloorPrice)
+                                        thisFloorPrice = +listing.price;
+                                    else if (thisFloorPrice > +listing.price)
+                                        thisFloorPrice = +listing.price;
                                 }
                             }
                         }
@@ -801,6 +811,8 @@ export function StoreFrontView(this: any, props: any) {
                 }
             }
             
+            setFloorPrice(thisFloorPrice);
+
             // check all that do not have an image or name and group them
             const mintsToGet = new Array();
             for (var mintListItem of collectionMintList){
@@ -1096,7 +1108,7 @@ export function StoreFrontView(this: any, props: any) {
                     <Box
                         className='grape-store-info'
                         sx={{
-                            m:10,
+                            m:4,
                             mb:4,
                             mt:-14,
                             p:1,
@@ -1187,7 +1199,20 @@ export function StoreFrontView(this: any, props: any) {
                         </Box>
                         
                         <Grid container spacing={0} sx={{mt:-2}}>
-                            <Grid item xs={12} sm={12} md={4} key={1}>
+                            <Grid item xs={12} sm={6} md={3} key={1}>
+                                <Box
+                                    className='grape-store-stat-item'
+                                    sx={{borderRadius:'24px',m:2,p:1}}
+                                >
+                                    <Typography variant="body2" sx={{color:'yellow'}}>
+                                        FLOOR
+                                    </Typography>
+                                    <Typography variant="subtitle2">
+                                        {floorPrice ? `${(floorPrice).toFixed(2)} SOL` : `-`}
+                                    </Typography>
+                                </Box>
+                            </Grid>
+                            <Grid item xs={12} sm={6} md={3} key={1}>
                                 <Box
                                     className='grape-store-stat-item'
                                     sx={{borderRadius:'24px',m:2,p:1}}
@@ -1200,7 +1225,7 @@ export function StoreFrontView(this: any, props: any) {
                                     </Typography>
                                 </Box>
                             </Grid>
-                            <Grid item xs={12} sm={12} md={4} key={1}>
+                            <Grid item xs={12} sm={6} md={3} key={1}>
                             <Tooltip title={collectionAuthority.entangled ? `All time for both collections` : `Unique owners for this collections`}>
                                 <Button 
                                     variant="text"
@@ -1227,7 +1252,7 @@ export function StoreFrontView(this: any, props: any) {
                                 </Button>
                             </Tooltip>
                             </Grid>
-                            <Grid item xs={12} sm={12} md={4} key={1}>
+                            <Grid item xs={12} sm={6} md={3} key={1}>
                                 {!stateLoading ?
                                     <ActivityView collectionAuthority={collectionAuthority} collectionMintList={collectionMintList} activity={auctionHouseListings} mode={0} />
                                 :
