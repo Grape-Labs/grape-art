@@ -129,6 +129,7 @@ import { sendTransactions } from "../utils/governanceTools/sendTransactions";
 import { InstructionsAndSignersSet } from "../utils/auctionHouse/helpers/types";
 import { useTranslation } from 'react-i18next';
 import GrapeIcon from "../components/static/GrapeIcon";
+import { CannotMatchFreeSalesWithoutAuctionHouseOrSellerSignoffError } from "@metaplex-foundation/mpl-auction-house/dist/src/generated/errors";
 
 const StyledTable = styled(Table)(({ theme }) => ({
     '& .MuiTableCell-root': {
@@ -626,6 +627,7 @@ function SellNowPrompt(props:any){
 export function OfferPrompt(props: any) {
     const [open_dialog, setOpenOPDialog] = React.useState(false);
     const [offer_amount, setOfferAmount] = React.useState('');
+    const [hasOffer, setHasOffer] = React.useState(false);
     const offers = props.offers || null;
     //const [sol_balance, setSolBalance] = React.useState(props.solBalance);
     const sol_balance = props.solBalance;  
@@ -774,15 +776,27 @@ export function OfferPrompt(props: any) {
             console.log("INVALID AMOUNT");
         }
     }
+
+    React.useEffect(() => {
+        if (publicKey){
+            if (offers){
+                for (var offer of offers){
+                    console.log("checking: "+JSON.stringify(offer))
+                    if (offer.buyeraddress === publicKey.toBase58())
+                        setHasOffer(true)
+                }
+            }
+        }
+    },[offers]);
     
     return (
-
+        
         <React.Fragment>
-
             <Button 
                 size="large" 
                 variant="outlined" 
                 value="Make Offer" 
+                disabled={hasOffer}
                 onClick={handleClickOpenDialog}
                 sx={{
                     color: '#fff',
