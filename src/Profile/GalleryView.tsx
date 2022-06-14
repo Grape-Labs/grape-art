@@ -129,20 +129,20 @@ export default function GalleryView(props: any){
         if (+type === 0){
             
             //collectionMintList.sort((a:any,b:any) => (a.listingPrice < b.listingPrice) ? 1 : -1);
-            collectionMintList.sort((a:any, b:any) => (a.listingPrice != null ? a.listingPrice : Infinity) - (b.listingPrice != null ? b.listingPrice : Infinity)) 
+            const sortedResults = collectionMintList.sort((a:any, b:any) => (a.listingPrice != null ? a.listingPrice : Infinity) - (b.listingPrice != null ? b.listingPrice : Infinity)) 
 
             //console.log("results: "+JSON.stringify(collectionMintList));
-            setFoundList(collectionMintList);
-            setScrollData(collectionMintList);
+            setFoundList(sortedResults);
+            setScrollData(sortedResults);
         } else if (+type === 1){
             
             const results = collectionMintList.filter((listitem:any) => {
                 //return listitem.name.toLowerCase().startsWith(keyword.toLowerCase())
                 return listitem.listedBlockTime > 0;
             });
-            results.sort((a:any,b:any) => (a.listedBlockTime - b.listedBlockTime) ? 1 : -1);
-            setFoundList(results);
-            setScrollData(results);
+            const sortedResults = results.sort((a:any,b:any) => (b.listedBlockTime != null ? b.listedBlockTime : Infinity) - (a.listedBlockTime != null ? a.listedBlockTime : Infinity));
+            setFoundList(sortedResults);
+            setScrollData(sortedResults);
         } else if (+type === 2){ // by offer count
             const results = collectionMintList.filter((listitem:any) => {
                 //return rea().startsWith(keyword.toLowerCase())
@@ -158,18 +158,18 @@ export default function GalleryView(props: any){
             });
             //results.sort((a:any,b:any) => (a.highestOffer - b.highestOffer) ? 1 : -1);
             
-            collectionMintList.sort((a:any, b:any) => (a.highestOffer != null ? a.highestOffer : Infinity) + (b.highestOffer != null ? b.highestOffer : Infinity)) 
+            const sortedResults = results.sort((a:any, b:any) => (b.highestOffer != null ? b.highestOffer : Infinity) - (a.highestOffer != null ? a.highestOffer : Infinity)) 
             
-            setFoundList(collectionMintList);
-            setScrollData(collectionMintList);
+            setFoundList(sortedResults);
+            setScrollData(sortedResults);
         } else if (+type === 4){ // by alphabetical
             const results = collectionMintList.filter((listitem:any) => {
                 //return listitem.name.toLowerCase().startsWith(keyword.toLowerCase())
                 return listitem;
             });
-            results.sort((a:any,b:any) => (a.name.toLowerCase().trim() > b.name.toLowerCase().trim()) ? 1 : -1);
-            setFoundList(results);
-            setScrollData(results);
+            const sortedResults = results.sort((a:any,b:any) => (a.name.toLowerCase().trim() > b.name.toLowerCase().trim()) ? 1 : -1);
+            setFoundList(sortedResults);
+            setScrollData(sortedResults);
             
             /*
             const keyword = '2';
