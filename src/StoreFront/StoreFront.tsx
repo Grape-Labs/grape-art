@@ -1201,17 +1201,31 @@ export function StoreFrontView(this: any, props: any) {
                                 </Box>
                             </Grid>
                             <Grid item xs={12} sm={12} md={4} key={1}>
-                                <Box
-                                    className='grape-store-stat-item'
-                                    sx={{borderRadius:'24px',m:2,p:1}}
+                            <Tooltip title={collectionAuthority.entangled ? `All time for both collections` : `Unique owners for this collections`}>
+                                <Button 
+                                    variant="text"
+                                    sx={{
+                                        color:'white',
+                                        verticalAlign: 'middle',
+                                        display: 'inline-flex',
+                                        borderRadius:'17px',
+                                        m:0,
+                                        p:0
+                                    }}
                                 >
-                                    <Typography variant="body2" sx={{color:'yellow'}}>
-                                        OWNERS
-                                    </Typography>
-                                    <Typography variant="subtitle2">
-                                        {(collectionAuthority.owners/1000).toFixed(1)}k
-                                    </Typography>
-                                </Box>
+                                    <Box
+                                        className='grape-store-stat-item'
+                                        sx={{borderRadius:'24px',m:2,p:1}}
+                                    >
+                                        <Typography variant="body2" sx={{color:'yellow'}}>
+                                            OWNERS
+                                        </Typography>
+                                        <Typography variant="subtitle2">
+                                            {(collectionAuthority.owners/1000).toFixed(1)}k
+                                        </Typography>
+                                    </Box>
+                                </Button>
+                            </Tooltip>
                             </Grid>
                             <Grid item xs={12} sm={12} md={4} key={1}>
                                 {!stateLoading ?

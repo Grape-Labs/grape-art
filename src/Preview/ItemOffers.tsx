@@ -715,11 +715,16 @@ export function OfferPrompt(props: any) {
                     let previous_offer_pk = null;
                     let offcnt = 0;
                     if (offers){
+
                         //console.log("Offers:"+offers.length);
+                        
                         offers.sort((a:any,b:any) => (a.offeramount < b.offeramount) ? 1 : -1);
                         offcnt = offers?.length || 1;
+                        
+                        //console.log("offers: "+JSON.stringify(offers));
+
                         if (offcnt > 1){
-                            previous_offer_pk = offers[1].buyeraddress;
+                            previous_offer_pk = offers[offcnt-1].buyeraddress;
                         }
                         
                         /*

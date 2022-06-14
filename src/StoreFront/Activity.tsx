@@ -437,30 +437,32 @@ export default function ActivityView(props: any){
                         </Typography>
                     </Box>
                     :   
-                    <Button 
-                        variant="text"
-                        onClick={handleClickOpenDialog}
-                        sx={{
-                            color:'white',
-                            verticalAlign: 'middle',
-                            display: 'inline-flex',
-                            borderRadius:'17px',
-                            m:0,
-                            p:0
-                        }}
-                    >
-                        <Box
-                            className='grape-store-stat-item'
-                            sx={{borderRadius:'24px',m:2,p:1}}
+                    <Tooltip title={collectionAuthority.entangled ? `All time for both collections` : `Unique owners for this collections`}>
+                        <Button 
+                            variant="text"
+                            onClick={handleClickOpenDialog}
+                            sx={{
+                                color:'white',
+                                verticalAlign: 'middle',
+                                display: 'inline-flex',
+                                borderRadius:'17px',
+                                m:0,
+                                p:0
+                            }}
                         >
-                            <Typography variant="body2" sx={{color:'yellow'}}>
-                                VOLUME/ACTIVITY
-                            </Typography>
-                            <Typography variant="subtitle2">
-                                {(collectionAuthority.volume/1000).toFixed(1)}k SOL
-                            </Typography>
-                        </Box>
-                    </Button>
+                            <Box
+                                className='grape-store-stat-item'
+                                sx={{borderRadius:'24px',m:2,p:1}}
+                            >
+                                <Typography variant="body2" sx={{color:'yellow'}}>
+                                    VOLUME/ACTIVITY
+                                </Typography>
+                                <Typography variant="subtitle2">
+                                    {(collectionAuthority.volume/1000).toFixed(1)}k SOL
+                                </Typography>
+                            </Box>
+                        </Button>
+                    </Tooltip>
                 }
                 </>
             :

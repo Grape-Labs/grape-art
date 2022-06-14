@@ -637,16 +637,14 @@ export default function OffersView(props:any){
                     p:2
                 }} 
             > 
+                <Typography variant="caption">*Displaying from the Grape Auction House, for Marketplaces please visit the respective marketplace</Typography>
                 <Grid 
                     container 
                     direction="row"
                     justifyContent='flex-end'
                     alignContent='flex-end'>
                     
-                    <Typography variant="caption">*Displaying from the Grape Auction House, for Marketplaces please visit the respective marketplace</Typography>
-                    <br/>
-
-                    {(publicKey && publicKey.toBase58() === thisPublicKey && ahbalance && (ahbalance > 0.001)) ?
+                    {(publicKey && publicKey.toBase58() === thisPublicKey && ahbalance && (ahbalance > 0.01)) ?
                         <Box
                             sx={{
                                 background: 'rgba(0, 0, 0, 0.2)',
@@ -809,16 +807,15 @@ export default function OffersView(props:any){
                     p:2
                 }} 
             > 
+                <Typography variant="caption">*Displaying from the Grape Auction House, for Marketplaces please visit the respective marketplace</Typography>
+                    
                 <Grid 
                     container 
                     direction="row"
                     justifyContent='flex-end'
                     alignContent='flex-end'>
                     
-                    <Typography variant="caption">*Displaying from the Grape Auction House, for Marketplaces please visit the respective marketplace</Typography>
-                    <br/>
-
-                    {(publicKey && publicKey.toBase58() === thisPublicKey && ahbalance && (ahbalance > 0.001)) ?
+                    {(publicKey && publicKey.toBase58() === thisPublicKey && ahbalance && (ahbalance > 0.01)) ?
                         <Box
                             sx={{
                                 background: 'rgba(0, 0, 0, 0.2)',
