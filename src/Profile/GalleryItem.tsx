@@ -312,7 +312,7 @@ export default function GalleryItem(props: any){
                                                     </Typography> 
                                                 </Grid>
                                                 
-                                                <Grid item xs={6}>
+                                                <Grid item xs={7}>
                                                     
                                                     {collectionitem?.listingPrice ?
                                                         
@@ -330,7 +330,7 @@ export default function GalleryItem(props: any){
                                                     }
                                                     
                                                 </Grid>
-                                                <Grid item xs={6}>
+                                                <Grid item xs={5}>
                                                     {collectionitem?.highestOffer > 0 &&
                                                         <>
                                                             <Typography variant="body2" textAlign="right">

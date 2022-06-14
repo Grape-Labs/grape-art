@@ -58,7 +58,7 @@ export default function ListForCollectionView(props: any){
     const entangleTo = props.entangleTo;
     const enforceEntangle = props.enforceEntangle;
     const entangleUrl = props.entangleUrl;
-
+    const auctionHouseListings = props.activity;
     const MD_PUBKEY = METAPLEX_PROGRAM_ID;
     const [open, setOpenDialog] = React.useState(false);
     const { t, i18n } = useTranslation();
@@ -315,7 +315,8 @@ export default function ListForCollectionView(props: any){
                         }}
                     ></Avatar>
                 </Button>
-                <ActivityView collectionAuthority={collectionAuthority} collectionMintList={collectionMintList} logo={logo} mode={1} />
+                <ActivityView collectionAuthority={collectionAuthority} collectionMintList={collectionMintList} logo={logo} mode={1} activity={auctionHouseListings} />
+                <ActivityView collectionAuthority={collectionAuthority} collectionMintList={collectionMintList} logo={logo} mode={2} />
             </ButtonGroup>
             <BootstrapDialog 
                 fullWidth={true}
@@ -355,7 +356,7 @@ export default function ListForCollectionView(props: any){
                                     >
                                     <ListItemAvatar>
                                         <Avatar
-                                            src={item.decodeMetadata?.image}
+                                            src={'https://solana-cdn.com/cdn-cgi/image/width=256/'+item.decodeMetadata?.image}
                                             sx={{
                                                 backgroundColor:'#222',
                                                 width: 75, 

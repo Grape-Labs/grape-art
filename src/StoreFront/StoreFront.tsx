@@ -480,6 +480,7 @@ export function StoreFrontView(this: any, props: any) {
     //const isConnected = session && session.isConnected;
     const [loading, setLoading] = React.useState(false);
     const [floorPrice, setFloorPrice] = React.useState(0);
+    const [totalListings, setTotalListings] = React.useState(0); 
     const [stateLoading, setStateLoading] = React.useState(false);
     const [rdloading, setRDLoading] = React.useState(false);
     const [loadCount, setLoadCount] = React.useState(0);
@@ -490,6 +491,7 @@ export function StoreFrontView(this: any, props: any) {
     const [solWebUrl, setSolWebUrl] = React.useState(null);
     const { connection } = useConnection();
     const { publicKey } = useWallet();
+    const [refresh, setRefresh] = React.useState(false);
     
     const [profilePictureUrl, setProfilePictureUrl] = React.useState(null);
     const [hasProfilePicture, setHasProfilePicture] = React.useState(false);
@@ -543,6 +545,7 @@ export function StoreFrontView(this: any, props: any) {
             
         } catch(e){console.log("ERR: "+e)}   
     }
+
 
     const fetchMintStates = async(address:string) => {
         try{
@@ -629,7 +632,7 @@ export function StoreFrontView(this: any, props: any) {
                         let meta_final = decodeMetadata(buf);
                         tmpcollectionmeta[i]["meta"] = meta_final;
                         tmpcollectionmeta[i]["groupBySymbol"] = 0;
-                        tmpcollectionmeta[i]["floorPrice"] = 0;
+                        tmpcollectionmeta[i]["floorPrice"] = floorPrice;
                         final_collection_meta.push(tmpcollectionmeta[i]);
                         
                     }catch(e){
@@ -646,6 +649,10 @@ export function StoreFrontView(this: any, props: any) {
         }
     }
 
+    const refreshMintStates = async () => {
+        fetchMintStates(collectionAuthority);
+    }
+
     React.useEffect(() => { 
         if (collectionAuthority){
             console.log("with collectionAuthority: "+JSON.stringify(collectionAuthority));
@@ -657,7 +664,7 @@ export function StoreFrontView(this: any, props: any) {
                 }
             //}
         }
-    }, [collectionMintList]);
+    }, [collectionMintList, refresh]);
 
     const getCollectionStates = async (address:string) => {
         
@@ -712,6 +719,7 @@ export function StoreFrontView(this: any, props: any) {
 
             // we need to remove listing history for those that have been sold
             let thisFloorPrice = null;
+            let thisTotalListings = 0;
             for (var listing of ahActivity){
                 let exists = false;
                 let offer_exists = false;
@@ -741,6 +749,7 @@ export function StoreFrontView(this: any, props: any) {
                                             mintElement.listingPrice = +listing.price;
                                             mintElement.listedTimestamp = listing.timestamp;
                                             mintElement.listedBlockTime = listing.blockTime;
+                                            thisTotalListings++;
                                             if (!thisFloorPrice)
                                                 thisFloorPrice = +listing.price;
                                             else if (thisFloorPrice > +listing.price)
@@ -788,6 +797,7 @@ export function StoreFrontView(this: any, props: any) {
                                         name:null,
                                         image:'',
                                     })
+                                    thisTotalListings++;
                                     if (!thisFloorPrice)
                                         thisFloorPrice = +listing.price;
                                     else if (thisFloorPrice > +listing.price)
@@ -811,6 +821,7 @@ export function StoreFrontView(this: any, props: any) {
                 }
             }
             
+            setTotalListings(thisTotalListings);
             setFloorPrice(thisFloorPrice);
 
             // check all that do not have an image or name and group them
@@ -1007,7 +1018,6 @@ export function StoreFrontView(this: any, props: any) {
 
     React.useEffect(() => {
         if (publicKey){
-            
             fetchProfilePicture();
             fetchSolanaDomain();
         }
@@ -1026,7 +1036,6 @@ export function StoreFrontView(this: any, props: any) {
             setWithPubKey(urlParams);
         } else if (pubkey){
         } else if (publicKey){
-        //    setWithPubKey(publicKey.toBase58());
         }
     }, [urlParams]);
 
@@ -1195,7 +1204,8 @@ export function StoreFrontView(this: any, props: any) {
                                 enforceEntangle={collectionAuthority.entangleEnforce}
                                 entangleUrl={collectionAuthority.entangleUrl}
                                 collectionAuthority={collectionAuthority}
-                                collectionMintList={collectionMintList} />
+                                collectionMintList={collectionMintList}
+                                activity={auctionHouseListings} />
                         </Box>
                         
                         <Grid container spacing={0} sx={{mt:-2}}>
@@ -1205,10 +1215,10 @@ export function StoreFrontView(this: any, props: any) {
                                     sx={{borderRadius:'24px',m:2,p:1}}
                                 >
                                     <Typography variant="body2" sx={{color:'yellow'}}>
-                                        FLOOR
+                                        FLOOR/LISTINGS
                                     </Typography>
                                     <Typography variant="subtitle2">
-                                        {floorPrice ? `${(floorPrice).toFixed(2)} SOL` : `-`}
+                                        {floorPrice ? `${(floorPrice).toFixed(2)} SOL` : `-`} / {totalListings}
                                     </Typography>
                                 </Box>
                             </Grid>

@@ -1198,7 +1198,7 @@ function GalleryItemMeta(props: any) {
                                                             </TableRow>
                                                         : null }
 
-    {collectionitem.properties?.creators ?
+                                                        {collectionitem.properties?.creators ?
                                                             <React.Fragment>
                                                                 <TableRow
                                                                     onClick={() => setOpenCreatorCollapse(!open_creator_collapse)}

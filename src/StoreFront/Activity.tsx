@@ -122,14 +122,15 @@ export default function ActivityView(props: any){
     const [walletCollection, setWalletCollection] = React.useState(null);
     const [collectionMetaFinal,setCollectionMetaFinal] = React.useState(null);
     const [loading, setLoading] = React.useState(false);
-    const [loadingActivity, setLoadingActivity] = React.useState(false);
+    const [activityLoaded, setActivityLoaded] = React.useState(false);
     const [recentActivity, setRecentActivity] = React.useState(null);
     const [selectedMint, setSelectedMint] = React.useState(null);
     const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
     const rpclimit = 100;
 
-    const handleClickOpenDialog = () => {
-        getAllActivity();
+    const handleClickOpenDialog = async () => {
+        await getAllActivity();
+        //if (activityLoaded)
         setOpenDialog(true);
     };
     
@@ -140,7 +141,7 @@ export default function ActivityView(props: any){
     const fetchAllActivity = async () => {
         
         try {
-            
+            setActivityLoaded(false);
             //if (!recentActivity){
                 if (mode === 0){
                     if (!recentActivity){
@@ -164,12 +165,13 @@ export default function ActivityView(props: any){
                                 isowner: false, 
                                 createdAt: item.createdAt, 
                                 cancelledAt: item.canceledAt, 
-                                timestamp: item.createdAt, 
+                                timestamp: timeAgo(item.createdAt), 
                                 blockTime: item.createdAt, 
                                 state: item?.receipt_type, 
                                 tradeState: item.tradeState, 
                                 purchaseReceipt: item.purchaseReceipt, 
-                                seller: item.seller.toBase58()});
+                                seller: item?.seller, 
+                                buyer: item?.buyer});
                         }
 
                         // sort by date
@@ -179,6 +181,43 @@ export default function ActivityView(props: any){
                         return dupRemovedResults;
                     }
                 } else if (mode === 1){
+                    if (!recentActivity){
+                        //console.log("with aH: "+ collectionAuthority.auctionHouse+" - "+JSON.stringify(collectionAuthority))
+                        const results = await getReceiptsFromAuctionHouse(collectionAuthority.auctionHouse || AUCTION_HOUSE_ADDRESS, null, null, null);
+
+                        const activityResults = new Array();
+
+                        for (var item of results){
+
+                            const mintitem = await getMintFromVerifiedMetadata(item.metadata.toBase58(), collectionMintList);
+                            //console.log("> item: "+JSON.stringify(item));
+                            //console.log("mintitem: "+JSON.stringify(mintitem));
+                            activityResults.push({
+                                buyeraddress: item.bookkeeper.toBase58(), 
+                                bookkeeper: item.bookkeeper.toBase58(), 
+                                amount: item.price, 
+                                price: item.price, 
+                                mint: mintitem?.address, 
+                                metadataParsed:mintitem, 
+                                isowner: false, 
+                                createdAt: item.createdAt, 
+                                cancelledAt: item.canceledAt, 
+                                timestamp: timeAgo(item.createdAt), 
+                                blockTime: item.createdAt, 
+                                state: item?.receipt_type, 
+                                tradeState: item.tradeState, 
+                                purchaseReceipt: item.purchaseReceipt,
+                                seller: item?.seller, 
+                                buyer: item?.buyer});
+                        }
+
+                        // sort by date
+                        activityResults.sort((a:any,b:any) => (a.blockTime < b.blockTime) ? 1 : -1);
+                        const dupRemovedResults = activityResults.filter( activity => !activity.purchaseReceipt)
+                        //activityResults.push({buyeraddress: feePayer.toBase58(), amount: memo_json?.amount || memo_json?.offer, mint: memo_json?.mint, isowner: false, timestamp: forSaleDate, blockTime: value.blockTime, state: memo_json?.state || memo_json?.status});
+                        return dupRemovedResults;
+                    }
+                } else if (mode === 2){
 
                     //console.log("with aH: "+ collectionAuthority.auctionHouse+" - "+JSON.stringify(collectionAuthority))
                     const results = await getReceiptsFromAuctionHouse(collectionAuthority.auctionHouse || AUCTION_HOUSE_ADDRESS, publicKey.toBase58(), null, null);
@@ -216,6 +255,8 @@ export default function ActivityView(props: any){
                 }
 
             //}
+
+            setActivityLoaded(true);
             return null;
         } catch (e) { // Handle errors from invalid calls
             console.log(e);
@@ -228,6 +269,7 @@ export default function ActivityView(props: any){
         
         if (!auctionHouseListings){
             console.log("Fetching on chain recent activity");
+            
             const [activityResults] = await Promise.all([fetchAllActivity()]);
             //console.log("activityResults: "+JSON.stringify(activityResults));
             //setRecentActivity(JSON.parse(JSON.stringify(activityResults)));
@@ -330,7 +372,7 @@ export default function ActivityView(props: any){
                                 sx={{borderRadius:'24px'}}
                             >
                                 <Avatar
-                                    src={item.metadataParsed?.image}
+                                    src={'https://solana-cdn.com/cdn-cgi/image/width=256/'+item.metadataParsed?.image}
                                     sx={{
                                         backgroundColor:'#222',
                                         width: 40, 
@@ -421,49 +463,79 @@ export default function ActivityView(props: any){
 
     return (
         <>
-
-            {mode === 0 ?
+            {mode === 0 || mode === 1 ?
                 <>
-                {loading ?
-                        <Box
-                        className='grape-store-stat-item'
-                        sx={{borderRadius:'24px',m:2,p:1}}
-                    >
-                        <Typography variant="body2" sx={{color:'yellow'}}>
-                            VOLUME/ACTIVITY
-                        </Typography>
-                        <Typography variant="subtitle2">
-                            loading...
-                        </Typography>
-                    </Box>
-                    :   
-                    <Tooltip title={collectionAuthority.entangled ? `All time for both collections` : `Unique owners for this collections`}>
-                        <Button 
-                            variant="text"
-                            onClick={handleClickOpenDialog}
-                            sx={{
-                                color:'white',
-                                verticalAlign: 'middle',
-                                display: 'inline-flex',
-                                borderRadius:'17px',
-                                m:0,
-                                p:0
-                            }}
-                        >
+                    {loading ?
+                    <>
+                        {mode === 0 ?
                             <Box
                                 className='grape-store-stat-item'
                                 sx={{borderRadius:'24px',m:2,p:1}}
-                            >
+                                >
                                 <Typography variant="body2" sx={{color:'yellow'}}>
                                     VOLUME/ACTIVITY
                                 </Typography>
                                 <Typography variant="subtitle2">
-                                    {(collectionAuthority.volume/1000).toFixed(1)}k SOL
+                                    loading...
                                 </Typography>
                             </Box>
-                        </Button>
-                    </Tooltip>
-                }
+                        :
+                            <Button 
+                                sx={{
+                                    color:'white',
+                                    verticalAlign: 'middle',
+                                    display: 'inline-flex',
+                                    borderRadius:'17px'
+                                }}
+                            >
+                                Loading
+                            </Button>
+                        }
+                    </>
+                    :   
+                    <>
+                        {mode === 0 ?
+                            <Tooltip title={collectionAuthority.entangled ? `All time for both collections` : `Unique owners for this collections`}>
+                                <Button 
+                                    variant="text"
+                                    onClick={handleClickOpenDialog}
+                                    sx={{
+                                        color:'white',
+                                        verticalAlign: 'middle',
+                                        display: 'inline-flex',
+                                        borderRadius:'17px',
+                                        m:0,
+                                        p:0
+                                    }}
+                                >
+                                    <Box
+                                        className='grape-store-stat-item'
+                                        sx={{borderRadius:'24px',m:2,p:1}}
+                                    >
+                                        <Typography variant="body2" sx={{color:'yellow'}}>
+                                            VOLUME/ACTIVITY
+                                        </Typography>
+                                        <Typography variant="subtitle2">
+                                            {(collectionAuthority.volume/1000).toFixed(1)}k SOL
+                                        </Typography>
+                                    </Box>
+                                </Button>
+                            </Tooltip>
+                        :
+                            <Button 
+                                onClick={handleClickOpenDialog}
+                                sx={{
+                                    color:'white',
+                                    verticalAlign: 'middle',
+                                    display: 'inline-flex',
+                                    borderRadius:'17px'
+                                }}
+                            >
+                                {t('Activity')}
+                            </Button>
+                        }
+                    </>
+                    }
                 </>
             :
                 <>
@@ -502,7 +574,13 @@ export default function ActivityView(props: any){
                 }}
             >
                 <DialogTitle>
-                    {t('Recent Activity')}
+                    {mode === 2 ?
+                    <>
+                        {t('My Recent Activity')}
+                    </>
+                    :
+                    <>{t('Recent Activity')}</>
+                    }
                         <Tooltip title={`Auction House ${collectionAuthority.auctionHouse || AUCTION_HOUSE_ADDRESS}`}>
                             <Button sx={{color:'white',borderRadius:'17px'}} variant="text" size="small">
                                 <InfoOutlinedIcon fontSize='small' />
@@ -512,7 +590,7 @@ export default function ActivityView(props: any){
                 <DialogContent>
                     <List>
 
-                        {mode === 0 ?
+                        {mode === 0 || mode === 1 ?
                             <>
                                 {loading ?
                                     <>
