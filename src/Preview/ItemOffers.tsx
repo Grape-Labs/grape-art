@@ -11,7 +11,7 @@ import { Button } from '@mui/material';
 import { useSnackbar } from 'notistack';
 import moment from 'moment';
 
-import { unicastGrapeSolflareMessage } from "../utils/walletNotifications/walletNotifications";
+import { unicastGrapeSolflareMessage } from "../utils/walletNotificationss/walletNotifications";
 
 import {
     Typography,
