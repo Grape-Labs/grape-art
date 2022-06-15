@@ -521,6 +521,12 @@ function SellNowPrompt(props:any){
                     signature: signedTransaction}, 
                     'processed'
                 );
+                closeSnackbar(cnfrmkey);
+                const snackaction = (key:any) => (
+                    <Button href={`https://explorer.solana.com/tx/${signedTransaction}`} target='_blank'  sx={{color:'white'}}>
+                        {signedTransaction}
+                    </Button>
+                );
                 enqueueSnackbar(`${t('Sell Now Price Set to')} ${sell_now_amount} SOL`,{ variant: 'success', action:snackaction });
                 
                 const eskey = enqueueSnackbar(`${t('Metadata will be refreshed in a few seconds')}`, {
@@ -696,7 +702,7 @@ export function OfferPrompt(props: any) {
                     .add(
                         ...instructionsArray
                     );
-                        
+                    
                     enqueueSnackbar(`${t('Preparing to make an offer for')} ${+offer_amount} SOL`,{ variant: 'info' });
                     const signedTransaction = await sendTransaction(transaction, connection)
                     const snackprogress = (key:any) => (

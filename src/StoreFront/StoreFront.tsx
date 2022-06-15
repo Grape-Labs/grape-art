@@ -59,6 +59,7 @@ import TwitterIcon from '@mui/icons-material/Twitter';
 import InstagramIcon from '@mui/icons-material/Instagram';
 
 import DiscordIcon from '../components/static/DiscordIcon';
+import RefreshIcon from '@mui/icons-material/Refresh';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import ArtTrackOutlinedIcon from '@mui/icons-material/ArtTrackOutlined';
 import CollectionsOutlinedIcon from '@mui/icons-material/CollectionsOutlined';
@@ -671,7 +672,7 @@ export function StoreFrontView(this: any, props: any) {
         if (!stateLoading){
             setStateLoading(true);
 
-            const results = await getReceiptsFromAuctionHouse(collectionAuthority.auctionHouse || AUCTION_HOUSE_ADDRESS, null, null, null);
+            const results = await getReceiptsFromAuctionHouse(collectionAuthority.auctionHouse || AUCTION_HOUSE_ADDRESS, null, null, null, false);
 
             const ahActivity = new Array();
             const ahListingsMints = new Array();
@@ -720,10 +721,11 @@ export function StoreFrontView(this: any, props: any) {
             // we need to remove listing history for those that have been sold
             let thisFloorPrice = null;
             let thisTotalListings = 0;
+            const tempCollectionMintList = collectionMintList;
             for (var listing of ahActivity){
                 let exists = false;
                 let offer_exists = false;
-                for (var mintElement of collectionMintList){
+                for (var mintElement of tempCollectionMintList){
                     if (mintElement.address === listing.mint){
                         exists = true;
                         if (listing.state === 'bid_receipt'){
@@ -777,7 +779,7 @@ export function StoreFrontView(this: any, props: any) {
                     if (listing.state === 'bid_receipt'){
                         if (!listing?.cancelledAt){
                             if (!listing?.purchaseReceipt){
-                                collectionMintList.push({
+                                tempCollectionMintList.push({
                                     address: listing.mint,
                                     highestOffer: listing.price,
                                     name:null,
@@ -789,7 +791,7 @@ export function StoreFrontView(this: any, props: any) {
                         if (!listing?.cancelledAt){
                             if (!mintElement?.listingCancelled){
                                 if (!listing?.purchaseReceipt){
-                                    collectionMintList.push({
+                                    tempCollectionMintList.push({
                                         address: listing.mint,
                                         listingPrice: listing.price,
                                         listedTimestamp: listing.timestamp,
@@ -807,7 +809,7 @@ export function StoreFrontView(this: any, props: any) {
                         }
                     } else if (listing.state === 'cancel_listing_receipt'){
                         if (!listing?.cancelledAt){
-                            collectionMintList.push({
+                            tempCollectionMintList.push({
                                 address: listing.mint,
                                 listingPrice: null,
                                 listedTimestamp: listing.timestamp,
@@ -824,9 +826,12 @@ export function StoreFrontView(this: any, props: any) {
             setTotalListings(thisTotalListings);
             setFloorPrice(thisFloorPrice);
 
+
+            console.log("FLOOR: "+thisFloorPrice);
+
             // check all that do not have an image or name and group them
             const mintsToGet = new Array();
-            for (var mintListItem of collectionMintList){
+            for (var mintListItem of tempCollectionMintList){
                 if (!mintListItem.name){
                     mintsToGet.push({address:mintListItem.address})
                 }
@@ -836,7 +841,7 @@ export function StoreFrontView(this: any, props: any) {
 
             const missing_meta = await getMissingCollectionData(0, mintsToGet);
             
-            for (var mintListItem of collectionMintList){
+            for (var mintListItem of tempCollectionMintList){
                 for (var missed of missing_meta){
                     if (mintListItem.address === missed.mint){
                         //console.log("pushing: "+JSON.stringify(missed));
@@ -849,8 +854,10 @@ export function StoreFrontView(this: any, props: any) {
             // now with missing meta populate it to collectionMintList
             //collectionMintList.sort((a:any,b:any) => (+a.listingPrice > +b.listingPrice) ? 1 : -1); // this will sort descending
             
-            collectionMintList.sort((a:any, b:any) => (a.listingPrice != null ? a.listingPrice : Infinity) - (b.listingPrice != null ? b.listingPrice : Infinity)) 
+            const sortedCollectionMintList = tempCollectionMintList.sort((a:any, b:any) => (a.listingPrice != null ? a.listingPrice : Infinity) - (b.listingPrice != null ? b.listingPrice : Infinity)) 
             
+            setCollectionMintList(sortedCollectionMintList);
+
             setTimeout(function() {
                 setStateLoading(false);                                      
             }, 500); 
@@ -1215,7 +1222,13 @@ export function StoreFrontView(this: any, props: any) {
                                     sx={{borderRadius:'24px',m:2,p:1}}
                                 >
                                     <Typography variant="body2" sx={{color:'yellow'}}>
-                                        FLOOR/LISTINGS
+                                        FLOOR/LISTINGS  
+                                        <Button
+                                            onClick={refreshMintStates}
+                                            sx={{color:'yellow', borderRadius:'24px'}}
+                                        >
+                                            <RefreshIcon fontSize="small" />
+                                        </Button>
                                     </Typography>
                                     <Typography variant="subtitle2">
                                         {floorPrice ? `${(floorPrice).toFixed(2)} SOL` : `-`} / {totalListings}

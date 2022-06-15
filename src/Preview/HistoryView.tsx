@@ -51,6 +51,10 @@ import {
     GRAPE_PROFILE,
 } from '../utils/grapeTools/constants';
 
+import { 
+    getReceiptsFromAuctionHouse,
+    } from '../utils/grapeTools/helpers';
+
 import { MakeLinkableAddress, ValidateCurve, trimAddress, timeAgo, formatBlockTime } from '../utils/grapeTools/WalletAddress'; // global key handling
 
 import { TokenAmount } from '../utils/grapeTools/safe-math';
@@ -167,139 +171,43 @@ export default function HistoryView(props: any){
 
     const getHistory = async () => {
         setLoading(true);
-        //const AuctionHouseProgram = await ggoconnection.AuctionHouseProgram(new PublicKey(ENV_AH)); // loadAuctionHouseProgram(null, ENV_AH, GRAPE_RPC_ENDPOINT);
-        //const AuctionHouseProgram =  AuctionHouse.fromAccountAddress(ggoconnection, new PublicKey(ENV_AH)); //.fromAccountInfo(info)[0];
-        
-        //AuctionHouseProgram.LISTINE_RECEIPT
-
-        //const AHP = await AuctionHouseProgram;
-        //spok(t, AuctionHouseProgram, expected);
         
         if (mint){
-            
-            const _mint = new PublicKey(mint);
-            
-            /**
-             * Allocated data size on auction_house program per PDA type
-             * CreateAuctionHouse: 459
-             * PrintListingReceipt: 236
-             * PrintBidReceipt: 269
-             * PrintPurchaseReceipt: 193
-             */
-            
-             const PrintListingReceiptSize = 236;
-             const PrintBidReceiptSize = 269;
-             const PrintPurchaseReceiptSize = 193;
- 
-             const ReceiptAccountSizes = [
-                 PrintListingReceiptSize,
-                 PrintBidReceiptSize,
-                 PrintPurchaseReceiptSize,
-             ] as const;
-             
-             const ReceiptAccounts = await (Promise.all(ReceiptAccountSizes.map(async size => {
-                 const accounts = await ggoconnection.getProgramAccounts(
-                   AUCTION_HOUSE_PROGRAM_ID,
-                   {
-                     commitment: 'confirmed',
-                     filters: [
-                       {
-                         dataSize: size,
-                       },
-                     ],
-                   }
-                 );
-                 
-                 const parsedAccounts = accounts.map(async account => {
-                   switch (size) {
-                    case PrintListingReceiptSize:
-                       const [
-                         ListingReceipt,
-                       ] = AuctionHouseProgram.accounts.ListingReceipt.fromAccountInfo(
-                         account.account
-                       );
-                    
-                       return {
-                         ...ListingReceipt,
-                         receipt_type: ListingReceipt.canceledAt
-                           ? 'cancel_listing_receipt'
-                           : 'listing_receipt',
-                       }; //as TransactionReceipt;
-                       break;
-                    
-                     case PrintBidReceiptSize:
-                       const [
-                         BidReceipt,
-                       ] = AuctionHouseProgram.accounts.BidReceipt.fromAccountInfo(
-                         account.account
-                       );
-                       
-                       return {
-                         ...BidReceipt,
-                         receipt_type: 'bid_receipt',
-                       }; //as TransactionReceipt;
-                       break;
-                     case PrintPurchaseReceiptSize:
-                       const [
-                         PurchaseReceipt,
-                       ] = AuctionHouseProgram.accounts.PurchaseReceipt.fromAccountInfo(
-                         account.account
-                       );
-                       
-                       return {
-                         ...PurchaseReceipt,
-                         receipt_type: 'purchase_receipt',
-                       } //as TransactionReceipt;
-                       break;
-                     default:
-                       return undefined;
-                       break;
-                   }
-                 });
-                 
-                 return await Promise.all(parsedAccounts);
-               })));
- 
-               const receipts = (await Promise.all(ReceiptAccounts))
-                .flat()
-                .map(receipt => ({
-                     ...receipt,
-                     tokenSize: new BN(receipt.tokenSize).toNumber(),
-                     price: new BN(receipt.price).toNumber() / LAMPORTS_PER_SOL,
-                     createdAt: new BN(receipt.createdAt).toNumber(),
-                     //cancelledAt: receipt?.canceledAt,
-                }))
-                //.filter((receipt) => receipt.auctionHouse.toBase58() === this.auctionHouse!.toBase58())
-                .sort((a, b) => {
-                    if ((a.receipt_type === 'bid_receipt', b.receipt_type === 'purchase_receipt')) {
-                    return 1;
-                    } else if ((a.receipt_type === 'purchase_receipt', b.receipt_type === 'bid_receipt')) {
-                    return -1;
-                    } else {
-                    return 0;
-                    }
-                })
-                .sort((a, b) => b.createdAt - a.createdAt);
-                ;
+            const results = await getReceiptsFromAuctionHouse(null, null, mint, null, true);
 
-                 console.log('receipts', receipts);
-             
-             setReceipts(receipts);
-            
-            
-            //const metadata = await Metadata.findByMint(ggoconnection, _mint);
-            
-            //const [metadata_program] = await Metadata.fromAccountAddress(tokenMint)
-            
-            console.log("Receipts: "+JSON.stringify(receipts));
-            //setOpenHistory(receipts.length);
-            //setReceipts(receipts);
-            
-            //const confirmedsignatures = await ggoconnection.getConfirmedSignaturesForAddress2(new PublicKey(mint), {"limit":25});
-            //const listingreceipts = await ggoconnection.getConfirmedSignaturesForAddress2(new PublicKey(mint), {"limit":25});
-            
-            //setHistory(nftSales);
-            //setOpenHistory(nftSales.length);
+            const activityResults = new Array();
+
+            for (var item of results){
+
+
+
+                //const mintitem = await getMintFromVerifiedMetadata(item.metadata.toBase58(), collectionMintList);
+                console.log("> history: "+JSON.stringify(item));
+                //console.log("mintitem: "+JSON.stringify(mintitem));
+                activityResults.push({
+                    buyeraddress: item.bookkeeper.toBase58(), 
+                    bookkeeper: item.bookkeeper.toBase58(), 
+                    amount: item.price, 
+                    price: item.price, 
+                //    mint: mintitem?.address, 
+                //    metadataParsed:mintitem, 
+                    isowner: false, 
+                    createdAt: item.createdAt, 
+                    cancelledAt: item.canceledAt, 
+                    timestamp: timeAgo(item.createdAt), 
+                    blockTime: item.createdAt, 
+                    state: item?.receipt_type, 
+                    tradeState: item.tradeState, 
+                    purchaseReceipt: item.purchaseReceipt, 
+                    seller: item?.seller, 
+                    buyer: item?.buyer});
+            }
+
+            // sort by date
+            activityResults.sort((a:any,b:any) => (a.blockTime < b.blockTime) ? 1 : -1);
+            const dupRemovedResults = activityResults.filter( activity => !activity.purchaseReceipt)
+            //activityResults.push({buyeraddress: feePayer.toBase58(), amount: memo_json?.amount || memo_json?.offer, mint: memo_json?.mint, isowner: false, timestamp: forSaleDate, blockTime: value.blockTime, state: memo_json?.state || memo_json?.status});
+            return dupRemovedResults;
         }
         setLoading(false);
     }
@@ -307,7 +215,7 @@ export default function HistoryView(props: any){
     React.useEffect(() => {
         if (mint){
             //if (!history){
-                //getHistory();
+                getHistory();
                 //getMEHistory();
             //}
         }
