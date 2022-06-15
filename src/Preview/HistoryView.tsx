@@ -110,20 +110,22 @@ export default function HistoryView(props: any){
         setLoading(true);
 
         if (mint){
-            let response = null;
+            try{
+                let response = null;
 
-            const apiUrl = "https://api-mainnet.magiceden.dev/v2/collections/"+symbol+"/stats";
-            
-            const resp = await window.fetch(apiUrl, {
-                method: 'GET',
-                redirect: 'follow',
-                //body: JSON.stringify(body),
-                //headers: { "Content-Type": "application/json" },
-            })
+                const apiUrl = "https://api-mainnet.magiceden.dev/v2/collections/"+symbol+"/stats";
+                
+                const resp = await window.fetch(apiUrl, {
+                    method: 'GET',
+                    redirect: 'follow',
+                    //body: JSON.stringify(body),
+                    //headers: { "Content-Type": "application/json" },
+                })
 
-            const json = await resp.json();
-            //console.log("json: "+JSON.stringify(json));
-            setMEStats(json);
+                const json = await resp.json();
+                //console.log("json: "+JSON.stringify(json));
+                setMEStats(json);
+            } catch(e){console.log("ERR: "+e)}
         }
         setLoading(false);
     }
@@ -133,38 +135,40 @@ export default function HistoryView(props: any){
         setLoading(true);
         
         if (mint){
-            let response = null;
-
-            const apiUrl = "https://api-mainnet.magiceden.dev/v2/tokens/"+mint+"/activities?offset=0&limit=100";
-            
-            const resp = await window.fetch(apiUrl, {
-                method: 'GET',
-                redirect: 'follow',
-                //body: JSON.stringify(body),
-                //headers: { "Content-Type": "application/json" },
-            })
-
-            const json = await resp.json();
-            //console.log("json: "+JSON.stringify(json));
             try{
-                // here get the last sale and show it:
-                // grape-art-last-sale
-                
-                let found = false;
-                for (var item of json){
-                    //console.log(item.type + ' ' + item.price + ' '+formatBlockTime(item.blockTime, true, true));
-                    if (item.type === "buyNow"){
-                        let elements = document.getElementById("grape-art-last-sale");
-                        if (!found){
-                            //elements.innerHTML = 'Last sale '+item.price+'sol on '+formatBlockTime(item.blockTime, true, false);
-                        }
-                        found = true;
-                    }
-                }
-            }catch(e){console.log("ERR: "+e);return null;}
+                let response = null;
 
-            setMEHistory(json);
-            setMEOpenHistory(json.length);
+                const apiUrl = "https://api-mainnet.magiceden.dev/v2/tokens/"+mint+"/activities?offset=0&limit=100";
+                
+                const resp = await window.fetch(apiUrl, {
+                    method: 'GET',
+                    redirect: 'follow',
+                    //body: JSON.stringify(body),
+                    //headers: { "Content-Type": "application/json" },
+                })
+
+                const json = await resp.json();
+                //console.log("json: "+JSON.stringify(json));
+                try{
+                    // here get the last sale and show it:
+                    // grape-art-last-sale
+                    
+                    let found = false;
+                    for (var item of json){
+                        //console.log(item.type + ' ' + item.price + ' '+formatBlockTime(item.blockTime, true, true));
+                        if (item.type === "buyNow"){
+                            let elements = document.getElementById("grape-art-last-sale");
+                            if (!found){
+                                //elements.innerHTML = 'Last sale '+item.price+'sol on '+formatBlockTime(item.blockTime, true, false);
+                            }
+                            found = true;
+                        }
+                    }
+                }catch(e){console.log("ERR: "+e);return null;}
+
+                setMEHistory(json);
+                setMEOpenHistory(json.length);
+            } catch(e){console.log("ERR: "+e)}
         }
         setLoading(false);
     }
@@ -243,7 +247,7 @@ export default function HistoryView(props: any){
         if (mint){
             if (!loading){
                 getHistory();
-                //getMEHistory();
+                getMEHistory();
             }
         }
     }, [mint]);
@@ -273,7 +277,7 @@ export default function HistoryView(props: any){
 
         return ( 
             <>
-                {/*historyME && historyME.length > 0 &&
+                {historyME && historyME.length > 0 &&
                     <Box
                         sx={{ 
                             p: 1, 
@@ -373,7 +377,7 @@ export default function HistoryView(props: any){
                             </List>
                         </Collapse>
                     </Box>
-                */}
+                }
                 {history && history.length > 0 &&
                     <Box
                         sx={{ 

@@ -956,7 +956,7 @@ export default function OffersView(props:any){
                                             <TableCell  align="right"><Typography variant="h6">
                                                 <Tooltip title={`Auction House: ${item.auctionHouse}`}>
                                                     <Button sx={{color:'white',borderRadius:'24px'}}>
-                                                        <Typography variant="h6">Offer {(item.amount)} <SolCurrencyIcon sx={{fontSize:"12px"}} /></Typography>
+                                                        <Typography variant="h6">Listing {(item.amount)} <SolCurrencyIcon sx={{fontSize:"12px"}} /></Typography>
                                                     </Button>
                                                 </Tooltip>
                                             </Typography></TableCell>
@@ -991,7 +991,7 @@ export default function OffersView(props:any){
                                             <TableCell  align="right"><Typography variant="caption">
                                             </Typography></TableCell>
                                             <TableCell  align="right"><Typography variant="h6" sx={{color:'red'}}>
-                                                {(item.amount)} <SolCurrencyIcon sx={{fontSize:"10.5px"}} />
+                                                Cancelled Listing {(item.amount)} <SolCurrencyIcon sx={{fontSize:"10.5px"}} />
                                             </Typography></TableCell>
                                             <TableCell align="right">
                                                 <Tooltip title={t('View NFT')}>

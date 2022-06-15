@@ -9,7 +9,7 @@ import { IdentityView } from "./Identity/Identity";
 import { SplashView } from "./Splash/Splash";
 import { StoreFrontView } from "./StoreFront/StoreFront";
 import { MessagesView } from "./Messages/Messages";
-import { NotificationsView } from "./NotificationsTest/NotificationsTest";
+//import { NotificationsView } from "./NotificationsTest/NotificationsTest";
 import CssBaseline from '@mui/material/CssBaseline';
 
 import {
@@ -161,7 +161,7 @@ function DashboardContent() {
                                     
                                     <Route path="/messages" element={<MessagesView/>} />
 
-                                    <Route path="/solflaretest" element={<NotificationsView/>} />
+                                    {/*<Route path="/solflaretest" element={<NotificationsView/>} />*/}
                                     
                                     <Route path="/" element={<ProfileView/>}>
                                       <Route path=":handlekey" element={<ProfileView />} />
