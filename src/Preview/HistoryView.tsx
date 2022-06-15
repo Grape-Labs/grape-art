@@ -170,19 +170,16 @@ export default function HistoryView(props: any){
     }
 
     const getHistory = async () => {
-        setLoading(true);
-        
-        if (mint){
+        if ((!loading) && (mint)){
+            setLoading(true);
+
             const results = await getReceiptsFromAuctionHouse(null, null, mint, null, true);
 
             const activityResults = new Array();
 
             for (var item of results){
-
-
-
                 //const mintitem = await getMintFromVerifiedMetadata(item.metadata.toBase58(), collectionMintList);
-                console.log("> history: "+JSON.stringify(item));
+                //console.log("> history: "+JSON.stringify(item));
                 //console.log("mintitem: "+JSON.stringify(mintitem));
                 activityResults.push({
                     buyeraddress: item.bookkeeper.toBase58(), 
@@ -199,25 +196,55 @@ export default function HistoryView(props: any){
                     state: item?.receipt_type, 
                     tradeState: item.tradeState, 
                     purchaseReceipt: item.purchaseReceipt, 
+                    auctionHouse: item?.auctionHouse, 
                     seller: item?.seller, 
                     buyer: item?.buyer});
             }
+
+            /*
+            const offerResults = new Array();
+            const listingResults: any[] = [];
+            for (var item of results){
+                //const mintitem = await getMintFromMetadata(null, item?.metadata);
+                
+                if (!item?.canceledAt){
+                        console.log("item: "+JSON.stringify(item));
+                        if (item.receipt_type==='bid_receipt'){
+                            offerResults.push({buyeraddress: item.bookkeeper.toBase58(), bookkeeper: item.bookkeeper.toBase58(), amount: item.price, price: item.price, mint: mint, isowner: false, createdAt: item.createdAt, cancelledAt: item.canceledAt, timestamp: item.createdAt, blockTime: item.createdAt, state: item?.receipt_type});
+                        } else if (item.receipt_type==='listing_receipt'){
+                            listingResults.push({buyeraddress: item.bookkeeper.toBase58(), bookkeeper: item.bookkeeper.toBase58(), amount: item.price, price: item.price, mint: mint, isowner: false, createdAt: item.createdAt, cancelledAt: item.canceledAt, timestamp: item.createdAt, blockTime: item.createdAt, state: item?.receipt_type});
+                        } else if (item.receipt_type==='cancel_listing_receipt'){
+                            listingResults.push({buyeraddress: item.bookkeeper.toBase58(), bookkeeper: item.bookkeeper.toBase58(), amount: item.price, price: item.price, mint: mint, isowner: false, createdAt: item.createdAt, cancelledAt: item.canceledAt, timestamp: item.createdAt, blockTime: item.createdAt, state: item?.receipt_type});
+                        }
+                }
+            }
+            */
+
+            // sort by date
+            //offerResults.sort((a:any,b:any) => (a.blockTime < b.blockTime) ? 1 : -1);
+            //listingResults.sort((a:any,b:any) => (a.blockTime < b.blockTime) ? 1 : -1);
 
             // sort by date
             activityResults.sort((a:any,b:any) => (a.blockTime < b.blockTime) ? 1 : -1);
             const dupRemovedResults = activityResults.filter( activity => !activity.purchaseReceipt)
             //activityResults.push({buyeraddress: feePayer.toBase58(), amount: memo_json?.amount || memo_json?.offer, mint: memo_json?.mint, isowner: false, timestamp: forSaleDate, blockTime: value.blockTime, state: memo_json?.state || memo_json?.status});
-            return dupRemovedResults;
+            
+            setHistory(activityResults);
+            setOpenHistory(activityResults.length);
+
+            //return dupRemovedResults;
+
+
         }
         setLoading(false);
     }
 
     React.useEffect(() => {
         if (mint){
-            //if (!history){
+            if (!loading){
                 getHistory();
                 //getMEHistory();
-            //}
+            }
         }
     }, [mint]);
 
@@ -246,7 +273,7 @@ export default function HistoryView(props: any){
 
         return ( 
             <>
-                {historyME && historyME.length > 0 &&
+                {/*historyME && historyME.length > 0 &&
                     <Box
                         sx={{ 
                             p: 1, 
@@ -275,7 +302,6 @@ export default function HistoryView(props: any){
                                 }}>
                                 <ListItemText>
                                     <Box sx={{ margin: 1 }}>
-                                        {/*<div style={{width: 'auto', overflowX: 'scroll'}}>*/}
                                         <TableContainer>
                                             <Table size="small" aria-label="purchases">
                                                 <TableHead>
@@ -347,7 +373,7 @@ export default function HistoryView(props: any){
                             </List>
                         </Collapse>
                     </Box>
-                }
+                */}
                 {history && history.length > 0 &&
                     <Box
                         sx={{ 
@@ -382,11 +408,11 @@ export default function HistoryView(props: any){
                                             <Table size="small" aria-label="purchases">
                                                 <TableHead>
                                                     <TableRow>
-                                                        <TableCell><Typography variant="caption">Type</Typography></TableCell>
-                                                        <TableCell><Typography variant="caption">Owner</Typography></TableCell>
+                                                        <TableCell><Typography variant="caption">Bookeeper</Typography></TableCell>
+                                                        <TableCell><Typography variant="caption">Status</Typography></TableCell>
                                                         <TableCell align="center"><Typography variant="caption">Amount</Typography></TableCell>
                                                         <TableCell align="center"><Typography variant="caption">Date</Typography></TableCell>
-                                                        <TableCell>Signature</TableCell>
+                                                        <TableCell>Auction House</TableCell>
                                                     </TableRow>
 
                                                 </TableHead>
@@ -395,33 +421,49 @@ export default function HistoryView(props: any){
                                                     {history && history.map((item: any) => (
                                                         <TableRow>
                                                             
-                                                            
                                                             <TableCell>
-                                                                {item.source ?
-                                                                    <Button size="small" variant="text" component={Link} to={`${GRAPE_PROFILE}${item?.source}`} target="_blank" sx={{ml:1,color:'white',borderRadius:'24px'}}>
-                                                                        {trimAddress(item.source,3)}
-                                                                    </Button>   
-                                                                :
-                                                                    <Typography variant="body2" sx={{textAlign:'center'}}>
-                                                                        {item.type.toLocaleUpperCase()}
-                                                                    </Typography>
-                                                                }   
+                                                                <Tooltip title={'View Bookkeeper Profile'}>
+                                                                    <Button size="small" variant="text" component={Link} to={`${GRAPE_PROFILE}${item.bookkeeper}`} target="_blank" sx={{ml:1,color:'white',borderRadius:'24px'}}>
+                                                                        {trimAddress(item.bookkeeper,4)}
+                                                                    </Button>
+                                                                </Tooltip>
                                                             </TableCell>
                                                             <TableCell>
-                                                                {item.owner ?
-                                                                <Button size="small" variant="text" component={Link} to={`${GRAPE_PROFILE}${item?.owner}`} target="_blank" sx={{ml:1,color:'white',borderRadius:'24px'}}>
-                                                                    {trimAddress(item?.owner,3)}
-                                                                </Button>
-                                                                :    
+                                                                
                                                                     <Typography variant="body2" sx={{textAlign:'center'}}>
-                                                                        {item?.type.toLocaleUpperCase()}
+                                                                        
+                                                                        {item?.purchaseReceipt ?
+                                                                            <>Sale <Typography variant="caption">({trimAddress(item.purchaseReceipt.toBase58(),3)})</Typography></>
+                                                                        :
+                                                                            <>
+                                                                            {item.state === "bid_receipt" && 
+                                                                                <>Offer
+                                                                                {item?.cancelledAt &&
+                                                                                    <> Cancelled</>
+                                                                                }</>
+                                                                            }
+                                                                            {item.state === "listing_receipt" && 
+                                                                                <>Listing
+                                                                                {item?.cancelledAt &&
+                                                                                    <> Cancelled</>
+                                                                                }
+                                                                                </>}
+                                                                            {item.state === "cancel_listing_receipt" && 
+                                                                                <>Listing Cancelled</>
+                                                                            }
+
+                                                                            {item.state === "purchase_receipt" && 
+                                                                                <>Sale</>
+                                                                            }
+                                                                            </>
+                                                                        } 
+
                                                                     </Typography>
                                                                 
-                                                                }    
                                                             </TableCell>
                                                             <TableCell  align="right">
                                                                     <Typography variant="body2">
-                                                                        {convertSolVal(item?.amount)} <SolCurrencyIcon sx={{fontSize:"10.5px"}} />
+                                                                        {(item?.price)} <SolCurrencyIcon sx={{fontSize:"10.5px"}} />
                                                                     </Typography>
                                                                 </TableCell>
                                                             <TableCell align="right">
@@ -434,9 +476,11 @@ export default function HistoryView(props: any){
                                                                 </Typography>
                                                             </TableCell>
                                                             <TableCell>
-                                                                <Button size="small" variant="text" component="a" href={`https://explorer.solana.com/tx/${item?.signature}`} target="_blank" sx={{ml:1,color:'white',borderRadius:'24px'}}>
-                                                                    {trimAddress(item?.signature,3)}
-                                                                </Button>
+                                                                <Tooltip title={'Auction House'}>
+                                                                    <Button size="small" variant="text" sx={{ml:1,color:'white',borderRadius:'24px'}}>
+                                                                        {trimAddress(item.auctionHouse.toBase58(),4)}
+                                                                    </Button>
+                                                                </Tooltip>
                                                             </TableCell>
                                                         </TableRow>
                                                     ))}

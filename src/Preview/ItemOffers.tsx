@@ -1799,8 +1799,8 @@ export default function ItemOffers(props: any) {
                                             <Typography component="div" variant="caption" id="grape-art-last-sale"></Typography>
                                         </Typography>
                                         {( (salePrice > 0) ?
-                                            
-                                                <Tooltip title='Marketplace fees at 1%'>
+
+                                                <Tooltip title={`Marketplace fees at 1% - Auction House: ${collectionAuctionHouse || AUCTION_HOUSE_ADDRESS}`}>
                                                     <Button variant="text" sx={{color:'white',borderRadius:'17px'}}>
                                                         <Typography component="div" variant="h4" sx={{fontWeight:'800'}}>
                                                             <strong>{salePrice} <SolCurrencyIcon /></strong>

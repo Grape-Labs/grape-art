@@ -321,10 +321,9 @@ export default function OffersView(props:any){
             }
 
             if (allmints.length <= 1){
-                console.log("mint: "+mint);
+                //console.log("mint: "+mint);
                 // get updateAuthority
                 // get auctionHouse
-                
                 
                 if (mint){ // with mint allow calling cancel withdraw combo
                     let [vcFinal] = await Promise.all([fetchVerifiedCollection(updateAuthority)]);
@@ -442,7 +441,7 @@ export default function OffersView(props:any){
                             console.log("verified: "+verified)
                         }
                         
-                        console.log(JSON.stringify(allmints));  
+                        //console.log(JSON.stringify(allmints));  
                         try{ 
                             if (cnt <= allmints.length){
                                 //cancelOffer on specific mint in list
@@ -492,7 +491,6 @@ export default function OffersView(props:any){
                             if (cnt === allmints.length){
                                 
                                 const transactionInstr = await withdrawOffer(offerAmount, null, publicKey, updateAuthority, vcFinal?.auctionHouse);
-                                console.log("here...")
                                 const instructionsArray = [transactionInstr.instructions].flat();        
                                 const transaction = new Transaction()
                                 .add(
@@ -539,8 +537,6 @@ export default function OffersView(props:any){
                         closeSnackbar(eskey);
                         setRefresh(true);
                     }, GRAPE_RPC_REFRESH);
-         
-				
             }
             
         } catch(e){
@@ -559,34 +555,31 @@ export default function OffersView(props:any){
             setLoading(true);
             setMaxPage(false);
 
-            
-                //console.log("with aH: "+ collectionAuthority.auctionHouse+" - "+JSON.stringify(collectionAuthority))
-                const results = await getReceiptsFromAuctionHouse(AUCTION_HOUSE_ADDRESS, thisPublicKey, null, null);
+            //console.log("with aH: "+ collectionAuthority.auctionHouse+" - "+JSON.stringify(collectionAuthority))
+            const results = await getReceiptsFromAuctionHouse(null, thisPublicKey, null, null, true);
 
-                const offerResults = new Array();
-                const listingResults: any[] = [];
-                for (var item of results){
-                    const mintitem = await getMintFromMetadata(null, item?.metadata);
-                    
-                    if (!item?.canceledAt){
-                        if (mintitem && mintitem.length > 3){
-                            console.log("item: "+JSON.stringify(item));
-                            if (item.receipt_type==='bid_receipt'){
-                                offerResults.push({buyeraddress: item.bookkeeper.toBase58(), bookkeeper: item.bookkeeper.toBase58(), amount: item.price, price: item.price, mint: mintitem, metadataParsed:mintitem, isowner: false, createdAt: item.createdAt, cancelledAt: item.canceledAt, timestamp: item.createdAt, blockTime: item.createdAt, state: item?.receipt_type});
-                            } else if (item.receipt_type==='listing_receipt'){
-                                listingResults.push({buyeraddress: item.bookkeeper.toBase58(), bookkeeper: item.bookkeeper.toBase58(), amount: item.price, price: item.price, mint: mintitem, metadataParsed:mintitem, isowner: false, createdAt: item.createdAt, cancelledAt: item.canceledAt, timestamp: item.createdAt, blockTime: item.createdAt, state: item?.receipt_type});
-                            } else if (item.receipt_type==='cancel_listing_receipt'){
-                                listingResults.push({buyeraddress: item.bookkeeper.toBase58(), bookkeeper: item.bookkeeper.toBase58(), amount: item.price, price: item.price, mint: mintitem, metadataParsed:mintitem, isowner: false, createdAt: item.createdAt, cancelledAt: item.canceledAt, timestamp: item.createdAt, blockTime: item.createdAt, state: item?.receipt_type});
-                            }
+            const offerResults = new Array();
+            const listingResults: any[] = [];
+            for (var item of results){
+                const mintitem = await getMintFromMetadata(null, item?.metadata);
+                
+                if (!item?.canceledAt){
+                    if (mintitem && mintitem.length > 3){
+                        console.log("item: "+JSON.stringify(item));
+                        if (item.receipt_type==='bid_receipt'){
+                            offerResults.push({buyeraddress: item.bookkeeper.toBase58(), bookkeeper: item.bookkeeper.toBase58(), amount: item.price, price: item.price, mint: mintitem, metadataParsed:mintitem, isowner: false, createdAt: item.createdAt, cancelledAt: item.canceledAt, timestamp: item.createdAt, blockTime: item.createdAt, state: item?.receipt_type, auctionHouse: item?.auctionHouse});
+                        } else if (item.receipt_type==='listing_receipt'){
+                            listingResults.push({buyeraddress: item.bookkeeper.toBase58(), bookkeeper: item.bookkeeper.toBase58(), amount: item.price, price: item.price, mint: mintitem, metadataParsed:mintitem, isowner: false, createdAt: item.createdAt, cancelledAt: item.canceledAt, timestamp: item.createdAt, blockTime: item.createdAt, state: item?.receipt_type, auctionHouse: item?.auctionHouse});
+                        } else if (item.receipt_type==='cancel_listing_receipt'){
+                            listingResults.push({buyeraddress: item.bookkeeper.toBase58(), bookkeeper: item.bookkeeper.toBase58(), amount: item.price, price: item.price, mint: mintitem, metadataParsed:mintitem, isowner: false, createdAt: item.createdAt, cancelledAt: item.canceledAt, timestamp: item.createdAt, blockTime: item.createdAt, state: item?.receipt_type, auctionHouse: item?.auctionHouse});
                         }
                     }
                 }
+            }
 
-                // sort by date
-                offerResults.sort((a:any,b:any) => (a.blockTime < b.blockTime) ? 1 : -1);
-                listingResults.sort((a:any,b:any) => (a.blockTime < b.blockTime) ? 1 : -1);
-            //setMyOffers(myoffers+j);
-
+            // sort by date
+            offerResults.sort((a:any,b:any) => (a.blockTime < b.blockTime) ? 1 : -1);
+            listingResults.sort((a:any,b:any) => (a.blockTime < b.blockTime) ? 1 : -1);
             
             if (offers){
                 setOffers(
@@ -673,90 +666,93 @@ export default function OffersView(props:any){
                     p:2
                 }} 
             > 
-                <Typography variant="caption">*Displaying from the Grape Auction House, for Marketplaces please visit the respective marketplace</Typography>
                 <Grid 
                     container 
                     direction="row"
                     justifyContent='flex-end'
                     alignContent='flex-end'>
                     
-                    {(publicKey && publicKey.toBase58() === thisPublicKey && ahbalance && (ahbalance > 0.01)) ?
-                        <Box
-                            sx={{
-                                background: 'rgba(0, 0, 0, 0.2)',
-                                borderRadius: '17px',
-                                mt:1,
-                                mb:1,
-                                ml:0,
-                                mr:0
-                            }}
-                        >
-                            
-                            <BootstrapDialog 
-                                fullWidth={true}
-                                maxWidth={"sm"}
-                                PaperProps={{
-                                    style: {
-                                        background: '#13151C',
-                                        border: '1px solid rgba(255,255,255,0.05)',
-                                        borderTop: '1px solid rgba(255,255,255,0.1)',
-                                        borderRadius: '20px'
-                                    }
-                                }}
-                                open={alertwithdrawopen}
-                                onClose={handleAlertWithdrawClose}
-                                aria-labelledby="alert-bn-dialog-title"
-                                aria-describedby="alert-bn-dialog-description"
-                                >
-                                <DialogTitle id="alert-bn-dialog-title">
-                                    <Typography>
-                                        {t('CONFIRMATION')}
-                                    </Typography>
-                                </DialogTitle>
-                                <DialogContent>
-                                    <DialogContentText id="alert-bn-dialog-description">
-                                    <br />
-                                    <Alert 
-                                        severity="warning" variant="outlined"
-                                        sx={{backgroundColor:'black'}}
-                                        >
-                                            {t('You currently have')} <strong>{myoffers}</strong> {t('standing offer')}{(myoffers > 1 && <>s</>)}, {t('it is recommended that you cancel all standing offers and then attempt to withdraw. If you are unable to cancel then click Withdraw to force cancel from the Grape Auction House')}
-                                            <br/><br/>
-                                            {t('NOTE: By pressing Withdraw you will have to Accept')} <strong>{myoffers}</strong> {t('additional transaction')}{(myoffers > 1 && <>s</>)} {t('with your wallet')}
-                                    </Alert>
-                                    </DialogContentText>
-                                </DialogContent>
-                                <DialogActions>
-                                    <Button onClick={handleAlertWithdrawClose}>{t('Cancel')}</Button>
-                                    <Button 
-                                        onClick={() => handleWithdrawOffer(convertSolVal(ahbalance), null, null)}
-                                        autoFocus>
-                                    {t('Withdraw')}
-                                    </Button>
-                                </DialogActions>
-                            </BootstrapDialog>
-                            
-                            <Grid 
-                                item
+                    {(publicKey && publicKey.toBase58() === thisPublicKey && ahbalance) ?
+                        <>
+                        {+ahbalance > 1000000 &&
+                            <Box
                                 sx={{
+                                    background: 'rgba(0, 0, 0, 0.2)',
+                                    borderRadius: '17px',
+                                    mt:1,
+                                    mb:1,
+                                    ml:0,
+                                    mr:0
                                 }}
                             >
-                                <Typography variant="caption">
-                                    <Tooltip title={`In the Grape Auction House ${AUCTION_HOUSE_ADDRESS}`}>
-                                        <Button
-                                            size="small"
-                                            variant="text"
-                                            //onClick={() => (myoffers > 0 ? setAlertWithdrawOpen(true) : handleWithdrawOffer(convertSolVal(ahbalance), null, null))}
-                                            sx={{
-                                                borderRadius:'17px'
-                                            }}
-                                        >
-                                            {convertSolVal(ahbalance)} <SolCurrencyIcon sx={{fontSize:"8px", mr:0.5 }} /> <GrapeIcon sx={{fontSize:"22px", mr:0.5, color:'white' }} />
+                                
+                                <BootstrapDialog 
+                                    fullWidth={true}
+                                    maxWidth={"sm"}
+                                    PaperProps={{
+                                        style: {
+                                            background: '#13151C',
+                                            border: '1px solid rgba(255,255,255,0.05)',
+                                            borderTop: '1px solid rgba(255,255,255,0.1)',
+                                            borderRadius: '20px'
+                                        }
+                                    }}
+                                    open={alertwithdrawopen}
+                                    onClose={handleAlertWithdrawClose}
+                                    aria-labelledby="alert-bn-dialog-title"
+                                    aria-describedby="alert-bn-dialog-description"
+                                    >
+                                    <DialogTitle id="alert-bn-dialog-title">
+                                        <Typography>
+                                            {t('CONFIRMATION')}
+                                        </Typography>
+                                    </DialogTitle>
+                                    <DialogContent>
+                                        <DialogContentText id="alert-bn-dialog-description">
+                                        <br />
+                                        <Alert 
+                                            severity="warning" variant="outlined"
+                                            sx={{backgroundColor:'black'}}
+                                            >
+                                                {t('You currently have')} <strong>{myoffers}</strong> {t('standing offer')}{(myoffers > 1 && <>s</>)}, {t('it is recommended that you cancel all standing offers and then attempt to withdraw. If you are unable to cancel then click Withdraw to force cancel from the Grape Auction House')}
+                                                <br/><br/>
+                                                {t('NOTE: By pressing Withdraw you will have to Accept')} <strong>{myoffers}</strong> {t('additional transaction')}{(myoffers > 1 && <>s</>)} {t('with your wallet')}
+                                        </Alert>
+                                        </DialogContentText>
+                                    </DialogContent>
+                                    <DialogActions>
+                                        <Button onClick={handleAlertWithdrawClose}>{t('Cancel')}</Button>
+                                        <Button 
+                                            onClick={() => handleWithdrawOffer(convertSolVal(ahbalance), null, null)}
+                                            autoFocus>
+                                        {t('Withdraw')}
                                         </Button>
-                                    </Tooltip>
-                                </Typography>
-                            </Grid>
-                        </Box>
+                                    </DialogActions>
+                                </BootstrapDialog>
+                                
+                                <Grid 
+                                    item
+                                    sx={{
+                                    }}
+                                >
+                                    <Typography variant="caption">
+                                        <Tooltip title={`In the Grape Auction House ${AUCTION_HOUSE_ADDRESS}`}>
+                                            <Button
+                                                size="small"
+                                                variant="text"
+                                                //onClick={() => (myoffers > 0 ? setAlertWithdrawOpen(true) : handleWithdrawOffer(convertSolVal(ahbalance), null, null))}
+                                                sx={{
+                                                    borderRadius:'17px'
+                                                }}
+                                            >
+                                                {convertSolVal(ahbalance)} <SolCurrencyIcon sx={{fontSize:"8px", mr:0.5 }} /> <GrapeIcon sx={{fontSize:"22px", mr:0.5, color:'white' }} />
+                                            </Button>
+                                        </Tooltip>
+                                    </Typography>
+                                </Grid>
+                            </Box>
+                        }
+                        </>
                     :
                     <Box></Box>
                     }
@@ -786,8 +782,15 @@ export default function OffersView(props:any){
                                                     </Button>
                                                 </Tooltip>
                                             </TableCell>
-                                            <TableCell  align="center"><Typography variant="h6">
-                                                Offer {(item.amount)} <SolCurrencyIcon sx={{fontSize:"10.5px"}} />
+                                            <TableCell  align="center">
+
+                                                <Tooltip title={`Auction House: ${item.auctionHouse}`}>
+                                                    <Button sx={{color:'white',borderRadius:'24px'}}>
+                                                        <Typography variant="h6">Offer {(item.amount)} <SolCurrencyIcon sx={{fontSize:"12px"}} /></Typography>
+                                                    </Button>
+                                                </Tooltip>
+
+                                                
                                                 {/*
                                                 {item.isowner ? (
                                                     <Tooltip title={t('Offer made')}>
@@ -803,7 +806,7 @@ export default function OffersView(props:any){
                                                     </Tooltip>)}
                                                     {(item.amount)} <SolCurrencyIcon sx={{fontSize:"10.5px"}} />
                                                 */}
-                                            </Typography></TableCell>
+                                            </TableCell>
                                             <TableCell align="right">
                                                 <Tooltip title={t('View NFT')}>
                                                     <Button
@@ -831,6 +834,7 @@ export default function OffersView(props:any){
                             ))}
                         </Table>
                     </TableContainer>
+                    <Typography variant="caption">*Displaying from all Metaplex Auction Houses</Typography>
                 </Grid>
             </Box>
             )
@@ -843,45 +847,93 @@ export default function OffersView(props:any){
                     p:2
                 }} 
             > 
-                <Typography variant="caption">*Displaying from the Grape Auction House, for Marketplaces please visit the respective marketplace</Typography>
-                    
                 <Grid 
                     container 
                     direction="row"
                     justifyContent='flex-end'
                     alignContent='flex-end'>
                     
-                    {(publicKey && publicKey.toBase58() === thisPublicKey && ahbalance && (ahbalance > 0.01)) ?
-                        <Box
-                            sx={{
-                                background: 'rgba(0, 0, 0, 0.2)',
-                                borderRadius: '17px',
-                                mt:1,
-                                mb:2,
-                            }}
-                        >
-                            
-                            <Grid 
-                                item
+                    {(publicKey && publicKey.toBase58() === thisPublicKey && ahbalance) ?
+                        <>
+                        {+ahbalance > 1000000 &&
+                            <Box
                                 sx={{
+                                    background: 'rgba(0, 0, 0, 0.2)',
+                                    borderRadius: '17px',
+                                    mt:1,
+                                    mb:1,
+                                    ml:0,
+                                    mr:0
                                 }}
                             >
-                                <Typography variant="caption">
-                                    <Tooltip title={`In the Grape Auction House ${AUCTION_HOUSE_ADDRESS}`}>
-                                        <Button
-                                            size="small"
-                                            variant="text"
-                                            //onClick={() => (myoffers > 0 ? setAlertWithdrawOpen(true) : handleWithdrawOffer(convertSolVal(ahbalance), null, null))}
-                                            sx={{
-                                                borderRadius:'17px'
-                                            }}
-                                        >
-                                            {convertSolVal(ahbalance)} <SolCurrencyIcon sx={{fontSize:"8px", mr:0.5 }} /> <GrapeIcon sx={{fontSize:"22px", mr:0.5, color:'white' }} />
+                                
+                                <BootstrapDialog 
+                                    fullWidth={true}
+                                    maxWidth={"sm"}
+                                    PaperProps={{
+                                        style: {
+                                            background: '#13151C',
+                                            border: '1px solid rgba(255,255,255,0.05)',
+                                            borderTop: '1px solid rgba(255,255,255,0.1)',
+                                            borderRadius: '20px'
+                                        }
+                                    }}
+                                    open={alertwithdrawopen}
+                                    onClose={handleAlertWithdrawClose}
+                                    aria-labelledby="alert-bn-dialog-title"
+                                    aria-describedby="alert-bn-dialog-description"
+                                    >
+                                    <DialogTitle id="alert-bn-dialog-title">
+                                        <Typography>
+                                            {t('CONFIRMATION')}
+                                        </Typography>
+                                    </DialogTitle>
+                                    <DialogContent>
+                                        <DialogContentText id="alert-bn-dialog-description">
+                                        <br />
+                                        <Alert 
+                                            severity="warning" variant="outlined"
+                                            sx={{backgroundColor:'black'}}
+                                            >
+                                                {t('You currently have')} <strong>{myoffers}</strong> {t('standing offer')}{(myoffers > 1 && <>s</>)}, {t('it is recommended that you cancel all standing offers and then attempt to withdraw. If you are unable to cancel then click Withdraw to force cancel from the Grape Auction House')}
+                                                <br/><br/>
+                                                {t('NOTE: By pressing Withdraw you will have to Accept')} <strong>{myoffers}</strong> {t('additional transaction')}{(myoffers > 1 && <>s</>)} {t('with your wallet')}
+                                        </Alert>
+                                        </DialogContentText>
+                                    </DialogContent>
+                                    <DialogActions>
+                                        <Button onClick={handleAlertWithdrawClose}>{t('Cancel')}</Button>
+                                        <Button 
+                                            onClick={() => handleWithdrawOffer(convertSolVal(ahbalance), null, null)}
+                                            autoFocus>
+                                        {t('Withdraw')}
                                         </Button>
-                                    </Tooltip>
-                                </Typography>
-                            </Grid>
-                        </Box>
+                                    </DialogActions>
+                                </BootstrapDialog>
+                                
+                                <Grid 
+                                    item
+                                    sx={{
+                                    }}
+                                >
+                                    <Typography variant="caption">
+                                        <Tooltip title={`In the Grape Auction House ${AUCTION_HOUSE_ADDRESS}`}>
+                                            <Button
+                                                size="small"
+                                                variant="text"
+                                                //onClick={() => (myoffers > 0 ? setAlertWithdrawOpen(true) : handleWithdrawOffer(convertSolVal(ahbalance), null, null))}
+                                                sx={{
+                                                    borderRadius:'17px'
+                                                }}
+                                            >
+                                                {convertSolVal(ahbalance)} <SolCurrencyIcon sx={{fontSize:"8px", mr:0.5 }} /> <GrapeIcon sx={{fontSize:"22px", mr:0.5, color:'white' }} />
+                                            </Button>
+                                        </Tooltip>
+                                    </Typography>
+                                </Grid>
+                            </Box>
+                        }
+                        </>
                     :
                     <Box></Box>
                     }
@@ -902,7 +954,11 @@ export default function OffersView(props:any){
                                             <TableCell  align="right"><Typography variant="caption">
                                             </Typography></TableCell>
                                             <TableCell  align="right"><Typography variant="h6">
-                                                {(item.amount)} <SolCurrencyIcon sx={{fontSize:"10.5px"}} />
+                                                <Tooltip title={`Auction House: ${item.auctionHouse}`}>
+                                                    <Button sx={{color:'white',borderRadius:'24px'}}>
+                                                        <Typography variant="h6">Offer {(item.amount)} <SolCurrencyIcon sx={{fontSize:"12px"}} /></Typography>
+                                                    </Button>
+                                                </Tooltip>
                                             </Typography></TableCell>
                                             <TableCell align="right">
                                                 <Tooltip title={t('View NFT')}>
@@ -966,6 +1022,7 @@ export default function OffersView(props:any){
                             ))}
                         </Table>
                     </TableContainer>
+                    <Typography variant="caption">*Displaying from all Metaplex Auction Houses</Typography>
                 </Grid>
             </Box>
             )

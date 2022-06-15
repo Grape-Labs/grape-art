@@ -1223,12 +1223,14 @@ export function StoreFrontView(this: any, props: any) {
                                 >
                                     <Typography variant="body2" sx={{color:'yellow'}}>
                                         FLOOR/LISTINGS  
+                                        {/*
                                         <Button
                                             onClick={refreshMintStates}
                                             sx={{color:'yellow', borderRadius:'24px'}}
                                         >
                                             <RefreshIcon fontSize="small" />
                                         </Button>
+                                        */}
                                     </Typography>
                                     <Typography variant="subtitle2">
                                         {floorPrice ? `${(floorPrice).toFixed(2)} SOL` : `-`} / {totalListings}
