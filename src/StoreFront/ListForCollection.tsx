@@ -16,7 +16,8 @@ import {
     ListItemText,
     ListItemAvatar,
     Typography,
-    LinearProgress
+    LinearProgress,
+    Hidden
 } from '@mui/material';
 
 import { PreviewView } from "../Preview/Preview";
@@ -304,7 +305,13 @@ export default function ListForCollectionView(props: any){
                         borderRadius:'17px'
                     }}
                 >
-                    {t('Just list it')}
+                    
+                    <Hidden smDown>
+                        {t('Just')}
+                    </Hidden>
+                    <>
+                        {` ${t('list it')}`}
+                    </>
                     <Avatar
                         variant="square"
                         src={logo}

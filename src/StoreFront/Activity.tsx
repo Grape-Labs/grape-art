@@ -22,6 +22,7 @@ import {
     TableRow,
     Tooltip,
     LinearProgress,
+    Hidden,
 } from '@mui/material';
 
 import { PreviewView } from "../Preview/Preview";
@@ -550,10 +551,23 @@ export default function ActivityView(props: any){
                     >
                         {publicKey ?
                             <>
-                            {t('My Activity')}
+                                <>
+                                    {t('My')}
+                                </>
+                                <Hidden smDown>
+                                    {` ${t('Activity')}`}
+                                </Hidden>
                             </>
                         :
-                            <>Connect your wallet</>
+                            <>
+                                <>
+                                    {t('Connect')}
+                                </>
+                                <Hidden smDown>
+                                    {` ${t('your wallet')}`}
+                                </Hidden>
+                            </>
+                   
                         }   
                     </Button>
                 </>
