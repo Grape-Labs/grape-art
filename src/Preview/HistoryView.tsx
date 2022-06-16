@@ -173,6 +173,24 @@ export default function HistoryView(props: any){
         setLoading(false);
     }
 
+    const cancelMEListing = async (sellerPubKey:string,auctionHouseAddress:string,tokenAccount:string,price:any) => {
+        try{
+            let response = null;
+
+            const apiUrl = "https://corsproxy.io/?https://api-devnet.magiceden.dev/v2/instructions/sell_cancel?seller="+sellerPubKey+"&auctionHouseAddress="+auctionHouseAddress+"&tokenMint="+mint+"&tokenAccount="+tokenAccount+"&price="+price+"&sellerReferral=&expiry=-1";
+
+            const resp = await window.fetch(apiUrl, {
+                method: 'GET',
+                redirect: 'follow',
+                //body: JSON.stringify(body),
+                //headers: { "Content-Type": "application/json" },
+            })
+            
+            const json = await resp.json();
+
+        } catch(e){console.log("ERR: "+e)}
+    }
+
     const getHistory = async () => {
         if ((!loading) && (mint)){
             setLoading(true);
@@ -205,27 +223,6 @@ export default function HistoryView(props: any){
                     buyer: item?.buyer, 
                     source: "auctionhouse"});
             }
-
-            /*
-            const offerResults = new Array();
-            const listingResults: any[] = [];
-            for (var item of results){
-                //const mintitem = await getMintFromMetadata(null, item?.metadata);
-                
-                if (!item?.canceledAt){
-                        console.log("item: "+JSON.stringify(item));
-                        if (item.receipt_type==='bid_receipt'){
-                            offerResults.push({buyeraddress: item.bookkeeper.toBase58(), bookkeeper: item.bookkeeper.toBase58(), amount: item.price, price: item.price, mint: mint, isowner: false, createdAt: item.createdAt, cancelledAt: item.canceledAt, timestamp: item.createdAt, blockTime: item.createdAt, state: item?.receipt_type});
-                        } else if (item.receipt_type==='listing_receipt'){
-                            listingResults.push({buyeraddress: item.bookkeeper.toBase58(), bookkeeper: item.bookkeeper.toBase58(), amount: item.price, price: item.price, mint: mint, isowner: false, createdAt: item.createdAt, cancelledAt: item.canceledAt, timestamp: item.createdAt, blockTime: item.createdAt, state: item?.receipt_type});
-                        } else if (item.receipt_type==='cancel_listing_receipt'){
-                            listingResults.push({buyeraddress: item.bookkeeper.toBase58(), bookkeeper: item.bookkeeper.toBase58(), amount: item.price, price: item.price, mint: mint, isowner: false, createdAt: item.createdAt, cancelledAt: item.canceledAt, timestamp: item.createdAt, blockTime: item.createdAt, state: item?.receipt_type});
-                        }
-                }
-            }
-            */
-
-            // fetch also history for ME
 
             try{
                 let response = null;
@@ -263,7 +260,7 @@ export default function HistoryView(props: any){
                         var createdAt = meitem.blockTime;
                         var cancelledAt = null;
                         
-                        console.log("ME: "+JSON.stringify(meitem));
+                        //console.log("ME: "+JSON.stringify(meitem));
                         var purchaeReceipt = null;
                         if (buyer && seller){
                             bookkeeper = buyer;
@@ -284,7 +281,7 @@ export default function HistoryView(props: any){
                         
                         var source = meitem.source;
                         if (source === "magiceden_v2")
-                            source = "Magic-Eden"
+                            source = "MagicEden v2"
                         if ((source === "auctionhouse")||(source === "solanart_ah")){
 
                         } else {
