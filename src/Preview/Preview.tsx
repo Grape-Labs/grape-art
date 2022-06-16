@@ -23,10 +23,6 @@ import { useSnackbar } from 'notistack';
 import { FollowListInfoResp, SearchUserInfoResp, Network } from '../utils/cyberConnect/types';
 import { followListInfoQuery, searchUserInfoQuery } from '../utils/cyberConnect/query';
 
-import { 
-    MARKET_LOGO
-} from '../utils/grapeTools/constants';
-
 import {
     Avatar,
     Chip,
@@ -60,6 +56,7 @@ import {
 
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
 
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import PersonAddOutlinedIcon from '@mui/icons-material/PersonAddOutlined';
 import PersonRemoveOutlinedIcon from '@mui/icons-material/PersonRemoveOutlined';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
@@ -101,6 +98,8 @@ import {
     GRAPE_TREASURY,
     TOKEN_REPORT_AMOUNT,
     GRAPE_COLLECTIONS_DATA,
+    MARKET_LOGO,
+    GRAPE_COLLECTION
 } from '../utils/grapeTools/constants';
 
 import {
@@ -224,12 +223,14 @@ function formatBlockTime(date: string, epoch: boolean, time: boolean){
 
 function GrapeVerified(props:any){
     const [loading, setLoading] = React.useState(false);
+    const [grapeVerified, setGrapeVerified] = React.useState(false);
     const [verifiedState, setVerifiedState] = React.useState(false);
     const [verifiedPK, setVerificationPK] = React.useState(null);
     const [collectionImage, setCollectionImage] = React.useState(null);
-    const [collectionName, setCollectionName] = React.useState(props.symbol);
+    const [collectionName, setCollectionName] = React.useState(props?.symbol);
     const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
-    let updateAuthority = props?.updateAuthority;
+    const verifiedCollection = props.verifiedCollection;
+    let collectionRawData = props?.collectionRawData;
     let grape_verified = -1;
 
     const MD_PUBKEY = METAPLEX_PROGRAM_ID;
@@ -263,43 +264,49 @@ function GrapeVerified(props:any){
 
     React.useEffect(() => { 
         try{
-            if (updateAuthority && !loading){
+            if (collectionRawData && !loading){
                 let verified = false;
                 let verified_creator = false;
 
                 // first stage verification
-                for (var item of updateAuthority.data.creators){
-                    if (item.address === updateAuthority.updateAuthority)
-                        if (item.verified === 1){
-                            // now validate verify_collection in the collection results
-                            verified_creator = true;
-                        }
+                
+                if (collectionRawData?.data?.creators){
+                    for (var item of collectionRawData.data.creators){
+                        console.log("step 1")
+                        if (item.address === collectionRawData.updateAuthority)
+                            if (item.verified === 1){
+                                // now validate verify_collection in the collection results
+                                verified_creator = true;
+                            }
+                    }
                 }
                 // second stage verification
                 if (verified_creator){
-                    if (updateAuthority?.collection?.verified){
-                        if (updateAuthority.collection.verified === 1){
+                    if (collectionRawData?.collection?.verified){
+                        if (collectionRawData.collection.verified === 1){
                             //console.log("updateAuthority: "+JSON.stringify(updateAuthority));
-                            if (ValidateAddress(updateAuthority.collection.key)){
+                            if (ValidateAddress(collectionRawData.collection.key)){
                                 setVerifiedState(true);
                                 if (!collectionImage){
-                                    setVerificationPK(updateAuthority.collection.key)
-                                    getCollectionData(updateAuthority.collection.key);
+                                    setVerificationPK(collectionRawData.collection.key)
+                                    getCollectionData(collectionRawData.collection.key);
                                 }
                             }
                         }
                     }
                 }
 
-                // third stage verification (coming soon)
-                grape_verified = UPDATE_AUTHORITIES.indexOf(updateAuthority);
-                //grape_verified = 1;
-                if (grape_verified > -1){
-
+                // third stage verification
+                // grape_verified = UPDATE_AUTHORITIES.indexOf(collectionRawData);
+                // grape_verified = 1;
+                if (verifiedCollection){
+                    if (verifiedCollection.address === collectionRawData.updateAuthority){
+                        setGrapeVerified(true);
+                    }
                 }
             }
         }catch(e){console.log("ERR: "+e)}
-    }, [updateAuthority]);
+    }, [collectionRawData]);
 
     const { t, i18n } = useTranslation();
 
@@ -314,7 +321,7 @@ function GrapeVerified(props:any){
                     <Avatar 
                         component={Paper} 
                         elevation={4}
-                        alt={updateAuthority.data.symbol}
+                        alt={collectionRawData?.data?.symbol}
                         src={collectionImage}
                         sx={{ width: 20, height: 20, bgcolor: "#222",ml:1}}
                     />
@@ -325,8 +332,36 @@ function GrapeVerified(props:any){
             </Tooltip>
         );
     
-    } else{
-        return <>{collectionName}</>
+    } else if (grapeVerified){
+        return (
+            <Tooltip title={`${verifiedCollection.name}: ${t('Update Authority/Creator Verified by Grape')}`} placement="top">
+                <Button 
+                    component={Link} to={`${GRAPE_COLLECTION}${verifiedCollection.vanityUrl}`}
+                    sx={{color:'white', borderRadius:'24px'}}>
+                    {verifiedCollection.name}
+                    <Avatar 
+                        component={Paper} 
+                        elevation={4}
+                        alt={verifiedCollection.name}
+                        src={GRAPE_COLLECTIONS_DATA+verifiedCollection.logo}
+                        sx={{ width: 20, height: 20, bgcolor: "#222",ml:1}}
+                    />
+                    {grape_verified > -1 &&
+                        <VerifiedIcon sx={{fontSize:"20px",ml:1}} />
+                    }
+                </Button>
+            </Tooltip>
+        );
+    } else {
+        return ( 
+            <>
+                {collectionName || 
+                    <>
+                        Update Authority: {trimAddress(props?.collectionRawData?.updateAuthority,4)} <Tooltip title="Could not verify collection"><Button sx={{borderRadius:'17px'}}><ErrorOutlineIcon fontSize="small" sx={{color:'yellow'}} /></Button></Tooltip>
+                    </>
+                }
+            </>
+        );
     } 
 }
 
@@ -337,6 +372,7 @@ function GalleryItemMeta(props: any) {
     if (viewMode===0)
         mode_margin = 10;
     
+    const verifiedCollection = props.verifiedCollection;
     const collectionrawprimer = props.collectionrawdata.meta_primer || [];
     const collectionrawdata = props.collectionrawdata.meta_final || [];
     const collectionitem = props.collectionitem.collectionmeta || [];
@@ -1365,7 +1401,7 @@ function GalleryItemMeta(props: any) {
 
                                         <Box>
                                             <Typography component="div" variant="subtitle1">
-                                               <GrapeVerified updateAuthority={collectionrawdata} symbol={collectionitem.symbol} />
+                                               <GrapeVerified verifiedCollection={verifiedCollection} collectionRawData={collectionrawdata} symbol={collectionitem.symbol} />
                                             </Typography>
                                             <Typography component="div" variant="h4" sx={{fontWeight:'800'}}>
                                                 <strong>
@@ -1724,6 +1760,7 @@ export function PreviewView(this: any, props: any) {
         const [collectionrawdata, setCollectionRaw] = React.useState(null);
         const [collectionAuctionHouse, setCollectionAuctionHouse] = React.useState(null);
         const [vcLoading, setVcLoading] = React.useState(false);
+        const [verifiedCollection, setVerifiedCollection] = React.useState(null);
         const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
         const { connection } = useConnection();
         const MD_PUBKEY = METAPLEX_PROGRAM_ID;
@@ -1799,10 +1836,12 @@ export function PreviewView(this: any, props: any) {
         const getVerifiedCollection = async () => {
             if (!vcLoading){
                 setVcLoading(true);
-                let [vcFinal] = await Promise.all([fetchVerifiedCollection(collectionrawdata?.meta_final?.updateAuthority)]);
-                if (vcFinal)
+                let vcFinal = await fetchVerifiedCollection(collectionrawdata?.meta_final?.updateAuthority);
+                
+                if (vcFinal){
+                    setVerifiedCollection(vcFinal);
                     setCollectionAuctionHouse(vcFinal?.auctionHouse);
-
+                }
                 setVcLoading(false);
             }
         }
@@ -1822,9 +1861,9 @@ export function PreviewView(this: any, props: any) {
             return () => clearInterval(interval); 
         }, [thismint]);
         
-        if((!collectionmeta)||
+        if((!collectionmeta)||(
             (loading)||
-            (vcLoading)){
+            (vcLoading))){
             
             return (
                 <Card
@@ -1849,7 +1888,7 @@ export function PreviewView(this: any, props: any) {
             //if ((collectionmeta)&&(!loading)){
             //if (image){
                 return (
-                        <GalleryItemMeta collectionitem={collectionmeta} collectionrawdata={collectionrawdata} mint={mint} setRefresh={setRefresh} setMintPubkey={setMintPubkey} collectionAuctionHouse={collectionAuctionHouse} handlekey={handlekey} viewMode={viewMode} />
+                        <GalleryItemMeta verifiedCollection={verifiedCollection} collectionitem={collectionmeta} collectionrawdata={collectionrawdata} mint={mint} setRefresh={setRefresh} setMintPubkey={setMintPubkey} collectionAuctionHouse={collectionAuctionHouse} handlekey={handlekey} viewMode={viewMode} />
                 );
             }
             //}
