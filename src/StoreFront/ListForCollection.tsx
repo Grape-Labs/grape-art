@@ -307,11 +307,11 @@ export default function ListForCollectionView(props: any){
                 >
                     
                     <Hidden smDown>
-                        {t('Just')}
+                        {t('Just list it')}
                     </Hidden>
-                    <>
-                        {` ${t('list it')}`}
-                    </>
+                    <Hidden smUp>
+                        {` ${t('List')}`}
+                    </Hidden>
                     <Avatar
                         variant="square"
                         src={logo}

@@ -671,7 +671,6 @@ export function StoreFrontView(this: any, props: any) {
         
         if (!stateLoading){
             setStateLoading(true);
-
             const results = await getReceiptsFromAuctionHouse(collectionAuthority.auctionHouse || AUCTION_HOUSE_ADDRESS, null, null, null, false);
 
             const ahActivity = new Array();
@@ -713,7 +712,8 @@ export function StoreFrontView(this: any, props: any) {
             
             setAuctionHouseListings(ahActivity);
             
-            for (var mintElement of collectionMintList){
+            const tempCollectionMintList = collectionMintList;
+            for (var mintElement of tempCollectionMintList){
                 mintElement.listingPrice = null;
                 mintElement.listingCancelled = false;
             }
@@ -721,7 +721,7 @@ export function StoreFrontView(this: any, props: any) {
             // we need to remove listing history for those that have been sold
             let thisFloorPrice = null;
             let thisTotalListings = 0;
-            const tempCollectionMintList = collectionMintList;
+            
             for (var listing of ahActivity){
                 let exists = false;
                 let offer_exists = false;
@@ -1099,26 +1099,50 @@ export function StoreFrontView(this: any, props: any) {
                     width:'100%',
                 }}
                 >
-                    <Box
-                        className='grape-store-splash'
-                        sx={{
-                            mt:-16
-                        }}
-                    >
-                        <img
-                            src={GRAPE_COLLECTIONS_DATA+collectionAuthority.splash}
-                            srcSet={GRAPE_COLLECTIONS_DATA+collectionAuthority.splash}
-                            alt={collectionAuthority.name}
-                            loading="lazy"
-                            height="auto"
-                            style={{
-                                width:'100%',
-                                borderBottomRightRadius:'24px',
-                                borderBottomLeftRadius:'24px',
-                                boxShadow:'0px 0px 5px 0px #000000',
+                    <Hidden smDown>
+                        <Box
+                            className='grape-store-splash'
+                            sx={{
+                                mt:-16
                             }}
-                        />
-                    </Box>
+                        >
+                            <img
+                                src={GRAPE_COLLECTIONS_DATA+collectionAuthority.splash}
+                                srcSet={GRAPE_COLLECTIONS_DATA+collectionAuthority.splash}
+                                alt={collectionAuthority.name}
+                                loading="lazy"
+                                height="auto"
+                                style={{
+                                    width:'100%',
+                                    borderBottomRightRadius:'24px',
+                                    borderBottomLeftRadius:'24px',
+                                    boxShadow:'0px 0px 5px 0px #000000',
+                                }}
+                            />
+                        </Box>
+                    </Hidden>
+                    <Hidden smUp>
+                        <Box
+                            className='grape-store-splash'
+                            sx={{
+                                mt:-2
+                            }}
+                        >
+                            <img
+                                src={GRAPE_COLLECTIONS_DATA+collectionAuthority.splash}
+                                srcSet={GRAPE_COLLECTIONS_DATA+collectionAuthority.splash}
+                                alt={collectionAuthority.name}
+                                loading="lazy"
+                                height="auto"
+                                style={{
+                                    width:'100%',
+                                    borderBottomRightRadius:'24px',
+                                    borderBottomLeftRadius:'24px',
+                                    boxShadow:'0px 0px 5px 0px #000000',
+                                }}
+                            />
+                        </Box>
+                    </Hidden>
                     
 
                     <Box
@@ -1126,14 +1150,17 @@ export function StoreFrontView(this: any, props: any) {
                         sx={{
                             m:4,
                             mb:4,
-                            mt:-14,
+                            mt:-1,
                             p:1,
                             textAlign:'center',
                             borderRadius:'24px',
+                            borderTopLeftRadius:'0px',
+                            borderTopRightRadius:'0px',
                             background: 'rgba(0, 0, 0, 0.6)',
                         }}
                     >
 
+                    <Hidden smDown>
                         <img
                             src={GRAPE_COLLECTIONS_DATA+collectionAuthority.logo}
                             srcSet={GRAPE_COLLECTIONS_DATA+collectionAuthority.logo}
@@ -1145,6 +1172,20 @@ export function StoreFrontView(this: any, props: any) {
                                 width:'100px',
                             }}
                         />
+                    </Hidden>
+                    <Hidden smUp>
+                        <img
+                            src={GRAPE_COLLECTIONS_DATA+collectionAuthority.logo}
+                            srcSet={GRAPE_COLLECTIONS_DATA+collectionAuthority.logo}
+                            alt={collectionAuthority.name}
+                            //onClick={ () => openImageViewer(0) }
+                            loading="lazy"
+                            height="auto"
+                            style={{
+                                width:'50px',
+                            }}
+                        />
+                    </Hidden>
 
                         <Box
                             sx={{m:0}}
@@ -1223,14 +1264,14 @@ export function StoreFrontView(this: any, props: any) {
                                 >
                                     <Typography variant="body2" sx={{color:'yellow'}}>
                                         FLOOR/LISTINGS  
-                                        {/*
+                                        
                                         <Button
                                             onClick={refreshMintStates}
                                             sx={{color:'yellow', borderRadius:'24px'}}
                                         >
                                             <RefreshIcon fontSize="small" />
                                         </Button>
-                                        */}
+                                        
                                     </Typography>
                                     <Typography variant="subtitle2">
                                         {floorPrice ? `${(floorPrice).toFixed(2)} SOL` : `-`} / {totalListings}
