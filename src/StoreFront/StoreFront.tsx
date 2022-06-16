@@ -15,7 +15,7 @@ import { Connection, PublicKey, SystemProgram, Transaction, TransactionInstructi
 
 import { useNavigate } from 'react-router';
 import { styled } from '@mui/material/styles';
-import { Button } from '@mui/material';
+import { Button, LinearProgress } from '@mui/material';
 
 import { useSnackbar } from 'notistack';
 
@@ -656,11 +656,11 @@ export function StoreFrontView(this: any, props: any) {
 
     React.useEffect(() => { 
         if (collectionAuthority){
-            console.log("with collectionAuthority: "+JSON.stringify(collectionAuthority));
+            //console.log("with collectionAuthority: "+JSON.stringify(collectionAuthority));
             //if (ValidateAddress(collectionAuthority.address)){
                 if (collectionMintList){
                     getCollectionMeta(0);
-                    console.log("collectionAuthority: "+JSON.stringify(collectionAuthority))
+                    //console.log("collectionAuthority: "+JSON.stringify(collectionAuthority))
                     fetchMintStates(collectionAuthority);
                 }
             //}
@@ -685,7 +685,7 @@ export function StoreFrontView(this: any, props: any) {
                     if (purchaseReceipt){ // do this in order to filter out sold items but show the sale
                         if (purchaseReceipt.toBase58().length <= 0)
                             purchaseReceipt = null; 
-                        console.log("found: "+purchaseReceipt.toBase58().length+": "+purchaseReceipt.toBase58());
+                        //console.log("found: "+purchaseReceipt.toBase58().length+": "+purchaseReceipt.toBase58());
                     }
                     if (!purchaseReceipt){ // push only null receipts
                         ahActivity.push({
@@ -746,16 +746,18 @@ export function StoreFrontView(this: any, props: any) {
                         } else if (listing.state === 'listing_receipt'){
                             if (!listing?.cancelledAt){                                
                                 if (!mintElement?.listingCancelled){
-                                    if ((!mintElement?.listedBlockTime) || (+listing.createdAt > +mintElement?.listedBlockTime)){
+                                    if ((!mintElement?.listedBlockTime) || (+listing.createdAt >= +mintElement?.listedBlockTime)){
+                                        //console.log("listing_receipt 2... "+mintElement?.listedBlockTime+" @"+listing.price);
                                         if (!listing?.purchaseReceipt){
                                             mintElement.listingPrice = +listing.price;
                                             mintElement.listedTimestamp = listing.timestamp;
                                             mintElement.listedBlockTime = listing.blockTime;
                                             thisTotalListings++;
-                                            if (!thisFloorPrice)
+                                            if (!thisFloorPrice){
                                                 thisFloorPrice = +listing.price;
-                                            else if (thisFloorPrice > +listing.price)
+                                            }else if (thisFloorPrice > +listing.price){
                                                 thisFloorPrice = +listing.price;
+                                            }
 
                                         }
                                     }
@@ -763,7 +765,7 @@ export function StoreFrontView(this: any, props: any) {
                             }
                         } else if (listing.state === 'cancel_listing_receipt'){
                             if (!listing?.cancelledAt){
-                                if ((!mintElement?.listedBlockTime) || (+listing.createdAt > +mintElement?.listedBlockTime)){
+                                if ((!mintElement?.listedBlockTime) || (+listing.createdAt >= +mintElement?.listedBlockTime)){
                                     mintElement.listingPrice = 0;
                                     mintElement.listedTimestamp = listing.timestamp;
                                     mintElement.listedBlockTime = listing.blockTime;
@@ -826,8 +828,9 @@ export function StoreFrontView(this: any, props: any) {
             setTotalListings(thisTotalListings);
             setFloorPrice(thisFloorPrice);
 
+            //console.log("items: "+tempCollectionMintList.length)
 
-            console.log("FLOOR: "+thisFloorPrice);
+            //console.log("FLOOR: "+thisFloorPrice);
 
             // check all that do not have an image or name and group them
             const mintsToGet = new Array();
@@ -1265,12 +1268,18 @@ export function StoreFrontView(this: any, props: any) {
                                     <Typography variant="body2" sx={{color:'yellow'}}>
                                         FLOOR/LISTINGS  
                                         
-                                        <Button
-                                            onClick={refreshMintStates}
-                                            sx={{color:'yellow', borderRadius:'24px'}}
-                                        >
-                                            <RefreshIcon fontSize="small" />
-                                        </Button>
+                                        {!stateLoading ?
+                                            <Button
+                                                onClick={refreshMintStates}
+                                                sx={{color:'yellow', borderRadius:'24px',p:0,m:0,ml:1,minWidth:'10px'}}
+                                            >
+                                                <RefreshIcon fontSize="small" sx={{p:0,m:0}} />
+                                            </Button>
+                                        :
+                                            <LinearProgress />
+                                        }
+                                        
+                                            
                                         
                                     </Typography>
                                     <Typography variant="subtitle2">
@@ -1322,7 +1331,7 @@ export function StoreFrontView(this: any, props: any) {
                                 {!stateLoading ?
                                     <ActivityView collectionAuthority={collectionAuthority} collectionMintList={collectionMintList} activity={auctionHouseListings} mode={0} />
                                 :
-                                    <CircularProgress />
+                                    <CircularProgress sx={{color:'yellow',p:'2px'}} />
                                 }
                             </Grid>
                         </Grid>
