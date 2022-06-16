@@ -313,7 +313,7 @@ function GrapeVerified(props:any){
     if (verifiedState){
         
         return (
-            <Tooltip title={`${props.symbol}: ${t('Update Authority/Creator Verified on Metaplex')}`} placement="top">
+            <Tooltip title={grapeVerified ? `${props.symbol}: ${t('Creator Verified on Metaplex & Grape')}` : `${props.symbol}: ${t('Creator Verified on Metaplex')}`} placement="top">
                 <Button 
                     href={`${GRAPE_PREVIEW}${verifiedPK}`}
                     sx={{color:'white', borderRadius:'24px'}}>
@@ -334,7 +334,7 @@ function GrapeVerified(props:any){
     
     } else if (grapeVerified){
         return (
-            <Tooltip title={`${verifiedCollection.name}: ${t('Update Authority/Creator Verified by Grape')}`} placement="top">
+            <Tooltip title={`${verifiedCollection.name}: ${t('Creator Verified on Grape')}`} placement="top">
                 <Button 
                     component={Link} to={`${GRAPE_COLLECTION}${verifiedCollection.vanityUrl}`}
                     sx={{color:'white', borderRadius:'24px'}}>
