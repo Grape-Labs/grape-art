@@ -54,8 +54,22 @@ import {
 //import { mainListItems, secondaryListItems } from './components/SidebarList/SidebarList';
 import grapeTheme from './utils/config/theme';
 //import "./App.less";
-import { GRAPE_RPC_ENDPOINT, TX_RPC_ENDPOINT } from './utils/grapeTools/constants';
-import { DialectUiManagementProvider } from '@dialectlabs/react-ui';
+import { GRAPE_RPC_ENDPOINT, TX_RPC_ENDPOINT, GENSYSGO_RPC_ENDPOINT } from './utils/grapeTools/constants';
+import { BottomChat as DialectBottomChat, DialectUiManagementProvider } from '@dialectlabs/react-ui';
+
+function BottomChat() {
+    const wallet = useWallet();
+
+    return (
+        <DialectBottomChat
+            dialectId="grape-bottom-chat"
+            wallet={wallet}
+            rpcUrl={GENSYSGO_RPC_ENDPOINT}
+            theme="dark"
+            network="mainnet"
+        />
+    );
+}
 
 function Copyright(props: any): JSX.Element {
     const { t, i18n } = useTranslation();
@@ -187,7 +201,7 @@ function DashboardContent() {
 
                                                             <Route path="*" element={<NotFound />} />
                                                         </Routes>
-
+                                                        <BottomChat />
                                                         <Copyright sx={{ mt: 4 }} />
                                                     </Container>
                                                 </Grid>
