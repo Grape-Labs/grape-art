@@ -89,7 +89,3 @@ dist
 
 # React build output
 build
-
-#lock files
-*.lock
-./package-lock.json
