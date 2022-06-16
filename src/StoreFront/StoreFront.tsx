@@ -1128,7 +1128,7 @@ export function StoreFrontView(this: any, props: any) {
                         <Box
                             className='grape-store-splash'
                             sx={{
-                                mt:-2
+                                mt:-4
                             }}
                         >
                             <img

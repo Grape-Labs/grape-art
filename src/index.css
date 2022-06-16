@@ -52,6 +52,7 @@ code {
 .grape-art-header{
   background: none;
   backdrop-filter: blur(12.5px);
+  -webkit-backdrop-filter: blur(12.5px);
 }
 
 .grape-store-splash{
