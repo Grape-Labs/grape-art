@@ -1,9 +1,9 @@
 import STATIC_LOGO from '../../public/grape_white_logo.svg';
 
 export const TX_RPC_ENDPOINT = process.env.REACT_APP_API_TX_RPC_ENDPOINT || 'https://api.mainnet-beta.solana.com';
-export const GRAPE_RPC_ENDPOINT = process.env.REACT_APP_API_GRAPE_RPC_ENDPOINT || 'https://api.mainnet-beta.solana.com';
+export const GRAPE_RPC_ENDPOINT = process.env.REACT_APP_API_GRAPE_RPC_ENDPOINT || 'https://ssc-dao.genesysgo.net/';
 export const GENSYSGO_RPC_ENDPOINT = process.env.REACT_APP_API_GENSYSGO_RPC_ENDPOINT || 'https://ssc-dao.genesysgo.net/';
-export const THEINDEX_RPC_ENDPOINT = process.env.REACT_APP_API_THEINDEX_RPC_ENDPOINT || 'https://api.mainnet-beta.solana.com';
+export const THEINDEX_RPC_ENDPOINT = process.env.REACT_APP_API_THEINDEX_RPC_ENDPOINT || 'https://ssc-dao.genesysgo.net/';
 export const SOFLARE_NOTIFICATIONS_API_KEY = process.env.REACT_APP_API_KEY_SOLFLARE_NOTIFICATIONS || '';
 
 export const GRAPE_PREVIEW = '/preview/';
@@ -28,7 +28,6 @@ export const REPORT_ALERT_THRESHOLD = 1;
 export const TOKEN_REALM_ID = 'By2sVGZXwfQq6rAiAM3rNPJ9iQfb5e2QhnF4YjJ4Bip';
 export const TOKEN_REALM_PROGRAM_ID = 'GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw';
 
-//export const GRAPE_COLLECTIONS_DATA = 'https://raw.githubusercontent.com/Grape-Labs/api.grape.io/main/collections/';
 export const GRAPE_COLLECTIONS_DATA = 'https://shdw-drive.genesysgo.net/6MM7GSocTFnAtwevaeyzj4eB1TSYKwx17cduKXExZAut/';
 
 export const VERIFIED_DAO_ARRAY = [
