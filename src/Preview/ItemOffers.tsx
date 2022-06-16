@@ -1922,7 +1922,7 @@ export default function ItemOffers(props: any) {
                                                                         <>
                                                                         {!ValidateCurve(mintOwner) && salePrice <= 0 &&
                                                                             <Grid item>
-                                                                                <SellNowVotePrompt mint={mint} updateAuthority={updateAuthority} mintOwner={mintOwner} salePrice={salePrice} grapeWeightedScore={grape_weighted_score} RefreshOffers={setRefreshOffers} collectionAuctionHouse={collectionAuctionHouse} />
+                                                                                <SellNowVotePrompt mint={mint} updateAuthority={updateAuthority} mintOwner={mintOwner} salePrice={salePrice} grapeWeightedScore={grape_weighted_score} setRefreshOffers={setRefreshOffers} collectionAuctionHouse={collectionAuctionHouse} />
                                                                             </Grid>
                                                                         }
                                                                         
@@ -1970,7 +1970,7 @@ export default function ItemOffers(props: any) {
                                                             </>
                                                             : 
                                                             <>
-                                                                <SellNowPrompt mint={mint} updateAuthority={updateAuthority} mintOwner={mintOwner} salePrice={salePrice} grapeWeightedScore={grape_weighted_score} RefreshOffers={setRefreshOffers} collectionAuctionHouse={collectionAuctionHouse} />
+                                                                <SellNowPrompt mint={mint} updateAuthority={updateAuthority} mintOwner={mintOwner} salePrice={salePrice} grapeWeightedScore={grape_weighted_score} setRefreshOffers={setRefreshOffers} collectionAuctionHouse={collectionAuctionHouse} />
                                                             </>
                                                         )}
                                                     </Grid>
