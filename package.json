@@ -1,6 +1,6 @@
 {
     "name": "@grape-labs/grape-art",
-    "version": "1.1.283",
+    "version": "1.1.284",
     "author": "Grape devDAO",
     "repository": "https://github.com/grape-labs/grape-art",
     "license": "Apache-2.0",
@@ -60,6 +60,7 @@
         "@testing-library/jest-dom": "^5.16.4",
         "@testing-library/react": "^13.3.0",
         "@types/react-copy-to-clipboard": "^5.0.1",
+        "@types/react-helmet": "^6.1.5",
         "@types/react-router-dom": "^5.1.6",
         "axios": "^0.21.1",
         "bignumber.js": "^9.0.1",

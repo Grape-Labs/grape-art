@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback, memo, Suspense } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
+import { Helmet } from 'react-helmet';
 import { decodeMetadata } from '../utils/grapeTools/utils';
 // @ts-ignore
 import fetch from 'node-fetch';
@@ -1094,250 +1095,272 @@ export function StoreFrontView(this: any, props: any) {
     return (
         <React.Fragment>
             {collectionAuthority &&
-            <Box
-                sx={{
-                    mb:4,
-                    mt:0,
-                    ml:0,
-                    mr:0,
-                    width:'100%',
-                }}
-                >
-                    <Hidden smDown>
-                        <Box
-                            className='grape-store-splash'
-                            sx={{
-                                mt:-16
-                            }}
-                        >
-                            <img
-                                src={GRAPE_COLLECTIONS_DATA+collectionAuthority.splash}
-                                srcSet={GRAPE_COLLECTIONS_DATA+collectionAuthority.splash}
-                                alt={collectionAuthority.name}
-                                loading="lazy"
-                                height="auto"
-                                style={{
-                                    width:'100%',
-                                    borderBottomRightRadius:'24px',
-                                    borderBottomLeftRadius:'24px',
-                                    boxShadow:'0px 0px 5px 0px #000000',
-                                }}
-                            />
-                        </Box>
-                    </Hidden>
-                    <Hidden smUp>
-                        <Box
-                            className='grape-store-splash'
-                            sx={{
-                                mt:-4
-                            }}
-                        >
-                            <img
-                                src={GRAPE_COLLECTIONS_DATA+collectionAuthority.splash}
-                                srcSet={GRAPE_COLLECTIONS_DATA+collectionAuthority.splash}
-                                alt={collectionAuthority.name}
-                                loading="lazy"
-                                height="auto"
-                                style={{
-                                    width:'100%',
-                                    borderBottomRightRadius:'24px',
-                                    borderBottomLeftRadius:'24px',
-                                    boxShadow:'0px 0px 5px 0px #000000',
-                                }}
-                            />
-                        </Box>
-                    </Hidden>
-                    
 
-                    <Box
-                        className='grape-store-info'
-                        sx={{
-                            m:4,
-                            mb:4,
-                            mt:-1,
-                            p:1,
-                            textAlign:'center',
-                            borderRadius:'24px',
-                            borderTopLeftRadius:'0px',
-                            borderTopRightRadius:'0px',
-                            background: 'rgba(0, 0, 0, 0.6)',
-                        }}
+            <>
+                <Helmet>
+                    <title>{`${collectionAuthority.name} | ${t('Grape Social. Stateless. Marketplace.')}`}</title>
+                    <meta property="og:title" content={`${collectionAuthority.name} @Grape`} />
+                    <meta property="og:type" content="website" />
+                    <meta property="og:url" content={window.location.href} />
+                    <meta property="og:image" content={GRAPE_COLLECTIONS_DATA+collectionAuthority.splash.logo} />
+                    <meta property="og:description" content={collectionAuthority.name} />
+                    <meta name="theme-color" content="#000000" />
+
+                    <meta name="twitter:card" content="summary" />
+                    {collectionAuthority.links?.twitter &&
+                        <meta name="twitter:site" content={`${collectionAuthority.links.twitter}`} />
+                    }
+                    <meta name="twitter:title" content={collectionAuthority.name} />
+                    <meta name="twitter:description" content={collectionAuthority.description} />
+                    <meta name="twitter:image" content={GRAPE_COLLECTIONS_DATA+collectionAuthority.splash.logo} />
+                </Helmet>
+            
+
+                <Box
+                    sx={{
+                        mb:4,
+                        mt:0,
+                        ml:0,
+                        mr:0,
+                        width:'100%',
+                    }}
                     >
-
-                    <Hidden smDown>
-                        <img
-                            src={GRAPE_COLLECTIONS_DATA+collectionAuthority.logo}
-                            srcSet={GRAPE_COLLECTIONS_DATA+collectionAuthority.logo}
-                            alt={collectionAuthority.name}
-                            //onClick={ () => openImageViewer(0) }
-                            loading="lazy"
-                            height="auto"
-                            style={{
-                                width:'100px',
-                            }}
-                        />
-                    </Hidden>
-                    <Hidden smUp>
-                        <img
-                            src={GRAPE_COLLECTIONS_DATA+collectionAuthority.logo}
-                            srcSet={GRAPE_COLLECTIONS_DATA+collectionAuthority.logo}
-                            alt={collectionAuthority.name}
-                            //onClick={ () => openImageViewer(0) }
-                            loading="lazy"
-                            height="auto"
-                            style={{
-                                width:'50px',
-                            }}
-                        />
-                    </Hidden>
+                        <Hidden smDown>
+                            <Box
+                                className='grape-store-splash'
+                                sx={{
+                                    mt:-16
+                                }}
+                            >
+                                <img
+                                    src={GRAPE_COLLECTIONS_DATA+collectionAuthority.splash}
+                                    srcSet={GRAPE_COLLECTIONS_DATA+collectionAuthority.splash}
+                                    alt={collectionAuthority.name}
+                                    loading="lazy"
+                                    height="auto"
+                                    style={{
+                                        width:'100%',
+                                        borderBottomRightRadius:'24px',
+                                        borderBottomLeftRadius:'24px',
+                                        boxShadow:'0px 0px 5px 0px #000000',
+                                    }}
+                                />
+                            </Box>
+                        </Hidden>
+                        <Hidden smUp>
+                            <Box
+                                className='grape-store-splash'
+                                sx={{
+                                    mt:-4
+                                }}
+                            >
+                                <img
+                                    src={GRAPE_COLLECTIONS_DATA+collectionAuthority.splash}
+                                    srcSet={GRAPE_COLLECTIONS_DATA+collectionAuthority.splash}
+                                    alt={collectionAuthority.name}
+                                    loading="lazy"
+                                    height="auto"
+                                    style={{
+                                        width:'100%',
+                                        borderBottomRightRadius:'24px',
+                                        borderBottomLeftRadius:'24px',
+                                        boxShadow:'0px 0px 5px 0px #000000',
+                                    }}
+                                />
+                            </Box>
+                        </Hidden>
+                        
 
                         <Box
-                            sx={{m:0}}
+                            className='grape-store-info'
+                            sx={{
+                                m:4,
+                                mb:4,
+                                mt:-1,
+                                p:1,
+                                textAlign:'center',
+                                borderRadius:'24px',
+                                borderTopLeftRadius:'0px',
+                                borderTopRightRadius:'0px',
+                                background: 'rgba(0, 0, 0, 0.6)',
+                            }}
                         >
-                            <Typography variant="h4">
-                                {collectionAuthority.name}
-                            </Typography>
 
-                            <Typography variant="h6">
-                                {collectionAuthority.author}
-                            </Typography>
+                        <Hidden smDown>
+                            <img
+                                src={GRAPE_COLLECTIONS_DATA+collectionAuthority.logo}
+                                srcSet={GRAPE_COLLECTIONS_DATA+collectionAuthority.logo}
+                                alt={collectionAuthority.name}
+                                //onClick={ () => openImageViewer(0) }
+                                loading="lazy"
+                                height="auto"
+                                style={{
+                                    width:'100px',
+                                }}
+                            />
+                        </Hidden>
+                        <Hidden smUp>
+                            <img
+                                src={GRAPE_COLLECTIONS_DATA+collectionAuthority.logo}
+                                srcSet={GRAPE_COLLECTIONS_DATA+collectionAuthority.logo}
+                                alt={collectionAuthority.name}
+                                //onClick={ () => openImageViewer(0) }
+                                loading="lazy"
+                                height="auto"
+                                style={{
+                                    width:'50px',
+                                }}
+                            />
+                        </Hidden>
 
-                            <Typography variant="caption">
-                                {collectionAuthority.description}
-                            </Typography>
+                            <Box
+                                sx={{m:0}}
+                            >
+                                <Typography variant="h4">
+                                    {collectionAuthority.name}
+                                </Typography>
 
-                            <Box sx={{ justifyContent: 'flex-end' }}>
-                                {collectionAuthority.links?.url &&
-                                    <Button 
-                                        target='_blank' href={collectionAuthority.links.url}
-                                        sx={{
-                                            verticalAlign: 'middle',
-                                            display: 'inline-flex',
-                                            borderRadius:'17px'}}
-                                    >
-                                        <LanguageIcon sx={{m:0.75,color:'white',borderRadius:'17px'}} />
-                                    </Button>
-                                }
-                                {collectionAuthority.links?.discord &&
-                                    <Button 
-                                        target='_blank' href={`https://${collectionAuthority.links.discord}`}
-                                        sx={{
-                                        verticalAlign: 'middle',
-                                        display: 'inline-flex',
-                                        borderRadius:'17px'
-                                    }}>
-                                        <DiscordIcon sx={{mt:1,fontSize:27.5,color:'white'}} />
-                                    </Button>
-                                }
-                                {collectionAuthority.links?.twitter &&
-                                    <Button 
-                                        target='_blank' href={`https://twitter.com/${collectionAuthority.links.twitter}`}
-                                        sx={{
+                                <Typography variant="h6">
+                                    {collectionAuthority.author}
+                                </Typography>
+
+                                <Typography variant="caption">
+                                    {collectionAuthority.description}
+                                </Typography>
+
+                                <Box sx={{ justifyContent: 'flex-end' }}>
+                                    {collectionAuthority.links?.url &&
+                                        <Button 
+                                            target='_blank' href={collectionAuthority.links.url}
+                                            sx={{
+                                                verticalAlign: 'middle',
+                                                display: 'inline-flex',
+                                                borderRadius:'17px'}}
+                                        >
+                                            <LanguageIcon sx={{m:0.75,color:'white',borderRadius:'17px'}} />
+                                        </Button>
+                                    }
+                                    {collectionAuthority.links?.discord &&
+                                        <Button 
+                                            target='_blank' href={`https://${collectionAuthority.links.discord}`}
+                                            sx={{
                                             verticalAlign: 'middle',
                                             display: 'inline-flex',
                                             borderRadius:'17px'
-                                        }}
-                                    >
-                                        <TwitterIcon sx={{m:0.75,color:'white'}} />
-                                    </Button>
-                                }
-                                
+                                        }}>
+                                            <DiscordIcon sx={{mt:1,fontSize:27.5,color:'white'}} />
+                                        </Button>
+                                    }
+                                    {collectionAuthority.links?.twitter &&
+                                        <Button 
+                                            target='_blank' href={`https://twitter.com/${collectionAuthority.links.twitter}`}
+                                            sx={{
+                                                verticalAlign: 'middle',
+                                                display: 'inline-flex',
+                                                borderRadius:'17px'
+                                            }}
+                                        >
+                                            <TwitterIcon sx={{m:0.75,color:'white'}} />
+                                        </Button>
+                                    }
+                                    
+                                </Box>
                             </Box>
-                        </Box>
 
-                        <Box
-                            sx={{m:2}}
-                        >
-                            <ListForCollectionView 
-                                logo={GRAPE_COLLECTIONS_DATA+collectionAuthority.logo} 
-                                entangleTo={collectionAuthority.entangleTo} 
-                                entangleFrom={collectionAuthority.entangleFrom} 
-                                entangled={collectionAuthority.entangled} 
-                                enforceEntangle={collectionAuthority.entangleEnforce}
-                                entangleUrl={collectionAuthority.entangleUrl}
-                                collectionAuthority={collectionAuthority}
-                                collectionMintList={collectionMintList}
-                                activity={auctionHouseListings} />
-                        </Box>
-                        
-                        <Grid container spacing={0} sx={{mt:-2}}>
-                            <Grid item xs={12} sm={6} md={3} key={1}>
-                                <Box
-                                    className='grape-store-stat-item'
-                                    sx={{borderRadius:'24px',m:2,p:1}}
-                                >
-                                    <Typography variant="body2" sx={{color:'yellow'}}>
-                                        FLOOR/LISTINGS  
-                                        
-                                        {!stateLoading ?
-                                            <Button
-                                                onClick={refreshMintStates}
-                                                sx={{color:'yellow', borderRadius:'24px',p:0,m:0,ml:1,minWidth:'10px'}}
-                                            >
-                                                <RefreshIcon fontSize="small" sx={{p:0,m:0}} />
-                                            </Button>
-                                        :
-                                            <LinearProgress />
-                                        }
-                                        
-                                            
-                                        
-                                    </Typography>
-                                    <Typography variant="subtitle2">
-                                        {floorPrice ? `${(floorPrice).toFixed(2)} SOL` : `-`} / {totalListings}
-                                    </Typography>
-                                </Box>
-                            </Grid>
-                            <Grid item xs={12} sm={6} md={3} key={1}>
-                                <Box
-                                    className='grape-store-stat-item'
-                                    sx={{borderRadius:'24px',m:2,p:1}}
-                                >
-                                    <Typography variant="body2" sx={{color:'yellow'}}>
-                                        ITEMS
-                                    </Typography>
-                                    <Typography variant="subtitle2">
-                                        {collectionMintList?.length || `${(collectionAuthority.size/1000).toFixed(1)}k`}
-                                    </Typography>
-                                </Box>
-                            </Grid>
-                            <Grid item xs={12} sm={6} md={3} key={1}>
-                            <Tooltip title={collectionAuthority.entangled ? `All time for both collections` : `Unique owners for this collections`}>
-                                <Button 
-                                    variant="text"
-                                    sx={{
-                                        color:'white',
-                                        verticalAlign: 'middle',
-                                        display: 'inline-flex',
-                                        borderRadius:'17px',
-                                        m:0,
-                                        p:0
-                                    }}
-                                >
+                            <Box
+                                sx={{m:2}}
+                            >
+                                <ListForCollectionView 
+                                    logo={GRAPE_COLLECTIONS_DATA+collectionAuthority.logo} 
+                                    entangleTo={collectionAuthority.entangleTo} 
+                                    entangleFrom={collectionAuthority.entangleFrom} 
+                                    entangled={collectionAuthority.entangled} 
+                                    enforceEntangle={collectionAuthority.entangleEnforce}
+                                    entangleUrl={collectionAuthority.entangleUrl}
+                                    collectionAuthority={collectionAuthority}
+                                    collectionMintList={collectionMintList}
+                                    activity={auctionHouseListings} />
+                            </Box>
+                            
+                            <Grid container spacing={0} sx={{mt:-2}}>
+                                <Grid item xs={12} sm={6} md={3} key={1}>
                                     <Box
                                         className='grape-store-stat-item'
                                         sx={{borderRadius:'24px',m:2,p:1}}
                                     >
                                         <Typography variant="body2" sx={{color:'yellow'}}>
-                                            OWNERS
+                                            FLOOR/LISTINGS  
+                                            
+                                            {!stateLoading ?
+                                                <Button
+                                                    onClick={refreshMintStates}
+                                                    sx={{color:'yellow', borderRadius:'24px',p:0,m:0,ml:1,minWidth:'10px'}}
+                                                >
+                                                    <RefreshIcon fontSize="small" sx={{p:0,m:0}} />
+                                                </Button>
+                                            :
+                                                <LinearProgress />
+                                            }
+                                            
+                                                
+                                            
                                         </Typography>
                                         <Typography variant="subtitle2">
-                                            {(collectionAuthority.owners/1000).toFixed(1)}k
+                                            {floorPrice ? `${(floorPrice).toFixed(2)} SOL` : `-`} / {totalListings}
                                         </Typography>
                                     </Box>
-                                </Button>
-                            </Tooltip>
+                                </Grid>
+                                <Grid item xs={12} sm={6} md={3} key={1}>
+                                    <Box
+                                        className='grape-store-stat-item'
+                                        sx={{borderRadius:'24px',m:2,p:1}}
+                                    >
+                                        <Typography variant="body2" sx={{color:'yellow'}}>
+                                            ITEMS
+                                        </Typography>
+                                        <Typography variant="subtitle2">
+                                            {collectionMintList?.length || `${(collectionAuthority.size/1000).toFixed(1)}k`}
+                                        </Typography>
+                                    </Box>
+                                </Grid>
+                                <Grid item xs={12} sm={6} md={3} key={1}>
+                                <Tooltip title={collectionAuthority.entangled ? `All time for both collections` : `Unique owners for this collections`}>
+                                    <Button 
+                                        variant="text"
+                                        sx={{
+                                            color:'white',
+                                            verticalAlign: 'middle',
+                                            display: 'inline-flex',
+                                            borderRadius:'17px',
+                                            m:0,
+                                            p:0
+                                        }}
+                                    >
+                                        <Box
+                                            className='grape-store-stat-item'
+                                            sx={{borderRadius:'24px',m:2,p:1}}
+                                        >
+                                            <Typography variant="body2" sx={{color:'yellow'}}>
+                                                OWNERS
+                                            </Typography>
+                                            <Typography variant="subtitle2">
+                                                {(collectionAuthority.owners/1000).toFixed(1)}k
+                                            </Typography>
+                                        </Box>
+                                    </Button>
+                                </Tooltip>
+                                </Grid>
+                                <Grid item xs={12} sm={6} md={3} key={1}>
+                                    {!stateLoading ?
+                                        <ActivityView collectionAuthority={collectionAuthority} collectionMintList={collectionMintList} activity={auctionHouseListings} mode={0} />
+                                    :
+                                        <CircularProgress sx={{color:'yellow',p:'2px'}} />
+                                    }
+                                </Grid>
                             </Grid>
-                            <Grid item xs={12} sm={6} md={3} key={1}>
-                                {!stateLoading ?
-                                    <ActivityView collectionAuthority={collectionAuthority} collectionMintList={collectionMintList} activity={auctionHouseListings} mode={0} />
-                                :
-                                    <CircularProgress sx={{color:'yellow',p:'2px'}} />
-                                }
-                            </Grid>
-                        </Grid>
-                    </Box>
-            </Box>
+                        </Box>
+                </Box>
+            </>
             }
                 <Box
                     sx={{
