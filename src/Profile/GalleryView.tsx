@@ -231,7 +231,7 @@ export default function GalleryView(props: any){
     };
 
     React.useEffect(() => {
-        if (!initSorting){
+        if (!initSorting && collectionMintList){
             //setScrollData((collectionMintList && collectionMintList?.length > scrollLimit-1) ? collectionMintList.slice(0, scrollLimit) : collectionMintList);
             setInitSorting(true);
             sortMintList(0);
