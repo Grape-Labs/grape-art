@@ -165,7 +165,7 @@ export default function GalleryView(props: any){
             const tmpScrollList = (sortedResults && sortedResults?.length > scrollLimit-1) ? sortedResults.slice(0, scrollLimit) : collectionMintList;
             setScrollData(tmpScrollList);
         } else if (+type === 4){ // by highest offers
-            const sortedResults = collectionMintList.sort((a:any, b:any) => b.highestOffer - a.highestOffer) 
+            const sortedResults = collectionMintList.sort((a:any, b:any) => (b.highestOffer != null ? b.highestOffer : Infinity) - (a.highestOffer != null ? a.highestOffer : Infinity)) 
             //const sortedResults = collectionMintList.sort((a:any, b:any) => (b.highestOffer - a.highestOffer) ? 1 : -1)
             setFoundList(sortedResults);
             const tmpScrollList = (sortedResults && sortedResults?.length > scrollLimit-1) ? sortedResults.slice(0, scrollLimit) : collectionMintList;
