@@ -473,6 +473,7 @@ export function StoreFrontView(this: any, props: any) {
     //const [provider, setProvider] = React.useState(getParam('provider'));
     const [gallery, setGallery] = React.useState(null);
     const [collectionMintList, setCollectionMintList] = React.useState(null);
+    const [fetchedCollectionMintList, setFetchedCollectionMintList] = React.useState(null);
     const [collectionAuthority, setCollectionAuthority] = React.useState(null);
     const [verifiedCollectionArray, setVerifiedCollectionArray] = React.useState(null);
     const [auctionHouseListings, setAuctionHouseListings] = React.useState(null);
@@ -542,7 +543,8 @@ export function StoreFrontView(this: any, props: any) {
               const string = await response.text();
               const json = string === "" ? {} : JSON.parse(string);
               //console.log("::: "+JSON.stringify(json));
-              setCollectionMintList(json);   
+              setFetchedCollectionMintList(json);
+              //setCollectionMintList(json);   
               return json;
             
         } catch(e){console.log("ERR: "+e)}   
@@ -557,7 +559,7 @@ export function StoreFrontView(this: any, props: any) {
     }
 
     const getCollectionData = async (start:number) => {
-        const wallet_collection = collectionMintList;//likeListInfo.likes.list;
+        const wallet_collection = fetchedCollectionMintList;//likeListInfo.likes.list;
         let rpclimit = 100;
         const MD_PUBKEY = METAPLEX_PROGRAM_ID;
         const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
@@ -613,7 +615,7 @@ export function StoreFrontView(this: any, props: any) {
     }
 
     const getCollectionMeta = async (start:number) => {
-        const wallet_collection = collectionMintList;//likeListInfo.likes.list;
+        const wallet_collection = fetchedCollectionMintList;//likeListInfo.likes.list;
         
         
         let tmpcollectionmeta = await getCollectionData(start);
@@ -659,14 +661,14 @@ export function StoreFrontView(this: any, props: any) {
         if (collectionAuthority){
             //console.log("with collectionAuthority: "+JSON.stringify(collectionAuthority));
             //if (ValidateAddress(collectionAuthority.address)){
-                if (collectionMintList){
+                if (fetchedCollectionMintList){
                     getCollectionMeta(0);
                     //console.log("collectionAuthority: "+JSON.stringify(collectionAuthority))
                     fetchMintStates(collectionAuthority);
                 }
             //}
         }
-    }, [collectionMintList, refresh]);
+    }, [fetchedCollectionMintList, refresh]);
 
     const getCollectionStates = async (address:string) => {
         
@@ -678,7 +680,7 @@ export function StoreFrontView(this: any, props: any) {
             const ahListingsMints = new Array();
 
             for (var item of results){
-                const mintitem = await getMintFromVerifiedMetadata(item.metadata.toBase58(), collectionMintList);
+                const mintitem = await getMintFromVerifiedMetadata(item.metadata.toBase58(), fetchedCollectionMintList);
                 //console.log("item: "+JSON.stringify(item));
                 //console.log("mintitem: "+JSON.stringify(mintitem));
                 if (mintitem){
@@ -713,7 +715,7 @@ export function StoreFrontView(this: any, props: any) {
             
             setAuctionHouseListings(ahActivity);
             
-            const tempCollectionMintList = collectionMintList;
+            const tempCollectionMintList = fetchedCollectionMintList;
             for (var mintElement of tempCollectionMintList){
                 mintElement.listingPrice = null;
                 mintElement.listingCancelled = false;
@@ -859,13 +861,12 @@ export function StoreFrontView(this: any, props: any) {
             // now with missing meta populate it to collectionMintList
             //collectionMintList.sort((a:any,b:any) => (+a.listingPrice > +b.listingPrice) ? 1 : -1); // this will sort descending
             
-            const sortedCollectionMintList = tempCollectionMintList.sort((a:any, b:any) => (a.listingPrice != null ? a.listingPrice : Infinity) - (b.listingPrice != null ? b.listingPrice : Infinity)) 
+            //const sortedCollectionMintList = tempCollectionMintList.sort((a:any, b:any) => (a.listingPrice != null ? a.listingPrice : Infinity) - (b.listingPrice != null ? b.listingPrice : Infinity)) 
             
-            setCollectionMintList(sortedCollectionMintList);
-
-            setTimeout(function() {
+            //setTimeout(function() {
+                setCollectionMintList(tempCollectionMintList);
                 setStateLoading(false);                                      
-            }, 500); 
+            //}, 500); 
             
         }
     }

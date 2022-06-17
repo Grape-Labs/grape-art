@@ -86,13 +86,17 @@ export default function GalleryView(props: any){
     const rowsperpage = 1500;
     const mode = props?.mode || 0;
     const collectionAuthority = props?.collectionAuthority || null;
+    //const [collectionMintList, setCollectionMintList] = props?.collectionMintList || null;
     const collectionMintList = props?.collectionMintList || null;
+    const [finalMintList, setFinalMintList] = React.useState(collectionMintList);
     const finalCollection = props?.finalCollection || null;
     const [filterVal, setFilterVal] = React.useState("");
     const isparent = props?.isparent || false;
     const groupbysymbol = props?.groupbysymbol || null;
     //const walletCollection = props.walletCollection;
     const [foundList, setFoundList] = React.useState(null);
+    const [initSorting, setInitSorting] = React.useState(false);
+    const [sortingLoader, setSortingLoader] = React.useState(false);
     const scrollLimit = 20;
 
     // If a gallery item is groupBySymbol > 0
@@ -106,7 +110,6 @@ export default function GalleryView(props: any){
             return listitem.name.toLowerCase().includes(keyword.toLowerCase())
             // Use the toLowerCase() method to make it case-insensitive
           });
-
             setFoundList(results);
             const tmpScrollList = (results && results?.length > 19) ? results.slice(0, 20) : results;
             setScrollData(tmpScrollList);
@@ -120,7 +123,6 @@ export default function GalleryView(props: any){
     };
 
     const handleSortChange = (type:any) => {
-        //const keyword = e.target.value;
         if (type !== '') {
             sortMintList(type);
         } 
@@ -128,6 +130,7 @@ export default function GalleryView(props: any){
 
     function sortMintList(type:number){
         setFilterVal("");
+        setSortingLoader(true);
         if (+type === 0){
             //collectionMintList.sort((a:any,b:any) => (a.listingPrice < b.listingPrice) ? 1 : -1);
             const sortedResults = collectionMintList.sort((a:any, b:any) => (a.listingPrice != null ? a.listingPrice : Infinity) - (b.listingPrice != null ? b.listingPrice : Infinity)) 
@@ -136,20 +139,23 @@ export default function GalleryView(props: any){
             const tmpScrollList = (sortedResults && sortedResults?.length > scrollLimit-1) ? sortedResults.slice(0, scrollLimit) : collectionMintList;
             setScrollData(tmpScrollList);
         } else if (+type === 1){
+            /*
             const results = collectionMintList.filter((listitem:any) => {
                 return listitem?.listingPrice > 0;
             });
+            */
             //const sortedResults = results.sort((a:any, b:any) => (a.listingPrice < b.listingPrice ? 1 : -1));
             const sortedResults = collectionMintList.sort((a:any, b:any) => b.listingPrice - a.listingPrice) 
             setFoundList(sortedResults);
             const tmpScrollList = (sortedResults && sortedResults?.length > scrollLimit-1) ? sortedResults.slice(0, scrollLimit) : collectionMintList;
             setScrollData(tmpScrollList);
         } else if (+type === 2){ // by block time
-            const results = collectionMintList.filter((listitem:any) => {
+            const thisCollectionMintList = collectionMintList;
+            //const results = thisCollectionMintList.filter((listitem:any) => {
                 //return listitem.name.toLowerCase().startsWith(keyword.toLowerCase())
-                return listitem.listedBlockTime > 0;
-            });
-            const sortedResults = results.sort((a:any,b:any) => (b.listedBlockTime != null ? b.listedBlockTime : Infinity) - (a.listedBlockTime != null ? a.listedBlockTime : Infinity));
+            //    return listitem.listedBlockTime > 0;
+            //});
+            const sortedResults = collectionMintList.sort((a:any,b:any) => b.listedBlockTime - a.listedBlockTime)//(b.listedBlockTime != null ? b.listedBlockTime : Infinity) - (a.listedBlockTime != null ? a.listedBlockTime : Infinity));
             setFoundList(sortedResults);
             const tmpScrollList = (sortedResults && sortedResults?.length > scrollLimit-1) ? sortedResults.slice(0, scrollLimit) : collectionMintList;
             setScrollData(tmpScrollList);
@@ -165,18 +171,20 @@ export default function GalleryView(props: any){
             const tmpScrollList = (sortedResults && sortedResults?.length > scrollLimit-1) ? sortedResults.slice(0, scrollLimit) : collectionMintList;
             setScrollData(tmpScrollList);
         } else if (+type === 5){ // by alphabetical
-            const results = collectionMintList.filter((listitem:any) => {
-                return listitem;
-            });
-            const sortedResults = results.sort((a:any,b:any) => (a.name.toLowerCase().trim() > b.name.toLowerCase().trim()) ? 1 : -1);
+            const thisCollectionMintList = collectionMintList;
+            //const results = thisCollectionMintList.filter((listitem:any) => {
+            //    return listitem;
+            //});
+            const sortedResults = collectionMintList.sort((a:any,b:any) => (a.name.toLowerCase().trim() > b.name.toLowerCase().trim()) ? 1 : -1);
             setFoundList(sortedResults);
             const tmpScrollList = (sortedResults && sortedResults?.length > scrollLimit-1) ? sortedResults.slice(0, scrollLimit) : collectionMintList;
             setScrollData(tmpScrollList);
         }
+        setSortingLoader(false);
     }
 
     //const [scrollData, setScrollData] = React.useState(null);
-    const [scrollData, setScrollData] = React.useState((foundList && foundList?.length > scrollLimit-1) ? foundList.slice(0, scrollLimit) : collectionMintList)
+    const [scrollData, setScrollData] = React.useState(null);
     const [hasMoreValue, setHasMoreValue] = React.useState(true);
 
     const loadScrollData = async () => {
@@ -214,27 +222,30 @@ export default function GalleryView(props: any){
     const handleOnRowsScrollProfileEnd = () => {
         if (foundList){
             if (scrollData.length < foundList.length) {
-            setHasMoreProfileValue(true);
-            loadScrollProfileData();
+                setHasMoreProfileValue(true);
+                loadScrollProfileData();
             } else {
-            setHasMoreProfileValue(false);
+                setHasMoreProfileValue(false);
             }
         }
     };
 
     React.useEffect(() => {
-        if (collectionMintList){
+        if (!initSorting){
+            //setScrollData((collectionMintList && collectionMintList?.length > scrollLimit-1) ? collectionMintList.slice(0, scrollLimit) : collectionMintList);
+            setInitSorting(true);
+            sortMintList(0);
             setTimeout(function() {
-                sortMintList(2);
+                setInitSorting(false);
             }, 500);
         } 
-    }, [collectionMintList])
+    }, [finalMintList])
 
     return (
         <>
             {mode === 1 ?
                 <>
-                    {collectionMintList && collectionMintList.length > 0 && (
+                    {!initSorting && !sortingLoader && scrollData && foundList && foundList.length > 0 && (
                         <Box
                             sx={{
                                 background: 'rgba(0, 0, 0, 0.6)',
@@ -242,7 +253,7 @@ export default function GalleryView(props: any){
                                 p:4
                             }} 
                         > 
-
+                        
                             <Grid container 
                                 spacing={{ xs: 1, md: 2 }} 
                                 alignItems="flex-start"
@@ -310,7 +321,7 @@ export default function GalleryView(props: any){
                                         </>
                                     }
                                 </Grid>
-
+                                
                                 <Grid item xs={12} sm={10}>
                                     <InfiniteScroll
                                         dataLength={scrollData.length}
