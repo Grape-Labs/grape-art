@@ -245,7 +245,7 @@ export default function GalleryView(props: any){
         <>
             {mode === 1 ?
                 <>
-                    {!initSorting && !sortingLoader && scrollData && foundList && foundList.length > 0 && (
+                    
                         <Box
                             sx={{
                                 background: 'rgba(0, 0, 0, 0.6)',
@@ -306,7 +306,7 @@ export default function GalleryView(props: any){
                                     </Container>
                                 </Grid>
                             </Grid>
-
+                        {!initSorting && !sortingLoader && scrollData && foundList && foundList.length > 0 && (
                             <Grid container 
                                 spacing={{ xs: 2, md: 3 }} 
                                 alignItems="flex-start"
@@ -355,8 +355,8 @@ export default function GalleryView(props: any){
                                     </InfiniteScroll>
                                 </Grid>
                             </Grid>
+                        )}
                         </Box>
-                    )}
                 </>
             :
                 <>
