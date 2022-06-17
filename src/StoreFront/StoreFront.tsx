@@ -716,6 +716,7 @@ export function StoreFrontView(this: any, props: any) {
             for (var mintElement of tempCollectionMintList){
                 mintElement.listingPrice = null;
                 mintElement.listingCancelled = false;
+                mintElement.highestOffer = 0;
             }
 
             // we need to remove listing history for those that have been sold

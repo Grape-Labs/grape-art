@@ -93,6 +93,7 @@ export default function GalleryView(props: any){
     const groupbysymbol = props?.groupbysymbol || null;
     //const walletCollection = props.walletCollection;
     const [foundList, setFoundList] = React.useState(null);
+    const scrollLimit = 20;
 
     // If a gallery item is groupBySymbol > 0
     // start searching how many are grouped so we can do this as a collective :) 
@@ -132,40 +133,36 @@ export default function GalleryView(props: any){
             const sortedResults = collectionMintList.sort((a:any, b:any) => (a.listingPrice != null ? a.listingPrice : Infinity) - (b.listingPrice != null ? b.listingPrice : Infinity)) 
             //console.log("results: "+JSON.stringify(collectionMintList));
             setFoundList(sortedResults);
-            const tmpScrollList = (sortedResults && sortedResults?.length > 19) ? sortedResults.slice(0, 20) : sortedResults;
+            const tmpScrollList = (sortedResults && sortedResults?.length > scrollLimit-1) ? sortedResults.slice(0, scrollLimit) : collectionMintList;
             setScrollData(tmpScrollList);
         } else if (+type === 1){
             const results = collectionMintList.filter((listitem:any) => {
                 return listitem?.listingPrice > 0;
             });
-            const sortedResults = results.sort((a:any, b:any) => (a.listingPrice < b.listingPrice ? 1 : -1));
+            //const sortedResults = results.sort((a:any, b:any) => (a.listingPrice < b.listingPrice ? 1 : -1));
+            const sortedResults = collectionMintList.sort((a:any, b:any) => b.listingPrice - a.listingPrice) 
             setFoundList(sortedResults);
-            const tmpScrollList = (sortedResults && sortedResults?.length > 19) ? sortedResults.slice(0, 20) : sortedResults;
+            const tmpScrollList = (sortedResults && sortedResults?.length > scrollLimit-1) ? sortedResults.slice(0, scrollLimit) : collectionMintList;
             setScrollData(tmpScrollList);
-        } else if (+type === 2){
+        } else if (+type === 2){ // by block time
             const results = collectionMintList.filter((listitem:any) => {
                 //return listitem.name.toLowerCase().startsWith(keyword.toLowerCase())
                 return listitem.listedBlockTime > 0;
             });
             const sortedResults = results.sort((a:any,b:any) => (b.listedBlockTime != null ? b.listedBlockTime : Infinity) - (a.listedBlockTime != null ? a.listedBlockTime : Infinity));
             setFoundList(sortedResults);
-            const tmpScrollList = (sortedResults && sortedResults?.length > 19) ? sortedResults.slice(0, 20) : sortedResults;
+            const tmpScrollList = (sortedResults && sortedResults?.length > scrollLimit-1) ? sortedResults.slice(0, scrollLimit) : collectionMintList;
             setScrollData(tmpScrollList);
         } else if (+type === 3){ // by offer count
-            const results = collectionMintList.filter((listitem:any) => {
-                return listitem.offerCount > 0;
-            });
-            results.sort((a:any,b:any) => (a.offerCount - b.offerCount) ? 1 : -1);
-            setFoundList(results);
-            const tmpScrollList = (results && results?.length > 19) ? results.slice(0, 20) : results;
+            const sortedResults = collectionMintList.sort((a:any,b:any) => (a.offerCount - b.offerCount) ? 1 : -1);
+            setFoundList(sortedResults);
+            const tmpScrollList = (sortedResults && sortedResults?.length > scrollLimit-1) ? sortedResults.slice(0, scrollLimit) : collectionMintList;
             setScrollData(tmpScrollList);
         } else if (+type === 4){ // by highest offers
-            const results = collectionMintList.filter((listitem:any) => {
-                return listitem.highestOffer > 0;
-            });
-            const sortedResults = results.sort((a:any, b:any) => (b.highestOffer != null ? b.highestOffer : Infinity) - (a.highestOffer != null ? a.highestOffer : Infinity)) 
+            const sortedResults = collectionMintList.sort((a:any, b:any) => b.highestOffer - a.highestOffer) 
+            //const sortedResults = collectionMintList.sort((a:any, b:any) => (b.highestOffer - a.highestOffer) ? 1 : -1)
             setFoundList(sortedResults);
-            const tmpScrollList = (sortedResults && sortedResults?.length > 19) ? sortedResults.slice(0, 20) : sortedResults;
+            const tmpScrollList = (sortedResults && sortedResults?.length > scrollLimit-1) ? sortedResults.slice(0, scrollLimit) : collectionMintList;
             setScrollData(tmpScrollList);
         } else if (+type === 5){ // by alphabetical
             const results = collectionMintList.filter((listitem:any) => {
@@ -173,19 +170,19 @@ export default function GalleryView(props: any){
             });
             const sortedResults = results.sort((a:any,b:any) => (a.name.toLowerCase().trim() > b.name.toLowerCase().trim()) ? 1 : -1);
             setFoundList(sortedResults);
-            const tmpScrollList = (sortedResults && sortedResults?.length > 19) ? sortedResults.slice(0, 20) : sortedResults;
+            const tmpScrollList = (sortedResults && sortedResults?.length > scrollLimit-1) ? sortedResults.slice(0, scrollLimit) : collectionMintList;
             setScrollData(tmpScrollList);
         }
     }
 
     //const [scrollData, setScrollData] = React.useState(null);
-    const [scrollData, setScrollData] = React.useState((foundList && foundList?.length > 19) ? foundList.slice(0, 20) : collectionMintList)
+    const [scrollData, setScrollData] = React.useState((foundList && foundList?.length > scrollLimit-1) ? foundList.slice(0, scrollLimit) : collectionMintList)
     const [hasMoreValue, setHasMoreValue] = React.useState(true);
 
     const loadScrollData = async () => {
         try {
             if (foundList)
-                setScrollData(foundList.slice(0, scrollData.length + 20));
+                setScrollData(foundList.slice(0, scrollData.length + scrollLimit));
         } catch (err) {
             console.log(err);
         }
@@ -208,7 +205,7 @@ export default function GalleryView(props: any){
     const loadScrollProfileData = async () => {
         try {
             if (foundList)
-                setScrollProfileData(foundList.slice(0, scrollData.length + 20));
+                setScrollProfileData(foundList.slice(0, scrollData.length + scrollLimit));
         } catch (err) {
             console.log(err);
         }
@@ -226,10 +223,11 @@ export default function GalleryView(props: any){
     };
 
     React.useEffect(() => {
-        setFoundList(collectionMintList)
-        const tmpScrollList = (collectionMintList && collectionMintList?.length > 19) ? collectionMintList.slice(0, 20) : collectionMintList;
-        setScrollData(tmpScrollList);
-        console.log("REDRAW...");
+        if (collectionMintList){
+            setTimeout(function() {
+                sortMintList(2);
+            }, 500);
+        } 
     }, [collectionMintList])
 
     return (
