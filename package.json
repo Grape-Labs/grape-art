@@ -128,6 +128,7 @@
         "path-browserify": "^1.0.1",
         "prettier": "^2.5.1",
         "querystring-es3": "^0.2.1",
+        "react-snap": "^1.23.0",
         "shx": "^0.3.4",
         "stream-http": "^3.2.0",
         "tslib": "^2.3.1"
