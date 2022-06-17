@@ -321,7 +321,7 @@ function SellNowVotePrompt(props:any){
                             {signedTransaction}
                         </Button>
                     );
-                    enqueueSnackbar(`Sell Now Price Set to ${sell_now_amount} SOL`,{ variant: 'success', action:snackaction });      
+                    enqueueSnackbar(`Sell Now Price Set to ${sell_now_amount} SOL`,{ variant: 'success', action:snackaction });  
                 }
                 const eskey = enqueueSnackbar(`${t('Metadata will be refreshed in a few seconds')}`, {
                     anchorOrigin: {
@@ -464,6 +464,8 @@ function SellNowPrompt(props:any){
     const [open_dialog, setOpenSPDialog] = React.useState(false);
     const [sell_now_amount, setSellNowAmount] = React.useState('');
     const mint = props.mint;  
+    const mintName = props.mintName;
+    const image = props.image;
     const updateAuthority = props.updateAuthority;
     const mintOwner = props.mintOwner;
     const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
@@ -527,8 +529,10 @@ function SellNowPrompt(props:any){
                         {signedTransaction}
                     </Button>
                 );
-                enqueueSnackbar(`${t('Sell Now Price Set to')} ${sell_now_amount} SOL`,{ variant: 'success', action:snackaction });
+                enqueueSnackbar(`${t('Listing set to')} ${sell_now_amount} SOL`,{ variant: 'success', action:snackaction });
                 
+                unicastGrapeSolflareMessage(`Listing Created`, `You have listed ${mintName} for ${sell_now_amount} SOL on grape.art`, image, publicKey.toString(), `https://grape.art${GRAPE_PREVIEW}${mint}`, signedTransaction, collectionAuctionHouse);
+
                 const eskey = enqueueSnackbar(`${t('Metadata will be refreshed in a few seconds')}`, {
                     anchorOrigin: {
                         vertical: 'top',
@@ -1040,7 +1044,8 @@ export default function ItemOffers(props: any) {
                 );
                 enqueueSnackbar(`${t('Listing Cancelled')} `,{ variant: 'success', action:snackaction });
                 //END CANCEL LISTING
-                
+                //unicastGrapeSolflareMessage(`Listing Cancelled`, `Your listing for ${mintName} has been cancelled on grape.art`, image, publicKey.toString(), `https://grape.art${GRAPE_PREVIEW}${mint}`, signedTransaction, collectionAuctionHouse);
+
                 const eskey = enqueueSnackbar(`${t('Metadata will be refreshed in a few seconds')}`, {
                     anchorOrigin: {
                         vertical: 'top',
@@ -1209,6 +1214,8 @@ export default function ItemOffers(props: any) {
             enqueueSnackbar(`${t('Listing Cancelled')} `,{ variant: 'success', action:snackaction });
             //END CANCEL LISTING
             
+            unicastGrapeSolflareMessage(`Listing Cancelled`, `Your listing for ${mintName} has been cancelled on grape.art`, image, publicKey.toString(), `https://grape.art${GRAPE_PREVIEW}${mint}`, signedTransaction, collectionAuctionHouse);
+
             const eskey = enqueueSnackbar(`${t('Metadata will be refreshed in a few seconds')}`, {
                 anchorOrigin: {
                     vertical: 'top',
@@ -1928,7 +1935,7 @@ export default function ItemOffers(props: any) {
                                                                         
                                                                         {(ValidateCurve(mintOwner) || (ValidateDAO(mintOwner))) && (
                                                                             <Grid item>
-                                                                                <OfferPrompt mintName={mintName} mint={mint} updateAuthority={updateAuthority} image={image} mintOwner={mintOwner} setRefreshOffers={setRefreshOffers} solBalance={sol_portfolio_balance} highestOffer={highestOffer} offers={offers} collectionAuctionHouse={collectionAuctionHouse} />
+                                                                                <OfferPrompt mintName={mintName} image={image} mint={mint} updateAuthority={updateAuthority} mintOwner={mintOwner} setRefreshOffers={setRefreshOffers} solBalance={sol_portfolio_balance} highestOffer={highestOffer} offers={offers} collectionAuctionHouse={collectionAuctionHouse} />
                                                                             </Grid>
                                                                         )}
                                                                         </>
@@ -1970,7 +1977,7 @@ export default function ItemOffers(props: any) {
                                                             </>
                                                             : 
                                                             <>
-                                                                <SellNowPrompt mint={mint} updateAuthority={updateAuthority} mintOwner={mintOwner} salePrice={salePrice} grapeWeightedScore={grape_weighted_score} setRefreshOffers={setRefreshOffers} collectionAuctionHouse={collectionAuctionHouse} />
+                                                                <SellNowPrompt mintName={mintName} image={image} mint={mint} updateAuthority={updateAuthority} mintOwner={mintOwner} salePrice={salePrice} grapeWeightedScore={grape_weighted_score} setRefreshOffers={setRefreshOffers} collectionAuctionHouse={collectionAuctionHouse} />
                                                             </>
                                                         )}
                                                     </Grid>
