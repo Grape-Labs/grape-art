@@ -969,6 +969,8 @@ export default function ItemOffers(props: any) {
     const [saleDate, setSaleDate] = React.useState(null);
     const [saleTimeAgo, setSaleTimeAgo] = React.useState(null);
     const [highestOffer, setHighestOffer] = React.useState(0);
+    const [highestOfferAH, setHighestOfferAH] = React.useState(null);
+    const [salePriceAH, setSalePriceAH] = React.useState(null);
     const [openOffers, setOpenOffers] = React.useState(0);
     const [verifiedCollection, setVerifiedCollection] = React.useState(null);
     const [verifiedCollectionLoaded, setVerifiedCollectionLoaded] = React.useState(false);
@@ -1180,11 +1182,11 @@ export default function ItemOffers(props: any) {
         
     }
 
-    const handleCancelListing =  async (salePrice: number) => {
+    const handleCancelListing =  async (price: number, priceAH: string) => {
         try {
             //START CANCEL LISTING
             //const transactionInstr = await cancelListing(salePrice, mint, walletPublicKey.toString(), mintOwner, updateAuthority, collectionAuctionHouse);
-            const transactionInstr = await gah_cancelListing(salePrice, mint, walletPublicKey.toString(), mintOwner, null, null, updateAuthority, collectionAuctionHouse);
+            const transactionInstr = await gah_cancelListing(price, mint, walletPublicKey.toString(), mintOwner, null, null, updateAuthority, priceAH);
             const instructionsArray = [transactionInstr.instructions].flat();        
             const transaction = new Transaction()
             .add(
@@ -1292,11 +1294,11 @@ export default function ItemOffers(props: any) {
         }  
     }
 
-    const handleCancelOffer = async (offerAmount: number) => {
+    const handleCancelOffer = async (offerAmount: number, offerAuctionHouse: string) => {
         try {
             console.log("with updateAuthority/collectionAuctionHouse: "+updateAuthority+" / "+collectionAuctionHouse);
             //const transactionInstr = await cancelOffer(offerAmount, mint, walletPublicKey, mintOwner, updateAuthority, collectionAuctionHouse);
-			const transactionInstr = await gah_cancelOffer(offerAmount, mint, walletPublicKey, mintOwner, updateAuthority, collectionAuctionHouse);
+			const transactionInstr = await gah_cancelOffer(offerAmount, mint, walletPublicKey, mintOwner, updateAuthority, offerAuctionHouse);
             //const transactionInstr = await cancelWithdrawOffer(offerAmount, mint, walletPublicKey, mintOwner, updateAuthority, collectionAuctionHouse);
             const instructionsArray = [transactionInstr.instructions].flat();        
             const transaction = new Transaction()
@@ -1422,7 +1424,8 @@ export default function ItemOffers(props: any) {
                             tradeState: item.tradeState, 
                             purchaseReceipt: item.purchaseReceipt,
                             seller: item.seller,
-                            buyer: item.buyer
+                            buyer: item.buyer,
+                            auctionHouse: item?.auctionHouse.toBase58(), 
                         });
                     }
                 }
@@ -1436,7 +1439,7 @@ export default function ItemOffers(props: any) {
                 let listing_count = 0;
                 let highest_offer = 0;
                 let isCancelled = false;
-
+                let sale_price_marketplace = null;
 
                 for (var offer of allResults){
                     listing_count++
@@ -1459,6 +1462,7 @@ export default function ItemOffers(props: any) {
                                             if (offer.bookkeeper === mintOwner){
                                                 forSale = offer.price;
                                                 forSaleDate = offer.blockTime;
+                                                sale_price_marketplace = offer.auctionHouse;
                                             }
                                         }
                                     }
@@ -1510,7 +1514,7 @@ export default function ItemOffers(props: any) {
                 const finalOfferResults = new Array();
                 
                 let highest_offer_date = null;
-                
+                let highest_offer_marketplace = null;
                 for (var offer of offerResults){
                     if (!offer?.cancelledAt){
                         if (offer.state === 'bid_receipt'){ // exit on first receipt
@@ -1521,6 +1525,7 @@ export default function ItemOffers(props: any) {
                                 if (highest_offer < offer.price){
                                     highest_offer = offer.price;
                                     highest_offer_date = offer.blockTime;
+                                    highest_offer_marketplace = offer.auctionHouse
                                 }
                             //}
                             }
@@ -1529,7 +1534,7 @@ export default function ItemOffers(props: any) {
                 }                
 
                 setHighestOffer(highest_offer);
-                
+                setHighestOfferAH(highest_offer_marketplace);
                 // sort offers by highest offeramount
                 //console.log("offerResults pre: "+JSON.stringify(offerResults));
                 //offerResults.sort((a,b) => (a.blockTime < b.blockTime) ? 1 : -1);
@@ -1544,6 +1549,7 @@ export default function ItemOffers(props: any) {
                 setSalePrice(
                     forSale
                 );
+                setSalePriceAH(sale_price_marketplace);
                     
                 if (forSaleDate){
                     let prettyForSaleDate = moment.unix(+forSaleDate).format("MMMM Do YYYY, h:mm a");
@@ -1807,13 +1813,27 @@ export default function ItemOffers(props: any) {
                                         </Typography>
                                         {( (salePrice > 0) ?
 
-                                                <Tooltip title={`Marketplace fees at 1% - Auction House: ${collectionAuctionHouse || AUCTION_HOUSE_ADDRESS}`}>
-                                                    <Button variant="text" sx={{color:'white',borderRadius:'17px'}}>
-                                                        <Typography component="div" variant="h4" sx={{fontWeight:'800'}}>
-                                                            <strong>{salePrice} <SolCurrencyIcon /></strong>
-                                                        </Typography>
-                                                    </Button>
-                                                </Tooltip>
+                                                <>
+                                                    {salePriceAH === collectionAuctionHouse || salePriceAH === AUCTION_HOUSE_ADDRESS ?
+                                                        <Tooltip title={`Marketplace fees at 1% - Auction House: ${collectionAuctionHouse || AUCTION_HOUSE_ADDRESS}`}>
+                                                            <Button variant="text" sx={{color:'white',borderRadius:'17px'}}>
+                                                                <Typography component="div" variant="h4" sx={{fontWeight:'800'}}>
+                                                                    <strong>{salePrice} <SolCurrencyIcon /></strong>
+                                                                </Typography>
+                                                            </Button>
+                                                        </Tooltip>
+                                                    :
+                                                        <Tooltip title={`Unknown marketplace fees (Not listed in Grape.art) - Auction House: ${salePriceAH}`}>
+                                                            <Button variant="text" sx={{color:'white',borderRadius:'17px'}}>
+                                                                <Typography component="div" variant="h4" sx={{fontWeight:'800'}}>
+                                                                    <strong>{salePrice} <SolCurrencyIcon /></strong>
+                                                                </Typography>
+                                                            </Button>
+                                                        </Tooltip>
+                                                    }
+                                                </>
+
+                                                
                                             
                                             : <></> 
                                         )}
@@ -1868,7 +1888,7 @@ export default function ItemOffers(props: any) {
                                                                                             {t('Amount')}: <strong>{salePrice}<SolCurrencyIcon sx={{ml:1,fontSize:"10px"}} /></strong><br/>
                                                                                             {t('Mint')}: <MakeLinkableAddress addr={mint} trim={0} hasextlink={true} hascopy={false} fontsize={16} /> <br/>
                                                                                             {t('Owner')}: <MakeLinkableAddress addr={mintOwner} trim={0} hasextlink={true} hascopy={false} fontsize={16} /><br/>
-                                                                                            {t('Auction House')}: <MakeLinkableAddress addr={collectionAuctionHouse || AUCTION_HOUSE_ADDRESS} trim={9} hasextlink={true} hascopy={false} fontsize={16} /><br/>
+                                                                                            {t('Auction House')}: <MakeLinkableAddress addr={salePriceAH} trim={9} hasextlink={true} hascopy={false} fontsize={16} /><br/>
                                                                                     
                                                                                             <Typography sx={{textAlign:'center'}}>
                                                                                                 {t('Make sure the above is correct')}<br/>{t('press Accept to proceed')}
@@ -1881,7 +1901,7 @@ export default function ItemOffers(props: any) {
                                                                         <DialogActions>
                                                                             <Button onClick={handleAlertBuyNowClose}>Cancel</Button>
                                                                             <Button 
-                                                                                onClick={() => handleBuyNow(salePrice, collectionAuctionHouse)}
+                                                                                onClick={() => handleBuyNow(salePrice, salePriceAH)}
                                                                                 autoFocus>
                                                                             {t('Accept')}
                                                                             </Button>
@@ -1907,19 +1927,38 @@ export default function ItemOffers(props: any) {
                                                                                     <QrCodeIcon />
                                                                                 </Button>
                                                                                 */}
-                                                                                <Button 
-                                                                                    size="large" 
-                                                                                    variant="contained" 
-                                                                                    value="Buy Now" 
-                                                                                    className="buyNowButton"
-                                                                                    onClick={() => setAlertBuyNowOpen(true)}
-                                                                                    sx={{
-                                                                                        
-                                                                                    }}
-                                                                                >
-                                                                                    <AccountBalanceWalletIcon sx={{mr:1}}/> {t('Buy Now')}
 
-                                                                                </Button>
+                                                                                {salePriceAH === collectionAuctionHouse || salePriceAH === AUCTION_HOUSE_ADDRESS ?
+                                                                                        <Button 
+                                                                                            size="large" 
+                                                                                            variant="contained" 
+                                                                                            value="Buy Now" 
+                                                                                            className="buyNowButton"
+                                                                                            onClick={() => setAlertBuyNowOpen(true)}
+                                                                                            sx={{
+                                                                                                
+                                                                                            }}
+                                                                                        >
+                                                                                            <AccountBalanceWalletIcon sx={{mr:1}}/> {t('Buy Now')}
+
+                                                                                        </Button>
+                                                                                :
+                                                                                    <Tooltip title="This is listed in a third party marketplace not yet supported in Grape.art">
+                                                                                        <Button 
+                                                                                            size="large" 
+                                                                                            variant="contained" 
+                                                                                            value="Buy Now" 
+                                                                                            className="buyNowButton"
+                                                                                            //onClick={() => setAlertBuyNowOpen(true)}
+                                                                                            sx={{
+                                                                                                
+                                                                                            }}
+                                                                                        >
+                                                                                            <AccountBalanceWalletIcon sx={{mr:1}}/> {t('Buy Now')}
+
+                                                                                        </Button> 
+                                                                                    </Tooltip>  
+                                                                                }
                                                                             </>
                                                                         :<></>)}
                                                                     </Grid>
@@ -1962,12 +2001,12 @@ export default function ItemOffers(props: any) {
                                                     <Grid item>
                                                         
                                                         {( (salePrice > 0) ?
-                                                            <>
+                                                            <> 
                                                                 <Button 
                                                                     size="large" 
                                                                     color="error"
                                                                     variant='outlined'
-                                                                    onClick={() => handleCancelListing(salePrice)}
+                                                                    onClick={() => handleCancelListing(salePrice, salePriceAH)}
                                                                     sx={{
                                                                         borderRadius: '10px',
                                                                     }}
@@ -2187,7 +2226,7 @@ export default function ItemOffers(props: any) {
                                                                                 color="error"
                                                                                 variant="text"
                                                                                 //onClick={() => handleWithdrawOffer(convertSolVal(item.offeramount))}
-                                                                                onClick={() => handleCancelOffer((item.price))}
+                                                                                onClick={() => handleCancelOffer(item.price, item.auctionHouse)}
                                                                                 sx={{
                                                                                     borderRadius: '10px',
                                                                                 }}
@@ -2229,7 +2268,7 @@ export default function ItemOffers(props: any) {
                                                                             color="error"
                                                                             variant="text"
                                                                             //onClick={() => handleWithdrawOffer(convertSolVal(item.offeramount))}
-                                                                            onClick={() => handleCancelOffer((item.price))}
+                                                                            onClick={() => handleCancelOffer(item.price, item.auctionHouse)}
                                                                             sx={{
                                                                                 borderRadius: '10px',
                                                                             }}
