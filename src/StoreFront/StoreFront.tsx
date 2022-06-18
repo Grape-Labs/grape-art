@@ -1104,7 +1104,7 @@ export function StoreFrontView(this: any, props: any) {
                     <meta property="og:title" content={`${collectionAuthority.name} Collection on Grape`} />
                     <meta property="og:type" content="website" />
                     <meta property="og:url" content={window.location.href} />
-                    <meta property="og:image" content={GRAPE_COLLECTIONS_DATA+collectionAuthority.splash.logo} />
+                    <meta property="og:image" content={GRAPE_COLLECTIONS_DATA+collectionAuthority.logo} />
                     <meta property="og:description" content={collectionAuthority.name} />
                     <meta name="theme-color" content="#000000" />
 
@@ -1114,7 +1114,7 @@ export function StoreFrontView(this: any, props: any) {
                     }
                     <meta name="twitter:title" content={collectionAuthority.name} />
                     <meta name="twitter:description" content={collectionAuthority.description} />
-                    <meta name="twitter:image" content={GRAPE_COLLECTIONS_DATA+collectionAuthority.splash.logo} />
+                    <meta name="twitter:image" content={GRAPE_COLLECTIONS_DATA+collectionAuthority.logo} />
                 </Helmet>
             
 
