@@ -1,6 +1,6 @@
 {
     "name": "@grape-labs/grape-art",
-    "version": "1.1.289",
+    "version": "1.1.290",
     "author": "Grape devDAO",
     "repository": "https://github.com/grape-labs/grape-art",
     "license": "Apache-2.0",
@@ -152,10 +152,6 @@
         "watcherGlob": "**"
     },
     "reactSnap": {
-        "source": "dist",
-        "minifyHtml": {
-            "collapseWhitespace": false,
-            "removeComments": false
-        }
+        "source": "dist"
     }
 }

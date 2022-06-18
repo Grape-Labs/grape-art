@@ -740,7 +740,8 @@ export function StoreFrontView(this: any, props: any) {
                             timestamp: timeAgo(item.createdAt), 
                             blockTime: item.createdAt, 
                             state: item?.receipt_type, 
-                            purchaseReceipt: purchaseReceipt});
+                            purchaseReceipt: purchaseReceipt,
+                            marketplaceListing:true});
                         ahListingsMints.push(mintitem.address);
                     }
                 }
@@ -792,6 +793,7 @@ export function StoreFrontView(this: any, props: any) {
                                             mintElement.listingPrice = +listing.price;
                                             mintElement.listedTimestamp = listing.timestamp;
                                             mintElement.listedBlockTime = listing.blockTime;
+                                            mintElement.marketplaceListing = true;
                                             thisTotalListings++;
                                             if (!thisFloorPrice){
                                                 thisFloorPrice = +listing.price;
@@ -840,6 +842,7 @@ export function StoreFrontView(this: any, props: any) {
                                         listedBlockTime: listing.blockTime,
                                         name:null,
                                         image:'',
+                                        marketplaceListing: true
                                     })
                                     thisTotalListings++;
                                     if (!thisFloorPrice)
@@ -864,6 +867,59 @@ export function StoreFrontView(this: any, props: any) {
                     }
                 }
             }
+
+            try{
+                let response = null;
+
+                const apiUrl = "https://corsproxy.io/?https://api-mainnet.magiceden.dev/v2/collections/"+collectionAuthority.me_symbol+"/listings?offset=0&limit=20";
+                const resp1 = await window.fetch(apiUrl, {
+                    method: 'GET',
+                    redirect: 'follow',
+                })
+                const json1 = await resp1.json();
+
+                const apiUrl2 = "https://corsproxy.io/?https://api-mainnet.magiceden.dev/v2/collections/"+collectionAuthority.me_symbol+"/listings?offset=20&limit=20";
+                const resp2 = await window.fetch(apiUrl2, {
+                    method: 'GET',
+                    redirect: 'follow',
+                })
+                const json2 = await resp2.json();
+
+                const apiUrl3 = "https://corsproxy.io/?https://api-mainnet.magiceden.dev/v2/collections/"+collectionAuthority.me_symbol+"/listings?offset=40&limit=20";
+                const resp3 = await window.fetch(apiUrl3, {
+                    method: 'GET',
+                    redirect: 'follow',
+                })
+                const json3 = await resp3.json();
+
+                const apiUrl4 = "https://corsproxy.io/?https://api-mainnet.magiceden.dev/v2/collections/"+collectionAuthority.me_symbol+"/listings?offset=60&limit=20";
+                const resp4 = await window.fetch(apiUrl4, {
+                    method: 'GET',
+                    redirect: 'follow',
+                })
+                const json4 = await resp4.json();
+                
+                const json = [...json1,...json2,...json3,json4];
+
+                console.log("JSON: "+JSON.stringify(json))
+
+                try{
+                    let found = false;
+                    for (var item of json){
+                        for (var mintListItem of tempCollectionMintList){
+                            if (mintListItem.address === item.tokenMint){
+                                if (mintListItem.listingPrice === null)
+                                    thisTotalListings++;
+                                mintListItem.listingPrice = item.price;
+                                mintListItem.marketplaceListing = false;
+                            }
+                            
+                        }
+                        if (thisFloorPrice > +item.price)
+                            thisFloorPrice = +item.price;
+                    }
+                }catch(e){console.log("ERR: "+e);}
+            }catch(err){console.log("ERR: "+err)}
             
             setTotalListings(thisTotalListings);
             setFloorPrice(thisFloorPrice);
@@ -1361,7 +1417,7 @@ export function StoreFrontView(this: any, props: any) {
                                             ITEMS
                                         </Typography>
                                         <Typography variant="subtitle2">
-                                            {collectionMintList?.length || `${(collectionAuthority.size/1000).toFixed(1)}k`}
+                                            {collectionMintList?.length || `${(collectionAuthority.size/1000).toFixed(1)}`}
                                         </Typography>
                                     </Box>
                                 </Grid>
