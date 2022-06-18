@@ -484,6 +484,8 @@ export function StoreFrontView(this: any, props: any) {
     const [loading, setLoading] = React.useState(false);
     const [floorPrice, setFloorPrice] = React.useState(0);
     const [totalListings, setTotalListings] = React.useState(0); 
+    const [grapeFloorPrice, setGrapeFloorPrice] = React.useState(0);
+    const [grapeTotalListings, setGrapeTotalListings] = React.useState(0); 
     const [stateLoading, setStateLoading] = React.useState(false);
     const [rdloading, setRDLoading] = React.useState(false);
     const [loadCount, setLoadCount] = React.useState(0);
@@ -867,6 +869,9 @@ export function StoreFrontView(this: any, props: any) {
                     }
                 }
             }
+
+            setGrapeTotalListings(thisTotalListings);
+            setGrapeFloorPrice(thisFloorPrice);
 
             try{
                 let response = null;
@@ -1403,7 +1408,7 @@ export function StoreFrontView(this: any, props: any) {
                                                 
                                             
                                         </Typography>
-                                        <Typography variant="subtitle2">
+                                        <Typography variant="subtitle2" title={`${grapeFloorPrice} SOL floor / ${grapeTotalListings} listings on Grape`}>
                                             {floorPrice ? `${(floorPrice).toFixed(2)} SOL` : `-`} / {totalListings}
                                         </Typography>
                                     </Box>

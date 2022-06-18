@@ -446,7 +446,7 @@ function SellNowVotePrompt(props:any){
             :
             <>
                 <Grid item>
-                    <Tooltip title={t('This NFT is currently owned by a program and may be listed on a marketplace')}>
+                    <Tooltip title={t('This NFT is currently owned by a program and may be listed on a third party marketplace')}>
                         <Button sx={{borderRadius:'10px'}}>
                             <Alert severity="warning" sx={{borderRadius:'10px'}}>
                             {t('LISTED/PROGRAM OWNED NFT')}
