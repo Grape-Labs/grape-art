@@ -5,7 +5,8 @@
     "repository": "https://github.com/grape-labs/grape-art",
     "license": "Apache-2.0",
     "publishConfig": {
-        "access": "public"
+        "access": "public",
+        "registry":"https://github.com/grape-labs/grape-art"
     },
     "files": [
         "src",
@@ -28,7 +29,8 @@
         "fmt": "prettier --write '{*,**/*}.{js,ts,jsx,tsx,json}'",
         "lint": "eslint . && prettier --check '{*,**/*}.{js,ts,jsx,tsx,json}'",
         "lint:fix": "eslint --fix . && yarn fmt",
-        "nuke": "shx rm -rf node_modules yarn.lock"
+        "nuke": "shx rm -rf node_modules yarn.lock",
+        "postbuild": "react-snap"
     },
     "peerDependencies": {
         "react": "^17.0.0 || ^18.0.0"
@@ -132,7 +134,6 @@
         "https-browserify": "^1.0.0",
         "nodemon": "^2.0.7",
         "parcel": "^2.3.1",
-        "parcel-plugin-prerender": "^1.4.1",
         "path-browserify": "^1.0.1",
         "prettier": "^2.5.1",
         "querystring-es3": "^0.2.1",
@@ -140,12 +141,6 @@
         "shx": "^0.3.4",
         "stream-http": "^3.2.0",
         "tslib": "^2.3.1"
-    },
-    "prerender": {
-        "routes": ["/", "/preview", "/profile", "/collection"],
-        "rendererConfig": {
-            "renderAfterDocumentEvent": "prerender-trigger"
-        }
     },
     "resolutions": {
         "@types/react": "17.0.40"
@@ -156,5 +151,8 @@
             "public"
         ],
         "watcherGlob": "**"
+    },
+    "reactSnap" : {
+      "source" : "./dist"
     }
 }

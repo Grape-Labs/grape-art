@@ -902,21 +902,24 @@ function GalleryItemMeta(props: any) {
                 sx={{mt:{mode_margin}}}
             >
                 {viewMode === 0 &&
-                    <Helmet>
-                        <title>{`${collectionitem.name} | ${t('Grape Social. Stateless. Marketplace.')}`}</title>
-                        <meta property="og:title" content={`${collectionitem.name} @Grape`} />
-                        <meta property="og:type" content="website" />
-                        <meta property="og:url" content={window.location.href} />
-                        <meta property="og:image" content={collectionitem.image} />
-                        <meta property="og:description" content={collectionitem.name} />
-                        <meta name="theme-color" content="#000000" />
+                    <>
+                        <Helmet>
+                            <title>{`${collectionitem.name} | ${t('Grape Social. Stateless. Marketplace.')}`}</title>
+                            <meta property="og:title" content={`${collectionitem.name} @Grape`} />
+                            <meta property="og:type" content="website" />
+                            <meta property="og:url" content={window.location.href} />
+                            <meta property="og:image" content={collectionitem.image} />
+                            <meta property="og:description" content={collectionitem.name} />
+                            <meta name="theme-color" content="#000000" />
 
-                        <meta name="twitter:card" content="summary" />
-                        <meta name="twitter:title" content={collectionitem.name} />
-                        <meta name="twitter:description" content={collectionitem.name} />
-                        <meta name="twitter:image" content={collectionitem.image} />
-                    </Helmet>
+                            <meta name="twitter:card" content="summary" />
+                            <meta name="twitter:title" content={collectionitem.name} />
+                            <meta name="twitter:description" content={collectionitem.name} />
+                            <meta name="twitter:image" content={collectionitem.image} />
+                        </Helmet>
+                    </>
                 }
+
 
                 {isViewerOpen && (
                     <ImageViewer
