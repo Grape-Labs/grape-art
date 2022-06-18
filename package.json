@@ -1,6 +1,6 @@
 {
     "name": "@grape-labs/grape-art",
-    "version": "1.1.286",
+    "version": "1.1.288",
     "author": "Grape devDAO",
     "repository": "https://github.com/grape-labs/grape-art",
     "license": "Apache-2.0",
@@ -21,6 +21,8 @@
     ],
     "scripts": {
         "clean": "shx rm -rf dist .parcel-cache",
+        "build:client": "parcel build --public-url ./dist/ src/index.html",
+        "build:server": "parcel build -d dist-server --target node server/index.js",
         "build": "yarn clean && parcel build src/index.html --no-source-maps",
         "start": "yarn clean && parcel src/index.html",
         "fmt": "prettier --write '{*,**/*}.{js,ts,jsx,tsx,json}'",
@@ -82,6 +84,7 @@
         "react-copy-to-clipboard": "^5.0.4",
         "react-dom": "^17.0.2",
         "react-helmet": "^6.1.0",
+        "react-hot-loader": "^4.0.0",
         "react-i18next": "^11.16.1",
         "react-infinite-scroll-component": "^6.1.0",
         "react-jazzicon": "^1.0.3",
@@ -90,6 +93,7 @@
         "react-scripts": "^5.0.1",
         "react-share": "^4.4.0",
         "react-simple-image-viewer": "^1.1.1",
+        "rimraf": "^2.6.2",
         "tweetnacl": "^1.0.3",
         "web-vitals": "^1.1.2",
         "web3modal": "^1.9.5",
@@ -113,8 +117,11 @@
         "@typescript-eslint/eslint-plugin": "^5.27.0",
         "@typescript-eslint/parser": "^5.27.0",
         "autoprefixer": "^10.4.7",
+        "babel-eslint": "^10.1.0",
+        "babel-plugin-dynamic-import-node": "^2.3.3",
         "browserify-zlib": "^0.2.0",
         "concurrently": "^6.1.0",
+        "cross-env": "^7.0.3",
         "crypto-browserify": "^3.12.0",
         "eslint": "^8.15.0",
         "eslint-config-prettier": "^8.5.0",
@@ -125,6 +132,7 @@
         "https-browserify": "^1.0.0",
         "nodemon": "^2.0.7",
         "parcel": "^2.3.1",
+        "parcel-plugin-prerender": "^1.4.1",
         "path-browserify": "^1.0.1",
         "prettier": "^2.5.1",
         "querystring-es3": "^0.2.1",
@@ -132,6 +140,9 @@
         "shx": "^0.3.4",
         "stream-http": "^3.2.0",
         "tslib": "^2.3.1"
+    },
+    "prerender": {
+        "routes": ["/", "/preview", "/profile", "/collection"]
     },
     "resolutions": {
         "@types/react": "17.0.40"

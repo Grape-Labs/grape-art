@@ -1100,7 +1100,8 @@ export function StoreFrontView(this: any, props: any) {
             <>
                 <Helmet>
                     <title>{`${collectionAuthority.name} | ${t('Grape Social. Stateless. Marketplace.')}`}</title>
-                    <meta property="og:title" content={`${collectionAuthority.name} @Grape`} />
+                    <meta name="description" content={collectionAuthority.description} />
+                    <meta property="og:title" content={`${collectionAuthority.name} Collection on Grape`} />
                     <meta property="og:type" content="website" />
                     <meta property="og:url" content={window.location.href} />
                     <meta property="og:image" content={GRAPE_COLLECTIONS_DATA+collectionAuthority.splash.logo} />
