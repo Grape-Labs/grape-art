@@ -153,6 +153,6 @@
         "watcherGlob": "**"
     },
     "reactSnap" : {
-      "source" : "./dist"
+      "source" : "./src"
     }
 }
