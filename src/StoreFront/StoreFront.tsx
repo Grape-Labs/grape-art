@@ -531,6 +531,43 @@ export function StoreFrontView(this: any, props: any) {
         } catch(e){console.log("ERR: "+e)}
     }
 
+    const fetchIndexedMintList = async(address:string) => {
+        const body = {
+            method: "getNFTsByCollection",//"getNFTsByCollection",
+            jsonrpc: "2.0",
+            params: [
+              address
+            ],
+            id: "1",
+        };
+        
+        const response = await window.fetch(THEINDEX_RPC_ENDPOINT, {
+            method: "POST",
+            body: JSON.stringify(body),
+            headers: { "Content-Type": "application/json" },
+        })
+        const json = await response.json();
+        const resultValues = json.result;
+        // transpose values to our format
+        const finalList = new Array()
+        for (var item of resultValues){
+            //console.log("item: "+JSON.stringify(item))
+            finalList.push({
+                address:item.metadata.mint.toString(),
+                name:item.metadata.name,
+                collection:item.metadata.symbol,
+                image:item.metadata.uri.replaceAll(".json",".png"),
+                metadata:item.metadata.pubkey.toString()
+
+            });
+        }
+
+        //console.log("finalList: "+JSON.stringify(finalList))
+        setFetchedCollectionMintList(finalList); 
+
+        return finalList;
+    }
+
     const fetchMintList = async(address:string) => {
         try{
             const url = GRAPE_COLLECTIONS_DATA+address.substring(0,9)+'.json';
@@ -543,7 +580,7 @@ export function StoreFrontView(this: any, props: any) {
               const string = await response.text();
               const json = string === "" ? {} : JSON.parse(string);
               //console.log("::: "+JSON.stringify(json));
-              setFetchedCollectionMintList(json);
+              //setFetchedCollectionMintList(json);
               //setCollectionMintList(json);   
               return json;
             
@@ -562,7 +599,6 @@ export function StoreFrontView(this: any, props: any) {
         const wallet_collection = fetchedCollectionMintList;//likeListInfo.likes.list;
         let rpclimit = 100;
         const MD_PUBKEY = METAPLEX_PROGRAM_ID;
-        const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
         
         try {
             let mintsPDAs = new Array();
@@ -591,7 +627,7 @@ export function StoreFrontView(this: any, props: any) {
                 }
             }
             //console.log("pushed pdas: "+JSON.stringify(mintsPDAs));
-            const metadata = await ggoconnection.getMultipleAccountsInfo(mintsPDAs);
+            const metadata = await ticonnection.getMultipleAccountsInfo(mintsPDAs);
             //console.log("returned: "+JSON.stringify(metadata));
             // LOOP ALL METADATA WE HAVE
             for (var metavalue of metadata){
@@ -906,7 +942,7 @@ export function StoreFrontView(this: any, props: any) {
                 }
 
                 //console.log("pushed pdas: "+JSON.stringify(mintsPDAs));
-                const metadata = await ggoconnection.getMultipleAccountsInfo(mintsPDAs);
+                const metadata = await ticonnection.getMultipleAccountsInfo(mintsPDAs);
                 //console.log("returned: "+JSON.stringify(metadata));
                 // LOOP ALL METADATA WE HAVE
                 const finalData = new Array();
@@ -972,24 +1008,24 @@ export function StoreFrontView(this: any, props: any) {
                 // check if this is a valid address using VERIFIED_COLLECTION_ARRAY
                 // check both .name and .address
                 for (var verified of verifiedCollectionArray){
-                    
                     //console.log("verified checking: "+verified.name.replaceAll(" ", "").toLowerCase() + " vs "+withPubKey.replaceAll(" ", "").toLowerCase());
                     //if (verified.address === mintOwner){
                     if (verified.address === withPubKey){
                         setCollectionAuthority(verified);
                         // get collection mint list
-                        const fml = fetchMintList(verified.address);
+                        //const fml = fetchMintList(verified.address); // BACKUP LIST
+                        const oml = fetchIndexedMintList(verified.collection);
                         break;
                     } else if (verified.name.replaceAll(" ", "").toLowerCase() === (withPubKey.replaceAll(" ", "").toLowerCase())){ // REMOVE SPACES FROM verified.name
                         //console.log("found: "+verified.name);
                         setCollectionAuthority(verified);
                         // get collection mint list
                         console.log("f ADDRESS: "+verified.address)
-                        const fml = fetchMintList(verified.address);
+                        //const fml = fetchMintList(verified.address); // BACKUP LIST
+                        const oml = fetchIndexedMintList(verified.collection);
                         break;
                     }
                 } 
-    
                 // IMPORTANT HANDLE INVALID COLLECTION ENTRY
             }
         }
