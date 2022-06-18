@@ -1013,16 +1013,20 @@ export function StoreFrontView(this: any, props: any) {
                     if (verified.address === withPubKey){
                         setCollectionAuthority(verified);
                         // get collection mint list
-                        //const fml = fetchMintList(verified.address); // BACKUP LIST
-                        const oml = fetchIndexedMintList(verified.collection);
+                        if (verified.collection)
+                            var oml = fetchIndexedMintList(verified.collection);
+                        else 
+                            var fml = fetchMintList(verified.address);
                         break;
                     } else if (verified.name.replaceAll(" ", "").toLowerCase() === (withPubKey.replaceAll(" ", "").toLowerCase())){ // REMOVE SPACES FROM verified.name
                         //console.log("found: "+verified.name);
                         setCollectionAuthority(verified);
                         // get collection mint list
                         console.log("f ADDRESS: "+verified.address)
-                        //const fml = fetchMintList(verified.address); // BACKUP LIST
-                        const oml = fetchIndexedMintList(verified.collection);
+                        if (verified.collection)
+                            var oml = fetchIndexedMintList(verified.collection);
+                        else 
+                            var fml = fetchMintList(verified.address);
                         break;
                     }
                 } 
