@@ -872,7 +872,7 @@ function GalleryItemMeta(props: any) {
             //setTokenOwners(null);
             props.setRefresh(true);
         }
-        if ((mintAta)&&(refreshOwner)){
+        if ((mintAta)||(refreshOwner)){
             console.log("HERE 2")
             getMintOwner();
             fetchTokenAccountOwnerHoldings();
