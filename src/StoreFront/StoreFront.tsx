@@ -764,7 +764,8 @@ export function StoreFrontView(this: any, props: any) {
             // we need to remove listing history for those that have been sold
             let thisFloorPrice = null;
             let thisTotalListings = 0;
-            
+            let crossTotalListings = 0;
+
             for (var listing of ahActivity){
                 let exists = false;
                 let offer_exists = false;
@@ -875,7 +876,6 @@ export function StoreFrontView(this: any, props: any) {
 
             try{
                 let response = null;
-
                 const apiUrl = "https://corsproxy.io/?https://api-mainnet.magiceden.dev/v2/collections/"+collectionAuthority.me_symbol+"/listings?offset=0&limit=20";
                 const resp1 = await window.fetch(apiUrl, {
                     method: 'GET',
@@ -902,23 +902,23 @@ export function StoreFrontView(this: any, props: any) {
                     method: 'GET',
                     redirect: 'follow',
                 })
-                const json4 = await resp4.json();
-                
+                const json4 = await resp4.json();                
                 const json = [...json1,...json2,...json3,json4];
-
-                console.log("JSON: "+JSON.stringify(json))
 
                 try{
                     let found = false;
                     for (var item of json){
                         for (var mintListItem of tempCollectionMintList){
                             if (mintListItem.address === item.tokenMint){
-                                if (mintListItem.listingPrice === null)
+                                if (mintListItem.listingPrice === null){
                                     thisTotalListings++;
+                                } else{
+                                    crossTotalListings++;
+                                }
+                                // no need to check date as this is an escrow check
                                 mintListItem.listingPrice = item.price;
                                 mintListItem.marketplaceListing = false;
                             }
-                            
                         }
                         if (thisFloorPrice > +item.price)
                             thisFloorPrice = +item.price;
@@ -926,6 +926,7 @@ export function StoreFrontView(this: any, props: any) {
                 }catch(e){console.log("ERR: "+e);}
             }catch(err){console.log("ERR: "+err)}
             
+            console.log("Cross Listings: "+crossTotalListings);
             setTotalListings(thisTotalListings);
             setFloorPrice(thisFloorPrice);
 

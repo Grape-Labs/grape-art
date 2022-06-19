@@ -230,7 +230,7 @@ function GrapeVerified(props:any){
     const [collectionName, setCollectionName] = React.useState(props?.symbol);
     const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
     const verifiedCollection = props.verifiedCollection;
-    let collectionRawData = props?.collectionRawData;
+    const [collectionRawData, setCollectionRawData]  = React.useState(props?.collectionRawData);
     let grape_verified = -1;
 
     const MD_PUBKEY = METAPLEX_PROGRAM_ID;
@@ -868,29 +868,34 @@ function GalleryItemMeta(props: any) {
     
     React.useEffect(() => { 
         if (refreshOwner){
+            console.log("HERE 1")
             //setTokenOwners(null);
             props.setRefresh(true);
         }
-        if ((mintAta)||(refreshOwner)){
+        if ((mintAta)&&(refreshOwner)){
+            console.log("HERE 2")
             getMintOwner();
             fetchTokenAccountOwnerHoldings();
         }
         if (refreshOwner){
+            console.log("HERE 3")
             setRefreshOwner(!refreshOwner);
         }
     }, [mintAta, publicKey, refreshOwner]);
     
     React.useEffect(() => { 
-        try{
-            ( collectionitem?.image && 
-                collectionItemImages.push(collectionitem.image)
-            )
-        } catch(e){
-            console.log("ERR: "+e);
-        }
-        
-        if (!tokenOwners){
-            fetchTokenAccountData();
+        if (!mintAta){
+            try{
+                ( collectionitem?.image && 
+                    collectionItemImages.push(collectionitem.image)
+                )
+            } catch(e){
+                console.log("ERR: "+e);
+            }
+            
+            if (!tokenOwners){
+                fetchTokenAccountData();
+            }
         }
     }, [mint]);
 
