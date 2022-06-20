@@ -272,7 +272,6 @@ function GrapeVerified(props:any){
                 
                 if (collectionRawData?.data?.creators){
                     for (var item of collectionRawData.data.creators){
-                        console.log("step 1")
                         if (item.address === collectionRawData.updateAuthority)
                             if (item.verified === 1){
                                 // now validate verify_collection in the collection results
@@ -372,6 +371,8 @@ function GalleryItemMeta(props: any) {
     if (viewMode===0)
         mode_margin = 10;
     
+    const [loadingTokenAccountAccountOwnerHoldings, setLoadingTokenAccountAccountOwnerHoldings] = React.useState(false);
+    const [loadingMintAta, setLoadingMintAta] = React.useState(false);
     const verifiedCollection = props.verifiedCollection;
     const collectionrawprimer = props.collectionrawdata.meta_primer || [];
     const collectionrawdata = props.collectionrawdata.meta_final || [];
@@ -613,12 +614,14 @@ function GalleryItemMeta(props: any) {
     };
 
     const fetchTokenAccountData = async () => {
+        setLoadingMintAta(true);
         let [flargestTokenAccounts] = await Promise.all([GetLargestTokenAccounts()]);
         //console.log("settings setMintAta: "+JSON.stringify(flargestTokenAccounts));
 
         if (+flargestTokenAccounts[0].amount === 1){ // some NFTS are amount > 1
             setMintATA(flargestTokenAccounts[0].address);
         }
+        setLoadingMintAta(false);
     }
 
     const fetchSOLBalance = async () => {
@@ -678,70 +681,72 @@ function GalleryItemMeta(props: any) {
     }, [publicKey]);
 
     const fetchTokenAccountOwnerHoldings = async () => {
-        if (publicKey){ 
-            let [sol_rsp, portfolio_rsp, governance_rsp] = await Promise.all([fetchSOLBalance(), fetchBalances(), getGovernanceBalance()]);
-            //setGrapeWhitelisted(GRAPE_WHITELIST.indexOf(publicKey.toString()));
-            if (sol_rsp){ // use sol calc for balance
-                setSolPortfolioBalance(parseFloat(new TokenAmount(sol_rsp, 9).format()));
-            }
-            try{
-
-                if (governance_rsp?.account?.governingTokenDepositAmount){
-                    setGrapeGovernanceBalance(governance_rsp?.account?.governingTokenDepositAmount);
-                }else{    
-                    setGrapeGovernanceBalance(0);
+        setLoadingTokenAccountAccountOwnerHoldings(true);
+            if (publicKey){ 
+                let [sol_rsp, portfolio_rsp, governance_rsp] = await Promise.all([fetchSOLBalance(), fetchBalances(), getGovernanceBalance()]);
+                //setGrapeWhitelisted(GRAPE_WHITELIST.indexOf(publicKey.toString()));
+                if (sol_rsp){ // use sol calc for balance
+                    setSolPortfolioBalance(parseFloat(new TokenAmount(sol_rsp, 9).format()));
                 }
-            }catch(e){
-                setGrapeGovernanceBalance(0);
-                console.log("ERR: "+e);
-            }
+                try{
 
-            try{
-                setGrapeMemberBalance(0);
-                let final_weighted_score = 0;
-                portfolio_rsp.map((token:any) => {
-                    let mint = token.account.data.parsed.info.mint;
-                    let balance = token.account.data.parsed.info.tokenAmount.uiAmount;
-                    if (mint === '8upjSpvjcdpuzhfR1zriwg5NXkwDruejqNE9WNbPRtyA'){ // check if wallet has sol
-                        if (governance_rsp?.account?.governingTokenDepositAmount){
-                            const total_grape = +balance + (+governance_rsp?.account?.governingTokenDepositAmount)/1000000
-                            setGrapeMemberBalance(total_grape);
-                            if (+total_grape >= 1000){
-                                const weighted_score = total_grape/1000;
-                                if (weighted_score<=0)
-                                    final_weighted_score = 0;
-                                else if (weighted_score<6)
-                                    final_weighted_score = 1; 
-                                else if (weighted_score<25)
-                                    final_weighted_score = 2; 
-                                else if (weighted_score<50)
-                                    final_weighted_score = 3; 
-                                else if (weighted_score>=50)
-                                    final_weighted_score = 4; 
-                                setGrapeWeightedScore(final_weighted_score);
-                            }
-                        } else{
-                            setGrapeMemberBalance(balance);
-                            if (+balance >= 1000){
-                                const weighted_score = +balance/1000;
-                                if (weighted_score<=0)
-                                    final_weighted_score = 0;
-                                else if (weighted_score<6)
-                                    final_weighted_score = 1; 
-                                else if (weighted_score<25)
-                                    final_weighted_score = 2; 
-                                else if (weighted_score<50)
-                                    final_weighted_score = 3; 
-                                else if (weighted_score>=50)
-                                    final_weighted_score = 4; 
-                                setGrapeWeightedScore(final_weighted_score);
+                    if (governance_rsp?.account?.governingTokenDepositAmount){
+                        setGrapeGovernanceBalance(governance_rsp?.account?.governingTokenDepositAmount);
+                    }else{    
+                        setGrapeGovernanceBalance(0);
+                    }
+                }catch(e){
+                    setGrapeGovernanceBalance(0);
+                    console.log("ERR: "+e);
+                }
+
+                try{
+                    setGrapeMemberBalance(0);
+                    let final_weighted_score = 0;
+                    portfolio_rsp.map((token:any) => {
+                        let mint = token.account.data.parsed.info.mint;
+                        let balance = token.account.data.parsed.info.tokenAmount.uiAmount;
+                        if (mint === '8upjSpvjcdpuzhfR1zriwg5NXkwDruejqNE9WNbPRtyA'){ // check if wallet has sol
+                            if (governance_rsp?.account?.governingTokenDepositAmount){
+                                const total_grape = +balance + (+governance_rsp?.account?.governingTokenDepositAmount)/1000000
+                                setGrapeMemberBalance(total_grape);
+                                if (+total_grape >= 1000){
+                                    const weighted_score = total_grape/1000;
+                                    if (weighted_score<=0)
+                                        final_weighted_score = 0;
+                                    else if (weighted_score<6)
+                                        final_weighted_score = 1; 
+                                    else if (weighted_score<25)
+                                        final_weighted_score = 2; 
+                                    else if (weighted_score<50)
+                                        final_weighted_score = 3; 
+                                    else if (weighted_score>=50)
+                                        final_weighted_score = 4; 
+                                    setGrapeWeightedScore(final_weighted_score);
+                                }
+                            } else{
+                                setGrapeMemberBalance(balance);
+                                if (+balance >= 1000){
+                                    const weighted_score = +balance/1000;
+                                    if (weighted_score<=0)
+                                        final_weighted_score = 0;
+                                    else if (weighted_score<6)
+                                        final_weighted_score = 1; 
+                                    else if (weighted_score<25)
+                                        final_weighted_score = 2; 
+                                    else if (weighted_score<50)
+                                        final_weighted_score = 3; 
+                                    else if (weighted_score>=50)
+                                        final_weighted_score = 4; 
+                                    setGrapeWeightedScore(final_weighted_score);
+                                }
                             }
                         }
-                    }
-                });
-            } catch(e){console.log("ERR: "+e);}
-            
-        }
+                    });
+                } catch(e){console.log("ERR: "+e);}
+                
+            }
+        setLoadingTokenAccountAccountOwnerHoldings(false);
     }
 
     const HandleSetAvatar = async () => {
@@ -802,56 +807,56 @@ function GalleryItemMeta(props: any) {
         }
         
         return (
-          <React.Fragment>
-            <Button onClick={handleClickOpenDialog}
-                sx={{borderRadius:'24px',color:'white'}}
-            >
-                <SearchIcon />
-            </Button> 
-             
-            <BootstrapDialog 
-                fullWidth={true}
-                maxWidth={"md"}
-                open={open_dialog} onClose={handleCloseDialog}
-                PaperProps={{
-                    style: {
-                        background: '#13151C',
-                        border: '1px solid rgba(255,255,255,0.05)',
-                        borderTop: '1px solid rgba(255,255,255,0.1)',
-                        borderRadius: '20px'
-                    }
-                    }}
+            <>
+                <Button onClick={handleClickOpenDialog}
+                    sx={{borderRadius:'24px',color:'white'}}
                 >
-                <DialogTitle>
-                    {t('Mint')}
-                </DialogTitle>
-                <form onSubmit={HandleMintAddressSubmit}>
-                    <DialogContent>
-                        <TextField
-                            autoFocus
-                            autoComplete='off'
-                            margin="dense"
-                            id="preview_mint_key"
-                            label={t('Paste a mint address')}
-                            type="text"
-                            fullWidth
-                            variant="standard"
-                            value={mintKey}
-                            onChange={(e) => setInputMintValue(e.target.value)}
-                        />
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={handleCloseDialog}>Cancel</Button>
-                        <Button 
-                            type="submit"
-                            variant="text" 
-                            title="GO">
-                                {t('Go')}
-                        </Button>
-                    </DialogActions>
-                </form>
-            </BootstrapDialog>   
-          </React.Fragment>
+                    <SearchIcon />
+                </Button> 
+                
+                <BootstrapDialog 
+                    fullWidth={true}
+                    maxWidth={"md"}
+                    open={open_dialog} onClose={handleCloseDialog}
+                    PaperProps={{
+                        style: {
+                            background: '#13151C',
+                            border: '1px solid rgba(255,255,255,0.05)',
+                            borderTop: '1px solid rgba(255,255,255,0.1)',
+                            borderRadius: '20px'
+                        }
+                        }}
+                    >
+                    <DialogTitle>
+                        {t('Mint')}
+                    </DialogTitle>
+                    <form onSubmit={HandleMintAddressSubmit}>
+                        <DialogContent>
+                            <TextField
+                                autoFocus
+                                autoComplete='off'
+                                margin="dense"
+                                id="preview_mint_key"
+                                label={t('Paste a mint address')}
+                                type="text"
+                                fullWidth
+                                variant="standard"
+                                value={mintKey}
+                                onChange={(e) => setInputMintValue(e.target.value)}
+                            />
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={handleCloseDialog}>Cancel</Button>
+                            <Button 
+                                type="submit"
+                                variant="text" 
+                                title="GO">
+                                    {t('Go')}
+                            </Button>
+                        </DialogActions>
+                    </form>
+                </BootstrapDialog>   
+            </>
         );
     }
 
@@ -868,33 +873,37 @@ function GalleryItemMeta(props: any) {
     
     React.useEffect(() => { 
         if (refreshOwner){
-            console.log("HERE 1")
             //setTokenOwners(null);
             props.setRefresh(true);
         }
         if ((mintAta)||(refreshOwner)){
-            console.log("HERE 2")
-            getMintOwner();
-            fetchTokenAccountOwnerHoldings();
+            if (!loadingOwner){
+                getMintOwner();
+                if (!loadingTokenAccountAccountOwnerHoldings)
+                    fetchTokenAccountOwnerHoldings();
+            }
         }
         if (refreshOwner){
-            console.log("HERE 3")
             setRefreshOwner(!refreshOwner);
         }
     }, [mintAta, publicKey, refreshOwner]);
     
     React.useEffect(() => { 
-        if (!mintAta){
-            try{
-                ( collectionitem?.image && 
-                    collectionItemImages.push(collectionitem.image)
-                )
-            } catch(e){
-                console.log("ERR: "+e);
-            }
-            
-            if (!tokenOwners){
-                fetchTokenAccountData();
+        if (mint){
+            if (!loadingMintAta){
+                if (!mintAta){
+                    try{
+                        ( collectionitem?.image && 
+                            collectionItemImages.push(collectionitem.image)
+                        )
+                    } catch(e){
+                        console.log("ERR: "+e);
+                    }
+                    
+                    if (!tokenOwners){
+                        fetchTokenAccountData();
+                    }
+                }
             }
         }
     }, [mint]);
@@ -1130,7 +1139,7 @@ function GalleryItemMeta(props: any) {
                                                         aria-label="NFT Meta">
                                                         
                                                         {collectionitem?.attributes ?
-                                                            <React.Fragment>
+                                                            <>
 
                                                                 {collectionitem.attributes?.length  && collectionitem.attributes.length > 0 ? (
                                                                     <></>
@@ -1213,7 +1222,7 @@ function GalleryItemMeta(props: any) {
                                                                     </TableRow>
                                                                 </>
                                                                 }
-                                                            </React.Fragment>
+                                                            </>
                                                         : null }
 
                                                         <TableRow>
@@ -1250,7 +1259,7 @@ function GalleryItemMeta(props: any) {
                                                         : null }
 
                                                         {collectionitem.properties?.creators ?
-                                                            <React.Fragment>
+                                                            <>
                                                                 <TableRow
                                                                     onClick={() => setOpenCreatorCollapse(!open_creator_collapse)}
                                                                 >
@@ -1298,7 +1307,7 @@ function GalleryItemMeta(props: any) {
                                                                         </Collapse>
                                                                     </TableCell>
                                                                 </TableRow>
-                                                            </React.Fragment>
+                                                            </>
                                                         : null }
 
 
@@ -1725,7 +1734,7 @@ export function PreviewView(this: any, props: any) {
     const [refresh, setRefresh] = React.useState(false);
     const {handlekey} = props.handlekey || useParams<{ handlekey: string }>();
     const [searchParams, setSearchParams] = useSearchParams();
-
+    const [counter, setCounter] = React.useState(0);
     const urlParams = searchParams.get("pkey") || searchParams.get("mint") || handlekey;
     
     //const [pubkey, setPubkey] = React.useState(null);
@@ -1757,7 +1766,7 @@ export function PreviewView(this: any, props: any) {
         // Add button next to collection to clear navigation address
         // this should only appear if the user is logged in (has a pubkey from session)
         return (
-            <React.Fragment></React.Fragment>
+            <></>
         );
     }
 
@@ -1896,50 +1905,60 @@ export function PreviewView(this: any, props: any) {
             //console.log("Mint: "+mint);
             //if ((collectionmeta)&&(!loading)){
             //if (image){
-                return (
-                        <GalleryItemMeta viewMode={viewMode} verifiedCollection={verifiedCollection} collectionitem={collectionmeta} collectionrawdata={collectionrawdata} mint={mint} setRefresh={setRefresh} setMintPubkey={setMintPubkey} collectionAuctionHouse={collectionAuctionHouse} handlekey={handlekey} viewMode={viewMode} />
-                );
+                if (!loading){
+                    return (
+                            <GalleryItemMeta viewMode={viewMode} verifiedCollection={verifiedCollection} collectionitem={collectionmeta} collectionrawdata={collectionrawdata} mint={mint} setRefresh={setRefresh} setMintPubkey={setMintPubkey} collectionAuctionHouse={collectionAuctionHouse} handlekey={handlekey} viewMode={viewMode} />
+                    );
+                }
             }
             //}
         }
     }
 
     React.useEffect(() => { 
-        if (refresh)
+        if (refresh){
             setRefresh(!refresh);
-        
+        }
+
         if (!props?.handlekey){
-            if (mint && ValidateAddress(mint)){
-                //props.history.push({
-                history({
-                    pathname: GRAPE_PREVIEW+mint
-                },
-                    { replace: true }
-                );
-            } else {
-                history({
-                    pathname: '/preview'
-                },
-                    { replace: true }
-                );
-            } 
+            setCounter(counter+1);
+            
+            if (mint){
+                if (mint && ValidateAddress(mint)){
+                    // check pathname
+                    if (location.pathname !== GRAPE_PREVIEW+mint){
+                        history({
+                            pathname: GRAPE_PREVIEW+mint
+                        },
+                            { replace: true }
+                        );
+                    }
+                } else {
+                    history({
+                        pathname: '/preview'
+                    },
+                        { replace: true }
+                    );
+                } 
+            }
         }
         
     }, [mint, refresh]);
 
-    if (!mint){
-        if (urlParams?.length > 0){
+    React.useEffect(() => { 
+        
+        if ((urlParams) && (!mint) && (urlParams?.length > 0)){
             setMintPubkey(urlParams);
         }
-    }
+    }, [urlParams]);
 
     const { t, i18n } = useTranslation();
 
     return (
-        <React.Fragment>
+        <>
                 { mint && ValidateAddress(mint) ?
                     <>
-                    {viewMode === 0 ?
+                    {!loading && viewMode === 0 ?
                         <Box
                             sx={{mt:6}}
                         >
@@ -1951,7 +1970,7 @@ export function PreviewView(this: any, props: any) {
                     </>
                 : 
                 <>
-                    <React.Fragment>
+                    <>
                         <Box
                             sx={{ 
                                 p: 1, 
@@ -1999,10 +2018,11 @@ export function PreviewView(this: any, props: any) {
                                     </Grid>
                                 </Grid>
                             </Box>
-                    </React.Fragment>
+                    </>
                 </>
                 }
                 
-        </React.Fragment>
+        </>
     );
+    
 }
