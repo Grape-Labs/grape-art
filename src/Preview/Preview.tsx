@@ -1599,8 +1599,9 @@ function GalleryItemMeta(props: any) {
                                 {tokenOwners?.data.parsed.info.owner &&
                                     <ItemOffers
                                         mintAta={mintAta} 
-                                        updateAuthority={collectionrawdata?.updateAuthority}
+                                        collectionItemData={collectionrawdata}
                                         collectionAuctionHouse={collectionAuctionHouse}
+                                        verifiedCollection={verifiedCollection}
                                         mintOwner={tokenOwners?.data.parsed.info.owner} 
                                         mint={mint} 
                                         mintName={collectionitem.name}

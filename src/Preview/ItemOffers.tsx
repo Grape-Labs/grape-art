@@ -949,8 +949,10 @@ export default function ItemOffers(props: any) {
     const pubkey = props.pubkey || null;
     const mintOwner = props.mintOwner;
     const mintName = props.mintName;
-    const updateAuthority = props.updateAuthority;
+    const collectionItemData = props.collectionItemData;   
+    const updateAuthority = collectionItemData?.updateAuthority;
     const collectionAuctionHouse = props.collectionAuctionHouse;
+    const verifiedCollection = props.verifiedCollection;
     const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
     const { connection } = useConnection();
     const { publicKey, sendTransaction } = useWallet();
@@ -972,7 +974,6 @@ export default function ItemOffers(props: any) {
     const [highestOfferAH, setHighestOfferAH] = React.useState(null);
     const [salePriceAH, setSalePriceAH] = React.useState(null);
     const [openOffers, setOpenOffers] = React.useState(0);
-    const [verifiedCollection, setVerifiedCollection] = React.useState(null);
     const [verifiedCollectionLoaded, setVerifiedCollectionLoaded] = React.useState(false);
     const grape_governance_balance = props.grape_governance_balance;
     const grape_offer_threshhold = props.grape_offer_threshhold;
@@ -1815,7 +1816,7 @@ export default function ItemOffers(props: any) {
 
                                                 <>
                                                     {salePriceAH === collectionAuctionHouse || salePriceAH === AUCTION_HOUSE_ADDRESS ?
-                                                        <Tooltip title={`Marketplace fees at 1% - Auction House: ${collectionAuctionHouse || AUCTION_HOUSE_ADDRESS}`}>
+                                                        <Tooltip title={`Marketplace fees at ${verifiedCollection.rate}% (${+verifiedCollection.shr*100}% got to ${verifiedCollection.author} DAO) - Auction House: ${collectionAuctionHouse || AUCTION_HOUSE_ADDRESS}`}>
                                                             <Button variant="text" sx={{color:'white',borderRadius:'17px'}}>
                                                                 <Typography component="div" variant="h4" sx={{fontWeight:'800'}}>
                                                                     <strong>{salePrice} <SolCurrencyIcon /></strong>

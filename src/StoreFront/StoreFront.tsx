@@ -582,7 +582,7 @@ export function StoreFrontView(this: any, props: any) {
               const string = await response.text();
               const json = string === "" ? {} : JSON.parse(string);
               //console.log("::: "+JSON.stringify(json));
-              //setFetchedCollectionMintList(json);
+              setFetchedCollectionMintList(json);
               //setCollectionMintList(json);   
               return json;
             
@@ -875,55 +875,57 @@ export function StoreFrontView(this: any, props: any) {
             setGrapeFloorPrice(thisFloorPrice);
 
             try{
-                let response = null;
-                const apiUrl = "https://corsproxy.io/?https://api-mainnet.magiceden.dev/v2/collections/"+collectionAuthority.me_symbol+"/listings?offset=0&limit=20";
-                const resp1 = await window.fetch(apiUrl, {
-                    method: 'GET',
-                    redirect: 'follow',
-                })
-                const json1 = await resp1.json();
+                if (collectionAuthority.me_symbol){
+                    let response = null;
+                    const apiUrl = "https://corsproxy.io/?https://api-mainnet.magiceden.dev/v2/collections/"+collectionAuthority.me_symbol+"/listings?offset=0&limit=20";
+                    const resp1 = await window.fetch(apiUrl, {
+                        method: 'GET',
+                        redirect: 'follow',
+                    })
+                    const json1 = await resp1.json();
 
-                const apiUrl2 = "https://corsproxy.io/?https://api-mainnet.magiceden.dev/v2/collections/"+collectionAuthority.me_symbol+"/listings?offset=20&limit=20";
-                const resp2 = await window.fetch(apiUrl2, {
-                    method: 'GET',
-                    redirect: 'follow',
-                })
-                const json2 = await resp2.json();
+                    const apiUrl2 = "https://corsproxy.io/?https://api-mainnet.magiceden.dev/v2/collections/"+collectionAuthority.me_symbol+"/listings?offset=20&limit=20";
+                    const resp2 = await window.fetch(apiUrl2, {
+                        method: 'GET',
+                        redirect: 'follow',
+                    })
+                    const json2 = await resp2.json();
+                    
+                    const apiUrl3 = "https://corsproxy.io/?https://api-mainnet.magiceden.dev/v2/collections/"+collectionAuthority.me_symbol+"/listings?offset=40&limit=20";
+                    const resp3 = await window.fetch(apiUrl3, {
+                        method: 'GET',
+                        redirect: 'follow',
+                    })
+                    const json3 = await resp3.json();
 
-                const apiUrl3 = "https://corsproxy.io/?https://api-mainnet.magiceden.dev/v2/collections/"+collectionAuthority.me_symbol+"/listings?offset=40&limit=20";
-                const resp3 = await window.fetch(apiUrl3, {
-                    method: 'GET',
-                    redirect: 'follow',
-                })
-                const json3 = await resp3.json();
+                    const apiUrl4 = "https://corsproxy.io/?https://api-mainnet.magiceden.dev/v2/collections/"+collectionAuthority.me_symbol+"/listings?offset=60&limit=20";
+                    const resp4 = await window.fetch(apiUrl4, {
+                        method: 'GET',
+                        redirect: 'follow',
+                    })
+                    const json4 = await resp4.json();                
+                    const json = [...json1,...json2,...json3,json4];
 
-                const apiUrl4 = "https://corsproxy.io/?https://api-mainnet.magiceden.dev/v2/collections/"+collectionAuthority.me_symbol+"/listings?offset=60&limit=20";
-                const resp4 = await window.fetch(apiUrl4, {
-                    method: 'GET',
-                    redirect: 'follow',
-                })
-                const json4 = await resp4.json();                
-                const json = [...json1,...json2,...json3,json4];
-
-                try{
-                    let found = false;
-                    for (var item of json){
-                        for (var mintListItem of tempCollectionMintList){
-                            if (mintListItem.address === item.tokenMint){
-                                if (mintListItem.listingPrice === null){
-                                    thisTotalListings++;
-                                } else{
-                                    crossTotalListings++;
+                    try{
+                        let found = false;
+                        for (var item of json){
+                            for (var mintListItem of tempCollectionMintList){
+                                if (mintListItem.address === item.tokenMint){
+                                    if (mintListItem.listingPrice === null){
+                                        thisTotalListings++;
+                                    } else{
+                                        crossTotalListings++;
+                                    }
+                                    // no need to check date as this is an escrow check
+                                    mintListItem.listingPrice = item.price;
+                                    mintListItem.marketplaceListing = false;
                                 }
-                                // no need to check date as this is an escrow check
-                                mintListItem.listingPrice = item.price;
-                                mintListItem.marketplaceListing = false;
                             }
+                            if (thisFloorPrice > +item.price)
+                                thisFloorPrice = +item.price;
                         }
-                        if (thisFloorPrice > +item.price)
-                            thisFloorPrice = +item.price;
-                    }
-                }catch(e){console.log("ERR: "+e);}
+                    }catch(e){console.log("ERR: "+e);}
+                }
             }catch(err){console.log("ERR: "+err)}
             
             console.log("Cross Listings: "+crossTotalListings);

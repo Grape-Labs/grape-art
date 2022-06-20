@@ -264,9 +264,9 @@ import { ConstructionOutlined } from '@mui/icons-material';
     const metadataDecoded: Metadata = decodeMetadata(Buffer.from(metadataObj.data),);
     const nft = metadataDecoded.data;
 
-    console.log("executeSaleInstruction.keys "+JSON.stringify(executeSaleInstruction.keys))
-    console.log("creators "+JSON.stringify(nft.creators))
-    console.log("AuctionHouseProgram.PUBKEY "+AuctionHouseProgram.PUBKEY)
+//    console.log("executeSaleInstruction.keys "+JSON.stringify(executeSaleInstruction.keys))
+//   console.log("creators "+JSON.stringify(nft.creators))
+//    console.log("AuctionHouseProgram.PUBKEY "+AuctionHouseProgram.PUBKEY)
 
 
       txt
