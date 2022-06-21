@@ -567,7 +567,7 @@ function SellNowPrompt(props:any){
                     {verifiedCollection?.shr && verifiedCollection?.shr > 0 &&
                         <>
                             <br/>
-                            {+verifiedCollection.shr*100}% are shared with {verifiedCollection.author} DAO
+                            {+verifiedCollection.shr*100}% is shared with {verifiedCollection.author} DAO
                         </>
                     }
                     <br/>
@@ -1805,7 +1805,7 @@ export default function ItemOffers(props: any) {
                                                         {verifiedCollection?.shr && verifiedCollection?.shr > 0 &&
                                                             <>
                                                                 <br/>
-                                                                {+verifiedCollection.shr*100}% are shared with {verifiedCollection.author} DAO
+                                                                {+verifiedCollection.shr*100}% is shared with {verifiedCollection.author} DAO
                                                             </>
                                                         }
                                                         <br/>
