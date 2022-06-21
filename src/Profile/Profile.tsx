@@ -82,6 +82,8 @@ import SolCurrencyIcon from '../components/static/SolCurrencyIcon';
 import IconButton, { IconButtonProps } from '@mui/material/IconButton';
 import SearchIcon from '@mui/icons-material/Search';
 import CircularProgress from '@mui/material/CircularProgress';
+import Chat from '@mui/icons-material/Chat';
+import Mail from '@mui/icons-material/Mail';
 
 import { MARKET_LOGO } from '../utils/grapeTools/constants';
 
@@ -100,12 +102,12 @@ import OffersView from './OffersView';
 import SocialView from './SocialView';
 import GalleryView from './GalleryView';
 import CurationView from './CurationView';
-import DirectMessageView from '../DirectMessage/DirectMessage';
 import { MakeLinkableAddress, ValidateAddress, trimAddress, timeAgo } from '../utils/grapeTools/WalletAddress'; // global key handling
 
 import { useTranslation } from 'react-i18next';
 import { ChatNavigationHelpers, useDialectUiId } from '@dialectlabs/react-ui';
 import { GRAPE_BOTTOM_CHAT_ID } from '../utils/ui-contants';
+import InboxView from './InboxView';
 
 const StyledTable = styled(Table)(({ theme }) => ({
     '& .MuiTableCell-root': {
@@ -479,10 +481,6 @@ const MainMenu = (props: any) => {
                         <ListItemText primary="Explore" />
                     </ListItemButton>
                 </ListItem>
-
-                <ListItem disablePadding>
-                    <DirectMessageView address={pubkey} />
-                </ListItem>
             </List>
         );
     } else {
@@ -670,6 +668,16 @@ const MainPanel = (props: any) => {
                                         sx={{ color: 'white', minWidth: '25px' }}
                                         {...a11yProps(6)}
                                     />
+                                    <Tab
+                                        icon={
+                                            <Hidden smUp>
+                                                <Mail sx={{ fontSize: '18px' }} />
+                                            </Hidden>
+                                        }
+                                        label={<Hidden smDown>{t('Inbox')}</Hidden>}
+                                        sx={{ color: 'white', minWidth: '25px' }}
+                                        {...a11yProps(7)}
+                                    />
                                 </Tabs>
 
                                 <TabPanel value={tabvalue} index={0}>
@@ -710,6 +718,9 @@ const MainPanel = (props: any) => {
                                 </TabPanel>
                                 <TabPanel value={tabvalue} index={6}>
                                     <CurationView pubkey={thisPublicKey} type={1} />
+                                </TabPanel>
+                                <TabPanel value={tabvalue} index={7}>
+                                    <InboxView />
                                 </TabPanel>
                             </TabActiveProvider>
                         </Box>
@@ -1336,6 +1347,7 @@ const IdentityView = (props: any) => {
                                                                 m: 1,
                                                             }}
                                                         >
+                                                            <Chat sx={{ fontSize: 12, mr: 0.5 }} />
                                                             <Typography
                                                                 component="span"
                                                                 color="#aaa"
