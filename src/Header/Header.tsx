@@ -15,15 +15,6 @@ import Snackbar, { SnackbarOrigin } from '@mui/material/Snackbar';
 
 import { PublicKey } from '@solana/web3.js';
 import { useWallet } from '@solana/wallet-adapter-react';
-import {
-    ChatButton,
-    NotificationsButton,
-    IncomingThemeVariables,
-    defaultVariables,
-    Inbox as DialectInbox,
-    ThemeProvider,
-} from '@dialectlabs/react-ui';
-import { ApiProvider, connected, DialectProvider, useApi } from '@dialectlabs/react';
 
 import { MARKET_LOGO } from '../utils/grapeTools/constants';
 
@@ -253,16 +244,6 @@ export function Header(props: any) {
                     </Tooltip>
                 </Container>
             </Box>
-            <div className="grape-dialect">
-                <ChatButton
-                    dialectId="grape-chat"
-                    wallet={wallet}
-                    network={'mainnet'}
-                    theme={theme}
-                    rpcUrl={GENSYSGO_RPC_ENDPOINT}
-                    bellClassName="grape-chat"
-                />
-            </div>
             <div className="grape-wallet-adapter">
                 <WalletDialogProvider className="grape-wallet-provider">
                     <WalletMultiButton className="grape-wallet-button" />
