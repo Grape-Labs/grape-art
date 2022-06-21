@@ -1411,8 +1411,14 @@ export function StoreFrontView(this: any, props: any) {
                                                 
                                             
                                         </Typography>
-                                        <Typography variant="subtitle2" title={`${grapeFloorPrice} SOL floor / ${grapeTotalListings} listings on Grape`}>
-                                            {floorPrice ? `${(floorPrice).toFixed(2)} SOL` : `-`} / {totalListings}
+                                        <Typography variant="subtitle2">
+                                            <Tooltip title={`${grapeFloorPrice} SOL floor / ${grapeTotalListings} listings on Grape`}>
+                                                <Button
+                                                    sx={{color:'white',m:0,p:0}}
+                                                >
+                                                    {floorPrice ? `${(floorPrice).toFixed(2)} SOL` : `-`} / {totalListings}
+                                                </Button>
+                                            </Tooltip>
                                         </Typography>
                                     </Box>
                                 </Grid>

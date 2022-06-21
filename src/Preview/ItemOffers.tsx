@@ -467,6 +467,7 @@ function SellNowPrompt(props:any){
     const mintName = props.mintName;
     const image = props.image;
     const updateAuthority = props.updateAuthority;
+    const verifiedCollection = props.verifiedCollection;
     const mintOwner = props.mintOwner;
     const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
     const { connection } = useConnection();
@@ -560,15 +561,29 @@ function SellNowPrompt(props:any){
 
     return (
         <React.Fragment>
-            <Button 
-                size="large" 
-                variant="outlined" 
-                sx={{
-                    borderRadius: '10px',
-                }}
-                value="Sell Now" onClick={handleClickOpenDialog}>
-                <AccountBalanceWalletIcon sx={{mr:1}}/> {t('Sell Now')}
-            </Button>            
+            <Tooltip title={
+                <React.Fragment>
+                    Marketplace fees at {verifiedCollection?.rate || 1}%
+                    {verifiedCollection?.shr && verifiedCollection?.shr > 0 &&
+                        <>
+                            <br/>
+                            {+verifiedCollection.shr*100}% are shared with {verifiedCollection.author} DAO
+                        </>
+                    }
+                    <br/>
+                    Auction House: {collectionAuctionHouse || AUCTION_HOUSE_ADDRESS}
+                </React.Fragment>}
+            >
+                <Button 
+                    size="large" 
+                    variant="outlined" 
+                    sx={{
+                        borderRadius: '10px',
+                    }}
+                    value="Sell Now" onClick={handleClickOpenDialog}>
+                    <AccountBalanceWalletIcon sx={{mr:1}}/> {t('Sell Now')}
+                </Button>     
+            </Tooltip>       
             <BootstrapDialog 
                 fullWidth={true}
                 maxWidth={"sm"}
@@ -1784,9 +1799,25 @@ export default function ItemOffers(props: any) {
                                             <Typography component="div" variant="caption" id="grape-art-last-sale"></Typography>
                                         </Typography>
                                         {( (salePrice > 0) ?
-                                            <Typography component="div" variant="h4" sx={{fontWeight:'800'}}>
-                                                <strong>{salePrice} <SolCurrencyIcon /></strong>
-                                            </Typography>
+                                                <Tooltip title={
+                                                    <React.Fragment>
+                                                        Marketplace fees at {verifiedCollection?.rate || 1}%
+                                                        {verifiedCollection?.shr && verifiedCollection?.shr > 0 &&
+                                                            <>
+                                                                <br/>
+                                                                {+verifiedCollection.shr*100}% are shared with {verifiedCollection.author} DAO
+                                                            </>
+                                                        }
+                                                        <br/>
+                                                        Auction House: {collectionAuctionHouse || AUCTION_HOUSE_ADDRESS}
+                                                    </React.Fragment>}
+                                                >
+                                                    <Button variant="text" sx={{color:'white',borderRadius:'17px'}}>
+                                                        <Typography component="div" variant="h4" sx={{fontWeight:'800'}}>
+                                                            <strong>{salePrice} <SolCurrencyIcon /></strong>
+                                                        </Typography>
+                                                    </Button>
+                                                </Tooltip>
                                             : <></> 
                                         )}
                                     </Box>
@@ -1814,9 +1845,13 @@ export default function ItemOffers(props: any) {
                                         </Typography>
                                         {( (salePrice > 0) ?
 
-                                                <>
+                                                <> 
                                                     {salePriceAH === collectionAuctionHouse || salePriceAH === AUCTION_HOUSE_ADDRESS ?
-                                                        <Tooltip title={`Marketplace fees at ${verifiedCollection.rate}% (${+verifiedCollection.shr*100}% got to ${verifiedCollection.author} DAO) - Auction House: ${collectionAuctionHouse || AUCTION_HOUSE_ADDRESS}`}>
+                                                        <Tooltip title={
+                                                            <React.Fragment>
+                                                                Auction House: {salePriceAH || collectionAuctionHouse || AUCTION_HOUSE_ADDRESS}
+                                                            </React.Fragment>}
+                                                        >
                                                             <Button variant="text" sx={{color:'white',borderRadius:'17px'}}>
                                                                 <Typography component="div" variant="h4" sx={{fontWeight:'800'}}>
                                                                     <strong>{salePrice} <SolCurrencyIcon /></strong>
@@ -1824,7 +1859,14 @@ export default function ItemOffers(props: any) {
                                                             </Button>
                                                         </Tooltip>
                                                     :
-                                                        <Tooltip title={`Unknown marketplace fees (Not listed in Grape.art) - Auction House: ${salePriceAH}`}>
+                                                        
+                                                        <Tooltip title={
+                                                            <React.Fragment>
+                                                                Unknown marketplace (Not listed with Grape.art) - Auction House
+                                                                <br/>
+                                                                Auction House: {salePriceAH}
+                                                            </React.Fragment>}
+                                                        >
                                                             <Button variant="text" sx={{color:'white',borderRadius:'17px'}}>
                                                                 <Typography component="div" variant="h4" sx={{fontWeight:'800'}}>
                                                                     <strong>{salePrice} <SolCurrencyIcon /></strong>
@@ -2017,7 +2059,7 @@ export default function ItemOffers(props: any) {
                                                             </>
                                                             : 
                                                             <>
-                                                                <SellNowPrompt mintName={mintName} image={image} mint={mint} updateAuthority={updateAuthority} mintOwner={mintOwner} salePrice={salePrice} grapeWeightedScore={grape_weighted_score} setRefreshOffers={setRefreshOffers} collectionAuctionHouse={collectionAuctionHouse} />
+                                                                <SellNowPrompt mintName={mintName} image={image} mint={mint} updateAuthority={updateAuthority} verifiedCollection={verifiedCollection} mintOwner={mintOwner} salePrice={salePrice} grapeWeightedScore={grape_weighted_score} setRefreshOffers={setRefreshOffers} collectionAuctionHouse={collectionAuctionHouse} />
                                                             </>
                                                         )}
                                                     </Grid>
