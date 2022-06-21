@@ -56,13 +56,14 @@ import grapeTheme from './utils/config/theme';
 //import "./App.less";
 import { GRAPE_RPC_ENDPOINT, TX_RPC_ENDPOINT, GENSYSGO_RPC_ENDPOINT } from './utils/grapeTools/constants';
 import { BottomChat as DialectBottomChat, DialectUiManagementProvider } from '@dialectlabs/react-ui';
+import { GRAPE_BOTTOM_CHAT_ID } from './utils/ui-contants';
 
 function BottomChat() {
     const wallet = useWallet();
 
     return (
         <DialectBottomChat
-            dialectId="grape-bottom-chat"
+            dialectId={GRAPE_BOTTOM_CHAT_ID}
             wallet={wallet}
             rpcUrl={GENSYSGO_RPC_ENDPOINT}
             theme="dark"
