@@ -37,8 +37,8 @@
     "dependencies": {
         "@bonfida/spl-name-service": "^0.1.31",
         "@cyberlab/cyberconnect": "^4.4.2",
-        "@dialectlabs/react": "^0.5.4",
-        "@dialectlabs/react-ui": "^0.8.9",
+        "@dialectlabs/react": "^0.5.6",
+        "@dialectlabs/react-ui": "^0.9.2",
         "@emotion/react": "^11.4.1",
         "@emotion/styled": "^11.8.1",
         "@google/model-viewer": "^1.12.0",
@@ -81,9 +81,9 @@
         "notistack": "^2.0.4",
         "prop-types": "^15.7.2",
         "ramda": "^0.28.0",
-        "react": "^17.0.2",
+        "react": "^18.2.0",
         "react-copy-to-clipboard": "^5.0.4",
-        "react-dom": "^17.0.2",
+        "react-dom": "^18.2.0",
         "react-helmet": "^6.1.0",
         "react-hot-loader": "^4.0.0",
         "react-i18next": "^11.16.1",
@@ -139,7 +139,8 @@
         "react-snap": "^1.23.0",
         "shx": "^0.3.4",
         "stream-http": "^3.2.0",
-        "tslib": "^2.3.1"
+        "tslib": "^2.3.1",
+        "util": "^0.12.4"
     },
     "resolutions": {
         "@types/react": "17.0.40"

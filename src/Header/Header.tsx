@@ -2,7 +2,7 @@ import * as React from 'react';
 import { styled, alpha } from '@mui/material/styles';
 import { Link, useLocation, NavLink } from 'react-router-dom';
 import { useNavigate } from 'react-router';
-import {CopyToClipboard} from 'react-copy-to-clipboard';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
@@ -15,33 +15,10 @@ import Snackbar, { SnackbarOrigin } from '@mui/material/Snackbar';
 
 import { PublicKey } from '@solana/web3.js';
 import { useWallet } from '@solana/wallet-adapter-react';
-//import '@dialectlabs/react-ui/lib/index.css';
-import '../dialect.css';
-import {
-    ChatButton,
-    NotificationsButton,
-    IncomingThemeVariables,
-    defaultVariables,
-    Inbox as DialectInbox, 
-    ThemeProvider
-  } from '@dialectlabs/react-ui';
-import {
-    ApiProvider,
-    connected,
-    DialectProvider,
-    useApi,
-} from '@dialectlabs/react';
 
-import { 
-    MARKET_LOGO
-} from '../utils/grapeTools/constants';
+import { MARKET_LOGO } from '../utils/grapeTools/constants';
 
-
-import {
-    WalletDialogProvider,
-    WalletDisconnectButton,
-    WalletMultiButton
-} from '@solana/wallet-adapter-material-ui';
+import { WalletDialogProvider, WalletDisconnectButton, WalletMultiButton } from '@solana/wallet-adapter-material-ui';
 
 import {
     MenuItem,
@@ -54,7 +31,7 @@ import {
     Container,
     List,
     ListItem,
-    ListItemText
+    ListItemText,
 } from '@mui/material';
 
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
@@ -74,8 +51,8 @@ function getParam(param: string) {
     return new URLSearchParams(window.location.search).get(param);
 }
 
-interface HeaderProps{
-    children?:React.ReactNode;
+interface HeaderProps {
+    children?: React.ReactNode;
 }
 
 const Search = styled('div')(({ theme }) => ({
@@ -95,9 +72,9 @@ const Search = styled('div')(({ theme }) => ({
         width: 'auto',
         marginLeft: 5,
     },
-  }));
+}));
 
-  const SearchIconWrapper = styled('div')(({ theme }) => ({
+const SearchIconWrapper = styled('div')(({ theme }) => ({
     padding: theme.spacing(0, 2),
     height: '100%',
     position: 'absolute',
@@ -106,26 +83,23 @@ const Search = styled('div')(({ theme }) => ({
     alignItems: 'center',
     justifyContent: 'center',
     color: alpha(theme.palette.common.white, 0.25),
-  }));
-  
-  const StyledInputBase = styled(InputBase)(({ theme }) => ({
+}));
+
+const StyledInputBase = styled(InputBase)(({ theme }) => ({
     color: 'inherit',
     '& .MuiInputBase-input': {
-      padding: theme.spacing(1, 1, 1, 0),
-      // vertical padding + font size from searchIcon
-      paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-      transition: theme.transitions.create('width'),
-      width: '100%',
-      [theme.breakpoints.up('md')]: {
+        padding: theme.spacing(1, 1, 1, 0),
+        // vertical padding + font size from searchIcon
+        paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+        transition: theme.transitions.create('width'),
         width: '100%',
-      },
+        [theme.breakpoints.up('md')]: {
+            width: '100%',
+        },
     },
-  }));
+}));
 
-const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
-    props,
-    ref,
-    ) {
+const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
@@ -135,12 +109,12 @@ export function Header(props: any) {
     const [tokenParam, setTokenParam] = React.useState(getParam('token'));
     const [discordId, setDiscordId] = React.useState(getParam('discord_id'));
     const [userId, setUserId] = React.useState(getParam('user_id'));
-    const [providers, setProviders] = React.useState(['Sollet', 'Sollet Extension', 'Phantom','Solflare']);
+    const [providers, setProviders] = React.useState(['Sollet', 'Sollet Extension', 'Phantom', 'Solflare']);
     const [open_wallet, setOpenWallet] = React.useState(false);
-    
+
     const [anchorEl, setAnchorEl] = React.useState(null);
     const isWalletOpen = Boolean(anchorEl);
-    const [newinputpkvalue, setNewInputPKValue] = React.useState("");
+    const [newinputpkvalue, setNewInputPKValue] = React.useState('');
     const navigate = useNavigate();
     const location = useLocation();
     const currPath = location.pathname;
@@ -151,14 +125,10 @@ export function Header(props: any) {
     const wallet = useWallet();
     const theme: 'dark' | 'light' = 'dark';
     //const YOUR_PROJECT_PUBLIC_KEY = new PublicKey(AUCTION_HOUSE_ADDRESS);
-    const DIALECT_PUBLIC_KEY = new PublicKey(
-        'D2pyBevYb6dit1oCx6e8vCxFK9mBeYCRe8TTntk2Tm98'
-    );
-    
-    const routes = [
-        { name: "Home", path: "/" },
-    ]
-    
+    const DIALECT_PUBLIC_KEY = new PublicKey('D2pyBevYb6dit1oCx6e8vCxFK9mBeYCRe8TTntk2Tm98');
+
+    const routes = [{ name: 'Home', path: '/' }];
+
     //Menu
     const menuId = 'primary-wallet-account-menu';
     const menuWalletId = 'primary-fullwallet-account-menu';
@@ -174,7 +144,6 @@ export function Header(props: any) {
 
     const handleCloseWallet = (value: any) => {
         setOpenWallet(false);
-
     };
 
     function SimpleDialog(props: any) {
@@ -203,8 +172,8 @@ export function Header(props: any) {
     }
 
     const handleClickSnackbar = () => {
-        enqueueSnackbar(`${t('Copied...')}`,{ variant: 'success' });
-        
+        enqueueSnackbar(`${t('Copied...')}`, { variant: 'success' });
+
         handleMenuClose();
         //setSnackbarState(true);
     };
@@ -214,69 +183,59 @@ export function Header(props: any) {
     function handlePublicKeySubmit(event: any) {
         event.preventDefault();
         //console.log(""+newinputpkvalue+" ("+newinputpkvalue.length+"): " +ValidateAddress(newinputpkvalue));
-        if ((newinputpkvalue && newinputpkvalue.length>0 && ValidateAddress(newinputpkvalue))||
-            ((newinputpkvalue.toLocaleUpperCase().indexOf(".SOL") > -1) || (newinputpkvalue.slice(0,1) === '@'))){
-            navigate({
-                pathname: GRAPE_PROFILE+newinputpkvalue
-            },
+        if (
+            (newinputpkvalue && newinputpkvalue.length > 0 && ValidateAddress(newinputpkvalue)) ||
+            newinputpkvalue.toLocaleUpperCase().indexOf('.SOL') > -1 ||
+            newinputpkvalue.slice(0, 1) === '@'
+        ) {
+            navigate(
+                {
+                    pathname: GRAPE_PROFILE + newinputpkvalue,
+                },
                 { replace: true }
             );
             setNewInputPKValue('');
-        } else if (newinputpkvalue && newinputpkvalue.length>0){
-            if (newinputpkvalue.toLocaleUpperCase().indexOf("MINT:") > -1){
-                let mint = newinputpkvalue.slice(5,newinputpkvalue.length);
-                if (ValidateAddress(mint)){
-                    navigate({
-                        pathname: GRAPE_PREVIEW+mint
-                    },
+        } else if (newinputpkvalue && newinputpkvalue.length > 0) {
+            if (newinputpkvalue.toLocaleUpperCase().indexOf('MINT:') > -1) {
+                const mint = newinputpkvalue.slice(5, newinputpkvalue.length);
+                if (ValidateAddress(mint)) {
+                    navigate(
+                        {
+                            pathname: GRAPE_PREVIEW + mint,
+                        },
                         { replace: true }
                     );
                     setNewInputPKValue('');
                 }
             }
-        }else{
+        } else {
             setNewInputPKValue('');
         }
     }
 
     return (
-        <Toolbar
-            color="inherit"
-            className="grape-art-header"
-            >
-
-            <Box display='flex' flexGrow={1}>
-                <Button
-                    variant="text"
-                    color="inherit" 
-                    href='/'
-                    sx={{borderRadius:'17px',pl:1,pr:1}}
-                >
-                    <Typography
-                        component="h1"
-                        variant="h6"
-                        color="inherit"
-                        display='flex'
-                        sx={{ml:1,mr:1}}
-                    >
-                        <img src={MARKET_LOGO} height="40px" width="137px" className="header-logo" alt="Powered by Grape" />
+        <Toolbar color="inherit" className="grape-art-header">
+            <Box display="flex" flexGrow={1}>
+                <Button variant="text" color="inherit" href="/" sx={{ borderRadius: '17px', pl: 1, pr: 1 }}>
+                    <Typography component="h1" variant="h6" color="inherit" display="flex" sx={{ ml: 1, mr: 1 }}>
+                        <img
+                            src={MARKET_LOGO}
+                            height="40px"
+                            width="137px"
+                            className="header-logo"
+                            alt="Powered by Grape"
+                        />
                     </Typography>
                 </Button>
-                
-                <Container
-                    component="form"
-                    onSubmit={handlePublicKeySubmit}
-                    sx={{background:'none'}}
-                    >
-                    <Tooltip title='Search by mint address by entering: mint:address'>
-                        <Search
-                            sx={{height:'40px'}}
-                        >
+
+                <Container component="form" onSubmit={handlePublicKeySubmit} sx={{ background: 'none' }}>
+                    <Tooltip title="Search by mint address by entering: mint:address">
+                        <Search sx={{ height: '40px' }}>
                             <SearchIconWrapper>
                                 <SearchIcon />
                             </SearchIconWrapper>
                             <StyledInputBase
-                                sx={{height:'40px', width:'100%'}}
+                                sx={{ height: '40px', width: '100%' }}
                                 placeholder={t('Search Solana Address')}
                                 inputProps={{ 'aria-label': 'search' }}
                                 value={newinputpkvalue}
@@ -285,18 +244,13 @@ export function Header(props: any) {
                         </Search>
                     </Tooltip>
                 </Container>
-
             </Box>
-            <div className="grape-dialect">
-                <ChatButton wallet={wallet} network={'mainnet'} theme={theme} rpcUrl={GENSYSGO_RPC_ENDPOINT} bellClassName='grape-chat' />
-            </div>
-            
             {location.pathname && location.pathname.includes('collection') &&
                 <Tooltip title='Profile'>
-                    <Button 
+                    <Button
                         component={Link} to='/'
                         sx={{color:'white',borderRadius:'24px',m:0}}>
-                            <PersonOutlineOutlinedIcon />
+                        <PersonOutlineOutlinedIcon />
                     </Button>
                 </Tooltip>
             }
@@ -306,7 +260,6 @@ export function Header(props: any) {
                 </WalletDialogProvider>
             </div>
         </Toolbar>
-        
     );
 }
 

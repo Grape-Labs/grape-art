@@ -21,7 +21,7 @@ html, body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  
+
   background: #4e8ebf;  /* fallback for old browsers */
   background: radial-gradient(at right bottom, rgb(255, 196, 195), rgb(152, 79, 172), rgb(68, 39, 156));
   /*
@@ -60,15 +60,6 @@ code {
 .grape-store-info{
 }
 
-.grape-dialect{
-  margin-right:5px;
-}
-.grape-dialect .dialect{
-}
-.grape-dialect .dialect .dt-flex .dt-relative.dt-bg-black{
-  background:none!important;
-}
-
 .grape-store-background{
   background: linear-gradient(to right, #4597D6 0%, #8D41A7 48.6%, #36325D 90.62%, #251A3A 100%);
 }
@@ -83,7 +74,7 @@ code {
 }
 
 .grape-art-generic-placeholder-container{
-  padding: 1em; 
+  padding: 1em;
   margin-bottom: 3em;
   width: 100%;
   background: #13151C;
@@ -126,7 +117,7 @@ code {
   min-height: 100%;
   padding: 1em;
   margin-top: 1em;
-  border-radius: 24px; 
+  border-radius: 24px;
   z-index: 9999;
 }
 
@@ -220,7 +211,7 @@ ul li .grape-wallet-button{
   .likeTab{
     display:none;
   }
-  
+
   /* Overriding MUI Stylings for mobile screens */
   .wallet-adapter-button,
   .grape-wallet-button {
@@ -232,7 +223,7 @@ ul li .grape-wallet-button{
   .wallet-adapter-solana-domain{
     display:none;
   }
-  
+
   .header-logo {
     width: 120px !important;
   }
