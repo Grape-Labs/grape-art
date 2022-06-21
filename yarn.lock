@@ -1355,10 +1355,10 @@
   dependencies:
     "@date-io/core" "^2.14.0"
 
-"@dialectlabs/react-ui@^0.9.1":
-  version "0.9.1"
-  resolved "https://registry.yarnpkg.com/@dialectlabs/react-ui/-/react-ui-0.9.1.tgz#b92fdef601dc806a7515a5881128dc5329729263"
-  integrity sha512-0pfFCH9SqfEWk+P/Z6eTkeIRfz9/Wu7GWguvv2Ra/r2NNWRfgWoB6tTBPFKAJdAJsbaLBUYW2DnpbDtq4edYxw==
+"@dialectlabs/react-ui@^0.9.2":
+  version "0.9.2"
+  resolved "https://registry.yarnpkg.com/@dialectlabs/react-ui/-/react-ui-0.9.2.tgz#762a574af51f44641c1caae408753bb8741c2f9f"
+  integrity sha512-Wxul+ULpav28IW1Ko9/9ksMbxeP0XGRTKxRFWOIWx4yg+aTFsuPov3+Rz9bUHDEABpTzfaU+q79bCEUhKQsd5A==
   dependencies:
     "@bonfida/name-offers" "^0.0.1"
     "@bonfida/spl-name-service" "^0.1.31"

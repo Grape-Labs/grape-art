@@ -5,6 +5,7 @@ import { ApiProvider, connected, DialectProvider, useApi } from '@dialectlabs/re
 import { GENSYSGO_RPC_ENDPOINT } from '../utils/grapeTools/constants';
 import { Box } from '@mui/material';
 import { ClassNames } from '@emotion/react';
+import { getDialectVariables, GRAPE_INBOX_ID } from '../utils/ui-contants';
 
 function InnerInboxView({ wrapperClassName }: { wrapperClassName?: string }) {
     const wallet = useWallet();
@@ -12,12 +13,12 @@ function InnerInboxView({ wrapperClassName }: { wrapperClassName?: string }) {
     const isWalletConnected = connected(wallet);
 
     useEffect(() => setWallet(isWalletConnected ? wallet : null), [setWallet, wallet, isWalletConnected]);
-    useEffect(() => setNetwork('localnet'), [setNetwork]);
+    useEffect(() => setNetwork('mainnet'), [setNetwork]);
     useEffect(() => setRpcUrl(GENSYSGO_RPC_ENDPOINT), [setRpcUrl]);
 
     return (
         <Box width="100%" height={550}>
-            <Inbox dialectId="grape-inbox" wallet={wallet} wrapperClassName={wrapperClassName} />
+            <Inbox dialectId={GRAPE_INBOX_ID} wallet={wallet} wrapperClassName={wrapperClassName} />
         </Box>
     );
 }
@@ -28,36 +29,15 @@ export default function InboxView() {
             <DialectProvider>
                 <ClassNames>
                     {({ css }) => (
-                        <DialectThemeProvider
-                            theme="dark"
-                            variables={{
-                                dark: {
-                                    colors: {
-                                        bg: css({ backgroundColor: 'rgba(0, 0, 0, 0.6)' }),
-                                        highlightSolid: css({
-                                            backgroundColor: 'rgba(0, 0, 0, 0.6)',
-                                            svg: { marginTop: '2px' }, // small hack to move down Dialect logo in Powered by
-                                        }),
-                                    },
-                                    textStyles: {
-                                        header: css({ fontSize: 16, fontWeight: 800 }),
-                                    },
-                                    divider: css({ borderColor: 'rgba(255, 255, 255, 0.2)' }),
-                                    header: `${defaultVariables.dark.header} dt-border-neutral-600`,
-                                    outlinedInput: `${defaultVariables.dark.outlinedInput} ${css({
-                                        fontFamily: 'inherit',
-                                    })}`,
-                                    input: `${defaultVariables.dark.input} ${css({ fontFamily: 'inherit' })}`,
-                                },
-                            }}
-                        >
+                        <DialectThemeProvider theme="dark" variables={getDialectVariables(css)}>
                             <InnerInboxView
                                 wrapperClassName={css({
                                     width: '100%',
                                     height: '100%',
                                     borderRadius: 16,
                                     overflow: 'hidden',
-                                    fontFamily: 'inherit',
+                                    fontFamily:
+                                        'GrapeFont, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif',
                                 })}
                             />
                         </DialectThemeProvider>
