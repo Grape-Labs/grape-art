@@ -1,10 +1,7 @@
-const path = require('path')
-
-const CWD = process.cwd()
+const packageImporter = require('node-sass-package-importer');
 
 module.exports = {
-  "includePaths": [
-    path.resolve(CWD, 'node_modules'),
-    path.resolve(CWD, 'src')
-  ]
-}
+    importer: [
+        packageImporter()
+    ]
+};

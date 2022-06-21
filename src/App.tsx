@@ -17,7 +17,8 @@ import STATIC_FAVICON_32x32 from './public/favicon-32x32.png';
 import STATIC_FAVICON_16x16 from './public/favicon-16x16.png';
 import STATIC_GRAPEDEX from './public/grapedex.png';
 
-import '@dialectlabs/react-ui/lib/index.css';
+//import '@dialectlabs/react-ui/lib/index.css';
+import './dialect.css';
 
 import { Box, Grid, Paper, Container, Typography, AppBar } from '@mui/material';
 
