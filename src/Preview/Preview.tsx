@@ -9,6 +9,9 @@ import { Token, TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID } from "@solana/sp
 import ImageViewer from 'react-simple-image-viewer';
 import { Helmet } from 'react-helmet';
 
+import { ChatNavigationHelpers, useDialectUiId } from '@dialectlabs/react-ui';
+import { GRAPE_BOTTOM_CHAT_ID } from '../utils/ui-contants';
+
 import { findDisplayName } from '../utils/name-service';
 import { createSetProfilePictureTransaction } from '@solflare-wallet/pfp';
 
@@ -56,6 +59,8 @@ import {
 
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
 
+import Chat from '@mui/icons-material/Chat';
+import Mail from '@mui/icons-material/Mail';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import PersonAddOutlinedIcon from '@mui/icons-material/PersonAddOutlined';
 import PersonRemoveOutlinedIcon from '@mui/icons-material/PersonRemoveOutlined';
@@ -81,7 +86,6 @@ import LockOpenIcon from '@mui/icons-material/LockOpen';
 
 import { WalletError } from '@solana/wallet-adapter-base';
 
-import { UPDATE_AUTHORITIES } from '../utils/grapeTools/mintverification';
 import { 
     TOKEN_REALM_PROGRAM_ID,
     TOKEN_REALM_ID,
@@ -408,7 +412,8 @@ function GalleryItemMeta(props: any) {
     const [loadingFollowState, setLoadingFollowState] = React.useState(false);
     const navigate = useNavigate();
     const { enqueueSnackbar, closeSnackbar} = useSnackbar();
-    
+    const { navigation, open } = useDialectUiId<ChatNavigationHelpers>(GRAPE_BOTTOM_CHAT_ID);
+
     const [searchAddrInfo, setSearchAddrInfo] = useState<SearchUserInfoResp | null>(null);
     const solanaProvider = useWallet();
 
@@ -1528,6 +1533,7 @@ function GalleryItemMeta(props: any) {
                                                                         <Button size="small" variant="text" component="a" href={`https://explorer.solana.com/address/${tokenOwners?.data.parsed.info.owner}`} target="_blank" sx={{borderRadius:'24px', color:'white', pl:0, pr:0}}> <OpenInNewIcon sx={{fontSize:'14px'}} /></Button>
                                                                     </Tooltip>
                                                                     {publicKey && publicKey.toBase58() === tokenOwners?.data.parsed.info.owner ?
+                                                                    <>
                                                                         <Tooltip title={t('Set this NFT as your avatar')}>
                                                                             <Button 
                                                                                 variant="text" 
@@ -1543,6 +1549,7 @@ function GalleryItemMeta(props: any) {
                                                                                 />
                                                                             </Button>
                                                                         </Tooltip>
+                                                                    </>
                                                                     :
                                                                     <>
                                                                         {loadingFollowState ?
@@ -1578,6 +1585,29 @@ function GalleryItemMeta(props: any) {
                                                                             }
                                                                             </>
                                                                         }
+
+                                                                            <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                                                                                <Tooltip title="Send a direct message">
+                                                                                    <Button
+                                                                                        onClick={() => {
+                                                                                            open();
+                                                                                            navigation?.showCreateThread(publicKey.toBase58());
+                                                                                        }}
+                                                                                        sx={{
+                                                                                            textTransform: 'none',
+                                                                                            borderRadius: '17px',
+                                                                                            transition:
+                                                                                                'opacity 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
+                                                                                        
+                                                                                        }}
+                                                                                    >
+                                                                                        
+                                                                                        <Chat
+                                                                                            sx={{ fontSize: 12, color: 'white' }}
+                                                                                        />
+                                                                                    </Button>
+                                                                                </Tooltip>
+                                                                            </Box>
                                                                     </>
                                                                     }
 
