@@ -113,7 +113,7 @@ export default function HistoryView(props: any){
             try{
                 let response = null;
 
-                const apiUrl = "https://api-mainnet.magiceden.dev/v2/collections/"+symbol+"/stats";
+                const apiUrl = "https://corsproxy.io/?https://api-mainnet.magiceden.dev/v2/collections/"+symbol+"/stats";
                 
                 const resp = await window.fetch(apiUrl, {
                     method: 'GET',
@@ -138,7 +138,7 @@ export default function HistoryView(props: any){
             try{
                 let response = null;
 
-                const apiUrl = "https://api-mainnet.magiceden.dev/v2/tokens/"+mint+"/activities?offset=0&limit=100";
+                const apiUrl = "https://corsproxy.io/?https://api-mainnet.magiceden.dev/v2/tokens/"+mint+"/activities?offset=0&limit=100";
                 
                 const resp = await window.fetch(apiUrl, {
                     method: 'GET',
@@ -173,6 +173,24 @@ export default function HistoryView(props: any){
         setLoading(false);
     }
 
+    const cancelMEListing = async (sellerPubKey:string,auctionHouseAddress:string,tokenAccount:string,price:any) => {
+        try{
+            let response = null;
+
+            const apiUrl = "https://corsproxy.io/?https://api-devnet.magiceden.dev/v2/instructions/sell_cancel?seller="+sellerPubKey+"&auctionHouseAddress="+auctionHouseAddress+"&tokenMint="+mint+"&tokenAccount="+tokenAccount+"&price="+price+"&sellerReferral=&expiry=-1";
+
+            const resp = await window.fetch(apiUrl, {
+                method: 'GET',
+                redirect: 'follow',
+                //body: JSON.stringify(body),
+                //headers: { "Content-Type": "application/json" },
+            })
+            
+            const json = await resp.json();
+
+        } catch(e){console.log("ERR: "+e)}
+    }
+
     const getHistory = async () => {
         if ((!loading) && (mint)){
             setLoading(true);
@@ -202,27 +220,97 @@ export default function HistoryView(props: any){
                     purchaseReceipt: item.purchaseReceipt, 
                     auctionHouse: item?.auctionHouse, 
                     seller: item?.seller, 
-                    buyer: item?.buyer});
+                    buyer: item?.buyer, 
+                    source: "auctionhouse"});
             }
 
-            /*
-            const offerResults = new Array();
-            const listingResults: any[] = [];
-            for (var item of results){
-                //const mintitem = await getMintFromMetadata(null, item?.metadata);
+            try{
+                let response = null;
+
+                const apiUrl = "https://corsproxy.io/?https://api-mainnet.magiceden.dev/v2/tokens/"+mint+"/activities?offset=0&limit=100";
                 
-                if (!item?.canceledAt){
-                        console.log("item: "+JSON.stringify(item));
-                        if (item.receipt_type==='bid_receipt'){
-                            offerResults.push({buyeraddress: item.bookkeeper.toBase58(), bookkeeper: item.bookkeeper.toBase58(), amount: item.price, price: item.price, mint: mint, isowner: false, createdAt: item.createdAt, cancelledAt: item.canceledAt, timestamp: item.createdAt, blockTime: item.createdAt, state: item?.receipt_type});
-                        } else if (item.receipt_type==='listing_receipt'){
-                            listingResults.push({buyeraddress: item.bookkeeper.toBase58(), bookkeeper: item.bookkeeper.toBase58(), amount: item.price, price: item.price, mint: mint, isowner: false, createdAt: item.createdAt, cancelledAt: item.canceledAt, timestamp: item.createdAt, blockTime: item.createdAt, state: item?.receipt_type});
-                        } else if (item.receipt_type==='cancel_listing_receipt'){
-                            listingResults.push({buyeraddress: item.bookkeeper.toBase58(), bookkeeper: item.bookkeeper.toBase58(), amount: item.price, price: item.price, mint: mint, isowner: false, createdAt: item.createdAt, cancelledAt: item.canceledAt, timestamp: item.createdAt, blockTime: item.createdAt, state: item?.receipt_type});
+                const resp = await window.fetch(apiUrl, {
+                    method: 'GET',
+                    redirect: 'follow',
+                    //body: JSON.stringify(body),
+                    //headers: { "Content-Type": "application/json" },
+                })
+
+                const json = await resp.json();
+                //console.log("json: "+JSON.stringify(json));
+                try{
+                    // here get the last sale and show it:
+                    // grape-art-last-sale
+                    
+                    let found = false;
+                    for (var item of json){
+                        //console.log(item.type + ' ' + item.price + ' '+formatBlockTime(item.blockTime, true, true));
+                        if (item.type === "buyNow"){
+                            found = true;
                         }
+                    }
+                }catch(e){console.log("ERR: "+e);return null;}
+
+                if (json){
+                    for (var meitem of json){
+                        var bookkeeper = meitem.seller;
+                        var buyer = meitem.buyer;
+                        var seller = meitem.seller;
+                        var receiptType = '';
+                        var createdAt = meitem.blockTime;
+                        var cancelledAt = null;
+                        
+                        //console.log("ME: "+JSON.stringify(meitem));
+                        var purchaeReceipt = null;
+                        if (buyer && seller){
+                            bookkeeper = buyer;
+                            purchaeReceipt = 'purchase_receipt';
+                        }
+                        if (meitem.type === 'list'){
+                            receiptType = 'listing_receipt'
+                        } else if (meitem.type === 'bid'){
+                            receiptType = 'bid_receipt'
+                        } else if (meitem.type === 'delist'){
+                            receiptType = 'cancel_listing_receipt'
+                            if (meitem.blockTime)
+                                cancelledAt = meitem.blockTime
+                        } else if (meitem.type === 'buyNow'){
+                            receiptType = 'purchase_receipt'
+                            purchaeReceipt = meitem.signature;
+                        }
+                        
+                        var source = meitem.source;
+                        if (source === "magiceden_v2")
+                            source = "MagicEden v2"
+                        if ((source === "auctionhouse")||(source === "solanart_ah")){
+
+                        } else {
+                            activityResults.push({
+                                buyeraddress: bookkeeper, 
+                                bookkeeper: bookkeeper, 
+                                amount: meitem.price, 
+                                price: meitem.price, 
+                                isowner: false, 
+                                createdAt: createdAt, 
+                                cancelledAt: cancelledAt, 
+                                timestamp: timeAgo(createdAt), 
+                                blockTime: createdAt, 
+                                state: receiptType, 
+                                tradeState: null, 
+                                purchaseReceipt: null, 
+                                auctionHouse: null,
+                                seller: seller, 
+                                buyer: buyer, 
+                                source: source});
+                        }
+
+                        
+                    }
                 }
-            }
-            */
+
+
+            } catch(e){console.log("ERR: "+e)}
+
 
             // sort by date
             //offerResults.sort((a:any,b:any) => (a.blockTime < b.blockTime) ? 1 : -1);
@@ -231,6 +319,7 @@ export default function HistoryView(props: any){
             // sort by date
             activityResults.sort((a:any,b:any) => (a.blockTime < b.blockTime) ? 1 : -1);
             const dupRemovedResults = activityResults.filter( activity => !activity.purchaseReceipt)
+            //const dupRemovedResults2 = activityResults.filter( activity => !activity.blockTime)
             //activityResults.push({buyeraddress: feePayer.toBase58(), amount: memo_json?.amount || memo_json?.offer, mint: memo_json?.mint, isowner: false, timestamp: forSaleDate, blockTime: value.blockTime, state: memo_json?.state || memo_json?.status});
             
             setHistory(dupRemovedResults);
@@ -247,7 +336,6 @@ export default function HistoryView(props: any){
         if (mint){
             if (!loading){
                 getHistory();
-                getMEHistory();
             }
         }
     }, [mint]);
@@ -294,7 +382,7 @@ export default function HistoryView(props: any){
                             <BarChartOutlinedIcon />
                             </ListItemIcon>
                             <ListItemText 
-                                primary='History'
+                                primary='Magic Eden History'
                             />
                                 <Typography variant="caption"><strong>{openMEHistory}</strong></Typography>
                                 {me_open_history_collapse ? <ExpandLess /> : <ExpandMoreIcon />}
@@ -416,7 +504,7 @@ export default function HistoryView(props: any){
                                                         <TableCell><Typography variant="caption">Status</Typography></TableCell>
                                                         <TableCell align="center"><Typography variant="caption">Amount</Typography></TableCell>
                                                         <TableCell align="center"><Typography variant="caption">Date</Typography></TableCell>
-                                                        <TableCell>Auction House</TableCell>
+                                                        <TableCell>Marketplace</TableCell>
                                                     </TableRow>
 
                                                 </TableHead>
@@ -437,7 +525,11 @@ export default function HistoryView(props: any){
                                                                     <Typography variant="body2" sx={{textAlign:'center'}}>
                                                                         
                                                                         {item?.purchaseReceipt ?
-                                                                            <>Sale <Typography variant="caption">({trimAddress(item.purchaseReceipt.toBase58(),3)})</Typography></>
+                                                                            <>Sale 
+                                                                                {item.purchaseReciept && item.purchaseReceipt.length >0 &&
+                                                                                <Typography variant="caption">({trimAddress(item.purchaseReceipt.toBase58(),3)})</Typography>
+                                                                                }
+                                                                            </>
                                                                         :
                                                                             <>
                                                                             {item.state === "bid_receipt" && 
@@ -479,13 +571,23 @@ export default function HistoryView(props: any){
                                                                     </Tooltip>
                                                                 </Typography>
                                                             </TableCell>
-                                                            <TableCell>
-                                                                <Tooltip title={'Auction House'}>
-                                                                    <Button size="small" variant="text" sx={{ml:1,color:'white',borderRadius:'24px'}}>
-                                                                        {trimAddress(item.auctionHouse.toBase58(),4)}
-                                                                    </Button>
-                                                                </Tooltip>
-                                                            </TableCell>
+                                                            {item.source === 'auctionhouse' ?
+                                                                <TableCell>
+                                                                    <Tooltip title={'Auction House'}>
+                                                                        <Button size="small" variant="text" sx={{ml:1,color:'white',borderRadius:'24px'}}>
+                                                                            {trimAddress(item.auctionHouse.toBase58(),4)}
+                                                                        </Button>
+                                                                    </Tooltip>
+                                                                </TableCell> 
+                                                            :
+                                                                <TableCell>
+                                                                    <Tooltip title={'Escrow'}>
+                                                                        <Button size="small" variant="text" sx={{ml:1,color:'white',borderRadius:'24px'}}>
+                                                                            {item.source}
+                                                                        </Button>
+                                                                    </Tooltip>
+                                                                </TableCell>
+                                                            }
                                                         </TableRow>
                                                     ))}
                                                 </TableBody>

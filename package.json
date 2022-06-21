@@ -1,11 +1,12 @@
 {
     "name": "@grape-labs/grape-art",
-    "version": "1.1.277",
+    "version": "1.1.295",
     "author": "Grape devDAO",
     "repository": "https://github.com/grape-labs/grape-art",
     "license": "Apache-2.0",
     "publishConfig": {
-        "access": "public"
+        "access": "public",
+        "registry": "https://github.com/grape-labs/grape-art"
     },
     "files": [
         "src",
@@ -21,6 +22,8 @@
     ],
     "scripts": {
         "clean": "shx rm -rf dist .parcel-cache",
+        "build:client": "parcel build --public-url ./dist/ src/index.html",
+        "build:server": "parcel build -d dist-server --target node server/index.js",
         "build": "yarn clean && parcel build src/index.html --no-source-maps",
         "start": "yarn clean && parcel src/index.html",
         "fmt": "prettier --write '{*,**/*}.{js,ts,jsx,tsx,json}'",
@@ -60,6 +63,7 @@
         "@testing-library/jest-dom": "^5.16.4",
         "@testing-library/react": "^13.3.0",
         "@types/react-copy-to-clipboard": "^5.0.1",
+        "@types/react-helmet": "^6.1.5",
         "@types/react-router-dom": "^5.1.6",
         "axios": "^0.21.1",
         "bignumber.js": "^9.0.1",
@@ -81,6 +85,7 @@
         "react-copy-to-clipboard": "^5.0.4",
         "react-dom": "^18.2.0",
         "react-helmet": "^6.1.0",
+        "react-hot-loader": "^4.0.0",
         "react-i18next": "^11.16.1",
         "react-infinite-scroll-component": "^6.1.0",
         "react-jazzicon": "^1.0.3",
@@ -89,6 +94,7 @@
         "react-scripts": "^5.0.1",
         "react-share": "^4.4.0",
         "react-simple-image-viewer": "^1.1.1",
+        "rimraf": "^2.6.2",
         "tweetnacl": "^1.0.3",
         "web-vitals": "^1.1.2",
         "web3modal": "^1.9.5",
@@ -97,10 +103,10 @@
         "zustand": "^3.6.8"
     },
     "devDependencies": {
-        "@parcel/packager-raw-url": "2.6.0",
-        "@parcel/resolver-glob": "^2.5.0",
-        "@parcel/transformer-less": "2.6.0",
-        "@parcel/transformer-webmanifest": "2.6.0",
+        "@parcel/packager-raw-url": "2.6.1",
+        "@parcel/resolver-glob": "^2.6.1",
+        "@parcel/transformer-less": "2.6.1",
+        "@parcel/transformer-webmanifest": "2.6.1",
         "@types/bn.js": "^5.1.0",
         "@types/bs58": "^4.0.1",
         "@types/eslint": "^8.2.2",
@@ -112,8 +118,11 @@
         "@typescript-eslint/eslint-plugin": "^5.27.0",
         "@typescript-eslint/parser": "^5.27.0",
         "autoprefixer": "^10.4.7",
+        "babel-eslint": "^10.1.0",
+        "babel-plugin-dynamic-import-node": "^2.3.3",
         "browserify-zlib": "^0.2.0",
         "concurrently": "^6.1.0",
+        "cross-env": "^7.0.3",
         "crypto-browserify": "^3.12.0",
         "eslint": "^8.15.0",
         "eslint-config-prettier": "^8.5.0",
@@ -123,10 +132,11 @@
         "gh-pages": "^3.1.0",
         "https-browserify": "^1.0.0",
         "nodemon": "^2.0.7",
-        "parcel": "^2.6.0",
+        "parcel": "^2.6.1",
         "path-browserify": "^1.0.1",
         "prettier": "^2.5.1",
         "querystring-es3": "^0.2.1",
+        "react-snap": "^1.23.0",
         "shx": "^0.3.4",
         "stream-http": "^3.2.0",
         "tslib": "^2.3.1",
@@ -141,5 +151,8 @@
             "public"
         ],
         "watcherGlob": "**"
+    },
+    "reactSnap": {
+        "source": "dist"
     }
 }

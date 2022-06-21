@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback, memo, Suspense } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
+import { Helmet } from 'react-helmet';
 import { decodeMetadata } from '../utils/grapeTools/utils';
 // @ts-ignore
 import fetch from 'node-fetch';
@@ -472,6 +473,7 @@ export function StoreFrontView(this: any, props: any) {
     //const [provider, setProvider] = React.useState(getParam('provider'));
     const [gallery, setGallery] = React.useState(null);
     const [collectionMintList, setCollectionMintList] = React.useState(null);
+    const [fetchedCollectionMintList, setFetchedCollectionMintList] = React.useState(null);
     const [collectionAuthority, setCollectionAuthority] = React.useState(null);
     const [verifiedCollectionArray, setVerifiedCollectionArray] = React.useState(null);
     const [auctionHouseListings, setAuctionHouseListings] = React.useState(null);
@@ -482,6 +484,8 @@ export function StoreFrontView(this: any, props: any) {
     const [loading, setLoading] = React.useState(false);
     const [floorPrice, setFloorPrice] = React.useState(0);
     const [totalListings, setTotalListings] = React.useState(0); 
+    const [grapeFloorPrice, setGrapeFloorPrice] = React.useState(0);
+    const [grapeTotalListings, setGrapeTotalListings] = React.useState(0); 
     const [stateLoading, setStateLoading] = React.useState(false);
     const [rdloading, setRDLoading] = React.useState(false);
     const [loadCount, setLoadCount] = React.useState(0);
@@ -529,6 +533,43 @@ export function StoreFrontView(this: any, props: any) {
         } catch(e){console.log("ERR: "+e)}
     }
 
+    const fetchIndexedMintList = async(address:string) => {
+        const body = {
+            method: "getNFTsByCollection",//"getNFTsByCollection",
+            jsonrpc: "2.0",
+            params: [
+              address
+            ],
+            id: "1",
+        };
+        
+        const response = await window.fetch(THEINDEX_RPC_ENDPOINT, {
+            method: "POST",
+            body: JSON.stringify(body),
+            headers: { "Content-Type": "application/json" },
+        })
+        const json = await response.json();
+        const resultValues = json.result;
+        // transpose values to our format
+        const finalList = new Array()
+        for (var item of resultValues){
+            //console.log("item: "+JSON.stringify(item))
+            finalList.push({
+                address:item.metadata.mint.toString(),
+                name:item.metadata.name,
+                collection:item.metadata.symbol,
+                image:item.metadata.uri.replaceAll(".json",".png"),
+                metadata:item.metadata.pubkey.toString()
+
+            });
+        }
+
+        //console.log("finalList: "+JSON.stringify(finalList))
+        setFetchedCollectionMintList(finalList); 
+
+        return finalList;
+    }
+
     const fetchMintList = async(address:string) => {
         try{
             const url = GRAPE_COLLECTIONS_DATA+address.substring(0,9)+'.json';
@@ -541,7 +582,8 @@ export function StoreFrontView(this: any, props: any) {
               const string = await response.text();
               const json = string === "" ? {} : JSON.parse(string);
               //console.log("::: "+JSON.stringify(json));
-              setCollectionMintList(json);   
+              setFetchedCollectionMintList(json);
+              //setCollectionMintList(json);   
               return json;
             
         } catch(e){console.log("ERR: "+e)}   
@@ -556,10 +598,9 @@ export function StoreFrontView(this: any, props: any) {
     }
 
     const getCollectionData = async (start:number) => {
-        const wallet_collection = collectionMintList;//likeListInfo.likes.list;
+        const wallet_collection = fetchedCollectionMintList;//likeListInfo.likes.list;
         let rpclimit = 100;
         const MD_PUBKEY = METAPLEX_PROGRAM_ID;
-        const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
         
         try {
             let mintsPDAs = new Array();
@@ -588,7 +629,7 @@ export function StoreFrontView(this: any, props: any) {
                 }
             }
             //console.log("pushed pdas: "+JSON.stringify(mintsPDAs));
-            const metadata = await ggoconnection.getMultipleAccountsInfo(mintsPDAs);
+            const metadata = await ticonnection.getMultipleAccountsInfo(mintsPDAs);
             //console.log("returned: "+JSON.stringify(metadata));
             // LOOP ALL METADATA WE HAVE
             for (var metavalue of metadata){
@@ -612,7 +653,7 @@ export function StoreFrontView(this: any, props: any) {
     }
 
     const getCollectionMeta = async (start:number) => {
-        const wallet_collection = collectionMintList;//likeListInfo.likes.list;
+        const wallet_collection = fetchedCollectionMintList;//likeListInfo.likes.list;
         
         
         let tmpcollectionmeta = await getCollectionData(start);
@@ -658,14 +699,14 @@ export function StoreFrontView(this: any, props: any) {
         if (collectionAuthority){
             //console.log("with collectionAuthority: "+JSON.stringify(collectionAuthority));
             //if (ValidateAddress(collectionAuthority.address)){
-                if (collectionMintList){
+                if (fetchedCollectionMintList){
                     getCollectionMeta(0);
                     //console.log("collectionAuthority: "+JSON.stringify(collectionAuthority))
                     fetchMintStates(collectionAuthority);
                 }
             //}
         }
-    }, [collectionMintList, refresh]);
+    }, [fetchedCollectionMintList, refresh]);
 
     const getCollectionStates = async (address:string) => {
         
@@ -677,7 +718,7 @@ export function StoreFrontView(this: any, props: any) {
             const ahListingsMints = new Array();
 
             for (var item of results){
-                const mintitem = await getMintFromVerifiedMetadata(item.metadata.toBase58(), collectionMintList);
+                const mintitem = await getMintFromVerifiedMetadata(item.metadata.toBase58(), fetchedCollectionMintList);
                 //console.log("item: "+JSON.stringify(item));
                 //console.log("mintitem: "+JSON.stringify(mintitem));
                 if (mintitem){
@@ -701,7 +742,8 @@ export function StoreFrontView(this: any, props: any) {
                             timestamp: timeAgo(item.createdAt), 
                             blockTime: item.createdAt, 
                             state: item?.receipt_type, 
-                            purchaseReceipt: purchaseReceipt});
+                            purchaseReceipt: purchaseReceipt,
+                            marketplaceListing:true});
                         ahListingsMints.push(mintitem.address);
                     }
                 }
@@ -712,16 +754,18 @@ export function StoreFrontView(this: any, props: any) {
             
             setAuctionHouseListings(ahActivity);
             
-            const tempCollectionMintList = collectionMintList;
+            const tempCollectionMintList = fetchedCollectionMintList;
             for (var mintElement of tempCollectionMintList){
                 mintElement.listingPrice = null;
                 mintElement.listingCancelled = false;
+                mintElement.highestOffer = 0;
             }
 
             // we need to remove listing history for those that have been sold
             let thisFloorPrice = null;
             let thisTotalListings = 0;
-            
+            let crossTotalListings = 0;
+
             for (var listing of ahActivity){
                 let exists = false;
                 let offer_exists = false;
@@ -752,6 +796,7 @@ export function StoreFrontView(this: any, props: any) {
                                             mintElement.listingPrice = +listing.price;
                                             mintElement.listedTimestamp = listing.timestamp;
                                             mintElement.listedBlockTime = listing.blockTime;
+                                            mintElement.marketplaceListing = true;
                                             thisTotalListings++;
                                             if (!thisFloorPrice){
                                                 thisFloorPrice = +listing.price;
@@ -800,6 +845,7 @@ export function StoreFrontView(this: any, props: any) {
                                         listedBlockTime: listing.blockTime,
                                         name:null,
                                         image:'',
+                                        marketplaceListing: true
                                     })
                                     thisTotalListings++;
                                     if (!thisFloorPrice)
@@ -824,7 +870,65 @@ export function StoreFrontView(this: any, props: any) {
                     }
                 }
             }
+
+            setGrapeTotalListings(thisTotalListings);
+            setGrapeFloorPrice(thisFloorPrice);
+
+            try{
+                if (collectionAuthority.me_symbol){
+                    let response = null;
+                    const apiUrl = "https://corsproxy.io/?https://api-mainnet.magiceden.dev/v2/collections/"+collectionAuthority.me_symbol+"/listings?offset=0&limit=20";
+                    const resp1 = await window.fetch(apiUrl, {
+                        method: 'GET',
+                        redirect: 'follow',
+                    })
+                    const json1 = await resp1.json();
+
+                    const apiUrl2 = "https://corsproxy.io/?https://api-mainnet.magiceden.dev/v2/collections/"+collectionAuthority.me_symbol+"/listings?offset=20&limit=20";
+                    const resp2 = await window.fetch(apiUrl2, {
+                        method: 'GET',
+                        redirect: 'follow',
+                    })
+                    const json2 = await resp2.json();
+                    
+                    const apiUrl3 = "https://corsproxy.io/?https://api-mainnet.magiceden.dev/v2/collections/"+collectionAuthority.me_symbol+"/listings?offset=40&limit=20";
+                    const resp3 = await window.fetch(apiUrl3, {
+                        method: 'GET',
+                        redirect: 'follow',
+                    })
+                    const json3 = await resp3.json();
+
+                    const apiUrl4 = "https://corsproxy.io/?https://api-mainnet.magiceden.dev/v2/collections/"+collectionAuthority.me_symbol+"/listings?offset=60&limit=20";
+                    const resp4 = await window.fetch(apiUrl4, {
+                        method: 'GET',
+                        redirect: 'follow',
+                    })
+                    const json4 = await resp4.json();                
+                    const json = [...json1,...json2,...json3,json4];
+
+                    try{
+                        let found = false;
+                        for (var item of json){
+                            for (var mintListItem of tempCollectionMintList){
+                                if (mintListItem.address === item.tokenMint){
+                                    if (mintListItem.listingPrice === null){
+                                        thisTotalListings++;
+                                    } else{
+                                        crossTotalListings++;
+                                    }
+                                    // no need to check date as this is an escrow check
+                                    mintListItem.listingPrice = item.price;
+                                    mintListItem.marketplaceListing = false;
+                                }
+                            }
+                            if (thisFloorPrice > +item.price)
+                                thisFloorPrice = +item.price;
+                        }
+                    }catch(e){console.log("ERR: "+e);}
+                }
+            }catch(err){console.log("ERR: "+err)}
             
+            console.log("Cross Listings: "+crossTotalListings);
             setTotalListings(thisTotalListings);
             setFloorPrice(thisFloorPrice);
 
@@ -857,13 +961,12 @@ export function StoreFrontView(this: any, props: any) {
             // now with missing meta populate it to collectionMintList
             //collectionMintList.sort((a:any,b:any) => (+a.listingPrice > +b.listingPrice) ? 1 : -1); // this will sort descending
             
-            const sortedCollectionMintList = tempCollectionMintList.sort((a:any, b:any) => (a.listingPrice != null ? a.listingPrice : Infinity) - (b.listingPrice != null ? b.listingPrice : Infinity)) 
+            //const sortedCollectionMintList = tempCollectionMintList.sort((a:any, b:any) => (a.listingPrice != null ? a.listingPrice : Infinity) - (b.listingPrice != null ? b.listingPrice : Infinity)) 
             
-            setCollectionMintList(sortedCollectionMintList);
-
-            setTimeout(function() {
+            //setTimeout(function() {
+                setCollectionMintList(tempCollectionMintList);
                 setStateLoading(false);                                      
-            }, 500); 
+            //}, 500); 
             
         }
     }
@@ -903,7 +1006,7 @@ export function StoreFrontView(this: any, props: any) {
                 }
 
                 //console.log("pushed pdas: "+JSON.stringify(mintsPDAs));
-                const metadata = await ggoconnection.getMultipleAccountsInfo(mintsPDAs);
+                const metadata = await ticonnection.getMultipleAccountsInfo(mintsPDAs);
                 //console.log("returned: "+JSON.stringify(metadata));
                 // LOOP ALL METADATA WE HAVE
                 const finalData = new Array();
@@ -969,24 +1072,28 @@ export function StoreFrontView(this: any, props: any) {
                 // check if this is a valid address using VERIFIED_COLLECTION_ARRAY
                 // check both .name and .address
                 for (var verified of verifiedCollectionArray){
-                    
                     //console.log("verified checking: "+verified.name.replaceAll(" ", "").toLowerCase() + " vs "+withPubKey.replaceAll(" ", "").toLowerCase());
                     //if (verified.address === mintOwner){
                     if (verified.address === withPubKey){
                         setCollectionAuthority(verified);
                         // get collection mint list
-                        const fml = fetchMintList(verified.address);
+                        if (verified.collection)
+                            var oml = fetchIndexedMintList(verified.collection);
+                        else 
+                            var fml = fetchMintList(verified.address);
                         break;
                     } else if (verified.name.replaceAll(" ", "").toLowerCase() === (withPubKey.replaceAll(" ", "").toLowerCase())){ // REMOVE SPACES FROM verified.name
                         //console.log("found: "+verified.name);
                         setCollectionAuthority(verified);
                         // get collection mint list
                         console.log("f ADDRESS: "+verified.address)
-                        const fml = fetchMintList(verified.address);
+                        if (verified.collection)
+                            var oml = fetchIndexedMintList(verified.collection);
+                        else 
+                            var fml = fetchMintList(verified.address);
                         break;
                     }
                 } 
-    
                 // IMPORTANT HANDLE INVALID COLLECTION ENTRY
             }
         }
@@ -1093,250 +1200,279 @@ export function StoreFrontView(this: any, props: any) {
     return (
         <React.Fragment>
             {collectionAuthority &&
-            <Box
-                sx={{
-                    mb:4,
-                    mt:0,
-                    ml:0,
-                    mr:0,
-                    width:'100%',
-                }}
-                >
-                    <Hidden smDown>
-                        <Box
-                            className='grape-store-splash'
-                            sx={{
-                                mt:-16
-                            }}
-                        >
-                            <img
-                                src={GRAPE_COLLECTIONS_DATA+collectionAuthority.splash}
-                                srcSet={GRAPE_COLLECTIONS_DATA+collectionAuthority.splash}
-                                alt={collectionAuthority.name}
-                                loading="lazy"
-                                height="auto"
-                                style={{
-                                    width:'100%',
-                                    borderBottomRightRadius:'24px',
-                                    borderBottomLeftRadius:'24px',
-                                    boxShadow:'0px 0px 5px 0px #000000',
-                                }}
-                            />
-                        </Box>
-                    </Hidden>
-                    <Hidden smUp>
-                        <Box
-                            className='grape-store-splash'
-                            sx={{
-                                mt:-4
-                            }}
-                        >
-                            <img
-                                src={GRAPE_COLLECTIONS_DATA+collectionAuthority.splash}
-                                srcSet={GRAPE_COLLECTIONS_DATA+collectionAuthority.splash}
-                                alt={collectionAuthority.name}
-                                loading="lazy"
-                                height="auto"
-                                style={{
-                                    width:'100%',
-                                    borderBottomRightRadius:'24px',
-                                    borderBottomLeftRadius:'24px',
-                                    boxShadow:'0px 0px 5px 0px #000000',
-                                }}
-                            />
-                        </Box>
-                    </Hidden>
-                    
 
-                    <Box
-                        className='grape-store-info'
-                        sx={{
-                            m:4,
-                            mb:4,
-                            mt:-1,
-                            p:1,
-                            textAlign:'center',
-                            borderRadius:'24px',
-                            borderTopLeftRadius:'0px',
-                            borderTopRightRadius:'0px',
-                            background: 'rgba(0, 0, 0, 0.6)',
-                        }}
+            <>
+                <Helmet>
+                    <title>{`${collectionAuthority.name} | ${t('Grape Social. Stateless. Marketplace.')}`}</title>
+                    <meta name="description" content={collectionAuthority.description} />
+                    <meta property="og:title" content={`${collectionAuthority.name} Collection on Grape`} />
+                    <meta property="og:type" content="website" />
+                    <meta property="og:url" content={window.location.href} />
+                    <meta property="og:image" content={GRAPE_COLLECTIONS_DATA+collectionAuthority.logo} />
+                    <meta property="og:description" content={collectionAuthority.name} />
+                    <meta name="theme-color" content="#000000" />
+
+                    <meta name="twitter:card" content="summary" />
+                    {collectionAuthority.links?.twitter &&
+                        <meta name="twitter:site" content={`${collectionAuthority.links.twitter}`} />
+                    }
+                    <meta name="twitter:title" content={collectionAuthority.name} />
+                    <meta name="twitter:description" content={collectionAuthority.description} />
+                    <meta name="twitter:image" content={GRAPE_COLLECTIONS_DATA+collectionAuthority.logo} />
+                </Helmet>
+            
+
+                <Box
+                    sx={{
+                        mb:4,
+                        mt:0,
+                        ml:0,
+                        mr:0,
+                        width:'100%',
+                    }}
                     >
-
-                    <Hidden smDown>
-                        <img
-                            src={GRAPE_COLLECTIONS_DATA+collectionAuthority.logo}
-                            srcSet={GRAPE_COLLECTIONS_DATA+collectionAuthority.logo}
-                            alt={collectionAuthority.name}
-                            //onClick={ () => openImageViewer(0) }
-                            loading="lazy"
-                            height="auto"
-                            style={{
-                                width:'100px',
-                            }}
-                        />
-                    </Hidden>
-                    <Hidden smUp>
-                        <img
-                            src={GRAPE_COLLECTIONS_DATA+collectionAuthority.logo}
-                            srcSet={GRAPE_COLLECTIONS_DATA+collectionAuthority.logo}
-                            alt={collectionAuthority.name}
-                            //onClick={ () => openImageViewer(0) }
-                            loading="lazy"
-                            height="auto"
-                            style={{
-                                width:'50px',
-                            }}
-                        />
-                    </Hidden>
+                        <Hidden smDown>
+                            <Box
+                                className='grape-store-splash'
+                                sx={{
+                                    mt:-16
+                                }}
+                            >
+                                <img
+                                    src={GRAPE_COLLECTIONS_DATA+collectionAuthority.splash}
+                                    srcSet={GRAPE_COLLECTIONS_DATA+collectionAuthority.splash}
+                                    alt={collectionAuthority.name}
+                                    loading="lazy"
+                                    height="auto"
+                                    style={{
+                                        width:'100%',
+                                        borderBottomRightRadius:'24px',
+                                        borderBottomLeftRadius:'24px',
+                                        boxShadow:'0px 0px 5px 0px #000000',
+                                    }}
+                                />
+                            </Box>
+                        </Hidden>
+                        <Hidden smUp>
+                            <Box
+                                className='grape-store-splash'
+                                sx={{
+                                    mt:-4
+                                }}
+                            >
+                                <img
+                                    src={GRAPE_COLLECTIONS_DATA+collectionAuthority.splash}
+                                    srcSet={GRAPE_COLLECTIONS_DATA+collectionAuthority.splash}
+                                    alt={collectionAuthority.name}
+                                    loading="lazy"
+                                    height="auto"
+                                    style={{
+                                        width:'100%',
+                                        borderBottomRightRadius:'24px',
+                                        borderBottomLeftRadius:'24px',
+                                        boxShadow:'0px 0px 5px 0px #000000',
+                                    }}
+                                />
+                            </Box>
+                        </Hidden>
+                        
 
                         <Box
-                            sx={{m:0}}
+                            className='grape-store-info'
+                            sx={{
+                                m:4,
+                                mb:4,
+                                mt:-1,
+                                p:1,
+                                textAlign:'center',
+                                borderRadius:'24px',
+                                borderTopLeftRadius:'0px',
+                                borderTopRightRadius:'0px',
+                                background: 'rgba(0, 0, 0, 0.6)',
+                            }}
                         >
-                            <Typography variant="h4">
-                                {collectionAuthority.name}
-                            </Typography>
 
-                            <Typography variant="h6">
-                                {collectionAuthority.author}
-                            </Typography>
+                        <Hidden smDown>
+                            <img
+                                src={GRAPE_COLLECTIONS_DATA+collectionAuthority.logo}
+                                srcSet={GRAPE_COLLECTIONS_DATA+collectionAuthority.logo}
+                                alt={collectionAuthority.name}
+                                //onClick={ () => openImageViewer(0) }
+                                loading="lazy"
+                                height="auto"
+                                style={{
+                                    width:'100px',
+                                }}
+                            />
+                        </Hidden>
+                        <Hidden smUp>
+                            <img
+                                src={GRAPE_COLLECTIONS_DATA+collectionAuthority.logo}
+                                srcSet={GRAPE_COLLECTIONS_DATA+collectionAuthority.logo}
+                                alt={collectionAuthority.name}
+                                //onClick={ () => openImageViewer(0) }
+                                loading="lazy"
+                                height="auto"
+                                style={{
+                                    width:'50px',
+                                }}
+                            />
+                        </Hidden>
 
-                            <Typography variant="caption">
-                                {collectionAuthority.description}
-                            </Typography>
+                            <Box
+                                sx={{m:0}}
+                            >
+                                <Typography variant="h4">
+                                    {collectionAuthority.name}
+                                </Typography>
 
-                            <Box sx={{ justifyContent: 'flex-end' }}>
-                                {collectionAuthority.links?.url &&
-                                    <Button 
-                                        target='_blank' href={collectionAuthority.links.url}
-                                        sx={{
-                                            verticalAlign: 'middle',
-                                            display: 'inline-flex',
-                                            borderRadius:'17px'}}
-                                    >
-                                        <LanguageIcon sx={{m:0.75,color:'white',borderRadius:'17px'}} />
-                                    </Button>
-                                }
-                                {collectionAuthority.links?.discord &&
-                                    <Button 
-                                        target='_blank' href={`https://${collectionAuthority.links.discord}`}
-                                        sx={{
-                                        verticalAlign: 'middle',
-                                        display: 'inline-flex',
-                                        borderRadius:'17px'
-                                    }}>
-                                        <DiscordIcon sx={{mt:1,fontSize:27.5,color:'white'}} />
-                                    </Button>
-                                }
-                                {collectionAuthority.links?.twitter &&
-                                    <Button 
-                                        target='_blank' href={`https://twitter.com/${collectionAuthority.links.twitter}`}
-                                        sx={{
+                                <Typography variant="h6">
+                                    {collectionAuthority.author}
+                                </Typography>
+
+                                <Typography variant="caption">
+                                    {collectionAuthority.description}
+                                </Typography>
+
+                                <Box sx={{ justifyContent: 'flex-end' }}>
+                                    {collectionAuthority.links?.url &&
+                                        <Button 
+                                            target='_blank' href={collectionAuthority.links.url}
+                                            sx={{
+                                                verticalAlign: 'middle',
+                                                display: 'inline-flex',
+                                                borderRadius:'17px'}}
+                                        >
+                                            <LanguageIcon sx={{m:0.75,color:'white',borderRadius:'17px'}} />
+                                        </Button>
+                                    }
+                                    {collectionAuthority.links?.discord &&
+                                        <Button 
+                                            target='_blank' href={`https://${collectionAuthority.links.discord}`}
+                                            sx={{
                                             verticalAlign: 'middle',
                                             display: 'inline-flex',
                                             borderRadius:'17px'
-                                        }}
-                                    >
-                                        <TwitterIcon sx={{m:0.75,color:'white'}} />
-                                    </Button>
-                                }
-                                
+                                        }}>
+                                            <DiscordIcon sx={{mt:1,fontSize:27.5,color:'white'}} />
+                                        </Button>
+                                    }
+                                    {collectionAuthority.links?.twitter &&
+                                        <Button 
+                                            target='_blank' href={`https://twitter.com/${collectionAuthority.links.twitter}`}
+                                            sx={{
+                                                verticalAlign: 'middle',
+                                                display: 'inline-flex',
+                                                borderRadius:'17px'
+                                            }}
+                                        >
+                                            <TwitterIcon sx={{m:0.75,color:'white'}} />
+                                        </Button>
+                                    }
+                                    
+                                </Box>
                             </Box>
-                        </Box>
 
-                        <Box
-                            sx={{m:2}}
-                        >
-                            <ListForCollectionView 
-                                logo={GRAPE_COLLECTIONS_DATA+collectionAuthority.logo} 
-                                entangleTo={collectionAuthority.entangleTo} 
-                                entangleFrom={collectionAuthority.entangleFrom} 
-                                entangled={collectionAuthority.entangled} 
-                                enforceEntangle={collectionAuthority.entangleEnforce}
-                                entangleUrl={collectionAuthority.entangleUrl}
-                                collectionAuthority={collectionAuthority}
-                                collectionMintList={collectionMintList}
-                                activity={auctionHouseListings} />
-                        </Box>
-                        
-                        <Grid container spacing={0} sx={{mt:-2}}>
-                            <Grid item xs={12} sm={6} md={3} key={1}>
-                                <Box
-                                    className='grape-store-stat-item'
-                                    sx={{borderRadius:'24px',m:2,p:1}}
-                                >
-                                    <Typography variant="body2" sx={{color:'yellow'}}>
-                                        FLOOR/LISTINGS  
-                                        
-                                        {!stateLoading ?
-                                            <Button
-                                                onClick={refreshMintStates}
-                                                sx={{color:'yellow', borderRadius:'24px',p:0,m:0,ml:1,minWidth:'10px'}}
-                                            >
-                                                <RefreshIcon fontSize="small" sx={{p:0,m:0}} />
-                                            </Button>
-                                        :
-                                            <LinearProgress />
-                                        }
-                                        
-                                            
-                                        
-                                    </Typography>
-                                    <Typography variant="subtitle2">
-                                        {floorPrice ? `${(floorPrice).toFixed(2)} SOL` : `-`} / {totalListings}
-                                    </Typography>
-                                </Box>
-                            </Grid>
-                            <Grid item xs={12} sm={6} md={3} key={1}>
-                                <Box
-                                    className='grape-store-stat-item'
-                                    sx={{borderRadius:'24px',m:2,p:1}}
-                                >
-                                    <Typography variant="body2" sx={{color:'yellow'}}>
-                                        ITEMS
-                                    </Typography>
-                                    <Typography variant="subtitle2">
-                                        {collectionMintList?.length || `${(collectionAuthority.size/1000).toFixed(1)}k`}
-                                    </Typography>
-                                </Box>
-                            </Grid>
-                            <Grid item xs={12} sm={6} md={3} key={1}>
-                            <Tooltip title={collectionAuthority.entangled ? `All time for both collections` : `Unique owners for this collections`}>
-                                <Button 
-                                    variant="text"
-                                    sx={{
-                                        color:'white',
-                                        verticalAlign: 'middle',
-                                        display: 'inline-flex',
-                                        borderRadius:'17px',
-                                        m:0,
-                                        p:0
-                                    }}
-                                >
+                            <Box
+                                sx={{m:2}}
+                            >
+                                <ListForCollectionView 
+                                    logo={GRAPE_COLLECTIONS_DATA+collectionAuthority.logo} 
+                                    entangleTo={collectionAuthority.entangleTo} 
+                                    entangleFrom={collectionAuthority.entangleFrom} 
+                                    entangled={collectionAuthority.entangled} 
+                                    enforceEntangle={collectionAuthority.entangleEnforce}
+                                    entangleUrl={collectionAuthority.entangleUrl}
+                                    collectionAuthority={collectionAuthority}
+                                    collectionMintList={collectionMintList}
+                                    activity={auctionHouseListings} />
+                            </Box>
+                            
+                            <Grid container spacing={0} sx={{mt:-2}}>
+                                <Grid item xs={12} sm={6} md={3} key={1}>
                                     <Box
                                         className='grape-store-stat-item'
                                         sx={{borderRadius:'24px',m:2,p:1}}
                                     >
                                         <Typography variant="body2" sx={{color:'yellow'}}>
-                                            OWNERS
+                                            FLOOR/LISTINGS  
+                                            
+                                            {!stateLoading ?
+                                                <Button
+                                                    onClick={refreshMintStates}
+                                                    sx={{color:'yellow', borderRadius:'24px',p:0,m:0,ml:1,minWidth:'10px'}}
+                                                >
+                                                    <RefreshIcon fontSize="small" sx={{p:0,m:0}} />
+                                                </Button>
+                                            :
+                                                <LinearProgress />
+                                            }
+                                            
+                                                
+                                            
                                         </Typography>
                                         <Typography variant="subtitle2">
-                                            {(collectionAuthority.owners/1000).toFixed(1)}k
+                                            <Tooltip title={`${grapeFloorPrice} SOL floor / ${grapeTotalListings} listings on Grape`}>
+                                                <Button
+                                                    sx={{color:'white',m:0,p:0}}
+                                                >
+                                                    {floorPrice ? `${(floorPrice).toFixed(2)} SOL` : `-`} / {totalListings}
+                                                </Button>
+                                            </Tooltip>
                                         </Typography>
                                     </Box>
-                                </Button>
-                            </Tooltip>
+                                </Grid>
+                                <Grid item xs={12} sm={6} md={3} key={1}>
+                                    <Box
+                                        className='grape-store-stat-item'
+                                        sx={{borderRadius:'24px',m:2,p:1}}
+                                    >
+                                        <Typography variant="body2" sx={{color:'yellow'}}>
+                                            ITEMS
+                                        </Typography>
+                                        <Typography variant="subtitle2">
+                                            {collectionMintList?.length || `${(collectionAuthority.size/1000).toFixed(1)}`}
+                                        </Typography>
+                                    </Box>
+                                </Grid>
+                                <Grid item xs={12} sm={6} md={3} key={1}>
+                                <Tooltip title={collectionAuthority.entangled ? `All time for both collections` : `Unique owners for this collections`}>
+                                    <Button 
+                                        variant="text"
+                                        sx={{
+                                            color:'white',
+                                            verticalAlign: 'middle',
+                                            display: 'inline-flex',
+                                            borderRadius:'17px',
+                                            m:0,
+                                            p:0
+                                        }}
+                                    >
+                                        <Box
+                                            className='grape-store-stat-item'
+                                            sx={{borderRadius:'24px',m:2,p:1}}
+                                        >
+                                            <Typography variant="body2" sx={{color:'yellow'}}>
+                                                OWNERS
+                                            </Typography>
+                                            <Typography variant="subtitle2">
+                                                {(collectionAuthority.owners/1000).toFixed(1)}k
+                                            </Typography>
+                                        </Box>
+                                    </Button>
+                                </Tooltip>
+                                </Grid>
+                                <Grid item xs={12} sm={6} md={3} key={1}>
+                                    {!stateLoading ?
+                                        <ActivityView collectionAuthority={collectionAuthority} collectionMintList={collectionMintList} activity={auctionHouseListings} mode={0} />
+                                    :
+                                        <CircularProgress sx={{color:'yellow',p:'2px'}} />
+                                    }
+                                </Grid>
                             </Grid>
-                            <Grid item xs={12} sm={6} md={3} key={1}>
-                                {!stateLoading ?
-                                    <ActivityView collectionAuthority={collectionAuthority} collectionMintList={collectionMintList} activity={auctionHouseListings} mode={0} />
-                                :
-                                    <CircularProgress sx={{color:'yellow',p:'2px'}} />
-                                }
-                            </Grid>
-                        </Grid>
-                    </Box>
-            </Box>
+                        </Box>
+                </Box>
+            </>
             }
                 <Box
                     sx={{

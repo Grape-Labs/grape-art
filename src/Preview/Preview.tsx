@@ -23,10 +23,6 @@ import { useSnackbar } from 'notistack';
 import { FollowListInfoResp, SearchUserInfoResp, Network } from '../utils/cyberConnect/types';
 import { followListInfoQuery, searchUserInfoQuery } from '../utils/cyberConnect/query';
 
-import { 
-    MARKET_LOGO
-} from '../utils/grapeTools/constants';
-
 import {
     Avatar,
     Chip,
@@ -60,6 +56,7 @@ import {
 
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
 
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import PersonAddOutlinedIcon from '@mui/icons-material/PersonAddOutlined';
 import PersonRemoveOutlinedIcon from '@mui/icons-material/PersonRemoveOutlined';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
@@ -101,6 +98,8 @@ import {
     GRAPE_TREASURY,
     TOKEN_REPORT_AMOUNT,
     GRAPE_COLLECTIONS_DATA,
+    MARKET_LOGO,
+    GRAPE_COLLECTION
 } from '../utils/grapeTools/constants';
 
 import {
@@ -224,12 +223,14 @@ function formatBlockTime(date: string, epoch: boolean, time: boolean){
 
 function GrapeVerified(props:any){
     const [loading, setLoading] = React.useState(false);
+    const [grapeVerified, setGrapeVerified] = React.useState(false);
     const [verifiedState, setVerifiedState] = React.useState(false);
     const [verifiedPK, setVerificationPK] = React.useState(null);
     const [collectionImage, setCollectionImage] = React.useState(null);
-    const [collectionName, setCollectionName] = React.useState(props.symbol);
+    const [collectionName, setCollectionName] = React.useState(props?.symbol);
     const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
-    let updateAuthority = props?.updateAuthority;
+    const verifiedCollection = props.verifiedCollection;
+    const [collectionRawData, setCollectionRawData]  = React.useState(props?.collectionRawData);
     let grape_verified = -1;
 
     const MD_PUBKEY = METAPLEX_PROGRAM_ID;
@@ -263,50 +264,55 @@ function GrapeVerified(props:any){
 
     React.useEffect(() => { 
         try{
-            if (updateAuthority && !loading){
+            if (collectionRawData && !loading){
                 let verified = false;
                 let verified_creator = false;
 
                 // first stage verification
-                for (var item of updateAuthority.data.creators){
-                    if (item.address === updateAuthority.updateAuthority)
-                        if (item.verified === 1){
-                            // now validate verify_collection in the collection results
-                            verified_creator = true;
-                        }
+                
+                if (collectionRawData?.data?.creators){
+                    for (var item of collectionRawData.data.creators){
+                        if (item.address === collectionRawData.updateAuthority)
+                            if (item.verified === 1){
+                                // now validate verify_collection in the collection results
+                                verified_creator = true;
+                            }
+                    }
                 }
                 // second stage verification
                 if (verified_creator){
-                    if (updateAuthority?.collection?.verified){
-                        if (updateAuthority.collection.verified === 1){
+                    if (collectionRawData?.collection?.verified){
+                        if (collectionRawData.collection.verified === 1){
                             //console.log("updateAuthority: "+JSON.stringify(updateAuthority));
-                            if (ValidateAddress(updateAuthority.collection.key)){
+                            if (ValidateAddress(collectionRawData.collection.key)){
                                 setVerifiedState(true);
                                 if (!collectionImage){
-                                    setVerificationPK(updateAuthority.collection.key)
-                                    getCollectionData(updateAuthority.collection.key);
+                                    setVerificationPK(collectionRawData.collection.key)
+                                    getCollectionData(collectionRawData.collection.key);
                                 }
                             }
                         }
                     }
                 }
 
-                // third stage verification (coming soon)
-                grape_verified = UPDATE_AUTHORITIES.indexOf(updateAuthority);
-                //grape_verified = 1;
-                if (grape_verified > -1){
-
+                // third stage verification
+                // grape_verified = UPDATE_AUTHORITIES.indexOf(collectionRawData);
+                // grape_verified = 1;
+                if (verifiedCollection){
+                    if (verifiedCollection.address === collectionRawData.updateAuthority){
+                        setGrapeVerified(true);
+                    }
                 }
             }
         }catch(e){console.log("ERR: "+e)}
-    }, [updateAuthority]);
+    }, [collectionRawData]);
 
     const { t, i18n } = useTranslation();
 
     if (verifiedState){
         
         return (
-            <Tooltip title={`${props.symbol}: ${t('Update Authority/Creator Verified on Metaplex')}`} placement="top">
+            <Tooltip title={grapeVerified ? `${props.symbol}: ${t('Collection Verified on Metaplex & Grape')}` : `${props.symbol}: ${t('Collection Verified on Metaplex')}`} placement="top">
                 <Button 
                     href={`${GRAPE_PREVIEW}${verifiedPK}`}
                     sx={{color:'white', borderRadius:'24px'}}>
@@ -314,7 +320,7 @@ function GrapeVerified(props:any){
                     <Avatar 
                         component={Paper} 
                         elevation={4}
-                        alt={updateAuthority.data.symbol}
+                        alt={collectionRawData?.data?.symbol}
                         src={collectionImage}
                         sx={{ width: 20, height: 20, bgcolor: "#222",ml:1}}
                     />
@@ -325,8 +331,36 @@ function GrapeVerified(props:any){
             </Tooltip>
         );
     
-    } else{
-        return <>{collectionName}</>
+    } else if (grapeVerified){
+        return (
+            <Tooltip title={`${verifiedCollection.name}: ${t('Collection Verified on Grape')}`} placement="top">
+                <Button 
+                    component={Link} to={`${GRAPE_COLLECTION}${verifiedCollection.vanityUrl}`}
+                    sx={{color:'white', borderRadius:'24px'}}>
+                    {verifiedCollection.name}
+                    <Avatar 
+                        component={Paper} 
+                        elevation={4}
+                        alt={verifiedCollection.name}
+                        src={GRAPE_COLLECTIONS_DATA+verifiedCollection.logo}
+                        sx={{ width: 20, height: 20, bgcolor: "#222",ml:1}}
+                    />
+                    {grape_verified > -1 &&
+                        <VerifiedIcon sx={{fontSize:"20px",ml:1}} />
+                    }
+                </Button>
+            </Tooltip>
+        );
+    } else {
+        return ( 
+            <>
+                {collectionName || 
+                    <>
+                        Update Authority: {trimAddress(props?.collectionRawData?.updateAuthority,4)} <Tooltip title="Could not verify collection"><Button sx={{borderRadius:'17px'}}><ErrorOutlineIcon fontSize="small" sx={{color:'yellow'}} /></Button></Tooltip>
+                    </>
+                }
+            </>
+        );
     } 
 }
 
@@ -337,6 +371,9 @@ function GalleryItemMeta(props: any) {
     if (viewMode===0)
         mode_margin = 10;
     
+    const [loadingTokenAccountAccountOwnerHoldings, setLoadingTokenAccountAccountOwnerHoldings] = React.useState(false);
+    const [loadingMintAta, setLoadingMintAta] = React.useState(false);
+    const verifiedCollection = props.verifiedCollection;
     const collectionrawprimer = props.collectionrawdata.meta_primer || [];
     const collectionrawdata = props.collectionrawdata.meta_final || [];
     const collectionitem = props.collectionitem.collectionmeta || [];
@@ -577,12 +614,14 @@ function GalleryItemMeta(props: any) {
     };
 
     const fetchTokenAccountData = async () => {
+        setLoadingMintAta(true);
         let [flargestTokenAccounts] = await Promise.all([GetLargestTokenAccounts()]);
         //console.log("settings setMintAta: "+JSON.stringify(flargestTokenAccounts));
 
         if (+flargestTokenAccounts[0].amount === 1){ // some NFTS are amount > 1
             setMintATA(flargestTokenAccounts[0].address);
         }
+        setLoadingMintAta(false);
     }
 
     const fetchSOLBalance = async () => {
@@ -642,70 +681,72 @@ function GalleryItemMeta(props: any) {
     }, [publicKey]);
 
     const fetchTokenAccountOwnerHoldings = async () => {
-        if (publicKey){ 
-            let [sol_rsp, portfolio_rsp, governance_rsp] = await Promise.all([fetchSOLBalance(), fetchBalances(), getGovernanceBalance()]);
-            //setGrapeWhitelisted(GRAPE_WHITELIST.indexOf(publicKey.toString()));
-            if (sol_rsp){ // use sol calc for balance
-                setSolPortfolioBalance(parseFloat(new TokenAmount(sol_rsp, 9).format()));
-            }
-            try{
-
-                if (governance_rsp?.account?.governingTokenDepositAmount){
-                    setGrapeGovernanceBalance(governance_rsp?.account?.governingTokenDepositAmount);
-                }else{    
-                    setGrapeGovernanceBalance(0);
+        setLoadingTokenAccountAccountOwnerHoldings(true);
+            if (publicKey){ 
+                let [sol_rsp, portfolio_rsp, governance_rsp] = await Promise.all([fetchSOLBalance(), fetchBalances(), getGovernanceBalance()]);
+                //setGrapeWhitelisted(GRAPE_WHITELIST.indexOf(publicKey.toString()));
+                if (sol_rsp){ // use sol calc for balance
+                    setSolPortfolioBalance(parseFloat(new TokenAmount(sol_rsp, 9).format()));
                 }
-            }catch(e){
-                setGrapeGovernanceBalance(0);
-                console.log("ERR: "+e);
-            }
+                try{
 
-            try{
-                setGrapeMemberBalance(0);
-                let final_weighted_score = 0;
-                portfolio_rsp.map((token:any) => {
-                    let mint = token.account.data.parsed.info.mint;
-                    let balance = token.account.data.parsed.info.tokenAmount.uiAmount;
-                    if (mint === '8upjSpvjcdpuzhfR1zriwg5NXkwDruejqNE9WNbPRtyA'){ // check if wallet has sol
-                        if (governance_rsp?.account?.governingTokenDepositAmount){
-                            const total_grape = +balance + (+governance_rsp?.account?.governingTokenDepositAmount)/1000000
-                            setGrapeMemberBalance(total_grape);
-                            if (+total_grape >= 1000){
-                                const weighted_score = total_grape/1000;
-                                if (weighted_score<=0)
-                                    final_weighted_score = 0;
-                                else if (weighted_score<6)
-                                    final_weighted_score = 1; 
-                                else if (weighted_score<25)
-                                    final_weighted_score = 2; 
-                                else if (weighted_score<50)
-                                    final_weighted_score = 3; 
-                                else if (weighted_score>=50)
-                                    final_weighted_score = 4; 
-                                setGrapeWeightedScore(final_weighted_score);
-                            }
-                        } else{
-                            setGrapeMemberBalance(balance);
-                            if (+balance >= 1000){
-                                const weighted_score = +balance/1000;
-                                if (weighted_score<=0)
-                                    final_weighted_score = 0;
-                                else if (weighted_score<6)
-                                    final_weighted_score = 1; 
-                                else if (weighted_score<25)
-                                    final_weighted_score = 2; 
-                                else if (weighted_score<50)
-                                    final_weighted_score = 3; 
-                                else if (weighted_score>=50)
-                                    final_weighted_score = 4; 
-                                setGrapeWeightedScore(final_weighted_score);
+                    if (governance_rsp?.account?.governingTokenDepositAmount){
+                        setGrapeGovernanceBalance(governance_rsp?.account?.governingTokenDepositAmount);
+                    }else{    
+                        setGrapeGovernanceBalance(0);
+                    }
+                }catch(e){
+                    setGrapeGovernanceBalance(0);
+                    console.log("ERR: "+e);
+                }
+
+                try{
+                    setGrapeMemberBalance(0);
+                    let final_weighted_score = 0;
+                    portfolio_rsp.map((token:any) => {
+                        let mint = token.account.data.parsed.info.mint;
+                        let balance = token.account.data.parsed.info.tokenAmount.uiAmount;
+                        if (mint === '8upjSpvjcdpuzhfR1zriwg5NXkwDruejqNE9WNbPRtyA'){ // check if wallet has sol
+                            if (governance_rsp?.account?.governingTokenDepositAmount){
+                                const total_grape = +balance + (+governance_rsp?.account?.governingTokenDepositAmount)/1000000
+                                setGrapeMemberBalance(total_grape);
+                                if (+total_grape >= 1000){
+                                    const weighted_score = total_grape/1000;
+                                    if (weighted_score<=0)
+                                        final_weighted_score = 0;
+                                    else if (weighted_score<6)
+                                        final_weighted_score = 1; 
+                                    else if (weighted_score<25)
+                                        final_weighted_score = 2; 
+                                    else if (weighted_score<50)
+                                        final_weighted_score = 3; 
+                                    else if (weighted_score>=50)
+                                        final_weighted_score = 4; 
+                                    setGrapeWeightedScore(final_weighted_score);
+                                }
+                            } else{
+                                setGrapeMemberBalance(balance);
+                                if (+balance >= 1000){
+                                    const weighted_score = +balance/1000;
+                                    if (weighted_score<=0)
+                                        final_weighted_score = 0;
+                                    else if (weighted_score<6)
+                                        final_weighted_score = 1; 
+                                    else if (weighted_score<25)
+                                        final_weighted_score = 2; 
+                                    else if (weighted_score<50)
+                                        final_weighted_score = 3; 
+                                    else if (weighted_score>=50)
+                                        final_weighted_score = 4; 
+                                    setGrapeWeightedScore(final_weighted_score);
+                                }
                             }
                         }
-                    }
-                });
-            } catch(e){console.log("ERR: "+e);}
-            
-        }
+                    });
+                } catch(e){console.log("ERR: "+e);}
+                
+            }
+        setLoadingTokenAccountAccountOwnerHoldings(false);
     }
 
     const HandleSetAvatar = async () => {
@@ -766,56 +807,56 @@ function GalleryItemMeta(props: any) {
         }
         
         return (
-          <React.Fragment>
-            <Button onClick={handleClickOpenDialog}
-                sx={{borderRadius:'24px',color:'white'}}
-            >
-                <SearchIcon />
-            </Button> 
-             
-            <BootstrapDialog 
-                fullWidth={true}
-                maxWidth={"md"}
-                open={open_dialog} onClose={handleCloseDialog}
-                PaperProps={{
-                    style: {
-                        background: '#13151C',
-                        border: '1px solid rgba(255,255,255,0.05)',
-                        borderTop: '1px solid rgba(255,255,255,0.1)',
-                        borderRadius: '20px'
-                    }
-                    }}
+            <>
+                <Button onClick={handleClickOpenDialog}
+                    sx={{borderRadius:'24px',color:'white'}}
                 >
-                <DialogTitle>
-                    {t('Mint')}
-                </DialogTitle>
-                <form onSubmit={HandleMintAddressSubmit}>
-                    <DialogContent>
-                        <TextField
-                            autoFocus
-                            autoComplete='off'
-                            margin="dense"
-                            id="preview_mint_key"
-                            label={t('Paste a mint address')}
-                            type="text"
-                            fullWidth
-                            variant="standard"
-                            value={mintKey}
-                            onChange={(e) => setInputMintValue(e.target.value)}
-                        />
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={handleCloseDialog}>Cancel</Button>
-                        <Button 
-                            type="submit"
-                            variant="text" 
-                            title="GO">
-                                {t('Go')}
-                        </Button>
-                    </DialogActions>
-                </form>
-            </BootstrapDialog>   
-          </React.Fragment>
+                    <SearchIcon />
+                </Button> 
+                
+                <BootstrapDialog 
+                    fullWidth={true}
+                    maxWidth={"md"}
+                    open={open_dialog} onClose={handleCloseDialog}
+                    PaperProps={{
+                        style: {
+                            background: '#13151C',
+                            border: '1px solid rgba(255,255,255,0.05)',
+                            borderTop: '1px solid rgba(255,255,255,0.1)',
+                            borderRadius: '20px'
+                        }
+                        }}
+                    >
+                    <DialogTitle>
+                        {t('Mint')}
+                    </DialogTitle>
+                    <form onSubmit={HandleMintAddressSubmit}>
+                        <DialogContent>
+                            <TextField
+                                autoFocus
+                                autoComplete='off'
+                                margin="dense"
+                                id="preview_mint_key"
+                                label={t('Paste a mint address')}
+                                type="text"
+                                fullWidth
+                                variant="standard"
+                                value={mintKey}
+                                onChange={(e) => setInputMintValue(e.target.value)}
+                            />
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={handleCloseDialog}>Cancel</Button>
+                            <Button 
+                                type="submit"
+                                variant="text" 
+                                title="GO">
+                                    {t('Go')}
+                            </Button>
+                        </DialogActions>
+                    </form>
+                </BootstrapDialog>   
+            </>
         );
     }
 
@@ -836,8 +877,11 @@ function GalleryItemMeta(props: any) {
             props.setRefresh(true);
         }
         if ((mintAta)||(refreshOwner)){
-            getMintOwner();
-            fetchTokenAccountOwnerHoldings();
+            if (!loadingOwner){
+                getMintOwner();
+                if (!loadingTokenAccountAccountOwnerHoldings)
+                    fetchTokenAccountOwnerHoldings();
+            }
         }
         if (refreshOwner){
             setRefreshOwner(!refreshOwner);
@@ -845,16 +889,22 @@ function GalleryItemMeta(props: any) {
     }, [mintAta, publicKey, refreshOwner]);
     
     React.useEffect(() => { 
-        try{
-            ( collectionitem?.image && 
-                collectionItemImages.push(collectionitem.image)
-            )
-        } catch(e){
-            console.log("ERR: "+e);
-        }
-        
-        if (!tokenOwners){
-            fetchTokenAccountData();
+        if (mint){
+            if (!loadingMintAta){
+                if (!mintAta){
+                    try{
+                        ( collectionitem?.image && 
+                            collectionItemImages.push(collectionitem.image)
+                        )
+                    } catch(e){
+                        console.log("ERR: "+e);
+                    }
+                    
+                    if (!tokenOwners){
+                        fetchTokenAccountData();
+                    }
+                }
+            }
         }
     }, [mint]);
 
@@ -865,21 +915,25 @@ function GalleryItemMeta(props: any) {
             <Grid
                 sx={{mt:{mode_margin}}}
             >
-                <Helmet>
-                    <title>{`${collectionitem.name} | ${t('Grape Social. Stateless. Marketplace.')}`}</title>
-                    <meta property="og:title" content={`${collectionitem.name} @Grape`} />
-                    <meta property="og:type" content="website" />
-                    <meta property="og:url" content={window.location.href} />
-                    <meta property="og:image" content={collectionitem.image} />
-                    <meta property="og:description" content={collectionitem.name} />
-                    <meta name="theme-color" content="#000000" />
+                {viewMode === 0 &&
+                    <>
+                        <Helmet>
+                            <title>{`${collectionitem.name} | ${t('Grape Social. Stateless. Marketplace.')}`}</title>
+                            <meta property="og:title" content={`${collectionitem.name} @Grape`} />
+                            <meta property="og:type" content="website" />
+                            <meta property="og:url" content={window.location.href} />
+                            <meta property="og:image" content={collectionitem.image} />
+                            <meta property="og:description" content={collectionitem.name} />
+                            <meta name="theme-color" content="#000000" />
 
-                    <meta name="twitter:card" content="summary_large_image" />
-                    <meta name="twitter:site" content={`${collectionitem.name} @Grape`} />
-                    <meta name="twitter:title" content={collectionitem.name} />
-                    <meta name="twitter:description" content={collectionitem.name} />
-                    <meta name="twitter:image" content={collectionitem.image} />
-                </Helmet>
+                            <meta name="twitter:card" content="summary" />
+                            <meta name="twitter:title" content={collectionitem.name} />
+                            <meta name="twitter:description" content={collectionitem.name} />
+                            <meta name="twitter:image" content={collectionitem.image} />
+                        </Helmet>
+                    </>
+                }
+
 
                 {isViewerOpen && (
                     <ImageViewer
@@ -1085,7 +1139,7 @@ function GalleryItemMeta(props: any) {
                                                         aria-label="NFT Meta">
                                                         
                                                         {collectionitem?.attributes ?
-                                                            <React.Fragment>
+                                                            <>
 
                                                                 {collectionitem.attributes?.length  && collectionitem.attributes.length > 0 ? (
                                                                     <></>
@@ -1168,7 +1222,7 @@ function GalleryItemMeta(props: any) {
                                                                     </TableRow>
                                                                 </>
                                                                 }
-                                                            </React.Fragment>
+                                                            </>
                                                         : null }
 
                                                         <TableRow>
@@ -1205,7 +1259,7 @@ function GalleryItemMeta(props: any) {
                                                         : null }
 
                                                         {collectionitem.properties?.creators ?
-                                                            <React.Fragment>
+                                                            <>
                                                                 <TableRow
                                                                     onClick={() => setOpenCreatorCollapse(!open_creator_collapse)}
                                                                 >
@@ -1253,7 +1307,7 @@ function GalleryItemMeta(props: any) {
                                                                         </Collapse>
                                                                     </TableCell>
                                                                 </TableRow>
-                                                            </React.Fragment>
+                                                            </>
                                                         : null }
 
 
@@ -1365,7 +1419,7 @@ function GalleryItemMeta(props: any) {
 
                                         <Box>
                                             <Typography component="div" variant="subtitle1">
-                                               <GrapeVerified updateAuthority={collectionrawdata} symbol={collectionitem.symbol} />
+                                               <GrapeVerified verifiedCollection={verifiedCollection} collectionRawData={collectionrawdata} symbol={collectionitem.symbol} />
                                             </Typography>
                                             <Typography component="div" variant="h4" sx={{fontWeight:'800'}}>
                                                 <strong>
@@ -1545,8 +1599,9 @@ function GalleryItemMeta(props: any) {
                                 {tokenOwners?.data.parsed.info.owner &&
                                     <ItemOffers
                                         mintAta={mintAta} 
-                                        updateAuthority={collectionrawdata?.updateAuthority}
+                                        collectionItemData={collectionrawdata}
                                         collectionAuctionHouse={collectionAuctionHouse}
+                                        verifiedCollection={verifiedCollection}
                                         mintOwner={tokenOwners?.data.parsed.info.owner} 
                                         mint={mint} 
                                         mintName={collectionitem.name}
@@ -1680,7 +1735,7 @@ export function PreviewView(this: any, props: any) {
     const [refresh, setRefresh] = React.useState(false);
     const {handlekey} = props.handlekey || useParams<{ handlekey: string }>();
     const [searchParams, setSearchParams] = useSearchParams();
-
+    const [counter, setCounter] = React.useState(0);
     const urlParams = searchParams.get("pkey") || searchParams.get("mint") || handlekey;
     
     //const [pubkey, setPubkey] = React.useState(null);
@@ -1712,7 +1767,7 @@ export function PreviewView(this: any, props: any) {
         // Add button next to collection to clear navigation address
         // this should only appear if the user is logged in (has a pubkey from session)
         return (
-            <React.Fragment></React.Fragment>
+            <></>
         );
     }
 
@@ -1724,6 +1779,7 @@ export function PreviewView(this: any, props: any) {
         const [collectionrawdata, setCollectionRaw] = React.useState(null);
         const [collectionAuctionHouse, setCollectionAuctionHouse] = React.useState(null);
         const [vcLoading, setVcLoading] = React.useState(false);
+        const [verifiedCollection, setVerifiedCollection] = React.useState(null);
         const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
         const { connection } = useConnection();
         const MD_PUBKEY = METAPLEX_PROGRAM_ID;
@@ -1799,10 +1855,12 @@ export function PreviewView(this: any, props: any) {
         const getVerifiedCollection = async () => {
             if (!vcLoading){
                 setVcLoading(true);
-                let [vcFinal] = await Promise.all([fetchVerifiedCollection(collectionrawdata?.meta_final?.updateAuthority)]);
-                if (vcFinal)
+                let vcFinal = await fetchVerifiedCollection(collectionrawdata?.meta_final?.updateAuthority);
+                
+                if (vcFinal){
+                    setVerifiedCollection(vcFinal);
                     setCollectionAuctionHouse(vcFinal?.auctionHouse);
-
+                }
                 setVcLoading(false);
             }
         }
@@ -1822,9 +1880,9 @@ export function PreviewView(this: any, props: any) {
             return () => clearInterval(interval); 
         }, [thismint]);
         
-        if((!collectionmeta)||
+        if((!collectionmeta)||(
             (loading)||
-            (vcLoading)){
+            (vcLoading))){
             
             return (
                 <Card
@@ -1848,50 +1906,60 @@ export function PreviewView(this: any, props: any) {
             //console.log("Mint: "+mint);
             //if ((collectionmeta)&&(!loading)){
             //if (image){
-                return (
-                        <GalleryItemMeta collectionitem={collectionmeta} collectionrawdata={collectionrawdata} mint={mint} setRefresh={setRefresh} setMintPubkey={setMintPubkey} collectionAuctionHouse={collectionAuctionHouse} handlekey={handlekey} viewMode={viewMode} />
-                );
+                if (!loading){
+                    return (
+                            <GalleryItemMeta viewMode={viewMode} verifiedCollection={verifiedCollection} collectionitem={collectionmeta} collectionrawdata={collectionrawdata} mint={mint} setRefresh={setRefresh} setMintPubkey={setMintPubkey} collectionAuctionHouse={collectionAuctionHouse} handlekey={handlekey} viewMode={viewMode} />
+                    );
+                }
             }
             //}
         }
     }
 
     React.useEffect(() => { 
-        if (refresh)
+        if (refresh){
             setRefresh(!refresh);
-        
+        }
+
         if (!props?.handlekey){
-            if (mint && ValidateAddress(mint)){
-                //props.history.push({
-                history({
-                    pathname: GRAPE_PREVIEW+mint
-                },
-                    { replace: true }
-                );
-            } else {
-                history({
-                    pathname: '/preview'
-                },
-                    { replace: true }
-                );
-            } 
+            setCounter(counter+1);
+            
+            if (mint){
+                if (mint && ValidateAddress(mint)){
+                    // check pathname
+                    if (location.pathname !== GRAPE_PREVIEW+mint){
+                        history({
+                            pathname: GRAPE_PREVIEW+mint
+                        },
+                            { replace: true }
+                        );
+                    }
+                } else {
+                    history({
+                        pathname: '/preview'
+                    },
+                        { replace: true }
+                    );
+                } 
+            }
         }
         
     }, [mint, refresh]);
 
-    if (!mint){
-        if (urlParams?.length > 0){
+    React.useEffect(() => { 
+        
+        if ((urlParams) && (!mint) && (urlParams?.length > 0)){
             setMintPubkey(urlParams);
         }
-    }
+    }, [urlParams]);
 
     const { t, i18n } = useTranslation();
 
     return (
-        <React.Fragment>
+        <>
                 { mint && ValidateAddress(mint) ?
                     <>
-                    {viewMode === 0 ?
+                    {!loading && viewMode === 0 ?
                         <Box
                             sx={{mt:6}}
                         >
@@ -1903,7 +1971,7 @@ export function PreviewView(this: any, props: any) {
                     </>
                 : 
                 <>
-                    <React.Fragment>
+                    <>
                         <Box
                             sx={{ 
                                 p: 1, 
@@ -1951,10 +2019,11 @@ export function PreviewView(this: any, props: any) {
                                     </Grid>
                                 </Grid>
                             </Box>
-                    </React.Fragment>
+                    </>
                 </>
                 }
                 
-        </React.Fragment>
+        </>
     );
+    
 }

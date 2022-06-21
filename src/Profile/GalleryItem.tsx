@@ -316,8 +316,8 @@ export default function GalleryItem(props: any){
                                                     
                                                     {collectionitem?.listingPrice ?
                                                         
-                                                        <Tooltip title={collectionitem?.listedTimestamp}> 
-                                                            <Button sx={{color:'white',borderRadius:'17px'}}>  
+                                                        <Tooltip title={collectionitem?.marketplaceListing ? collectionitem?.listedTimestamp : `Third party listing - see NFT history for details`}> 
+                                                            <Button sx={{color:collectionitem?.marketplaceListing ? `white` : `gray`,borderRadius:'17px'}}>  
                                                             <Typography variant="h6">
                                                             {collectionitem?.listingPrice}  <SolCurrencyIcon sx={{fontSize:"16px"}} />
                                                             </Typography>

@@ -12,6 +12,11 @@ import { MessagesView } from './Messages/Messages';
 //import { NotificationsView } from "./NotificationsTest/NotificationsTest";
 import CssBaseline from '@mui/material/CssBaseline';
 
+import STATIC_APPLE_TOUCH from './public/apple-touch-icon.png';
+import STATIC_FAVICON_32x32 from './public/favicon-32x32.png';
+import STATIC_FAVICON_16x16 from './public/favicon-16x16.png';
+import STATIC_GRAPEDEX from './public/grapedex.png';
+
 import '@dialectlabs/react-ui/lib/index.css';
 
 import { Box, Grid, Paper, Container, Typography, AppBar } from '@mui/material';
@@ -140,7 +145,27 @@ function DashboardContent() {
 
     return (
         <>
-            <Suspense fallback="loading">
+            <Helmet>
+      <meta name="theme-color" content="#000000" />
+        <meta name="description" content="Grape | Social. Stateless. Marketplace. powered by DAOs on Solana" />
+
+        <link rel="apple-touch-icon" sizes="180x180" href={STATIC_APPLE_TOUCH}/>
+        <link rel="icon" type="image/png" sizes="32x32" href={STATIC_FAVICON_32x32}/>
+        <link rel="icon" type="image/png" sizes="16x16" href={STATIC_FAVICON_16x16}/>
+        <meta name="msapplication-TileColor" content="#da532c"/>
+
+        <meta name="twitter:title" content="Grape | Social. Stateless. Marketplace. powered by Solana"/>
+        <meta name="twitter:card" content="summary"/>
+        <meta name="twitter:image" content={STATIC_GRAPEDEX}/>
+        <meta property="og:url" content="https://grape.art/"/>
+        <meta property="og:type" content="website"/>
+        <meta property="og:title" content="Grape | Social. Stateless. Marketplace. powered by Solana"/>
+        <meta property="og:description" content="List and get offers for your NFT collection without it leaving your wallet only on grape.art, enjoy the benefits of holding your NFT until it's sold, the first truly decentralized social marketplace on Solana"/>
+        <meta property="og:image" content={STATIC_GRAPEDEX}/>
+        <title>Grape | Social. Stateless. Marketplace. powered by DAOs on Solana</title>
+      </Helmet>
+
+      <Suspense fallback="loading">
                 <DialectUiManagementProvider>
                     <ThemeProvider theme={grapeTheme}>
                         <div className="grape-gradient-background">
