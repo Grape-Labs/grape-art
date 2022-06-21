@@ -545,6 +545,8 @@ const MainPanel = (props: any) => {
     const rowsperpage = 1500;
     //const { activeTab, setActiveTab } = React.useContext(TabActiveContext);
     const [tabvalue, setTabValue] = React.useState(props?.activeTab || 0);
+    const { publicKey } = useWallet();
+    const isYou = publicKey?.toBase58() === thisPublicKey;
 
     const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
         setTabValue(newValue);
@@ -668,16 +670,18 @@ const MainPanel = (props: any) => {
                                         sx={{ color: 'white', minWidth: '25px' }}
                                         {...a11yProps(6)}
                                     />
-                                    <Tab
-                                        icon={
-                                            <Hidden smUp>
-                                                <Mail sx={{ fontSize: '18px' }} />
-                                            </Hidden>
-                                        }
-                                        label={<Hidden smDown>{t('Inbox')}</Hidden>}
-                                        sx={{ color: 'white', minWidth: '25px' }}
-                                        {...a11yProps(7)}
-                                    />
+                                    {isYou && (
+                                        <Tab
+                                            icon={
+                                                <Hidden smUp>
+                                                    <Mail sx={{ fontSize: '18px' }} />
+                                                </Hidden>
+                                            }
+                                            label={<Hidden smDown>{t('Inbox')}</Hidden>}
+                                            sx={{ color: 'white', minWidth: '25px' }}
+                                            {...a11yProps(7)}
+                                        />
+                                    )}
                                 </Tabs>
 
                                 <TabPanel value={tabvalue} index={0}>
@@ -719,9 +723,11 @@ const MainPanel = (props: any) => {
                                 <TabPanel value={tabvalue} index={6}>
                                     <CurationView pubkey={thisPublicKey} type={1} />
                                 </TabPanel>
-                                <TabPanel value={tabvalue} index={7}>
-                                    <InboxView />
-                                </TabPanel>
+                                {isYou && (
+                                    <TabPanel value={tabvalue} index={7}>
+                                        <InboxView />
+                                    </TabPanel>
+                                )}
                             </TabActiveProvider>
                         </Box>
                     </Grid>
@@ -759,6 +765,7 @@ const IdentityView = (props: any) => {
     //const { setActiveTab } = React.useContext(TabActiveContext);
     const [activeTab, setActiveTab] = React.useState(0);
     const { navigation, open } = useDialectUiId<ChatNavigationHelpers>(GRAPE_BOTTOM_CHAT_ID);
+    const isYou = publicKey?.toBase58() === pubkey;
 
     const ref = React.createRef();
 
@@ -1167,7 +1174,7 @@ const IdentityView = (props: any) => {
                                                                     title={'Grape Profile | ' + trimAddress(pubkey, 4)}
                                                                 />
 
-                                                                {publicKey && publicKey.toBase58() !== pubkey && (
+                                                                {!isYou && (
                                                                     <Typography
                                                                         component="div"
                                                                         variant="caption"
@@ -1328,38 +1335,48 @@ const IdentityView = (props: any) => {
                                                     </Typography>
                                                 </Grid>
                                                 <Grid item sx={{ mt: 1 }}>
-                                                    <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                                                        <Button
-                                                            onClick={() => {
-                                                                open();
-                                                                navigation?.showCreateThread(pubkey);
-                                                            }}
-                                                            sx={{
-                                                                fontSize: '12px',
-                                                                textTransform: 'none',
-                                                                color: 'white',
-                                                                border: '1px solid #fff',
-                                                                borderRadius: '17px',
-                                                                pl: 5,
-                                                                pr: 5,
-                                                                pt: 0,
-                                                                pb: 0,
-                                                                m: 1,
-                                                            }}
-                                                        >
-                                                            <Chat sx={{ fontSize: 12, mr: 0.5 }} />
-                                                            <Typography
-                                                                component="span"
-                                                                color="#aaa"
-                                                                variant="caption"
-                                                                align="center"
-                                                                sx={{ flexGrow: 1 }}
+                                                    {!isYou && (
+                                                        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                                                            <Button
+                                                                onClick={() => {
+                                                                    open();
+                                                                    navigation?.showCreateThread(pubkey);
+                                                                }}
+                                                                sx={{
+                                                                    ':hover': {
+                                                                        opacity: 0.8,
+                                                                        bgcolor: 'white',
+                                                                    },
+                                                                    textTransform: 'none',
+                                                                    bgcolor: 'white',
+                                                                    borderRadius: '17px',
+                                                                    transition:
+                                                                        'opacity 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
+                                                                    pl: 5,
+                                                                    pr: 5,
+                                                                    pt: 0,
+                                                                    pb: 0,
+                                                                    m: 1,
+                                                                }}
                                                             >
-                                                                {t('Message')}
-                                                            </Typography>
-                                                            &nbsp;
-                                                        </Button>
-                                                    </Box>
+                                                                <Chat
+                                                                    sx={{ fontSize: 12, mr: 0.5, color: '#6D3583' }}
+                                                                />
+                                                                <Typography
+                                                                    component="span"
+                                                                    color="#6D3583"
+                                                                    variant="caption"
+                                                                    align="center"
+                                                                    fontSize={12}
+                                                                    fontWeight={800}
+                                                                    sx={{ flexGrow: 1 }}
+                                                                >
+                                                                    {t('Message')}
+                                                                </Typography>
+                                                                &nbsp;
+                                                            </Button>
+                                                        </Box>
+                                                    )}
                                                     {followListInfo && (
                                                         <>
                                                             <Typography
