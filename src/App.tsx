@@ -67,25 +67,29 @@ import { ClassNames } from '@emotion/react';
 
 function BottomChat() {
     const wallet = useWallet();
+    const {publicKey} = useWallet();
 
     return (
-        <ClassNames>
-            {({ css }) => (
-                <Container sx={{ 
-                    zIndex: 'tooltip', }}>
-                    <DialectBottomChat
-                        dialectId={GRAPE_BOTTOM_CHAT_ID}
-                        wallet={wallet}
-                        rpcUrl={GENSYSGO_RPC_ENDPOINT}
-                        theme="dark"
-                        network="mainnet"
-                        variables={getDialectVariables(css, 'popup')}
-                        
-                    />
-                </Container>
-            )}
-        </ClassNames>
-        
+        <>
+        {publicKey &&
+            <ClassNames>
+                {({ css }) => (
+                    <Container sx={{ 
+                        zIndex: 'tooltip', }}>
+                        <DialectBottomChat
+                            dialectId={GRAPE_BOTTOM_CHAT_ID}
+                            wallet={wallet}
+                            rpcUrl={GENSYSGO_RPC_ENDPOINT}
+                            theme="dark"
+                            network="mainnet"
+                            variables={getDialectVariables(css, 'popup')}
+                            
+                        />
+                    </Container>
+                )}
+            </ClassNames>
+        }
+        </>
     );
 }
 
@@ -137,6 +141,7 @@ function DashboardContent() {
         ],
         [network]
     );
+    
 
     /*
   const { enqueueSnackbar } = useSnackbar();
@@ -152,24 +157,24 @@ function DashboardContent() {
     return (
         <>
             <Helmet>
-      <meta name="theme-color" content="#000000" />
-        <meta name="description" content="Grape | Social. Stateless. Marketplace. powered by DAOs on Solana" />
+                <meta name="theme-color" content="#000000" />
+                <meta name="description" content="Grape | Social. Stateless. Marketplace. powered by DAOs on Solana" />
 
-        <link rel="apple-touch-icon" sizes="180x180" href={STATIC_APPLE_TOUCH}/>
-        <link rel="icon" type="image/png" sizes="32x32" href={STATIC_FAVICON_32x32}/>
-        <link rel="icon" type="image/png" sizes="16x16" href={STATIC_FAVICON_16x16}/>
-        <meta name="msapplication-TileColor" content="#da532c"/>
+                <link rel="apple-touch-icon" sizes="180x180" href={STATIC_APPLE_TOUCH}/>
+                <link rel="icon" type="image/png" sizes="32x32" href={STATIC_FAVICON_32x32}/>
+                <link rel="icon" type="image/png" sizes="16x16" href={STATIC_FAVICON_16x16}/>
+                <meta name="msapplication-TileColor" content="#da532c"/>
 
-        <meta name="twitter:title" content="Grape | Social. Stateless. Marketplace. powered by Solana"/>
-        <meta name="twitter:card" content="summary"/>
-        <meta name="twitter:image" content={STATIC_GRAPEDEX}/>
-        <meta property="og:url" content="https://grape.art/"/>
-        <meta property="og:type" content="website"/>
-        <meta property="og:title" content="Grape | Social. Stateless. Marketplace. powered by Solana"/>
-        <meta property="og:description" content="List and get offers for your NFT collection without it leaving your wallet only on grape.art, enjoy the benefits of holding your NFT until it's sold, the first truly decentralized social marketplace on Solana"/>
-        <meta property="og:image" content={STATIC_GRAPEDEX}/>
-        <title>Grape | Social. Stateless. Marketplace. powered by DAOs on Solana</title>
-      </Helmet>
+                <meta name="twitter:title" content="Grape | Social. Stateless. Marketplace. powered by Solana"/>
+                <meta name="twitter:card" content="summary"/>
+                <meta name="twitter:image" content={STATIC_GRAPEDEX}/>
+                <meta property="og:url" content="https://grape.art/"/>
+                <meta property="og:type" content="website"/>
+                <meta property="og:title" content="Grape | Social. Stateless. Marketplace. powered by Solana"/>
+                <meta property="og:description" content="List and get offers for your NFT collection without it leaving your wallet only on grape.art, enjoy the benefits of holding your NFT until it's sold, the first truly decentralized social marketplace on Solana"/>
+                <meta property="og:image" content={STATIC_GRAPEDEX}/>
+                <title>Grape | Social. Stateless. Marketplace. powered by DAOs on Solana</title>
+            </Helmet>
 
       <Suspense fallback="loading">
                 <DialectUiManagementProvider>
@@ -205,6 +210,7 @@ function DashboardContent() {
                                                     <Container maxWidth="xl" sx={{ mb: 4 }}>
                                                         <ConfirmDialog />
                                                         <BottomChat />
+                                                        
                                                         <Routes>
                                                             <Route path="/splash" element={<SplashView />} />
 
