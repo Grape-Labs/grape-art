@@ -6,6 +6,8 @@ import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { BN, web3 } from '@project-serum/anchor';
 //import spok from 'spok';
 
+import { ChatNavigationHelpers, useDialectUiId } from '@dialectlabs/react-ui';
+import { GRAPE_BOTTOM_CHAT_ID } from '../utils/ui-contants';
 import moment from 'moment';
 
 import {
@@ -59,6 +61,7 @@ import { MakeLinkableAddress, ValidateCurve, trimAddress, timeAgo, formatBlockTi
 
 import { TokenAmount } from '../utils/grapeTools/safe-math';
 
+import Chat from '@mui/icons-material/Chat';
 import BarChartOutlinedIcon from '@mui/icons-material/BarChartOutlined';
 import HowToVoteIcon from '@mui/icons-material/HowToVote';
 import SolCurrencyIcon from '../components/static/SolCurrencyIcon';
@@ -92,7 +95,7 @@ export default function HistoryView(props: any){
     const [symbol, setSymbol] = React.useState(props.symbol || null);
     const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
     const { connection } = useConnection();
-
+    const { navigation, open } = useDialectUiId<ChatNavigationHelpers>(GRAPE_BOTTOM_CHAT_ID);
     const [receiptListing, setReceiptListing] = React.useState(null);
     const [receiptPurchase, setReceiptPurchase] = React.useState(null);
     const [receiptBid, setReceiptBid] = React.useState(null);
@@ -285,6 +288,10 @@ export default function HistoryView(props: any){
                         if ((source === "auctionhouse")||(source === "solanart_ah")){
 
                         } else {
+                            var directmessage = null;
+                            if (activityResults.length === 0)
+                                directmessage = true;
+
                             activityResults.push({
                                 buyeraddress: bookkeeper, 
                                 bookkeeper: bookkeeper, 
@@ -301,7 +308,8 @@ export default function HistoryView(props: any){
                                 auctionHouse: null,
                                 seller: seller, 
                                 buyer: buyer, 
-                                source: source});
+                                source: source,
+                                directmessage:directmessage});
                         }
 
                         
@@ -514,11 +522,36 @@ export default function HistoryView(props: any){
                                                         <TableRow>
                                                             
                                                             <TableCell>
-                                                                <Tooltip title={'View Bookkeeper Profile'}>
-                                                                    <Button size="small" variant="text" component={Link} to={`${GRAPE_PROFILE}${item.bookkeeper}`} target="_blank" sx={{ml:1,color:'white',borderRadius:'24px'}}>
-                                                                        {trimAddress(item.bookkeeper,4)}
-                                                                    </Button>
-                                                                </Tooltip>
+                                                                <ButtonGroup>
+                                                                    <Tooltip title={'View Bookkeeper Profile'}>
+                                                                        <Button size="small" variant="text" component={Link} to={`${GRAPE_PROFILE}${item.bookkeeper}`} target="_blank" sx={{ml:1,color:'white',borderRadius:'24px'}}>
+                                                                            {trimAddress(item.bookkeeper,4)}
+                                                                        </Button>
+                                                                    </Tooltip>
+                                                                {item.directmessage &&
+                                                                    <Tooltip title="Send a direct message">
+                                                                        <Button
+                                                                            onClick={() => {
+                                                                                open();
+                                                                                navigation?.showCreateThread(item.bookkeeper);
+                                                                            }}
+                                                                            sx={{
+                                                                                m:0,p:0,
+                                                                                textTransform: 'none',
+                                                                                borderRadius: '17px',
+                                                                                transition:
+                                                                                    'opacity 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
+                                                                            
+                                                                            }}
+                                                                        >
+                                                                            
+                                                                            <Chat
+                                                                                sx={{ fontSize: 12, color: 'white' }}
+                                                                            />
+                                                                        </Button>
+                                                                    </Tooltip>
+                                                                }
+                                                                </ButtonGroup>
                                                             </TableCell>
                                                             <TableCell>
                                                                 
