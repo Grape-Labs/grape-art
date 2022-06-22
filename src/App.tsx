@@ -69,6 +69,10 @@ function BottomChat() {
     const wallet = useWallet();
 
     return (
+        <>
+        {location.pathname && location.pathname.includes('collection') ?
+        <></>
+        :
         <ClassNames>
             {({ css }) => (
                 <Container sx={{ 
@@ -85,6 +89,8 @@ function BottomChat() {
                 </Container>
             )}
         </ClassNames>
+        }
+        </>
     );
 }
 
