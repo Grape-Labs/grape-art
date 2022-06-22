@@ -71,14 +71,18 @@ function BottomChat() {
     return (
         <ClassNames>
             {({ css }) => (
-                <DialectBottomChat
-                    dialectId={GRAPE_BOTTOM_CHAT_ID}
-                    wallet={wallet}
-                    rpcUrl={GENSYSGO_RPC_ENDPOINT}
-                    theme="dark"
-                    network="mainnet"
-                    variables={getDialectVariables(css, 'popup')}
-                />
+                <Container sx={{ 
+                    zIndex: 'tooltip', }}>
+                    <DialectBottomChat
+                        dialectId={GRAPE_BOTTOM_CHAT_ID}
+                        wallet={wallet}
+                        rpcUrl={GENSYSGO_RPC_ENDPOINT}
+                        theme="dark"
+                        network="mainnet"
+                        variables={getDialectVariables(css, 'popup')}
+                        
+                    />
+                </Container>
             )}
         </ClassNames>
     );
@@ -199,6 +203,7 @@ function DashboardContent() {
                                                 >
                                                     <Container maxWidth="xl" sx={{ mb: 4 }}>
                                                         <ConfirmDialog />
+                                                        <BottomChat />
                                                         <Routes>
                                                             <Route path="/splash" element={<SplashView />} />
 
@@ -234,7 +239,7 @@ function DashboardContent() {
 
                                                             <Route path="*" element={<NotFound />} />
                                                         </Routes>
-                                                        <BottomChat />
+                                                        
                                                         <Copyright sx={{ mt: 4 }} />
                                                     </Container>
                                                 </Grid>

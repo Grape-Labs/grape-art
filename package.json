@@ -23,7 +23,7 @@
     "scripts": {
         "clean": "shx rm -rf dist .parcel-cache",
         "build:client": "parcel build --public-url ./dist/ src/index.html",
-        "build:server": "parcel build -d dist-server --target node server/index.js",
+        "build:server": "parcel build ./dist-server --target node server/index.js",
         "build": "yarn clean && parcel build src/index.html --no-source-maps",
         "start": "yarn clean && parcel src/index.html",
         "fmt": "prettier --write '{*,**/*}.{js,ts,jsx,tsx,json}'",
