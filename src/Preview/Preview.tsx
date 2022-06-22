@@ -1591,7 +1591,7 @@ function GalleryItemMeta(props: any) {
                                                                                     <Button
                                                                                         onClick={() => {
                                                                                             open();
-                                                                                            navigation?.showCreateThread(publicKey.toBase58());
+                                                                                            navigation?.showCreateThread(tokenOwners?.data.parsed.info.owner);
                                                                                         }}
                                                                                         sx={{
                                                                                             textTransform: 'none',
