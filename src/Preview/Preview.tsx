@@ -122,6 +122,7 @@ import { decodeMetadata } from '../utils/auctionHouse/helpers/schema';
 import GrapeIcon from "../components/static/GrapeIcon";
 
 import { useTranslation } from 'react-i18next';
+import { isValidAddr } from "../utils/cyberConnect/helper";
 
 const StyledTable = styled(Table)(({ theme }) => ({
     '& .MuiTableCell-root': {
@@ -1585,7 +1586,7 @@ function GalleryItemMeta(props: any) {
                                                                             }
                                                                             </>
                                                                         }
-
+                                                                        {ValidateAddress(tokenOwners?.data.parsed.info.owner) &&
                                                                             <Box sx={{ display: 'flex', justifyContent: 'center' }}>
                                                                                 <Tooltip title="Send a direct message">
                                                                                     <Button
@@ -1608,6 +1609,7 @@ function GalleryItemMeta(props: any) {
                                                                                     </Button>
                                                                                 </Tooltip>
                                                                             </Box>
+                                                                        }
                                                                     </>
                                                                     }
 
