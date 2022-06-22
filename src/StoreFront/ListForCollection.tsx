@@ -157,11 +157,14 @@ export default function ListForCollectionView(props: any){
         try {
             let mintsPDAs = new Array();
             
+            // we should loop entire collection user has
+
             let mintarr = wallet_collection.slice(rpclimit*(start), rpclimit*(start+1)).map((value:any, index:number) => {
                 //console.log("mint: "+JSON.stringify(value.address));
                 //return value.account.data.parsed.info.mint;
                 return value;
             });
+
 
             for (var value of mintarr){
                 if (value){
@@ -178,9 +181,11 @@ export default function ListForCollectionView(props: any){
                     }
                 }
             }
-
+            
             //console.log("pushed pdas: "+JSON.stringify(mintsPDAs));
             const metadata = await ggoconnection.getMultipleAccountsInfo(mintsPDAs);
+        
+        
             //console.log("returned: "+JSON.stringify(metadata));
             // LOOP ALL METADATA WE HAVE
             //for (var metavalue of metadata){
@@ -236,9 +241,23 @@ export default function ListForCollectionView(props: any){
             collection
         });
 
-        const [collectionMeta] = await Promise.all([getCollectionData(0, collection)]);
+        const loops = Math.ceil(collection.length / rpclimit);
+        let collectionmeta: any[] = [];
+
+        console.log('lps: ' + loops);
+        for (let x = 0; x < loops; x++) {
+            //const interval = setTimeout(() => {
+            const tmpcollectionmeta = await getCollectionData(x, collection);
+            //collectionmeta.push(tmpcollectionmeta);
+            collectionmeta = collectionmeta.concat(tmpcollectionmeta);
+            //}, 200);
+        }
+        //console.log(collectionmeta.length + ' vs '+wallet_collection.length);
+
+        //const [collectionMeta] = await Promise.all([getCollectionData(0, collection)]);
+        
         //console.log("collectionMeta: "+JSON.stringify(collectionMeta));
-        setCollectionMetaFinal(collectionMeta);
+        setCollectionMetaFinal(collectionmeta);
         setLoading(false);
     }
 
@@ -253,14 +272,17 @@ export default function ListForCollectionView(props: any){
         
         React.useEffect(() => {
             if (item){
-                for (var mintItem of collectionMintList){
-                    if (mintItem.address === item.decoded?.mint){
-                        if (mintItem?.listingPrice){
-                            setIsListed(true)
-                            setListedPrice(mintItem?.listingPrice)
+                try{
+                //console.log("collectionMintList: "+JSON.stringify(collectionMintList))
+                    for (var mintItem of collectionMintList){
+                        if (mintItem.address === item.decoded?.mint){
+                            if (mintItem?.listingPrice){
+                                setIsListed(true)
+                                setListedPrice(mintItem?.listingPrice)
+                            }
                         }
                     }
-                }
+                }catch(e){console.log("ERR: "+e)}
             }
         }, [item]);
 
