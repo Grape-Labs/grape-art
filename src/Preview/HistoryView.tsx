@@ -255,6 +255,7 @@ export default function HistoryView(props: any){
                 }catch(e){console.log("ERR: "+e);return null;}
 
                 if (json){
+                    var founddm = false;
                     for (var meitem of json){
                         var bookkeeper = meitem.seller;
                         var buyer = meitem.buyer;
@@ -289,8 +290,13 @@ export default function HistoryView(props: any){
 
                         } else {
                             var directmessage = null;
-                            if (activityResults.length === 0)
-                                directmessage = true;
+                            if ((activityResults.length === 0)||(!founddm)){
+                                if (receiptType === 'listing_receipt'){
+                                    directmessage = true;
+                                    founddm = true;
+                                }
+                            }
+                                
 
                             activityResults.push({
                                 buyeraddress: bookkeeper, 
