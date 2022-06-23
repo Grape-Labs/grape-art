@@ -1,6 +1,6 @@
 {
     "name": "@grape-labs/grape-art",
-    "version": "1.1.299",
+    "version": "1.1.300",
     "author": "Grape devDAO",
     "repository": "https://github.com/grape-labs/grape-art",
     "license": "Apache-2.0",
@@ -24,7 +24,7 @@
         "clean": "shx rm -rf dist .parcel-cache",
         "build-client": "cross-env BABEL_ENV=client parcel build src/index.html --dist-dir dist/client --public-url /dist",
         "build-server": "cross-env BABEL_ENV=server parcel build server/index.js --dist-dir dist/server --public-url /dist",
-        "build-ssr": "rimraf dist && npm run generate-imported-component && npm run build-client && npm run build-server",
+        "build-ssr": "rimraf dist && npm run generate-imported-component && npm run build-client --no-source-maps && npm run build-server --no-source-maps",
         "generate-imported-component": "imported-components src src/imported.js",
         "build": "yarn clean && parcel build src/index.html --no-source-maps",
         "start": "yarn clean && parcel src/index.html",
@@ -147,6 +147,7 @@
         "shx": "^0.3.4",
         "stream-http": "^3.2.0",
         "tslib": "^2.3.1",
+        "url": "^0.11.0",
         "util": "^0.12.4"
     },
     "resolutions": {

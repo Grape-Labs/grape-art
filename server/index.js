@@ -13,7 +13,7 @@ app.use(compression());
 
 // Favicon
 const faviconFileName = favicon.slice(favicon.lastIndexOf('/') + 1);
-app.use('/favicon.ico', (req, res) => res.sendFile(path.join(__dirname, `../client/${faviconFileName}`)));
+app.use('/public/favicon.ico', (req, res) => res.sendFile(path.join(__dirname, `../client/${faviconFileName}`)));
 
 // Expose the public directory as /dist and point to the browser version
 app.use('/dist', express.static(`${__dirname}/../client`));
