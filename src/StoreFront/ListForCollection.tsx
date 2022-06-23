@@ -73,8 +73,10 @@ export default function ListForCollectionView(props: any){
     const rpclimit = 100;
 
     const handleClickOpenPreviewDialog = (mint:string) => {
+        setSelectedMint(null);
         if (mint){
             setSelectedMint(mint)
+            // if (selectedMint)
             setOpenPreviewDialog(true);
         }
     };
@@ -422,34 +424,36 @@ export default function ListForCollectionView(props: any){
                                                 variant='subtitle2'>
                                                 <SellNowButton item={item} />
                                             </Typography>
-                                            {selectedMint &&
-                                                <BootstrapDialog 
-                                                    fullWidth={true}
-                                                    maxWidth={"lg"}
-                                                    open={openPreviewDialog} onClose={handleClosePreviewDialog}
-                                                    PaperProps={{
-                                                        style: {
-                                                            background: '#13151C',
-                                                            border: '1px solid rgba(255,255,255,0.05)',
-                                                            borderTop: '1px solid rgba(255,255,255,0.1)',
-                                                            borderRadius: '20px'
-                                                        }
-                                                    }}
-                                                >
-                                                    <DialogContent>
-                                                        <PreviewView handlekey={selectedMint} />
-                                                    </DialogContent>
-                                                    <DialogActions>
-                                                        <Button variant="text" onClick={handleClosePreviewDialog}>{t('Close')}</Button>
-                                                    </DialogActions>
-                                                </BootstrapDialog>
-                                            }
+                                            
                                             </>
                                         }
 
                                     </ListItemText>
                                 </ListItem>
                             ))}
+
+                            {selectedMint &&
+                                <BootstrapDialog 
+                                    fullWidth={true}
+                                    maxWidth={"lg"}
+                                    open={openPreviewDialog} onClose={handleClosePreviewDialog}
+                                    PaperProps={{
+                                        style: {
+                                            background: '#13151C',
+                                            border: '1px solid rgba(255,255,255,0.05)',
+                                            borderTop: '1px solid rgba(255,255,255,0.1)',
+                                            borderRadius: '20px'
+                                        }
+                                    }}
+                                >
+                                    <DialogContent>
+                                        <PreviewView handlekey={selectedMint} />
+                                    </DialogContent>
+                                    <DialogActions>
+                                        <Button variant="text" onClick={handleClosePreviewDialog}>{t('Close')}</Button>
+                                    </DialogActions>
+                                </BootstrapDialog>
+                            }
                         </>
                     }
                     </List>
