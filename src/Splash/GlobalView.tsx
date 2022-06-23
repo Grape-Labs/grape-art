@@ -53,6 +53,7 @@ import { dataBeet, Metadata } from '@metaplex-foundation/mpl-token-metadata';
 import { 
     GRAPE_RPC_ENDPOINT,
     GRAPE_PROFILE,
+    GRAPE_PREVIEW,
     THEINDEX_RPC_ENDPOINT,
 } from '../utils/grapeTools/constants';
 
@@ -395,11 +396,13 @@ export default function GlobalView(props: any){
                                                             }  
                                                         </TableCell>
                                                         <TableCell>
-                                                            {item?.mintpk &&
-                                                                <>
-                                                                {item?.mintpk.toBase58()}
-                                                                </>
-                                                            }  
+                                                            <>
+                                                                {item?.mintpk &&
+                                                                <Button size="small" variant="text" component={Link} to={`${GRAPE_PREVIEW}${item?.mintpk.toBase58()}`} target="_blank" sx={{ml:1,color:'white',borderRadius:'24px'}}>
+                                                                    {item?.mintpk.toBase58()}
+                                                                </Button>
+                                                                } 
+                                                            </> 
                                                         </TableCell>
                                                     </TableRow>
                                                 ))}
