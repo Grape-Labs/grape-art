@@ -198,12 +198,12 @@ export default function GlobalView(props: any){
                     {
                     dataSize: size,
                     },
-                    {
-                    memcmp: {
+                    /*{
+                    mcmp: {
                         offset: ahPosition,
                         bytes: "7bgahjaMKFgwK3jSx5RQjdxSQ67wkfPWMCNCmtiPy65L",
                     },
-                    },
+                    },*/
                 ],
                 }
             )
@@ -212,6 +212,7 @@ export default function GlobalView(props: any){
 
             //place the elements of the array in a single index/row
             if (myArray[1].length > 0) {
+                myArray = myArray.sort((a:any,b:any) => (a.blockTime < b.blockTime) ? 1 : -1);
                 for (var i = 1; i < myArray.length; i++) {
                     let myArrayLength = myArray[i].length;
                     for (var j = 0; j < myArrayLength; j++) {
