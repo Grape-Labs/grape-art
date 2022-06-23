@@ -404,7 +404,7 @@ export default function ListForCollectionView(props: any){
                                         {(item.decoded.updateAuthority === entangleFrom) && (enforceEntangle) ?
                                             <Typography
                                                 variant='subtitle2'>
-                                                You need to reload this Bear first to list
+                                                Entangle/Reload this NFT first and then you can list
                                                 <Button
                                                     component="a" href={entangleUrl} target="_blank"
                                                     size="large" 
