@@ -399,7 +399,7 @@ export default function GlobalView(props: any){
                                                             <>
                                                                 {item?.mintpk &&
                                                                 <Button size="small" variant="text" component={Link} to={`${GRAPE_PREVIEW}${item?.mintpk.toBase58()}`} target="_blank" sx={{ml:1,color:'white',borderRadius:'24px'}}>
-                                                                    {item?.mintpk.toBase58()}
+                                                                    {trimAddress(item?.mintpk.toBase58(),3)}
                                                                 </Button>
                                                                 } 
                                                             </> 
