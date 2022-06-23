@@ -876,34 +876,12 @@ export function StoreFrontView(this: any, props: any) {
 
             try{
                 if (collectionAuthority.me_symbol){
-                    let response = null;
-                    const apiUrl = "https://corsproxy.io/?https://api-mainnet.magiceden.dev/v2/collections/"+collectionAuthority.me_symbol+"/listings?offset=0&limit=20";
-                    const resp1 = await window.fetch(apiUrl, {
-                        method: 'GET',
-                        redirect: 'follow',
-                    })
-                    const json1 = await resp1.json();
-
-                    const apiUrl2 = "https://corsproxy.io/?https://api-mainnet.magiceden.dev/v2/collections/"+collectionAuthority.me_symbol+"/listings?offset=20&limit=20";
-                    const resp2 = await window.fetch(apiUrl2, {
-                        method: 'GET',
-                        redirect: 'follow',
-                    })
-                    const json2 = await resp2.json();
                     
-                    const apiUrl3 = "https://corsproxy.io/?https://api-mainnet.magiceden.dev/v2/collections/"+collectionAuthority.me_symbol+"/listings?offset=40&limit=20";
-                    const resp3 = await window.fetch(apiUrl3, {
-                        method: 'GET',
-                        redirect: 'follow',
-                    })
-                    const json3 = await resp3.json();
-
-                    const apiUrl4 = "https://corsproxy.io/?https://api-mainnet.magiceden.dev/v2/collections/"+collectionAuthority.me_symbol+"/listings?offset=60&limit=20";
-                    const resp4 = await window.fetch(apiUrl4, {
-                        method: 'GET',
-                        redirect: 'follow',
-                    })
-                    const json4 = await resp4.json();                
+                    const json1 = await fetchMEWithTimeout(collectionAuthority.me_symbol,0);
+                    const json2 = await fetchMEWithTimeout(collectionAuthority.me_symbol,20);
+                    const json3 = await fetchMEWithTimeout(collectionAuthority.me_symbol,40);
+                    const json4 = await fetchMEWithTimeout(collectionAuthority.me_symbol,60);
+                    
                     const json = [...json1,...json2,...json3,json4];
 
                     try{
@@ -969,6 +947,23 @@ export function StoreFrontView(this: any, props: any) {
             //}, 500); 
             
         }
+    }
+
+    const Timeout = (time:number) => {
+        let controller = new AbortController();
+        setTimeout(() => controller.abort(), time * 1000);
+        return controller;
+    };
+
+    const fetchMEWithTimeout = async (symbol:string,start:number) => {
+        const apiUrl = "https://corsproxy.io/?https://api-mainnet.magiceden.dev/v2/collections/"+symbol+"/listings?offset="+start+"&limit=20";
+        const resp = await window.fetch(apiUrl, {
+            method: 'GET',
+            redirect: 'follow',
+            signal: Timeout(10).signal,
+        })
+        const json = await resp.json(); 
+        return json
     }
 
     const getMissingCollectionData = async (start:number, missing_collection:any) => {

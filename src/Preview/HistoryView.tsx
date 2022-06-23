@@ -133,49 +133,6 @@ export default function HistoryView(props: any){
         setLoading(false);
     }
 
-    const getMEHistory = async () => {
-        
-        setLoading(true);
-        
-        if (mint){
-            try{
-                let response = null;
-
-                const apiUrl = "https://corsproxy.io/?https://api-mainnet.magiceden.dev/v2/tokens/"+mint+"/activities?offset=0&limit=100";
-                
-                const resp = await window.fetch(apiUrl, {
-                    method: 'GET',
-                    redirect: 'follow',
-                    //body: JSON.stringify(body),
-                    //headers: { "Content-Type": "application/json" },
-                })
-
-                const json = await resp.json();
-                //console.log("json: "+JSON.stringify(json));
-                try{
-                    // here get the last sale and show it:
-                    // grape-art-last-sale
-                    
-                    let found = false;
-                    for (var item of json){
-                        //console.log(item.type + ' ' + item.price + ' '+formatBlockTime(item.blockTime, true, true));
-                        if (item.type === "buyNow"){
-                            let elements = document.getElementById("grape-art-last-sale");
-                            if (!found){
-                                //elements.innerHTML = 'Last sale '+item.price+'sol on '+formatBlockTime(item.blockTime, true, false);
-                            }
-                            found = true;
-                        }
-                    }
-                }catch(e){console.log("ERR: "+e);return null;}
-
-                setMEHistory(json);
-                setMEOpenHistory(json.length);
-            } catch(e){console.log("ERR: "+e)}
-        }
-        setLoading(false);
-    }
-
     const cancelMEListing = async (sellerPubKey:string,auctionHouseAddress:string,tokenAccount:string,price:any) => {
         try{
             let response = null;
@@ -229,22 +186,12 @@ export default function HistoryView(props: any){
 
             try{
                 let response = null;
-
-                const apiUrl = "https://corsproxy.io/?https://api-mainnet.magiceden.dev/v2/tokens/"+mint+"/activities?offset=0&limit=100";
                 
-                const resp = await window.fetch(apiUrl, {
-                    method: 'GET',
-                    redirect: 'follow',
-                    //body: JSON.stringify(body),
-                    //headers: { "Content-Type": "application/json" },
-                })
-
-                const json = await resp.json();
+                const json = await fetchMEHistoryWithTimeout(mint,0);
                 //console.log("json: "+JSON.stringify(json));
+
                 try{
                     // here get the last sale and show it:
-                    // grape-art-last-sale
-                    
                     let found = false;
                     for (var item of json){
                         //console.log(item.type + ' ' + item.price + ' '+formatBlockTime(item.blockTime, true, true));
@@ -344,6 +291,23 @@ export default function HistoryView(props: any){
 
         }
         setLoading(false);
+    }
+
+    const Timeout = (time:number) => {
+        let controller = new AbortController();
+        setTimeout(() => controller.abort(), time * 1000);
+        return controller;
+    };
+
+    const fetchMEHistoryWithTimeout = async (mint:string,start:number) => {
+        const apiUrl = "https://corsproxy.io/?https://api-mainnet.magiceden.dev/v2/tokens/"+mint+"/activities?offset="+start+"&limit=100";
+        const resp = await window.fetch(apiUrl, {
+            method: 'GET',
+            redirect: 'follow',
+            signal: Timeout(10).signal,
+        })
+        const json = await resp.json(); 
+        return json
     }
 
     React.useEffect(() => {
