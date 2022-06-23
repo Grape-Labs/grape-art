@@ -304,7 +304,7 @@ export default function HistoryView(props: any){
         const resp = await window.fetch(apiUrl, {
             method: 'GET',
             redirect: 'follow',
-            signal: Timeout(10).signal,
+            signal: Timeout(5).signal,
         })
         const json = await resp.json(); 
         return json
