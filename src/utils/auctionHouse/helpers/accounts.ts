@@ -29,6 +29,7 @@ import fs from 'fs';
 import { web3 } from '@project-serum/anchor';
 import log from 'loglevel';
 import { AccountLayout } from '@solana/spl-token';
+import { AuctionHouseProgram } from '@metaplex-foundation/mpl-auction-house';
 
 export type AccountAndPubkey = {
   pubkey: string;
@@ -36,6 +37,20 @@ export type AccountAndPubkey = {
 };
 
 export type StringPublicKey = string;
+
+export const deserializeReceipt = (data: Buffer, size: Number) => {
+  let receiptInfo : any;
+  if (size === 236){
+    receiptInfo = AuctionHouseProgram.accounts.ListingReceipt.deserialize(data);
+  } else if (size === 269){
+    receiptInfo = AuctionHouseProgram.accounts.BidReceipt.deserialize(data);
+  } else if (size === 193){
+    receiptInfo = AuctionHouseProgram.accounts.PurchaseReceipt.deserialize(data);
+  } else {
+    receiptInfo = null;
+  }
+  return receiptInfo;
+};
 
 // TODO: expose in spl package
 export const deserializeAccount = (data: Buffer) => {
