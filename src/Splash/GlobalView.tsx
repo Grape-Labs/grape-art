@@ -342,16 +342,16 @@ export default function GlobalView(props: any){
                                                         </TableCell>
                                                         <TableCell>
                                                             {item?.auctionHouse &&
-                                                                <Button size="small" variant="text" component={Link} to={`${GRAPE_PROFILE}${item?.auctionHouse.toBase58()}`} target="_blank" sx={{ml:1,color:'white',borderRadius:'24px'}}>
+                                                                <>
                                                                     {trimAddress(item?.auctionHouse.toBase58(),3)}
-                                                                </Button>   
+                                                                </>   
                                                             }  
                                                         </TableCell>
                                                         <TableCell>
                                                             {item?.seller &&
-                                                                <>
-                                                                {trimAddress(item?.seller.toBase58(),3)}
-                                                                </>
+                                                                <Button size="small" variant="text" component={Link} to={`${GRAPE_PROFILE}${item?.seller.toBase58()}`} target="_blank" sx={{ml:1,color:'white',borderRadius:'24px'}}>
+                                                                    {trimAddress(item?.seller.toBase58(),3)}
+                                                                </Button>
                                                             }  
                                                         </TableCell>
                                                         <TableCell>
