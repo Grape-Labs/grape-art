@@ -1,5 +1,6 @@
 import { ClassNamesContent } from '@emotion/react';
 import { defaultVariables, IncomingThemeVariables } from '@dialectlabs/react-ui';
+import theme from './config/theme';
 
 export const GRAPE_BOTTOM_CHAT_ID = 'grape-bottom-chat';
 export const GRAPE_INBOX_ID = 'grape-inbox';
@@ -16,6 +17,15 @@ export const getDialectVariables = (
                 svg: { marginTop: '2px' }, // small hack to move down Dialect logo in Powered by
             }),
         },
+        sliderWrapper: `${defaultVariables.dark.sliderWrapper} ${css`
+            z-index: 1400;
+            // Ideally this 'theme' object should be imported through mui's provider for function's purity. To improve.
+            ${theme.breakpoints.up('sm')} {
+                width: 25rem;
+                height: 35rem;
+                right: 1rem;
+            }
+        `}`, // increasing zIndex to appear above everything
         slider: css({
             width: '100%',
             height: '100%',
@@ -39,7 +49,7 @@ export const getDialectVariables = (
         `}`,
         textArea: `${defaultVariables.dark.textArea} ${css({
             fontFamily: 'inherit',
-            backgroundColor: 'transparent', // solid bg of tabs background (without opacity)
+            backgroundColor: 'transparent',
             borderColor: '#818791',
         })} ${css`
             ::placeholder {
