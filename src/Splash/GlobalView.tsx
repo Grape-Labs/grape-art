@@ -395,9 +395,9 @@ export default function GlobalView(props: any){
                                                             }  
                                                         </TableCell>
                                                         <TableCell>
-                                                            {item?.mintPk &&
+                                                            {item?.mintpk &&
                                                                 <>
-                                                                {item?.mintPk}
+                                                                {item?.mintpk.toBase58()}
                                                                 </>
                                                             }  
                                                         </TableCell>
