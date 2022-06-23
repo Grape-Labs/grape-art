@@ -210,8 +210,11 @@ export default function GlobalView(props: any){
             myArray.push(accounts.map(account => account.pubkey));
             })));
 
+            
+
             //place the elements of the array in a single index/row
             if (myArray[1].length > 0) {
+                myArray = myArray.sort((a:any,b:any) => (a.createdAt < b.createdAt) ? 1 : -1);
                 for (var i = 1; i < myArray.length; i++) {
                     let myArrayLength = myArray[i].length;
                     for (var j = 0; j < myArrayLength; j++) {
@@ -396,9 +399,9 @@ export default function GlobalView(props: any){
                                                             }  
                                                         </TableCell>
                                                         <TableCell>
-                                                            {item?.mintPk &&
+                                                            {item?.mintpk &&
                                                                 <>
-                                                                {item?.mintPk}
+                                                                {item?.mintpk}
                                                                 </>
                                                             }  
                                                         </TableCell>
