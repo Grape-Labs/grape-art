@@ -1,4 +1,4 @@
-import React, { FC, ReactNode, useCallback, useMemo, Suspense } from 'react';
+import React, { FC, ReactNode, useCallback, useMemo, Suspense, Component } from 'react';
 import { styled, ThemeProvider } from '@mui/material/styles';
 import { HashRouter, BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 //import { LogView } from "./Log/Log";
@@ -63,6 +63,7 @@ import { GRAPE_RPC_ENDPOINT, TX_RPC_ENDPOINT, GENSYSGO_RPC_ENDPOINT } from './ut
 import { BottomChat as DialectBottomChat, DialectUiManagementProvider } from '@dialectlabs/react-ui';
 import { getDialectVariables, GRAPE_BOTTOM_CHAT_ID } from './utils/ui-contants';
 import { ClassNames } from '@emotion/react';
+import { render } from '@testing-library/react';
 
 function BottomChat() {
     const wallet = useWallet();
@@ -106,7 +107,8 @@ function Copyright(props: any): JSX.Element {
     );
 }
 
-function DashboardContent() {
+function DashboardContent(){
+//export default class DashboardContent extends Component {
     const [open, setOpen] = React.useState(true);
     const toggleDrawer = () => {
         setOpen(!open);
@@ -152,7 +154,8 @@ function DashboardContent() {
   );
   */
 
-    return (
+    //render(){
+        return (
         <>
             <Helmet>
                 <meta name="theme-color" content="#000000" />
@@ -261,7 +264,8 @@ function DashboardContent() {
                 </DialectUiManagementProvider>
             </Suspense>
         </>
-    );
+        );
+    //}
 }
 
 export const NotFound = () => {

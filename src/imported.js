@@ -1,7 +1,7 @@
 /* eslint-disable */ 
-import {assignImportedComponents} from 'react-imported-component';
-const applicationImports = {
-  "0": () => import('./App'),
-};
-assignImportedComponents(applicationImports);
-export default applicationImports;
+    import {assignImportedComponents} from 'react-imported-component';
+    const applicationImports = {
+      0: () => import('../web-vitals'),
+    };
+    assignImportedComponents(applicationImports);
+    export default applicationImports;
