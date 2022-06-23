@@ -88,6 +88,7 @@ function convertSolVal(sol: any){
 export async function getPage(myArray: any, page: number, perPage: number): Promise<any []> {
     //console.log('myArray:', myArray, 'page:', page, 'perPage:', perPage);
     const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
+    const ticonnection = new Connection(GRAPE_RPC_ENDPOINT);
     const paginatedPublicKeys = myArray[0].slice(
         (page - 1) * perPage,
         page * perPage,
@@ -96,7 +97,7 @@ export async function getPage(myArray: any, page: number, perPage: number): Prom
     if (paginatedPublicKeys.length === 0) {
         return [];
     } 
-    const accountsWithData = await ggoconnection.getMultipleAccountsInfo(paginatedPublicKeys);
+    const accountsWithData = await ticonnection.getMultipleAccountsInfo(paginatedPublicKeys);
     //return accountsWithData;
     let myReceipts = [];
     let receiptInfoDs: any;
@@ -156,7 +157,7 @@ export default function GlobalView(props: any){
     const [mint, setMint] = React.useState(props.mint || null);
     const [symbol, setSymbol] = React.useState(props.symbol || null);
     const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
-    //const ggoconnection2 = new Connection(THEINDEX_RPC_ENDPOINT);   
+    const ticonnection = new Connection(THEINDEX_RPC_ENDPOINT);   
     const { connection } = useConnection();
 
     const [receiptListing, setReceiptListing] = React.useState(null);
@@ -188,11 +189,11 @@ export default function GlobalView(props: any){
             let myArray = [];
 
             const ReceiptAccounts = await (Promise.all(ReceiptAccountSizes2.map(async ({size, ahPosition}) => {
-            const accounts = await ggoconnection.getProgramAccounts(
+            const accounts = await ticonnection.getProgramAccounts(
                 AUCTION_HOUSE_PROGRAM_ID,
                 {
                 dataSlice: { offset: 0, length: 0 }, 
-                commitment: 'confirmed',
+                //commitment: 'confirmed',
                 filters: [
                     {
                     dataSize: size,
@@ -288,7 +289,7 @@ export default function GlobalView(props: any){
                         <ListItemText 
                             primary='History'
                         />
-                            <Typography variant="caption"><strong>{0}</strong></Typography>
+                            <Typography variant="caption"><strong>{totalResults}</strong></Typography>
                             {open_listing_collapse ? <ExpandLess /> : <ExpandMoreIcon />}
                     </ListItemButton>
                     <Collapse in={open_listing_collapse} timeout="auto" unmountOnExit>
