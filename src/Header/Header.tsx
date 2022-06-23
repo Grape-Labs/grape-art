@@ -36,6 +36,7 @@ import {
 
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
 import SearchIcon from '@mui/icons-material/Search';
+import Mail from '@mui/icons-material/Mail';
 
 import { GRAPE_PROFILE, GRAPE_PREVIEW, GRAPE_RPC_ENDPOINT, GENSYSGO_RPC_ENDPOINT } from '../utils/grapeTools/constants';
 import { ValidateAddress } from '../utils/grapeTools/WalletAddress'; // global key handling
@@ -245,15 +246,24 @@ export function Header(props: any) {
                     </Tooltip>
                 </Container>
             </Box>
-            {location.pathname && location.pathname.includes('collection') &&
-                <Tooltip title='Profile'>
+            {wallet.connected && (
+                <Tooltip title="Inbox">
                     <Button
-                        component={Link} to='/'
-                        sx={{color:'white',borderRadius:'24px',m:0}}>
+                        component={Link}
+                        to={`/profile/${wallet.publicKey?.toBase58()}#inbox`}
+                        sx={{ color: 'white', borderRadius: '24px', m: 0 }}
+                    >
+                        <Mail />
+                    </Button>
+                </Tooltip>
+            )}
+            {location.pathname && location.pathname.includes('collection') && (
+                <Tooltip title="Profile">
+                    <Button component={Link} to="/" sx={{ color: 'white', borderRadius: '24px', m: 0 }}>
                         <PersonOutlineOutlinedIcon />
                     </Button>
                 </Tooltip>
-            }
+            )}
             <div className="grape-wallet-adapter">
                 <WalletDialogProvider className="grape-wallet-provider">
                     <WalletMultiButton className="grape-wallet-button" />

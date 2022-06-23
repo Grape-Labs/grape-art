@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback, memo, Suspense } from 'react';
-import { Link, useParams, useSearchParams } from 'react-router-dom';
+import { Link, useLocation, useParams, useSearchParams } from 'react-router-dom';
 import { decodeMetadata } from '../utils/grapeTools/utils';
 // @ts-ignore
 
@@ -534,6 +534,17 @@ export const TabActiveProvider = ({ children, initialActiveKey }) => {
     );
 };
 
+enum NavPanel {
+    Collection,
+    Marketplace,
+    Followers,
+    Following,
+    Offers,
+    Selling,
+    Likes,
+    Inbox,
+}
+
 const MainPanel = (props: any) => {
     const [loading, setLoading] = React.useState(false);
     const [thisPublicKey, setThisPublicKey] = React.useState(props.thisPublicKey || null);
@@ -544,7 +555,7 @@ const MainPanel = (props: any) => {
     const [page, setPage] = React.useState(1);
     const rowsperpage = 1500;
     //const { activeTab, setActiveTab } = React.useContext(TabActiveContext);
-    const [tabvalue, setTabValue] = React.useState(props?.activeTab || 0);
+    const [tabvalue, setTabValue] = React.useState(props?.activeTab || NavPanel.Collection);
     const { publicKey } = useWallet();
     const isYou = publicKey?.toBase58() === thisPublicKey;
 
@@ -606,7 +617,7 @@ const MainPanel = (props: any) => {
                                         }
                                         label={<Hidden smDown>{t('Collection')}</Hidden>}
                                         sx={{ color: 'white', minWidth: '25px' }}
-                                        {...a11yProps(0)}
+                                        {...a11yProps(NavPanel.Collection)}
                                     />
                                     {/*<Tab icon={<Hidden smUp><RssFeedOutlinedIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>{t('Feed')}</Hidden>} sx={{color:'white',minWidth:'25px'}} {...a11yProps(1)} />*/}
                                     <Tab
@@ -617,7 +628,7 @@ const MainPanel = (props: any) => {
                                         }
                                         label={<Hidden smDown>{t('Marketplace')}</Hidden>}
                                         sx={{ color: 'white', minWidth: '25px' }}
-                                        {...a11yProps(1)}
+                                        {...a11yProps(NavPanel.Marketplace)}
                                     />
                                     <Tab
                                         icon={
@@ -627,7 +638,7 @@ const MainPanel = (props: any) => {
                                         }
                                         label={<Hidden smDown>{t('Followers')}</Hidden>}
                                         sx={{ color: 'white', minWidth: '25px' }}
-                                        {...a11yProps(2)}
+                                        {...a11yProps(NavPanel.Followers)}
                                     />
                                     <Tab
                                         icon={
@@ -637,7 +648,7 @@ const MainPanel = (props: any) => {
                                         }
                                         label={<Hidden smDown>{t('Following')}</Hidden>}
                                         sx={{ color: 'white', minWidth: '25px' }}
-                                        {...a11yProps(3)}
+                                        {...a11yProps(NavPanel.Following)}
                                     />
                                     {/*<Tab label="Bids" sx={{color:'white'}} {...a11yProps(4)} />*/}
                                     <Tab
@@ -648,7 +659,7 @@ const MainPanel = (props: any) => {
                                         }
                                         label={<Hidden smDown>{t('Offers')}</Hidden>}
                                         sx={{ color: 'white', minWidth: '25px' }}
-                                        {...a11yProps(4)}
+                                        {...a11yProps(NavPanel.Offers)}
                                     />
                                     <Tab
                                         icon={
@@ -658,7 +669,7 @@ const MainPanel = (props: any) => {
                                         }
                                         label={<Hidden smDown>{t('Selling')}</Hidden>}
                                         sx={{ color: 'white', minWidth: '25px' }}
-                                        {...a11yProps(5)}
+                                        {...a11yProps(NavPanel.Selling)}
                                     />
                                     <Tab
                                         icon={
@@ -668,7 +679,7 @@ const MainPanel = (props: any) => {
                                         }
                                         label={<Hidden smDown>{t('Likes')}</Hidden>}
                                         sx={{ color: 'white', minWidth: '25px' }}
-                                        {...a11yProps(6)}
+                                        {...a11yProps(NavPanel.Likes)}
                                     />
                                     {isYou && (
                                         <Tab
@@ -679,16 +690,16 @@ const MainPanel = (props: any) => {
                                             }
                                             label={<Hidden smDown>{t('Inbox')}</Hidden>}
                                             sx={{ color: 'white', minWidth: '25px' }}
-                                            {...a11yProps(7)}
+                                            {...a11yProps(NavPanel.Inbox)}
                                         />
                                     )}
                                 </Tabs>
 
-                                <TabPanel value={tabvalue} index={0}>
+                                <TabPanel value={tabvalue} index={NavPanel.Collection}>
                                     <GalleryView mode={0} finalCollection={finalCollection} isparent={true} />
                                 </TabPanel>
 
-                                <TabPanel value={tabvalue} index={1}>
+                                <TabPanel value={tabvalue} index={NavPanel.Marketplace}>
                                     <MarketplaceView />
                                 </TabPanel>
 
@@ -697,14 +708,14 @@ const MainPanel = (props: any) => {
                                     <FeedView />
                                 </TabPanel>
                                 */}
-                                <TabPanel value={tabvalue} index={2}>
+                                <TabPanel value={tabvalue} index={NavPanel.Followers}>
                                     <SocialView pubkey={thisPublicKey} type={0} />
                                 </TabPanel>
-                                <TabPanel value={tabvalue} index={3}>
+                                <TabPanel value={tabvalue} index={NavPanel.Following}>
                                     <SocialView pubkey={thisPublicKey} type={1} />
                                 </TabPanel>
 
-                                <TabPanel value={tabvalue} index={4}>
+                                <TabPanel value={tabvalue} index={NavPanel.Offers}>
                                     <OffersView
                                         selectedstate={'bid_receipt'}
                                         pubkey={thisPublicKey}
@@ -712,7 +723,7 @@ const MainPanel = (props: any) => {
                                         wallet_collection_meta={walletCollectionMeta}
                                     />
                                 </TabPanel>
-                                <TabPanel value={tabvalue} index={5}>
+                                <TabPanel value={tabvalue} index={NavPanel.Selling}>
                                     <OffersView
                                         selectedstate={'listing_receipt'}
                                         pubkey={thisPublicKey}
@@ -720,11 +731,11 @@ const MainPanel = (props: any) => {
                                         wallet_collection_meta={walletCollectionMeta}
                                     />
                                 </TabPanel>
-                                <TabPanel value={tabvalue} index={6}>
+                                <TabPanel value={tabvalue} index={NavPanel.Likes}>
                                     <CurationView pubkey={thisPublicKey} type={1} />
                                 </TabPanel>
                                 {isYou && (
-                                    <TabPanel value={tabvalue} index={7}>
+                                    <TabPanel value={tabvalue} index={NavPanel.Inbox}>
                                         <InboxView />
                                     </TabPanel>
                                 )}
@@ -762,8 +773,10 @@ const IdentityView = (props: any) => {
     const [searchAddrInfo, setSearchAddrInfo] = useState<SearchUserInfoResp | null>(null);
     const solanaProvider = useWallet();
     const { publicKey } = useWallet();
+    const { hash } = useLocation();
     //const { setActiveTab } = React.useContext(TabActiveContext);
-    const [activeTab, setActiveTab] = React.useState(0);
+    // TODO: Ideally, make Tabs use React Router and that way there won't be any need for managing internal tab state
+    const [activeTab, setActiveTab] = React.useState(hash === '#inbox' ? NavPanel.Inbox : NavPanel.Collection);
     const { navigation, open } = useDialectUiId<ChatNavigationHelpers>(GRAPE_BOTTOM_CHAT_ID);
     const isYou = publicKey?.toBase58() === pubkey;
 
@@ -1386,7 +1399,7 @@ const IdentityView = (props: any) => {
                                                                 sx={{ flexGrow: 1 }}
                                                             >
                                                                 <Button
-                                                                    onClick={() => setActiveTab(3)}
+                                                                    onClick={() => setActiveTab(NavPanel.Following)}
                                                                     sx={{
                                                                         fontSize: '12px',
                                                                         textTransform: 'none',
@@ -1414,7 +1427,7 @@ const IdentityView = (props: any) => {
                                                                     &nbsp;
                                                                 </Button>
                                                                 <Button
-                                                                    onClick={() => setActiveTab(2)}
+                                                                    onClick={() => setActiveTab(NavPanel.Followers)}
                                                                     sx={{
                                                                         fontSize: '12px',
                                                                         textTransform: 'none',
