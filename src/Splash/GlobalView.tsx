@@ -88,7 +88,6 @@ function convertSolVal(sol: any){
 export async function getPage(myArray: any, page: number, perPage: number): Promise<any []> {
     //console.log('myArray:', myArray, 'page:', page, 'perPage:', perPage);
     const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
-    const ticonnection = new Connection(GRAPE_RPC_ENDPOINT);
     const paginatedPublicKeys = myArray[0].slice(
         (page - 1) * perPage,
         page * perPage,
@@ -97,7 +96,7 @@ export async function getPage(myArray: any, page: number, perPage: number): Prom
     if (paginatedPublicKeys.length === 0) {
         return [];
     } 
-    const accountsWithData = await ticonnection.getMultipleAccountsInfo(paginatedPublicKeys);
+    const accountsWithData = await ggoconnection.getMultipleAccountsInfo(paginatedPublicKeys);
     //return accountsWithData;
     let myReceipts = [];
     let receiptInfoDs: any;
@@ -157,7 +156,7 @@ export default function GlobalView(props: any){
     const [mint, setMint] = React.useState(props.mint || null);
     const [symbol, setSymbol] = React.useState(props.symbol || null);
     const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
-    const ticonnection = new Connection(THEINDEX_RPC_ENDPOINT);   
+    //const ggoconnection2 = new Connection(THEINDEX_RPC_ENDPOINT);   
     const { connection } = useConnection();
 
     const [receiptListing, setReceiptListing] = React.useState(null);
@@ -189,11 +188,11 @@ export default function GlobalView(props: any){
             let myArray = [];
 
             const ReceiptAccounts = await (Promise.all(ReceiptAccountSizes2.map(async ({size, ahPosition}) => {
-            const accounts = await ticonnection.getProgramAccounts(
+            const accounts = await ggoconnection.getProgramAccounts(
                 AUCTION_HOUSE_PROGRAM_ID,
                 {
                 dataSlice: { offset: 0, length: 0 }, 
-                //commitment: 'confirmed',
+                commitment: 'confirmed',
                 filters: [
                     {
                     dataSize: size,
@@ -210,11 +209,8 @@ export default function GlobalView(props: any){
             myArray.push(accounts.map(account => account.pubkey));
             })));
 
-            
-
             //place the elements of the array in a single index/row
             if (myArray[1].length > 0) {
-                myArray = myArray.sort((a:any,b:any) => (a.createdAt < b.createdAt) ? 1 : -1);
                 for (var i = 1; i < myArray.length; i++) {
                     let myArrayLength = myArray[i].length;
                     for (var j = 0; j < myArrayLength; j++) {
@@ -399,9 +395,9 @@ export default function GlobalView(props: any){
                                                             }  
                                                         </TableCell>
                                                         <TableCell>
-                                                            {item?.mintpk &&
+                                                            {item?.mintPk &&
                                                                 <>
-                                                                {item?.mintpk}
+                                                                {item?.mintPk}
                                                                 </>
                                                             }  
                                                         </TableCell>
