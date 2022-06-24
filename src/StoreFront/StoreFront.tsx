@@ -1233,6 +1233,39 @@ export function StoreFrontView(this: any, props: any) {
                                     mt:-16
                                 }}
                             >
+                                {collectionAuthority.videoUrl ?
+                                <Box
+                                    sx={{mt:'-40vh'}}
+                                >
+                                    <video 
+                                        loop={true} 
+                                        muted={true}
+                                        autoPlay={true}
+                                        style={{
+                                            width:"100%",
+                                            borderBottomRightRadius:'24px',
+                                            borderBottomLeftRadius:'24px',
+                                            boxShadow:'0px 0px 5px 0px #000000',
+                                        }}>
+                                        <source 
+                                            src={collectionAuthority.videoUrl}
+                                            type="video/mp4"/>
+                                            <img
+                                                src={GRAPE_COLLECTIONS_DATA+collectionAuthority.splash}
+                                                srcSet={GRAPE_COLLECTIONS_DATA+collectionAuthority.splash}
+                                                alt={collectionAuthority.name}
+                                                loading="lazy"
+                                                height="auto"
+                                                style={{
+                                                    width:'100%',
+                                                    borderBottomRightRadius:'24px',
+                                                    borderBottomLeftRadius:'24px',
+                                                    boxShadow:'0px 0px 5px 0px #000000',
+                                                }}
+                                            />
+                                    </video>
+                                </Box>
+                                :
                                 <img
                                     src={GRAPE_COLLECTIONS_DATA+collectionAuthority.splash}
                                     srcSet={GRAPE_COLLECTIONS_DATA+collectionAuthority.splash}
@@ -1246,6 +1279,7 @@ export function StoreFrontView(this: any, props: any) {
                                         boxShadow:'0px 0px 5px 0px #000000',
                                     }}
                                 />
+                                }
                             </Box>
                         </Hidden>
                         <Hidden smUp>

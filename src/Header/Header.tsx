@@ -21,6 +21,9 @@ import { MARKET_LOGO } from '../utils/grapeTools/constants';
 import { WalletDialogProvider, WalletDisconnectButton, WalletMultiButton } from '@solana/wallet-adapter-material-ui';
 
 import {
+    TextField,
+    Stack,
+    Autocomplete,
     MenuItem,
     Menu,
     Tooltip,
@@ -34,11 +37,19 @@ import {
     ListItemText,
 } from '@mui/material';
 
+import { createFilterOptions } from '@mui/material/Autocomplete';
+
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
 import SearchIcon from '@mui/icons-material/Search';
 import Mail from '@mui/icons-material/Mail';
 
-import { GRAPE_PROFILE, GRAPE_PREVIEW, GRAPE_RPC_ENDPOINT, GENSYSGO_RPC_ENDPOINT } from '../utils/grapeTools/constants';
+import { 
+    GRAPE_RPC_ENDPOINT, 
+    GRAPE_PREVIEW,
+    GRAPE_PROFILE, 
+    GRAPE_COLLECTIONS_DATA
+} from '../utils/grapeTools/constants';
+
 import { ValidateAddress } from '../utils/grapeTools/WalletAddress'; // global key handling
 
 import { useTranslation } from 'react-i18next';
@@ -104,6 +115,12 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props,
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
+interface CollectionOptionType {
+    image?: string;
+    name: string;
+    vanityUrl?: number;
+  }
+
 export function Header(props: any) {
     const { open_menu } = props;
     const [open_snackbar, setSnackbarState] = React.useState(false);
@@ -112,7 +129,7 @@ export function Header(props: any) {
     const [userId, setUserId] = React.useState(getParam('user_id'));
     const [providers, setProviders] = React.useState(['Sollet', 'Sollet Extension', 'Phantom', 'Solflare']);
     const [open_wallet, setOpenWallet] = React.useState(false);
-
+    const [verifiedCollectionArray, setVerifiedCollectionArray] = React.useState(null);
     const [anchorEl, setAnchorEl] = React.useState(null);
     const isWalletOpen = Boolean(anchorEl);
     const [newinputpkvalue, setNewInputPKValue] = React.useState('');
@@ -122,7 +139,7 @@ export function Header(props: any) {
     const searchParams = new URLSearchParams(location.search);
     //const currPath = location?.pathname ?? "";
     const { enqueueSnackbar } = useSnackbar();
-
+    const filter = createFilterOptions<CollectionOptionType>();
     const wallet = useWallet();
     const theme: 'dark' | 'light' = 'dark';
     //const YOUR_PROJECT_PUBLIC_KEY = new PublicKey(AUCTION_HOUSE_ADDRESS);
@@ -181,6 +198,29 @@ export function Header(props: any) {
 
     const { t, i18n } = useTranslation();
 
+    const fetchVerifiedCollection = async(address:string) => {
+        try{
+            //const url = './verified_collections.json';
+            const url = GRAPE_COLLECTIONS_DATA+'verified_collections.json';
+            const response = await window.fetch(url, {
+                method: 'GET',
+                headers: {
+                }
+              });
+              const string = await response.text();
+              const json = string === "" ? {} : JSON.parse(string);
+              //console.log(">>> "+JSON.stringify(json));
+              setVerifiedCollectionArray(json); 
+              //return json;
+            
+        } catch(e){console.log("ERR: "+e)}
+    }
+
+    React.useEffect(() => { 
+        if (!verifiedCollectionArray)
+            fetchVerifiedCollection(null)
+    }, []);
+
     function handlePublicKeySubmit(event: any) {
         event.preventDefault();
         //console.log(""+newinputpkvalue+" ("+newinputpkvalue.length+"): " +ValidateAddress(newinputpkvalue));
@@ -232,16 +272,48 @@ export function Header(props: any) {
                 <Container component="form" onSubmit={handlePublicKeySubmit} sx={{ background: 'none' }}>
                     <Tooltip title="Search by mint address by entering: mint:address">
                         <Search sx={{ height: '40px' }}>
+                            
                             <SearchIconWrapper>
                                 <SearchIcon />
                             </SearchIconWrapper>
+                            {
                             <StyledInputBase
                                 sx={{ height: '40px', width: '100%' }}
                                 placeholder={t('Search Solana Address')}
                                 inputProps={{ 'aria-label': 'search' }}
                                 value={newinputpkvalue}
                                 onChange={(e) => setNewInputPKValue(e.target.value)}
-                            />
+                            />}
+                            
+                            {/*verifiedCollectionArray &&
+                            <>
+                                <Autocomplete
+                                    id="auto-complete-header-search"
+                                    freeSolo
+                                    selectOnFocus
+                                    clearOnBlur
+                                    handleHomeEndKeys
+                                    value={newinputpkvalue}
+                                    options={verifiedCollectionArray}
+                                    onChange={(event, newValue) => {
+                                        if (typeof newValue === 'string') {
+                                            setNewInputPKValue(newValue);
+                                        } else {
+                                            setNewInputPKValue(newValue);
+                                        }
+                                      }}
+                                    renderOption={(props, option) => <li {...props}>{option}</li>}
+                                    sx={{borderRadius:'17px'}}
+                                    renderInput={(params) => 
+                                        <TextField
+                                            {...params}
+                                            label="Search Solana Address"
+                                        />
+                                    }
+                                />
+                            </>
+                            */}
+
                         </Search>
                     </Tooltip>
                 </Container>
