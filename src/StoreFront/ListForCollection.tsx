@@ -54,6 +54,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 export default function ListForCollectionView(props: any){
     const logo = props.logo;
     const collectionAuthority = props.collectionAuthority;
+    const updateAuthority = props.collectionUpdateAuthority;
     const collectionMintList = props.collectionMintList;
     const entangleFrom = props.entangleFrom;
     const entangleTo = props.entangleTo;
@@ -200,8 +201,10 @@ export default function ListForCollectionView(props: any){
                         let meta_final = decodeMetadata(buf);
                         metadata[x]["decoded"] = meta_final;
                         
-                        if (meta_final.updateAuthority === entangleFrom ||
-                            meta_final.updateAuthority === entangleTo){
+                        if ((enforceEntangle && 
+                            (meta_final.updateAuthority === entangleFrom ||
+                            meta_final.updateAuthority === entangleTo)) ||
+                            (meta_final.updateAuthority === updateAuthority)){
                             try{
                                 const metadataFetch = await window.fetch(meta_final.data.uri)
                                 .then(

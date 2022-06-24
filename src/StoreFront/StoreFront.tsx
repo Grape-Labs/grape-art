@@ -653,7 +653,7 @@ export function StoreFrontView(this: any, props: any) {
     }
 
     const getCollectionMeta = async (start:number) => {
-        const wallet_collection = fetchedCollectionMintList;//likeListInfo.likes.list;
+        const wallet_collection = fetchedCollectionMintList;
         
         
         let tmpcollectionmeta = await getCollectionData(start);
@@ -662,8 +662,9 @@ export function StoreFrontView(this: any, props: any) {
         let final_collection_meta: any[] = [];
         
         if (tmpcollectionmeta){
+
             for (var i = 0; i < tmpcollectionmeta.length; i++){
-                //console.log(i+": "+JSON.stringify(collectionmeta[i])+" --- with --- "+JSON.stringify(wallet_collection[i]));
+                //console.log(i+": "+JSON.stringify(tmpcollectionmeta[i])+" --- with --- "+JSON.stringify(wallet_collection[i]));
                 if (tmpcollectionmeta[i]){
                     tmpcollectionmeta[i]["wallet"] = wallet_collection[i].address;
                     try{
@@ -1412,6 +1413,7 @@ export function StoreFrontView(this: any, props: any) {
                                     entangled={collectionAuthority.entangled} 
                                     enforceEntangle={collectionAuthority.entangleEnforce}
                                     entangleUrl={collectionAuthority.entangleUrl}
+                                    updateAuthority={collectionAuthority.updateAuthority}
                                     collectionAuthority={collectionAuthority}
                                     collectionMintList={collectionMintList}
                                     activity={auctionHouseListings} />
