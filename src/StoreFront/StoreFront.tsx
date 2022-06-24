@@ -1248,7 +1248,7 @@ export function StoreFrontView(this: any, props: any) {
                                             boxShadow:'0px 0px 5px 0px #000000',
                                         }}>
                                         <source 
-                                            src={collectionAuthority.videoUrl}
+                                            src={GRAPE_COLLECTIONS_DATA+collectionAuthority.videoUrl}
                                             type="video/mp4"/>
                                             <img
                                                 src={GRAPE_COLLECTIONS_DATA+collectionAuthority.splash}
