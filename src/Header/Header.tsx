@@ -21,6 +21,8 @@ import { MARKET_LOGO } from '../utils/grapeTools/constants';
 import { WalletDialogProvider, WalletDisconnectButton, WalletMultiButton } from '@solana/wallet-adapter-material-ui';
 
 import {
+    Grid,
+    Avatar,
     TextField,
     Stack,
     Autocomplete,
@@ -276,43 +278,24 @@ export function Header(props: any) {
                             <SearchIconWrapper>
                                 <SearchIcon />
                             </SearchIconWrapper>
-                            {
-                            <StyledInputBase
+                            
+                            {verifiedCollectionArray ?
+                                <StyledInputBase
                                 sx={{ height: '40px', width: '100%' }}
                                 placeholder={t('Search Solana Address')}
                                 inputProps={{ 'aria-label': 'search' }}
                                 value={newinputpkvalue}
                                 onChange={(e) => setNewInputPKValue(e.target.value)}
-                            />}
-                            
-                            {/*verifiedCollectionArray &&
-                            <>
-                                <Autocomplete
-                                    id="auto-complete-header-search"
-                                    freeSolo
-                                    selectOnFocus
-                                    clearOnBlur
-                                    handleHomeEndKeys
+                            />
+                            :
+                                <StyledInputBase
+                                    sx={{ height: '40px', width: '100%' }}
+                                    placeholder={t('Search Solana Address')}
+                                    inputProps={{ 'aria-label': 'search' }}
                                     value={newinputpkvalue}
-                                    options={verifiedCollectionArray}
-                                    onChange={(event, newValue) => {
-                                        if (typeof newValue === 'string') {
-                                            setNewInputPKValue(newValue);
-                                        } else {
-                                            setNewInputPKValue(newValue);
-                                        }
-                                      }}
-                                    renderOption={(props, option) => <li {...props}>{option}</li>}
-                                    sx={{borderRadius:'17px'}}
-                                    renderInput={(params) => 
-                                        <TextField
-                                            {...params}
-                                            label="Search Solana Address"
-                                        />
-                                    }
+                                    onChange={(e) => setNewInputPKValue(e.target.value)}
                                 />
-                            </>
-                            */}
+                            }
 
                         </Search>
                     </Tooltip>
@@ -322,7 +305,7 @@ export function Header(props: any) {
                 <Tooltip title="Inbox">
                     <Button
                         component={Link}
-                        to={`/profile/${wallet.publicKey?.toBase58()}#inbox`}
+                        to={`${GRAPE_PROFILE}${wallet.publicKey?.toBase58()}#inbox`}
                         sx={{ color: 'white', borderRadius: '24px', m: 0 }}
                     >
                         <Mail />

@@ -121,6 +121,20 @@ code {
   z-index: 9999;
 }
 
+button.grape-crossmint-button {
+    background-color: transparent;
+    border:none;
+    border-radius: 4px;
+    font-weight: normal;
+    text-transform: uppercase;
+    padding: 6px 8px;
+    margin:2px;
+    color: #90caf9!important;
+}
+button.grape-crossmint-button:hover {
+  background-color: rgba(144, 202, 249, 0.08);
+}
+
 @keyframes avataranimation {
   0%   {color: white; }
   25%  {color: rgb(144, 202, 249); }
