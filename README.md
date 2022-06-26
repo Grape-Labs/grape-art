@@ -21,7 +21,7 @@ BUILD/START:
 
 CONSTANTS: 
 -   * connection endpoints can be edited in the `utils/grapeTools/constants.tsx`
--   * Default AH is set with 0% fees
+-   * Default AH is set with 0% fees | list on Grape and share marketplace fees with a custom auction house setup on grape.art
 
 GET LISTED IN THE MARKETPLACE:
 -   Want to include your collection in the Markerplace? Reach out to our team at https://discord.gg/greatape #grape-art channel
