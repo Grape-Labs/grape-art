@@ -29,8 +29,8 @@ CONSTANTS:
 -   * Default AH is set with 0% fees
 
 
-HELP SETTING UP:
--   Have a DAO and want to run an instance of grape.art? Reach out to the Grape Team at https://discord.gg/greatape
+GET LISTED IN THE MARKETPLACE:
+-   Want to include your collection in the Markerplace? Reach out to our team at https://discord.gg/greatape
 
 TRY IT OUT NOW:
 - https://grape.art

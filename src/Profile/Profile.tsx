@@ -1536,7 +1536,7 @@ export function ProfileView(this: any, props: any) {
     const [searchParams, setSearchParams] = useSearchParams();
 
     const urlParams = searchParams.get('pkey') || searchParams.get('address') || handlekey;
-
+    
     const navigate = useNavigate();
     //const location = useLocation();
 

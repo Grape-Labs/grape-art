@@ -653,7 +653,7 @@ export function StoreFrontView(this: any, props: any) {
     }
 
     const getCollectionMeta = async (start:number) => {
-        const wallet_collection = fetchedCollectionMintList;//likeListInfo.likes.list;
+        const wallet_collection = fetchedCollectionMintList;
         
         
         let tmpcollectionmeta = await getCollectionData(start);
@@ -662,8 +662,9 @@ export function StoreFrontView(this: any, props: any) {
         let final_collection_meta: any[] = [];
         
         if (tmpcollectionmeta){
+
             for (var i = 0; i < tmpcollectionmeta.length; i++){
-                //console.log(i+": "+JSON.stringify(collectionmeta[i])+" --- with --- "+JSON.stringify(wallet_collection[i]));
+                //console.log(i+": "+JSON.stringify(tmpcollectionmeta[i])+" --- with --- "+JSON.stringify(wallet_collection[i]));
                 if (tmpcollectionmeta[i]){
                     tmpcollectionmeta[i]["wallet"] = wallet_collection[i].address;
                     try{
@@ -1233,6 +1234,39 @@ export function StoreFrontView(this: any, props: any) {
                                     mt:-16
                                 }}
                             >
+                                {collectionAuthority.videoUrl ?
+                                <Box
+                                    sx={{mt:-60}}
+                                >
+                                    <video 
+                                        loop={true} 
+                                        muted={true}
+                                        autoPlay={true}
+                                        style={{
+                                            width:"100%",
+                                            borderBottomRightRadius:'24px',
+                                            borderBottomLeftRadius:'24px',
+                                            boxShadow:'0px 0px 5px 0px #000000',
+                                        }}>
+                                        <source 
+                                            src={GRAPE_COLLECTIONS_DATA+collectionAuthority.videoUrl}
+                                            type="video/mp4"/>
+                                            <img
+                                                src={GRAPE_COLLECTIONS_DATA+collectionAuthority.splash}
+                                                srcSet={GRAPE_COLLECTIONS_DATA+collectionAuthority.splash}
+                                                alt={collectionAuthority.name}
+                                                loading="lazy"
+                                                height="auto"
+                                                style={{
+                                                    width:'100%',
+                                                    borderBottomRightRadius:'24px',
+                                                    borderBottomLeftRadius:'24px',
+                                                    boxShadow:'0px 0px 5px 0px #000000',
+                                                }}
+                                            />
+                                    </video>
+                                </Box>
+                                :
                                 <img
                                     src={GRAPE_COLLECTIONS_DATA+collectionAuthority.splash}
                                     srcSet={GRAPE_COLLECTIONS_DATA+collectionAuthority.splash}
@@ -1246,6 +1280,7 @@ export function StoreFrontView(this: any, props: any) {
                                         boxShadow:'0px 0px 5px 0px #000000',
                                     }}
                                 />
+                                }
                             </Box>
                         </Hidden>
                         <Hidden smUp>
@@ -1378,6 +1413,7 @@ export function StoreFrontView(this: any, props: any) {
                                     entangled={collectionAuthority.entangled} 
                                     enforceEntangle={collectionAuthority.entangleEnforce}
                                     entangleUrl={collectionAuthority.entangleUrl}
+                                    updateAuthority={collectionAuthority.updateAuthority}
                                     collectionAuthority={collectionAuthority}
                                     collectionMintList={collectionMintList}
                                     activity={auctionHouseListings} />

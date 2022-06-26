@@ -38,6 +38,8 @@ import {
     ListItemText,
 } from '@mui/material';
 
+import { CrossmintPayButton } from '@crossmint/client-sdk-react-ui';
+
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
 
 import HowToVoteIcon from '@mui/icons-material/HowToVote';
@@ -1942,11 +1944,26 @@ export default function ItemOffers(props: any) {
                                                                             </DialogContentText>
                                                                         </DialogContent>
                                                                         <DialogActions>
+                                                                            
                                                                             <Button onClick={handleAlertBuyNowClose}>Cancel</Button>
+                                                                            {/*
+                                                                            <CrossmintPayButton
+                                                                                collectionTitle={mintName}
+                                                                                collectionDescription={mintName}
+                                                                                collectionPhoto={image}
+                                                                                clientId="NYI"
+                                                                                whPassThroughArgs={{
+                                                                                    mintHash: mint,
+                                                                                    sellerWallet: mintOwner,
+                                                                                    buyPrice: salePrice,
+                                                                                }}
+                                                                                className="grape-crossmint-button"
+                                                                            />
+                                                                            */}
                                                                             <Button 
                                                                                 onClick={() => handleBuyNow(salePrice, salePriceAH)}
                                                                                 autoFocus>
-                                                                            {t('Accept')}
+                                                                            {t('Buy with Wallet')}
                                                                             </Button>
                                                                         </DialogActions>
                                                                     </BootstrapDialog>
