@@ -273,7 +273,7 @@ export function Header(props: any) {
                         />
                     </Typography>
                 </Button>
-                
+
                 <Container component="form" onSubmit={handlePublicKeySubmit} sx={{ background: 'none' }}>
                     <Tooltip title="Search by mint address by entering: mint:address">
                         <Search sx={{ height: '40px' }}>
@@ -301,8 +301,9 @@ export function Header(props: any) {
                                         } else if (newValue && newValue.inputValue) {
                                             console.log(">>> inputValue")
                                         } else {
-                                            {newValue?.vanityUrl &&
-                                                navigate(`${GRAPE_COLLECTION}${newValue.vanityUrl}`)
+                                            {newValue?.vanityUrl && 
+                                                window.location.replace(`${GRAPE_COLLECTION}${newValue.vanityUrl}`);
+                                                //navigate(`${GRAPE_COLLECTION}${newValue.vanityUrl}`)
                                             }
                                             
                                             //console.log(">>> none "+JSON.stringify(newValue.vanityUrl))
