@@ -6,6 +6,8 @@ References:
 - Metaplex Auction House (https://github.com/metaplex-foundation/metaplex)
 - Realms/Governance (https://github.com/solana-labs/oyster/)
 - Dialect Labs (https://github.com/dialectlabs)
+- Bonfida (https://github.com/Bonfida)
+- Solflare (https://github.com/solflare-wallet)
 
 Wallet Adapter:
 - Solana Wallet Adapter (https://github.com/solana-labs/wallet-adapter)
