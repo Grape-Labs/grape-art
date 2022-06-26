@@ -507,7 +507,7 @@ export function StoreFrontView(this: any, props: any) {
     //}
     const {handlekey} = useParams<{ handlekey: string }>();
     const [searchParams, setSearchParams] = useSearchParams();
-
+    
     const urlParams = searchParams.get("pkey") || searchParams.get("address") || handlekey;
     
     const navigate = useNavigate();
@@ -1059,10 +1059,9 @@ export function StoreFrontView(this: any, props: any) {
     }
 
     React.useEffect(() => { 
-        if ((verifiedCollectionArray)&&(!collectionAuthority)){
+        if ((verifiedCollectionArray)){ //&&(!collectionAuthority)){ // using a router makes checking collectionAuthority pointless for seach
             if (withPubKey){
                 console.log("using: "+withPubKey)
-                
                 //console.log("verified_collection_array: "+JSON.stringify(verified_collection_array))
                 
                 // check if this is a valid address using VERIFIED_COLLECTION_ARRAY
@@ -1093,7 +1092,7 @@ export function StoreFrontView(this: any, props: any) {
                 // IMPORTANT HANDLE INVALID COLLECTION ENTRY
             }
         }
-    }, [verifiedCollectionArray]);
+    }, [verifiedCollectionArray, withPubKey]);
 
     const fetchProfilePicture = async () => {
         const { isAvailable, url } = await getProfilePicture(ggoconnection, publicKey);
@@ -1140,7 +1139,6 @@ export function StoreFrontView(this: any, props: any) {
     React.useEffect(() => { 
         if ((withPubKey)&&(!verifiedCollectionArray)){
             fetchVerifiedCollection(withPubKey);
-            
         }
     }, [withPubKey]);
 

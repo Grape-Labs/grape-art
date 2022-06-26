@@ -63,7 +63,7 @@ export async function getMintFromVerifiedMetadata(metadata:string, collectionMin
 export async function getReceiptsFromAuctionHouse(auctionHouse_filter: string, wallet_filter: string, mint_filter: string, bid_receipt_filter:string, getAllAh: boolean ) {
     // if wallet is set we should also filter by wallet address
 
-    const ggoconnection = new Connection(THEINDEX_RPC_ENDPOINT);    
+    const ticonnection = new Connection(THEINDEX_RPC_ENDPOINT);    
     const collectionAuctionHouse = auctionHouse_filter || AUCTION_HOUSE_ADDRESS;
         {    
             const PrintListingReceiptSize = 236;
@@ -100,7 +100,7 @@ export async function getReceiptsFromAuctionHouse(auctionHouse_filter: string, w
             const ReceiptAccounts = await (Promise.all(ReceiptAccountSizes2.map(async ({size, ahPosition}) => {
                 if (wallet_filter != null && mint_filter === null && !getAllAh){
                   console.log('execute with wallet_filter');
-                  accounts = await ggoconnection.getProgramAccounts(
+                  accounts = await ticonnection.getProgramAccounts(
                     AUCTION_HOUSE_PROGRAM_ID,
                   {
                     //commitment: 'confirmed',
@@ -125,7 +125,7 @@ export async function getReceiptsFromAuctionHouse(auctionHouse_filter: string, w
                 );
                 } else if (wallet_filter != null && mint_filter != null && !getAllAh) {
                   console.log('execute with all filters');
-                  accounts = await ggoconnection.getProgramAccounts(
+                  accounts = await ticonnection.getProgramAccounts(
                     AUCTION_HOUSE_PROGRAM_ID,
                   {
                     //commitment: 'confirmed',
@@ -156,7 +156,7 @@ export async function getReceiptsFromAuctionHouse(auctionHouse_filter: string, w
                 );
               } else if (wallet_filter === null && mintMetadata != null && !getAllAh) {
                 console.log('execute with mint_filter');
-                accounts = await ggoconnection.getProgramAccounts(
+                accounts = await ticonnection.getProgramAccounts(
                   AUCTION_HOUSE_PROGRAM_ID,
                 {
                   //commitment: 'confirmed',
@@ -181,7 +181,7 @@ export async function getReceiptsFromAuctionHouse(auctionHouse_filter: string, w
               );
             } else if (wallet_filter === null && mintMetadata != null && getAllAh) {
               console.log('execute with mint_filter for all AH');
-              accounts = await ggoconnection.getProgramAccounts(
+              accounts = await ticonnection.getProgramAccounts(
                 AUCTION_HOUSE_PROGRAM_ID,
               {
                 //commitment: 'confirmed',
@@ -200,7 +200,7 @@ export async function getReceiptsFromAuctionHouse(auctionHouse_filter: string, w
             );
             } else if (wallet_filter != null && mint_filter === null && getAllAh){
               console.log('execute with wallet_filter for all AH');
-              accounts = await ggoconnection.getProgramAccounts(
+              accounts = await ticonnection.getProgramAccounts(
                 AUCTION_HOUSE_PROGRAM_ID,
               {
                 //commitment: 'confirmed',
@@ -219,7 +219,7 @@ export async function getReceiptsFromAuctionHouse(auctionHouse_filter: string, w
             ); 
             } else {
                   console.log('execute default only AH');
-                  accounts = await ggoconnection.getProgramAccounts(
+                  accounts = await ticonnection.getProgramAccounts(
                     AUCTION_HOUSE_PROGRAM_ID,
                   {
                     //commitment: 'confirmed',

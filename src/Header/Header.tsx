@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { styled, alpha } from '@mui/material/styles';
-import { Link, useLocation, NavLink } from 'react-router-dom';
-import { useNavigate } from 'react-router';
+import { Link, useLocation, NavLink, Route, Navigate, useNavigate } from 'react-router-dom';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -39,6 +38,9 @@ import {
     ListItemText,
 } from '@mui/material';
 
+import parse from 'autosuggest-highlight/parse';
+import match from 'autosuggest-highlight/match';
+
 import { createFilterOptions } from '@mui/material/Autocomplete';
 
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
@@ -49,6 +51,7 @@ import {
     GRAPE_RPC_ENDPOINT, 
     GRAPE_PREVIEW,
     GRAPE_PROFILE, 
+    GRAPE_COLLECTION,
     GRAPE_COLLECTIONS_DATA
 } from '../utils/grapeTools/constants';
 
@@ -145,7 +148,7 @@ export function Header(props: any) {
     const wallet = useWallet();
     const theme: 'dark' | 'light' = 'dark';
     //const YOUR_PROJECT_PUBLIC_KEY = new PublicKey(AUCTION_HOUSE_ADDRESS);
-    const DIALECT_PUBLIC_KEY = new PublicKey('D2pyBevYb6dit1oCx6e8vCxFK9mBeYCRe8TTntk2Tm98');
+    //const DIALECT_PUBLIC_KEY = new PublicKey('D2pyBevYb6dit1oCx6e8vCxFK9mBeYCRe8TTntk2Tm98');
 
     const routes = [{ name: 'Home', path: '/' }];
 
@@ -270,7 +273,7 @@ export function Header(props: any) {
                         />
                     </Typography>
                 </Button>
-
+                
                 <Container component="form" onSubmit={handlePublicKeySubmit} sx={{ background: 'none' }}>
                     <Tooltip title="Search by mint address by entering: mint:address">
                         <Search sx={{ height: '40px' }}>
@@ -280,13 +283,81 @@ export function Header(props: any) {
                             </SearchIconWrapper>
                             
                             {verifiedCollectionArray ?
-                                <StyledInputBase
-                                sx={{ height: '40px', width: '100%' }}
-                                placeholder={t('Search Solana Address')}
-                                inputProps={{ 'aria-label': 'search' }}
-                                value={newinputpkvalue}
-                                onChange={(e) => setNewInputPKValue(e.target.value)}
-                            />
+                                
+                                <Autocomplete
+                                    id="auto-complete-header-search"
+                                    freeSolo
+                                    selectOnFocus
+                                    clearOnBlur
+                                    handleHomeEndKeys
+                                    value={newinputpkvalue || ''}
+                                    options={verifiedCollectionArray}
+                                    getOptionLabel={(option:any) => option.name || ""}
+                                    onChange={(event, newValue:any) => {
+                                        if (typeof newValue === 'string') {
+                                            //console.log(">>> string")
+                                            setNewInputPKValue(newValue);
+                                          // timeout to avoid instant validation of the dialog's form.
+                                        } else if (newValue && newValue.inputValue) {
+                                            console.log(">>> inputValue")
+                                        } else {
+                                            {newValue?.vanityUrl &&
+                                                navigate(`${GRAPE_COLLECTION}${newValue.vanityUrl}`)
+                                            }
+                                            
+                                            //console.log(">>> none "+JSON.stringify(newValue.vanityUrl))
+                                        //  setValue(newValue);
+                                        }
+                                    }}
+                                    renderOption={(props, option, {inputValue}) => 
+                                        //const matches = match(option.name, inputValue);
+                                        //const parts = parse(option.name, matches);
+                                        <li {...props}>
+                                            <Grid container>
+                                                {option.logo &&
+                                                <Grid item>
+                                                    <Avatar
+                                                        variant="square"
+                                                        src={GRAPE_COLLECTIONS_DATA+option.logo}
+                                                        sx={{
+                                                            ml:1,
+                                                            mr:1,
+                                                            width: 24, 
+                                                            height: 24
+                                                        }}
+                                                    ></Avatar>
+                                                </Grid>
+                                                }
+                                                <Grid item>
+                                                    {option.name}
+                                                </Grid>
+                                            </Grid>
+                                        </li>
+                                    }
+                                    renderInput={params => (
+                                        <StyledInputBase
+                                            sx={{ height: '40px', width: '100%' }}
+                                            placeholder={t('Search Collection or Solana Address')}
+                                            ref={params.InputProps.ref}
+                                            inputProps={params.inputProps}
+                                            autoFocus
+                                            //className={classes.inputBase}
+                                        />
+                                    )}
+                                    /*
+                                    renderInput={(params) => 
+                                        <TextField
+                                            {...params}
+                                            InputProps={{
+                                                style:{
+                                                    borderRadius:'17px',
+                                                    lineHeight: '40px'}
+                                            }}
+                                            //placeholder={t('Search Collection or enter a Solana Address')}
+                                            label="Search Collection or enter a Solana Address"
+                                        />
+                                    }*/
+                                />
                             :
                                 <StyledInputBase
                                     sx={{ height: '40px', width: '100%' }}
