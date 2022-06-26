@@ -275,7 +275,7 @@ export function Header(props: any) {
                 </Button>
 
                 <Container component="form" onSubmit={handlePublicKeySubmit} sx={{ background: 'none' }}>
-                    <Tooltip title="Search by mint address by entering: mint:address">
+                    <Tooltip title={<><>Search by Address or by mint by entering: <strong>mint:</strong>address</></>}>
                         <Search sx={{ height: '40px' }}>
                             
                             <SearchIconWrapper>
@@ -286,6 +286,7 @@ export function Header(props: any) {
                                 
                                 <Autocomplete
                                     id="auto-complete-header-search"
+                                    
                                     freeSolo
                                     selectOnFocus
                                     clearOnBlur
@@ -341,7 +342,6 @@ export function Header(props: any) {
                                             placeholder={t('Search Collection or Solana Address')}
                                             ref={params.InputProps.ref}
                                             inputProps={params.inputProps}
-                                            autoFocus
                                             //className={classes.inputBase}
                                         />
                                     )}

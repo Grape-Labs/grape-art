@@ -62,7 +62,7 @@ export async function getMintFromVerifiedMetadata(metadata:string, collectionMin
 
 export async function getReceiptsFromAuctionHouse(auctionHouse_filter: string, wallet_filter: string, mint_filter: string, bid_receipt_filter:string, getAllAh: boolean ) {
     // if wallet is set we should also filter by wallet address
-
+    
     const ticonnection = new Connection(THEINDEX_RPC_ENDPOINT);    
     const collectionAuctionHouse = auctionHouse_filter || AUCTION_HOUSE_ADDRESS;
         {    
