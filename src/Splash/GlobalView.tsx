@@ -157,7 +157,7 @@ export default function GlobalView(props: any){
     const [mint, setMint] = React.useState(props.mint || null);
     const [symbol, setSymbol] = React.useState(props.symbol || null);
     const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
-    //const ggoconnection2 = new Connection(THEINDEX_RPC_ENDPOINT);   
+    const ticonnection = new Connection(THEINDEX_RPC_ENDPOINT);   
     const { connection } = useConnection();
 
     const [receiptListing, setReceiptListing] = React.useState(null);
@@ -189,11 +189,11 @@ export default function GlobalView(props: any){
             let myArray = [];
 
             const ReceiptAccounts = await (Promise.all(ReceiptAccountSizes2.map(async ({size, ahPosition}) => {
-            const accounts = await ggoconnection.getProgramAccounts(
+            const accounts = await ticonnection.getProgramAccounts(
                 AUCTION_HOUSE_PROGRAM_ID,
                 {
                 dataSlice: { offset: 0, length: 0 }, 
-                commitment: 'confirmed',
+                //commitment: 'confirmed',
                 filters: [
                     {
                     dataSize: size,
