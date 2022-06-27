@@ -1624,7 +1624,7 @@ export default function ItemOffers(props: any) {
                 enqueueSnackbar(`${t('Preparing to Buy Now')}: ${salePrice} SOL ${t('from')}: ${buyerPublicKey.toBase58()}`,{ variant: 'info' });
                 //const signedTransaction = await sendTransaction(transaction, connection);
                 //await connection.confirmTransaction(signedTransaction, 'processed');
-                enqueueSnackbar(`${t('Executing transfer for')}: ${mint.toString()}`,{ variant: 'info' });
+                enqueueSnackbar(`${t('Executing transaction for')}: ${mint.toString()}`,{ variant: 'info' });
                 const signedTransaction2 = await sendTransaction(transaction, connection);
                 
                 const snackprogress = (key:any) => (

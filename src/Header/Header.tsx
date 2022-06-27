@@ -215,7 +215,13 @@ export function Header(props: any) {
               const string = await response.text();
               const json = string === "" ? {} : JSON.parse(string);
               //console.log(">>> "+JSON.stringify(json));
-              setVerifiedCollectionArray(json); 
+              const vCA = new Array();
+              for (let item of json){
+                if (item?.enabled && item?.discover)
+                    vCA.push(item);
+              }
+
+              setVerifiedCollectionArray(vCA); 
               //return json;
             
         } catch(e){console.log("ERR: "+e)}

@@ -52,7 +52,7 @@ export default function MarketplaceView(props: any) {
         <Grid container spacing={2} sx={{mt:6}}>
             {verifiedCollectionArray && verifiedCollectionArray.map((featured: any, key: number) => (
                 <>
-                    {featured?.enabled &&
+                    {featured?.enabled && featured?.discover &&
                     <Grid item xs={12} sm={6}>
                         <>
                             <Card sx={{borderRadius:'26px',mb:2}}>

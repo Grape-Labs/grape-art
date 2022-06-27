@@ -1304,7 +1304,6 @@ export function StoreFrontView(this: any, props: any) {
                             </Box>
                         </Hidden>
                         
-
                         <Box
                             className='grape-store-info'
                             sx={{
