@@ -966,7 +966,8 @@ export default function ItemOffers(props: any) {
     const pubkey = props.pubkey || null;
     const mintOwner = props.mintOwner;
     const mintName = props.mintName;
-    const collectionItemData = props.collectionItemData;   
+    const collectionItemData = props.collectionItemData;  
+    const verifiedAuctionHouses = props.verifiedAuctionHouses; 
     const updateAuthority = collectionItemData?.updateAuthority;
     const collectionAuctionHouse = props.collectionAuctionHouse;
     const verifiedCollection = props.verifiedCollection;
@@ -977,6 +978,7 @@ export default function ItemOffers(props: any) {
     const walletPublicKey = publicKey;
     const mint = props.mint; 
     const image = props.image;
+    const [verifiedAuctionHouse, setVerifiedAuctionHouse] = React.useState(null);
     const [refreshOffers, setRefreshOffers] = React.useState(false);
     const anchorWallet = useAnchorWallet();
     const [alertopen, setAlertOpen] = React.useState(false); 
@@ -1568,7 +1570,14 @@ export default function ItemOffers(props: any) {
                     forSale
                 );
                 setSalePriceAH(sale_price_marketplace);
-                    
+                
+                // check and set the current verified auction house this is with
+                for (let itemAuctionHouse of verifiedAuctionHouses){
+                    if (itemAuctionHouse.address === sale_price_marketplace){
+                        setVerifiedAuctionHouse(itemAuctionHouse);
+                    }
+                }
+
                 if (forSaleDate){
                     let prettyForSaleDate = moment.unix(+forSaleDate).format("MMMM Do YYYY, h:mm a");
                     setSaleDate(
@@ -1846,11 +1855,14 @@ export default function ItemOffers(props: any) {
                                             <Typography component="div" variant="caption" id="grape-art-last-sale"></Typography>
                                         </Typography>
                                         {( (salePrice > 0) ?
-
+                                                
                                                 <> 
-                                                    {salePriceAH === collectionAuctionHouse || salePriceAH === AUCTION_HOUSE_ADDRESS ?
+                                                    {salePriceAH === collectionAuctionHouse || salePriceAH === AUCTION_HOUSE_ADDRESS || verifiedAuctionHouse ?
                                                         <Tooltip title={
                                                             <React.Fragment>
+                                                                {verifiedAuctionHouse && 
+                                                                    <><strong>{verifiedAuctionHouse.name}</strong><br/></>
+                                                                }
                                                                 Auction House: {salePriceAH || collectionAuctionHouse || AUCTION_HOUSE_ADDRESS}
                                                             </React.Fragment>}
                                                         >
@@ -1861,10 +1873,10 @@ export default function ItemOffers(props: any) {
                                                             </Button>
                                                         </Tooltip>
                                                     :
-                                                        
                                                         <Tooltip title={
                                                             <React.Fragment>
-                                                                Unknown marketplace (Not listed with Grape.art) - Auction House
+                                                                Unknown marketplace (Not listed on Grape.art)
+                                                                <>{JSON.stringify(verifiedAuctionHouse)}</>
                                                                 <br/>
                                                                 Auction House: {salePriceAH}
                                                             </React.Fragment>}
@@ -1934,7 +1946,9 @@ export default function ItemOffers(props: any) {
                                                                                             {t('Mint')}: <MakeLinkableAddress addr={mint} trim={0} hasextlink={true} hascopy={false} fontsize={16} /> <br/>
                                                                                             {t('Owner')}: <MakeLinkableAddress addr={mintOwner} trim={0} hasextlink={true} hascopy={false} fontsize={16} /><br/>
                                                                                             {t('Auction House')}: <MakeLinkableAddress addr={salePriceAH} trim={9} hasextlink={true} hascopy={false} fontsize={16} /><br/>
-                                                                                    
+                                                                                            {verifiedAuctionHouse && 
+                                                                                                <>Marketplace: <strong>{verifiedAuctionHouse.name}</strong><br/><br/></>
+                                                                                            }
                                                                                             <Typography sx={{textAlign:'center'}}>
                                                                                                 {t('Make sure the above is correct')}<br/>{t('press Accept to proceed')}
                                                                                             </Typography>   
@@ -1988,7 +2002,7 @@ export default function ItemOffers(props: any) {
                                                                                 </Button>
                                                                                 */}
 
-                                                                                {salePriceAH === collectionAuctionHouse || salePriceAH === AUCTION_HOUSE_ADDRESS ?
+                                                                                {salePriceAH === collectionAuctionHouse || salePriceAH === AUCTION_HOUSE_ADDRESS || verifiedAuctionHouse ?
                                                                                         <Button 
                                                                                             size="large" 
                                                                                             variant="contained" 
