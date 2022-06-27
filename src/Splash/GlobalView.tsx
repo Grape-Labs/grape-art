@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { Connection, PublicKey, Transaction, LAMPORTS_PER_SOL } from '@solana/web3.js'
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { BN, web3 } from '@project-serum/anchor';
+import bs58 from 'bs58';
 //import spok from 'spok';
 
 import moment from 'moment';
@@ -89,7 +90,8 @@ function convertSolVal(sol: any){
 export async function getPage(myArray: any, page: number, perPage: number): Promise<any []> {
     //console.log('myArray:', myArray, 'page:', page, 'perPage:', perPage);
     const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
-    const paginatedPublicKeys = myArray[0].slice(
+    //const paginatedPublicKeys = myArray[0].slice(
+    const paginatedPublicKeys = myArray.slice(
         (page - 1) * perPage,
         page * perPage,
     );
@@ -122,12 +124,13 @@ export async function getPage(myArray: any, page: number, perPage: number): Prom
         tokenSize: new BN(receipt.tokenSize).toNumber(),
         price: new BN(receipt.price).toNumber() / LAMPORTS_PER_SOL,
         createdAt: new BN(receipt.createdAt).toNumber(),
+        //receipt_type: new BN(receipt.createdAt).toString(),
         mintpk: receipt.metadata,
         //mintpk: getMintFromMetadata(receipt.metadata),
         //mint: getMintFromReceipt(receipt.tradeState.toBase58()),
         //cancelledAt: receipt?.canceledAt,           
     }));
-    receipts.sort((a:any,b:any) => (a.createdAt < b.createdAt) ? 1 : -1); 
+    //receipts.sort((a:any,b:any) => (a.createdAt < b.createdAt) ? 1 : -1); 
     return receipts;
     //setReceipts(receipts);
 }
@@ -176,54 +179,103 @@ export default function GlobalView(props: any){
             const PrintListingReceiptSize = 236;
                 const PrintBidReceiptSize = 269;
                 const PrintPurchaseReceiptSize = 193;
+                const purchaseCreatedAtLocation = 185;
 
-                const AhLocation1 = 72;
-                const AhLocation2 = 104;
 
-            const ReceiptAccountSizes2 = [
-                {size: PrintListingReceiptSize, ahPosition: AhLocation1},
-                {size: PrintBidReceiptSize, ahPosition: AhLocation1},
-                {size: PrintPurchaseReceiptSize, ahPosition: AhLocation2}
-            ];
-            
-            let myArray = [];
-
-            const ReceiptAccounts = await (Promise.all(ReceiptAccountSizes2.map(async ({size, ahPosition}) => {
-            const accounts = await ticonnection.getProgramAccounts(
+            const bidReceiptAccounts = await ggoconnection.getProgramAccounts(
                 AUCTION_HOUSE_PROGRAM_ID,
                 {
-                dataSlice: { offset: 0, length: 0 }, 
-                //commitment: 'confirmed',
-                filters: [
-                    {
-                    dataSize: size,
-                    },
-                    /*{
-                    mcmp: {
-                        offset: ahPosition,
-                        bytes: "7bgahjaMKFgwK3jSx5RQjdxSQ67wkfPWMCNCmtiPy65L",
-                    },
-                    },*/
-                ],
+                    dataSlice: { offset: purchaseCreatedAtLocation, length: 8 },
+                    commitment: 'confirmed',
+                    filters: [
+                        { dataSize: PrintPurchaseReceiptSize },
+                    ],
                 }
-            )
-            myArray.push(accounts.map(account => account.pubkey));
-            })));
+            );
 
-            //place the elements of the array in a single index/row
-            if (myArray[1].length > 0) {
-                myArray = myArray.sort((a:any,b:any) => (a.blockTime < b.blockTime) ? 1 : -1);
-                for (var i = 1; i < myArray.length; i++) {
-                    let myArrayLength = myArray[i].length;
-                    for (var j = 0; j < myArrayLength; j++) {
-                        let getlastPosition = myArray[i].length - 1;
-                        const element = myArray[i].splice(getlastPosition, 1);
-                        let toIndex = myArray[0].length;
-                        myArray[0].splice(toIndex, 0, element[0]);
-                    }
+            const listingReceiptWithPurchaseAccounts = await ggoconnection.getProgramAccounts(
+                AUCTION_HOUSE_PROGRAM_ID,
+                {
+                    dataSlice: { offset: 8 + 32 + 32 + 32 + 32 + 32 + 33 + 8 + 8 + 1 + 1, length: 8 },
+                    commitment: 'confirmed',
+                    filters: [
+                        { dataSize: PrintListingReceiptSize },
+                        { memcmp: { offset: 8 + 32 + 32 + 32 + 32 + 32, bytes: bs58.encode((new BN(1, 'le')).toArray()) } }, // Ensure it has a purchase receipt.
+                    ],
                 }
-            }   
+            );
 
+            const listingReceiptWithoutPurchaseAccounts = await ggoconnection.getProgramAccounts(
+                AUCTION_HOUSE_PROGRAM_ID,
+                {
+                    dataSlice: { offset: 8 + 32 + 32 + 32 + 32 + 32 + 1 + 8 + 8 + 1 + 1, length: 8 },
+                    commitment: 'confirmed',
+                    filters: [
+                        { dataSize: PrintListingReceiptSize },
+                        { memcmp: { offset: 8 + 32 + 32 + 32 + 32 + 32, bytes: bs58.encode((new BN(0, 'le')).toArray()) } }, // Ensure it doesn't have a purchase receipt.
+                    ],
+                }
+            );
+
+            const bidReceiptWithTokenAndPurchaseAccounts = await ggoconnection.getProgramAccounts(
+                AUCTION_HOUSE_PROGRAM_ID,
+                { 
+                    dataSlice: { offset: 8 + 32 + 32 + 32 + 32 + 32 + 33 + 33 + 8 + 8 + 1 + 1, length: 8 },
+                    commitment: 'confirmed',
+                    filters: [
+                        { dataSize: PrintBidReceiptSize },
+                        { memcmp: { offset: 8 + 32 + 32 + 32 + 32 + 32, bytes: bs58.encode((new BN(1, 'le')).toArray()) } }, // Ensure it has a token account.
+                        { memcmp: { offset: 8 + 32 + 32 + 32 + 32 + 32 + 33, bytes: bs58.encode((new BN(1, 'le')).toArray()) } }, // Ensure it has a purchase receipt.
+                    ],
+                }
+            );
+
+            const bidReceiptWithTokenNotPurchaseAccounts = await ggoconnection.getProgramAccounts(
+                AUCTION_HOUSE_PROGRAM_ID,
+                {
+                    dataSlice: { offset: 8 + 32 + 32 + 32 + 32 + 32 + 33 + 1 + 8 + 8 + 1 + 1, length: 8 },
+                    commitment: 'confirmed',
+                    filters: [
+                        { dataSize: PrintBidReceiptSize },
+                        { memcmp: { offset: 8 + 32 + 32 + 32 + 32 + 32, bytes: bs58.encode((new BN(1, 'le')).toArray()) } }, // Ensure it has a token account.
+                        { memcmp: { offset: 8 + 32 + 32 + 32 + 32 + 32 + 33, bytes: bs58.encode((new BN(0, 'le')).toArray()) } }, // Ensure it doesn't have a purchase receipt.
+                    ],
+                }
+            );
+
+            const bidReceiptWithoutTokenWithPurchaseAccounts = await ggoconnection.getProgramAccounts(
+                AUCTION_HOUSE_PROGRAM_ID,
+                {
+                    dataSlice: { offset: 8 + 32 + 32 + 32 + 32 + 32 + 1 + 33 + 8 + 8 + 1 + 1, length: 8 },
+                    commitment: 'confirmed',
+                    filters: [
+                        { dataSize: PrintBidReceiptSize },
+                        { memcmp: { offset: 8 + 32 + 32 + 32 + 32 + 32, bytes: bs58.encode((new BN(0, 'le')).toArray()) } }, // Ensure it doesn't have a token account.
+                        { memcmp: { offset: 8 + 32 + 32 + 32 + 32 + 32 + 1, bytes: bs58.encode((new BN(1, 'le')).toArray()) } }, // Ensure it has a purchase receipt.
+                    ],
+                }
+            );
+
+            const bidReceiptWithoutTokenAndPurchaseAccounts = await ggoconnection.getProgramAccounts(
+                AUCTION_HOUSE_PROGRAM_ID,
+                {
+                    dataSlice: { offset: 8 + 32 + 32 + 32 + 32 + 32 + 1 + 1 + 8 + 8 + 1 + 1, length: 8 },
+                    commitment: 'confirmed',
+                    filters: [
+                        { dataSize: PrintBidReceiptSize },
+                        { memcmp: { offset: 8 + 32 + 32 + 32 + 32 + 32, bytes: bs58.encode((new BN(0, 'le')).toArray()) } }, // Ensure it doesn't have a token account.
+                        { memcmp: { offset: 8 + 32 + 32 + 32 + 32 + 32 + 1, bytes: bs58.encode((new BN(0, 'le')).toArray()) } }, // Ensure it doesn't have a purchase receipt.
+                    ],
+                }
+            );
+
+            const accounts = [...bidReceiptAccounts, ...listingReceiptWithPurchaseAccounts, ...listingReceiptWithoutPurchaseAccounts, ...bidReceiptWithTokenAndPurchaseAccounts, 
+                            ...bidReceiptWithTokenNotPurchaseAccounts, ...bidReceiptWithoutTokenWithPurchaseAccounts, ...bidReceiptWithoutTokenAndPurchaseAccounts];
+
+            const accountsWithCreationDate = accounts.map(({ pubkey, account }) => ({pubkey, createdAt: new BN(account.data, 'le').toNumber(),}));
+            const sortedAccountwithCreationDate = accountsWithCreationDate.sort((a:any,b:any) => (a.createdAt < b.createdAt) ? 1: -1);
+            const accountPublicKeys = sortedAccountwithCreationDate.map((account) => account.pubkey);
+            //console.log('accountPublicKeys:',accountPublicKeys);
             //set number of elements per page
             if (rowsPerPage === null) {
                 rowsPerPage = 5;
@@ -234,9 +286,9 @@ export default function GlobalView(props: any){
             } else {
                 pageOn = (page + 1);
             }
-            setTotalResults(myArray[0].length);
-            setMyArray(myArray);
-            const pageData = await getPage(myArray, pageOn, rowsPerPage);
+            setTotalResults(accountPublicKeys.length);
+            setMyArray(accountPublicKeys);
+            const pageData = await getPage(accountPublicKeys, pageOn, rowsPerPage);
             setReceipts(pageData);
         }
         setLoading(false);
@@ -257,7 +309,7 @@ export default function GlobalView(props: any){
 
             const receipts = await getPage(myArray, newPage+1, rowsPerPage);
             setReceipts(receipts);
-            setTotalResults(myArray[0].length);
+            setTotalResults(myArray.length);
             setPage(newPage);
         }
 
@@ -266,7 +318,7 @@ export default function GlobalView(props: any){
             setRowsPerPage(parseInt(event.target.value));
             const receipts = await getPage(myArray, 1, parseInt(event.target.value));
             setReceipts(receipts);
-            setTotalResults(myArray[0].length);
+            setTotalResults(myArray.length);
             setPage(0);
         }
 
@@ -410,7 +462,7 @@ export default function GlobalView(props: any){
                                             </TableBody>
                                         </Table>
                                         <TablePagination
-                                            rowsPerPageOptions={[5,10,25]}
+                                            rowsPerPageOptions={[5,10,25,50,100]}
                                             component="div"
                                             count={totalResults}
                                             page={page}
