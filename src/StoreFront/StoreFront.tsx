@@ -1224,6 +1224,7 @@ export function StoreFrontView(this: any, props: any) {
             <>
                 <Helmet>
                     <title>{`${collectionAuthority.name} | ${t('Grape Social. Stateless. Marketplace.')}`}</title>
+                    <link href={GRAPE_COLLECTIONS_DATA+collectionAuthority.logo} rel="apple-touch-icon" sizes="180x180"></link>
                     <meta name="description" content={collectionAuthority.description} />
                     <meta property="og:title" content={`${collectionAuthority.name} Collection on Grape`} />
                     <meta property="og:type" content="website" />
