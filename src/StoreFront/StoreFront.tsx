@@ -3,11 +3,8 @@ import { Link, useParams, useSearchParams } from "react-router-dom";
 import { Helmet } from 'react-helmet';
 import { decodeMetadata } from '../utils/grapeTools/utils';
 // @ts-ignore
-import fetch from 'node-fetch';
-import BN from "bn.js";
 
 import { findDisplayName } from '../utils/name-service';
-import { FollowListInfoResp, SearchUserInfoResp, Network } from '../utils/cyberConnect/types';
 
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 
@@ -17,8 +14,6 @@ import { Connection, PublicKey, SystemProgram, Transaction, TransactionInstructi
 import { useNavigate } from 'react-router';
 import { styled } from '@mui/material/styles';
 import { Button, LinearProgress } from '@mui/material';
-
-import { useSnackbar } from 'notistack';
 
 import {
     Pagination,
@@ -533,7 +528,7 @@ export function StoreFrontView(this: any, props: any) {
         } catch(e){console.log("ERR: "+e)}
     }
 
-    const fetchIndexedMintList = async(address:string) => {
+    const fetchIndexedMintList = async(address:string, jsonToImage: boolean, updateAuthority:string) => {
         const body = {
             method: "getNFTsByCollection",//"getNFTsByCollection",
             jsonrpc: "2.0",
@@ -551,17 +546,49 @@ export function StoreFrontView(this: any, props: any) {
         const json = await response.json();
         const resultValues = json.result;
         // transpose values to our format
-        const finalList = new Array()
+        const finalList = new Array();
+        console.log("jsonToImage: "+jsonToImage);
         for (var item of resultValues){
             //console.log("item: "+JSON.stringify(item))
+
+            // fetch from the JSON
+            let image = item.metadata.uri.replaceAll(".json",".png");
+            try {
+                if (!jsonToImage && item.metadata.uri){
+                    try{
+                        //https://corsproxy.io/?
+                        const metadata = await window.fetch(''+item.metadata.uri)
+                        .then(
+                            (res: any) => res.json()
+                        );
+                        image = metadata.image;
+                        //return metadata;
+                    }catch(ie){
+                    }
+                } else{
+                    
+                }
+            } catch (e) { // Handle errors from invalid calls
+            }
+
             finalList.push({
                 address:item.metadata.mint.toString(),
                 name:item.metadata.name,
                 collection:item.metadata.symbol,
-                image:item.metadata.uri.replaceAll(".json",".png"),
+                image:image,
                 metadata:item.metadata.pubkey.toString()
-
             });
+        }
+
+        // prepare to export if this is fetched (will take a good 10mins to fetch 10k collection)
+        if (!jsonToImage && item.metadata.uri){
+            const jsonString = `data:text/json;chatset=utf-8,${encodeURIComponent(
+                JSON.stringify(finalList)
+              )}`;
+              const link = document.createElement("a");
+              link.href = jsonString;
+              link.download = updateAuthority.substring(0,9)+".json";
+              link.click();
         }
 
         //console.log("finalList: "+JSON.stringify(finalList))
@@ -1041,7 +1068,6 @@ export function StoreFrontView(this: any, props: any) {
                                 }
                             }
                             
-                            
                         }catch(etfm){console.log("ERR: "+etfm + " for "+ JSON.stringify(metavalue));}
                     } else{
                         console.log("Something not right...");
@@ -1073,7 +1099,7 @@ export function StoreFrontView(this: any, props: any) {
                         setCollectionAuthority(verified);
                         // get collection mint list
                         if (verified.collection)
-                            var oml = fetchIndexedMintList(verified.collection);
+                            var oml = fetchIndexedMintList(verified.collection, verified?.jsonToImage, verified.updateAuthority);
                         else 
                             var fml = fetchMintList(verified.address);
                         break;
@@ -1083,7 +1109,7 @@ export function StoreFrontView(this: any, props: any) {
                         // get collection mint list
                         console.log("f ADDRESS: "+verified.address)
                         if (verified.collection)
-                            var oml = fetchIndexedMintList(verified.collection);
+                            var oml = fetchIndexedMintList(verified.collection, verified?.jsonToImage, verified.updateAuthority);
                         else 
                             var fml = fetchMintList(verified.address);
                         break;
