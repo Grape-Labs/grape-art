@@ -1,6 +1,7 @@
 {
   "short_name": "Grape",
-  "name": "Grape | Social. Stateless. Marketplace. powered by DAOs on Solana",
+  "name": "Grape Art",
+  "description": "Grape | Social. Stateless. Marketplace. powered by DAOs on Solana",
   "icons": [
     {
       "src": "favicon.ico",
@@ -18,8 +19,9 @@
       "sizes": "512x512"
     }
   ],
+  "scope" : "/",
   "start_url": ".",
-  "display": "standalone",
+  "display": "fullscreen",
   "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "background_color": "#000000"
 }
