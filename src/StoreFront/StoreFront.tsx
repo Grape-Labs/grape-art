@@ -556,7 +556,6 @@ export function StoreFrontView(this: any, props: any) {
             try {
                 if (!jsonToImage && item.metadata.uri){
                     try{
-                        //https://corsproxy.io/?
                         const metadata = await window.fetch(''+item.metadata.uri)
                         .then(
                             (res: any) => res.json()
@@ -578,17 +577,6 @@ export function StoreFrontView(this: any, props: any) {
                 image:image,
                 metadata:item.metadata.pubkey.toString()
             });
-        }
-
-        // prepare to export if this is fetched (will take a good 10mins to fetch 10k collection)
-        if (!jsonToImage && item.metadata.uri){
-            const jsonString = `data:text/json;chatset=utf-8,${encodeURIComponent(
-                JSON.stringify(finalList)
-              )}`;
-              const link = document.createElement("a");
-              link.href = jsonString;
-              link.download = updateAuthority.substring(0,9)+".json";
-              link.click();
         }
 
         //console.log("finalList: "+JSON.stringify(finalList))
@@ -1098,7 +1086,7 @@ export function StoreFrontView(this: any, props: any) {
                     if (verified.address === withPubKey){
                         setCollectionAuthority(verified);
                         // get collection mint list
-                        if (verified.collection)
+                        if ((verified.collection) && (!verified.staticMintList))
                             var oml = fetchIndexedMintList(verified.collection, verified?.jsonToImage, verified.updateAuthority);
                         else 
                             var fml = fetchMintList(verified.address);
@@ -1108,7 +1096,7 @@ export function StoreFrontView(this: any, props: any) {
                         setCollectionAuthority(verified);
                         // get collection mint list
                         console.log("f ADDRESS: "+verified.address)
-                        if (verified.collection)
+                        if ((verified.collection) && (!verified.staticMintList))
                             var oml = fetchIndexedMintList(verified.collection, verified?.jsonToImage, verified.updateAuthority);
                         else 
                             var fml = fetchMintList(verified.address);
@@ -1292,19 +1280,19 @@ export function StoreFrontView(this: any, props: any) {
                                     </video>
                                 </Box>
                                 :
-                                <img
-                                    src={GRAPE_COLLECTIONS_DATA+collectionAuthority.splash}
-                                    srcSet={GRAPE_COLLECTIONS_DATA+collectionAuthority.splash}
-                                    alt={collectionAuthority.name}
-                                    loading="lazy"
-                                    height="auto"
-                                    style={{
-                                        width:'100%',
-                                        borderBottomRightRadius:'24px',
-                                        borderBottomLeftRadius:'24px',
-                                        boxShadow:'0px 0px 5px 0px #000000',
-                                    }}
-                                />
+                                    <img
+                                        src={GRAPE_COLLECTIONS_DATA+collectionAuthority.splash}
+                                        srcSet={GRAPE_COLLECTIONS_DATA+collectionAuthority.splash}
+                                        alt={collectionAuthority.name}
+                                        loading="lazy"
+                                        height="auto"
+                                        style={{
+                                            width:'100%',
+                                            borderBottomRightRadius:'24px',
+                                            borderBottomLeftRadius:'24px',
+                                            boxShadow:'0px 0px 5px 0px #000000',
+                                        }}
+                                    />
                                 }
                             </Box>
                         </Hidden>
@@ -1312,7 +1300,7 @@ export function StoreFrontView(this: any, props: any) {
                             <Box
                                 className='grape-store-splash'
                                 sx={{
-                                    mt:-4
+                                    mt:-4,
                                 }}
                             >
                                 <img
