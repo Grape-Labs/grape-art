@@ -201,15 +201,11 @@ export default function ListForCollectionView(props: any){
                         let meta_final = decodeMetadata(buf);
                         metadata[x]["decoded"] = meta_final;
                         
-                        console.log("check ("+updateAuthority+"): "+meta_final.updateAuthority);
-
                         if ((enforceEntangle && 
                             (meta_final.updateAuthority === entangleFrom ||
                             meta_final.updateAuthority === entangleTo)) ||
                             (meta_final.updateAuthority === updateAuthority)){
 
-                            console.log("found: "+meta_final.updateAuthority);
-                            
                             try{
                                 const metadataFetch = await window.fetch(meta_final.data.uri)
                                 .then(
