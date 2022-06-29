@@ -156,23 +156,25 @@ export default function ActivityView(props: any){
                             const mintitem = await getMintFromVerifiedMetadata(item.metadata.toBase58(), collectionMintList);
                             //console.log("> item: "+JSON.stringify(item));
                             //console.log("mintitem: "+JSON.stringify(mintitem));
-                            activityResults.push({
-                                buyeraddress: item.bookkeeper.toBase58(), 
-                                bookkeeper: item.bookkeeper.toBase58(), 
-                                amount: item.price, 
-                                price: item.price, 
-                                mint: mintitem?.address, 
-                                metadataParsed:mintitem, 
-                                isowner: false, 
-                                createdAt: item.createdAt, 
-                                cancelledAt: item.canceledAt, 
-                                timestamp: timeAgo(item.createdAt), 
-                                blockTime: item.createdAt, 
-                                state: item?.receipt_type, 
-                                tradeState: item.tradeState, 
-                                purchaseReceipt: item.purchaseReceipt, 
-                                seller: item?.seller, 
-                                buyer: item?.buyer});
+                            if (mintitem?.address){
+                                activityResults.push({
+                                    buyeraddress: item.bookkeeper.toBase58(), 
+                                    bookkeeper: item.bookkeeper.toBase58(), 
+                                    amount: item.price, 
+                                    price: item.price, 
+                                    mint: mintitem?.address, 
+                                    metadataParsed:mintitem, 
+                                    isowner: false, 
+                                    createdAt: item.createdAt, 
+                                    cancelledAt: item.canceledAt, 
+                                    timestamp: timeAgo(item.createdAt), 
+                                    blockTime: item.createdAt, 
+                                    state: item?.receipt_type, 
+                                    tradeState: item.tradeState, 
+                                    purchaseReceipt: item.purchaseReceipt, 
+                                    seller: item?.seller, 
+                                    buyer: item?.buyer});
+                            }
                         }
 
                         // sort by date
@@ -193,23 +195,25 @@ export default function ActivityView(props: any){
                             const mintitem = await getMintFromVerifiedMetadata(item.metadata.toBase58(), collectionMintList);
                             //console.log("> item: "+JSON.stringify(item));
                             //console.log("mintitem: "+JSON.stringify(mintitem));
-                            activityResults.push({
-                                buyeraddress: item.bookkeeper.toBase58(), 
-                                bookkeeper: item.bookkeeper.toBase58(), 
-                                amount: item.price, 
-                                price: item.price, 
-                                mint: mintitem?.address, 
-                                metadataParsed:mintitem, 
-                                isowner: false, 
-                                createdAt: item.createdAt, 
-                                cancelledAt: item.canceledAt, 
-                                timestamp: timeAgo(item.createdAt), 
-                                blockTime: item.createdAt, 
-                                state: item?.receipt_type, 
-                                tradeState: item.tradeState, 
-                                purchaseReceipt: item.purchaseReceipt,
-                                seller: item?.seller, 
-                                buyer: item?.buyer});
+                            if (mintitem?.address){
+                                activityResults.push({
+                                    buyeraddress: item.bookkeeper.toBase58(), 
+                                    bookkeeper: item.bookkeeper.toBase58(), 
+                                    amount: item.price, 
+                                    price: item.price, 
+                                    mint: mintitem?.address, 
+                                    metadataParsed:mintitem, 
+                                    isowner: false, 
+                                    createdAt: item.createdAt, 
+                                    cancelledAt: item.canceledAt, 
+                                    timestamp: timeAgo(item.createdAt), 
+                                    blockTime: item.createdAt, 
+                                    state: item?.receipt_type, 
+                                    tradeState: item.tradeState, 
+                                    purchaseReceipt: item.purchaseReceipt,
+                                    seller: item?.seller, 
+                                    buyer: item?.buyer});
+                            }
                         }
 
                         // sort by date
@@ -229,23 +233,25 @@ export default function ActivityView(props: any){
                         const mintitem = await getMintFromVerifiedMetadata(item.metadata.toBase58(), collectionMintList);
                         //console.log("> item: "+JSON.stringify(item));
                         //console.log("mintitem: "+JSON.stringify(mintitem));
-                        activityResults.push({
-                            buyeraddress: item.bookkeeper.toBase58(), 
-                            bookkeeper: item.bookkeeper.toBase58(), 
-                            amount: item.price, 
-                            price: item.price, 
-                            mint: mintitem?.address, 
-                            metadataParsed:mintitem, 
-                            isowner: false, 
-                            createdAt: item.createdAt, 
-                            cancelledAt: item.canceledAt, 
-                            timestamp: timeAgo(item.createdAt), 
-                            blockTime: item.createdAt, 
-                            state: item?.receipt_type, 
-                            purchaseReceipt: item.purchaseReceipt, 
-                            seller: item?.seller, 
-                            buyer: item?.buyer
-                        });
+                        if (mintitem?.address){
+                            activityResults.push({
+                                buyeraddress: item.bookkeeper.toBase58(), 
+                                bookkeeper: item.bookkeeper.toBase58(), 
+                                amount: item.price, 
+                                price: item.price, 
+                                mint: mintitem?.address, 
+                                metadataParsed:mintitem, 
+                                isowner: false, 
+                                createdAt: item.createdAt, 
+                                cancelledAt: item.canceledAt, 
+                                timestamp: timeAgo(item.createdAt), 
+                                blockTime: item.createdAt, 
+                                state: item?.receipt_type, 
+                                purchaseReceipt: item.purchaseReceipt, 
+                                seller: item?.seller, 
+                                buyer: item?.buyer
+                            });
+                        }
                     }
 
                     // sort by date
@@ -280,17 +286,19 @@ export default function ActivityView(props: any){
             // transpose auctionHouseListings
             const activityResults = new Array();
             for (var item of auctionHouseListings){
-                activityResults.push({
-                    buyeraddress: item.buyeraddress, 
-                    amount: item.amount, 
-                    mint: item?.mint || "5XdghzBiKqnUfWSUwHRC3PWYwyVXhLAxT7JiSWeye4fs", 
-                    isowner: false, 
-                    blockTime: item.blockTime, 
-                    timestamp: item.timestamp, 
-                    state: item?.state, 
-                    purchaseReceipt: item?.purchaseReceipt, 
-                    seller: item?.seller
-                })
+                if (item?.mint){
+                    activityResults.push({
+                        buyeraddress: item.buyeraddress, 
+                        amount: item.amount, 
+                        mint: item?.mint, 
+                        isowner: false, 
+                        blockTime: item.blockTime, 
+                        timestamp: item.timestamp, 
+                        state: item?.state, 
+                        purchaseReceipt: item?.purchaseReceipt, 
+                        seller: item?.seller
+                    })
+                }
             }
             
             setRecentActivity(auctionHouseListings);
