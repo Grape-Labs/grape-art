@@ -54,7 +54,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 export default function ListForCollectionView(props: any){
     const logo = props.logo;
     const collectionAuthority = props.collectionAuthority;
-    const updateAuthority = props.collectionUpdateAuthority;
+    const updateAuthority = props.updateAuthority;
     const collectionMintList = props.collectionMintList;
     const entangleFrom = props.entangleFrom;
     const entangleTo = props.entangleTo;
@@ -201,10 +201,15 @@ export default function ListForCollectionView(props: any){
                         let meta_final = decodeMetadata(buf);
                         metadata[x]["decoded"] = meta_final;
                         
+                        console.log("check ("+updateAuthority+"): "+meta_final.updateAuthority);
+
                         if ((enforceEntangle && 
                             (meta_final.updateAuthority === entangleFrom ||
                             meta_final.updateAuthority === entangleTo)) ||
                             (meta_final.updateAuthority === updateAuthority)){
+
+                            console.log("found: "+meta_final.updateAuthority);
+                            
                             try{
                                 const metadataFetch = await window.fetch(meta_final.data.uri)
                                 .then(
@@ -216,6 +221,8 @@ export default function ListForCollectionView(props: any){
                                 //console.log("ERR: "+JSON.stringify(meta_final));
                                 // return null;
                             }
+                        } else {
+                            
                         }
 
                     }catch(etfm){console.log("ERR: "+etfm + " for "+ JSON.stringify(metadata[x]));}
