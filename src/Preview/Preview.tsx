@@ -320,7 +320,7 @@ function GrapeVerified(props:any){
         return (
             <Tooltip title={grapeVerified ? `${props.symbol}: ${t('Collection Verified on Metaplex & Grape')}` : `${props.symbol}: ${t('Collection Verified on Metaplex')}`} placement="top">
                 <Button 
-                    href={`${GRAPE_PREVIEW}${verifiedPK}`}
+                    href={grapeVerified ? `${GRAPE_COLLECTION}${verifiedCollection.vanityUrl}` : `${GRAPE_PREVIEW}${verifiedPK}`}
                     sx={{color:'white', borderRadius:'24px'}}>
                     {collectionName}
                     <Avatar 
