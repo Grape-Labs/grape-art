@@ -1288,6 +1288,7 @@ export function StoreFrontView(this: any, props: any) {
                                         height="auto"
                                         style={{
                                             width:'100%',
+                                            marginTop:'-10%',
                                             borderBottomRightRadius:'24px',
                                             borderBottomLeftRadius:'24px',
                                             boxShadow:'0px 0px 5px 0px #000000',

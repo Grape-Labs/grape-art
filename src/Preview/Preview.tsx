@@ -289,17 +289,18 @@ function GrapeVerified(props:any){
                     if (collectionRawData?.collection?.verified){
                         if (collectionRawData.collection.verified === 1){
                             //console.log("updateAuthority: "+JSON.stringify(updateAuthority));
-                            if (ValidateAddress(collectionRawData.collection.key)){
+                            if (ValidateAddress(collectionRawData.collection?.key)){
                                 setVerifiedState(true);
                                 if (!collectionImage){
-                                    setVerificationPK(collectionRawData.collection.key)
-                                    getCollectionData(collectionRawData.collection.key);
+                                    setVerificationPK(collectionRawData.collection?.key)
+                                    getCollectionData(collectionRawData.collection?.key);
+                                    
                                 }
                             }
                         }
                     }
                 }
-
+                
                 // third stage verification
                 // grape_verified = UPDATE_AUTHORITIES.indexOf(collectionRawData);
                 // grape_verified = 1;
