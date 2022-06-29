@@ -915,7 +915,7 @@ export function StoreFrontView(this: any, props: any) {
                                     mintListItem.marketplaceListing = false;
                                 }
                             }
-                            if (thisFloorPrice > +item.price)
+                            if ((thisFloorPrice > +item.price)||(!thisFloorPrice))
                                 thisFloorPrice = +item.price;
                         }
                     }catch(e){console.log("ERR: "+e);}
@@ -1244,7 +1244,7 @@ export function StoreFrontView(this: any, props: any) {
                             <Box
                                 className='grape-store-splash'
                                 sx={{
-                                    mt:-16
+                                    mt:collectionAuthority?.splashOffset || -16,
                                 }}
                             >
                                 {collectionAuthority.videoUrl ?
@@ -1288,7 +1288,6 @@ export function StoreFrontView(this: any, props: any) {
                                         height="auto"
                                         style={{
                                             width:'100%',
-                                            marginTop:'-10%',
                                             borderBottomRightRadius:'24px',
                                             borderBottomLeftRadius:'24px',
                                             boxShadow:'0px 0px 5px 0px #000000',
@@ -1369,9 +1368,11 @@ export function StoreFrontView(this: any, props: any) {
                                     {collectionAuthority.name}
                                 </Typography>
 
-                                <Typography variant="h6">
-                                    {collectionAuthority.author}
-                                </Typography>
+                                {collectionAuthority?.author && collectionAuthority.author !== collectionAuthority.name &&
+                                    <Typography variant="h6">
+                                        {collectionAuthority.author}
+                                    </Typography>
+                                }
 
                                 <Typography variant="caption">
                                     {collectionAuthority.description}
@@ -1456,7 +1457,7 @@ export function StoreFrontView(this: any, props: any) {
                                             
                                         </Typography>
                                         <Typography variant="subtitle2">
-                                            <Tooltip title={`${grapeFloorPrice} SOL floor / ${grapeTotalListings} listings on Grape`}>
+                                            <Tooltip title={`${grapeFloorPrice || 0} SOL floor / ${grapeTotalListings} listings on Grape`}>
                                                 <Button
                                                     sx={{color:'white',m:0,p:0}}
                                                 >
