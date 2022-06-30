@@ -216,6 +216,10 @@ export function Header(props: any) {
               const json = string === "" ? {} : JSON.parse(string);
               //console.log(">>> "+JSON.stringify(json));
               const vCA = new Array();
+
+              // sort by name
+              json.sort((a:any,b:any) => (a.name > b.name) ? 1 : -1);
+
               for (let item of json){
                 if (item?.discover)
                     vCA.push(item);

@@ -37,6 +37,9 @@ export default function MarketplaceView(props: any) {
               });
               const string = await response.text();
               const json = string === "" ? {} : JSON.parse(string);
+
+              json.sort((a:any,b:any) => (a.name > b.name) ? 1 : -1);
+
               //console.log(">>> "+JSON.stringify(json));
               setVerifiedCollectionArray(json); 
               return json;
