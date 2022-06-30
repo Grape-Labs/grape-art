@@ -338,17 +338,23 @@ export default function GalleryView(props: any){
                                             alignItems="center">
                                             {scrollData.map((collectionInfo:any, key:number) => {
                                                 return(
-                                                    <Grid item xs={12} sm={12} md={4} lg={3} xl={2}>
-                                                        <Box
-                                                            sx={{
-                                                                background: 'rgba(0, 0, 0, 0.6)',
-                                                                borderRadius: '26px',
-                                                                minWidth: '175px'
-                                                            }} 
-                                                        >
-                                                            <GalleryItem collectionitem={collectionInfo} mode={mode} groupbysymbol={collectionInfo.groupBySymbol} isparent={false} listed={true} count={key} />
-                                                        </Box>
-                                                    </Grid>
+                                                    <>
+                                                        {collectionInfo?.image ?
+                                                            <Grid item xs={12} sm={12} md={4} lg={3} xl={2}>
+                                                                <Box
+                                                                    sx={{
+                                                                        background: 'rgba(0, 0, 0, 0.6)',
+                                                                        borderRadius: '26px',
+                                                                        minWidth: '175px'
+                                                                    }} 
+                                                                >
+                                                                    <GalleryItem collectionitem={collectionInfo} mode={mode} groupbysymbol={collectionInfo.groupBySymbol} isparent={false} listed={true} count={key} />
+                                                                </Box>
+                                                            </Grid>
+                                                        :
+                                                        <></>
+                                                        }
+                                                    </>
                                                 )
                                             })}
                                         </Grid>
@@ -432,17 +438,23 @@ export default function GalleryView(props: any){
                                                 )}
                                                 </>
                                             ):(
-                                                <Grid item xs={12} sm={12} md={4} lg={3} xl={2} key={key}>
-                                                    <Box
-                                                        sx={{
-                                                            background: 'rgba(0, 0, 0, 0.6)',
-                                                            borderRadius: '26px',
-                                                            minWidth: '175px'
-                                                        }} 
-                                                    >
-                                                        <GalleryItem collectionitem={collectionInfo} mode={mode} groupbysymbol={collectionInfo.groupBySymbol} isparent={false} finalCollection={finalCollection} listed={true} count={key} />
-                                                    </Box>
-                                                </Grid>
+                                                <>
+                                                    {collectionInfo?.image ?
+                                                        <Grid item xs={12} sm={12} md={4} lg={3} xl={2} key={key}>
+                                                            <Box
+                                                                sx={{
+                                                                    background: 'rgba(0, 0, 0, 0.6)',
+                                                                    borderRadius: '26px',
+                                                                    minWidth: '175px'
+                                                                }} 
+                                                            >
+                                                                <GalleryItem collectionitem={collectionInfo} mode={mode} groupbysymbol={collectionInfo.groupBySymbol} isparent={false} finalCollection={finalCollection} listed={true} count={key} />
+                                                            </Box>
+                                                        </Grid>
+                                                    :
+                                                    <></>
+                                                    }
+                                                </>
                                             )}
                                         </>   
                                     )
