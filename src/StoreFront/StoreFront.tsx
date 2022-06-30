@@ -548,13 +548,19 @@ export function StoreFrontView(this: any, props: any) {
         // transpose values to our format
         const finalList = new Array();
         console.log("jsonToImage: "+jsonToImage);
+
         for (var item of resultValues){
-            //console.log("item: "+JSON.stringify(item))
+            console.log("item: "+JSON.stringify(item))
 
             // fetch from the JSON
-            let image = item.metadata.uri.replaceAll(".json",".png");
+
+            let image = null;
+            if (jsonToImage)
+                image = item.metadata.uri.replaceAll(".json",".png");
+            
             try {
-                if (!jsonToImage && item.metadata.uri){
+                /*
+                if (!jsonToImage && item.metadata.uri){ // this will take too long to 1+ collections
                     try{
                         const metadata = await window.fetch(''+item.metadata.uri)
                         .then(
@@ -566,7 +572,7 @@ export function StoreFrontView(this: any, props: any) {
                     }
                 } else{
                     
-                }
+                }*/
             } catch (e) { // Handle errors from invalid calls
             }
 
@@ -578,6 +584,7 @@ export function StoreFrontView(this: any, props: any) {
                 metadata:item.metadata.pubkey.toString()
             });
         }
+        
 
         //console.log("finalList: "+JSON.stringify(finalList))
         setFetchedCollectionMintList(finalList); 
@@ -897,8 +904,10 @@ export function StoreFrontView(this: any, props: any) {
                     const json2 = await fetchMEWithTimeout(collectionAuthority.me_symbol,20);
                     const json3 = await fetchMEWithTimeout(collectionAuthority.me_symbol,40);
                     const json4 = await fetchMEWithTimeout(collectionAuthority.me_symbol,60);
+                    const json5 = await fetchMEWithTimeout(collectionAuthority.me_symbol,80);
+                    const json6 = await fetchMEWithTimeout(collectionAuthority.me_symbol,100);
                     
-                    const json = [...json1,...json2,...json3,json4];
+                    const json = [...json1,...json2,...json3,...json4,...json5,...json6];
 
                     try{
                         let found = false;

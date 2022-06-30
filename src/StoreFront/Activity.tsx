@@ -504,7 +504,7 @@ export default function ActivityView(props: any){
                     :   
                     <>
                         {mode === 0 ?
-                            <Tooltip title={collectionAuthority.entangled ? `All time for both collections` : `Unique owners for this collections`}>
+                            <Tooltip title={collectionAuthority.entangled ? `All time for both collections` : `Volume`}>
                                 <Button 
                                     variant="text"
                                     onClick={handleClickOpenDialog}
