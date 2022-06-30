@@ -1228,6 +1228,10 @@ export function StoreFrontView(this: any, props: any) {
                     <meta name="twitter:title" content={collectionAuthority.name} />
                     <meta name="twitter:description" content={collectionAuthority.description} />
                     <meta name="twitter:image" content={GRAPE_COLLECTIONS_DATA+collectionAuthority.logo} />
+
+                    {collectionAuthority.theme &&
+                        <style>{'html, body { background: '+collectionAuthority.theme+' fixed!important;height: 100%; }'}</style>
+                    }
                 </Helmet>
             
 
@@ -1434,7 +1438,7 @@ export function StoreFrontView(this: any, props: any) {
                             </Box>
                             
                             <Grid container spacing={0} sx={{mt:-2}}>
-                                <Grid item xs={12} sm={6} md={3} key={1}>
+                                <Grid item xs={12} sm={6} md={4} key={1}>
                                     <Box
                                         className='grape-store-stat-item'
                                         sx={{borderRadius:'24px',m:2,p:1}}
@@ -1467,7 +1471,7 @@ export function StoreFrontView(this: any, props: any) {
                                         </Typography>
                                     </Box>
                                 </Grid>
-                                <Grid item xs={12} sm={6} md={3} key={1}>
+                                <Grid item xs={12} sm={6} md={4} key={1}>
                                     <Box
                                         className='grape-store-stat-item'
                                         sx={{borderRadius:'24px',m:2,p:1}}
@@ -1480,6 +1484,7 @@ export function StoreFrontView(this: any, props: any) {
                                         </Typography>
                                     </Box>
                                 </Grid>
+                                {/*
                                 <Grid item xs={12} sm={6} md={3} key={1}>
                                 <Tooltip title={collectionAuthority.entangled ? `All time for both collections` : `Unique owners for this collections`}>
                                     <Button 
@@ -1507,7 +1512,8 @@ export function StoreFrontView(this: any, props: any) {
                                     </Button>
                                 </Tooltip>
                                 </Grid>
-                                <Grid item xs={12} sm={6} md={3} key={1}>
+                                */}
+                                <Grid item xs={12} sm={6} md={4} key={1}>
                                     {!stateLoading ?
                                         <ActivityView collectionAuthority={collectionAuthority} collectionMintList={collectionMintList} activity={auctionHouseListings} mode={0} />
                                     :
