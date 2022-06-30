@@ -217,7 +217,7 @@ export function Header(props: any) {
               //console.log(">>> "+JSON.stringify(json));
               const vCA = new Array();
               for (let item of json){
-                if (item?.enabled && item?.discover)
+                if (item?.discover)
                     vCA.push(item);
               }
 
