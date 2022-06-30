@@ -125,7 +125,7 @@ import { getPriceWithMantissa } from '../utils/auctionHouse/helpers/various';
 
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 //import { WalletConnectButton } from "@solana/wallet-adapter-react-ui";
-import { WalletConnectButton } from "@solana/wallet-adapter-material-ui";
+import { WalletDialogProvider, WalletMultiButton } from "@solana/wallet-adapter-material-ui";
 import  useWalletStore  from '../utils/governanceTools/useWalletStore';
 import { sendTransactions } from "../utils/governanceTools/sendTransactions";
 import { InstructionsAndSignersSet } from "../utils/auctionHouse/helpers/types";
@@ -2105,7 +2105,11 @@ export default function ItemOffers(props: any) {
                                             justifyContent="center"
                                         >
                                             <Grid item>
-                                                <WalletConnectButton />
+                                            <WalletDialogProvider className="grape-wallet-provider">
+                                                <WalletMultiButton className="grape-wallet-button">
+                                                    Connect to buy
+                                                </WalletMultiButton>
+                                            </WalletDialogProvider>
                                             </Grid>
                                         </Grid>
                                     )
