@@ -319,7 +319,7 @@ export default function GalleryItem(props: any){
                                                         <Tooltip title={collectionitem?.marketplaceListing ? collectionitem?.listedTimestamp : `Third party listing - see NFT history for details`}> 
                                                             <Button sx={{color:collectionitem?.marketplaceListing ? `white` : `gray`,borderRadius:'17px'}}>  
                                                             <Typography variant="h6">
-                                                            {collectionitem?.listingPrice}  <SolCurrencyIcon sx={{fontSize:"16px"}} />
+                                                            {+collectionitem.listingPrice.toFixed(3)}  <SolCurrencyIcon sx={{fontSize:"16px"}} />
                                                             </Typography>
                                                             </Button>
                                                         </Tooltip>
@@ -337,7 +337,7 @@ export default function GalleryItem(props: any){
                                                                 Offer for
                                                             </Typography>
                                                             <Typography variant="body1" textAlign="right" sx={{color:'yellow'}}>
-                                                                {collectionitem?.highestOffer.toFixed(3)} <SolCurrencyIcon sx={{fontSize:"11px"}} />
+                                                                {+collectionitem.highestOffer.toFixed(3)} <SolCurrencyIcon sx={{fontSize:"11px"}} />
                                                             </Typography>
                                                         </>
                                                     }

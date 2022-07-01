@@ -44,6 +44,7 @@ import {
     SolletExtensionWalletAdapter,
     SlopeWalletAdapter,
     SolletWalletAdapter,
+    BraveWalletAdapter,
     TorusWalletAdapter,
     CloverWalletAdapter,
     MathWalletAdapter,
@@ -54,6 +55,7 @@ import {
     BitpieWalletAdapter,
     SafePalWalletAdapter,
     ExodusWalletAdapter,
+    NightlyWalletAdapter,
 } from '@solana/wallet-adapter-wallets';
 
 //import { mainListItems, secondaryListItems } from './components/SidebarList/SidebarList';
@@ -130,6 +132,7 @@ function DashboardContent(){
             new ExodusWalletAdapter(),
             new SolletWalletAdapter({ network }),
             new SolletExtensionWalletAdapter({ network }),
+            new BraveWalletAdapter(),
             new TorusWalletAdapter(),
             new CloverWalletAdapter(),
             new MathWalletAdapter(),
@@ -139,6 +142,7 @@ function DashboardContent(){
             new TokenPocketWalletAdapter(),
             new SafePalWalletAdapter(),
             new BitpieWalletAdapter(),
+            new NightlyWalletAdapter(),
         ],
         [network]
     );
