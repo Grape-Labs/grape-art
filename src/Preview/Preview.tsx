@@ -272,10 +272,7 @@ function GrapeVerified(props:any){
             if (collectionRawData && !loading){
                 let verified = false;
                 let verified_creator = false;
-
-
-                console.log("Verified: "+JSON.stringify(collectionRawData))
-
+                //console.log("Verified: "+JSON.stringify(collectionRawData))
                 // first stage verification
                 
                 if (collectionRawData?.data?.creators){

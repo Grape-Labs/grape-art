@@ -549,8 +549,7 @@ export default function OffersView(props:any){
 
     const getOffers = async () => {
         getEscrowBalance();
-
-
+        
         if (!loading){
             setLoading(true);
             setMaxPage(false);

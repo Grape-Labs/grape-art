@@ -16,12 +16,26 @@ import { getMetadata } from '../auctionHouse/helpers/accounts';
 
 import { AuctionHouseProgram  } from '@metaplex-foundation/mpl-auction-house';
 
+export async function getTokenPrice(tokenIn:string,tokenOut:string){
+  const body = {
+    id: tokenIn,
+    vsToken: tokenOut
+  }
+  const apiUrl = "https://price.jup.ag/v1/price?id="+tokenIn+"&vsToken="+tokenOut;
+  const resp = await window.fetch(apiUrl, {
+    //method:'GET',
+    //body: JSON.stringify(body)
+  })
+  const json = await resp.json(); 
+  return json
+}
+
 export async function getMintFromMetadataWithVerifiedCollection(updateAuthority:string, metadata:string) {
     
     // add a helper function to get Metadata from Grape Verified Collection
 
     // returns the mint address
-
+  
 }
 
 export async function getMintFromMetadata(updateAuthority:string, metaData:web3.PublicKey): Promise<string>{

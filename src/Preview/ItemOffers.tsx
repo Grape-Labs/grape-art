@@ -79,6 +79,8 @@ import {
     getReceiptsFromAuctionHouse,
     getMintFromVerifiedMetadata } from '../utils/grapeTools/helpers';
 
+import { getTokenPrice } from '../utils/grapeTools/helpers';
+
 import { RegexTextField } from '../utils/grapeTools/RegexTextField';
 import { MakeLinkableAddress, ValidateCurve, trimAddress, timeAgo } from '../utils/grapeTools/WalletAddress'; // global key handling
 
@@ -987,6 +989,7 @@ export default function ItemOffers(props: any) {
     const [tradeState, setTradeState] = React.useState(null);
     const [final_offerfrom, setFinalOfferFrom] = React.useState(null);
     const [salePrice, setSalePrice] = React.useState(props.salePrice);
+    const [tokenSalePrice, setTokenSalePrice] = React.useState(0);
     const [saleDate, setSaleDate] = React.useState(null);
     const [saleTimeAgo, setSaleTimeAgo] = React.useState(null);
     const [highestOffer, setHighestOffer] = React.useState(0);
@@ -1566,9 +1569,17 @@ export default function ItemOffers(props: any) {
                 setOffers(
                     finalOfferResults
                 );
+
+                const tpResponse = await getTokenPrice('SOL','USDC');
+                
                 setSalePrice(
                     forSale
                 );
+                if (tpResponse?.data?.price){
+                    setTokenSalePrice(
+                        tpResponse.data.price
+                    );
+                }
                 setSalePriceAH(sale_price_marketplace);
                 
                 // check and set the current verified auction house this is with
@@ -1825,7 +1836,7 @@ export default function ItemOffers(props: any) {
                                                 >
                                                     <Button variant="text" sx={{color:'white',borderRadius:'17px'}}>
                                                         <Typography component="div" variant="h4" sx={{fontWeight:'800'}}>
-                                                            <strong>{salePrice} <SolCurrencyIcon /></strong>
+                                                            <strong>{salePrice} <SolCurrencyIcon /></strong> {tokenSalePrice && <Typography variant='caption' sx={{color:'#999'}}>/{(salePrice*tokenSalePrice).toFixed(2)} USDC</Typography>}
                                                         </Typography>
                                                     </Button>
                                                 </Tooltip>
@@ -1868,7 +1879,7 @@ export default function ItemOffers(props: any) {
                                                         >
                                                             <Button variant="text" sx={{color:'white',borderRadius:'17px'}}>
                                                                 <Typography component="div" variant="h4" sx={{fontWeight:'800'}}>
-                                                                    <strong>{salePrice} <SolCurrencyIcon /></strong>
+                                                                    <strong>{salePrice} <SolCurrencyIcon /></strong> {tokenSalePrice && <Typography variant='caption' sx={{color:'#999'}}>/{(salePrice*tokenSalePrice).toFixed(2)} USDC</Typography>}
                                                                 </Typography>
                                                             </Button>
                                                         </Tooltip>
