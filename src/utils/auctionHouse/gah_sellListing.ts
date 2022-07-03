@@ -207,6 +207,8 @@ import { ConstructionOutlined } from '@mui/icons-material';
       programAsSignerBump,
       buyerPrice,
       tokenSize: 1,
+      partialOrderSize:null,
+      partialOrderPrice:null
     }
 
     const [bidReceipt, bidReceiptBump] =

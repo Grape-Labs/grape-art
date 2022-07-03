@@ -218,6 +218,8 @@ export async function gah_acceptOffer(offerAmount: number, mint: string, sellerP
       programAsSignerBump,
       buyerPrice: buyerPrice,
       tokenSize: 1,
+      partialOrderSize:null,
+      partialOrderPrice:null
     }
     const executePrintPurchaseReceiptInstructionAccounts = {
       purchaseReceipt,

@@ -550,7 +550,7 @@ export function StoreFrontView(this: any, props: any) {
         console.log("jsonToImage: "+jsonToImage);
 
         for (var item of resultValues){
-            console.log("item: "+JSON.stringify(item))
+            //console.log("item: "+JSON.stringify(item))
 
             // fetch from the JSON
 
