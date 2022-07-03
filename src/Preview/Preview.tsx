@@ -273,6 +273,9 @@ function GrapeVerified(props:any){
                 let verified = false;
                 let verified_creator = false;
 
+
+                console.log("Verified: "+JSON.stringify(collectionRawData))
+
                 // first stage verification
                 
                 if (collectionRawData?.data?.creators){
@@ -285,21 +288,20 @@ function GrapeVerified(props:any){
                     }
                 }
                 // second stage verification
-                if (verified_creator){
-                    if (collectionRawData?.collection?.verified){
-                        if (collectionRawData.collection.verified === 1){
-                            //console.log("updateAuthority: "+JSON.stringify(updateAuthority));
-                            if (ValidateAddress(collectionRawData.collection?.key)){
-                                setVerifiedState(true);
-                                if (!collectionImage){
-                                    setVerificationPK(collectionRawData.collection?.key)
-                                    getCollectionData(collectionRawData.collection?.key);
-                                    
-                                }
+                if (collectionRawData?.collection?.verified){
+                    if (collectionRawData.collection.verified === 1){
+                        //console.log("updateAuthority: "+JSON.stringify(updateAuthority));
+                        if (ValidateAddress(collectionRawData.collection?.key)){
+                            setVerifiedState(true);
+                            if (!collectionImage){
+                                setVerificationPK(collectionRawData.collection?.key)
+                                getCollectionData(collectionRawData.collection?.key);
+                                
                             }
                         }
                     }
-                }
+                    }
+                
                 
                 // third stage verification
                 // grape_verified = UPDATE_AUTHORITIES.indexOf(collectionRawData);
@@ -762,6 +764,7 @@ function GalleryItemMeta(props: any) {
             const transaction = await createSetProfilePictureTransaction(publicKey, new PublicKey(mint), new PublicKey(mintAta));
             //console.log("Transaction: "+JSON.stringify(transaction));
             enqueueSnackbar(`${t('Preparing set your avatar with')} ${mint} ${t('mint')}`,{ variant: 'info' });
+            //transaction.feePayer = publicKey;
             const signedTransaction = await sendTransaction(transaction, connection);
             
             const snackprogress = (key:any) => (
@@ -1336,10 +1339,22 @@ function GalleryItemMeta(props: any) {
                                                             <TableRow>
                                                                 <TableCell>{t('Update Authority')}:</TableCell>
                                                                 <TableCell>
-                                                                    <MakeLinkableAddress addr={collectionrawdata.updateAuthority} trim={5} hasextlink={true} hascopy={false} fontsize={14} />
+                                                                    <MakeLinkableAddress addr={collectionrawdata.updateAuthority} trim={5} hasextlink={true} hascopy={true} fontsize={14} />
                                                                 </TableCell>
                                                             </TableRow>
                                                         : null }
+
+                                                        {collectionrawdata?.collection?.key ? 
+                                                            <TableRow>
+                                                                <TableCell>{t('Collection')}:</TableCell>
+                                                                <TableCell>
+                                                                    <MakeLinkableAddress addr={collectionrawdata?.collection?.key} trim={5} hasextlink={true} hascopy={true} fontsize={14} />
+                                                                </TableCell>
+                                                            </TableRow>
+                                                        : null }
+
+
+
                                                         {collectionrawdata?.isMutable == 1 ?
                                                             <TableRow>
                                                                 <TableCell>{t('Mutable')}:</TableCell>
