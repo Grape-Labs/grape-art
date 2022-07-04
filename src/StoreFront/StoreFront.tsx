@@ -1370,7 +1370,7 @@ export function StoreFrontView(this: any, props: any) {
                             sx={{
                                 m:4,
                                 mb:4,
-                                mt:-1,
+                                mt:-0.75,
                                 p:1,
                                 textAlign:'center',
                                 borderRadius:'24px',
