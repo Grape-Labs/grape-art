@@ -91,7 +91,8 @@ import {
 
 import { 
     getReceiptsFromAuctionHouse,
-    getMintFromVerifiedMetadata
+    getMintFromVerifiedMetadata,
+    getTokenPrice
 } from '../utils/grapeTools/helpers';
 
 import { getProfilePicture } from '@solflare-wallet/pfp';
@@ -477,10 +478,12 @@ export function StoreFrontView(this: any, props: any) {
     const [final_collection, setCollectionMetaFinal] = React.useState(null);
     //const isConnected = session && session.isConnected;
     const [loading, setLoading] = React.useState(false);
+    const [tokenPrice, setTokenPrice] = React.useState(null);
     const [floorPrice, setFloorPrice] = React.useState(0);
     const [totalListings, setTotalListings] = React.useState(0); 
     const [grapeFloorPrice, setGrapeFloorPrice] = React.useState(0);
     const [grapeTotalListings, setGrapeTotalListings] = React.useState(0); 
+    const [meStats, setMEStats] = React.useState(null);
     const [stateLoading, setStateLoading] = React.useState(false);
     const [rdloading, setRDLoading] = React.useState(false);
     const [loadCount, setLoadCount] = React.useState(0);
@@ -903,6 +906,12 @@ export function StoreFrontView(this: any, props: any) {
             try{
                 if (collectionAuthority.me_symbol){
                     
+                    const jsonStats = await fetchMEStatsWithTimeout(collectionAuthority.me_symbol);
+
+                    if (jsonStats){
+                        setMEStats(jsonStats);
+                    }
+
                     const json1 = await fetchMEWithTimeout(collectionAuthority.me_symbol,0);
                     const json2 = await fetchMEWithTimeout(collectionAuthority.me_symbol,20);
                     const json3 = await fetchMEWithTimeout(collectionAuthority.me_symbol,40);
@@ -992,6 +1001,25 @@ export function StoreFrontView(this: any, props: any) {
         })
         const json = await resp.json(); 
         return json
+    }
+    const fetchMEStatsWithTimeout = async (symbol:string) => {
+        const apiUrl = "https://corsproxy.io/?https://api-mainnet.magiceden.dev/v2/collections/"+symbol+"/stats";
+        const resp = await window.fetch(apiUrl, {
+            method: 'GET',
+            redirect: 'follow',
+            signal: Timeout(5).signal,
+        })
+        const json = await resp.json(); 
+        return json
+    }
+
+    const fetchTokenPrice = async (fromToken:string,toToken:string) => {
+        const tpResponse = await getTokenPrice(fromToken, toToken);
+        if (tpResponse?.data?.price){
+            setTokenPrice(
+                tpResponse.data.price
+            );
+        }
     }
 
     const getMissingCollectionData = async (start:number, missing_collection:any) => {
@@ -1087,6 +1115,8 @@ export function StoreFrontView(this: any, props: any) {
     React.useEffect(() => { 
         if ((verifiedCollectionArray)){ //&&(!collectionAuthority)){ // using a router makes checking collectionAuthority pointless for seach
             if (withPubKey){
+                fetchTokenPrice('SOL','USDC');
+                
                 console.log("using: "+withPubKey)
                 //console.log("verified_collection_array: "+JSON.stringify(verified_collection_array))
                 
@@ -1527,7 +1557,7 @@ export function StoreFrontView(this: any, props: any) {
                                 */}
                                 <Grid item xs={12} sm={6} md={4} key={1}>
                                     {!stateLoading ?
-                                        <ActivityView collectionAuthority={collectionAuthority} collectionMintList={collectionMintList} activity={auctionHouseListings} mode={0} />
+                                        <ActivityView collectionAuthority={collectionAuthority} collectionMintList={collectionMintList} activity={auctionHouseListings} meStats={meStats} tokenPrice={tokenPrice} mode={0} />
                                     :
                                         <CircularProgress sx={{color:'yellow',p:'2px'}} />
                                     }
@@ -1543,9 +1573,8 @@ export function StoreFrontView(this: any, props: any) {
                     }}
                 >
                     <Box> 
-
                         {collectionMintList &&  
-                            <GalleryView mode={1} collectionMintList={collectionMintList} collectionAuthority={collectionAuthority}/>
+                            <GalleryView mode={1} collectionMintList={collectionMintList} collectionAuthority={collectionAuthority} tokenPrice={tokenPrice}/>
                         }
                     </Box>
                 </Box>

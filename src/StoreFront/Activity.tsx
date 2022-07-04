@@ -115,7 +115,9 @@ export default function ActivityView(props: any){
     const collectionAuthority = props.collectionAuthority;
     const collectionMintList = props.collectionMintList;
     const auctionHouseListings = props.activity;
-
+    const tokenPrice = props.tokenPrice;
+    const tokenToSymbol = props?.tokenToSymbol || 'USDC';
+    const meStats = props.meStats;
     const MD_PUBKEY = METAPLEX_PROGRAM_ID;
     const [open, setOpenDialog] = React.useState(false);
     const { t, i18n } = useTranslation();
@@ -504,7 +506,7 @@ export default function ActivityView(props: any){
                     :   
                     <>
                         {mode === 0 ?
-                            <Tooltip title={collectionAuthority.entangled ? `All time for both collections` : `Volume`}>
+                            <Tooltip title={meStats ? <strong>{((meStats.volumeAll/1000000000000)*tokenPrice).toFixed(2)}K {tokenToSymbol}</strong> : `Volume`}>
                                 <Button 
                                     variant="text"
                                     onClick={handleClickOpenDialog}
@@ -525,7 +527,13 @@ export default function ActivityView(props: any){
                                             VOLUME/ACTIVITY
                                         </Typography>
                                         <Typography variant="subtitle2">
-                                            {(collectionAuthority.volume/1000).toFixed(1)}k SOL
+                                            {meStats ?
+                                                <>{(meStats.volumeAll/1000000000000).toFixed(1)}k SOL</>
+                                            :
+                                                <>
+                                                {(collectionAuthority.volume/1000).toFixed(1)}k SOL
+                                                </>
+                                            }
                                         </Typography>
                                     </Box>
                                 </Button>

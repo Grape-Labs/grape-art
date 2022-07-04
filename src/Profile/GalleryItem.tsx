@@ -49,6 +49,8 @@ export default function GalleryItem(props: any){
     const MD_PUBKEY = METAPLEX_PROGRAM_ID;
     const collectionitem = props.collectionitem || [];
     const mode = props?.mode || 0;
+    const tokenPrice = props?.tokenPrice || null;
+    const tokenToSymbol = props?.tokenToSymbol || 'USDC';
     const mint = collectionitem?.wallet?.account?.data.parsed.info.mint || collectionitem?.wallet?.address || collectionitem?.meta?.mint || null;
     const [expanded, setExpanded] = React.useState(false);
     const [open, setOpenDialog] = React.useState(false);
@@ -316,7 +318,19 @@ export default function GalleryItem(props: any){
                                                     
                                                     {collectionitem?.listingPrice ?
                                                         
-                                                        <Tooltip title={collectionitem?.marketplaceListing ? collectionitem?.listedTimestamp : `Third party listing - see NFT history for details`}> 
+                                                        <Tooltip title={
+                                                            <>
+                                                            {tokenPrice &&
+                                                                <strong>{(collectionitem.listingPrice*tokenPrice).toFixed(2)} {tokenToSymbol}<br/></strong>
+                                                            }
+
+                                                            {collectionitem?.marketplaceListing ? 
+                                                                <> {collectionitem?.listedTimestamp}</>
+                                                            : 
+                                                                `Third party listing - see NFT history for details`
+                                                            }
+                                                            </>
+                                                        }> 
                                                             <Button sx={{color:collectionitem?.marketplaceListing ? `white` : `gray`,borderRadius:'17px'}}>  
                                                             <Typography variant="h6">
                                                             {+collectionitem.listingPrice.toFixed(3)}  <SolCurrencyIcon sx={{fontSize:"16px"}} />

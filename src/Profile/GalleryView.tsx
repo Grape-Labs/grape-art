@@ -86,6 +86,7 @@ export default function GalleryView(props: any){
     const rowsperpage = 1500;
     const mode = props?.mode || 0;
     const collectionAuthority = props?.collectionAuthority || null;
+    const tokenPrice = props?.tokenPrice || null;
     //const [collectionMintList, setCollectionMintList] = props?.collectionMintList || null;
     const collectionMintList = props?.collectionMintList || null;
     const [finalMintList, setFinalMintList] = React.useState(collectionMintList);
@@ -321,7 +322,6 @@ export default function GalleryView(props: any){
                                         </>
                                     }
                                 </Grid>
-                                
                                 <Grid item xs={12} sm={10}>
                                     <InfiniteScroll
                                         dataLength={scrollData.length}
@@ -348,7 +348,7 @@ export default function GalleryView(props: any){
                                                                         minWidth: '175px'
                                                                     }} 
                                                                 >
-                                                                    <GalleryItem collectionitem={collectionInfo} mode={mode} groupbysymbol={collectionInfo.groupBySymbol} isparent={false} listed={true} count={key} />
+                                                                    <GalleryItem collectionitem={collectionInfo} mode={mode} groupbysymbol={collectionInfo.groupBySymbol} tokenPrice={tokenPrice} isparent={false} listed={true} count={key} />
                                                                 </Box>
                                                             </Grid>
                                                         :
