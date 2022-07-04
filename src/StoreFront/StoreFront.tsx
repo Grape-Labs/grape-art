@@ -658,7 +658,14 @@ export function StoreFrontView(this: any, props: any) {
                 }
             }
             //console.log("pushed pdas: "+JSON.stringify(mintsPDAs));
-            const metadata = await ticonnection.getMultipleAccountsInfo(mintsPDAs);
+            
+            let metadata = null;
+            try{
+                metadata = await ticonnection.getMultipleAccountsInfo(mintsPDAs);
+            } catch(err){
+                metadata = await ggoconnection.getMultipleAccountsInfo(mintsPDAs);
+            }
+            
             //console.log("returned: "+JSON.stringify(metadata));
             // LOOP ALL METADATA WE HAVE
             for (var metavalue of metadata){
@@ -1058,7 +1065,11 @@ export function StoreFrontView(this: any, props: any) {
                 }
 
                 //console.log("pushed pdas: "+JSON.stringify(mintsPDAs));
-                const metadata = await ticonnection.getMultipleAccountsInfo(mintsPDAs);
+                try{
+                    metadata = await ticonnection.getMultipleAccountsInfo(mintsPDAs);
+                } catch(err){
+                    metadata = await ggoconnection.getMultipleAccountsInfo(mintsPDAs);
+                }
                 //console.log("returned: "+JSON.stringify(metadata));
                 // LOOP ALL METADATA WE HAVE
                 const finalData = new Array();
