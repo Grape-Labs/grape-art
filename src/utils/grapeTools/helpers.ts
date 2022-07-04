@@ -74,46 +74,103 @@ export async function getMintFromVerifiedMetadata(metadata:string, collectionMin
     return null;
 }
 
-export async function getReceiptsFromAuctionHouse(auctionHouse_filter: string, wallet_filter: string, mint_filter: string, bid_receipt_filter:string, getAllAh: boolean ) {
+export async function getReceiptsFromAuctionHouse(auctionHouse_filter: string, wallet_filter: string, mint_filter: string, bid_receipt_filter:string, getAllAh: boolean, rpcEndpoint: string) {
     // if wallet is set we should also filter by wallet address
     
-    const ticonnection = new Connection(THEINDEX_RPC_ENDPOINT);    
-    const collectionAuctionHouse = auctionHouse_filter || AUCTION_HOUSE_ADDRESS;
-        {    
-            const PrintListingReceiptSize = 236;
-            const PrintBidReceiptSize = 269;
-            const PrintPurchaseReceiptSize = 193;
+    const ticonnection = new Connection(rpcEndpoint || THEINDEX_RPC_ENDPOINT);   
+    try{ 
+      const collectionAuctionHouse = auctionHouse_filter || AUCTION_HOUSE_ADDRESS;
+          {    
+              const PrintListingReceiptSize = 236;
+              const PrintBidReceiptSize = 269;
+              const PrintPurchaseReceiptSize = 193;
 
-            const AhLocation1 = 72;
-            const AhLocation2 = 104;
+              const AhLocation1 = 72;
+              const AhLocation2 = 104;
 
-            const ReceiptAccountSizes = [
-                PrintListingReceiptSize,
-                PrintBidReceiptSize,
-                PrintPurchaseReceiptSize,
-            ] as const;
+              const ReceiptAccountSizes = [
+                  PrintListingReceiptSize,
+                  PrintBidReceiptSize,
+                  PrintPurchaseReceiptSize,
+              ] as const;
 
-            const ReceiptAccountSizes2 = [
-              {size: PrintListingReceiptSize, ahPosition: AhLocation1},
-              {size: PrintBidReceiptSize, ahPosition: AhLocation1},
-              {size: PrintPurchaseReceiptSize, ahPosition: AhLocation2}
-            ]
-            
-            let accounts: any;
-            //const AH_PK = new web3.PublicKey(AUCTION_HOUSE_ADDRESS);
-            let mintMetadata: any;
-            let retrieveMint: any;
-            if (mint_filter!=null){
-              mintMetadata = await getMetadata(new PublicKey(mint_filter));
-              //console.log('metadata: ', mintMetadata.toString());
-              //let testMint = new PublicKey(mint_filter);
-              //retrieveMint = await getMintFromMetadata(null, new PublicKey(mintMetadata));
-              //console.log('retrieveMint: ', retrieveMint.toString());
-            }
-            //const ReceiptAccounts = await (Promise.all(ReceiptAccountSizes.map(async size => {
-            const ReceiptAccounts = await (Promise.all(ReceiptAccountSizes2.map(async ({size, ahPosition}) => {
-                if (wallet_filter != null && mint_filter === null && !getAllAh){
-                  console.log('execute with wallet_filter');
+              const ReceiptAccountSizes2 = [
+                {size: PrintListingReceiptSize, ahPosition: AhLocation1},
+                {size: PrintBidReceiptSize, ahPosition: AhLocation1},
+                {size: PrintPurchaseReceiptSize, ahPosition: AhLocation2}
+              ]
+              
+              let accounts: any;
+              //const AH_PK = new web3.PublicKey(AUCTION_HOUSE_ADDRESS);
+              let mintMetadata: any;
+              let retrieveMint: any;
+              if (mint_filter!=null){
+                mintMetadata = await getMetadata(new PublicKey(mint_filter));
+                //console.log('metadata: ', mintMetadata.toString());
+                //let testMint = new PublicKey(mint_filter);
+                //retrieveMint = await getMintFromMetadata(null, new PublicKey(mintMetadata));
+                //console.log('retrieveMint: ', retrieveMint.toString());
+              }
+              //const ReceiptAccounts = await (Promise.all(ReceiptAccountSizes.map(async size => {
+              const ReceiptAccounts = await (Promise.all(ReceiptAccountSizes2.map(async ({size, ahPosition}) => {
+                  if (wallet_filter != null && mint_filter === null && !getAllAh){
+                    console.log('execute with wallet_filter');
+                    accounts = await ticonnection.getProgramAccounts(
+                      AUCTION_HOUSE_PROGRAM_ID,
+                    {
+                      //commitment: 'confirmed',
+                      filters: [
+                        {
+                          dataSize: size,
+                        },
+                        {
+                          memcmp: {
+                              offset: 40,
+                              bytes: wallet_filter,
+                          },
+                        },
+                        {
+                          memcmp: {
+                              offset: ahPosition,
+                              bytes: collectionAuctionHouse,
+                          },
+                        },
+                      ],
+                    }
+                  );
+                  } else if (wallet_filter != null && mint_filter != null && !getAllAh) {
+                    console.log('execute with all filters');
+                    accounts = await ticonnection.getProgramAccounts(
+                      AUCTION_HOUSE_PROGRAM_ID,
+                    {
+                      //commitment: 'confirmed',
+                      filters: [
+                        {
+                          dataSize: size,
+                        },
+                        {
+                          memcmp: {
+                              offset: 40,
+                              bytes: wallet_filter,
+                          },
+                        },
+                        {
+                          memcmp: {
+                              offset: ahPosition,
+                              bytes: collectionAuctionHouse,
+                          },
+                        },
+                        {
+                          memcmp: {
+                              offset: 136,
+                              bytes: mintMetadata,
+                          },
+                        },
+                      ],
+                    }
+                  );
+                } else if (wallet_filter === null && mintMetadata != null && !getAllAh) {
+                  console.log('execute with mint_filter');
                   accounts = await ticonnection.getProgramAccounts(
                     AUCTION_HOUSE_PROGRAM_ID,
                   {
@@ -121,37 +178,6 @@ export async function getReceiptsFromAuctionHouse(auctionHouse_filter: string, w
                     filters: [
                       {
                         dataSize: size,
-                      },
-                      {
-                        memcmp: {
-                            offset: 40,
-                            bytes: wallet_filter,
-                        },
-                      },
-                      {
-                        memcmp: {
-                            offset: ahPosition,
-                            bytes: collectionAuctionHouse,
-                        },
-                      },
-                    ],
-                  }
-                );
-                } else if (wallet_filter != null && mint_filter != null && !getAllAh) {
-                  console.log('execute with all filters');
-                  accounts = await ticonnection.getProgramAccounts(
-                    AUCTION_HOUSE_PROGRAM_ID,
-                  {
-                    //commitment: 'confirmed',
-                    filters: [
-                      {
-                        dataSize: size,
-                      },
-                      {
-                        memcmp: {
-                            offset: 40,
-                            bytes: wallet_filter,
-                        },
                       },
                       {
                         memcmp: {
@@ -168,8 +194,8 @@ export async function getReceiptsFromAuctionHouse(auctionHouse_filter: string, w
                     ],
                   }
                 );
-              } else if (wallet_filter === null && mintMetadata != null && !getAllAh) {
-                console.log('execute with mint_filter');
+              } else if (wallet_filter === null && mintMetadata != null && getAllAh) {
+                console.log('execute with mint_filter for all AH');
                 accounts = await ticonnection.getProgramAccounts(
                   AUCTION_HOUSE_PROGRAM_ID,
                 {
@@ -180,12 +206,6 @@ export async function getReceiptsFromAuctionHouse(auctionHouse_filter: string, w
                     },
                     {
                       memcmp: {
-                          offset: ahPosition,
-                          bytes: collectionAuctionHouse,
-                      },
-                    },
-                    {
-                      memcmp: {
                           offset: 136,
                           bytes: mintMetadata,
                       },
@@ -193,132 +213,116 @@ export async function getReceiptsFromAuctionHouse(auctionHouse_filter: string, w
                   ],
                 }
               );
-            } else if (wallet_filter === null && mintMetadata != null && getAllAh) {
-              console.log('execute with mint_filter for all AH');
-              accounts = await ticonnection.getProgramAccounts(
-                AUCTION_HOUSE_PROGRAM_ID,
-              {
-                //commitment: 'confirmed',
-                filters: [
-                  {
-                    dataSize: size,
-                  },
-                  {
-                    memcmp: {
-                        offset: 136,
-                        bytes: mintMetadata,
+              } else if (wallet_filter != null && mint_filter === null && getAllAh){
+                console.log('execute with wallet_filter for all AH');
+                accounts = await ticonnection.getProgramAccounts(
+                  AUCTION_HOUSE_PROGRAM_ID,
+                {
+                  //commitment: 'confirmed',
+                  filters: [
+                    {
+                      dataSize: size,
                     },
-                  },
-                ],
-              }
-            );
-            } else if (wallet_filter != null && mint_filter === null && getAllAh){
-              console.log('execute with wallet_filter for all AH');
-              accounts = await ticonnection.getProgramAccounts(
-                AUCTION_HOUSE_PROGRAM_ID,
-              {
-                //commitment: 'confirmed',
-                filters: [
-                  {
-                    dataSize: size,
-                  },
-                  {
-                    memcmp: {
-                        offset: 40,
-                        bytes: wallet_filter,
+                    {
+                      memcmp: {
+                          offset: 40,
+                          bytes: wallet_filter,
+                      },
                     },
-                  },
-                ],
-              }
-            ); 
-            } else {
-                  console.log('execute default only AH');
-                  accounts = await ticonnection.getProgramAccounts(
-                    AUCTION_HOUSE_PROGRAM_ID,
-                  {
-                    //commitment: 'confirmed',
-                    filters: [
-                      {
-                        dataSize: size,
-                      },
-                      {
-                        memcmp: {
-                            offset: ahPosition,
-                            bytes: collectionAuctionHouse,
-                        },
-                      },
-                    ],
-                  }
-                );
+                  ],
                 }
-                const parsedAccounts = accounts.map(async account => {
-                  switch (size) {
-                    case PrintListingReceiptSize:
-                      const [
-                        ListingReceipt,
-                      ] = AuctionHouseProgram.accounts.ListingReceipt.fromAccountInfo(
-                        account.account
-                      );
-                       
-                      return {
-                        ...ListingReceipt,
-                        receipt_type: ListingReceipt.canceledAt
-                          ? 'cancel_listing_receipt'
-                          : 'listing_receipt',
-                      }; 
-                      break;
-                    case PrintBidReceiptSize:
-                      const [
-                        BidReceipt,
-                      ] = AuctionHouseProgram.accounts.BidReceipt.fromAccountInfo(
-                        account.account
-                      );
-                      
-                      return {
-                        ...BidReceipt,
-                        receipt_type: 'bid_receipt',
-                      };
-                      break;
-                    case PrintPurchaseReceiptSize:
-                      const [
-                        PurchaseReceipt,
-                      ] = AuctionHouseProgram.accounts.PurchaseReceipt.fromAccountInfo(
-                        account.account
-                      );
-                      
-                      return {
-                        ...PurchaseReceipt,
-                        receipt_type: 'purchase_receipt',
-                      } 
-                      break;
-                    default:
-                      return undefined;
-                      break;
+              ); 
+              } else {
+                    console.log('execute default only AH');
+                    accounts = await ticonnection.getProgramAccounts(
+                      AUCTION_HOUSE_PROGRAM_ID,
+                    {
+                      //commitment: 'confirmed',
+                      filters: [
+                        {
+                          dataSize: size,
+                        },
+                        {
+                          memcmp: {
+                              offset: ahPosition,
+                              bytes: collectionAuctionHouse,
+                          },
+                        },
+                      ],
+                    }
+                  );
                   }
-                });
-                
-                return await Promise.all(parsedAccounts);
-              })));
-              const receipts = (await Promise.all(ReceiptAccounts))
-                .flat()
-                .map(receipt => ({
-                    ...receipt,
-                    tokenSize: new BN(receipt.tokenSize).toNumber(),
-                    price: new BN(receipt.price).toNumber() / LAMPORTS_PER_SOL,
-                    createdAt: new BN(receipt.createdAt).toNumber(),
-                    //mintpk: getMintFromMetadata(receipt.metadata),
-                    //mint: getMintFromReceipt(receipt.tradeState.toBase58()),
-                    //cancelledAt: receipt?.canceledAt,
-                }));
-                /*let mintResults: any[] = [];
-                    for (var receiptMetadata of receipts.flat()){
-                        let mintPk = await getMintFromMetadata(null, receiptMetadata.metadata);
-                        let recMetadata = receiptMetadata.metadata;
-                        if (mintPk){
-                            mintResults.push({metadata: recMetadata, mint: mintPk});
-                        }
-                    }*/
-            return (receipts);
-            
-        }
+                  const parsedAccounts = accounts.map(async account => {
+                    switch (size) {
+                      case PrintListingReceiptSize:
+                        const [
+                          ListingReceipt,
+                        ] = AuctionHouseProgram.accounts.ListingReceipt.fromAccountInfo(
+                          account.account
+                        );
+                        
+                        return {
+                          ...ListingReceipt,
+                          receipt_type: ListingReceipt.canceledAt
+                            ? 'cancel_listing_receipt'
+                            : 'listing_receipt',
+                        }; 
+                        break;
+                      case PrintBidReceiptSize:
+                        const [
+                          BidReceipt,
+                        ] = AuctionHouseProgram.accounts.BidReceipt.fromAccountInfo(
+                          account.account
+                        );
+                        
+                        return {
+                          ...BidReceipt,
+                          receipt_type: 'bid_receipt',
+                        };
+                        break;
+                      case PrintPurchaseReceiptSize:
+                        const [
+                          PurchaseReceipt,
+                        ] = AuctionHouseProgram.accounts.PurchaseReceipt.fromAccountInfo(
+                          account.account
+                        );
+                        
+                        return {
+                          ...PurchaseReceipt,
+                          receipt_type: 'purchase_receipt',
+                        } 
+                        break;
+                      default:
+                        return undefined;
+                        break;
+                    }
+                  });
+                  
+                  return await Promise.all(parsedAccounts);
+                })));
+                const receipts = (await Promise.all(ReceiptAccounts))
+                  .flat()
+                  .map(receipt => ({
+                      ...receipt,
+                      tokenSize: new BN(receipt.tokenSize).toNumber(),
+                      price: new BN(receipt.price).toNumber() / LAMPORTS_PER_SOL,
+                      createdAt: new BN(receipt.createdAt).toNumber(),
+                      //mintpk: getMintFromMetadata(receipt.metadata),
+                      //mint: getMintFromReceipt(receipt.tradeState.toBase58()),
+                      //cancelledAt: receipt?.canceledAt,
+                  }));
+                  /*let mintResults: any[] = [];
+                      for (var receiptMetadata of receipts.flat()){
+                          let mintPk = await getMintFromMetadata(null, receiptMetadata.metadata);
+                          let recMetadata = receiptMetadata.metadata;
+                          if (mintPk){
+                              mintResults.push({metadata: recMetadata, mint: mintPk});
+                          }
+                      }*/
+              return (receipts);
+              
+          }
+    }catch(e){ // if RPC error resend it?
+      getReceiptsFromAuctionHouse(auctionHouse_filter, wallet_filter, mint_filter, bid_receipt_filter, getAllAh, GRAPE_RPC_ENDPOINT)
+    }
 }

@@ -1411,7 +1411,7 @@ export default function ItemOffers(props: any) {
                 console.log("with aH: "+ collectionAuctionHouse)
                 
                 const auctionHouseKey = collectionAuctionHouse || AUCTION_HOUSE_ADDRESS;
-                const results = await getReceiptsFromAuctionHouse(auctionHouseKey, null, mint, null, true);
+                const results = await getReceiptsFromAuctionHouse(auctionHouseKey, null, mint, null, true, null);
                 // we need to get listing_receipt too to show the latest price listed, do in two calls or in one with a filter????
                 
                 const open_offers = 0;

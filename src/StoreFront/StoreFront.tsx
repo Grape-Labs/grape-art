@@ -537,59 +537,62 @@ export function StoreFrontView(this: any, props: any) {
             ],
             id: "1",
         };
-        
-        const response = await window.fetch(THEINDEX_RPC_ENDPOINT, {
-            method: "POST",
-            body: JSON.stringify(body),
-            headers: { "Content-Type": "application/json" },
-        })
-        const json = await response.json();
-        const resultValues = json.result;
-        // transpose values to our format
-        const finalList = new Array();
-        console.log("jsonToImage: "+jsonToImage);
+        try{
+            const response = await window.fetch(THEINDEX_RPC_ENDPOINT, {
+                method: "POST",
+                body: JSON.stringify(body),
+                headers: { "Content-Type": "application/json" },
+            })
+            const json = await response.json();
+            const resultValues = json.result;
+            // transpose values to our format
+            const finalList = new Array();
+            console.log("jsonToImage: "+jsonToImage);
 
-        for (var item of resultValues){
-            //console.log("item: "+JSON.stringify(item))
+            for (var item of resultValues){
+                //console.log("item: "+JSON.stringify(item))
 
-            // fetch from the JSON
+                // fetch from the JSON
 
-            let image = null;
-            if (jsonToImage)
-                image = item.metadata.uri.replaceAll(".json",".png");
-            
-            try {
-                /*
-                if (!jsonToImage && item.metadata.uri){ // this will take too long to 1+ collections
-                    try{
-                        const metadata = await window.fetch(''+item.metadata.uri)
-                        .then(
-                            (res: any) => res.json()
-                        );
-                        image = metadata.image;
-                        //return metadata;
-                    }catch(ie){
-                    }
-                } else{
-                    
-                }*/
-            } catch (e) { // Handle errors from invalid calls
+                let image = null;
+                if (jsonToImage)
+                    image = item.metadata.uri.replaceAll(".json",".png");
+                
+                try {
+                    /*
+                    if (!jsonToImage && item.metadata.uri){ // this will take too long to 1+ collections
+                        try{
+                            const metadata = await window.fetch(''+item.metadata.uri)
+                            .then(
+                                (res: any) => res.json()
+                            );
+                            image = metadata.image;
+                            //return metadata;
+                        }catch(ie){
+                        }
+                    } else{
+                        
+                    }*/
+                } catch (e) { // Handle errors from invalid calls
+                }
+
+                finalList.push({
+                    address:item.metadata.mint.toString(),
+                    name:item.metadata.name,
+                    collection:item.metadata.symbol,
+                    image:image,
+                    metadata:item.metadata.pubkey.toString()
+                });
             }
+            
 
-            finalList.push({
-                address:item.metadata.mint.toString(),
-                name:item.metadata.name,
-                collection:item.metadata.symbol,
-                image:image,
-                metadata:item.metadata.pubkey.toString()
-            });
+            //console.log("finalList: "+JSON.stringify(finalList))
+            setFetchedCollectionMintList(finalList); 
+
+            return finalList;
+        } catch(e){
+            return fetchMintList(updateAuthority);
         }
-        
-
-        //console.log("finalList: "+JSON.stringify(finalList))
-        setFetchedCollectionMintList(finalList); 
-
-        return finalList;
     }
 
     const fetchMintList = async(address:string) => {
@@ -735,7 +738,7 @@ export function StoreFrontView(this: any, props: any) {
         
         if (!stateLoading){
             setStateLoading(true);
-            const results = await getReceiptsFromAuctionHouse(collectionAuthority.auctionHouse || AUCTION_HOUSE_ADDRESS, null, null, null, false);
+            const results = await getReceiptsFromAuctionHouse(collectionAuthority.auctionHouse || AUCTION_HOUSE_ADDRESS, null, null, null, false, null);
 
             const ahActivity = new Array();
             const ahListingsMints = new Array();
