@@ -52,6 +52,7 @@ import MuiAlert, { AlertProps } from '@mui/material/Alert';
 
 import LanguageIcon from '@mui/icons-material/Language';
 import TwitterIcon from '@mui/icons-material/Twitter';
+import TelegramIcon from '@mui/icons-material/Telegram';
 import InstagramIcon from '@mui/icons-material/Instagram';
 
 import DiscordIcon from '../components/static/DiscordIcon';
@@ -1457,6 +1458,18 @@ export function StoreFrontView(this: any, props: any) {
                                             }}
                                         >
                                             <TwitterIcon sx={{m:0.75,color:'white'}} />
+                                        </Button>
+                                    }
+                                    {collectionAuthority.links?.telegram &&
+                                        <Button 
+                                            target='_blank' href={`${collectionAuthority.links.telegram}`}
+                                            sx={{
+                                                verticalAlign: 'middle',
+                                                display: 'inline-flex',
+                                                borderRadius:'17px'
+                                            }}
+                                        >
+                                            <TelegramIcon sx={{m:0.75,color:'white'}} />
                                         </Button>
                                     }
                                     
