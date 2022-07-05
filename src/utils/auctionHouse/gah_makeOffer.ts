@@ -23,8 +23,6 @@ import { Metadata } from '@metaplex-foundation/mpl-token-metadata'
 
 import {
     loadAuctionHouseProgram,
-    getAuctionHouseTradeState,
-    getAtaForMint,
     getTokenAmount, 
     getMetadata,
     getAuctionHouseBuyerEscrow,

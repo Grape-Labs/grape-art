@@ -28,7 +28,7 @@ import fs from 'fs';
 //import { createConfigAccount } from './instructions';
 import { web3 } from '@project-serum/anchor';
 import log from 'loglevel';
-import { AccountLayout } from '@solana/spl-token-v2';
+import { AccountLayout } from '@solana/spl-token';
 import { AuctionHouseProgram } from '@metaplex-foundation/mpl-auction-house';
 
 export type AccountAndPubkey = {

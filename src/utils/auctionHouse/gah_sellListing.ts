@@ -22,9 +22,6 @@ import { AuctionHouseProgram } from '@metaplex-foundation/mpl-auction-house'
 
 import {
     loadAuctionHouseProgram,
-    getAuctionHouseTradeState,
-    getAtaForMint,
-    getAuctionHouseProgramAsSigner,
     getMetadata,
   } from './helpers/accounts';
 import { getPriceWithMantissa } from './helpers/various';
