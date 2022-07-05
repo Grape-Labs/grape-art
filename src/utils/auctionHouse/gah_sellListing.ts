@@ -291,7 +291,7 @@ export async function gah_sellListing(offerAmount: number, mint: string, buyerPu
             ),
           })
         )
-        //.add(printPurchaseReceiptInstruction)
+        .add(printPurchaseReceiptInstruction)
         
   
     
