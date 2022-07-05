@@ -1065,6 +1065,7 @@ export function StoreFrontView(this: any, props: any) {
                 }
 
                 //console.log("pushed pdas: "+JSON.stringify(mintsPDAs));
+                let metadata = null;
                 try{
                     metadata = await ticonnection.getMultipleAccountsInfo(mintsPDAs);
                 } catch(err){
