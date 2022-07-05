@@ -548,7 +548,7 @@ function SellNowPrompt(props:any){
                     closeSnackbar(eskey);
                     props.setRefreshOffers(true);
                 }, GRAPE_RPC_REFRESH);
-            } catch(e){
+            } catch(e:any){
                 closeSnackbar();
                 enqueueSnackbar(e.message ? `${e.name}: ${e.message}` : e.name, { variant: 'error' });
                 //enqueueSnackbar(`Error: ${e}`,{ variant: 'error' });
@@ -1084,7 +1084,7 @@ export default function ItemOffers(props: any) {
                 }, GRAPE_RPC_REFRESH);
                 await handleAcceptOffer(offerAmount, buyerAddress, tradeState);
                 
-            }catch(e){
+            }catch(e:any){
                 closeSnackbar();
                 enqueueSnackbar(e.message ? `${e.name}: ${e.message}` : e.name, { variant: 'error' });
                 //enqueueSnackbar(`Error: ${(e)}`,{ variant: 'error' });
@@ -1195,7 +1195,7 @@ export default function ItemOffers(props: any) {
                 //props.setRefreshOwner(true);
             }, GRAPE_RPC_REFRESH);
                 
-        } catch(e){
+        } catch(e:any){
             closeSnackbar();
             enqueueSnackbar(e.message ? `${e.name}: ${e.message}` : e.name, { variant: 'error' });
             console.log("Error: "+e);
@@ -1252,7 +1252,7 @@ export default function ItemOffers(props: any) {
                 setRefreshOffers(true);
             }, GRAPE_RPC_REFRESH);
 
-        }catch(e){
+        }catch(e:any){
             closeSnackbar();
             enqueueSnackbar(e.message ? `${e.name}: ${e.message}` : e.name, { variant: 'error' });
             //enqueueSnackbar(`Error: ${(e)}`,{ variant: 'error' });
@@ -1307,7 +1307,7 @@ export default function ItemOffers(props: any) {
             }, GRAPE_RPC_REFRESH);
             /*console.log('Withdrew', offerAmount, amountAdjusted, 'from your account with Auction House',
                 AUCTION_HOUSE_ADDRESS, '. New Balance:', currBal - amountAdjusted,);*/
-        } catch(e){
+        } catch(e:any){
             closeSnackbar();
             enqueueSnackbar(e.message ? `${e.name}: ${e.message}` : e.name, { variant: 'error' });
             //enqueueSnackbar(`Error: ${(e)}`,{ variant: 'error' });
@@ -1363,7 +1363,7 @@ export default function ItemOffers(props: any) {
               setRefreshOffers(true);
             }, GRAPE_RPC_REFRESH);
 
-        }catch(e){
+        }catch(e:any){
             closeSnackbar();
             enqueueSnackbar(e.message ? `${e.name}: ${e.message}` : e.name, { variant: 'error' });
             //enqueueSnackbar(`Error: ${(e)}`,{ variant: 'error' });
@@ -1707,7 +1707,7 @@ export default function ItemOffers(props: any) {
             else {
                 enqueueSnackbar(`To BUY NOW you must first cancel the existing offer of ${convertSolVal(amount)} SOL.`,{ variant: 'warning' });
             }*/
-        } catch(e){
+        } catch(e:any){
             closeSnackbar();
             enqueueSnackbar(e.message ? `${e.name}: ${e.message}` : e.name, { variant: 'error' });
             //enqueueSnackbar(`Error: ${e}`,{ variant: 'error' });

@@ -16,7 +16,7 @@ import {
     getAtaForMint,
     getAuctionHouseBuyerEscrow,
   } from './helpers/accounts';
-import { ASSOCIATED_TOKEN_PROGRAM_ID } from '@solana/spl-token';
+import { ASSOCIATED_TOKEN_PROGRAM_ID } from '@solana/spl-token-v2';
 import { getPriceWithMantissa } from './helpers/various';
 
 function convertSolVal(sol: any){

@@ -20,7 +20,7 @@ import {
   } from './helpers/accounts';
 import { getPriceWithMantissa } from './helpers/various';
 import { decodeMetadata, Metadata } from './helpers/schema';
-import { ASSOCIATED_TOKEN_PROGRAM_ID } from '@solana/spl-token';
+import { ASSOCIATED_TOKEN_PROGRAM_ID } from '@solana/spl-token-v2';
 
 export async function voteOffer(offerAmount: number, mint: string, mintOwner: string, buyerAddress: string, walletPublicKey: string, updateAuthority: string): Promise<InstructionsAndSignersSet> {
   //START SELL

@@ -17,7 +17,7 @@ import {
     getAuctionHouseBuyerEscrow,
   } from './helpers/accounts';
 import { getPriceWithMantissa } from './helpers/various';
-import { ASSOCIATED_TOKEN_PROGRAM_ID } from '@solana/spl-token';
+import { ASSOCIATED_TOKEN_PROGRAM_ID } from '@solana/spl-token-v2';
 
 export async function withdrawOffer(offerAmount: number, mint: string, buyerWalletKey: PublicKey, updateAuthority: string, collectionAuctionHouse: string): Promise<InstructionsAndSignersSet> {
   

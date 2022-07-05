@@ -30,7 +30,6 @@ import {
     getAuctionHouseBuyerEscrow,
   } from './helpers/accounts';
 import { getPriceWithMantissa } from './helpers/various';
-import { ASSOCIATED_TOKEN_PROGRAM_ID, Token } from '@solana/spl-token';
 
 import { Connection } from '@solana/web3.js';
 import { TokenAmount } from '../grapeTools/safe-math';

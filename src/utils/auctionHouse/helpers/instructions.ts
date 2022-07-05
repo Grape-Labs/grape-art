@@ -11,7 +11,7 @@ import {
     METAPLEX_PROGRAM_ID,
   } from './constants';
   import * as anchor from '@project-serum/anchor';
-  import {Token} from "@solana/spl-token";
+  import {createTransferInstruction} from "@solana/spl-token-v2";
   
   export async function createAssociatedTokenAccount(wallet: PublicKey, mint: PublicKey, associatedTokenAddress: PublicKey) {
     return createAssociatedTokenAccountInstruction(associatedTokenAddress,
@@ -21,13 +21,13 @@ import {
   }
   
   export function getTransferInstructions(source: PublicKey, destination: PublicKey, owner: PublicKey) {
-    return Token.createTransferInstruction(
-      TOKEN_PROGRAM_ID,
+    return createTransferInstruction(
       source,
       destination,
       owner,
+      1,
       [],
-      1
+      TOKEN_PROGRAM_ID,
     )
   }
   

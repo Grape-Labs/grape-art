@@ -20,7 +20,7 @@ import {
   } from './helpers/accounts';
 import { getPriceWithMantissa } from './helpers/various';
 import { decodeMetadata, Metadata } from './helpers/schema';
-import { ASSOCIATED_TOKEN_PROGRAM_ID, createApproveInstruction, createRevokeInstruction } from '@solana/spl-token';
+import { ASSOCIATED_TOKEN_PROGRAM_ID, createApproveInstruction, createRevokeInstruction } from '@solana/spl-token-v2';
 
 export async function buyNowListing(offerAmount: number, mint: string, walletPublicKey: string, buyerAddress: PublicKey, updateAuthority: string, collectionAuctionHouse: string): Promise<InstructionsAndSignersSet> {
   //START BUY

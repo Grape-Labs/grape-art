@@ -40,7 +40,6 @@ import CircularProgress from '@mui/material/CircularProgress';
 import CancelIcon from '@mui/icons-material/Cancel';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
-import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import { WalletConnectButton } from "@solana/wallet-adapter-material-ui";
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { Connection, PublicKey } from '@solana/web3.js';

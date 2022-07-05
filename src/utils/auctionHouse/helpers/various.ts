@@ -3,7 +3,7 @@ import fs from 'fs';
 import weighted from 'weighted';
 import path from 'path';
 import { Program, web3 } from '@project-serum/anchor';
-import { TOKEN_PROGRAM_ID, getMint } from '@solana/spl-token';
+import { TOKEN_PROGRAM_ID, getMint } from '@solana/spl-token-v2';
 
 //const { readFile } = fs.promises;
 

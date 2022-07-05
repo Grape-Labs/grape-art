@@ -3,7 +3,7 @@ import React, { useEffect, useState, useCallback, memo } from "react";
 import CyberConnect, { Env, Blockchain, ConnectionType } from '@cyberlab/cyberconnect';
 
 import { Connection, PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js';
-import { TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID, getAssociatedTokenAddress, createAssociatedTokenAccountInstruction, createTransferInstruction } from "@solana/spl-token";
+import { TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID, getAssociatedTokenAddress, createAssociatedTokenAccountInstruction, createTransferInstruction } from "@solana/spl-token-v2";
 
 import { styled } from '@mui/material/styles';
 import { Button } from '@mui/material';
@@ -395,7 +395,7 @@ export function SocialFlags(props: any){
                 flagWalletConnect(mint);
 
                 enqueueSnackbar(`Sent ${amountToSend} ${tokenMintName} to ${toaddress}`,{ variant: 'success', action });
-            }catch(e){
+            }catch(e:any){
                 enqueueSnackbar(e.message ? `${e.name}: ${e.message}` : e.name, { variant: 'error' });
             } 
         } else{
@@ -470,7 +470,7 @@ export function SocialFlags(props: any){
                     flagWalletConnect(mint);
 
                     enqueueSnackbar(`Sent ${amountToSend} ${tokenMintName} to ${toaddress}`,{ variant: 'success', action });
-                }catch(e){
+                }catch(e:any){
                     closeSnackbar();
                     enqueueSnackbar(e.message ? `${e.name}: ${e.message}` : e.name, { variant: 'error' });
                 } 
@@ -512,7 +512,7 @@ export function SocialFlags(props: any){
                     flagWalletConnect(mint);
 
                     enqueueSnackbar(`Sent ${amountToSend} ${tokenMintName} to ${toaddress}`,{ variant: 'success', action });
-                }catch(e){
+                }catch(e:any){
                     closeSnackbar();
                     enqueueSnackbar(e.message ? `${e.name}: ${e.message}` : e.name, { variant: 'error' });
                 } 

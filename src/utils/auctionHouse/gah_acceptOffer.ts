@@ -29,8 +29,6 @@ import {
   getAuctionHouseBuyerEscrow,
 } from './helpers/accounts';
 import { AuctionHouseProgram } from '@metaplex-foundation/mpl-auction-house'
-import { ASSOCIATED_TOKEN_PROGRAM_ID } from '@solana/spl-token';
-import { getPriceWithMantissa } from './helpers/various';
 
 function convertSolVal(sol: any){
 let sol_precision = 6;
