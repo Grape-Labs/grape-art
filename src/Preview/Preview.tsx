@@ -782,7 +782,7 @@ function GalleryItemMeta(props: any) {
                 </Button>
             );
             enqueueSnackbar(`${t('Your avatar has been set')} `,{ variant: 'success', action:snackaction });
-        } catch(e){
+        } catch(e:any){
             closeSnackbar();
             enqueueSnackbar(e.message ? `${e.name}: ${e.message}` : e.name, { variant: 'error' });
             console.log("Error: "+e);
@@ -1975,7 +1975,7 @@ export function PreviewView(this: any, props: any) {
             //if (image){
                 if (!loading){
                     return (
-                            <GalleryItemMeta verifiedAuctionHouses={verifiedAuctionHouses} viewMode={viewMode} verifiedCollection={verifiedCollection} collectionitem={collectionmeta} collectionrawdata={collectionrawdata} mint={mint} setRefresh={setRefresh} setMintPubkey={setMintPubkey} collectionAuctionHouse={collectionAuctionHouse} handlekey={handlekey} viewMode={viewMode} />
+                            <GalleryItemMeta verifiedAuctionHouses={verifiedAuctionHouses} viewMode={viewMode} verifiedCollection={verifiedCollection} collectionitem={collectionmeta} collectionrawdata={collectionrawdata} mint={mint} setRefresh={setRefresh} setMintPubkey={setMintPubkey} collectionAuctionHouse={collectionAuctionHouse} handlekey={handlekey} />
                     );
                 }
             }
