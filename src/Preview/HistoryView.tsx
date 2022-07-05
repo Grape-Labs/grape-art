@@ -51,6 +51,7 @@ import { Metadata } from '@metaplex-foundation/mpl-token-metadata';
 import { 
     GRAPE_RPC_ENDPOINT,
     GRAPE_PROFILE,
+    PROXY
 } from '../utils/grapeTools/constants';
 
 import { 
@@ -116,7 +117,7 @@ export default function HistoryView(props: any){
             try{
                 let response = null;
 
-                const apiUrl = "https://corsproxy.io/?https://api-mainnet.magiceden.dev/v2/collections/"+symbol+"/stats";
+                const apiUrl = PROXY+"https://api-mainnet.magiceden.dev/v2/collections/"+symbol+"/stats";
                 
                 const resp = await window.fetch(apiUrl, {
                     method: 'GET',
@@ -137,7 +138,7 @@ export default function HistoryView(props: any){
         try{
             let response = null;
 
-            const apiUrl = "https://corsproxy.io/?https://api-devnet.magiceden.dev/v2/instructions/sell_cancel?seller="+sellerPubKey+"&auctionHouseAddress="+auctionHouseAddress+"&tokenMint="+mint+"&tokenAccount="+tokenAccount+"&price="+price+"&sellerReferral=&expiry=-1";
+            const apiUrl = PROXY+"https://api-devnet.magiceden.dev/v2/instructions/sell_cancel?seller="+sellerPubKey+"&auctionHouseAddress="+auctionHouseAddress+"&tokenMint="+mint+"&tokenAccount="+tokenAccount+"&price="+price+"&sellerReferral=&expiry=-1";
 
             const resp = await window.fetch(apiUrl, {
                 method: 'GET',

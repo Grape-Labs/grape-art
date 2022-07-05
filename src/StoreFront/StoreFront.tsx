@@ -87,7 +87,8 @@ import {
     THEINDEX_RPC_ENDPOINT, 
     GRAPE_PROFILE, 
     FEATURED_DAO_ARRAY, 
-    GRAPE_COLLECTIONS_DATA
+    GRAPE_COLLECTIONS_DATA,
+    PROXY
 } from '../utils/grapeTools/constants';
 
 import { 
@@ -1001,7 +1002,7 @@ export function StoreFrontView(this: any, props: any) {
     };
 
     const fetchMEWithTimeout = async (symbol:string,start:number) => {
-        const apiUrl = "https://corsproxy.io/?https://api-mainnet.magiceden.dev/v2/collections/"+symbol+"/listings?offset="+start+"&limit=20";
+        const apiUrl = PROXY+"https://api-mainnet.magiceden.dev/v2/collections/"+symbol+"/listings?offset="+start+"&limit=20";
         const resp = await window.fetch(apiUrl, {
             method: 'GET',
             redirect: 'follow',
@@ -1011,7 +1012,7 @@ export function StoreFrontView(this: any, props: any) {
         return json
     }
     const fetchMEStatsWithTimeout = async (symbol:string) => {
-        const apiUrl = "https://corsproxy.io/?https://api-mainnet.magiceden.dev/v2/collections/"+symbol+"/stats";
+        const apiUrl = PROXY+"https://api-mainnet.magiceden.dev/v2/collections/"+symbol+"/stats";
         const resp = await window.fetch(apiUrl, {
             method: 'GET',
             redirect: 'follow',
