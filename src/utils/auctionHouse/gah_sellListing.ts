@@ -9,13 +9,17 @@ import {
   LAMPORTS_PER_SOL,
   SystemProgram, 
   TransactionInstruction,
-  SYSVAR_INSTRUCTIONS_PUBKEY } from '@solana/web3.js'
+  SYSVAR_INSTRUCTIONS_PUBKEY,
+  SYSVAR_RENT_PUBKEY,
+  Connection} from '@solana/web3.js'
+import * as splToken from '@solana/spl-token';
 import { web3 } from '@project-serum/anchor';
 import { GRAPE_RPC_ENDPOINT, OTHER_MARKETPLACES } from '../grapeTools/constants';
 import { InstructionsAndSignersSet } from "./helpers/types";
 import { concat } from 'ramda';
 
 import { AuctionHouseProgram } from '@metaplex-foundation/mpl-auction-house'
+//import { Metadata } from '@metaplex-foundation/mpl-token-metadata'
 
 import {
     loadAuctionHouseProgram,
@@ -34,9 +38,7 @@ const {
   createPrintPurchaseReceiptInstruction,
 } = AuctionHouseProgram.instructions
 
-import { ConstructionOutlined } from '@mui/icons-material';
-  export async function gah_sellListing(offerAmount: number, mint: string, buyerPublicKey: string, mintOwner: any, weightedScore: any, daoPublicKey: string, updateAuthority: string, collectionAuctionHouse: string): Promise<InstructionsAndSignersSet> {
-
+export async function gah_sellListing(offerAmount: number, mint: string, buyerPublicKey: string, mintOwner: any, weightedScore: any, daoPublicKey: string, updateAuthority: string, collectionAuctionHouse: string): Promise<InstructionsAndSignersSet> {
     let tokenSize = 1;
     const auctionHouseKey = new web3.PublicKey(collectionAuctionHouse || AUCTION_HOUSE_ADDRESS);
     const mintKey = new web3.PublicKey(mint);
@@ -90,8 +92,11 @@ import { ConstructionOutlined } from '@mui/icons-material';
         1
       )
 
-    const metadata = await getMetadata(tokenMint)
-
+    const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
+    //const tokenMetadata = await getMetadata(tokenMint);
+    //const [tokenMetadata] = await Metadata.fromAccountAddress(ggoconnection, tokenMint); //await getMetadata(tokenMint)
+    const metadata = await getMetadata(tokenMint);
+    //console.log("tokenMetadata: "+JSON.stringify(tokenMetadata));
     const [programAsSigner, programAsSignerBump] =
       await AuctionHouseProgram.findAuctionHouseProgramAsSignerAddress()
 
@@ -112,6 +117,18 @@ import { ConstructionOutlined } from '@mui/icons-material';
         auctionHouse,
         buyerPubkey
     )
+    
+    console.log("buyerPubkey: "+JSON.stringify(buyerPubkey));
+    console.log("paymentAccount: "+JSON.stringify(buyerPubkey));
+    console.log("transferAuthority: "+JSON.stringify(buyerPubkey));
+    console.log("treasuryMint: "+JSON.stringify(treasuryMint));
+    console.log("tokenAccount: "+JSON.stringify(tokenAccount));
+    console.log("metadata: "+JSON.stringify(metadata));
+    console.log("escrowPaymentAccount: "+JSON.stringify(escrowPaymentAccount));
+    console.log("authority: "+JSON.stringify(authority));
+    console.log("auctionHouse: "+JSON.stringify(auctionHouse));
+    console.log("auctionHouseFeeAccount: "+JSON.stringify(auctionHouseFeeAccount));
+    console.log("buyerTradeState: "+JSON.stringify(buyerTradeState));
       
     const publicBuyInstructionAccounts = {
       wallet: buyerPubkey,
@@ -125,7 +142,12 @@ import { ConstructionOutlined } from '@mui/icons-material';
       auctionHouse,
       auctionHouseFeeAccount,
       buyerTradeState,
+
     }
+
+    console.log("tradeStateBump: "+JSON.stringify(tradeStateBump));
+    console.log("escrowPaymentBump: "+JSON.stringify(escrowPaymentBump));
+    console.log("buyerPrice: "+JSON.stringify(buyerPrice));
 
     const publicBuyInstructionArgs = {
       tradeStateBump,
@@ -140,32 +162,36 @@ import { ConstructionOutlined } from '@mui/icons-material';
         buyerPubkey
       )
 
-      
+    const transferAuthority = web3.Keypair.generate();
+    const signers = true ? [] : [transferAuthority]; 
+    
     const executeSaleInstructionAccounts2 = {
       buyer: buyerAddress,
       sellerAddress,
-      tokenAccount,
-      tokenMint,
-      metadata,
+      transferAuthority,
       treasuryMint,
+      tokenAccount,
+      metadata,
       escrowPaymentAccount,
-      sellerPaymentReceiptAccount: sellerWalletKey,
-      buyerReceiptTokenAccount,
       authority,
       auctionHouse,
       auctionHouseFeeAccount,
-      auctionHouseTreasury,
       buyerTradeState,
+      tokenMint,
+      sellerPaymentReceiptAccount: sellerWalletKey,
+      buyerReceiptTokenAccount,
+      auctionHouseTreasury,
       sellerTradeState,
       freeTradeState,
       programAsSigner,
     }
 
     const executeSaleInstructionAccounts = {
-      buyer: buyerPubkey,
-      seller: sellerWalletKey,
-      auctionHouse,
+      buyer: buyerAddress,
+      seller: sellerAddress,
       tokenAccount,
+      auctionHouse,
+      
       tokenMint,
       treasuryMint,
       metadata,
@@ -173,39 +199,18 @@ import { ConstructionOutlined } from '@mui/icons-material';
       sellerTradeState,
       buyerTradeState,
       freeTradeState,
-      sellerPaymentReceiptAccount: sellerWalletKey,
+      sellerPaymentReceiptAccount: sellerAddress,
       escrowPaymentAccount,
       buyerReceiptTokenAccount,
       auctionHouseFeeAccount,
       auctionHouseTreasury,
       programAsSigner,
     }
-    /*
-    const executeSaleInstructionAccounts = {
-      buyer: buyerPubkey,
-      seller: sellerWalletKey,
-      auctionHouse,
-      tokenAccount,
-      tokenMint,
-      treasuryMint,
-      metadata,
-      authority,
-      sellerTradeState,
-      buyerTradeState,
-      freeTradeState,
-      sellerPaymentReceiptAccount: sellerWalletKey,
-      escrowPaymentAccount,
-      buyerReceiptTokenAccount,
-      auctionHouseFeeAccount,
-      auctionHouseTreasury,
-      programAsSigner,
-    }*/
-
     const executeSaleInstructionArgs = {
       escrowPaymentBump,
       freeTradeStateBump,
       programAsSignerBump,
-      buyerPrice,
+      buyerPrice: buyerPrice,
       tokenSize: 1,
       partialOrderSize:null,
       partialOrderPrice:null
@@ -247,13 +252,14 @@ import { ConstructionOutlined } from '@mui/icons-material';
       publicBuyInstructionAccounts,
       publicBuyInstructionArgs
     )
+
     const printBidReceiptInstruction = createPrintBidReceiptInstruction(
       printBidReceiptAccounts,
       printBidReceiptArgs
     )
     const executeSaleInstruction = createExecuteSaleInstruction(
       executeSaleInstructionAccounts,
-      executeSaleInstructionArgs
+      executeSaleInstructionArgs,
     )
     const printPurchaseReceiptInstruction =
       createPrintPurchaseReceiptInstruction(
@@ -261,15 +267,16 @@ import { ConstructionOutlined } from '@mui/icons-material';
         printPurchaseReceiptArgs
       )
 
-    const txt = new Transaction()
-    const metadataObj = await anchorProgram.provider.connection.getAccountInfo(metadata,);
-    const metadataDecoded: Metadata = decodeMetadata(Buffer.from(metadataObj.data),);
-    const nft = metadataDecoded.data;
+      const txt = new Transaction()
+      const metadataObj = await anchorProgram.provider.connection.getAccountInfo(metadata,);
+      const metadataDecoded: Metadata = decodeMetadata(Buffer.from(metadataObj.data),);
+      const nft = metadataDecoded.data;
 
-//    console.log("executeSaleInstruction.keys "+JSON.stringify(executeSaleInstruction.keys))
-//   console.log("creators "+JSON.stringify(nft.creators))
-//    console.log("AuctionHouseProgram.PUBKEY "+AuctionHouseProgram.PUBKEY)
-
+      /*
+      nft.creators.map((creator: any) => (
+        console.log("executeSaleInstruction: "+JSON.stringify(executeSaleInstruction.keys))
+      ));
+      */
 
       txt
         .add(publicBuyInstruction)
@@ -288,17 +295,15 @@ import { ConstructionOutlined } from '@mui/icons-material';
             ),
           })
         )
-        .add(printPurchaseReceiptInstruction)
+        //.add(printPurchaseReceiptInstruction)
+        
   
     
     //txt.add(publicBuyInstruction).add(printPurchaseReceiptInstruction)
     
     //txt.recentBlockhash = (await connection.getRecentBlockhash()).blockhash
     txt.feePayer = buyerAddress;
-
-
-    const transferAuthority = web3.Keypair.generate();
-    const signers = true ? [] : [transferAuthority];
+    
     const instructions = txt.instructions;
     
     /*

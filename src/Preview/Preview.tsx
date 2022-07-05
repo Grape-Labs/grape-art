@@ -4,7 +4,6 @@ import { Link, useParams, useSearchParams } from "react-router-dom";
 import CyberConnect, { Env, Blockchain, ConnectionType } from '@cyberlab/cyberconnect';
 
 import { Connection, ParsedAccountData, PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js'
-import { Token, TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID } from "@solana/spl-token";
 // @ts-ignore
 import ImageViewer from 'react-simple-image-viewer';
 import { Helmet } from 'react-helmet';

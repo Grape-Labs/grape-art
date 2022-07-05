@@ -127,7 +127,7 @@ export async function gah_acceptOffer(offerAmount: number, mint: string, sellerP
       )
 
 
-    console.log("purchaseReceipt: "+JSON.stringify(purchaseReceipt))
+    //console.log("purchaseReceipt: "+JSON.stringify(purchaseReceipt))
 
     const [escrowPaymentAccount, escrowPaymentBump] =
       await AuctionHouseProgram.findEscrowPaymentAccountAddress(
@@ -138,8 +138,8 @@ export async function gah_acceptOffer(offerAmount: number, mint: string, sellerP
     const [programAsSigner, programAsSignerBump] =
       await AuctionHouseProgram.findAuctionHouseProgramAsSignerAddress()
 
-    console.log("programAsSigner: "+JSON.stringify(programAsSigner))
-
+    //console.log("programAsSigner: "+JSON.stringify(programAsSigner))
+      
     const [freeTradeState, freeTradeStateBump] =
       await AuctionHouseProgram.findTradeStateAddress(
         sellerAddress,
@@ -151,7 +151,7 @@ export async function gah_acceptOffer(offerAmount: number, mint: string, sellerP
         1
       )
 
-    console.log("freeTradeState: "+JSON.stringify(freeTradeState))
+    //console.log("freeTradeState: "+JSON.stringify(freeTradeState))
 
 
     const [buyerReceiptTokenAccount] =

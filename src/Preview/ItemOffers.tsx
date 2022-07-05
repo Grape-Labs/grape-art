@@ -800,7 +800,7 @@ export function OfferPrompt(props: any) {
                             closeSnackbar(eskey);
                             props.setRefreshOffers(true);
                         }, GRAPE_RPC_REFRESH);
-                } catch(e){
+                } catch(e:any){
                     closeSnackbar();
                     enqueueSnackbar(e.message ? `${e.name}: ${e.message}` : e.name, { variant: 'error' });
                     console.log("Error: "+e);
@@ -819,7 +819,7 @@ export function OfferPrompt(props: any) {
         if (publicKey){
             if (offers){
                 for (var offer of offers){
-                    console.log("checking: "+JSON.stringify(offer))
+                    //console.log("checking: "+JSON.stringify(offer))
                     if (offer.buyeraddress === publicKey.toBase58())
                         setHasOffer(true)
                 }
