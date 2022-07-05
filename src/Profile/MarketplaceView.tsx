@@ -72,6 +72,7 @@ export default function MarketplaceView(props: any) {
                                                     background: 'rgba(0, 0, 0, 1)',
                                                     m:0,
                                                     p:0,
+                                                    maxHeight:'200px'
                                                 }} 
                                             />
                                             
