@@ -1309,7 +1309,7 @@ export function StoreFrontView(this: any, props: any) {
                             >
                                 {collectionAuthority.videoUrl ?
                                 <Box
-                                    sx={{mt:-60}}
+                                    sx={{mt:-40}}
                                 >
                                     <video 
                                         loop={true} 
