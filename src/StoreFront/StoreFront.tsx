@@ -1308,9 +1308,7 @@ export function StoreFrontView(this: any, props: any) {
                                 }}
                             >
                                 {collectionAuthority.videoUrl ?
-                                <Box
-                                    sx={{mt:-40}}
-                                >
+                                <Box>
                                     <video 
                                         loop={true} 
                                         muted={true}
