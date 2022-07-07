@@ -194,6 +194,37 @@ export class EditionMarker {
 	}
 }
 
+export class TokenStandard {
+	NonFungible: number;
+	FungibleAsset: number;
+	Fungible: number;
+	NonFungibleEdition: number;
+  
+	constructor(args: {
+	  NonFungible: number;
+	  FungibleAsset: number;
+	  Fungible: number;
+	  NonFungibleEdition: number;
+	}) {
+	  this.NonFungible = args.NonFungible;
+	  this.FungibleAsset = args.FungibleAsset;
+	  this.Fungible = args.Fungible;
+	  this.NonFungibleEdition = args.NonFungibleEdition;
+	}
+  }
+  export class Collection {
+	verified: boolean;
+	key: StringPublicKey;
+  
+	constructor(args: {
+	  verified: boolean;
+	  key: StringPublicKey;
+	}) {
+	  this.verified = args.verified;
+	  this.key = args.key;
+	}
+  }
+
 export class Edition {
 	key: MetadataKey;
 	/// Points at MasterEdition struct
@@ -256,28 +287,33 @@ export class Metadata {
 	primarySaleHappened: boolean;
 	isMutable: boolean;
 	editionNonce: number | null;
-
+	edition?: StringPublicKey | null;
 	// set lazy
 	masterEdition?: StringPublicKey;
-	edition?: StringPublicKey;
-
+	tokenStandard?: TokenStandard;
+	collection?: Collection;
+  
 	constructor(args: {
-		updateAuthority: StringPublicKey;
-		mint: StringPublicKey;
-		data: Data;
-		primarySaleHappened: boolean;
-		isMutable: boolean;
-		editionNonce: number | null;
+	  updateAuthority: StringPublicKey;
+	  mint: StringPublicKey;
+	  data: Data;
+	  primarySaleHappened: boolean;
+	  isMutable: boolean;
+	  editionNonce: number | null;
+	  tokenStandard: TokenStandard | null;
+	  collection: Collection | null;
 	}) {
-		this.key = MetadataKey.MetadataV1;
-		this.updateAuthority = args.updateAuthority;
-		this.mint = args.mint;
-		this.data = args.data;
-		this.primarySaleHappened = args.primarySaleHappened;
-		this.isMutable = args.isMutable;
-		this.editionNonce = args.editionNonce;
+	  this.key = MetadataKey.MetadataV1;
+	  this.updateAuthority = args.updateAuthority;
+	  this.mint = args.mint;
+	  this.data = args.data;
+	  this.primarySaleHappened = args.primarySaleHappened;
+	  this.isMutable = args.isMutable;
+	  this.editionNonce = args.editionNonce ?? null;
+	  this.tokenStandard = args.tokenStandard ?? null;
+	  this.collection = args.collection ?? null;
 	}
-}
+  }
 
 class CreateMetadataArgs {
 	instruction: number = 0;
@@ -323,135 +359,106 @@ class MintPrintingTokensArgs {
 	}
 }
 
+
+
 export const METADATA_SCHEMA = new Map<any, any>([
 	[
-		CreateMetadataArgs,
-		{
-			kind: 'struct',
-			fields: [
-				['instruction', 'u8'],
-				['data', Data],
-				['isMutable', 'u8'], // bool
-			],
-		},
+	  CreateMetadataArgs,
+	  {
+		kind: 'struct',
+		fields: [
+		  ['instruction', 'u8'],
+		  ['data', Data],
+		  ['isMutable', 'u8'], // bool
+		],
+	  },
 	],
 	[
-		UpdateMetadataArgs,
-		{
-			kind: 'struct',
-			fields: [
-				['instruction', 'u8'],
-				['data', { kind: 'option', type: Data }],
-				['updateAuthority', { kind: 'option', type: 'pubkeyAsString' }],
-				['primarySaleHappened', { kind: 'option', type: 'u8' }],
-			],
-		},
-	],
-
-	[
-		CreateMasterEditionArgs,
-		{
-			kind: 'struct',
-			fields: [
-				['instruction', 'u8'],
-				['maxSupply', { kind: 'option', type: 'u64' }],
-			],
-		},
+	  CreateMasterEditionArgs,
+	  {
+		kind: 'struct',
+		fields: [
+		  ['instruction', 'u8'],
+		  ['maxSupply', { kind: 'option', type: 'u64' }],
+		],
+	  },
 	],
 	[
-		MintPrintingTokensArgs,
-		{
-			kind: 'struct',
-			fields: [
-				['instruction', 'u8'],
-				['supply', 'u64'],
-			],
-		},
+	  UpdateMetadataArgs,
+	  {
+		kind: 'struct',
+		fields: [
+		  ['instruction', 'u8'],
+		  ['data', { kind: 'option', type: Data }],
+		  ['updateAuthority', { kind: 'option', type: 'pubkeyAsString' }],
+		  ['primarySaleHappened', { kind: 'option', type: 'u8' }],
+		],
+	  },
 	],
 	[
-		MasterEditionV1,
-		{
-			kind: 'struct',
-			fields: [
-				['key', 'u8'],
-				['supply', 'u64'],
-				['maxSupply', { kind: 'option', type: 'u64' }],
-				['printingMint', 'pubkeyAsString'],
-				['oneTimePrintingAuthorizationMint', 'pubkeyAsString'],
-			],
-		},
+	  Data,
+	  {
+		kind: 'struct',
+		fields: [
+		  ['name', 'string'],
+		  ['symbol', 'string'],
+		  ['uri', 'string'],
+		  ['sellerFeeBasisPoints', 'u16'],
+		  ['creators', { kind: 'option', type: [Creator] }],
+		],
+	  },
 	],
 	[
-		MasterEditionV2,
-		{
-			kind: 'struct',
-			fields: [
-				['key', 'u8'],
-				['supply', 'u64'],
-				['maxSupply', { kind: 'option', type: 'u64' }],
-			],
-		},
+	  Creator,
+	  {
+		kind: 'struct',
+		fields: [
+		  ['address', 'pubkeyAsString'],
+		  ['verified', 'u8'],
+		  ['share', 'u8'],
+		],
+	  },
 	],
 	[
-		Edition,
-		{
-			kind: 'struct',
-			fields: [
-				['key', 'u8'],
-				['parent', 'pubkeyAsString'],
-				['edition', 'u64'],
-			],
-		},
+	  Collection,
+	  {
+		kind: 'struct',
+		fields: [
+		  ['verified', 'u8'], // bool
+		  ['key', 'pubkeyAsString'],
+		],
+	  },
 	],
 	[
-		Data,
-		{
-			kind: 'struct',
-			fields: [
-				['name', 'string'],
-				['symbol', 'string'],
-				['uri', 'string'],
-				['sellerFeeBasisPoints', 'u16'],
-				['creators', { kind: 'option', type: [Creator] }],
-			],
-		},
+	  TokenStandard,
+	  {
+		kind: 'struct',
+		fields: [
+		  ['NonFungible', 'u8'],
+		  ['FungibleAsset', 'u8'],
+		  ['Fungible', 'u8'],
+		  ['NonFungibleEdition', 'u8'],
+		],
+	  },
 	],
 	[
-		Creator,
-		{
-			kind: 'struct',
-			fields: [
-				['address', 'pubkeyAsString'],
-				['verified', 'u8'],
-				['share', 'u8'],
-			],
-		},
+	  Metadata,
+	  {
+		kind: 'struct',
+		fields: [
+		  ['key', 'u8'],
+		  ['updateAuthority', 'pubkeyAsString'],
+		  ['mint', 'pubkeyAsString'],
+		  ['data', Data],
+		  ['primarySaleHappened', 'u8'], // bool
+		  ['isMutable', 'u8'], // bool
+		  ['editionNonce', { kind: 'option', type: 'u8' }],
+		  ['tokenStandard', { kind: 'option', type: 'u8' }],
+		  ['collection', { kind: 'option', type: Collection }],
+		],
+	  },
 	],
-	[
-		Metadata,
-		{
-			kind: 'struct',
-			fields: [
-				['key', 'u8'],
-				['updateAuthority', 'pubkeyAsString'],
-				['mint', 'pubkeyAsString'],
-				['data', Data],
-				['primarySaleHappened', 'u8'], // bool
-				['isMutable', 'u8'], // bool
-			],
-		},
-	],
-	[
-		EditionMarker,
-		{
-			kind: 'struct',
-			fields: [
-				['key', 'u8'],
-				['ledger', [31]],
-			],
-		},
-	],
-]);
+  ]);
 
 // eslint-disable-next-line no-control-regex
 const METADATA_REPLACE = new RegExp('\u0000', 'g');

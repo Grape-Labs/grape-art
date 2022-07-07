@@ -575,11 +575,11 @@ export default function ActivityView(props: any){
                             </>
                         :
                             <>
-                                <>
-                                    {t('Connect')}
-                                </>
+                                <Hidden smUp>
+                                    <AccountBalanceWalletIcon />
+                                </Hidden>
                                 <Hidden smDown>
-                                    {` ${t('your wallet')}`}
+                                    {` ${t('Connect your wallet')}`}
                                 </Hidden>
                             </>
                    

@@ -188,7 +188,6 @@ export default function ListForCollectionView(props: any){
             //console.log("pushed pdas: "+JSON.stringify(mintsPDAs));
             const metadata = await ggoconnection.getMultipleAccountsInfo(mintsPDAs);
         
-        
             //console.log("returned: "+JSON.stringify(metadata));
             // LOOP ALL METADATA WE HAVE
             //for (var metavalue of metadata){
@@ -206,16 +205,22 @@ export default function ListForCollectionView(props: any){
                             meta_final.updateAuthority === entangleTo)) ||
                             (meta_final.updateAuthority === updateAuthority)){
 
-                            try{
-                                const metadataFetch = await window.fetch(meta_final.data.uri)
-                                .then(
-                                    (res: any) => res.json()
-                                );
-                                metadata[x]["decodeMetadata"] = metadataFetch;
-                            }catch(ie){
-                                // not on Arweave:
-                                //console.log("ERR: "+JSON.stringify(meta_final));
-                                // return null;
+                            if ((meta_final?.collection.key === collectionAuthority.collection)||
+                                (collectionAuthority.collection === updateAuthority)){
+                                //console.log("meta_final "+JSON.stringify(meta_final))
+                                //console.log("collectionAuthority: "+JSON.stringify(collectionAuthority.collection))
+
+                                try{
+                                    const metadataFetch = await window.fetch(meta_final.data.uri)
+                                    .then(
+                                        (res: any) => res.json()
+                                    );
+                                    metadata[x]["decodeMetadata"] = metadataFetch;
+                                }catch(ie){
+                                    // not on Arweave:
+                                    //console.log("ERR: "+JSON.stringify(meta_final));
+                                    // return null;
+                                }
                             }
                         } else {
                             

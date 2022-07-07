@@ -1960,7 +1960,7 @@ export default function ItemOffers(props: any) {
                                                                                                 <>Marketplace: <strong>{verifiedAuctionHouse.name}</strong><br/><br/></>
                                                                                             }
                                                                                             <Typography sx={{textAlign:'center'}}>
-                                                                                                {t('Make sure the above is correct')}<br/>{t('press Accept to proceed')}
+                                                                                                {t('Make sure the above is correct')}<br/>{t('press BUY WITH WALLET to proceed')}
                                                                                             </Typography>   
                                                                                         </Box>
                                                                                 </Alert>
@@ -2251,7 +2251,7 @@ export default function ItemOffers(props: any) {
                                                             {t('From')}: <MakeLinkableAddress addr={final_offerfrom} trim={0} hasextlink={true} hascopy={false} fontsize={16} /><br/>
                                                             {t('Auction House')}: <MakeLinkableAddress addr={collectionAuctionHouse || AUCTION_HOUSE_ADDRESS} trim={9} hasextlink={true} hascopy={false} fontsize={16} /><br/>
                                                             <Typography sx={{textAlign:'center'}}>
-                                                            {t('Make sure the above is correct')}<br/>{t('press Accept to proceed')}
+                                                            {t('Make sure the above is correct')}<br/>{t('press BUY WITH WALLET to proceed')}
 
                                                             {salePrice && salePrice > 0 && (
                                                                 <Typography variant="body2"><br/><br/>IMPORTANT: Your NFT is currently listed, you will need to accept <strong>two</strong> wallet transactions to cancel the listing and then accept the offer</Typography>    
