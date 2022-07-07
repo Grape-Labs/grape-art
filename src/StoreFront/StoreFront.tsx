@@ -1563,7 +1563,7 @@ export function StoreFrontView(this: any, props: any) {
                                         {collectionChildren.map((child:any) => (
                                             <Button 
                                                 component={Link} 
-                                                to={`${GRAPE_COLLECTION}${collectionChildren.vanityUrl}`}
+                                                to={`${GRAPE_COLLECTION}${child.vanityUrl}`}
                                                 variant="outlined"
                                                 sx={{
                                                     color:'white',
