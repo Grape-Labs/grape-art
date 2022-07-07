@@ -472,6 +472,8 @@ export function StoreFrontView(this: any, props: any) {
     const [gallery, setGallery] = React.useState(null);
     const [collectionMintList, setCollectionMintList] = React.useState(null);
     const [fetchedCollectionMintList, setFetchedCollectionMintList] = React.useState(null);
+    const [collectionChildren, setCollectionChildren] = React.useState(null);
+    const [collectionParentAuthority, setCollectionParentAuthority] = React.useState(null);
     const [collectionAuthority, setCollectionAuthority] = React.useState(null);
     const [verifiedCollectionArray, setVerifiedCollectionArray] = React.useState(null);
     const [auctionHouseListings, setAuctionHouseListings] = React.useState(null);
@@ -1159,6 +1161,25 @@ export function StoreFrontView(this: any, props: any) {
                         break;
                     }
                 } 
+                if ((verified?.collection) && (verified?.parentCollection)){
+                    for (var item of verifiedCollectionArray){
+                        if (item.collection === verified?.parentCollection){
+                            setCollectionParentAuthority(item);
+                        }
+                    }
+                }
+
+                // check if any other co
+                const children = new Array();
+                for (var item of verifiedCollectionArray){
+                    if (item.parentCollection === verified?.collection){
+                        children.push(item);
+                    }
+                }
+                
+                if (children.length > 0){
+                    setCollectionChildren(children);
+                }
                 // IMPORTANT HANDLE INVALID COLLECTION ENTRY
             }
         }
@@ -1502,6 +1523,67 @@ export function StoreFrontView(this: any, props: any) {
                                     collectionMintList={collectionMintList}
                                     activity={auctionHouseListings} />
                             </Box>
+
+                            {collectionParentAuthority && 
+                                <Box
+                                    
+                                    sx={{m:2}}
+                                >
+                                    <Button 
+                                        //onClick={handleClickOpenDialog}
+                                        variant="outlined"
+                                        sx={{
+                                            color:'white',
+                                            verticalAlign: 'middle',
+                                            display: 'inline-flex',
+                                            borderRadius:'17px'
+                                        }}
+                                    >
+                                        {collectionParentAuthority.name}
+                                        <Avatar
+                                            variant="square"
+                                            src={GRAPE_COLLECTIONS_DATA+collectionParentAuthority.logo}
+                                            sx={{
+                                                ml:1,
+                                                width: 24, 
+                                                height: 24
+                                            }}
+                                        ></Avatar>
+                                    </Button>
+                                </Box>
+                            }
+
+                            {collectionChildren && 
+                                <Box       
+                                    sx={{m:2}}
+                                >
+                                    <ButtonGroup>
+                                        {collectionChildren.map((child:any) => (
+                                            <Button 
+                                                //onClick={handleClickOpenDialog}
+                                                variant="outlined"
+                                                sx={{
+                                                    color:'white',
+                                                    verticalAlign: 'middle',
+                                                    display: 'inline-flex',
+                                                    borderRadius:'17px'
+                                                }}
+                                            >
+                                                {child.name}
+                                                <Avatar
+                                                    variant="square"
+                                                    src={GRAPE_COLLECTIONS_DATA+child.logo}
+                                                    sx={{
+                                                        ml:1,
+                                                        width: 24, 
+                                                        height: 24
+                                                    }}
+                                                ></Avatar>
+                                        </Button>
+                                        ))}
+                                    </ButtonGroup>
+                                </Box>
+                            }
                             
                             <Grid container spacing={0} sx={{mt:-2}}>
                                 <Grid item xs={12} sm={6} md={4} key={1}>
