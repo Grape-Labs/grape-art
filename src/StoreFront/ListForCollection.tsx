@@ -204,8 +204,12 @@ export default function ListForCollectionView(props: any){
                             (meta_final.updateAuthority === entangleFrom ||
                             meta_final.updateAuthority === entangleTo)) ||
                             (meta_final.updateAuthority === updateAuthority)){
+                            
+                            console.log("meta_final?.collection.key: "+meta_final?.collection?.key);
+                            console.log("collectionAuthority.collection: "+collectionAuthority.collection);
+                            console.log("updateAuthority: "+updateAuthority);
 
-                            if ((meta_final?.collection.key === collectionAuthority.collection)||
+                            if ((meta_final?.collection?.key === collectionAuthority.collection)||
                                 (collectionAuthority.collection === updateAuthority)){
                                 //console.log("meta_final "+JSON.stringify(meta_final))
                                 //console.log("collectionAuthority: "+JSON.stringify(collectionAuthority.collection))
