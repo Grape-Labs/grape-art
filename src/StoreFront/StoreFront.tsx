@@ -85,7 +85,8 @@ import {
     GRAPE_PREVIEW,
     REPORT_ALERT_THRESHOLD,
     THEINDEX_RPC_ENDPOINT, 
-    GRAPE_PROFILE, 
+    GRAPE_PROFILE,  
+    GRAPE_COLLECTION, 
     FEATURED_DAO_ARRAY, 
     GRAPE_COLLECTIONS_DATA,
     PROXY
@@ -1530,7 +1531,8 @@ export function StoreFrontView(this: any, props: any) {
                                     sx={{m:2}}
                                 >
                                     <Button 
-                                        //onClick={handleClickOpenDialog}
+                                        component={Link} 
+                                        to={`${GRAPE_COLLECTION}${collectionParentAuthority.vanityUrl}`}
                                         variant="outlined"
                                         sx={{
                                             color:'white',
@@ -1560,7 +1562,8 @@ export function StoreFrontView(this: any, props: any) {
                                     <ButtonGroup>
                                         {collectionChildren.map((child:any) => (
                                             <Button 
-                                                //onClick={handleClickOpenDialog}
+                                                component={Link} 
+                                                to={`${GRAPE_COLLECTION}${collectionParentAuthority.vanityUrl}`}
                                                 variant="outlined"
                                                 sx={{
                                                     color:'white',
