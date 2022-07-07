@@ -1531,8 +1531,8 @@ export function StoreFrontView(this: any, props: any) {
                                     sx={{m:2}}
                                 >
                                     <Button 
-                                        component={Link} 
-                                        to={`${GRAPE_COLLECTION}${collectionParentAuthority.vanityUrl}`}
+                                        //component={a} 
+                                        href={`${GRAPE_COLLECTION}${collectionParentAuthority.vanityUrl}`}
                                         variant="outlined"
                                         sx={{
                                             color:'white',
@@ -1562,8 +1562,8 @@ export function StoreFrontView(this: any, props: any) {
                                     <ButtonGroup>
                                         {collectionChildren.map((child:any) => (
                                             <Button 
-                                                component={Link} 
-                                                to={`${GRAPE_COLLECTION}${child.vanityUrl}`}
+                                                //component={a} 
+                                                href={`${GRAPE_COLLECTION}${child.vanityUrl}`}
                                                 variant="outlined"
                                                 sx={{
                                                     color:'white',
