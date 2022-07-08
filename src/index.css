@@ -207,6 +207,21 @@ ul li .grape-wallet-button{
   background:black!important;
 }
 
+.grape-community-tab {
+  color:white;
+}
+.grape-community-tab .Mui-selected {
+  color:white !important;
+}
+.grape-community-tab .MuiTab-root:hover {
+  color:#ccc !important;
+}
+.grape-community-tab .Mui-focusVisible {
+  background-color: '#d1eaff';
+}
+
+
+
 @keyframes avataranimation {
   0%   {background: linear-gradient(270deg, #00F0DD 0%, #DC1FFF 100%);}
   10%  {background: linear-gradient(306deg, #00F0DD 0%, #DC1FFF 100%);}

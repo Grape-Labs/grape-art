@@ -25,6 +25,7 @@
         "build-client": "cross-env BABEL_ENV=client parcel build src/index.html --dist-dir dist/client --public-url /dist",
         "build-server": "cross-env BABEL_ENV=server parcel build server/index.js --dist-dir dist/server --public-url /dist",
         "build-ssr": "rimraf dist && npm run generate-imported-component && npm run build-client --no-source-maps && npm run build-server --no-source-maps",
+        "start-ssr": "node dist/server",
         "generate-imported-component": "imported-components src src/imported.js",
         "build": "yarn clean && parcel build src/index.html --no-source-maps",
         "start": "yarn clean && parcel src/index.html",

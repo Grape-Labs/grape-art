@@ -55,6 +55,12 @@ import TwitterIcon from '@mui/icons-material/Twitter';
 import TelegramIcon from '@mui/icons-material/Telegram';
 import InstagramIcon from '@mui/icons-material/Instagram';
 
+
+import ForumIcon from '@mui/icons-material/Forum';
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import StorefrontIcon from '@mui/icons-material/Storefront';
+import PeopleIcon from '@mui/icons-material/People';
+
 import DiscordIcon from '../components/static/DiscordIcon';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
@@ -104,6 +110,7 @@ import ShareSocialURL from '../utils/grapeTools/ShareUrl';
 import GalleryView from '../Profile/GalleryView';
 import ListForCollectionView from './ListForCollection';
 import ActivityView from './Activity';
+import { GovernanceView } from './Governance';
 
 import { MakeLinkableAddress, ValidateAddress, trimAddress, timeAgo } from '../utils/grapeTools/WalletAddress'; // global key handling
 import { ConstructionOutlined, SettingsRemoteOutlined } from "@mui/icons-material";
@@ -425,6 +432,20 @@ const MainMenu = (props:any) => {
     )
     */
 }
+enum NavPanel {
+    Token,
+    Marketplace,
+    Governance,
+    Holders,
+    Chat,
+}
+
+function a11yProps(index: number) {
+    return {
+      id: `simple-tab-${index}`,
+      'aria-controls': `simple-tabpanel-${index}`,
+    };
+  }
 
 export const TabActiveContext = React.createContext({
     activeTab: 0,
@@ -500,7 +521,8 @@ export function StoreFrontView(this: any, props: any) {
     const { connection } = useConnection();
     const { publicKey } = useWallet();
     const [refresh, setRefresh] = React.useState(false);
-    
+    const [tabValue, setTabValue] = React.useState(0 || NavPanel.Marketplace);
+
     const [profilePictureUrl, setProfilePictureUrl] = React.useState(null);
     const [hasProfilePicture, setHasProfilePicture] = React.useState(false);
     const [solanaDomain, setSolanaDomain] = React.useState(null);
@@ -518,6 +540,11 @@ export function StoreFrontView(this: any, props: any) {
 
     const { t, i18n } = useTranslation();
     
+
+    const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+        setTabValue(newValue);
+    };
+
     const fetchVerifiedCollection = async(address:string) => {
         try{
             //const url = './verified_collections.json';
@@ -1173,8 +1200,10 @@ export function StoreFrontView(this: any, props: any) {
                 // check if any other co
                 const children = new Array();
                 for (var item of verifiedCollectionArray){
-                    if (item.parentCollection === verified?.collection){
-                        children.push(item);
+                    if (verified?.collection != null && verified?.collection.length > 0){
+                        if (item.parentCollection === verified?.collection){
+                            children.push(item);
+                        }
                     }
                 }
                 
@@ -1524,7 +1553,7 @@ export function StoreFrontView(this: any, props: any) {
                                     collectionMintList={collectionMintList}
                                     activity={auctionHouseListings} />
                             </Box>
-
+                            
                             {collectionParentAuthority && 
                                 <Box
                                     
@@ -1678,14 +1707,28 @@ export function StoreFrontView(this: any, props: any) {
             }
                 <Box
                     sx={{
-                        
+                        background:'rgba(0,0,0,0.2)',
+                        borderRadius:'17px'
                     }}
                 >
-                    <Box> 
-                        {collectionMintList &&  
-                            <GalleryView mode={1} collectionMintList={collectionMintList} collectionAuthority={collectionAuthority} tokenPrice={tokenPrice}/>
-                        }
-                    </Box>
+                    
+
+                    <TabPanel value={tabValue} index={NavPanel.Marketplace}>
+                        <Box> 
+                            {collectionMintList &&  
+                                <GalleryView mode={1} collectionMintList={collectionMintList} collectionAuthority={collectionAuthority} tokenPrice={tokenPrice}/>
+                            }
+                        </Box>
+                    </TabPanel>
+
+                    <TabPanel value={tabValue} index={NavPanel.Governance}>
+                        <Box> 
+                            {collectionMintList &&  
+                                <GovernanceView collectionAuthority={collectionAuthority} />
+                            }
+                        </Box>
+                    </TabPanel>
+
                 </Box>
         </React.Fragment>
     );
