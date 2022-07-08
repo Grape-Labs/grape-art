@@ -332,7 +332,7 @@ export function GovernanceView(props: any) {
             try{
 
                 console.log("with governance: "+collectionAuthority.governance);
-                
+
                 const programId = new PublicKey(GOVERNANCE_PROGRAM_ID);
                 const gprops = await getAllProposals(new Connection(THEINDEX_RPC_ENDPOINT), programId, new PublicKey(collectionAuthority.governance));
                 console.log("gprops: "+JSON.stringify(gprops));

@@ -1711,7 +1711,21 @@ export function StoreFrontView(this: any, props: any) {
                         borderRadius:'17px'
                     }}
                 >
-                    
+                    <Tabs value={tabValue} onChange={handleTabChange} aria-label="grape community tabs" sx={{pl:2,color:'white'}} className="grape-community-tab">
+                        {collectionAuthority?.tokenType && collectionAuthority?.tokenType === 'SPL' &&
+                            <Tab icon={<SolCurrencyIcon />} aria-label="Token" value={NavPanel.Token} sx={{color:'white'}} />
+                        }
+                        {collectionAuthority?.tokenType && collectionAuthority?.tokenType === 'NFT' &&
+                            <Tab icon={<StorefrontIcon />} aria-label="Marketplace" value={NavPanel.Marketplace} sx={{color:'white'}} />
+                        }
+                        {collectionAuthority?.governance &&
+                            <Tab icon={<AccountBalanceIcon />} aria-label="Governance" value={NavPanel.Governance} sx={{color:'white'}} />
+                        }
+                        
+                        <Tab icon={<PeopleIcon />} aria-label="Holders" disabled={true} value={NavPanel.Holders} sx={{color:'white'}} />
+                        <Tab icon={<ForumIcon />} aria-label="Community" disabled={true} value={NavPanel.Chat} sx={{color:'white'}} />
+                        
+                    </Tabs>
 
                     <TabPanel value={tabValue} index={NavPanel.Marketplace}>
                         <Box> 
