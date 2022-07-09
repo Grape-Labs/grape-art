@@ -321,7 +321,7 @@ export function MembersView(props: any) {
 
                 const programId = new PublicKey(GOVERNANCE_PROGRAM_ID);
                 const grealm = await getRealm(new Connection(THEINDEX_RPC_ENDPOINT), new PublicKey(collectionAuthority.governance))
-                setRealm(realm);
+                setRealm(grealm);
 
                 const realmPk = grealm.pubkey;
 

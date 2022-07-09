@@ -398,7 +398,7 @@ export function GovernanceView(props: any) {
                 //console.log("gpbgprops: "+JSON.stringify(gpbgprops));
                 
                 const realmPk = grealm.pubkey;
-                const gprops = await getAllProposals(new Connection(THEINDEX_RPC_ENDPOINT, "recent"), grealm.owner, realmPk);
+                const gprops = await getAllProposals(new Connection(THEINDEX_RPC_ENDPOINT), grealm.owner, realmPk);
                 
                 let allprops: any[] = [];
                 for (let props of gprops){
