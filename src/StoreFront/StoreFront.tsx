@@ -111,6 +111,7 @@ import GalleryView from '../Profile/GalleryView';
 import ListForCollectionView from './ListForCollection';
 import ActivityView from './Activity';
 import { GovernanceView } from './Governance';
+import { MembersView } from './Members';
 
 import { MakeLinkableAddress, ValidateAddress, trimAddress, timeAgo } from '../utils/grapeTools/WalletAddress'; // global key handling
 import { ConstructionOutlined, SettingsRemoteOutlined } from "@mui/icons-material";
@@ -1713,16 +1714,19 @@ export function StoreFrontView(this: any, props: any) {
                 >
                     <Tabs value={tabValue} onChange={handleTabChange} aria-label="grape community tabs" sx={{pl:2,color:'white'}} className="grape-community-tab">
                         {collectionAuthority?.tokenType && collectionAuthority?.tokenType === 'SPL' &&
-                            <Tab icon={<SolCurrencyIcon />} aria-label="Token" value={NavPanel.Token} sx={{color:'white'}} />
+                            <Tab icon={<SolCurrencyIcon />} aria-label="Token" value={NavPanel.Token} sx={{color:'white'}} title="Tokenized Community" />
                         }
                         {collectionAuthority?.tokenType && collectionAuthority?.tokenType === 'NFT' &&
-                            <Tab icon={<StorefrontIcon />} aria-label="Marketplace" value={NavPanel.Marketplace} sx={{color:'white'}} />
+                            <Tab icon={<StorefrontIcon />} aria-label="Marketplace" value={NavPanel.Marketplace} sx={{color:'white'}} title="Marketplace" />
                         }
                         {collectionAuthority?.governance &&
-                            <Tab icon={<AccountBalanceIcon />} aria-label="Governance" value={NavPanel.Governance} sx={{color:'white'}} />
+                            <Tab icon={<AccountBalanceIcon />} aria-label="Governance" value={NavPanel.Governance} sx={{color:'white'}} title="Governance" />
                         }
-                        
-                        <Tab icon={<PeopleIcon />} aria-label="Holders" disabled={true} value={NavPanel.Holders} sx={{color:'white'}} />
+                        {collectionAuthority?.governance &&
+                            <Tab icon={<PeopleIcon />} aria-label="Holders" value={NavPanel.Holders} sx={{color:'white'}} title="Members" />
+                        }
+
+
                         <Tab icon={<ForumIcon />} aria-label="Community" disabled={true} value={NavPanel.Chat} sx={{color:'white'}} />
                         
                     </Tabs>
@@ -1739,6 +1743,14 @@ export function StoreFrontView(this: any, props: any) {
                         <Box> 
                             {collectionMintList &&  
                                 <GovernanceView collectionAuthority={collectionAuthority} />
+                            }
+                        </Box>
+                    </TabPanel>
+
+                    <TabPanel value={tabValue} index={NavPanel.Holders}>
+                        <Box> 
+                            {collectionMintList &&  
+                                <MembersView collectionAuthority={collectionAuthority} />
                             }
                         </Box>
                     </TabPanel>

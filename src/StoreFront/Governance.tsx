@@ -1,4 +1,4 @@
-import { getRealms, getAllProposals, getVoteRecordsByVoter, getTokenOwnerRecordForRealm, getTokenOwnerRecordsByOwner} from '@solana/spl-governance';
+import { getRealm, getAllProposals, getProposalsByGovernance } from '@solana/spl-governance';
 import { PublicKey, TokenAmount, Connection } from '@solana/web3.js';
 import { ENV, TokenListProvider, TokenInfo } from '@solana/spl-token-registry';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
@@ -140,9 +140,11 @@ function RenderGovernanceTable(props:any) {
     const [loading, setLoading] = React.useState(false);
     //const [proposals, setProposals] = React.useState(props.proposals);
     const proposals = props.proposals;
+    const token = props.token;
     const { connection } = useConnection();
     const { publicKey } = useWallet();
-    
+    const tokenDecimals = token?.decimals || 6;
+
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
     // Avoid a layout jump when reaching the last page with empty rows.
@@ -188,10 +190,8 @@ function RenderGovernanceTable(props:any) {
                         <TableHead>
                             <TableRow>
                                 <TableCell><Typography variant="caption">Name</Typography></TableCell>
-                                {/*
                                 <TableCell align="center" sx={{width:"1%"}}><Typography variant="caption">Yes</Typography></TableCell>
                                 <TableCell align="center" sx={{width:"1%"}}><Typography variant="caption">No</Typography></TableCell>
-                                */}
                                 <TableCell align="center" sx={{width:"1%"}}><Typography variant="caption">Status</Typography></TableCell>
                                 {/*
                                 <TableCell align="center"><Typography variant="caption">Ending</Typography></TableCell>
@@ -209,6 +209,7 @@ function RenderGovernanceTable(props:any) {
                                     : proposals
                                 ).map((item:any, index:number) => (
                                 <>
+                                    {console.log("item: "+JSON.stringify(item))}
                                     {item?.pubkey && item?.account &&
                                         <TableRow key={index} sx={{borderBottom:"none"}}>
                                             <TableCell>
@@ -220,6 +221,58 @@ function RenderGovernanceTable(props:any) {
                                                     </Tooltip>
                                                 }
                                                 </Typography>
+                                            </TableCell>
+                                            <TableCell>
+                                                {item.account?.options[0].voteWeight && 
+                                                    <Typography variant="h6">
+                                                        {console.log("vote: "+JSON.stringify(item.account))}
+                                                        <Tooltip title={item.account?.options[0].voteWeight.toNumber() <= 1 ?
+                                                            <>
+                                                                {item.account?.options[0].voteWeight.toNumber()}
+                                                            </>
+                                                            :
+                                                            <>
+                                                                {(item.account?.options[0].voteWeight.toNumber()/Math.pow(10, tokenDecimals)).toFixed(0)}
+                                                            </>
+                                                            }
+                                                        >
+                                                            <Button sx={{color:'white'}}>
+                                                                {item.account?.options[0].voteWeight.toNumber() > 0 ?
+                                                                <>
+                                                                {`${(((item.account?.options[0].voteWeight.toNumber()/Math.pow(10, tokenDecimals))/((item.account?.denyVoteWeight.toNumber()/Math.pow(10, tokenDecimals))+(item.account?.options[0].voteWeight.toNumber()/Math.pow(10, tokenDecimals))))*100).toFixed(2)}%`}
+                                                                </>
+                                                                :
+                                                                <>0%</>
+}
+                                                            </Button>
+                                                        </Tooltip>
+                                                    </Typography>
+                                                }
+                                            </TableCell>
+                                            <TableCell>
+                                                {item.account?.denyVoteWeight && 
+                                                    <Typography variant="h6">
+                                                        <Tooltip title={item.account?.denyVoteWeight.toNumber() <= 1 ?
+                                                            <>
+                                                                {item.account?.denyVoteWeight.toNumber()}
+                                                            </>
+                                                            :
+                                                            <>
+                                                                {(item.account?.denyVoteWeight.toNumber()/Math.pow(10, tokenDecimals)).toFixed(0)}
+                                                            </>
+                                                            }
+                                                        >
+                                                            <Button sx={{color:'white'}}>
+                                                                {item.account?.denyVoteWeight.toNumber() > 0 ?
+                                                                <>
+                                                                {`${(((item.account?.denyVoteWeight.toNumber()/Math.pow(10, tokenDecimals))/((item.account?.denyVoteWeight.toNumber()/Math.pow(10, tokenDecimals))+(item.account?.options[0].voteWeight.toNumber()/Math.pow(10, tokenDecimals))))*100).toFixed(2)}%`}
+                                                                </>:
+                                                                <>0%</>
+                                                                }
+                                                            </Button>
+                                                        </Tooltip>
+                                                    </Typography>
+                                                }
                                             </TableCell>
                                             <TableCell  align="center">
                                                 <Typography variant="h6">
@@ -301,7 +354,9 @@ export function GovernanceView(props: any) {
     const collectionAuthority = props.collectionAuthority;
     const [loading, setLoading] = React.useState(false);
     const [tokenMap, setTokenMap] = React.useState(null);
+    const [realm, setRealm] = React.useState(null);
     const [tokenArray, setTokenArray] = React.useState(null);
+    const [token, setToken] = React.useState(null);
     const { connection } = useConnection();
     const { publicKey } = useWallet();
     const [proposals, setProposals] = React.useState(null);
@@ -332,9 +387,24 @@ export function GovernanceView(props: any) {
             try{
 
                 console.log("with governance: "+collectionAuthority.governance);
+                
+                const grealm = await getRealm(new Connection(THEINDEX_RPC_ENDPOINT), new PublicKey(collectionAuthority.governance))
+                setRealm(grealm);
+                console.log("realm: "+JSON.stringify(grealm));
 
                 const programId = new PublicKey(GOVERNANCE_PROGRAM_ID);
-                const gprops = await getAllProposals(new Connection(THEINDEX_RPC_ENDPOINT), programId, new PublicKey(collectionAuthority.governance));
+
+                //const gpbgprops = await getProposalsByGovernance(new Connection(THEINDEX_RPC_ENDPOINT), programId, new PublicKey(collectionAuthority.governancePublicKey || collectionAuthority.governance));
+                //console.log("gpbgprops: "+JSON.stringify(gpbgprops));
+                
+                let owner = collectionAuthority.governance;
+                if (grealm.owner.toBase58() !== GOVERNANCE_PROGRAM_ID){
+                    owner = grealm.owner.toBase58();
+                }
+
+                console.log("owner: "+owner);
+
+                const gprops = await getAllProposals(new Connection(THEINDEX_RPC_ENDPOINT), programId, new PublicKey(owner));
                 console.log("gprops: "+JSON.stringify(gprops));
 
                 let allprops: any[] = [];
@@ -345,13 +415,33 @@ export function GovernanceView(props: any) {
                         }
                     }
                 }
-                allprops.sort((a,b) => (a.account?.votingAt.toNumber() < b.account?.votingAt.toNumber()) ? 1 : -1);
 
-
+                const sortedResults = allprops.sort((a:any, b:any) => (a.account?.votingAt != null && b.account?.votingAt != null && a.account?.votingAt.toNumber() < b.account?.votingAt.toNumber()) ? 1 : -1)
+                //const sortedResults = allprops.sort((a,b) => (a.account?.votingAt.toNumber() < b.account?.votingAt.toNumber()) ? 1 : -1);
+                
                 console.log("allprops: "+JSON.stringify(allprops));
 
+                setProposals(sortedResults);
 
-                setProposals(allprops);
+                if (!tokenArray)
+                    await getTokens();
+
+                
+                /*
+                try{
+                    let decimals = 0;
+                    for (var item of tokenArray){
+                        if (item?.address === tokenOwnerRecordsByOwner[index].account.governingTokenMint.toBase58())
+                            decimals = item.decimals;
+                    }
+                    console.log(tokenOwnerRecordsByOwner[index].account.governingTokenMint.toBase58()+" found: "+decimals);
+    
+                    setToken({address:tokenOwnerRecordsByOwner[index].account.governingTokenMint.toBase58(), decimals:decimals});
+                } catch(e){
+                    setToken({address:tokenOwnerRecordsByOwner[index].account.governingTokenMint.toBase58(),decimals:0})
+                }
+                */
+                
 
             }catch(e){console.log("ERR: "+e)}
         } else{
@@ -388,7 +478,37 @@ export function GovernanceView(props: any) {
                             p:4
                         }} 
                     > 
-                    
+                        {realm &&
+                            <>
+                            <Typography variant="h4">
+                                {realm.account.name}
+
+                                <Button
+                                    size='small'
+                                    sx={{ml:1, color:'white', borderRadius:'17px'}}
+                                    href={'https://realms.today/dao/'+collectionAuthority.governanceVanityUrl}
+                                >
+                                    <OpenInNewIcon/>
+                                </Button>
+                            </Typography>
+                            {/*
+                            <Typography variant="caption">
+                                <Tooltip title={
+                                    <>
+                                        Council Mint: {realm.account.config.councilMint.toBase58()}<br/>
+                                        Community Mint Max Vote Weight: {realm.account.config.communityMintMaxVoteWeightSource.value.toNumber()/1000000}<br/>
+                                        <>Min Community Tokens to Create Governance: {realm.account.config.minCommunityTokensToCreateGovernance.toNumber()/1000000}</>
+                                    </>
+                                }>
+                                    <Button>
+                                    {realm.pubkey.toBase58()}
+                                    </Button>
+                                </Tooltip>
+                            </Typography>
+                            */}
+                            </>
+                        }
+
                         <RenderGovernanceTable proposals={proposals} />
                     </Box>
                                 
