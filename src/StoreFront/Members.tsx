@@ -320,13 +320,13 @@ export function MembersView(props: any) {
                 console.log("with governance: "+collectionAuthority.governance);
 
                 const programId = new PublicKey(GOVERNANCE_PROGRAM_ID);
-                const realm = await getRealm(new Connection(THEINDEX_RPC_ENDPOINT), new PublicKey(collectionAuthority.governance))
+                const grealm = await getRealm(new Connection(THEINDEX_RPC_ENDPOINT), new PublicKey(collectionAuthority.governance))
                 setRealm(realm);
 
-                
+                const realmPk = grealm.pubkey;
 
                 //console.log("realm: "+JSON.stringify(realm));
-                const trecords = await getAllTokenOwnerRecords(new Connection(THEINDEX_RPC_ENDPOINT), programId, new PublicKey(collectionAuthority.governance))
+                const trecords = await getAllTokenOwnerRecords(new Connection(THEINDEX_RPC_ENDPOINT), grealm.owner, realmPk)
 
                 //let sortedResults = trecords.sort((a,b) => (a.account?.outstandingProposalCount < b.account?.outstandingProposalCount) ? 1 : -1);
                 const sortedResults = trecords.sort((a,b) => (a.account?.totalVotesCount < b.account?.totalVotesCount) ? 1 : -1);

@@ -223,7 +223,7 @@ function RenderGovernanceTable(props:any) {
                                                 </Typography>
                                             </TableCell>
                                             <TableCell>
-                                                {item.account?.options[0].voteWeight && 
+                                                {item.account?.options && item.account?.options[0]?.voteWeight && 
                                                     <Typography variant="h6">
                                                         {console.log("vote: "+JSON.stringify(item.account))}
                                                         <Tooltip title={item.account?.options[0].voteWeight.toNumber() <= 1 ?
@@ -392,21 +392,14 @@ export function GovernanceView(props: any) {
                 setRealm(grealm);
                 console.log("realm: "+JSON.stringify(grealm));
 
-                const programId = new PublicKey(GOVERNANCE_PROGRAM_ID);
+                //const programId = new PublicKey(GOVERNANCE_PROGRAM_ID);
 
                 //const gpbgprops = await getProposalsByGovernance(new Connection(THEINDEX_RPC_ENDPOINT), programId, new PublicKey(collectionAuthority.governancePublicKey || collectionAuthority.governance));
                 //console.log("gpbgprops: "+JSON.stringify(gpbgprops));
                 
-                let owner = collectionAuthority.governance;
-                if (grealm.owner.toBase58() !== GOVERNANCE_PROGRAM_ID){
-                    owner = grealm.owner.toBase58();
-                }
-
-                console.log("owner: "+owner);
-
-                const gprops = await getAllProposals(new Connection(THEINDEX_RPC_ENDPOINT), programId, new PublicKey(owner));
-                console.log("gprops: "+JSON.stringify(gprops));
-
+                const realmPk = grealm.pubkey;
+                const gprops = await getAllProposals(new Connection(THEINDEX_RPC_ENDPOINT, "recent"), grealm.owner, realmPk);
+                
                 let allprops: any[] = [];
                 for (let props of gprops){
                     for (let prop of props){
