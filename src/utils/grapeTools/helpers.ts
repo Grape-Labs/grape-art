@@ -16,7 +16,25 @@ import { getMetadata } from '../auctionHouse/helpers/accounts';
 
 import { AuctionHouseProgram  } from '@metaplex-foundation/mpl-auction-house';
 
-export async function getTokenPrice(tokenIn:string,tokenOut:string){
+
+//Get Prices RPC
+export async function getCoinGeckoPrice(token:string) {
+  const response = await fetch("https://api.coingecko.com/api/v3/simple/price?include_24hr_change=true&ids="+token+"&vs_currencies=usd",{
+    method: "GET",
+    //body: JSON.stringify(body),
+    headers: { "Content-Type": "application/json" },
+  }).catch((error)=>{
+    console.log("ERROR GETTING CG DATA!");
+    return null;
+  });
+  
+  try{
+    const json = await response.json();
+    return json;
+  }catch(e){return null;}
+}
+
+export async function getTokenPrice(tokenIn:string,tokenOut:string) {
   const body = {
     id: tokenIn,
     vsToken: tokenOut

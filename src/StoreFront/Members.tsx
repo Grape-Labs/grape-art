@@ -1,4 +1,4 @@
-import { getRealm, getAllTokenOwnerRecords, SetRealmAuthorityArgs } from '@solana/spl-governance';
+import { getRealm, getAllTokenOwnerRecords, getTokenOwnerRecordsByOwner } from '@solana/spl-governance';
 import { PublicKey, TokenAmount, Connection } from '@solana/web3.js';
 import { ENV, TokenListProvider, TokenInfo } from '@solana/spl-token-registry';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
@@ -147,6 +147,7 @@ function TablePaginationActions(props) {
 function RenderGovernanceMembersTable(props:any) {
     const [loading, setLoading] = React.useState(false);
     //const [proposals, setProposals] = React.useState(props.proposals);
+    const participating = props.participating;
     const members = props.members;
     const { connection } = useConnection();
     const { publicKey } = useWallet();
@@ -190,6 +191,7 @@ function RenderGovernanceMembersTable(props:any) {
     }
 
     const ProfilePicture = (props:any) => {
+        const participating = props.participating;
         const [address, setAddress] = React.useState(props.address);
         const [loadingpicture, setLoadingPicture] = React.useState(false);
         const [solanaDomain, setSolanaDomain] = React.useState(null);
@@ -229,7 +231,10 @@ function RenderGovernanceMembersTable(props:any) {
                 //const interval = setTimeout(() => {
                     if (address){
                         fetchProfilePicture();
-                        fetchSolanaDomain();
+                        if (participating)
+                            fetchSolanaDomain();
+                        else
+                            setSolanaDomain(trimAddress(address, 6))
                     }
                 //}, 500);
             }
@@ -320,7 +325,7 @@ function RenderGovernanceMembersTable(props:any) {
                                     <TableRow key={index} sx={{borderBottom:"none"}}>
                                         <TableCell>
                                             <Typography variant="h6">
-                                                <ProfilePicture address={item.account.governingTokenOwner.toBase58()} />
+                                                <ProfilePicture address={item.account.governingTokenOwner.toBase58()} participating={participating} />
                                             </Typography>
                                         </TableCell>
                                         <TableCell align="center" >
@@ -336,30 +341,49 @@ function RenderGovernanceMembersTable(props:any) {
 
                                         <TableCell>
                                             <Typography variant="h6">
+                                               
+                                                {ValidateAddress(item.account.governingTokenOwner.toBase58()) &&
+                                                    <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                                                        {participating ?
+                                                            <Tooltip title="Send a direct message">
+                                                                <Button
+                                                                    onClick={() => {
+                                                                        open();
+                                                                        navigation?.showCreateThread(item.account.governingTokenOwner.toBase58());
+                                                                    }}
+                                                                    sx={{
+                                                                        textTransform: 'none',
+                                                                        borderRadius: '17px',
+                                                                        transition:
+                                                                            'opacity 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
+                                                                    
+                                                                    }}
+                                                                >
+                                                                    <Chat
+                                                                        sx={{ fontSize: 16, color: 'white' }}
+                                                                    />
+                                                                </Button>
+                                                            </Tooltip>
+                                                        :
+                                                            <Tooltip title="Join this community governance to direct message">
+                                                                <Button
+                                                                    sx={{
+                                                                        textTransform: 'none',
+                                                                        borderRadius: '17px',
+                                                                        transition:
+                                                                            'opacity 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
+                                                                    
+                                                                    }}
+                                                                >
+                                                                    <Chat
+                                                                        sx={{ fontSize: 16, color: 'white' }}
+                                                                    />
+                                                                </Button>
+                                                            </Tooltip>
+                                                        }
+                                                    </Box>
+                                                }
                                                 
-                                            {ValidateAddress(item.account.governingTokenOwner.toBase58()) &&
-                                                <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                                                    <Tooltip title="Send a direct message">
-                                                        <Button
-                                                            onClick={() => {
-                                                                open();
-                                                                navigation?.showCreateThread(item.account.governingTokenOwner.toBase58());
-                                                            }}
-                                                            sx={{
-                                                                textTransform: 'none',
-                                                                borderRadius: '17px',
-                                                                transition:
-                                                                    'opacity 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
-                                                            
-                                                            }}
-                                                        >
-                                                            <Chat
-                                                                sx={{ fontSize: 16, color: 'white' }}
-                                                            />
-                                                        </Button>
-                                                    </Tooltip>
-                                                </Box>
-                                            }
                                                 
 
                                             </Typography>
@@ -408,17 +432,27 @@ export function MembersView(props: any) {
     const { connection } = useConnection();
     const { publicKey } = useWallet();
     const [realm, setRealm] = React.useState(null);
-    
+    const [participating, setParticipating] = React.useState(false)
     const GOVERNANCE_PROGRAM_ID = 'GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw';
 
     const getGovernanceMembers = async () => {
         if (!loading){
             setLoading(true);
             try{
-
-                console.log("with governance: "+collectionAuthority.governance);
-
                 const programId = new PublicKey(GOVERNANCE_PROGRAM_ID);
+                
+                console.log("with governance: "+collectionAuthority.governance);
+                
+                const ownerRecordsbyOwner = await getTokenOwnerRecordsByOwner(connection, programId, publicKey);
+                // check if part of this realm
+                var pcp = false;
+                for (var realm of ownerRecordsbyOwner){
+                    console.log("realm: "+JSON.stringify(realm))
+                    if (realm.account.realm.toBase58() === collectionAuthority.governance)
+                        pcp = true;
+                }
+                setParticipating(pcp);
+
                 const grealm = await getRealm(new Connection(THEINDEX_RPC_ENDPOINT), new PublicKey(collectionAuthority.governance))
                 setRealm(grealm);
 
@@ -432,6 +466,7 @@ export function MembersView(props: any) {
                 
                 //console.log("trecords: "+JSON.stringify(trecords));
                 setMembers(sortedResults);
+            
             }catch(e){console.log("ERR: "+e)}
         } else{
 
@@ -440,8 +475,10 @@ export function MembersView(props: any) {
     }
 
     React.useEffect(() => { 
-        if (publicKey && !loading)
+        if (publicKey && !loading){
+            
             getGovernanceMembers();
+        }
     }, [publicKey]);
     
     if (publicKey){
@@ -483,12 +520,30 @@ export function MembersView(props: any) {
                             </>
                         }
                     
-                        <RenderGovernanceMembersTable members={members} />
+                        <RenderGovernanceMembersTable members={members} participating={participating} />
                     </Box>
                                 
                 );
             }else{
+                /*
+                if (!participating){
+                    return (
+                        <Box
+                            sx={{
+                                background: 'rgba(0, 0, 0, 0.6)',
+                                borderRadius: '17px',
+                                p:4
+                            }} 
+                        > 
+                            <Typography variant="h4">
+                                You are not participating in this governance
+                            </Typography>
+                        </Box>
+                    );
+                } else {
+                    */
                 return (<></>);
+                
             }
             
         }

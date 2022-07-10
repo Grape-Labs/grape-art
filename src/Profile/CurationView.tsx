@@ -56,7 +56,7 @@ export default function CurationView(props: any){
     const NAME_SPACE = 'Grape';
     const GLOBAL_NAME_SPACE = '';
     const NETWORK = Network.SOLANA;
-    const FIRST = 12; // The number of users in followings/followers list for each fetch
+    const FIRST = 24; // The number of users in followings/followers list for each fetch
     const rowsperpage = 1500;
 
     const cyberConnect = new CyberConnect({

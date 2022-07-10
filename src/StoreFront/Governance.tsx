@@ -1,9 +1,8 @@
-import { getRealm, getAllProposals, getProposalsByGovernance } from '@solana/spl-governance';
+import { getRealm, getAllProposals, getTokenOwnerRecordsByOwner } from '@solana/spl-governance';
 import { PublicKey, TokenAmount, Connection } from '@solana/web3.js';
 import { ENV, TokenListProvider, TokenInfo } from '@solana/spl-token-registry';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import * as React from 'react';
-import BN from 'bn.js';
 import { styled, useTheme } from '@mui/material/styles';
 import {
   Typography,
@@ -360,7 +359,8 @@ export function GovernanceView(props: any) {
     const { connection } = useConnection();
     const { publicKey } = useWallet();
     const [proposals, setProposals] = React.useState(null);
-    
+    const [participating, setParticipating] = React.useState(false)
+
     const GOVERNANCE_PROGRAM_ID = 'GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw';
 
     const getTokens = async () => {
@@ -387,7 +387,18 @@ export function GovernanceView(props: any) {
             try{
 
                 console.log("with governance: "+collectionAuthority.governance);
-                
+                const programId = new PublicKey(GOVERNANCE_PROGRAM_ID);
+
+                const ownerRecordsbyOwner = await getTokenOwnerRecordsByOwner(connection, programId, publicKey);
+                // check if part of this realm
+                var pcp = false;
+                for (var realm of ownerRecordsbyOwner){
+                    console.log("realm: "+JSON.stringify(realm))
+                    if (realm.account.realm.toBase58() === collectionAuthority.governance)
+                        pcp = true;
+                }
+                setParticipating(pcp);
+
                 const grealm = await getRealm(new Connection(THEINDEX_RPC_ENDPOINT), new PublicKey(collectionAuthority.governance))
                 setRealm(grealm);
                 console.log("realm: "+JSON.stringify(grealm));
