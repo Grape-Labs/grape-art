@@ -237,7 +237,7 @@ export default function OffersView(props:any){
                 closeSnackbar(eskey);
                 setRefresh(true);
             }, GRAPE_RPC_REFRESH);
-        }catch(e){
+        }catch(e:any){
             closeSnackbar();
             enqueueSnackbar(e.message ? `${e.name}: ${e.message}` : e.name, { variant: 'error' });
             //enqueueSnackbar(`${t('Error')}: ${(e)}`,{ variant: 'error' });
@@ -297,7 +297,7 @@ export default function OffersView(props:any){
             }, GRAPE_RPC_REFRESH);
             /*console.log('Withdrew', offerAmount, amountAdjusted, 'from your account with Auction House',
                 AUCTION_HOUSE_ADDRESS, '. New Balance:', currBal - amountAdjusted,);*/
-        } catch(e){
+        } catch(e:any){
             closeSnackbar()
             enqueueSnackbar(e.message ? `${e.name}: ${e.message}` : e.name, { variant: 'error' });
             //enqueueSnackbar(`Error: ${(e)}`,{ variant: 'error' });
@@ -373,7 +373,7 @@ export default function OffersView(props:any){
                             closeSnackbar(eskey);
                             setRefresh(true);
                         }, GRAPE_RPC_REFRESH);
-                    } catch(e){
+                    } catch(e:any){
                         closeSnackbar();
                         enqueueSnackbar(e.message ? `${e.name}: ${e.message}` : e.name, { variant: 'error' });
                         console.log("Error: "+JSON.stringify(e));
@@ -421,7 +421,7 @@ export default function OffersView(props:any){
                             closeSnackbar(eskey);
                             setRefresh(true);
                         }, GRAPE_RPC_REFRESH);
-                    } catch(e){
+                    } catch(e:any){
                         closeSnackbar();
                         enqueueSnackbar(e.message ? `${e.name}: ${e.message}` : e.name, { variant: 'error' });
                         console.log("Error: "+e);
@@ -481,7 +481,7 @@ export default function OffersView(props:any){
                                 );
                                 enqueueSnackbar(`${t('Offer cancel complete')} `,{ variant: 'success', action:snackaction });                 
                             }
-                        } catch(e){
+                        } catch(e:any){
                             closeSnackbar();
                             enqueueSnackbar(e.message ? `${e.name}: ${e.message}` : e.name, { variant: 'error' });
                             console.log("Error: "+e);
@@ -518,7 +518,7 @@ export default function OffersView(props:any){
                                 );
                                 enqueueSnackbar(`${t('Grapevine Withdrawal complete')} `,{ variant: 'success', action:snackaction });                     
                             }
-                        } catch(e){
+                        } catch(e:any){
                             closeSnackbar();
                             enqueueSnackbar(e.message ? `${e.name}: ${e.message}` : e.name, { variant: 'error' });
                             console.log("Error: "+e);

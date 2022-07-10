@@ -1,6 +1,8 @@
 import { PublicKey, TokenAmount, Connection } from '@solana/web3.js';
 import { ENV, TokenListProvider, TokenInfo } from '@solana/spl-token-registry';
+import { TOKEN_PROGRAM_ID } from '@solana/spl-token-v2';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
+import { getOwnedTokenAccounts } from '../utils/governanceTools/tokens';
 import * as React from 'react';
 import BN from 'bn.js';
 import { styled, useTheme } from '@mui/material/styles';
@@ -9,6 +11,9 @@ import {
   Button,
   Grid,
   Box,
+  Card,
+  CardActions,
+  CardContent,
   Paper,
   Avatar,
   Skeleton,
@@ -68,12 +73,13 @@ export function TokenView(props: any) {
     const collectionAuthority = props.collectionAuthority;
     const [loading, setLoading] = React.useState(false);
     const [token, setToken] = React.useState(null);
-    const { connection } = useConnection();
+    const connection = new Connection(GRAPE_RPC_ENDPOINT);
     const { publicKey } = useWallet();
     const [realm, setRealm] = React.useState(null);
     const [tokenMap, setTokenMap] = React.useState<Map<string,TokenInfo>>(undefined);
     const [tokenPrice, setTokenPrice] = React.useState(null);
     const [coinGeckoPrice,setCoinGeckoPrice] = React.useState(null);
+    const [myToken, setMyToken] = React.useState(null);
 
     const fetchTokens = async () => {
         const tokens = await new TokenListProvider().resolve();
@@ -83,24 +89,48 @@ export function TokenView(props: any) {
             return map;
         }, new Map())
         setTokenMap(tokenMapValue);
+        return tokenMapValue;
     }
 
+    const getMyTokenInfo = async () => {
+        const body = {
+            method: "getTokenAccountsByOwner",
+            jsonrpc: "2.0",
+            params: [
+                publicKey.toBase58(),
+              { programId: TOKEN_PROGRAM_ID },
+              { encoding: "jsonParsed", commitment: "processed" },
+            ],
+            id: "35f0036a-3801-4485-b573-2bf29a7c77d2",
+        };
+        const resp = await window.fetch(GRAPE_RPC_ENDPOINT, {
+            method: "POST",
+            body: JSON.stringify(body),
+            headers: { "Content-Type": "application/json" },
+        })
+        const json = await resp.json();
+        
+        for (var token of json.result.value){
+            if (token.account.data.parsed.info.mint === collectionAuthority.address){
+                setMyToken(token);
+            }
+        }
 
+        console.log("myTokens: "+JSON.stringify(json));
+    }
 
     const getTokenInfo = async () => {
         if (!loading){
             setLoading(true);
             try{
+                const tknMap = await fetchTokens();
 
-                await fetchTokens();
-
-                const tkn = tokenMap.get(collectionAuthority.address);
+                const tkn = tknMap.get(collectionAuthority.address);
                 setToken(tkn)
 
                 const tknPrice = await getTokenPrice(tkn.symbol, "SOL");
-
+                
                 setTokenPrice(tknPrice);
-
                 const cgPrice = await getCoinGeckoPrice(tkn.extensions.coingeckoId);
 
                 setCoinGeckoPrice(cgPrice);
@@ -118,8 +148,11 @@ export function TokenView(props: any) {
     }
 
     React.useEffect(() => { 
-        if (!loading)
+        if (!loading){
             getTokenInfo();
+        }
+        if (publicKey)
+            getMyTokenInfo();
     }, [publicKey]);
     
     
@@ -147,7 +180,16 @@ export function TokenView(props: any) {
                 > 
                     <>
                         <Typography variant="h4">
-                            {token.name}
+                            <Grid container direction="row">
+                                <Grid item>
+                                    {token.name}
+                                </Grid>
+                                <Grid item sx={{ml:1}}>
+                                    <Avatar alt={token.address} src={token.logoURI} sx={{ width: 40, height: 40, bgcolor: 'rgb(0, 0, 0)' }}>
+                                        {token.address.substr(0,2)}
+                                    </Avatar>
+                                </Grid>
+                            </Grid>
                         </Typography>
                         <Typography variant="caption">
                             {token.address}
@@ -155,26 +197,110 @@ export function TokenView(props: any) {
                     </>
                     
 
-                    <Box>
-                    {JSON.stringify(token)}
+                    <Box sx={{mt:2}}>
 
-                    {tokenPrice &&
-                        <>
-                            {JSON.stringify(tokenPrice)}
-                        </>
-                    }
+                        <Grid container spacing={2}>
+                        
+                        {tokenPrice &&
+                            <Grid item xs={6}>
+                                <Card sx={{borderRadius:'17px'}}>
+                                    <CardContent>
+                                        <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+                                        Token Price
+                                        </Typography>
+                                        <Typography variant="h5" component="div">
+                                            1 SOL = {1/tokenPrice.data.price} {token.name}
+                                        </Typography>
+                                        <Typography variant="body2" component="div">
+                                            1 {token.name} = {tokenPrice.data.price} SOL
+                                        </Typography>
+                                        <Typography sx={{ mb: 1.5 }} color="text.secondary" variant="caption">
+                                        Source: Jupiter Aggregator
+                                        </Typography>
+                                    </CardContent>
+                                </Card>
+                            </Grid>
+                        }
 
-                    {coinGeckoPrice &&
-                        <>
-                            {JSON.stringify(coinGeckoPrice)}
-                        </>
-                    }
+                        {coinGeckoPrice &&
+                            <Grid item xs={6}>
+                                <Card sx={{borderRadius:'17px'}}>
+                                    <CardContent>
+                                        <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+                                        Token Price
+                                        </Typography>
+                                        <Typography variant="h5" component="div">
+                                            <Grid container direction="row">
+                                                <Grid item>
+                                                    {coinGeckoPrice[token.extensions.coingeckoId]?.usd} USD
+                                                </Grid>
+                                                <Grid item>
+                                                    {coinGeckoPrice[token.extensions.coingeckoId]?.usd_24h_change < 0 ?
+                                                        <Typography sx={{color:'red'}}>
+                                                        {coinGeckoPrice[token.extensions.coingeckoId]?.usd_24h_change.toFixed(2)}%
+                                                        </Typography>
+                                                    :
+                                                        <Typography sx={{color:'green'}}>
+                                                        {coinGeckoPrice[token.extensions.coingeckoId]?.usd_24h_change.toFixed(2)}%
+                                                        </Typography>
+                                                    }
+                                                </Grid>
+                                            </Grid>
+                                            <Typography variant="body2" component="div">
+                                                1 USD = {1/coinGeckoPrice[token.extensions.coingeckoId]?.usd} {token.name}
+                                            </Typography>
+                                        </Typography>
+                                        <Typography sx={{ mb: 1.5 }} color="text.secondary" variant="caption">
+                                        Source: CoinGecko
+                                        </Typography>
+                                    </CardContent>
+                                </Card>
+                            </Grid>
+                        }
+
+                        {publicKey && myToken &&
+                            <Grid item xs={12}>
+                                <Card sx={{borderRadius:'17px'}}>
+                                    <CardContent>
+                                        <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+                                        Balance
+                                        </Typography>
+                                        <Typography variant="h5" component="div">
+                                        
+                                        {myToken.account.data.parsed.info.tokenAmount.uiAmount}
+                                        </Typography>
+                                        <Typography sx={{ mb: 1.5 }} color="text.secondary" variant="caption">
+                                        Source: {publicKey.toBase58()}
+                                        </Typography>
+                                    </CardContent>
+                                    <CardActions>
+                                        <Button size="small">SWAP</Button>
+                                        <Button size="small">SEND</Button>
+                                    </CardActions>
+                                </Card>
+                            </Grid>
+                        }
+                        {publicKey && !myToken &&
+                            <Grid item xs={12}>
+                                <Card sx={{borderRadius:'17px'}}>
+                                    <CardContent>
+                                        <Typography variant="h5" component="div">
+                                        YOU ARE NOT PARTICIPATING IN THIS TOKENIZED COMMUNITY
+                                        </Typography>
+                                    </CardContent>
+                                    <CardActions>
+                                        <Button size="small">SWAP &amp; GET TOKENS TO PARTICIPATE</Button>
+                                    </CardActions>
+                                </Card>
+                            </Grid>
+                        }
+                        </Grid>
                     </Box>
                 </Box>
                             
             );
         }else{
-            return (<></>);
+            return (<>???</>);
         }
         
     }

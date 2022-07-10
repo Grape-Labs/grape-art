@@ -360,6 +360,7 @@ export function GovernanceView(props: any) {
     const { publicKey } = useWallet();
     const [proposals, setProposals] = React.useState(null);
     const [participating, setParticipating] = React.useState(false)
+    const [participatingRealm, setParticipatingRealm] = React.useState(null)
 
     const GOVERNANCE_PROGRAM_ID = 'GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw';
 
@@ -394,8 +395,10 @@ export function GovernanceView(props: any) {
                 var pcp = false;
                 for (var realm of ownerRecordsbyOwner){
                     console.log("realm: "+JSON.stringify(realm))
-                    if (realm.account.realm.toBase58() === collectionAuthority.governance)
+                    if (realm.account.realm.toBase58() === collectionAuthority.governance){
                         pcp = true;
+                        setParticipatingRealm(realm);
+                    }
                 }
                 setParticipating(pcp);
 
