@@ -112,6 +112,7 @@ import ListForCollectionView from './ListForCollection';
 import ActivityView from './Activity';
 import { GovernanceView } from './Governance';
 import { MembersView } from './Members';
+import { TokenView } from './Token';
 
 import { MakeLinkableAddress, ValidateAddress, trimAddress, timeAgo } from '../utils/grapeTools/WalletAddress'; // global key handling
 import { ConstructionOutlined, SettingsRemoteOutlined } from "@mui/icons-material";
@@ -1725,12 +1726,17 @@ export function StoreFrontView(this: any, props: any) {
                         {collectionAuthority?.governance &&
                             <Tab icon={<PeopleIcon />} aria-label="Holders" value={NavPanel.Holders} sx={{color:'white'}} title="Members" />
                         }
-
-
                         <Tab icon={<ForumIcon />} aria-label="Community" disabled={true} value={NavPanel.Chat} sx={{color:'white'}} />
-                        
                     </Tabs>
 
+                    <TabPanel value={tabValue} index={NavPanel.Token}>
+                        <Box> 
+                            {collectionAuthority &&  
+                                <TokenView mode={1} collectionAuthority={collectionAuthority} tokenPrice={tokenPrice}/>
+                            }
+                        </Box>
+                    </TabPanel>
+                    
                     <TabPanel value={tabValue} index={NavPanel.Marketplace}>
                         <Box> 
                             {collectionMintList &&  
@@ -1741,7 +1747,7 @@ export function StoreFrontView(this: any, props: any) {
 
                     <TabPanel value={tabValue} index={NavPanel.Governance}>
                         <Box> 
-                            {collectionMintList &&  
+                            {collectionAuthority &&  
                                 <GovernanceView collectionAuthority={collectionAuthority} />
                             }
                         </Box>
@@ -1749,7 +1755,7 @@ export function StoreFrontView(this: any, props: any) {
 
                     <TabPanel value={tabValue} index={NavPanel.Holders}>
                         <Box> 
-                            {collectionMintList &&  
+                            {collectionAuthority &&  
                                 <MembersView collectionAuthority={collectionAuthority} />
                             }
                         </Box>

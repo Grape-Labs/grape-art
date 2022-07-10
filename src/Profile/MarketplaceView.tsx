@@ -17,6 +17,8 @@ import {
 } from '@mui/material';
 
 import ShareSocialURL from '../utils/grapeTools/ShareUrl';
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+
 import { MakeLinkableAddress, ValidateAddress, trimAddress, timeAgo } from '../utils/grapeTools/WalletAddress'; // global key handling
 
 import { CardActionArea } from '@mui/material';
@@ -197,11 +199,17 @@ export default function MarketplaceView(props: any) {
                                                     sx={{borderRadius:'24px', color:'white'}}>
                                                     {t('View DAO')}</Button>
                                                 */}
+                                                {featured?.governance &&
+                                                    <Button size="small" disabled={true}>
+                                                        <AccountBalanceIcon />
+                                                    </Button>
+                                                }
+
                                                 <Button size="small"    
                                                     component={Link} to={`${GRAPE_COLLECTION}${featured.vanityUrl}`}
                                                     sx={{borderRadius:'24px', color:'white'}}
-                                                >{t('View Collection')}</Button>
-                                                <ShareSocialURL url={'https://grape.art'+GRAPE_COLLECTION+featured.vanityUrl} title={`Collection: ${featured.name}`} />
+                                                >View {featured?.tokenType} Community</Button>
+                                                <ShareSocialURL url={'https://grape.art'+GRAPE_COLLECTION+featured.vanityUrl} title={`Community: ${featured.name}`} />
                                             </ButtonGroup>
                                         :
                                             <>Coming soon...</>

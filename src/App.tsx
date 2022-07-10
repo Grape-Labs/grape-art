@@ -216,6 +216,9 @@ function DashboardContent(){
                                                             <Route path="collection/*" element={<StoreFrontView />}>
                                                                 <Route path=":handlekey" element={<StoreFrontView />} />
                                                             </Route>
+                                                            <Route path="community/*" element={<StoreFrontView />}>
+                                                                <Route path=":handlekey" element={<StoreFrontView />} />
+                                                            </Route>
 
                                                             <Route path="profile/*" element={<ProfileView />}>
                                                                 <Route path=":handlekey" element={<ProfileView />} />
