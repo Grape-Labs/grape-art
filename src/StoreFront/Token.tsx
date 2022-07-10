@@ -29,11 +29,15 @@ import {
   Tooltip,
   CircularProgress,
   LinearProgress,
+  ButtonGroup,
 } from '@mui/material/';
 
 import {  
     getTokenPrice,
     getCoinGeckoPrice } from '../utils/grapeTools/helpers';
+
+import JupiterSwap from "./Swap";
+import SendToken from "./Send";
 
 //import {formatAmount, getFormattedNumberToLocale} from '../Meanfi/helpers/ui';
 //import { PretifyCommaNumber } from '../../components/Tools/PretifyCommaNumber';
@@ -80,6 +84,7 @@ export function TokenView(props: any) {
     const [tokenPrice, setTokenPrice] = React.useState(null);
     const [coinGeckoPrice,setCoinGeckoPrice] = React.useState(null);
     const [myToken, setMyToken] = React.useState(null);
+    const [portfolioPositions, setPortfolioPositions] = React.useState(null);
 
     const fetchTokens = async () => {
         const tokens = await new TokenListProvider().resolve();
@@ -110,6 +115,8 @@ export function TokenView(props: any) {
         })
         const json = await resp.json();
         
+        setPortfolioPositions(json.result.value);
+
         for (var token of json.result.value){
             if (token.account.data.parsed.info.mint === collectionAuthority.address){
                 setMyToken(token);
@@ -274,8 +281,8 @@ export function TokenView(props: any) {
                                         </Typography>
                                     </CardContent>
                                     <CardActions>
-                                        <Button size="small">SWAP</Button>
-                                        <Button size="small">SEND</Button>
+                                        <JupiterSwap swapfrom={'So11111111111111111111111111111111111111112'} swapto={token.address} portfolioPositions={portfolioPositions} tokenMap={tokenMap}/>
+                                        <SendToken mint={token.address} name={token.name} logoURI={token.logoURI} balance={token.balance} conversionrate={1} showTokenName={false} sendType={0} />
                                     </CardActions>
                                 </Card>
                             </Grid>
