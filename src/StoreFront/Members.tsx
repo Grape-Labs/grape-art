@@ -29,6 +29,8 @@ import {
 
 //import {formatAmount, getFormattedNumberToLocale} from '../Meanfi/helpers/ui';
 //import { PretifyCommaNumber } from '../../components/Tools/PretifyCommaNumber';
+import { getProfilePicture } from '@solflare-wallet/pfp';
+import { findDisplayName } from '../utils/name-service';
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
 
 import moment from 'moment';
@@ -148,7 +150,6 @@ function RenderGovernanceMembersTable(props:any) {
     const members = props.members;
     const { connection } = useConnection();
     const { publicKey } = useWallet();
-    
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
     // Avoid a layout jump when reaching the last page with empty rows.
@@ -188,118 +189,216 @@ function RenderGovernanceMembersTable(props:any) {
         )
     }
 
+    const ProfilePicture = (props:any) => {
+        const [address, setAddress] = React.useState(props.address);
+        const [loadingpicture, setLoadingPicture] = React.useState(false);
+        const [solanaDomain, setSolanaDomain] = React.useState(null);
+        const [profilePictureUrl, setProfilePictureUrl] = React.useState(null);
+        const [hasProfilePicture, setHasProfilePicture] = React.useState(false);
+        const countRef = React.useRef(0);
+
+        const fetchProfilePicture = async () => {
+            setLoadingPicture(true);  
+                //console.log("trying: "+address)
+                try{
+                    //console.log(countRef.current+": "+address+" - "+loadingpicture);
+                    const { isAvailable, url } = await getProfilePicture(new Connection(GRAPE_RPC_ENDPOINT), new PublicKey(address));
+                    
+                    let img_url = url;
+                    if (url)
+                        img_url = url.replace(/width=100/g, 'width=256');
+                    setProfilePictureUrl(img_url);
+                    setHasProfilePicture(isAvailable);
+                    countRef.current++;
+                }catch(e){}
+            setLoadingPicture(false);
+        }
+
+        const fetchSolanaDomain = async () => {
+            const domain = await findDisplayName(new Connection(GRAPE_RPC_ENDPOINT), address);
+            if (domain) {
+                if (domain[0] !== address) {
+                    setSolanaDomain(domain[0]);
+                }
+            }
+        };
+
+        
+        React.useEffect(() => {       
+            if (!loadingpicture){
+                //const interval = setTimeout(() => {
+                    if (address){
+                        fetchProfilePicture();
+                        fetchSolanaDomain();
+                    }
+                //}, 500);
+            }
+        }, []);
+        
+        if (loadingpicture){
+            return (
+                <Grid container direction="row">
+                    <Grid item>
+                        <Avatar alt={address} sx={{ width: 30, height: 30, bgcolor: 'rgb(0, 0, 0)' }}>
+                            <CircularProgress size="1rem" />
+                        </Avatar>
+                    </Grid>
+                    <Grid item sx={{ml:1}}>
+                    {trimAddress(address,6)}
+                    </Grid>
+                </Grid>
+            )
+        }else{
+            
+            if (hasProfilePicture){
+                return (  
+                    <Grid container direction="row">
+                        <Grid item>
+                            <Avatar alt={address} src={profilePictureUrl} sx={{ width: 30, height: 30, bgcolor: 'rgb(0, 0, 0)' }}>
+                                {address.substr(0,2)}
+                            </Avatar>
+                        </Grid>
+                        <Grid item sx={{ml:1}}>
+                        {solanaDomain || trimAddress(address,6)}
+                        </Grid>
+                    </Grid>
+                );
+            
+            } else{
+                return (
+                    <>
+                    {jsNumberForAddress(address) ?
+                        <Grid container direction="row">
+                            <Grid item alignItems="center">
+                                <Jazzicon diameter={30} seed={jsNumberForAddress(address)} />
+                            </Grid>
+                            <Grid item  alignItems="center" sx={{ml:1}}>
+                                {solanaDomain || trimAddress(address,6)}
+                            </Grid>
+                        </Grid>
+                    :
+                        <Grid container direction="row">
+                            <Grid item alignItems="center">
+                                <Jazzicon diameter={30} seed={Math.round(Math.random() * 10000000)} />
+                            </Grid>
+                            <Grid item  alignItems="center" sx={{ml:1}}>
+                                {solanaDomain || trimAddress(address,6)}
+                            </Grid>
+                        </Grid>
+                    }
+                    </>
+                    
+                );
+            }
+        }
+    }
+
     
-        return (
-            <Table>
-                <TableContainer component={Paper} sx={{background:'none'}}>
-                    <StyledTable sx={{ minWidth: 500 }} size="small" aria-label="Portfolio Table">
-                        <TableHead>
-                            <TableRow>
-                                <TableCell><Typography variant="caption"></Typography></TableCell>
-                                <TableCell><Typography variant="caption">Member</Typography></TableCell>
-                                <TableCell><Typography variant="caption">Total Votes</Typography></TableCell>
-                                <TableCell><Typography variant="caption">Proposals</Typography></TableCell>
-                                <TableCell><Typography variant="caption"></Typography></TableCell>
-                                
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {/*proposals && (proposals).map((item: any, index:number) => (*/}
-                            {members && 
-                            <>  
-                                {(rowsPerPage > 0
-                                    ? members.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                    : members
-                                ).map((item:any, index:number) => (
-                                <>
-                                    {item?.pubkey && item?.account &&
-                                        <TableRow key={index} sx={{borderBottom:"none"}}>
-                                            <TableCell>
-                                                <Typography variant="h6">
-                                                    <Jazzicon diameter={25} seed={jsNumberForAddress(item.account.governingTokenOwner.toBase58())} />
-                                                </Typography>
-                                            </TableCell>
-                                            <TableCell>
-                                                <Typography variant="h6">
-                                                    {trimAddress(item.account.governingTokenOwner.toBase58(),6)}
-                                                </Typography>
-                                            </TableCell>
-                                            <TableCell align="center" >
-                                                <Typography variant="h6">
-                                                    {item.account.totalVotesCount}
-                                                </Typography>
-                                            </TableCell>
-                                            <TableCell align="center" >
-                                                <Typography variant="h6">
-                                                    {item.account.outstandingProposalCount}
-                                                </Typography>
-                                            </TableCell>
+    return (
+        <Table>
+            <TableContainer component={Paper} sx={{background:'none'}}>
+                <StyledTable sx={{ minWidth: 500 }} size="small" aria-label="Portfolio Table">
+                    <TableHead>
+                        <TableRow>
+                            <TableCell><Typography variant="caption">Member</Typography></TableCell>
+                            <TableCell><Typography variant="caption">Total Votes</Typography></TableCell>
+                            <TableCell><Typography variant="caption">Proposals</Typography></TableCell>
+                            <TableCell><Typography variant="caption"></Typography></TableCell>
+                            
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {/*proposals && (proposals).map((item: any, index:number) => (*/}
+                        {members && 
+                        <>  
+                            {(rowsPerPage > 0
+                                ? members.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                : members
+                            ).map((item:any, index:number) => (
+                            <>
+                                {item?.pubkey && item?.account &&
+                                    <TableRow key={index} sx={{borderBottom:"none"}}>
+                                        <TableCell>
+                                            <Typography variant="h6">
+                                                <ProfilePicture address={item.account.governingTokenOwner.toBase58()} />
+                                            </Typography>
+                                        </TableCell>
+                                        <TableCell align="center" >
+                                            <Typography variant="h6">
+                                                {item.account.totalVotesCount}
+                                            </Typography>
+                                        </TableCell>
+                                        <TableCell align="center" >
+                                            <Typography variant="h6">
+                                                {item.account.outstandingProposalCount}
+                                            </Typography>
+                                        </TableCell>
 
-                                            <TableCell>
-                                                <Typography variant="h6">
-                                                    
-                                                {ValidateAddress(item.account.governingTokenOwner.toBase58()) &&
-                                                    <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                                                        <Tooltip title="Send a direct message">
-                                                            <Button
-                                                                onClick={() => {
-                                                                    open();
-                                                                    navigation?.showCreateThread(item.account.governingTokenOwner.toBase58());
-                                                                }}
-                                                                sx={{
-                                                                    textTransform: 'none',
-                                                                    borderRadius: '17px',
-                                                                    transition:
-                                                                        'opacity 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
-                                                                
-                                                                }}
-                                                            >
-                                                                <Chat
-                                                                    sx={{ fontSize: 16, color: 'white' }}
-                                                                />
-                                                            </Button>
-                                                        </Tooltip>
-                                                    </Box>
-                                                }
-                                                    
+                                        <TableCell>
+                                            <Typography variant="h6">
+                                                
+                                            {ValidateAddress(item.account.governingTokenOwner.toBase58()) &&
+                                                <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                                                    <Tooltip title="Send a direct message">
+                                                        <Button
+                                                            onClick={() => {
+                                                                open();
+                                                                navigation?.showCreateThread(item.account.governingTokenOwner.toBase58());
+                                                            }}
+                                                            sx={{
+                                                                textTransform: 'none',
+                                                                borderRadius: '17px',
+                                                                transition:
+                                                                    'opacity 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
+                                                            
+                                                            }}
+                                                        >
+                                                            <Chat
+                                                                sx={{ fontSize: 16, color: 'white' }}
+                                                            />
+                                                        </Button>
+                                                    </Tooltip>
+                                                </Box>
+                                            }
+                                                
 
-                                                </Typography>
-                                            </TableCell>
-                                        </TableRow>
-                                    }
-                                </>
-
-                            ))}
+                                            </Typography>
+                                        </TableCell>
+                                    </TableRow>
+                                }
                             </>
-                            }
-                        </TableBody>
-                        
-                        <TableFooter>
-                            <TableRow>
-                                <TablePagination
-                                rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
-                                colSpan={5}
-                                count={members && members.length}
-                                rowsPerPage={rowsPerPage}
-                                page={page}
-                                SelectProps={{
-                                    inputProps: {
-                                    'aria-label': 'rows per page',
-                                    },
-                                    native: true,
-                                }}
-                                onPageChange={handleChangePage}
-                                onRowsPerPageChange={handleChangeRowsPerPage}
-                                ActionsComponent={TablePaginationActions}
-                                />
-                            </TableRow>
-                        </TableFooter>
-                        
-                        
-                    </StyledTable>
-                </TableContainer>
-            </Table>
-        )
+
+                        ))}
+                        </>
+                        }
+                    </TableBody>
+                    
+                    <TableFooter>
+                        <TableRow>
+                            <TablePagination
+                            rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
+                            colSpan={5}
+                            count={members && members.length}
+                            rowsPerPage={rowsPerPage}
+                            page={page}
+                            SelectProps={{
+                                inputProps: {
+                                'aria-label': 'rows per page',
+                                },
+                                native: true,
+                            }}
+                            onPageChange={handleChangePage}
+                            onRowsPerPageChange={handleChangeRowsPerPage}
+                            ActionsComponent={TablePaginationActions}
+                            />
+                        </TableRow>
+                    </TableFooter>
+                    
+                    
+                </StyledTable>
+            </TableContainer>
+        </Table>
+    )
 }
 
 export function MembersView(props: any) {
