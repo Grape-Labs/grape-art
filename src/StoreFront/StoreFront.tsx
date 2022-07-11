@@ -62,6 +62,7 @@ import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import StorefrontIcon from '@mui/icons-material/Storefront';
 import PeopleIcon from '@mui/icons-material/People';
 
+import RateReviewIcon from '@mui/icons-material/RateReview';
 import DiscordIcon from '../components/static/DiscordIcon';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
@@ -440,6 +441,7 @@ enum NavPanel {
     Marketplace,
     Governance,
     Holders,
+    Topics,
     Chat,
 }
 
@@ -1743,11 +1745,60 @@ export function StoreFrontView(this: any, props: any) {
                     }}
                 >
 
-                        {collectionMintList &&  
-                                <GalleryView mode={1} collectionMintList={collectionMintList} collectionAuthority={collectionAuthority} tokenPrice={tokenPrice}/>
+                    {/*collectionMintList &&  
+                            <GalleryView mode={1} collectionMintList={collectionMintList} collectionAuthority={collectionAuthority} tokenPrice={tokenPrice}/>
+                    */}
+                    
+                    <Tabs value={tabValue} onChange={handleTabChange} aria-label="grape community tabs" sx={{pl:2,color:'white'}} className="grape-community-tab">
+                        {collectionAuthority?.tokenType && collectionAuthority?.tokenType === 'SPL' &&
+                            <Tab icon={<SolCurrencyIcon />} aria-label="Token" value={NavPanel.Token} sx={{color:'white'}} title="Tokenized Community" />
                         }
+                        {collectionAuthority?.tokenType && collectionAuthority?.tokenType === 'NFT' &&
+                            <Tab icon={<StorefrontIcon />} aria-label="Marketplace" value={NavPanel.Marketplace} sx={{color:'white'}} title="Marketplace" />
+                        }
+                        {collectionAuthority?.governance &&
+                            <Tab icon={<AccountBalanceIcon />} aria-label="Governance" value={NavPanel.Governance} sx={{color:'white'}} title="Governance" />
+                        }
+                        {collectionAuthority?.governance &&
+                            <Tab icon={<PeopleIcon />} aria-label="Holders" value={NavPanel.Holders} sx={{color:'white'}} title="Members" />
+                        }
+
+                        <Tab icon={<RateReviewIcon />} aria-label="Topics" disabled={true} value={NavPanel.Topics} sx={{color:'white'}} />
+                        <Tab icon={<ForumIcon />} aria-label="Chat" disabled={true} value={NavPanel.Chat} sx={{color:'white'}} />
+                        
+                    </Tabs>
+
+                    <TabPanel value={tabValue} index={NavPanel.Token}>
+                        <Box> 
+                            {collectionAuthority &&  
+                                <TokenView mode={1} collectionAuthority={collectionAuthority} tokenPrice={tokenPrice}/>
+                            }
+                        </Box>
+                    </TabPanel>
                     
-                    
+                    <TabPanel value={tabValue} index={NavPanel.Marketplace}>
+                        <Box> 
+                            {collectionMintList &&  
+                                <GalleryView mode={1} collectionMintList={collectionMintList} collectionAuthority={collectionAuthority} tokenPrice={tokenPrice}/>
+                            }
+                        </Box>
+                    </TabPanel>
+
+                    <TabPanel value={tabValue} index={NavPanel.Governance}>
+                        <Box> 
+                            {collectionAuthority &&  
+                                <GovernanceView collectionAuthority={collectionAuthority} />
+                            }
+                        </Box>
+                    </TabPanel>
+
+                    <TabPanel value={tabValue} index={NavPanel.Holders}>
+                        <Box> 
+                            {collectionAuthority &&  
+                                <MembersView collectionAuthority={collectionAuthority} />
+                            }
+                        </Box>
+                    </TabPanel>
 
                 </Box>
         </React.Fragment>
