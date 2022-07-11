@@ -529,6 +529,7 @@ export function GovernanceView(props: any) {
                         sx={{
                             background: 'rgba(0, 0, 0, 0.6)',
                             borderRadius: '17px',
+                            overflow: 'hidden',
                             p:4
                         }} 
                     > 

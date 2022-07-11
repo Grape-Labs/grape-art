@@ -130,8 +130,13 @@ function JupiterForm(props: any) {
     const [userTokenBalanceInput, setTokenBalanceInput] = useState(0);
     const [convertedAmountValue, setConvertedAmountValue] = useState(null);
     const [amounttoswap, setTokensToSwap] = useState(null);
-    const [swapfrom, setSwapFrom] = useState('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v');
-    const [swapto, setSwapTo] = useState('8upjSpvjcdpuzhfR1zriwg5NXkwDruejqNE9WNbPRtyA');
+    
+    //const [swapfrom, setSwapFrom] = useState('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v');
+    //const [swapto, setSwapTo] = useState('8upjSpvjcdpuzhfR1zriwg5NXkwDruejqNE9WNbPRtyA');
+    
+    const [swapfrom, setSwapFrom] = useState(props.swapfrom);
+    const [swapto, setSwapTo] = useState(props.swapto);
+    
     const [tokenMap, setTokenMap] = useState<Map<string,TokenInfo>>(undefined);
     const [inputValue, setInputValue] = useState('')
     const [selectedValue, setSelectedValue] = useState<TokenInfo>()
@@ -143,7 +148,7 @@ function JupiterForm(props: any) {
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
     const [ autoCompleteOptions, setAutoCompleteOptions ] = useState([]);
     const [ allAutoCompleteOptions, setAllAutoCompleteOptions ] = useState([]);
-    const wallet = useWallet();
+    const {publicKey, wallet, signAllTransactions, signTransaction, sendTransaction} = useWallet();
     const connection = useConnection();
     const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
 
@@ -223,10 +228,10 @@ function JupiterForm(props: any) {
         if (
             !loading &&
             routes?.[0] &&
-            wallet.signAllTransactions &&
-            wallet.signTransaction &&
-            wallet.sendTransaction &&
-            wallet.publicKey
+            signAllTransactions &&
+            signTransaction &&
+            sendTransaction &&
+            publicKey
         ) {
             enqueueSnackbar(`Preparing to swap ${amounttoswap.toString()} ${tokenMap.get(swapfrom).name} for at least ${minimumReceived} ${tokenMap.get(swapto).name}`,{ variant: 'info' });
 
@@ -237,10 +242,10 @@ function JupiterForm(props: any) {
             
             const swapResult = await exchange({
                 wallet: {
-                    sendTransaction: wallet.sendTransaction,
-                    publicKey: wallet.publicKey,
-                    signAllTransactions: wallet.signAllTransactions,
-                    signTransaction: wallet.signTransaction,
+                    sendTransaction: sendTransaction,
+                    publicKey: publicKey,
+                    signAllTransactions: signAllTransactions,
+                    signTransaction: signTransaction,
                 },
                 routeInfo: routes[0],
                 onTransaction: async (txid) => {
@@ -273,8 +278,7 @@ function JupiterForm(props: any) {
                 enqueueSnackbar(`Swapped: ${swapResult.txid}`,{ variant: 'success' });
                 setOpen(false);
             }
-        } else
-        {
+        } else{
             enqueueSnackbar(`Unable to setup a valid swap`,{ variant: 'error' });
         }
     }
@@ -286,7 +290,7 @@ function JupiterForm(props: any) {
 
     function getPortfolioTokenBalance(swapingfrom:string){
         let balance = 0;
-        console.log("props.... "+JSON.stringify(props.portfolioPositions));
+        //console.log("props.... "+JSON.stringify(props.portfolioPositions));
 
         props.portfolioPositions.map((token: any) => {
             if (token.account.data.parsed.info.mint === swapingfrom){
@@ -315,20 +319,33 @@ function JupiterForm(props: any) {
         })
         setMinimumReceived(routes[0].outAmountWithSlippage / (10 ** 6))
 
-        setRate(`${(routes[0].outAmount / (10 ** 6))/ (routes[0].inAmount / (10 ** tokenMap.get(swapfrom)!.decimals))} GRAPE per ${tokenMap.get(swapfrom)!.symbol}`)
+        setRate(`${(routes[0].outAmount / (10 ** 6))/ (routes[0].inAmount / (10 ** tokenMap.get(swapfrom)!.decimals))} ${tokenMap.get(swapto)!.symbol} per ${tokenMap.get(swapfrom)!.symbol}`)
     }, [routes, tokenMap])
 
     useEffect(()=>{
         setAutoCompleteOptions(allAutoCompleteOptions.filter( v => (v.name.toLowerCase() + v.symbol.toLowerCase()).includes(inputValue.toLowerCase())))
     },[inputValue])
 
+    const getSolBalance = async () => {
+        const sol = await ggoconnection.getBalance(publicKey);
+        //console.log("Balance: "+JSON.stringify(sol))
+        const adjustedAmountToSend = (sol / Math.pow(10, 9));
+        setPortfolioSwapTokenAvailableBalance(adjustedAmountToSend);
+    }
+
     useEffect(()=>{
         if(!selectedValue){
             return;
         }
+
         setSwapFrom(selectedValue.address);
+        //console.log("swapfrom: "+selectedValue.address);
+        if (selectedValue.address === 'So11111111111111111111111111111111111111112'){
+            getSolBalance();
+        } else{
+            getPortfolioTokenBalance(selectedValue.address);
+        }
         // @ts-ignore
-        getPortfolioTokenBalance(selectedValue.address);
         setTokenBalanceInput(0);
         setTokensToSwap(0);
     }, [selectedValue, swapfrom])
@@ -368,7 +385,7 @@ function JupiterForm(props: any) {
                 <Grid container spacing={2}>
                     <Grid item xs={12}>
                         <Grid container>
-                            <Grid item xs={6}>
+                            <Grid item xs={6} justifyContent='center'>
                                 <FormControl>
                                     <Autocomplete
                                         sx={{width:230}}
@@ -418,8 +435,10 @@ function JupiterForm(props: any) {
                                     inputProps={{
                                         style: {
                                             textAlign:'right',
+                                            marginTop:0
                                         }
                                     }}
+                                    sx={{mt:0}}
                                 />
                             </Grid>
                         </Grid>
@@ -619,7 +638,9 @@ function JupiterForm(props: any) {
                     variant="outlined"
                     title="Swap"
                     sx={{
-                        margin:1
+                        margin:1,
+                        borderRadius: '17px',
+                        color:'white'
                     }}>
                     Swap
                 </Button>

@@ -115,14 +115,19 @@ export function TokenView(props: any) {
         })
         const json = await resp.json();
         
-        setPortfolioPositions(json.result.value);
+        const pp = new Array;
+        
+        for (var item of json.result.value){
+            pp.push(item);
+        }
+
+        setPortfolioPositions(pp);
 
         for (var token of json.result.value){
             if (token.account.data.parsed.info.mint === collectionAuthority.address){
                 setMyToken(token);
             }
         }
-
         console.log("myTokens: "+JSON.stringify(json));
     }
 
@@ -289,8 +294,14 @@ export function TokenView(props: any) {
                                         Source: {publicKey.toBase58()}
                                         </Typography>
                                     </CardContent>
-                                    <CardActions>
-                                        <JupiterSwap swapfrom={'So11111111111111111111111111111111111111112'} swapto={token.address} portfolioPositions={portfolioPositions} tokenMap={tokenMap}/>
+                                    <CardActions
+                                        sx={{
+                                            justifyContent:'flex-end',
+                                            alignContent: 'flex-end'}}
+                                    >
+                                        {portfolioPositions &&
+                                            <JupiterSwap swapfrom={'So11111111111111111111111111111111111111112'} swapto={token.address} portfolioPositions={portfolioPositions} tokenMap={tokenMap}/>
+                                        }
                                         {coinGeckoPrice &&
                                             <SendToken mint={token.address} name={token.name} logoURI={token.logoURI} balance={myToken.account.data.parsed.info.tokenAmount.uiAmount} conversionrate={+coinGeckoPrice[token.extensions.coingeckoId]?.usd} showTokenName={false} sendType={0} />
                                         }
@@ -306,8 +317,10 @@ export function TokenView(props: any) {
                                         YOU ARE NOT PARTICIPATING IN THIS TOKENIZED COMMUNITY
                                         </Typography>
                                     </CardContent>
-                                    <CardActions>
-                                        <Button size="small">SWAP &amp; GET TOKENS TO PARTICIPATE</Button>
+                                    <CardActions sx={{}}>
+                                        {portfolioPositions &&
+                                            <JupiterSwap swapfrom={'So11111111111111111111111111111111111111112'} swapto={token.address} portfolioPositions={portfolioPositions} tokenMap={tokenMap}/>
+                                        }
                                     </CardActions>
                                 </Card>
                             </Grid>
