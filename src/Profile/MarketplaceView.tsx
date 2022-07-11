@@ -208,7 +208,12 @@ export default function MarketplaceView(props: any) {
                                                 <Button size="small"    
                                                     component={Link} to={`${GRAPE_COLLECTION}${featured.vanityUrl}`}
                                                     sx={{borderRadius:'24px', color:'white'}}
-                                                >View {featured?.tokenType} Community</Button>
+                                                >View 
+                                                {featured?.tokenType === 'SPL' ?
+                                                    <> {featured?.tokenType} Token</>
+                                                :
+                                                    <> {featured?.tokenType}</>        
+                                                } Community</Button>
                                                 <ShareSocialURL url={'https://grape.art'+GRAPE_COLLECTION+featured.vanityUrl} title={`Community: ${featured.name}`} />
                                             </ButtonGroup>
                                         :

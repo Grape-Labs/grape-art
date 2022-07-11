@@ -6,6 +6,7 @@ import { getOwnedTokenAccounts } from '../utils/governanceTools/tokens';
 import * as React from 'react';
 import BN from 'bn.js';
 import { styled, useTheme } from '@mui/material/styles';
+//import { Swap } from '@strata-foundation/react'
 import {
   Typography,
   Button,
@@ -147,6 +148,7 @@ export function TokenView(props: any) {
 
                 setCoinGeckoPrice(cgPrice);
 
+                
                 //src={tokenMap.get(item.account.data.parsed.info.mint)?.logoURI}
 
                 //const tkn = TokenInfo()
@@ -305,6 +307,9 @@ export function TokenView(props: any) {
                                         {coinGeckoPrice &&
                                             <SendToken mint={token.address} name={token.name} logoURI={token.logoURI} balance={myToken.account.data.parsed.info.tokenAmount.uiAmount} conversionrate={+coinGeckoPrice[token.extensions.coingeckoId]?.usd} showTokenName={false} sendType={0} />
                                         }
+                                        {/*
+                                        <Swap id={token.address} />
+                                        */}
                                     </CardActions>
                                 </Card>
                             </Grid>
