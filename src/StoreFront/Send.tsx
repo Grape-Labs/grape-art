@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { WalletError, WalletNotConnectedError } from '@solana/wallet-adapter-base';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { Signer, Connection, PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js';
-import { TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID, getOrCreateAssociatedTokenAccount, createAssociatedTokenAccountInstruction, createTransferInstruction } from "@solana/spl-token-v2";
+import { TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID, getOrCreateAssociatedTokenAccount, createTransferInstruction } from "@solana/spl-token-v2";
 
 import { GRAPE_RPC_ENDPOINT, TX_RPC_ENDPOINT, GRAPE_TREASURY } from '../utils/grapeTools/constants';
 import { RegexTextField } from '../utils/grapeTools/RegexTextField';
@@ -211,7 +211,7 @@ export default function SendToken(props: any) {
                 fromWallet,
                 mintPubkey,
                 fromWallet,
-                !ValidateAddress(fromWallet.toBase58()),
+                true,//!ValidateAddress(fromWallet.toBase58()),
                 TOKEN_PROGRAM_ID,
                 ASSOCIATED_TOKEN_PROGRAM_ID
             );
@@ -224,7 +224,7 @@ export default function SendToken(props: any) {
                     fromWallet,
                     mintPubkey,
                     toWallet,
-                    !ValidateAddress(toWallet.toBase58()),
+                    true,//!ValidateAddress(toWallet.toBase58()),
                     TOKEN_PROGRAM_ID,
                     ASSOCIATED_TOKEN_PROGRAM_ID
                 );
@@ -277,7 +277,7 @@ export default function SendToken(props: any) {
                         </Button>
                     );
                     enqueueSnackbar(`Sent ${amountToSend} ${name} to ${toaddress}`,{ variant: 'success', action });
-                }catch(e){
+                }catch(e:any){
                     closeSnackbar();
                     enqueueSnackbar(e.message ? `${e.name}: ${e.message}` : e.name, { variant: 'error' });
                 } 
