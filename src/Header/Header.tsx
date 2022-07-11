@@ -349,7 +349,7 @@ export function Header(props: any) {
                                     renderInput={params => (
                                         <StyledInputBase
                                             sx={{ height: '40px', width: '100%' }}
-                                            placeholder={t('Search Collection or Solana Address')}
+                                            placeholder={t('Search Community or Solana Address')}
                                             ref={params.InputProps.ref}
                                             inputProps={params.inputProps}
                                             //className={classes.inputBase}

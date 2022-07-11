@@ -198,8 +198,11 @@ export function TokenView(props: any) {
                                 </Grid>
                             </Grid>
                         </Typography>
-                        <Typography variant="caption">
-                            {token.address}
+                        <Typography variant="caption" component='div'>
+                            Address: {token.address}
+                        </Typography>
+                        <Typography variant="caption" component='div'>
+                            Symbol: {token.symbol}
                         </Typography>
                     </>
                     
@@ -282,7 +285,9 @@ export function TokenView(props: any) {
                                     </CardContent>
                                     <CardActions>
                                         <JupiterSwap swapfrom={'So11111111111111111111111111111111111111112'} swapto={token.address} portfolioPositions={portfolioPositions} tokenMap={tokenMap}/>
-                                        <SendToken mint={token.address} name={token.name} logoURI={token.logoURI} balance={token.balance} conversionrate={1} showTokenName={false} sendType={0} />
+                                        {coinGeckoPrice &&
+                                            <SendToken mint={token.address} name={token.name} logoURI={token.logoURI} balance={myToken.account.data.parsed.info.tokenAmount.uiAmount} conversionrate={+coinGeckoPrice[token.extensions.coingeckoId]?.usd} showTokenName={false} sendType={0} />
+                                        }
                                     </CardActions>
                                 </Card>
                             </Grid>
