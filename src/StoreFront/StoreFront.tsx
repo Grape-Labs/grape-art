@@ -1745,11 +1745,11 @@ export function StoreFrontView(this: any, props: any) {
                     }}
                 >
 
-                    {collectionMintList &&  
+                    {/*collectionMintList &&  
                             <GalleryView mode={1} collectionMintList={collectionMintList} collectionAuthority={collectionAuthority} tokenPrice={tokenPrice}/>
-                    }
+                    */}
                     
-                    {/*
+                    
                     <Tabs value={tabValue} onChange={handleTabChange} aria-label="grape community tabs" sx={{pl:2,color:'white'}} className="grape-community-tab">
                         {collectionAuthority?.tokenType && collectionAuthority?.tokenType === 'SPL' &&
                             <Tab icon={<SolCurrencyIcon />} aria-label="Token" value={NavPanel.Token} sx={{color:'white'}} title="Tokenized Community" />
@@ -1800,7 +1800,7 @@ export function StoreFrontView(this: any, props: any) {
                             }
                         </Box>
                     </TabPanel>
-                        */}
+                    
                 </Box>
         </React.Fragment>
     );
