@@ -200,32 +200,30 @@ export default function ListForCollectionView(props: any){
                         let meta_final = decodeMetadata(buf);
                         metadata[x]["decoded"] = meta_final;
                         
-                        if ((enforceEntangle && 
-                            (meta_final.updateAuthority === entangleFrom ||
-                            meta_final.updateAuthority === entangleTo)) ||
-                            (meta_final.updateAuthority === updateAuthority)){
+                        
+
+                        if ((meta_final.updateAuthority === updateAuthority)||
+                            (enforceEntangle && (meta_final.updateAuthority === entangleFrom || meta_final.updateAuthority === entangleTo))){
                             
-                            console.log("meta_final?.collection.key: "+meta_final?.collection?.key);
-                            console.log("collectionAuthority.collection: "+collectionAuthority.collection);
-                            console.log("updateAuthority: "+updateAuthority);
+                                    if ((meta_final?.collection?.key === collectionAuthority.collection)||
+                                        (collectionAuthority.collection === updateAuthority)||
+                                        (collectionAuthority.address === updateAuthority)){
+                                        //console.log("meta_final "+JSON.stringify(meta_final))
+                                        //console.log("collectionAuthority: "+JSON.stringify(collectionAuthority.collection))
 
-                            if ((meta_final?.collection?.key === collectionAuthority.collection)||
-                                (collectionAuthority.collection === updateAuthority)){
-                                //console.log("meta_final "+JSON.stringify(meta_final))
-                                //console.log("collectionAuthority: "+JSON.stringify(collectionAuthority.collection))
-
-                                try{
-                                    const metadataFetch = await window.fetch(meta_final.data.uri)
-                                    .then(
-                                        (res: any) => res.json()
-                                    );
-                                    metadata[x]["decodeMetadata"] = metadataFetch;
-                                }catch(ie){
-                                    // not on Arweave:
-                                    //console.log("ERR: "+JSON.stringify(meta_final));
-                                    // return null;
-                                }
-                            }
+                                        try{
+                                            const metadataFetch = await window.fetch(meta_final.data.uri)
+                                            .then(
+                                                (res: any) => res.json()
+                                            );
+                                            metadata[x]["decodeMetadata"] = metadataFetch;
+                                        }catch(ie){
+                                            // not on Arweave:
+                                            //console.log("ERR: "+JSON.stringify(meta_final));
+                                            // return null;
+                                        }
+                                    }
+                            
                         } else {
                             
                         }

@@ -1,4 +1,4 @@
-import { getRealm, getAllProposals, getTokenOwnerRecordsByOwner, getRealmConfigAddress, getGovernanceAccount, getAccountTypes, GovernanceAccountType, tryGetRealmConfig, SetRealmConfigArgs } from '@solana/spl-governance';
+import { getRealm, getAllProposals, getTokenOwnerRecordsByOwner, getRealmConfigAddress, getGovernanceAccount, getAccountTypes, GovernanceAccountType, tryGetRealmConfig,  } from '@solana/spl-governance';
 import { PublicKey, TokenAmount, Connection } from '@solana/web3.js';
 import { ENV, TokenListProvider, TokenInfo } from '@solana/spl-token-registry';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
@@ -437,7 +437,7 @@ export function GovernanceView(props: any) {
 
                 const grealm = await getRealm(new Connection(THEINDEX_RPC_ENDPOINT), new PublicKey(collectionAuthority.governance))
                 setRealm(grealm);
-                //console.log("realm: "+JSON.stringify(grealm));
+                console.log("realm: "+JSON.stringify(grealm));
 
                 const realmPk = grealm.pubkey;
 
