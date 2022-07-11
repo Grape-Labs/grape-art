@@ -279,6 +279,12 @@ export function TokenView(props: any) {
                                         
                                         {myToken.account.data.parsed.info.tokenAmount.uiAmount}
                                         </Typography>
+                                        <Typography variant="body2" component="div">
+                                            {myToken.account.data.parsed.info.tokenAmount.uiAmount*coinGeckoPrice[token.extensions.coingeckoId]?.usd} USD
+                                        </Typography>
+                                        <Typography variant="body2" component="div">
+                                            {myToken.account.data.parsed.info.tokenAmount.uiAmount * tokenPrice.data.price} SOL
+                                        </Typography>
                                         <Typography sx={{ mb: 1.5 }} color="text.secondary" variant="caption">
                                         Source: {publicKey.toBase58()}
                                         </Typography>

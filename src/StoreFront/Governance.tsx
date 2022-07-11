@@ -1,4 +1,4 @@
-import { getRealm, getAllProposals, getTokenOwnerRecordsByOwner } from '@solana/spl-governance';
+import { getRealm, getAllProposals, getTokenOwnerRecordsByOwner, getRealmConfigAddress, getGovernanceAccount, getAccountTypes, GovernanceAccountType, tryGetRealmConfig } from '@solana/spl-governance';
 import { PublicKey, TokenAmount, Connection } from '@solana/web3.js';
 import { ENV, TokenListProvider, TokenInfo } from '@solana/spl-token-registry';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
@@ -139,6 +139,7 @@ function RenderGovernanceTable(props:any) {
     const [loading, setLoading] = React.useState(false);
     //const [proposals, setProposals] = React.useState(props.proposals);
     const proposals = props.proposals;
+    const nftBasedGovernance = props.nftBasedGovernance;
     const token = props.token;
     const { connection } = useConnection();
     const { publicKey } = useWallet();
@@ -239,6 +240,31 @@ function RenderGovernanceTable(props:any) {
                                                                 {item.account?.options[0].voteWeight.toNumber() > 0 ?
                                                                 <>
                                                                 {`${(((item.account?.options[0].voteWeight.toNumber()/Math.pow(10, tokenDecimals))/((item.account?.denyVoteWeight.toNumber()/Math.pow(10, tokenDecimals))+(item.account?.options[0].voteWeight.toNumber()/Math.pow(10, tokenDecimals))))*100).toFixed(2)}%`}
+                                                                </>
+                                                                :
+                                                                <>0%</>
+}
+                                                            </Button>
+                                                        </Tooltip>
+                                                    </Typography>
+                                                }
+                                                {item.account?.options && item.account?.options[0]?.voterWeight && 
+                                                    <Typography variant="h6">
+                                                        {console.log("vote: "+JSON.stringify(item.account))}
+                                                        <Tooltip title={item.account?.options[0].voterWeight.toNumber() <= 1 ?
+                                                            <>
+                                                                {item.account?.options[0].voterWeight.toNumber()}
+                                                            </>
+                                                            :
+                                                            <>
+                                                                {(item.account?.options[0].voterWeight.toNumber()/Math.pow(10, tokenDecimals)).toFixed(0)}
+                                                            </>
+                                                            }
+                                                        >
+                                                            <Button sx={{color:'white'}}>
+                                                                {item.account?.options[0].voterWeight.toNumber() > 0 ?
+                                                                <>
+                                                                {`${(((item.account?.options[0].voterWeight.toNumber()/Math.pow(10, tokenDecimals))/((item.account?.denyVoteWeight.toNumber()/Math.pow(10, tokenDecimals))+(item.account?.options[0].voterWeight.toNumber()/Math.pow(10, tokenDecimals))))*100).toFixed(2)}%`}
                                                                 </>
                                                                 :
                                                                 <>0%</>
@@ -361,6 +387,7 @@ export function GovernanceView(props: any) {
     const [proposals, setProposals] = React.useState(null);
     const [participating, setParticipating] = React.useState(false)
     const [participatingRealm, setParticipatingRealm] = React.useState(null)
+    const [nftBasedGovernance, setNftBasedGovernance] = React.useState(false);
 
     const GOVERNANCE_PROGRAM_ID = 'GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw';
 
@@ -394,10 +421,12 @@ export function GovernanceView(props: any) {
                 // check if part of this realm
                 var pcp = false;
                 for (var realm of ownerRecordsbyOwner){
-                    console.log("realm: "+JSON.stringify(realm))
+                    console.log("owner record realm: "+JSON.stringify(realm))
                     if (realm.account.realm.toBase58() === collectionAuthority.governance){
                         pcp = true;
                         setParticipatingRealm(realm);
+                        
+
                     }
                 }
                 setParticipating(pcp);
@@ -406,12 +435,30 @@ export function GovernanceView(props: any) {
                 setRealm(grealm);
                 console.log("realm: "+JSON.stringify(grealm));
 
+                const realmPk = grealm.pubkey;
+
+                if (grealm.account.config.useCommunityVoterWeightAddin){
+                    const realmConfigPk = await getRealmConfigAddress(
+                        programId,
+                        realmPk
+                    )
+                    const realmConfig = await tryGetRealmConfig(
+                        connection,
+                        programId,
+                        realmPk
+                    )
+                    
+                    if (realmConfig.account.communityVoterWeightAddin.toBase58() === 'GnftV5kLjd67tvHpNGyodwWveEKivz3ZWvvE3Z4xi2iw'){ // NFT based community
+                        setNftBasedGovernance(true);
+                    }
+                }
+
                 //const programId = new PublicKey(GOVERNANCE_PROGRAM_ID);
 
                 //const gpbgprops = await getProposalsByGovernance(new Connection(THEINDEX_RPC_ENDPOINT), programId, new PublicKey(collectionAuthority.governancePublicKey || collectionAuthority.governance));
                 //console.log("gpbgprops: "+JSON.stringify(gpbgprops));
                 
-                const realmPk = grealm.pubkey;
+                
                 const gprops = await getAllProposals(new Connection(THEINDEX_RPC_ENDPOINT), grealm.owner, realmPk);
                 
                 let allprops: any[] = [];
@@ -516,7 +563,7 @@ export function GovernanceView(props: any) {
                             </>
                         }
 
-                        <RenderGovernanceTable proposals={proposals} />
+                        <RenderGovernanceTable proposals={proposals} nftBasedGovernance={nftBasedGovernance} />
                     </Box>
                                 
                 );

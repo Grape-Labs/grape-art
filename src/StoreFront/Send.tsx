@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { WalletError, WalletNotConnectedError } from '@solana/wallet-adapter-base';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { Signer, Connection, PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js';
-import { TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID, getOrCreateAssociatedTokenAccount, createTransferInstruction } from "@solana/spl-token-v2";
+import { TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID, getOrCreateAssociatedTokenAccount, createAssociatedTokenAccount, createTransferInstruction } from "@solana/spl-token-v2";
 
 import { GRAPE_RPC_ENDPOINT, TX_RPC_ENDPOINT, GRAPE_TREASURY } from '../utils/grapeTools/constants';
 import { RegexTextField } from '../utils/grapeTools/RegexTextField';
@@ -104,8 +104,8 @@ export default function SendToken(props: any) {
     const [memonotes, setMemoNotes] = React.useState(''); 
     const [memoText, setMemoText] = React.useState(null); 
     const freeconnection = new Connection(TX_RPC_ENDPOINT);
-    const { connection } = useConnection();
-    const { publicKey, wallet, sendTransaction } = useWallet();
+    const connection = new Connection(GRAPE_RPC_ENDPOINT);//useConnection();
+    const { publicKey, wallet, sendTransaction, signTransaction } = useWallet();
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
     const onError = useCallback(
         (error: WalletError) => {
@@ -198,39 +198,58 @@ export default function SendToken(props: any) {
             const decimals = accountParsed.parsed.info.decimals;
             
             //tokenMintAddress
-            /*
+            
             console.log("TOKEN_PROGRAM_ID: "+TOKEN_PROGRAM_ID.toBase58())
             console.log("ASSOCIATED_TOKEN_PROGRAM_ID: "+ASSOCIATED_TOKEN_PROGRAM_ID.toBase58())
             console.log("mintPubkey: "+mintPubkey.toBase58())
             console.log("fromWallet: "+fromWallet.toBase58())
             console.log("toWallet: "+toWallet.toBase58())
-            */
+            
 
             let fromTokenAccount = await getOrCreateAssociatedTokenAccount(
                 connection,
                 fromWallet,
                 mintPubkey,
                 fromWallet,
-                true,//!ValidateAddress(fromWallet.toBase58()),
+                !ValidateAddress(fromWallet.toBase58()),
                 TOKEN_PROGRAM_ID,
                 ASSOCIATED_TOKEN_PROGRAM_ID
             );
             
             //console.log("validateAddress onCurve: "+ValidateAddress(toWallet.toBase58()))
-
             try{
-                let toTokenAccount = await getOrCreateAssociatedTokenAccount(
-                    connection,
-                    fromWallet,
-                    mintPubkey,
-                    toWallet,
-                    true,//!ValidateAddress(toWallet.toBase58()),
-                    TOKEN_PROGRAM_ID,
-                    ASSOCIATED_TOKEN_PROGRAM_ID
-                );
+                console.log("trying...")
+                let toTokenAccount = null;
+                try{
+                    toTokenAccount = await getOrCreateAssociatedTokenAccount(
+                        connection,
+                        fromWallet,
+                        mintPubkey,
+                        toWallet,
+                        !ValidateAddress(toWallet.toBase58()),
+                        //signTransaction,
+                        TOKEN_PROGRAM_ID,
+                        ASSOCIATED_TOKEN_PROGRAM_ID
+                    );
+                }catch(errs){
+                    console.log("ERR: "+JSON.stringify(errs));
+                    toTokenAccount = await createAssociatedTokenAccount(
+                        connection,
+                        fromWallet,
+                        mintPubkey,
+                        toWallet,
+                        signTransaction,
+                        TOKEN_PROGRAM_ID,
+                        ASSOCIATED_TOKEN_PROGRAM_ID
+                    );
+                } 
+                console.log("found?...")
 
                 const adjustedAmountToSend = amountToSend * Math.pow(10, decimals);
                 
+                console.log("fromTokenAccount: "+JSON.stringify(fromTokenAccount))
+                console.log("toTokenAccount: "+JSON.stringify(toTokenAccount))
+
                 const transaction = new Transaction();
                 if (toTokenAccount){
                     transaction
