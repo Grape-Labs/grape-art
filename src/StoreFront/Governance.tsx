@@ -1,4 +1,4 @@
-import { getRealm, getAllProposals, getTokenOwnerRecordsByOwner, getRealmConfigAddress, getGovernanceAccount, getAccountTypes, GovernanceAccountType, tryGetRealmConfig } from '@solana/spl-governance';
+import { getRealm, getAllProposals, getTokenOwnerRecordsByOwner, getRealmConfigAddress, getGovernanceAccount, getAccountTypes, GovernanceAccountType, tryGetRealmConfig, SetRealmConfigArgs } from '@solana/spl-governance';
 import { PublicKey, TokenAmount, Connection } from '@solana/web3.js';
 import { ENV, TokenListProvider, TokenInfo } from '@solana/spl-token-registry';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
@@ -301,7 +301,11 @@ function RenderGovernanceTable(props:any) {
                                             </TableCell>
                                             <TableCell  align="center">
                                                 <Typography variant="h6">
-                                                    {GOVERNANNCE_STATE[item.account?.state]}
+                                                    <Tooltip title={JSON.stringify(item)}>
+                                                        <Button sx={{color:'white'}}>
+                                                            {GOVERNANNCE_STATE[item.account?.state]}
+                                                        </Button>
+                                                    </Tooltip>
                                                 </Typography>
                                             </TableCell>
                                             <TableCell align="center">
@@ -421,7 +425,7 @@ export function GovernanceView(props: any) {
                 // check if part of this realm
                 var pcp = false;
                 for (var realm of ownerRecordsbyOwner){
-                    console.log("owner record realm: "+JSON.stringify(realm))
+                    //console.log("owner record realm: "+JSON.stringify(realm))
                     if (realm.account.realm.toBase58() === collectionAuthority.governance){
                         pcp = true;
                         setParticipatingRealm(realm);
@@ -433,23 +437,32 @@ export function GovernanceView(props: any) {
 
                 const grealm = await getRealm(new Connection(THEINDEX_RPC_ENDPOINT), new PublicKey(collectionAuthority.governance))
                 setRealm(grealm);
-                console.log("realm: "+JSON.stringify(grealm));
+                //console.log("realm: "+JSON.stringify(grealm));
 
                 const realmPk = grealm.pubkey;
 
-                if (grealm.account.config.useCommunityVoterWeightAddin){
+                if (grealm?.account?.config?.useCommunityVoterWeightAddin){
                     const realmConfigPk = await getRealmConfigAddress(
                         programId,
                         realmPk
                     )
-                    const realmConfig = await tryGetRealmConfig(
-                        connection,
-                        programId,
-                        realmPk
-                    )
-                    
-                    if (realmConfig.account.communityVoterWeightAddin.toBase58() === 'GnftV5kLjd67tvHpNGyodwWveEKivz3ZWvvE3Z4xi2iw'){ // NFT based community
-                        setNftBasedGovernance(true);
+                    try{
+                        const realmConfig = await tryGetRealmConfig(
+                            connection,
+                            programId,
+                            realmPk,//realmConfigPk,//realmPk
+                        )
+                        
+                        console.log("config: "+JSON.stringify(realmConfig));
+                        //setRealmConfig(realmConfigPK)
+
+                        if (realmConfig && realmConfig?.account && realmConfig?.account?.communityVoterWeightAddin){
+                            if (realmConfig?.account?.communityVoterWeightAddin.toBase58() === 'GnftV5kLjd67tvHpNGyodwWveEKivz3ZWvvE3Z4xi2iw'){ // NFT based community
+                                setNftBasedGovernance(true);
+                            }
+                        }
+                    }catch(errs){
+                        console.log("ERR: "+errs)
                     }
                 }
 
@@ -470,7 +483,9 @@ export function GovernanceView(props: any) {
                     }
                 }
 
-                const sortedResults = allprops.sort((a:any, b:any) => (a.account?.votingAt != null && b.account?.votingAt != null && a.account?.votingAt.toNumber() < b.account?.votingAt.toNumber()) ? 1 : -1)
+                //const sortedResults = allprops.sort((a:any, b:any) => (a.account?.votingAt != null && b.account?.votingAt != null && a.account?.votingAt.toNumber() < b.account?.votingAt.toNumber()) ? 1 : -1)
+                const sortedResults = allprops.sort((a:any, b:any) => ((b.account?.votingAt != null ? b.account?.votingAt : 0) - (a.account?.votingAt != null ? a.account?.votingAt : 0)))
+                
                 //const sortedResults = allprops.sort((a,b) => (a.account?.votingAt.toNumber() < b.account?.votingAt.toNumber()) ? 1 : -1);
                 
                 console.log("allprops: "+JSON.stringify(allprops));
