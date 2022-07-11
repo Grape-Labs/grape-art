@@ -1128,7 +1128,8 @@ export function StoreFrontView(this: any, props: any) {
                                     //let buf = Buffer.from(meta_primer.data, 'base64');
                                     //let meta_final = decodeMetadata(buf);
                                     try{
-                                        const metadata = await window.fetch(meta_final.data.uri)
+
+                                        const metadata = await window.fetch(PROXY+meta_final.data.uri)
                                         .then(
                                             (res: any) => res.json()
                                         );
@@ -1741,54 +1742,12 @@ export function StoreFrontView(this: any, props: any) {
                         borderRadius:'17px'
                     }}
                 >
-                    
-                    <Tabs value={tabValue} onChange={handleTabChange} aria-label="grape community tabs" sx={{pl:2,color:'white'}} className="grape-community-tab">
-                        {collectionAuthority?.tokenType && collectionAuthority?.tokenType === 'SPL' &&
-                            <Tab icon={<SolCurrencyIcon />} aria-label="Token" value={NavPanel.Token} sx={{color:'white'}} title="Tokenized Community" />
-                        }
-                        {collectionAuthority?.tokenType && collectionAuthority?.tokenType === 'NFT' &&
-                            <Tab icon={<StorefrontIcon />} aria-label="Marketplace" value={NavPanel.Marketplace} sx={{color:'white'}} title="Marketplace" />
-                        }
-                        {collectionAuthority?.governance &&
-                            <Tab icon={<AccountBalanceIcon />} aria-label="Governance" value={NavPanel.Governance} sx={{color:'white'}} title="Governance" />
-                        }
-                        {collectionAuthority?.governance &&
-                            <Tab icon={<PeopleIcon />} aria-label="Holders" value={NavPanel.Holders} sx={{color:'white'}} title="Members" />
-                        }
-                        <Tab icon={<ForumIcon />} aria-label="Community" disabled={true} value={NavPanel.Chat} sx={{color:'white'}} />
-                    </Tabs>
 
-                    <TabPanel value={tabValue} index={NavPanel.Token}>
-                        <Box> 
-                            {collectionAuthority &&  
-                                <TokenView mode={1} collectionAuthority={collectionAuthority} tokenPrice={tokenPrice}/>
-                            }
-                        </Box>
-                    </TabPanel>
-                    
-                    <TabPanel value={tabValue} index={NavPanel.Marketplace}>
-                        <Box> 
-                            {collectionMintList &&  
+                        {collectionMintList &&  
                                 <GalleryView mode={1} collectionMintList={collectionMintList} collectionAuthority={collectionAuthority} tokenPrice={tokenPrice}/>
-                            }
-                        </Box>
-                    </TabPanel>
-
-                    <TabPanel value={tabValue} index={NavPanel.Governance}>
-                        <Box> 
-                            {collectionAuthority &&  
-                                <GovernanceView collectionAuthority={collectionAuthority} />
-                            }
-                        </Box>
-                    </TabPanel>
-
-                    <TabPanel value={tabValue} index={NavPanel.Holders}>
-                        <Box> 
-                            {collectionAuthority &&  
-                                <MembersView collectionAuthority={collectionAuthority} />
-                            }
-                        </Box>
-                    </TabPanel>
+                        }
+                    
+                    
 
                 </Box>
         </React.Fragment>
