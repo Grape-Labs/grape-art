@@ -421,7 +421,7 @@ function SellNowVotePrompt(props:any){
             return (
                 <Grid item>
                     {meListing && meListing[0]?.auctionHouse ?
-                    <Tooltip title={`This NFT is currently owned by a program (${meListing[0]?.auctionHouse}) and listed on Magic Eden`}>
+                    <Tooltip title={`This NFT is listed on Magic Eden using an escrow program: ${meListing[0]?.auctionHouse}`}>
                         <Button sx={{borderRadius:'10px'}}
                             onClick={handleMeBuyeNow}
                         >

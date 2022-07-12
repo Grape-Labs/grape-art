@@ -937,6 +937,11 @@ function GalleryItemMeta(props: any) {
                             <meta name="twitter:title" content={collectionitem.name} />
                             <meta name="twitter:description" content={collectionitem.name} />
                             <meta name="twitter:image" content={collectionitem.image} />
+
+                            {verifiedCollection?.theme &&
+                                <style>{'html, body { background: '+verifiedCollection.theme+' fixed!important;height: 100%; }'}</style>
+                            }
+
                         </Helmet>
                     </>
                 }
