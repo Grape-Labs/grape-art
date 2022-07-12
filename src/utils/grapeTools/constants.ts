@@ -6,6 +6,7 @@ export const GENSYSGO_RPC_ENDPOINT = process.env.REACT_APP_API_GENSYSGO_RPC_ENDP
 export const THEINDEX_RPC_ENDPOINT = process.env.REACT_APP_API_THEINDEX_RPC_ENDPOINT || 'https://ssc-dao.genesysgo.net/';
 export const SOFLARE_NOTIFICATIONS_API_KEY = process.env.REACT_APP_API_KEY_SOLFLARE_NOTIFICATIONS || '';
 export const PROXY = process.env.REACT_APP_API_PROXY || '';
+export const ME_KEYBASE = process.env.REACT_APP_API_ME_KEYBASE || null;
 
 export const GRAPE_PREVIEW = '/preview/';
 export const GRAPE_PROFILE = '/profile/';
