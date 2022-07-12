@@ -2,6 +2,8 @@ import React, { useCallback } from "react";
 import { Link } from "react-router-dom";
 
 import { Connection, PublicKey, Transaction } from '@solana/web3.js';
+import * as anchor from '@project-serum/anchor';
+import { getAssociatedTokenAddress } from '@solana/spl-token-v2';
 // @ts-ignore
 //import fetch from 'node-fetch';
 
@@ -72,6 +74,8 @@ import {
     GRAPE_PROFILE,
     FEATURED_DAO_ARRAY,
     VERIFIED_DAO_ARRAY,
+    PROXY,
+    ME_KEYBASE,
 } from '../utils/grapeTools/constants';
 
 import { AuctionHouseProgram } from '@metaplex-foundation/mpl-auction-house'
@@ -243,13 +247,14 @@ function SellNowVotePrompt(props:any){
     const mintOwner = props.mintOwner;
     const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
     const { connection } = useConnection();
-    const { publicKey, wallet, sendTransaction } = useWallet();
+    const { publicKey, wallet, sendTransaction, signTransaction } = useWallet();
 	const anchorWallet = useAnchorWallet();
     const [daoPublicKey, setDaoPublicKey] = React.useState(null);
     const salePrice = props.salePrice || null;
     const weightedScore = props.grapeWeightedScore || 0;
     const collectionAuctionHouse = props.collectionAuctionHouse || null; 
     //const salePrice = React.useState(props.salePrice);
+    //const provider = new anchor.Provider(connection, wallet, anchor.Provider.defaultOptions)
 
     const handleClickOpenDialog = () => {
         setSellNowAmount('');
@@ -272,6 +277,189 @@ function SellNowVotePrompt(props:any){
 
     const { t, i18n } = useTranslation();
     
+
+    function ThirdPartyHolder (){
+        const [loadingTP, setLoadingTP] = React.useState(false);
+        const [meListing, setMEListing] = React.useState(null);
+
+        const Timeout = (time:number) => {
+            let controller = new AbortController();
+            setTimeout(() => controller.abort(), time * 1000);
+            return controller;
+        };
+
+        async function handleMeBuyeNow(event: any) {
+            event.preventDefault();
+            
+            if (meListing && meListing[0].price > 0) {
+                
+                //handleCloseDialog();
+                
+                //const setSellNowPrice = async () => {
+                try {
+                    const transaction = new Transaction();
+                    const transactionInstr = await fetchMEBuyNowTimeout();
+                    if (transactionInstr){
+                        //const transferAuthority = web3.Keypair.generate();
+                        //const signers = isNative ? [] : [transferAuthority];
+
+                        const txSigned = transactionInstr.txSigned;
+                        const txn = anchor.web3.Transaction.from(Buffer.from(txSigned.data));
+                        /*
+                        const instructionsArray = txn;        
+                        transaction.add(
+                            ...instructionsArray
+                        );
+                        */  
+
+                        enqueueSnackbar(`Preparing to buy now at ${meListing[0].price} SOL`,{ variant: 'info' });
+                        //const signedTransaction = await sendTransaction(txn, connection);                    
+                        //const signed = await signTransaction(txn);                    
+                        
+                        //const signedTransaction = await signTransaction(txn);
+                        //anchor.web3.sendAndConfirmRawTransaction(connection, txn.serialize());
+                        
+                        const signedTransaction = await sendTransaction(txn, connection);     
+                        
+                        const snackprogress = (key:any) => (
+                            <CircularProgress sx={{padding:'10px'}} />
+                        );
+                        const cnfrmkey = enqueueSnackbar(`Confirming transaction`,{ variant: 'info', action:snackprogress, persist: true });
+                        const latestBlockHash = await connection.getLatestBlockhash();
+                        await ggoconnection.confirmTransaction({
+                            blockhash: latestBlockHash.blockhash,
+                            lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+                            signature: signedTransaction}, 
+                            'processed'
+                        );
+                        
+                        closeSnackbar(cnfrmkey);
+                        const snackaction = (key:any) => (
+                            <Button href={`https://explorer.solana.com/tx/${signedTransaction}`} target='_blank'  sx={{color:'white'}}>
+                                {signedTransaction}
+                            </Button>
+                        );
+                        enqueueSnackbar(`Sell Now Price Set to ${sell_now_amount} SOL`,{ variant: 'success', action:snackaction });  
+                        
+                        const eskey = enqueueSnackbar(`${t('Metadata will be refreshed in a few seconds')}`, {
+                            anchorOrigin: {
+                                vertical: 'top',
+                                horizontal: 'center',
+                            },
+                            persist: true,
+                        });
+                        setTimeout(function() {
+                            closeSnackbar(eskey);
+                            props.setRefreshOffers(true);
+                        }, GRAPE_RPC_REFRESH); 
+                    } else{
+                        closeSnackbar();
+                        enqueueSnackbar(`Invalid transaction instructions...`,{ variant: 'error' });
+                    }       
+                    
+                } catch(e){
+                    closeSnackbar();
+                    enqueueSnackbar(`${e}`,{ variant: 'error' });
+                    console.log("Error: "+e);
+                    //console.log("Error: "+JSON.stringify(e));
+                } 
+            } else{
+                console.log("INVALID AMOUNT");
+            }
+        }
+
+        const fetchMEBuyNowTimeout = async () => {
+            const grape_referral = '';
+
+            const tokenAta = await getAssociatedTokenAddress(
+                new PublicKey(meListing[0].pdaAddress),
+                publicKey
+            );
+
+            const apiUrl = PROXY+"https://api-mainnet.magiceden.dev/v2/instructions/buy_now?buyer="+publicKey.toBase58()+"&seller="+meListing[0].seller+"&auctionHouseAddress="+meListing[0].auctionHouse+"&tokenMint="+meListing[0].tokenMint+"&tokenATA="+tokenAta.toBase58()+"&price="+meListing[0].price+"&buyerReferral="+grape_referral+"&sellerReferral="+meListing[0].sellerReferral+"&buyerExpiry=&sellerExpiry=";
+            console.log("apiUrl: " + apiUrl);
+
+            //const apiUrl = PROXY+"https://api-mainnet.magiceden.dev/v2/instructions/buy?buyer="+publicKey.toBase58()+"&seller="+meListing[0].seller+"&auctionHouseAddress="+meListing[0].auctionHouse+"&tokenMint="+meListing[0].tokenMint+"&price="+meListing[0].price;
+            const resp = await window.fetch(apiUrl, {
+                method: 'GET',
+                redirect: 'follow',
+                signal: Timeout(5).signal,
+                headers: {
+                    'Authorization': `Bearer ${ME_KEYBASE}` 
+                }
+            })
+            const json = await resp.json(); 
+            console.log("json: "+JSON.stringify(json))
+
+            if (json?.tx)
+                return json;
+            else
+                return null;
+        }
+
+        const fetchMEMintWithTimeout = async () => {
+            setLoadingTP(true);
+            const apiUrl = PROXY+"https://api-mainnet.magiceden.dev/v2/tokens/"+mint+"/listings";
+            const resp = await window.fetch(apiUrl, {
+                method: 'GET',
+                redirect: 'follow',
+                signal: Timeout(5).signal,
+            })
+            const json = await resp.json(); 
+            setLoadingTP(false);
+            setMEListing(json);
+            console.log("json: "+JSON.stringify(json))
+            return json
+        }
+
+        React.useEffect(() => {
+            const result = fetchMEMintWithTimeout();
+        },[]);
+
+        
+        if (!loadingTP){
+            return (
+                <Grid item>
+                    {meListing && meListing[0]?.auctionHouse ?
+                    <Tooltip title={`This NFT is currently owned by a program (${meListing[0]?.auctionHouse}) and listed on Magic Eden`}>
+                        <Button sx={{borderRadius:'10px'}}
+                            onClick={handleMeBuyeNow}
+                        >
+                            <Alert severity="info" sx={{borderRadius:'10px'}}>
+                                Buy from Magic Eden for <strong>{meListing && meListing[0]?.price} SOL</strong>
+                            </Alert>
+                        </Button>
+                    </Tooltip>
+                    :
+                    <Tooltip title={t('This NFT is currently owned by a program and may be listed on a third party marketplace')}>
+                        <Button sx={{borderRadius:'10px'}}>
+                            <Alert severity="warning" sx={{borderRadius:'10px'}}>
+                            {t('LISTED/PROGRAM OWNED NFT')}
+                            </Alert>
+                        </Button>
+                    </Tooltip>
+                    }
+                </Grid>  
+            )
+        } else{
+            return (
+
+                <Grid item>
+                    <Tooltip title={t('This NFT is currently owned by a program and may be listed on a third party marketplace')}>
+                        <Button sx={{borderRadius:'10px'}}>
+                            <Alert severity="warning" sx={{borderRadius:'10px'}}>
+                            {t('LISTED/PROGRAM OWNED NFT')}
+                            </Alert>
+                        </Button>
+                    </Tooltip>
+                </Grid>  
+
+            )
+        }
+        
+
+    }
+
     async function handleSellNow(event: any) {
         event.preventDefault();
         
@@ -448,15 +636,7 @@ function SellNowVotePrompt(props:any){
                 </>
             :
             <>
-                <Grid item>
-                    <Tooltip title={t('This NFT is currently owned by a program and may be listed on a third party marketplace')}>
-                        <Button sx={{borderRadius:'10px'}}>
-                            <Alert severity="warning" sx={{borderRadius:'10px'}}>
-                            {t('LISTED/PROGRAM OWNED NFT')}
-                            </Alert>
-                        </Button>
-                    </Tooltip>
-                </Grid>  
+                <ThirdPartyHolder />
             </>
             }  
         </React.Fragment>
