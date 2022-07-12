@@ -1,15 +1,15 @@
 import React, { useCallback } from "react";
 import { Link } from "react-router-dom";
 
-import { Connection, PublicKey, Transaction } from '@solana/web3.js';
+import { Connection, PublicKey, Transaction, TransactionInstruction } from '@solana/web3.js';
 import * as anchor from '@project-serum/anchor';
-import { getAssociatedTokenAddress } from '@solana/spl-token-v2';
+import { getAssociatedTokenAddress, getOrCreateAssociatedTokenAccount } from '@solana/spl-token-v2';
 // @ts-ignore
 //import fetch from 'node-fetch';
 
 import { TokenAmount } from '../utils/grapeTools/safe-math';
 import { styled } from '@mui/material/styles';
-import { Button } from '@mui/material';
+import { Button, LinearProgress } from '@mui/material';
 import { useSnackbar } from 'notistack';
 import moment from 'moment';
 
@@ -251,6 +251,7 @@ function SellNowVotePrompt(props:any){
 	const anchorWallet = useAnchorWallet();
     const [daoPublicKey, setDaoPublicKey] = React.useState(null);
     const salePrice = props.salePrice || null;
+    const setSalePriceEscrow = props.setSalePriceEscrow;
     const weightedScore = props.grapeWeightedScore || 0;
     const collectionAuctionHouse = props.collectionAuctionHouse || null; 
     //const salePrice = React.useState(props.salePrice);
@@ -304,20 +305,23 @@ function SellNowVotePrompt(props:any){
                         //const signers = isNative ? [] : [transferAuthority];
 
                         const txSigned = transactionInstr.txSigned;
-                        const txn = anchor.web3.Transaction.from(Buffer.from(txSigned.data));
-                        /*
-                        const instructionsArray = txn;        
-                        transaction.add(
-                            ...instructionsArray
-                        );
-                        */  
 
+                        //console.log("txSigned: "+JSON.stringify(txSigned));
+
+                        //const instructionsArray = [transactionInstr.instructions].flat();   
+                        //const instructionsArray = transactionInstr.txSigned; 
+
+                        const txn = anchor.web3.Transaction.from(Buffer.from(txSigned.data));
+                        
+                        console.log("txn: "+JSON.stringify(txn))
+                        
                         enqueueSnackbar(`Preparing to buy now at ${meListing[0].price} SOL`,{ variant: 'info' });
                         //const signedTransaction = await sendTransaction(txn, connection);                    
                         //const signed = await signTransaction(txn);                    
                         
-                        //const signedTransaction = await signTransaction(txn);
-                        //anchor.web3.sendAndConfirmRawTransaction(connection, txn.serialize());
+                        //const signedTransactionTest = await signTransaction(transaction);
+                        //console.log("signedTransactionTest: "+JSON.stringify(signedTransactionTest))
+                        //const signedTransaction = await anchor.web3.sendAndConfirmRawTransaction(connection, txn.serialize());
                         
                         const signedTransaction = await sendTransaction(txn, connection);     
                         
@@ -369,14 +373,22 @@ function SellNowVotePrompt(props:any){
         }
 
         const fetchMEBuyNowTimeout = async () => {
-            const grape_referral = '';
-
+            const buyer_referral = ''//publicKey.toBase58();
+            const seller_referral = meListing[0].sellerReferral;
+            
             const tokenAta = await getAssociatedTokenAddress(
                 new PublicKey(meListing[0].pdaAddress),
                 publicKey
             );
 
-            const apiUrl = PROXY+"https://api-mainnet.magiceden.dev/v2/instructions/buy_now?buyer="+publicKey.toBase58()+"&seller="+meListing[0].seller+"&auctionHouseAddress="+meListing[0].auctionHouse+"&tokenMint="+meListing[0].tokenMint+"&tokenATA="+tokenAta.toBase58()+"&price="+meListing[0].price+"&buyerReferral="+grape_referral+"&sellerReferral="+meListing[0].sellerReferral+"&buyerExpiry=&sellerExpiry=";
+            console.log("buyer: "+publicKey.toBase58());
+            console.log("seller: "+meListing[0].seller);
+            console.log("auctionHouse: "+meListing[0].auctionHouse);
+            console.log("tokenAta: "+tokenAta.toBase58());
+            console.log("tokenMint: "+meListing[0].tokenMint);
+            console.log("price: "+meListing[0].price);
+
+            const apiUrl = PROXY+"https://api-mainnet.magiceden.dev/v2/instructions/buy_now?buyer="+publicKey.toBase58()+"&seller="+meListing[0].seller+"&auctionHouseAddress="+meListing[0].auctionHouse+"&tokenMint="+meListing[0].tokenMint+"&tokenATA="+tokenAta.toBase58()+"&price="+meListing[0].price+"&buyerReferral="+buyer_referral+"&sellerReferral="+seller_referral+"&buyerExpiry=&sellerExpiry=0";
             console.log("apiUrl: " + apiUrl);
 
             //const apiUrl = PROXY+"https://api-mainnet.magiceden.dev/v2/instructions/buy?buyer="+publicKey.toBase58()+"&seller="+meListing[0].seller+"&auctionHouseAddress="+meListing[0].auctionHouse+"&tokenMint="+meListing[0].tokenMint+"&price="+meListing[0].price;
@@ -407,6 +419,10 @@ function SellNowVotePrompt(props:any){
             })
             const json = await resp.json(); 
             setLoadingTP(false);
+
+            if (json && json[0]?.price > 0)
+                setSalePriceEscrow(json[0].price)
+
             setMEListing(json);
             console.log("json: "+JSON.stringify(json))
             return json
@@ -416,8 +432,13 @@ function SellNowVotePrompt(props:any){
             const result = fetchMEMintWithTimeout();
         },[]);
 
-        
-        if (!loadingTP){
+        if (loadingTP){
+            return (
+                <Grid item>
+                    <CircularProgress sx={{p:0.5}}  />
+                </Grid>  
+            )
+        } else {
             return (
                 <Grid item>
                     {meListing && meListing[0]?.auctionHouse ?
@@ -440,20 +461,6 @@ function SellNowVotePrompt(props:any){
                     </Tooltip>
                     }
                 </Grid>  
-            )
-        } else{
-            return (
-
-                <Grid item>
-                    <Tooltip title={t('This NFT is currently owned by a program and may be listed on a third party marketplace')}>
-                        <Button sx={{borderRadius:'10px'}}>
-                            <Alert severity="warning" sx={{borderRadius:'10px'}}>
-                            {t('LISTED/PROGRAM OWNED NFT')}
-                            </Alert>
-                        </Button>
-                    </Tooltip>
-                </Grid>  
-
             )
         }
         
@@ -1168,6 +1175,7 @@ export default function ItemOffers(props: any) {
     const [tradeState, setTradeState] = React.useState(null);
     const [final_offerfrom, setFinalOfferFrom] = React.useState(null);
     const [salePrice, setSalePrice] = React.useState(props.salePrice);
+    const [salePriceEscrow, setSalePriceEscrow] = React.useState(null);
     const [tokenSalePrice, setTokenSalePrice] = React.useState(0);
     const [saleDate, setSaleDate] = React.useState(null);
     const [saleTimeAgo, setSaleTimeAgo] = React.useState(null);
@@ -1805,7 +1813,8 @@ export default function ItemOffers(props: any) {
             //if (amount === 0){
                 //const transactionInstr = await buyNowListing(salePrice, mint, sellerWalletKey.toString(), buyerPublicKey, updateAuthority, auctionHouseKey.toBase58());
                 const transactionInstr = await gah_sellListing(salePrice, mint, buyerPublicKey.toBase58(), sellerWalletKey.toBase58(), null, null, updateAuthority, auctionHouseKey.toBase58());
-                const instructionsArray = [transactionInstr.instructions].flat();        
+                const instructionsArray = [transactionInstr.instructions].flat();   
+                
                 const transaction = new Transaction()
                 .add(
                     ...instructionsArray
@@ -1987,7 +1996,15 @@ export default function ItemOffers(props: any) {
                                         {t('Selling now')}: 
                                             
                                             {salePrice <= 0 ? 
-                                                <>&nbsp;{t('not listed for sale')}</>
+                                                <>
+                                                {salePriceEscrow && salePriceEscrow > 0 ?
+                                                    <>&nbsp;listed on escrow</>
+                                                :
+                                                    <>
+                                                    &nbsp;{t('not listed for sale')}
+                                                    </>
+                                                }
+                                                </>
                                             :
                                                 <>
                                                 {( (saleTimeAgo) ? 
@@ -2032,7 +2049,15 @@ export default function ItemOffers(props: any) {
                                         <Typography component="div" variant="caption">
                                             {t('Buy now')}: 
                                             {salePrice <= 0 ? 
-                                                <>&nbsp;{t('not listed for sale')}</>
+                                                <>
+                                                {salePriceEscrow && salePriceEscrow > 0 ?
+                                                    <>&nbsp;listed on escrow</>
+                                                :
+                                                    <>
+                                                    &nbsp;{t('not listed for sale')}
+                                                    </>
+                                                }
+                                                </>
                                             :
                                                 <>
                                                 {( (saleTimeAgo) ? 
@@ -2232,7 +2257,7 @@ export default function ItemOffers(props: any) {
                                                                         <>
                                                                         {!ValidateCurve(mintOwner) && salePrice <= 0 &&
                                                                             <Grid item>
-                                                                                <SellNowVotePrompt mint={mint} updateAuthority={updateAuthority} mintOwner={mintOwner} salePrice={salePrice} grapeWeightedScore={grape_weighted_score} setRefreshOffers={setRefreshOffers} collectionAuctionHouse={collectionAuctionHouse} />
+                                                                                <SellNowVotePrompt setSalePriceEscrow={setSalePriceEscrow} mint={mint} updateAuthority={updateAuthority} mintOwner={mintOwner} salePrice={salePrice} grapeWeightedScore={grape_weighted_score} setRefreshOffers={setRefreshOffers} collectionAuctionHouse={collectionAuctionHouse} />
                                                                             </Grid>
                                                                         }
                                                                         
