@@ -76,6 +76,7 @@ import {
     VERIFIED_DAO_ARRAY,
     PROXY,
     ME_KEYBASE,
+    CROSSMINT_API,
 } from '../utils/grapeTools/constants';
 
 import { AuctionHouseProgram } from '@metaplex-foundation/mpl-auction-house'
@@ -289,7 +290,7 @@ function SellNowVotePrompt(props:any){
             return controller;
         };
 
-        async function handleMeBuyeNow(event: any) {
+        async function handleEscrowBuyNow(event: any) {
             event.preventDefault();
             
             if (meListing && meListing[0].price > 0) {
@@ -444,10 +445,10 @@ function SellNowVotePrompt(props:any){
                     {meListing && meListing[0]?.auctionHouse ?
                     <Tooltip title={`This NFT is listed on Magic Eden using an escrow program: ${meListing[0]?.auctionHouse}`}>
                         <Button sx={{borderRadius:'10px'}}
-                            onClick={handleMeBuyeNow}
+                            //onClick={handleEscrowBuyNow}
                         >
                             <Alert severity="info" sx={{borderRadius:'10px'}}>
-                                Buy from Magic Eden for <strong>{meListing && meListing[0]?.price} SOL</strong>
+                                Listed on Magic Eden for <strong>{meListing && meListing[0]?.price} SOL</strong>
                             </Alert>
                         </Button>
                     </Tooltip>
@@ -1174,7 +1175,7 @@ export default function ItemOffers(props: any) {
     const [final_offeramount, setFinalOfferAmount] = React.useState(null);
     const [tradeState, setTradeState] = React.useState(null);
     const [final_offerfrom, setFinalOfferFrom] = React.useState(null);
-    const [salePrice, setSalePrice] = React.useState(props.salePrice);
+    const [salePrice, setSalePrice] = React.useState(props.salePrice || 0);
     const [salePriceEscrow, setSalePriceEscrow] = React.useState(null);
     const [tokenSalePrice, setTokenSalePrice] = React.useState(0);
     const [saleDate, setSaleDate] = React.useState(null);
@@ -2175,20 +2176,22 @@ export default function ItemOffers(props: any) {
                                                                         <DialogActions>
                                                                             
                                                                             <Button onClick={handleAlertBuyNowClose}>Cancel</Button>
-                                                                            {/*
-                                                                            <CrossmintPayButton
-                                                                                collectionTitle={mintName}
-                                                                                collectionDescription={mintName}
-                                                                                collectionPhoto={image}
-                                                                                clientId="NYI"
-                                                                                whPassThroughArgs={{
-                                                                                    mintHash: mint,
-                                                                                    sellerWallet: mintOwner,
-                                                                                    buyPrice: salePrice,
-                                                                                }}
-                                                                                className="grape-crossmint-button"
-                                                                            />
-                                                                            */}
+                                                                            {verifiedAuctionHouse?.crossmint &&
+                                                                                <CrossmintPayButton
+                                                                                    collectionTitle={mintName}
+                                                                                    collectionDescription={mintName}
+                                                                                    collectionPhoto={image}
+                                                                                    clientId={verifiedAuctionHouse?.crossmint}
+                                                                                    mintConfig={{
+                                                                                        type: "solana-auction-house",
+                                                                                        mintHash: {mint},
+                                                                                        sellerWallet: {mintOwner},
+                                                                                        buyPrice: salePrice.toString(),
+                                                                                        totalPrice: salePrice.toString(),
+                                                                                    }}
+                                                                                    className="grape-crossmint-button"
+                                                                                />
+                                                                            }
                                                                             <Button 
                                                                                 onClick={() => handleBuyNow(salePrice, salePriceAH)}
                                                                                 autoFocus>
