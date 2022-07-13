@@ -301,7 +301,7 @@ export default function HistoryView(props: any){
     };
 
     const fetchMEHistoryWithTimeout = async (mint:string,start:number) => {
-        const apiUrl = "https://corsproxy.io/?https://api-mainnet.magiceden.dev/v2/tokens/"+mint+"/activities?offset="+start+"&limit=100";
+        const apiUrl = PROXY+"https://api-mainnet.magiceden.dev/v2/tokens/"+mint+"/activities?offset="+start+"&limit=100";
         const resp = await window.fetch(apiUrl, {
             method: 'GET',
             redirect: 'follow',
