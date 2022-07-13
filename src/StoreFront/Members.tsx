@@ -2,12 +2,11 @@ import { getRealm, getAllTokenOwnerRecords, getTokenOwnerRecordsByOwner } from '
 import { PublicKey, TokenAmount, Connection } from '@solana/web3.js';
 import { ENV, TokenListProvider, TokenInfo } from '@solana/spl-token-registry';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
+import axios from "axios";
 
-/*
 import { 
     tryGetName,
 } from '@cardinal/namespaces';
-*/
 
 import * as React from 'react';
 import BN from 'bn.js';
@@ -207,9 +206,7 @@ function RenderGovernanceMembersTable(props:any) {
         
         const fetchProfilePicture = async () => {
             setLoadingPicture(true);  
-                //console.log("trying: "+address)
                 try{
-                    //console.log(countRef.current+": "+address+" - "+loadingpicture);
                     const { isAvailable, url } = await getProfilePicture(ggoconnection, new PublicKey(address));
                     
                     let img_url = url;
@@ -225,14 +222,28 @@ function RenderGovernanceMembersTable(props:any) {
         const fetchSolanaDomain = async () => {
             
             console.log("fetching tryGetName: "+address);
-            const cardinal_registration = null
-            /*await tryGetName(
+            const cardinal_registration = await tryGetName(
                 ggoconnection, 
                 new PublicKey(address)
-            );*/
+            );
 
             if (cardinal_registration){
-                console.log("FOUND: "+JSON.stringify(cardinal_registration))
+                //console.log("FOUND: "+JSON.stringify(cardinal_registration))
+                setSolanaDomain(cardinal_registration);
+                const url = `https://api.cardinal.so/twitter/proxy?url=https://api.twitter.com/2/users/by&usernames=${cardinal_registration.slice(1)}&user.fields=profile_image_url`;
+                /*
+                const response = await window.fetch(url, {
+                    method: 'GET',
+                    headers: {
+                    }
+                });
+                */
+                const response = await axios.get(url);
+                //const twitterImage = response?.data?.data[0]?.profile_image_url;
+                if (response?.data?.data[0]?.profile_image_url){
+                    setProfilePictureUrl(response?.data?.data[0]?.profile_image_url);
+                    setHasProfilePicture(true);
+                }
             } else{
                 const domain = await findDisplayName(ggoconnection, address);
                 if (domain) {

@@ -43,6 +43,7 @@
   "dependencies": {
     "@apollo/client": "^3.6.9",
     "@bonfida/spl-name-service": "^0.1.31",
+    "@cardinal/namespaces": "3.2.0",
     "@crossmint/client-sdk-react-ui": "^0.1.7-alpha.1",
     "@cyberlab/cyberconnect": "^4.4.2",
     "@dialectlabs/react": "^0.5.6",

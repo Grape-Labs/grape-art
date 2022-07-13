@@ -2191,7 +2191,7 @@ export default function ItemOffers(props: any) {
                                                                                     }}
                                                                                     className="grape-crossmint-button"
                                                                                 />
-                                                                                */}
+                                                                            */}
                                                                             <Button 
                                                                                 onClick={() => handleBuyNow(salePrice, salePriceAH)}
                                                                                 autoFocus>
