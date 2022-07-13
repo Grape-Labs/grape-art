@@ -118,18 +118,20 @@ export function TokenView(props: any) {
         
         const pp = new Array;
         
-        for (var item of json.result.value){
-            pp.push(item);
-        }
-
-        setPortfolioPositions(pp);
-
-        for (var token of json.result.value){
-            if (token.account.data.parsed.info.mint === collectionAuthority.address){
-                setMyToken(token);
+        if (json?.result?.value){
+            for (var item of json.result?.value){
+                pp.push(item);
             }
+
+            setPortfolioPositions(pp);
+
+            for (var token of json.result?.value){
+                if (token.account.data.parsed.info.mint === collectionAuthority.address){
+                    setMyToken(token);
+                }
+            }
+            //console.log("myTokens: "+JSON.stringify(json));
         }
-        console.log("myTokens: "+JSON.stringify(json));
     }
 
     const getTokenInfo = async () => {
