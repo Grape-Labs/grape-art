@@ -2176,12 +2176,12 @@ export default function ItemOffers(props: any) {
                                                                         <DialogActions>
                                                                             
                                                                             <Button onClick={handleAlertBuyNowClose}>Cancel</Button>
-                                                                            {verifiedAuctionHouse?.crossmint &&
+                                                                            {/*verifiedCollection?.crossmint &&
                                                                                 <CrossmintPayButton
                                                                                     collectionTitle={mintName}
                                                                                     collectionDescription={mintName}
                                                                                     collectionPhoto={image}
-                                                                                    clientId={verifiedAuctionHouse?.crossmint}
+                                                                                    clientId={verifiedCollection?.crossmint}
                                                                                     mintConfig={{
                                                                                         type: "solana-auction-house",
                                                                                         mintHash: {mint},
@@ -2191,7 +2191,7 @@ export default function ItemOffers(props: any) {
                                                                                     }}
                                                                                     className="grape-crossmint-button"
                                                                                 />
-                                                                            }
+                                                                                */}
                                                                             <Button 
                                                                                 onClick={() => handleBuyNow(salePrice, salePriceAH)}
                                                                                 autoFocus>

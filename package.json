@@ -41,6 +41,7 @@
     "react": "^17.0.0 || ^18.0.0"
   },
   "dependencies": {
+    "@apollo/client": "^3.6.9",
     "@bonfida/spl-name-service": "^0.1.31",
     "@crossmint/client-sdk-react-ui": "^0.1.7-alpha.1",
     "@cyberlab/cyberconnect": "^4.4.2",

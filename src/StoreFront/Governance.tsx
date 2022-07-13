@@ -12,6 +12,7 @@ import {
   Paper,
   Avatar,
   Skeleton,
+  Stack,
   Table,
   TableContainer,
   TableCell,
@@ -25,9 +26,6 @@ import {
   CircularProgress,
   LinearProgress,
 } from '@mui/material/';
-
-//import {formatAmount, getFormattedNumberToLocale} from '../Meanfi/helpers/ui';
-//import { PretifyCommaNumber } from '../../components/Tools/PretifyCommaNumber';
 
 import moment from 'moment';
 
@@ -46,6 +44,7 @@ import HowToVoteIcon from '@mui/icons-material/HowToVote';
 
 import PropTypes from 'prop-types';
 import { GRAPE_RPC_ENDPOINT, THEINDEX_RPC_ENDPOINT } from '../utils/grapeTools/constants';
+import { formatAmount, getFormattedNumberToLocale } from '../utils/grapeTools/helpers'
 import { RevokeCollectionAuthority } from '@metaplex-foundation/mpl-token-metadata';
 
 const StyledTable = styled(Table)(({ theme }) => ({
@@ -386,7 +385,6 @@ export function GovernanceView(props: any) {
     const [tokenMap, setTokenMap] = React.useState(null);
     const [realm, setRealm] = React.useState(null);
     const [tokenArray, setTokenArray] = React.useState(null);
-    const [token, setToken] = React.useState(null);
     const { connection } = useConnection();
     const { publicKey } = useWallet();
     const [proposals, setProposals] = React.useState(null);
@@ -395,6 +393,33 @@ export function GovernanceView(props: any) {
     const [nftBasedGovernance, setNftBasedGovernance] = React.useState(false);
 
     const GOVERNANCE_PROGRAM_ID = 'GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw';
+
+    function VotingPower(props: any){
+        const tArray = props.tokenArray;
+        const pRealm = props.participatingRealm;
+        const [thisToken, setThisToken] = React.useState(null);
+
+        React.useEffect(() => { 
+            if (tArray){
+                for (var token of tArray){
+                    if (token.address === participatingRealm.account?.governingTokenMint.toBase58()){
+                        setThisToken(token);
+                    }
+                }
+            }
+        }, [pRealm]);
+
+        return (
+            <>
+            {thisToken && 
+                <>
+                    {getFormattedNumberToLocale(formatAmount(parseInt(participatingRealm.account?.governingTokenDepositAmount)/Math.pow(10, +thisToken?.decimals)))} votes
+                </>
+            }
+            </>
+        );
+
+    }
 
     const getTokens = async () => {
         const tarray:any[] = [];
@@ -419,26 +444,30 @@ export function GovernanceView(props: any) {
             setLoading(true);
             try{
 
+                if (!tokenArray)
+                    await getTokens();
+                    
                 console.log("with governance: "+collectionAuthority.governance);
                 const programId = new PublicKey(GOVERNANCE_PROGRAM_ID);
 
                 const ownerRecordsbyOwner = await getTokenOwnerRecordsByOwner(connection, programId, publicKey);
                 // check if part of this realm
                 var pcp = false;
+                var partOf = null;
                 for (var realm of ownerRecordsbyOwner){
                     //console.log("owner record realm: "+JSON.stringify(realm))
                     if (realm.account.realm.toBase58() === collectionAuthority.governance){
                         pcp = true;
+                        partOf = realm;
                         setParticipatingRealm(realm);
-                        
-
+                        console.log("realm: "+JSON.stringify(realm))
                     }
                 }
                 setParticipating(pcp);
 
                 const grealm = await getRealm(new Connection(THEINDEX_RPC_ENDPOINT), new PublicKey(collectionAuthority.governance))
                 setRealm(grealm);
-                console.log("realm: "+JSON.stringify(grealm));
+                console.log("B realm: "+JSON.stringify(grealm));
 
                 const realmPk = grealm.pubkey;
 
@@ -493,26 +522,6 @@ export function GovernanceView(props: any) {
 
                 setProposals(sortedResults);
 
-                if (!tokenArray)
-                    await getTokens();
-
-                
-                /*
-                try{
-                    let decimals = 0;
-                    for (var item of tokenArray){
-                        if (item?.address === tokenOwnerRecordsByOwner[index].account.governingTokenMint.toBase58())
-                            decimals = item.decimals;
-                    }
-                    console.log(tokenOwnerRecordsByOwner[index].account.governingTokenMint.toBase58()+" found: "+decimals);
-    
-                    setToken({address:tokenOwnerRecordsByOwner[index].account.governingTokenMint.toBase58(), decimals:decimals});
-                } catch(e){
-                    setToken({address:tokenOwnerRecordsByOwner[index].account.governingTokenMint.toBase58(),decimals:0})
-                }
-                */
-                
-
             }catch(e){console.log("ERR: "+e)}
         } else{
 
@@ -551,18 +560,28 @@ export function GovernanceView(props: any) {
                     > 
                         {realm &&
                             <>
-                            <Typography variant="h4">
-                                {realm.account.name}
+                            <Grid container>
+                                <Grid item xs={12} sm={6} container justifyContent="flex-start">
+                                    <Typography variant="h4">
+                                        {realm.account.name}
 
-                                <Button
-                                    size='small'
-                                    sx={{ml:1, color:'white', borderRadius:'17px'}}
-                                    href={'https://realms.today/dao/'+collectionAuthority.governanceVanityUrl}
-                                    target='blank'
-                                >
-                                    <OpenInNewIcon/>
-                                </Button>
-                            </Typography>
+                                        <Button
+                                            size='small'
+                                            sx={{ml:1, color:'white', borderRadius:'17px'}}
+                                            href={'https://realms.today/dao/'+collectionAuthority.governanceVanityUrl}
+                                            target='blank'
+                                        >
+                                            <OpenInNewIcon/>
+                                        </Button>
+                                    
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs={12} sm={6} container justifyContent="flex-end">
+                                    <Typography variant="h4" align="right">
+                                        <VotingPower tokenArray={tokenArray} participatingRealm={participatingRealm} />
+                                    </Typography>
+                                </Grid>
+                            </Grid>
                             {/*
                             <Typography variant="caption">
                                 <Tooltip title={

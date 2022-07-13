@@ -15,7 +15,103 @@ import {
 import { getMetadata } from '../auctionHouse/helpers/accounts';
 
 import { AuctionHouseProgram  } from '@metaplex-foundation/mpl-auction-house';
+const SI_SYMBOL = ["", "k", "M", "G", "T", "P", "E"];
 
+export function timeConvert(n: number, decimals = 0, abbr = false): string {
+  const num = n;
+  const hours = (num / 60);
+  const rhours = Math.floor(hours);
+  const minutes = (hours - rhours) * 60;
+  const rminutes = Math.round(minutes);
+  const rdays = Math.round(rhours / 24);
+  let returnString = '';
+  if (num === 1) {
+      returnString = `${num} minute.`;
+  } else if (num === 60) {
+      returnString = '1 hour.';
+  } else if (num > 60) {
+      returnString = `${formatAmount(num, decimals, abbr)} minutes`;
+      if (rdays > 1) {
+          returnString += `. ~${rdays} days.`;
+      } else {
+          returnString = ` = ${formatAmount(rhours, decimals, abbr)} hour(s) and ${rminutes} minutes.`;
+      }
+  } else {
+      returnString = `${rminutes} minutes.`;
+  }
+  return returnString;
+}
+
+export const getFormattedNumberToLocale = (value: any, digits = 0) => {
+  const converted = parseFloat(value.toString());
+  const formatted = new Intl.NumberFormat('en-US', {
+      minimumSignificantDigits: 1,
+      minimumFractionDigits: digits,
+      maximumFractionDigits: digits,
+  }).format(converted);
+  return formatted || '';
+}
+
+export const formatThousands = (val: number, maxDecimals?: number, minDecimals = 0) => {
+  let convertedVlue: Intl.NumberFormat;
+
+  if (maxDecimals) {
+      convertedVlue = new Intl.NumberFormat('en-US', {
+          minimumFractionDigits: minDecimals,
+          maximumFractionDigits: maxDecimals
+      });
+  } else {
+      convertedVlue = new Intl.NumberFormat("en-US", {
+          minimumFractionDigits: minDecimals,
+          maximumFractionDigits: 0
+      });
+  }
+
+  return convertedVlue.format(val);
+}
+
+const abbreviateNumber = (number: number, precision: number) => {
+  if (number === undefined) {
+      return '--';
+  }
+  let tier = (Math.log10(number) / 3) | 0;
+  let scaled = number;
+  let suffix = SI_SYMBOL[tier];
+  if (tier !== 0) {
+      let scale = Math.pow(10, tier * 3);
+      scaled = number / scale;
+  }
+
+  return scaled.toFixed(precision) + suffix;
+};
+
+export const formatAmount = (
+  val: number,
+  precision: number = 6,
+  abbr: boolean = false
+) => {
+  if (val) {
+      if (abbr) {
+          return abbreviateNumber(val, precision);
+      } else {
+          return val.toFixed(precision);
+      }
+  }
+  return '0';
+};
+
+export function getRemainingDays(targetDate?: string): number {
+  const date = new Date();
+  const time = new Date(date.getTime());
+  const toDate = targetDate ? new Date(targetDate) : null;
+  if (toDate) {
+      time.setMonth(toDate.getMonth());
+  } else {
+      time.setMonth(date.getMonth() + 1);
+  }
+  time.setDate(0);
+  return time.getDate() > date.getDate() ? time.getDate() - date.getDate() : 0;
+}
 
 //Get Prices RPC
 export async function getCoinGeckoPrice(token:string) {

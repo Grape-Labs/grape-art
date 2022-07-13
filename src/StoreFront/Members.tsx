@@ -27,8 +27,6 @@ import {
   LinearProgress,
 } from '@mui/material/';
 
-//import {formatAmount, getFormattedNumberToLocale} from '../Meanfi/helpers/ui';
-//import { PretifyCommaNumber } from '../../components/Tools/PretifyCommaNumber';
 import { getProfilePicture } from '@solflare-wallet/pfp';
 import { findDisplayName } from '../utils/name-service';
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
