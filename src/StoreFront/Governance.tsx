@@ -1,4 +1,4 @@
-import { getRealm, getAllProposals, getTokenOwnerRecordsByOwner, getRealmConfigAddress, getGovernanceAccount, getAccountTypes, GovernanceAccountType, tryGetRealmConfig,  } from '@solana/spl-governance';
+import { getRealm, getAllProposals, getTokenOwnerRecordsByOwner, getTokenOwnerRecord, getRealmConfigAddress, getGovernanceAccount, getAccountTypes, GovernanceAccountType, tryGetRealmConfig  } from '@solana/spl-governance';
 import { PublicKey, TokenAmount, Connection } from '@solana/web3.js';
 import { ENV, TokenListProvider, TokenInfo } from '@solana/spl-token-registry';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
@@ -402,7 +402,7 @@ export function GovernanceView(props: any) {
         React.useEffect(() => { 
             if (tArray){
                 for (var token of tArray){
-                    if (token.address === participatingRealm.account?.governingTokenMint.toBase58()){
+                    if (token.address === participatingRealm?.account?.governingTokenMint.toBase58()){
                         setThisToken(token);
                     }
                 }
@@ -413,7 +413,7 @@ export function GovernanceView(props: any) {
             <>
             {thisToken && 
                 <>
-                    {getFormattedNumberToLocale(formatAmount(parseInt(participatingRealm.account?.governingTokenDepositAmount)/Math.pow(10, +thisToken?.decimals)))} votes
+                    {getFormattedNumberToLocale(formatAmount(parseInt(participatingRealm?.account?.governingTokenDepositAmount)/Math.pow(10, +thisToken?.decimals)))} votes
                 </>
             }
             </>

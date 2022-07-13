@@ -2,6 +2,13 @@ import { getRealm, getAllTokenOwnerRecords, getTokenOwnerRecordsByOwner } from '
 import { PublicKey, TokenAmount, Connection } from '@solana/web3.js';
 import { ENV, TokenListProvider, TokenInfo } from '@solana/spl-token-registry';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
+
+/*
+import { 
+    tryGetName,
+} from '@cardinal/namespaces';
+*/
+
 import * as React from 'react';
 import BN from 'bn.js';
 import { styled, useTheme } from '@mui/material/styles';
@@ -196,13 +203,14 @@ function RenderGovernanceMembersTable(props:any) {
         const [profilePictureUrl, setProfilePictureUrl] = React.useState(null);
         const [hasProfilePicture, setHasProfilePicture] = React.useState(false);
         const countRef = React.useRef(0);
-
+        const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
+        
         const fetchProfilePicture = async () => {
             setLoadingPicture(true);  
                 //console.log("trying: "+address)
                 try{
                     //console.log(countRef.current+": "+address+" - "+loadingpicture);
-                    const { isAvailable, url } = await getProfilePicture(new Connection(GRAPE_RPC_ENDPOINT), new PublicKey(address));
+                    const { isAvailable, url } = await getProfilePicture(ggoconnection, new PublicKey(address));
                     
                     let img_url = url;
                     if (url)
@@ -215,16 +223,29 @@ function RenderGovernanceMembersTable(props:any) {
         }
 
         const fetchSolanaDomain = async () => {
-            const domain = await findDisplayName(new Connection(GRAPE_RPC_ENDPOINT), address);
-            if (domain) {
-                if (domain[0] !== address) {
-                    setSolanaDomain(domain[0]);
+            
+            console.log("fetching tryGetName: "+address);
+            const cardinal_registration = null
+            /*await tryGetName(
+                ggoconnection, 
+                new PublicKey(address)
+            );*/
+
+            if (cardinal_registration){
+                console.log("FOUND: "+JSON.stringify(cardinal_registration))
+            } else{
+                const domain = await findDisplayName(ggoconnection, address);
+                if (domain) {
+                    if (domain[0] !== address) {
+                        setSolanaDomain(domain[0]);
+                    }
                 }
             }
         };
 
         
-        React.useEffect(() => {       
+        React.useEffect(() => {    
+            
             if (!loadingpicture){
                 //const interval = setTimeout(() => {
                     if (address){
@@ -247,7 +268,7 @@ function RenderGovernanceMembersTable(props:any) {
                         </Avatar>
                     </Grid>
                     <Grid item sx={{ml:1}}>
-                    {trimAddress(address,6)}
+                        {trimAddress(address,6)}
                     </Grid>
                 </Grid>
             )
@@ -274,6 +295,9 @@ function RenderGovernanceMembersTable(props:any) {
                         <Grid container direction="row">
                             <Grid item alignItems="center">
                                 <Jazzicon diameter={30} seed={jsNumberForAddress(address)} />
+                                {/*
+                                <DisplayAddress address={new PublicKey(address)} connection={ggoconnection} />
+                                */}
                             </Grid>
                             <Grid item  alignItems="center" sx={{ml:1}}>
                                 {solanaDomain || trimAddress(address,6)}
@@ -283,6 +307,9 @@ function RenderGovernanceMembersTable(props:any) {
                         <Grid container direction="row">
                             <Grid item alignItems="center">
                                 <Jazzicon diameter={30} seed={Math.round(Math.random() * 10000000)} />
+                                {/*
+                                <DisplayAddress address={new PublicKey(address)} connection={ggoconnection} />
+                                */}
                             </Grid>
                             <Grid item  alignItems="center" sx={{ml:1}}>
                                 {solanaDomain || trimAddress(address,6)}
@@ -521,7 +548,6 @@ export function MembersView(props: any) {
                                 </Typography>
                             </>
                         }
-                    
                         <RenderGovernanceMembersTable members={members} participating={participating} />
                     </Box>
                                 
