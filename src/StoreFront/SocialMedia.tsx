@@ -165,12 +165,12 @@ export function SocialMediaView(props: any) {
                                                             </Grid>
                                                             <Grid item>
                                                                 <Typography variant="caption">
-                                                                <strong>&nbsp;{twitterProfile?.public_metrics?.followers_count}</strong> Followers
+                                                                &nbsp;|&nbsp;<strong>{twitterProfile?.public_metrics?.followers_count}</strong> Followers
                                                                 </Typography>
                                                             </Grid>
                                                             <Grid item>
                                                                 <Typography variant="caption">
-                                                                <strong>&nbsp;{twitterProfile?.public_metrics?.tweet_count}</strong> Tweets
+                                                                &nbsp;|&nbsp;<strong>{twitterProfile?.public_metrics?.tweet_count}</strong> Tweets
                                                                 </Typography>
                                                             </Grid>
                                                         
