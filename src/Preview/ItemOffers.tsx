@@ -445,7 +445,7 @@ function SellNowVotePrompt(props:any){
                     {meListing && meListing[0]?.auctionHouse ?
                     <Tooltip title={`This NFT is listed on Magic Eden using an escrow program: ${meListing[0]?.auctionHouse}`}>
                         <Button sx={{borderRadius:'10px'}}
-                            onClick={handleEscrowBuyNow}
+                            //onClick={handleEscrowBuyNow}
                         >
                             <Alert severity="info" sx={{borderRadius:'10px'}}>
                                 Listed on Magic Eden for <strong>{meListing && meListing[0]?.price} SOL</strong>
@@ -2033,7 +2033,7 @@ export default function ItemOffers(props: any) {
                                                 >
                                                     <Button variant="text" sx={{color:'white',borderRadius:'17px'}}>
                                                         <Typography component="div" variant="h4" sx={{fontWeight:'800'}}>
-                                                            <strong>{salePrice} <SolCurrencyIcon /></strong> {tokenSalePrice && <Typography variant='caption' sx={{color:'#999'}}>/{(salePrice*tokenSalePrice).toFixed(2)} USDC</Typography>}
+                                                            <strong>{salePrice} <SolCurrencyIcon /></strong> {tokenSalePrice && <Typography variant='caption' sx={{color:'#999'}}>~{(salePrice*tokenSalePrice).toFixed(2)} USDC</Typography>}
                                                         </Typography>
                                                     </Button>
                                                 </Tooltip>
@@ -2084,7 +2084,7 @@ export default function ItemOffers(props: any) {
                                                         >
                                                             <Button variant="text" sx={{color:'white',borderRadius:'17px'}}>
                                                                 <Typography component="div" variant="h4" sx={{fontWeight:'800'}}>
-                                                                    <strong>{salePrice} <SolCurrencyIcon /></strong> {tokenSalePrice && <Typography variant='caption' sx={{color:'#999'}}>/{(salePrice*tokenSalePrice).toFixed(2)} USDC</Typography>}
+                                                                    <strong>{salePrice} <SolCurrencyIcon /></strong> {tokenSalePrice && <Typography variant='caption' sx={{color:'#999'}}>~{(salePrice*tokenSalePrice).toFixed(2)} USDC</Typography>}
                                                                 </Typography>
                                                             </Button>
                                                         </Tooltip>
@@ -2176,7 +2176,7 @@ export default function ItemOffers(props: any) {
                                                                         <DialogActions>
                                                                             
                                                                             <Button onClick={handleAlertBuyNowClose}>Cancel</Button>
-                                                                            {/*verifiedCollection?.crossmint &&
+                                                                            {verifiedCollection?.crossmint && (salePrice*tokenSalePrice) < 750 &&
                                                                                 <CrossmintPayButton
                                                                                     collectionTitle={mintName}
                                                                                     collectionDescription={mintName}
@@ -2191,7 +2191,7 @@ export default function ItemOffers(props: any) {
                                                                                     }}
                                                                                     className="grape-crossmint-button"
                                                                                 />
-                                                                            */}
+                                                                            }
                                                                             <Button 
                                                                                 onClick={() => handleBuyNow(salePrice, salePriceAH)}
                                                                                 autoFocus>

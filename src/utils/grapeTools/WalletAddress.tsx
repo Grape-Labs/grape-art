@@ -50,19 +50,31 @@ export function timeAgo(blockTime:string){
         let timeago = moment.duration(moment(new Date()).diff(moment.unix(+blockTime))).asDays().toFixed(0);
         //console.log("Time Ago: "+timeago);
         if (+timeago >= 1){
-            prettydate = timeago+' days ago';
+            if (+timeago === 1)
+                prettydate = timeago+' day ago';
+            else
+                prettydate = timeago+' days ago';
         } else{
             let hoursago = moment.duration(moment(new Date()).diff(moment.unix(+blockTime))).asHours().toFixed(0);
             if (+hoursago >= 1){
-                prettydate = hoursago+' hours ago';
+                if (+hoursago === 1)
+                    prettydate = hoursago+' hour ago';
+                else
+                    prettydate = hoursago+' hours ago';
             } else {
                 let minutesAgo = moment.duration(moment(new Date()).diff(moment.unix(+blockTime))).asMinutes().toFixed(0);
                 if (+minutesAgo >= 1){
-                    prettydate = minutesAgo+' minutes ago';
+                    if (+minutesAgo === 1)
+                        prettydate = minutesAgo+' minute ago';
+                    else
+                        prettydate = minutesAgo+' minutes ago';
                 } else {
                     let secondsAgo = moment.duration(moment(new Date()).diff(moment.unix(+blockTime))).asSeconds().toFixed(0);
                     if (+secondsAgo >= 1){
-                        prettydate = minutesAgo+' seconds ago';
+                        if (+secondsAgo === 1)
+                            prettydate = secondsAgo+' second ago';
+                        else
+                            prettydate = secondsAgo+' seconds ago';
                     }
                 }
             }
