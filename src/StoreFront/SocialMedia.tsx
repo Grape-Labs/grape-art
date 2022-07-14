@@ -120,7 +120,7 @@ export function SocialMediaView(props: any) {
                         
                             <Grid container direction="row">
                                 <Grid item>
-                                    <Tooltip title={twitterProfile && twitterProfile?.description}>
+                                    <Tooltip title={twitterProfile && twitterProfile?.description && twitterProfile?.description.length > 0 && twitterProfile?.description}>
                                         <Button
                                             sx={{borderRadius:'17px', color:'white',textTransform:'none', fontSize:'30px'}}
                                             href={`https://twitter.com/${twitterHandle}`}
@@ -158,19 +158,19 @@ export function SocialMediaView(props: any) {
                                                 
                                                 {twitterProfile &&
                                                     <Grid container direction="row" sx={{mt:-3}}>
-                                                            <Grid item xs={4}>
+                                                            <Grid item>
                                                                 <Typography variant="caption">
                                                                 <strong>{twitterProfile?.public_metrics?.following_count}</strong> Following
                                                                 </Typography>
                                                             </Grid>
-                                                            <Grid item xs={4}>
+                                                            <Grid item>
                                                                 <Typography variant="caption">
-                                                                <strong>{twitterProfile?.public_metrics?.followers_count}</strong> Followers
+                                                                <strong>&nbsp;{twitterProfile?.public_metrics?.followers_count}</strong> Followers
                                                                 </Typography>
                                                             </Grid>
-                                                            <Grid item xs={4}>
+                                                            <Grid item>
                                                                 <Typography variant="caption">
-                                                                <strong>{twitterProfile?.public_metrics?.tweet_count}</strong> Tweets
+                                                                <strong>&nbsp;{twitterProfile?.public_metrics?.tweet_count}</strong> Tweets
                                                                 </Typography>
                                                             </Grid>
                                                         
