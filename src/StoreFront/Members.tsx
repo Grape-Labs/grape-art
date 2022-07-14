@@ -261,10 +261,10 @@ function RenderGovernanceMembersTable(props:any) {
                 //const interval = setTimeout(() => {
                     if (address){
                         fetchProfilePicture();
-                        if (participating)
+                        //if (participating)
                             fetchSolanaDomain();
-                        else
-                            setSolanaDomain(trimAddress(address, 6))
+                        //else
+                        //    setSolanaDomain(trimAddress(address, 6))
                     }
                 //}, 500);
             }
