@@ -112,6 +112,7 @@ import ShareSocialURL from '../utils/grapeTools/ShareUrl';
 import GalleryView from '../Profile/GalleryView';
 import ListForCollectionView from './ListForCollection';
 import ActivityView from './Activity';
+import { SocialMediaView } from './SocialMedia';
 import { GovernanceView } from './Governance';
 import { MembersView } from './Members';
 import { TokenView } from './Token';
@@ -443,6 +444,7 @@ enum NavPanel {
     Holders,
     Topics,
     Chat,
+    SocialFeed
 }
 
 function a11yProps(index: number) {
@@ -1766,6 +1768,10 @@ export function StoreFrontView(this: any, props: any) {
 
                         <Tab icon={<RateReviewIcon />} aria-label="Topics" disabled={true} value={NavPanel.Topics} sx={{color:'white'}} />
                         <Tab icon={<ForumIcon />} aria-label="Chat" disabled={true} value={NavPanel.Chat} sx={{color:'white'}} />
+
+                        {collectionAuthority?.links?.twitter &&
+                            <Tab icon={<RssFeedOutlinedIcon />} aria-label="Holders" value={NavPanel.SocialFeed} sx={{color:'white'}} title="Twitter Feed" />
+                        }
                         
                     </Tabs>
 
@@ -1800,6 +1806,15 @@ export function StoreFrontView(this: any, props: any) {
                             }
                         </Box>
                     </TabPanel>
+                    {collectionAuthority?.links?.twitter &&
+                        <TabPanel value={tabValue} index={NavPanel.SocialFeed}>
+                            <Box> 
+                                {collectionAuthority &&  
+                                    <SocialMediaView collectionAuthority={collectionAuthority} twitterHandle={collectionAuthority?.links?.twitter} />
+                                }
+                            </Box>
+                        </TabPanel>
+                    }
                     
                 </Box>
         </React.Fragment>

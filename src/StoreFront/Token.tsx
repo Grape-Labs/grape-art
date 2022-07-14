@@ -338,7 +338,7 @@ export function TokenView(props: any) {
                             
             );
         }else{
-            return (<>???</>);
+            return (<></>);
         }
         
     }

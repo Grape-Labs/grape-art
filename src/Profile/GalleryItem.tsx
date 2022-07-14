@@ -154,7 +154,8 @@ export default function GalleryItem(props: any){
                     if ((image?.toLocaleUpperCase().indexOf('?EXT=PNG') > -1) ||
                         (image?.toLocaleUpperCase().indexOf('?EXT=JPEG') > -1) ||
                         (image?.toLocaleUpperCase().indexOf('.JPEG') > -1) ||
-                        (image?.toLocaleUpperCase().indexOf('.PNG') > -1)){
+                        (image?.toLocaleUpperCase().indexOf('.PNG') > -1) ||
+                        (image?.toLocaleUpperCase().indexOf('ipfs.io') > -1)){
                             let image_url = 'https://solana-cdn.com/cdn-cgi/image/width=256/'+image;
                             image = image_url;
                             //image = setImageUrl(image_url, image);
