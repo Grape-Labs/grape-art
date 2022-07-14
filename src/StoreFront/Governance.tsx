@@ -45,7 +45,7 @@ import HowToVoteIcon from '@mui/icons-material/HowToVote';
 import PropTypes from 'prop-types';
 import { GRAPE_RPC_ENDPOINT, THEINDEX_RPC_ENDPOINT } from '../utils/grapeTools/constants';
 import { formatAmount, getFormattedNumberToLocale } from '../utils/grapeTools/helpers'
-import { RevokeCollectionAuthority } from '@metaplex-foundation/mpl-token-metadata';
+//import { RevokeCollectionAuthority } from '@metaplex-foundation/mpl-token-metadata';
 
 const StyledTable = styled(Table)(({ theme }) => ({
     '& .MuiTableCell-root': {
