@@ -445,7 +445,7 @@ function SellNowVotePrompt(props:any){
                     {meListing && meListing[0]?.auctionHouse ?
                     <Tooltip title={`This NFT is listed on Magic Eden using an escrow program: ${meListing[0]?.auctionHouse}`}>
                         <Button sx={{borderRadius:'10px'}}
-                            //onClick={handleEscrowBuyNow}
+                            onClick={handleEscrowBuyNow}
                         >
                             <Alert severity="info" sx={{borderRadius:'10px'}}>
                                 Listed on Magic Eden for <strong>{meListing && meListing[0]?.price} SOL</strong>
