@@ -1770,7 +1770,7 @@ export function StoreFrontView(this: any, props: any) {
                         <Tab icon={<ForumIcon />} aria-label="Chat" disabled={true} value={NavPanel.Chat} sx={{color:'white'}} />
 
                         {collectionAuthority?.links?.twitter &&
-                            <Tab icon={<RssFeedOutlinedIcon />} aria-label="Holders" value={NavPanel.SocialFeed} sx={{color:'white'}} title="Twitter Feed" />
+                            <Tab icon={<TwitterIcon />} aria-label="Holders" value={NavPanel.SocialFeed} sx={{color:'white'}} title="Twitter Feed" />
                         }
                         
                     </Tabs>

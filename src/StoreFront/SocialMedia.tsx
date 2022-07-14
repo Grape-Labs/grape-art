@@ -28,6 +28,7 @@ import {
 
 import moment from 'moment';
 
+import TwitterIcon from '@mui/icons-material/Twitter';
 import SyncIcon from '@mui/icons-material/Sync';
 import PropTypes from 'prop-types';
 import {  
@@ -112,19 +113,18 @@ export function SocialMediaView(props: any) {
                     }} 
                 > 
                     <>
-                        <Typography variant="h4">
+                        <Typography variant="h5">
                             <Grid container direction="row">
                                 <Grid item>
-                                    {/*
+                                    
                                     <Button
-                                        sx={{borderRadius:'17px', color:'white'}}
+                                        sx={{borderRadius:'17px', color:'white',textTransform:'none', fontSize:'30px'}}
                                         href={`https://twitter.com/${twitterHandle}`}
                                         target="_blank"
                                     >
-                                    {twitterHandle}
+                                        {twitterHandle}
+                                        <TwitterIcon sx={{ml:1}}/>
                                     </Button>
-                                    */}
-                                    {twitterHandle}
                                 </Grid>
                             </Grid>
                         </Typography>
