@@ -66,7 +66,7 @@ import { GRAPE_BOTTOM_CHAT_ID } from '../utils/ui-contants';
 import PropTypes from 'prop-types';
 import { GRAPE_RPC_ENDPOINT, THEINDEX_RPC_ENDPOINT } from '../utils/grapeTools/constants';
 import { MakeLinkableAddress, ValidateAddress, ValidateCurve, trimAddress, timeAgo } from '../utils/grapeTools/WalletAddress'; // global key handling
-import { RevokeCollectionAuthority } from '@metaplex-foundation/mpl-token-metadata';
+//import { RevokeCollectionAuthority } from '@metaplex-foundation/mpl-token-metadata';
 
 const StyledTable = styled(Table)(({ theme }) => ({
     '& .MuiTableCell-root': {
