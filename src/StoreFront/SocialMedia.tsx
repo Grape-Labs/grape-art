@@ -68,7 +68,7 @@ export function SocialMediaView(props: any) {
                 apiUrl
             );
             
-            console.log("response: "+JSON.stringify(response))
+            //console.log("response: "+JSON.stringify(response))
 
             return (response?.data?.data);
         }
