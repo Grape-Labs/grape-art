@@ -33,7 +33,8 @@ import SyncIcon from '@mui/icons-material/Sync';
 import PropTypes from 'prop-types';
 import {  
     PROXY,
-    TWITTER_BEARER } from '../utils/grapeTools/constants';
+    TWITTER_BEARER,
+    TWITTER_PROXY } from '../utils/grapeTools/constants';
 import { MakeLinkableAddress, ValidateAddress, ValidateCurve, trimAddress, timeAgo } from '../utils/grapeTools/WalletAddress'; // global key handling
 //import { RevokeCollectionAuthority } from '@metaplex-foundation/mpl-token-metadata';
 
@@ -53,7 +54,7 @@ export function SocialMediaView(props: any) {
 
     const getTwitterFeed = async () => {
         
-        const url = `https://api.cardinal.so/twitter/proxy?url=https://api.twitter.com/2/users/by&usernames=${twitterHandle.slice(1)}&user.fields=profile_image_url,public_metrics,created_at`;
+        const url = `${TWITTER_PROXY}https://api.twitter.com/2/users/by&usernames=${twitterHandle.slice(1)}&user.fields=profile_image_url,public_metrics,created_at,description`;
         const responseProfile = await axios.get(url);
         //const twitterImage = response?.data?.data[0]?.profile_image_url;
         if (responseProfile?.data?.data[0]?.id){
@@ -61,7 +62,7 @@ export function SocialMediaView(props: any) {
             setTwitterProfile(responseProfile?.data?.data[0]);
             
             //const params = new URLSearchParams([['expansions', "created_at"]]);
-            const apiUrl = `https://api.cardinal.so/twitter/proxy?url=https://api.twitter.com/2/users/${responseProfile?.data?.data[0]?.id}/tweets&tweet.fields=created_at`;
+            const apiUrl = `${TWITTER_PROXY}https://api.twitter.com/2/users/${responseProfile?.data?.data[0]?.id}/tweets&tweet.fields=created_at,public_metrics,organic_metrics,promoted_metrics`;
             
             const response = await axios.get(
                 apiUrl
@@ -120,7 +121,7 @@ export function SocialMediaView(props: any) {
                         
                             <Grid container direction="row">
                                 <Grid item>
-                                    <Tooltip title={twitterProfile && twitterProfile?.description && twitterProfile?.description.length > 0 && twitterProfile?.description}>
+                                    <Tooltip title={twitterProfile && twitterProfile.description}>
                                         <Button
                                             sx={{borderRadius:'17px', color:'white',textTransform:'none', fontSize:'30px'}}
                                             href={`https://twitter.com/${twitterHandle}`}

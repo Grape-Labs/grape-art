@@ -57,7 +57,10 @@ import { ChatNavigationHelpers, useDialectUiId } from '@dialectlabs/react-ui';
 import { GRAPE_BOTTOM_CHAT_ID } from '../utils/ui-contants';
 
 import PropTypes from 'prop-types';
-import { GRAPE_RPC_ENDPOINT, THEINDEX_RPC_ENDPOINT } from '../utils/grapeTools/constants';
+import { 
+    GRAPE_RPC_ENDPOINT, 
+    THEINDEX_RPC_ENDPOINT,
+    TWITTER_PROXY } from '../utils/grapeTools/constants';
 import { MakeLinkableAddress, ValidateAddress, ValidateCurve, trimAddress, timeAgo } from '../utils/grapeTools/WalletAddress'; // global key handling
 //import { RevokeCollectionAuthority } from '@metaplex-foundation/mpl-token-metadata';
 
@@ -230,7 +233,7 @@ function RenderGovernanceMembersTable(props:any) {
             if (cardinal_registration){
                 //console.log("FOUND: "+JSON.stringify(cardinal_registration))
                 setSolanaDomain(cardinal_registration);
-                const url = `https://api.cardinal.so/twitter/proxy?url=https://api.twitter.com/2/users/by&usernames=${cardinal_registration.slice(1)}&user.fields=profile_image_url`;
+                const url = `${TWITTER_PROXY}https://api.twitter.com/2/users/by&usernames=${cardinal_registration.slice(1)}&user.fields=profile_image_url,public_metrics`;
                 /*
                 const response = await window.fetch(url, {
                     method: 'GET',
