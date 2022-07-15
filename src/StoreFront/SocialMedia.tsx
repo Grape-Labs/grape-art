@@ -62,7 +62,7 @@ export function SocialMediaView(props: any) {
             setTwitterProfile(responseProfile?.data?.data[0]);
             
             //const params = new URLSearchParams([['expansions', "created_at"]]);
-            const apiUrl = `${TWITTER_PROXY}https://api.twitter.com/2/users/${responseProfile?.data?.data[0]?.id}/tweets&tweet.fields=created_at,public_metrics,organic_metrics,promoted_metrics`;
+            const apiUrl = `${TWITTER_PROXY}https://api.twitter.com/2/users/${responseProfile?.data?.data[0]?.id}/tweets&tweet.fields=created_at,public_metrics`;
             
             const response = await axios.get(
                 apiUrl
@@ -205,7 +205,30 @@ export function SocialMediaView(props: any) {
                                             }
                                             </>
                                         }
-                                        secondary={`${timeAgo(moment(post.created_at).format('X'))} - View Tweet`}
+                                        secondary={
+                                            <>
+                                                {timeAgo(moment(post.created_at).format('X'))} - View Tweet
+                                                    {post?.public_metrics &&
+                                                    <Grid container direction="row" sx={{mt:0}}>
+                                                            <Grid item>
+                                                                <Typography variant="caption">
+                                                                <strong>{post?.public_metrics?.retweet_count}</strong> Retweets
+                                                                </Typography>
+                                                            </Grid>
+                                                            <Grid item>
+                                                                <Typography variant="caption">
+                                                                &nbsp;|&nbsp;<strong>{post?.public_metrics?.reply_count}</strong> Replies
+                                                                </Typography>
+                                                            </Grid>
+                                                            <Grid item>
+                                                                <Typography variant="caption">
+                                                                &nbsp;|&nbsp;<strong>{post?.public_metrics?.like_count}</strong> Likes
+                                                                </Typography>
+                                                            </Grid>
+                                                    </Grid>
+                                                    }
+                                            </>
+                                        }
                                     />
                                 </ListItemButton>
                             ))}
