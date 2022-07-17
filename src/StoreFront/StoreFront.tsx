@@ -513,11 +513,14 @@ export function StoreFrontView(this: any, props: any) {
     const [loading, setLoading] = React.useState(false);
     const [tokenPrice, setTokenPrice] = React.useState(null);
     const [floorPrice, setFloorPrice] = React.useState(0);
+    const [crossListings, setCrossListings] = React.useState(0);
     const [totalListings, setTotalListings] = React.useState(0); 
     const [grapeFloorPrice, setGrapeFloorPrice] = React.useState(0);
     const [grapeTotalListings, setGrapeTotalListings] = React.useState(0); 
     const [meStats, setMEStats] = React.useState(null);
+    const [refreshGallery, setRefreshGallery] = React.useState(0);
     const [stateLoading, setStateLoading] = React.useState(false);
+    const [escrowStateLoading, setEscrowStateLoading] = React.useState(false);
     const [rdloading, setRDLoading] = React.useState(false);
     const [loadCount, setLoadCount] = React.useState(0);
     //const [success, setSuccess] = React.useState(false);
@@ -638,6 +641,7 @@ export function StoreFrontView(this: any, props: any) {
 
             return finalList;
         } catch(e){
+            console.log("ERROR fetching dynamic mint list: "+updateAuthority);
             return fetchMintList(updateAuthority);
         }
     }
@@ -665,6 +669,13 @@ export function StoreFrontView(this: any, props: any) {
     const fetchMintStates = async(address:string) => {
         try{
             await getCollectionStates(address);
+        } catch(e){console.log("ERR: "+e)}
+        
+    }
+
+    const fetchMintEscrowStates = async(address:string) => {
+        try{
+            await getEscrowStates(address);
         } catch(e){console.log("ERR: "+e)}
         
     }
@@ -787,6 +798,26 @@ export function StoreFrontView(this: any, props: any) {
             //}
         }
     }, [fetchedCollectionMintList, refresh]);
+
+    React.useEffect(() => { 
+        if (collectionAuthority){
+            //console.log("with collectionAuthority: "+JSON.stringify(collectionAuthority));
+            //if (ValidateAddress(collectionAuthority.address)){
+                if (fetchedCollectionMintList){
+                    getCollectionMeta(0);
+                    //console.log("collectionAuthority: "+JSON.stringify(collectionAuthority))
+                    fetchMintStates(collectionAuthority);
+                }
+            //}
+        }
+    }, [fetchedCollectionMintList, refresh]);
+
+    React.useEffect(() => { 
+        if (collectionAuthority){
+            if (!stateLoading)
+                fetchMintEscrowStates(collectionAuthority);
+        }
+    }, [stateLoading]);
 
     const getCollectionStates = async (address:string) => {
         
@@ -953,7 +984,7 @@ export function StoreFrontView(this: any, props: any) {
 
             setGrapeTotalListings(thisTotalListings);
             setGrapeFloorPrice(thisFloorPrice);
-
+            /*
             try{
                 if (collectionAuthority.me_symbol){
                     
@@ -993,7 +1024,7 @@ export function StoreFrontView(this: any, props: any) {
                     }catch(e){console.log("ERR: "+e);}
                 }
             }catch(err){console.log("ERR: "+err)}
-            
+            */
             console.log("Cross Listings: "+crossTotalListings);
             setTotalListings(thisTotalListings);
             setFloorPrice(thisFloorPrice);
@@ -1031,11 +1062,73 @@ export function StoreFrontView(this: any, props: any) {
             
             //setTimeout(function() {
                 setCollectionMintList(tempCollectionMintList);
-                setStateLoading(false);                                      
-            //}, 500); 
+                setStateLoading(false);    
+                
+            //}, 500);
+            return tempCollectionMintList; 
             
         }
     }
+
+    const getEscrowStates = async (address:string) => {
+        
+        if (!escrowStateLoading){
+            setEscrowStateLoading(true);
+            
+            let tempCollectionMintList = collectionMintList;
+            let thisTotalListings = totalListings;
+            let thisFloorPrice = floorPrice; 
+            let crossTotalListings = 0;
+
+            try{
+                if (collectionAuthority.me_symbol){
+                    
+                    const jsonStats = await fetchMEStatsWithTimeout(collectionAuthority.me_symbol);
+
+                    if (jsonStats){
+                        setMEStats(jsonStats);
+                    }
+
+                    const json1 = await fetchMEWithTimeout(collectionAuthority.me_symbol,0);
+                    const json2 = await fetchMEWithTimeout(collectionAuthority.me_symbol,20);
+                    const json3 = await fetchMEWithTimeout(collectionAuthority.me_symbol,40);
+                    const json4 = await fetchMEWithTimeout(collectionAuthority.me_symbol,60);
+                    const json5 = await fetchMEWithTimeout(collectionAuthority.me_symbol,80);
+                    const json6 = await fetchMEWithTimeout(collectionAuthority.me_symbol,100);
+                    
+                    const json = [...json1,...json2,...json3,...json4,...json5,...json6];
+                    
+                    try{
+                        let found = false;
+                        for (var item of json){
+                            for (var mintListItem of tempCollectionMintList){
+                                if (mintListItem.address === item.tokenMint){
+                                    if (mintListItem.listingPrice === null){
+                                        thisTotalListings++;
+                                    } else{
+                                        crossTotalListings++;
+                                    }
+                                    // no need to check date as this is an escrow check
+                                    mintListItem.listingPrice = item.price;
+                                    mintListItem.marketplaceListing = false;
+                                }
+                            }
+                            if ((thisFloorPrice > +item.price)||(!thisFloorPrice))
+                                thisFloorPrice = +item.price;
+                        }
+                    }catch(e){console.log("ERR: "+e);}
+                }
+            }catch(err){console.log("ERR: "+err)}
+            
+            setCollectionMintList(tempCollectionMintList);
+            console.log("thisTotalListings: "+thisTotalListings + " crossTotalListings: "+crossTotalListings + " totalListings: "+totalListings)
+            setTotalListings(thisTotalListings+crossTotalListings);
+            setFloorPrice(thisFloorPrice);
+            setEscrowStateLoading(false);
+            setRefreshGallery(1);
+        }
+    }
+
 
     const Timeout = (time:number) => {
         let controller = new AbortController();
@@ -1786,7 +1879,7 @@ export function StoreFrontView(this: any, props: any) {
                     <TabPanel value={tabValue} index={NavPanel.Marketplace}>
                         <Box> 
                             {collectionMintList &&  
-                                <GalleryView mode={1} collectionMintList={collectionMintList} collectionAuthority={collectionAuthority} tokenPrice={tokenPrice}/>
+                                <GalleryView mode={1} collectionMintList={collectionMintList} collectionAuthority={collectionAuthority} tokenPrice={tokenPrice} refreshGallery={refreshGallery}/>
                             }
                         </Box>
                     </TabPanel>

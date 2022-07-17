@@ -85,6 +85,7 @@ export default function GalleryView(props: any){
     const [page, setPage] = React.useState(1);
     const rowsperpage = 1500;
     const mode = props?.mode || 0;
+    const refreshGallery = props.refreshGallery;
     const collectionAuthority = props?.collectionAuthority || null;
     const tokenPrice = props?.tokenPrice || null;
     //const [collectionMintList, setCollectionMintList] = props?.collectionMintList || null;
@@ -232,15 +233,19 @@ export default function GalleryView(props: any){
     };
 
     React.useEffect(() => {
+        //console.log("refreshGallery: "+refreshGallery)
+        
         if (!initSorting && collectionMintList){
-            //setScrollData((collectionMintList && collectionMintList?.length > scrollLimit-1) ? collectionMintList.slice(0, scrollLimit) : collectionMintList);
+
+        //if (collectionMintList){
+                //setScrollData((collectionMintList && collectionMintList?.length > scrollLimit-1) ? collectionMintList.slice(0, scrollLimit) : collectionMintList);
             setInitSorting(true);
             sortMintList(0);
             setTimeout(function() {
                 setInitSorting(false);
             }, 500);
         } 
-    }, [finalMintList])
+    }, [finalMintList, collectionMintList, refreshGallery])
 
     return (
         <>

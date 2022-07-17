@@ -102,7 +102,8 @@ import {
     TOKEN_REPORT_AMOUNT,
     GRAPE_COLLECTIONS_DATA,
     MARKET_LOGO,
-    GRAPE_COLLECTION
+    GRAPE_COLLECTION,
+    THEINDEX_RPC_ENDPOINT
 } from '../utils/grapeTools/constants';
 
 import {
@@ -233,6 +234,7 @@ function GrapeVerified(props:any){
     const [collectionImage, setCollectionImage] = React.useState(null);
     const [collectionName, setCollectionName] = React.useState(props?.symbol);
     const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
+    const ticonnection = new Connection(THEINDEX_RPC_ENDPOINT);
     const verifiedCollection = props.verifiedCollection;
     const [collectionRawData, setCollectionRawData]  = React.useState(props?.collectionRawData);
     let grape_verified = -1;
@@ -249,7 +251,7 @@ function GrapeVerified(props:any){
             ], MD_PUBKEY)
             
             
-            const meta_response = await ggoconnection.getAccountInfo(pda);
+            const meta_response = await ticonnection.getAccountInfo(pda);
 
             let meta_final = decodeMetadata(meta_response.data);
             
