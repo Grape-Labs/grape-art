@@ -215,16 +215,20 @@ export function SocialMediaView(props: any) {
                                                                 <strong>{post?.public_metrics?.retweet_count}</strong> Retweets
                                                                 </Typography>
                                                             </Grid>
-                                                            <Grid item>
-                                                                <Typography variant="caption">
-                                                                &nbsp;|&nbsp;<strong>{post?.public_metrics?.reply_count}</strong> Replies
-                                                                </Typography>
-                                                            </Grid>
-                                                            <Grid item>
-                                                                <Typography variant="caption">
-                                                                &nbsp;|&nbsp;<strong>{post?.public_metrics?.like_count}</strong> Likes
-                                                                </Typography>
-                                                            </Grid>
+                                                            {post.text.slice(0,2) !== 'RT' &&
+                                                            <>
+                                                                <Grid item>
+                                                                    <Typography variant="caption">
+                                                                    &nbsp;|&nbsp;<strong>{post?.public_metrics?.reply_count}</strong> Replies
+                                                                    </Typography>
+                                                                </Grid>
+                                                                <Grid item>
+                                                                    <Typography variant="caption">
+                                                                    &nbsp;|&nbsp;<strong>{post?.public_metrics?.like_count}</strong> Likes
+                                                                    </Typography>
+                                                                </Grid>
+                                                            </>
+                                                            }
                                                     </Grid>
                                                     }
                                             </>
