@@ -250,6 +250,7 @@ export const getAtaForMint = async (
   );
 };
 
+/*
 export const getParticipationMint = async (
   authority: anchor.web3.PublicKey,
   uuid: string,
@@ -265,7 +266,8 @@ export const getParticipationMint = async (
     FAIR_LAUNCH_PROGRAM_ID,
   );
 };
-
+*/
+/*
 export const getParticipationToken = async (
   authority: anchor.web3.PublicKey,
   uuid: string,
@@ -282,7 +284,8 @@ export const getParticipationToken = async (
     FAIR_LAUNCH_PROGRAM_ID,
   );
 };
-
+*/
+/*
 export const getTreasury = async (
   tokenMint: anchor.web3.PublicKey,
 ): Promise<[anchor.web3.PublicKey, number]> => {
@@ -291,6 +294,7 @@ export const getTreasury = async (
     FAIR_LAUNCH_PROGRAM_ID,
   );
 };
+*/
 
 export const getMetadata = async (
   mint: anchor.web3.PublicKey,
