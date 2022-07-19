@@ -13,6 +13,7 @@ import {
     Stack,
     Typography,
     Grid,
+    Hidden,
     Box,
     Skeleton,
     ListItemButton,
@@ -350,25 +351,27 @@ export default function GalleryView(props: any){
                                 alignItems="flex-start"
                                 >
                             
-                                <Grid item xs={0} sm={2}>
-                                    
-                                    {collectionAttributes ?
-                                        <>
-                                        {collectionAttributes.map((element:any, key:number) => 
-                                            <Button variant="outlined" sx={{m:1,color:'white',borderColor:'white',borderRadius:'17px'}} disabled>{element.trait_type}: {element.value}</Button>
-                                        )}
-                                        </>
-                                    :
-                                    <>
-                                        {collectionAuthority && collectionAuthority?.attributes &&
-                                            <>  
-                                                {Object.keys(collectionAuthority.attributes).map(key => 
-                                                    <Button variant="outlined" sx={{m:1,color:'white',borderColor:'white',borderRadius:'17px'}} disabled>{key}</Button>
-                                                )/* {JSON.stringify(collectionAuthority.attributes[key])} */}
+                                <Hidden smDown>
+                                    <Grid item xs={0} sm={2}>
+                                        
+                                        {collectionAttributes ?
+                                            <>
+                                            {collectionAttributes.map((element:any, key:number) => 
+                                                <Button variant="outlined" sx={{m:1,color:'white',borderColor:'white',borderRadius:'17px'}} disabled>{element.trait_type}: {element.value}</Button>
+                                            )}
                                             </>
-                                        }</>
-                                    }
-                                </Grid>
+                                        :
+                                        <>
+                                            {collectionAuthority && collectionAuthority?.attributes &&
+                                                <>  
+                                                    {Object.keys(collectionAuthority.attributes).map(key => 
+                                                        <Button variant="outlined" sx={{m:1,color:'white',borderColor:'white',borderRadius:'17px'}} disabled>{key}</Button>
+                                                    )/* {JSON.stringify(collectionAuthority.attributes[key])} */}
+                                                </>
+                                            }</>
+                                        }
+                                    </Grid>
+                                </Hidden>
                                 <Grid item xs={12} sm={10}>
                                     <InfiniteScroll
                                         dataLength={scrollData.length}
