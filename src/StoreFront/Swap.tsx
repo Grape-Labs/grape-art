@@ -309,17 +309,21 @@ function JupiterForm(props: any) {
         setTradeRoute('');
         setLpFees([]);
         setPriceImpacts([]);
-        setConvertedAmountValue(routes[0].outAmount / (10 ** 6));
+        
+        setConvertedAmountValue(routes[0].outAmount[0] / (10 ** 6));
         routes[0].marketInfos.forEach(mi => {
             setTradeRoute(tr => tr + (tr && " x ") + mi.amm.label)
 
-            setLpFees(lpf => [...lpf, `${mi.amm.label}: ${(mi.lpFee.amount/(10 ** tokenMap.get(mi.lpFee.mint)?.decimals))}` +
+            setLpFees(lpf => [...lpf, `${mi.amm.label}: ${(+mi.lpFee.amount[0]/(10 ** tokenMap.get(mi.lpFee.mint)?.decimals))}` +
             ` ${tokenMap.get(mi.lpFee.mint)?.symbol} (${mi.lpFee.pct * 100}%)`]);
             setPriceImpacts(pi => [...pi, `${mi.amm.label}: ${mi.priceImpactPct * 100 < 0.1 ? '< 0.1' : (mi.priceImpactPct * 100).toFixed(2)}%` ])
         })
-        setMinimumReceived(routes[0].outAmountWithSlippage / (10 ** 6))
 
-        setRate(`${(routes[0].outAmount / (10 ** 6))/ (routes[0].inAmount / (10 ** tokenMap.get(swapfrom)!.decimals))} ${tokenMap.get(swapto)!.symbol} per ${tokenMap.get(swapfrom)!.symbol}`)
+        //console.log("outAmountWithSlippage: "+JSON.stringify(routes[0].amount))
+        // outAmountWithSlippage
+        setMinimumReceived((routes[0].outAmount[0]-(routes[0].outAmount[0]*0.001)) / (10 ** 6))
+
+        setRate(`${(+routes[0].outAmount[0] / (10 ** 6))/ (+routes[0].inAmount[0] / (10 ** tokenMap.get(swapfrom)!.decimals))} ${tokenMap.get(swapto)!.symbol} per ${tokenMap.get(swapfrom)!.symbol}`)
     }, [routes, tokenMap])
 
     useEffect(()=>{

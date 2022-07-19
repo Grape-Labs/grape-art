@@ -626,12 +626,15 @@ export function StoreFrontView(this: any, props: any) {
                 } catch (e) { // Handle errors from invalid calls
                 }
 
+                //console.log("item.metadata "+JSON.stringify(item.metadata));
+
                 finalList.push({
                     address:item.metadata.mint.toString(),
                     name:item.metadata.name,
                     collection:item.metadata.symbol,
                     image:image,
-                    metadata:item.metadata.pubkey.toString()
+                    metadata:item.metadata.pubkey.toString(),
+                    
                 });
             }
             

@@ -100,6 +100,8 @@ export default function GalleryView(props: any){
     const [initSorting, setInitSorting] = React.useState(false);
     const [sortingLoader, setSortingLoader] = React.useState(false);
     const scrollLimit = 20;
+    const [collectionAttributeTypes, setCollectionAttributeTypes] = React.useState(null);
+    const [collectionAttributes, setCollectionAttributes] = React.useState(null);
 
     // If a gallery item is groupBySymbol > 0
     // start searching how many are grouped so we can do this as a collective :) 
@@ -232,11 +234,41 @@ export default function GalleryView(props: any){
         }
     };
 
+    function getCollectionAttributes(){
+        const thisAttributes = new Array();
+
+        if (collectionMintList){
+            for(var item of collectionMintList){
+                //console.log("item: "+JSON.stringify(item))
+                if (item.attributes){
+                    let foundType = false;
+                    for  (var x of item.attributes){
+                        for (var y of thisAttributes){
+                            if ((y.trait_type === x.trait_type) && 
+                                (y.value === x.value))
+                                foundType = true;
+                        }
+                        if (!foundType){
+                            thisAttributes.push(x)
+                        }
+                    }
+                }
+            }
+
+            // sort attributes
+            thisAttributes.sort((a:any, b:any) => a?.trait_type.toLowerCase().trim() > b?.trait_type.toLowerCase().trim() ? 1 : -1);   
+            //console.log("attributeTypes: "+JSON.stringify(thisAttributes))
+        }
+
+        setCollectionAttributes(thisAttributes);
+    }
+
     React.useEffect(() => {
         //console.log("refreshGallery: "+refreshGallery)
         
         if (!initSorting && collectionMintList){
 
+            getCollectionAttributes();
         //if (collectionMintList){
                 //setScrollData((collectionMintList && collectionMintList?.length > scrollLimit-1) ? collectionMintList.slice(0, scrollLimit) : collectionMintList);
             setInitSorting(true);
@@ -319,12 +351,22 @@ export default function GalleryView(props: any){
                                 >
                             
                                 <Grid item xs={0} sm={2}>
-                                    {collectionAuthority && collectionAuthority?.attributes &&
-                                        <>  
-                                            {Object.keys(collectionAuthority.attributes).map(key => 
-                                                <Button variant="outlined" sx={{m:1,color:'white',borderColor:'white',borderRadius:'17px'}} disabled>{key}</Button>
-                                            )/* {JSON.stringify(collectionAuthority.attributes[key])} */}
+                                    
+                                    {collectionAttributes ?
+                                        <>
+                                        {collectionAttributes.map((element:any, key:number) => 
+                                            <Button variant="outlined" sx={{m:1,color:'white',borderColor:'white',borderRadius:'17px'}} disabled>{element.trait_type}: {element.value}</Button>
+                                        )}
                                         </>
+                                    :
+                                    <>
+                                        {collectionAuthority && collectionAuthority?.attributes &&
+                                            <>  
+                                                {Object.keys(collectionAuthority.attributes).map(key => 
+                                                    <Button variant="outlined" sx={{m:1,color:'white',borderColor:'white',borderRadius:'17px'}} disabled>{key}</Button>
+                                                )/* {JSON.stringify(collectionAuthority.attributes[key])} */}
+                                            </>
+                                        }</>
                                     }
                                 </Grid>
                                 <Grid item xs={12} sm={10}>
