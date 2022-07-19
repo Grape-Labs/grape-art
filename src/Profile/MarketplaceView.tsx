@@ -191,7 +191,7 @@ export default function MarketplaceView(props: any) {
                                         }}
                                     >
                                         {featured?.vanityUrl ?
-
+                                        
                                             <ButtonGroup variant="text">
                                                 {/*
                                                 <Button size="small" 
