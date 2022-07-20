@@ -1463,6 +1463,12 @@ export function StoreFrontView(this: any, props: any) {
                         {collectionAuthority.theme &&
                             <style>{'html, body { background: '+collectionAuthority.theme+' fixed!important;height: 100%; }'}</style>
                         }
+
+                        {collectionAuthority.theme && collectionAuthority.themeImage &&
+                            <style>{'html, body { background: '+collectionAuthority.theme+' fixed!important;height: 100%; background-image:'+collectionAuthority.themeImage+'!important; background-size: 10px 10px!important; }'}</style>
+                        
+                        }
+
                     </Helmet>
                 
 
