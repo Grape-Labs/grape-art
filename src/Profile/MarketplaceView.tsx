@@ -16,6 +16,7 @@ import {
     Avatar,
 } from '@mui/material';
 
+import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import ShareSocialURL from '../utils/grapeTools/ShareUrl';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 
@@ -205,14 +206,30 @@ export default function MarketplaceView(props: any) {
                                                     </Button>
                                                 }
 
+                                                {featured?.isGame &&
+                                                    <Button size="small" disabled={true}>
+                                                        <SportsEsportsIcon />
+                                                    </Button>
+                                                }
+
                                                 <Button size="small"    
                                                     component={Link} to={`${GRAPE_COLLECTION}${featured.vanityUrl}`}
                                                     sx={{borderRadius:'24px', color:'white'}}
                                                 >View 
                                                 {featured?.tokenType === 'SPL' ?
-                                                    <> {featured?.tokenType} Token</>
+                                                    <>&nbsp;{featured?.tokenType} Token</>
                                                 :
-                                                    <> {featured?.tokenType}</>        
+                                                    <> 
+                                                        {featured?.isGame ? 
+                                                            <>&nbsp;
+                                                            Gaming
+                                                            </>
+                                                        :
+                                                            <>&nbsp;
+                                                            {featured?.tokenType}
+                                                            </>
+                                                        }
+                                                    </>        
                                                 } Community</Button>
                                                 <ShareSocialURL url={'https://grape.art'+GRAPE_COLLECTION+featured.vanityUrl} title={`Community: ${featured.name}`} />
                                             </ButtonGroup>
