@@ -61,6 +61,8 @@ import {
     GRAPE_RPC_ENDPOINT, 
     THEINDEX_RPC_ENDPOINT,
     TWITTER_PROXY } from '../utils/grapeTools/constants';
+
+import { formatAmount, getFormattedNumberToLocale } from '../utils/grapeTools/helpers'
 import { MakeLinkableAddress, ValidateAddress, ValidateCurve, trimAddress, timeAgo } from '../utils/grapeTools/WalletAddress'; // global key handling
 //import { RevokeCollectionAuthority } from '@metaplex-foundation/mpl-token-metadata';
 
@@ -162,7 +164,8 @@ function RenderGovernanceMembersTable(props:any) {
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
     // Avoid a layout jump when reaching the last page with empty rows.
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - members.length) : 0;
-
+    const token = props.token;
+    const tokenDecimals = token?.decimals || 6;
     const { navigation, open } = useDialectUiId<ChatNavigationHelpers>(GRAPE_BOTTOM_CHAT_ID);
 
     const handleChangePage = (event:any, newPage:number) => {
@@ -345,7 +348,10 @@ function RenderGovernanceMembersTable(props:any) {
                     <TableHead>
                         <TableRow>
                             <TableCell><Typography variant="caption">Member</Typography></TableCell>
-                            <TableCell><Typography variant="caption">Total Votes</Typography></TableCell>
+                            {/*
+                            <TableCell><Typography variant="caption">Votes</Typography></TableCell>
+                            */}
+                            <TableCell><Typography variant="caption">Votes Cast</Typography></TableCell>
                             <TableCell><Typography variant="caption">Proposals</Typography></TableCell>
                             <TableCell><Typography variant="caption"></Typography></TableCell>
                             
@@ -367,6 +373,13 @@ function RenderGovernanceMembersTable(props:any) {
                                                 <ProfilePicture address={item.account.governingTokenOwner.toBase58()} participating={participating} />
                                             </Typography>
                                         </TableCell>
+                                        {/*
+                                        <TableCell align="center" >
+                                            <Typography variant="h6">
+                                                {getFormattedNumberToLocale(formatAmount(parseInt(item.account.governingTokenDepositAmount.toNumber())/Math.pow(10, +tokenDecimals)))}
+                                            </Typography>
+                                        </TableCell>
+                                        */}
                                         <TableCell align="center" >
                                             <Typography variant="h6">
                                                 {item.account.totalVotesCount}
@@ -506,6 +519,24 @@ export function MembersView(props: any) {
                 //let sortedResults = trecords.sort((a,b) => (a.account?.outstandingProposalCount < b.account?.outstandingProposalCount) ? 1 : -1);
                 const sortedResults = trecords.sort((a,b) => (a.account?.totalVotesCount < b.account?.totalVotesCount) ? 1 : -1);
                 
+                var memberArray = new Array();
+                for (var member of sortedResults){
+                    var found = false;
+                    if (member.account.governingTokenOwner.toBase58() === 'B98e2BdhvvkxtBTwsu97HCmot93kjg9kEKSVYL6YnjjK')
+                        console.log("member: "+JSON.stringify(ma))
+                    for (var ma of memberArray){
+                        if (ma.account.governingTokenOwner.toBase58() === member.account.governingTokenOwner.toBase58()){
+                            found = true;
+                        }    
+                    }
+                    
+                    if (!found)
+                        memberArray.push(member);
+                }
+
+                console.log("ma len: "+memberArray.length);
+
+
                 //console.log("trecords: "+JSON.stringify(trecords));
                 setMembers(sortedResults);
             

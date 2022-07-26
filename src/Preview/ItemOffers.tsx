@@ -2174,7 +2174,6 @@ export default function ItemOffers(props: any) {
                                                                             </DialogContentText>
                                                                         </DialogContent>
                                                                         <DialogActions>
-                                                                            
                                                                             <Button onClick={handleAlertBuyNowClose}>Cancel</Button>
                                                                             {verifiedCollection?.crossmint && (salePrice*tokenSalePrice) < 750 &&
                                                                                 <CrossmintPayButton
@@ -2186,7 +2185,7 @@ export default function ItemOffers(props: any) {
                                                                                         type: "solana-auction-house",
                                                                                         mintHash: {mint},
                                                                                         sellerWallet: {mintOwner},
-                                                                                        buyPrice: salePrice.toString(),
+                                                                                        buyPrice: +salePrice,
                                                                                         totalPrice: salePrice.toString(),
                                                                                     }}
                                                                                     className="grape-crossmint-button"

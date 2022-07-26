@@ -944,7 +944,7 @@ function GalleryItemMeta(props: any) {
                                 <style>{'html, body { background: '+verifiedCollection.theme+' fixed!important;height: 100%; }'}</style>
                             }
 
-                            {verifiedCollection.theme && verifiedCollection.themeImage &&
+                            {verifiedCollection?.theme && verifiedCollection.themeImage &&
                                 <style>{'html, body { background: '+verifiedCollection.theme+' fixed!important;height: 100%; background-image:'+verifiedCollection.themeImage+'!important; background-size: 10px 10px!important; }'}</style>
                             }
 

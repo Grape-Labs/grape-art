@@ -578,7 +578,7 @@ export default function HistoryView(props: any){
                                                             {item.source === 'auctionhouse' ?
                                                                 <TableCell>
                                                                     <Tooltip title={'Auction House'}>
-                                                                        <Button size="small" variant="text" sx={{ml:1,color:'white',borderRadius:'24px'}}>
+                                                                        <Button size="small" variant="text" sx={{ml:1,color:'white',borderRadius:'24px'}} target='_blank' href={`https://explorer.solana.com/address/${item.auctionHouse.toBase58()}/anchor-account`}>
                                                                             {trimAddress(item.auctionHouse.toBase58(),4)}
                                                                         </Button>
                                                                     </Tooltip>
