@@ -219,7 +219,7 @@ export default function MarketplaceView(props: any) {
                                                 {featured?.tokenType === 'SPL' ?
                                                     <>&nbsp;{featured?.tokenType} Token</>
                                                 :
-                                                    <> 
+                                                    <>
                                                         {featured?.isGame ? 
                                                             <>&nbsp;
                                                             Gaming
