@@ -6,8 +6,13 @@ References:
 - Metaplex Auction House (https://github.com/metaplex-foundation/metaplex)
 - Realms/Governance (https://github.com/solana-labs/oyster/)
 - Dialect Labs (https://github.com/dialectlabs)
+- Cyberconnect (https://github.com/cyberconnecthq)
+- GenesysGo Shadow Drive (https://github.com/GenesysGo/shadow-drive)
 - Bonfida (https://github.com/Bonfida)
+- Cardinal (https://github.com/cardinal-labs)
 - Solflare (https://github.com/solflare-wallet)
+- Jupiter Aggregator (https://www.npmjs.com/package/@jup-ag/react-hook)
+- Crossmint (https://www.npmjs.com/package/@crossmint/client-sdk-react-ui)
 
 Wallet Adapter:
 - Solana Wallet Adapter (https://github.com/solana-labs/wallet-adapter)
