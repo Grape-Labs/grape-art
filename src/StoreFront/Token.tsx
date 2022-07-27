@@ -321,7 +321,7 @@ export function TokenView(props: any) {
                                 <Card sx={{borderRadius:'17px'}}>
                                     <CardContent>
                                         <Typography variant="h5" component="div">
-                                        YOU ARE NOT PARTICIPATING IN THIS TOKENIZED COMMUNITY
+                                        YOU DO NOT HAVE THIS TOKEN IN YOUR CONNECTED WALLET | CHECK GOVERNANCE TAB FOR COMMUNITY PARTICIPATION
                                         </Typography>
                                     </CardContent>
                                     <CardActions sx={{}}>

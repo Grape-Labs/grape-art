@@ -1282,6 +1282,8 @@ export function StoreFrontView(this: any, props: any) {
                     if (verified.address === withPubKey){
                         //setCollectionAuthority(verified);
                         // get collection mint list
+
+                        // TODO: to speed things up take an incremental approach first fetch from indexed mint list and then refetch list dynamically
                         if (verified?.tokenType === "NFT"){
                             if ((verified.collection) && (!verified.staticMintList))
                                 var oml = fetchIndexedMintList(verified.collection, verified?.jsonToImage, verified.updateAuthority);
@@ -1294,6 +1296,8 @@ export function StoreFrontView(this: any, props: any) {
                         setCollectionAuthority(verified);
                         // get collection mint list
                         console.log("f ADDRESS: "+verified.address)
+
+                        // TODO: to speed things up take an incremental approach first fetch from indexed mint list and then refetch list dynamically
                         if (verified?.tokenType === "NFT"){
                             if ((verified.collection) && (!verified.staticMintList))
                                 var oml = fetchIndexedMintList(verified.collection, verified?.jsonToImage, verified.updateAuthority);

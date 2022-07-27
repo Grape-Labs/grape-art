@@ -1,4 +1,4 @@
-import { getRealm, getAllProposals, getTokenOwnerRecordsByOwner, getTokenOwnerRecord, getRealmConfigAddress, getGovernanceAccount, getAccountTypes, GovernanceAccountType, tryGetRealmConfig  } from '@solana/spl-governance';
+import { getRealm, getAllProposals, getGovernance, getTokenOwnerRecordsByOwner, getTokenOwnerRecord, getRealmConfigAddress, getGovernanceAccount, getAccountTypes, GovernanceAccountType, tryGetRealmConfig  } from '@solana/spl-governance';
 import { PublicKey, TokenAmount, Connection } from '@solana/web3.js';
 import { ENV, TokenListProvider, TokenInfo } from '@solana/spl-token-registry';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
@@ -159,6 +159,55 @@ function RenderGovernanceTable(props:any) {
         setPage(0);
     };
 
+    function GetProposalStatus(props: any){
+        const thisitem = props.item;
+        const [thisGovernance, setThisGovernance] = React.useState(null);
+
+        const getGovernanceProps = async () => {
+            const governance = await getGovernance(connection, thisitem.account.governance);
+            setThisGovernance(governance);
+            //const starts = thisitem.account?.votingAt.toNumber();
+            ///const ends = thisitem.account?.votingAt.toNumber()+governance?.account?.config?.maxVotingTime;
+            //console.log("ending at : " + moment.unix(thisitem.account?.votingAt.toNumber()+governance?.account?.config?.maxVotingTime).format("MMMM Da, YYYY, h:mm a"));
+
+            console.log("Single governance: "+JSON.stringify(governance));
+        }
+
+        React.useEffect(() => { 
+            if (thisitem.account?.state === 2){ // if voting state
+                getGovernanceProps()
+            }
+        }, [thisitem]);
+
+        // calculate time left
+        // /60/60/24 to get days
+        
+
+
+        return (
+            <>
+                <TableCell  align="center">
+                    <Typography variant="h6">
+                        <Tooltip title={
+                            
+                            <>
+                            {thisGovernance?.account?.config?.maxVotingTime ?
+                                `Ending ${moment.unix(thisitem.account?.votingAt.toNumber()+thisGovernance?.account?.config?.maxVotingTime).fromNow()}`
+                            :
+                                `Status`
+                            }    
+                            </>
+                            }>
+                            <Button sx={{color:'white'}}>
+                                {GOVERNANNCE_STATE[thisitem.account?.state]}
+                            </Button>
+                        </Tooltip>
+                    </Typography>
+                </TableCell>
+            </>
+        )
+    }
+
     /*
     const getProposals = async (GOVERNANCE_PROGRAM_ID:string) => {
         if (!loading){
@@ -209,7 +258,7 @@ function RenderGovernanceTable(props:any) {
                                     : proposals
                                 ).map((item:any, index:number) => (
                                 <>
-                                    {console.log("item: "+JSON.stringify(item))}
+                                    {/*console.log("item: "+JSON.stringify(item))*/}
                                     {item?.pubkey && item?.account &&
                                         <TableRow key={index} sx={{borderBottom:"none"}}>
                                             <TableCell>
@@ -225,7 +274,7 @@ function RenderGovernanceTable(props:any) {
                                             <TableCell>
                                                 {item.account?.options && item.account?.options[0]?.voteWeight && 
                                                     <Typography variant="h6">
-                                                        {console.log("vote: "+JSON.stringify(item.account))}
+                                                        {/*console.log("vote: "+JSON.stringify(item.account))*/}
                                                         <Tooltip title={item.account?.options[0].voteWeight.toNumber() <= 1 ?
                                                             <>
                                                                 {item.account?.options[0].voteWeight.toNumber()}
@@ -250,7 +299,7 @@ function RenderGovernanceTable(props:any) {
                                                 }
                                                 {item.account?.options && item.account?.options[0]?.voterWeight && 
                                                     <Typography variant="h6">
-                                                        {console.log("vote: "+JSON.stringify(item.account))}
+                                                        {/*console.log("vote: "+JSON.stringify(item.account))*/}
                                                         <Tooltip title={item.account?.options[0].voterWeight.toNumber() <= 1 ?
                                                             <>
                                                                 {item.account?.options[0].voterWeight.toNumber()}
@@ -299,15 +348,7 @@ function RenderGovernanceTable(props:any) {
                                                     </Typography>
                                                 }
                                             </TableCell>
-                                            <TableCell  align="center">
-                                                <Typography variant="h6">
-                                                    <Tooltip title={JSON.stringify(item)}>
-                                                        <Button sx={{color:'white'}}>
-                                                            {GOVERNANNCE_STATE[item.account?.state]}
-                                                        </Button>
-                                                    </Tooltip>
-                                                </Typography>
-                                            </TableCell>
+                                            <GetProposalStatus item={item}/>
                                             <TableCell align="center">
                                                 <Typography variant="caption">
                                                     {item.account?.votingCompletedAt ?
