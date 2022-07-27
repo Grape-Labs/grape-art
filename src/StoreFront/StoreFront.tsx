@@ -579,8 +579,9 @@ export function StoreFrontView(this: any, props: any) {
     }
 
     const fetchIndexedMintList = async(address:string, jsonToImage: boolean, updateAuthority:string) => {
+        
         const body = {
-            method: "getNFTsByCollection",//"getNFTsByCollection",
+            method: "getNFTsByCollection",
             jsonrpc: "2.0",
             params: [
               address
@@ -588,6 +589,8 @@ export function StoreFrontView(this: any, props: any) {
             id: "1",
         };
         try{
+            const staticMintList = await fetchMintList(updateAuthority)
+
             const response = await window.fetch(THEINDEX_RPC_ENDPOINT, {
                 method: "POST",
                 body: JSON.stringify(body),
@@ -599,50 +602,53 @@ export function StoreFrontView(this: any, props: any) {
             const finalList = new Array();
             console.log("jsonToImage: "+jsonToImage);
 
-            for (var item of resultValues){
-                //console.log("item: "+JSON.stringify(item))
+            if (staticMintList.length === resultValues.length){
 
-                // fetch from the JSON
+                for (var item of resultValues){
+                    //console.log("item: "+JSON.stringify(item))
 
-                let image = null;
-                if (jsonToImage)
-                    image = item.metadata.uri.replaceAll(".json",".png");
-                
-                try {
-                    /*
-                    if (!jsonToImage && item.metadata.uri){ // this will take too long to 1+ collections
-                        try{
-                            const metadata = await window.fetch(''+item.metadata.uri)
-                            .then(
-                                (res: any) => res.json()
-                            );
-                            image = metadata.image;
-                            //return metadata;
-                        }catch(ie){
-                        }
-                    } else{
-                        
-                    }*/
-                } catch (e) { // Handle errors from invalid calls
-                }
+                    // fetch from the JSON
 
-                //console.log("item.metadata "+JSON.stringify(item.metadata));
-
-                finalList.push({
-                    address:item.metadata.mint.toString(),
-                    name:item.metadata.name,
-                    collection:item.metadata.symbol,
-                    image:image,
-                    metadata:item.metadata.pubkey.toString(),
+                    let image = null;
+                    if (jsonToImage)
+                        image = item.metadata.uri.replaceAll(".json",".png");
                     
-                });
+                    try {
+                        /*
+                        if (!jsonToImage && item.metadata.uri){ // this will take too long to 1+ collections
+                            try{
+                                const metadata = await window.fetch(''+item.metadata.uri)
+                                .then(
+                                    (res: any) => res.json()
+                                );
+                                image = metadata.image;
+                                //return metadata;
+                            }catch(ie){
+                            }
+                        } else{
+                            
+                        }*/
+                    } catch (e) { // Handle errors from invalid calls
+                    }
+
+                    //console.log("item.metadata "+JSON.stringify(item.metadata));
+
+                    finalList.push({
+                        address:item.metadata.mint.toString(),
+                        name:item.metadata.name,
+                        collection:item.metadata.symbol,
+                        image:image,
+                        metadata:item.metadata.pubkey.toString(),
+                        
+                    });
+                }
+                
+                //console.log("finalList: "+JSON.stringify(finalList))
+                setFetchedCollectionMintList(finalList); 
+                return finalList;
             }
+
             
-
-            //console.log("finalList: "+JSON.stringify(finalList))
-            setFetchedCollectionMintList(finalList); 
-
-            return finalList;
         } catch(e){
             console.log("ERROR fetching dynamic mint list: "+updateAuthority);
             return fetchMintList(updateAuthority);
