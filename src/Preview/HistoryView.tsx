@@ -489,8 +489,8 @@ export default function HistoryView(props: any){
                                                 </TableHead>
 
                                                 <TableBody>
-                                                    {history && history.map((item: any) => (
-                                                        <TableRow>
+                                                    {history && history.map((item: any, key: number) => (
+                                                        <TableRow key={key}>
                                                             
                                                             <TableCell>
                                                                 <ButtonGroup>

@@ -356,7 +356,7 @@ export default function GalleryView(props: any){
                                         
                                         {collectionAttributes ?
                                             <>
-                                            {collectionAttributes.map((element:any, key:number) => (key<=0 || (collectionAttributes[key-1].trait_type != collectionAttributes[key].trait_type) &&
+                                            {collectionAttributes.map((element:any, key:number) => ((key<=0 || (key>0 && collectionAttributes[key-1].trait_type != collectionAttributes[key].trait_type)) &&
                                                 
                                                     <Button variant="outlined" sx={{m:1,color:'white',borderColor:'white',borderRadius:'17px'}} disabled>{element.trait_type} {/*element.value*/}</Button>
                                                 )

@@ -44,6 +44,7 @@ import { CrossmintPayButton } from '@crossmint/client-sdk-react-ui';
 
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
 
+import RefreshIcon from '@mui/icons-material/Refresh';
 import HowToVoteIcon from '@mui/icons-material/HowToVote';
 import SolCurrencyIcon from '../components/static/SolCurrencyIcon';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
@@ -248,7 +249,8 @@ function SellNowVotePrompt(props:any){
     const mintOwner = props.mintOwner;
     const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
     const { connection } = useConnection();
-    const { publicKey, wallet, sendTransaction, signTransaction } = useWallet();
+    const { publicKey, sendTransaction, signTransaction } = useWallet();
+    const wallet = useWallet();
 	const anchorWallet = useAnchorWallet();
     const [daoPublicKey, setDaoPublicKey] = React.useState(null);
     const salePrice = props.salePrice || null;
@@ -324,6 +326,12 @@ function SellNowVotePrompt(props:any){
                         //console.log("signedTransactionTest: "+JSON.stringify(signedTransactionTest))
                         //const signedTransaction = await anchor.web3.sendAndConfirmRawTransaction(connection, txn.serialize());
                         
+                        /*
+                        const provider = new anchor.Provider(connection, wallet, {commitment: "processed"})
+                        provider.wallet.signTransaction(txn);
+                        anchor.web3.sendAndConfirmRawTransaction(connection, txn.serialize());
+                        */
+
                         const signedTransaction = await sendTransaction(txn, connection);     
                         
                         const snackprogress = (key:any) => (
@@ -344,7 +352,7 @@ function SellNowVotePrompt(props:any){
                                 {signedTransaction}
                             </Button>
                         );
-                        enqueueSnackbar(`Sell Now Price Set to ${sell_now_amount} SOL`,{ variant: 'success', action:snackaction });  
+                        enqueueSnackbar(`Purchased NFT for ${sell_now_amount} SOL`,{ variant: 'success', action:snackaction });  
                         
                         const eskey = enqueueSnackbar(`${t('Metadata will be refreshed in a few seconds')}`, {
                             anchorOrigin: {
@@ -453,7 +461,7 @@ function SellNowVotePrompt(props:any){
                         </Button>
                     </Tooltip>
                     :
-                    <Tooltip title={t('This NFT is currently owned by a program and may be listed on a third party marketplace')}>
+                    <Tooltip title={t('This NFT is currently owned by a program and may be listed on a third party marketplace escrow')}>
                         <Button sx={{borderRadius:'10px'}}>
                             <Alert severity="warning" sx={{borderRadius:'10px'}}>
                             {t('LISTED/PROGRAM OWNED NFT')}
@@ -529,6 +537,7 @@ function SellNowVotePrompt(props:any){
                     },
                     persist: true,
                 });
+                
                 setTimeout(function() {
                     closeSnackbar(eskey);
                     props.setRefreshOffers(true);
@@ -732,6 +741,7 @@ function SellNowPrompt(props:any){
                     },
                     persist: true,
                 });
+                
                 setTimeout(function() {
                     closeSnackbar(eskey);
                     props.setRefreshOffers(true);
@@ -1592,7 +1602,7 @@ export default function ItemOffers(props: any) {
     };
     
     const getOffers = async () => {
-        
+        setLoading(true);
         try {
             //getMetadata
             if (!openOffers){
@@ -1789,10 +1799,11 @@ export default function ItemOffers(props: any) {
                 }
 
             }
-            
+            setLoading(false);
             return null;
         } catch (e) { // Handle errors from invalid calls
             console.log(e);
+            setLoading(false);
             return null;
         }
         
@@ -1807,9 +1818,11 @@ export default function ItemOffers(props: any) {
         try {
             const anchorProgram = await loadAuctionHouseProgram(null, ENV_AH, GRAPE_RPC_ENDPOINT);
             const auctionHouseKey = new web3.PublicKey(collectionAuctionHouse || AUCTION_HOUSE_ADDRESS);
+            //const auctionHouseObj = await anchorProgram.account.auctionHouse.fetch(auctionHouseKey,);
             const auctionHouseObj = await anchorProgram.account.auctionHouse.fetch(auctionHouseKey,);
             const escrow = (await getAuctionHouseBuyerEscrow(auctionHouseKey, publicKey))[0];
-            const amount = await getTokenAmount(anchorProgram,escrow,auctionHouseObj.treasuryMint,);
+            //const amount = await getTokenAmount(anchorProgram,escrow,auctionHouseObj.treasuryMint,);
+			const amount = await getTokenAmount(anchorProgram,escrow,mint,);
 			const escrowAmount = convertSolVal(amount);
             //if (amount === 0){
                 //const transactionInstr = await buyNowListing(salePrice, mint, sellerWalletKey.toString(), buyerPublicKey, updateAuthority, auctionHouseKey.toBase58());
@@ -1995,7 +2008,6 @@ export default function ItemOffers(props: any) {
                                     >
                                         <Typography component="div" variant="caption">
                                         {t('Selling now')}: 
-                                            
                                             {salePrice <= 0 ? 
                                                 <>
                                                 {salePriceEscrow && salePriceEscrow > 0 ?
@@ -2015,6 +2027,18 @@ export default function ItemOffers(props: any) {
                                                 )}
                                                 </>
                                             }
+                                            <Button 
+                                                disabled={loading}
+                                                onClick={() => setRefreshOffers(true)}
+                                                size='small'
+                                                sx={{ml:1,borderRadius:'17px',color:'white'}}
+                                            >
+                                                {loading ?
+                                                    <>loading...</>
+                                                :
+                                                <RefreshIcon />
+                                                }                                           
+                                            </Button>
                                             <Typography component="div" variant="caption" id="grape-art-last-sale"></Typography>
                                         </Typography>
                                         {( (salePrice > 0) ?
@@ -2342,15 +2366,15 @@ export default function ItemOffers(props: any) {
     }   
 
     React.useEffect(() => {
+        if (mintAta){
+            if ((!offers || refreshOffers) && !loading){
+                getOffers();
+            }
+        }
+
         if (refreshOffers){
             //setOffers(null);
             setRefreshOffers(!refreshOffers);
-        }
-
-        if (mintAta){
-            if (!offers){
-                getOffers();
-            }
         }
     }, [mintAta, refreshOffers]);
 

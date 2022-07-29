@@ -579,7 +579,7 @@ export function StoreFrontView(this: any, props: any) {
     }
 
     const fetchIndexedMintList = async(address:string, jsonToImage: boolean, updateAuthority:string) => {
-        
+
         const body = {
             method: "getNFTsByCollection",
             jsonrpc: "2.0",
@@ -599,53 +599,65 @@ export function StoreFrontView(this: any, props: any) {
             const json = await response.json();
             const resultValues = json.result;
             // transpose values to our format
-            const finalList = new Array();
+            
             console.log("jsonToImage: "+jsonToImage);
 
-            if (staticMintList.length === resultValues.length){
-
+            if (staticMintList.length < resultValues.length){
+                console.log("staticMintList: "+staticMintList.length);
+                console.log("resultValues: "+resultValues.length);
+                
+                const extraList = new Array();
                 for (var item of resultValues){
-                    //console.log("item: "+JSON.stringify(item))
 
-                    // fetch from the JSON
-
-                    let image = null;
-                    if (jsonToImage)
-                        image = item.metadata.uri.replaceAll(".json",".png");
-                    
-                    try {
-                        /*
-                        if (!jsonToImage && item.metadata.uri){ // this will take too long to 1+ collections
-                            try{
-                                const metadata = await window.fetch(''+item.metadata.uri)
-                                .then(
-                                    (res: any) => res.json()
-                                );
-                                image = metadata.image;
-                                //return metadata;
-                            }catch(ie){
-                            }
-                        } else{
-                            
-                        }*/
-                    } catch (e) { // Handle errors from invalid calls
+                    var found = false;
+                    for (var staticItem of staticMintList){
+                        if (staticItem.metadata.mint.toString() === item.metadata.mint.toString())
+                            found = true;
                     }
 
-                    //console.log("item.metadata "+JSON.stringify(item.metadata));
+                    if (!found){
+                        //console.log("item: "+JSON.stringify(item))
 
-                    finalList.push({
-                        address:item.metadata.mint.toString(),
-                        name:item.metadata.name,
-                        collection:item.metadata.symbol,
-                        image:image,
-                        metadata:item.metadata.pubkey.toString(),
+                        // fetch from the JSON
+
+                        let image = null;
+                        if (jsonToImage)
+                            image = item.metadata.uri.replaceAll(".json",".png");
                         
-                    });
+                        try {
+                            /*
+                            if (!jsonToImage && item.metadata.uri){ // this will take too long to 1+ collections
+                                try{
+                                    const metadata = await window.fetch(''+item.metadata.uri)
+                                    .then(
+                                        (res: any) => res.json()
+                                    );
+                                    image = metadata.image;
+                                    //return metadata;
+                                }catch(ie){
+                                }
+                            } else{
+                                
+                            }*/
+                        } catch (e) { // Handle errors from invalid calls
+                        }
+
+                        //console.log("item.metadata "+JSON.stringify(item.metadata));
+
+                        extraList.push({
+                            address:item.metadata.mint.toString(),
+                            name:item.metadata.name,
+                            collection:item.metadata.symbol,
+                            image:image,
+                            metadata:item.metadata.pubkey.toString(),
+                        });
+                    }
                 }
                 
                 //console.log("finalList: "+JSON.stringify(finalList))
-                setFetchedCollectionMintList(finalList); 
-                return finalList;
+                if (extraList && extraList.length > 0)
+                    setFetchedCollectionMintList([...staticMintList, extraList]); 
+                //return finalList;
             }
 
             
