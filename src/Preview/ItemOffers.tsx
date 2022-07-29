@@ -850,13 +850,13 @@ function SellNowPrompt(props:any){
                                             sx={{textTransform:'none', color:'white',fontSize:'12px',m:0,p:0}}
                                         >
                                             Marketplace Fees: {verifiedCollection?.rate || 1}% {verifiedCollection?.rate && +sell_now_amount > 0 && <Typography variant="caption">~{+verifiedCollection.rate/100*+sell_now_amount} <SolCurrencyIcon sx={{fontSize:"8px"}} /></Typography>}
-                                            {verifiedCollection?.shr && verifiedCollection?.shr > 0 &&
-                                                <Typography component='div' variant="caption">
-                                                    *{+verifiedCollection.shr*100}% is shared with {verifiedCollection.author} DAO
-                                                </Typography>
-                                            }
                                         </Button>
                                     </Tooltip>
+                                    {verifiedCollection?.shr && verifiedCollection?.shr > 0 &&
+                                        <Typography component='div' variant="caption" sx={{color:'gray'}}>
+                                            *{+verifiedCollection.shr*100}% is shared with {verifiedCollection.author} DAO
+                                        </Typography>
+                                    }
                                 </div>
                                 {royalties &&
                                     <div>
