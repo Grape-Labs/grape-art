@@ -809,20 +809,6 @@ function SellNowPrompt(props:any){
                 <Box sx={{width:'100%'}}>
                     {t('Mint')}: <MakeLinkableAddress addr={mint} trim={0} hasextlink={true} hascopy={false} fontsize={16} /> <br/>
                     Auction House: <MakeLinkableAddress addr={collectionAuctionHouse || AUCTION_HOUSE_ADDRESS} trim={0} hasextlink={true} hascopy={false} fontsize={16} />
-                    <br/>
-                    Marketplace Fees: {verifiedCollection?.rate || 1}% {verifiedCollection?.rate && +sell_now_amount > 0 && <Typography variant="caption">~{+verifiedCollection.rate/100*+sell_now_amount} sol</Typography>}
-                    {verifiedCollection?.shr && verifiedCollection?.shr > 0 &&
-                        <Typography component='div' variant="caption">
-                            *{+verifiedCollection.shr*100}% is shared with {verifiedCollection.author} DAO
-                        </Typography>
-                    }
-                    {royalties &&
-                        <>
-                        Royalties: <Tooltip title={t('These are the original creator royalties if this NFT is sold again using the Metaplex Auction House program')}><Button variant='text' sx={{color:'white'}}>{(+royalties/100).toFixed(2)}%</Button></Tooltip>{royalties > 0 && +sell_now_amount>0 && <Typography variant="caption">~{+royalties/100/100*+sell_now_amount} sol</Typography>}<br/>
-                        </>
-                    }
-                    <br/>
-                  
                 </Box>
 
                     <RegexTextField
@@ -857,7 +843,44 @@ function SellNowPrompt(props:any){
                             <Typography
                                 variant="caption"
                             >
-                                {t('Price set in SOL')} <SolCurrencyIcon sx={{fontSize:"12px"}} />
+                                {t('Price set in SOL')} <SolCurrencyIcon sx={{fontSize:"10px"}} />
+                                <div>
+                                    <Tooltip title="*Marketplace/transaction fees help maintain and support this marketplace">
+                                        <Button
+                                            sx={{textTransform:'none', color:'white',fontSize:'12px',m:0,p:0}}
+                                        >
+                                            Marketplace Fees: {verifiedCollection?.rate || 1}% {verifiedCollection?.rate && +sell_now_amount > 0 && <Typography variant="caption">~{+verifiedCollection.rate/100*+sell_now_amount} <SolCurrencyIcon sx={{fontSize:"8px"}} /></Typography>}
+                                            {verifiedCollection?.shr && verifiedCollection?.shr > 0 &&
+                                                <Typography component='div' variant="caption">
+                                                    *{+verifiedCollection.shr*100}% is shared with {verifiedCollection.author} DAO
+                                                </Typography>
+                                            }
+                                        </Button>
+                                    </Tooltip>
+                                </div>
+                                {royalties &&
+                                    <div>
+                                        <Tooltip title="*These are the original creator royalties of this NFT, if this NFT is sold again the seller pays for these royalties">
+                                            <Button
+                                                sx={{textTransform:'none', color:'white',fontSize:'12px',m:0,p:0}}
+                                            >
+                                                Royalties: {(+royalties/100).toFixed(2)}% {royalties > 0 && +sell_now_amount>0 && <Typography variant="caption">~{(+royalties/100/100*+sell_now_amount).toFixed(4)} <SolCurrencyIcon sx={{fontSize:"8px"}} /></Typography>}
+                                            </Button>
+                                        </Tooltip>
+                                    </div>
+                                }
+                                
+                                {(+verifiedCollection.rate/100*+sell_now_amount + royalties/100/100*+sell_now_amount) > 0 &&
+                                    <><br/>Total Fees: {(+verifiedCollection.rate/100*+sell_now_amount + royalties/100/100*+sell_now_amount).toFixed(4)} <SolCurrencyIcon sx={{fontSize:"8px"}} /></>
+                                }
+
+                                <Typography
+                                    variant="body2"
+                                >
+                                {(+sell_now_amount - (+verifiedCollection.rate/100*+sell_now_amount + royalties/100/100*+sell_now_amount)) > 0 &&
+                                    <>You receive: {(+sell_now_amount - (+verifiedCollection.rate/100*+sell_now_amount + royalties/100/100*+sell_now_amount)).toFixed(4)} <SolCurrencyIcon sx={{fontSize:"8px"}} /></>
+                                }
+                                </Typography>
                             </Typography>
                         </Grid>
                     </Grid>
@@ -2225,11 +2248,13 @@ export default function ItemOffers(props: any) {
                                                                                                 <>Marketplace: <strong>{verifiedAuctionHouse.name}</strong><br/></>
                                                                                             }
                                                                                             {royalties &&
-                                                                                                <>
-                                                                                                Royalties: <Tooltip title={t('These are the original royalties if this NFT is sold again using the Metaplex Auction House program')}><Button variant='text' sx={{color:'white'}}>{(+royalties/100).toFixed(2)}%</Button></Tooltip><br/>
-                                                                                                </>
+                                                                                                <Typography variant='body2' sx={{mt:1}}>
+                                                                                                Royalties: {(+royalties/100).toFixed(2)}%
+                                                                                                <Typography component='div' variant='caption'>*These are the original creator royalties of this NFT, if this NFT is sold again the seller pays for these royalties</Typography>
+                                                                                                <br/>
+                                                                                                </Typography>
                                                                                             }
-                                                                                            <br/><br/>
+                                                                                            <br/>
                                                                                             <Typography sx={{textAlign:'center'}}>
                                                                                                 {t('Make sure the above is correct')}<br/>{t('press BUY WITH WALLET to proceed')}
                                                                                             </Typography>   
