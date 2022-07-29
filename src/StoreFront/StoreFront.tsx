@@ -61,6 +61,7 @@ import ForumIcon from '@mui/icons-material/Forum';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import StorefrontIcon from '@mui/icons-material/Storefront';
 import PeopleIcon from '@mui/icons-material/People';
+import WorkIcon from '@mui/icons-material/Work';
 
 import RateReviewIcon from '@mui/icons-material/RateReview';
 import DiscordIcon from '../components/static/DiscordIcon';
@@ -403,6 +404,7 @@ const MainMenu = (props:any) => {
                         <ListItemText primary={`Messages`} />
                     </ListItemButton>
                 </ListItem>
+                        
             </List>
     
         );
@@ -444,6 +446,7 @@ enum NavPanel {
     Holders,
     Topics,
     Chat,
+    Work,
     SocialFeed
 }
 
@@ -605,7 +608,7 @@ export function StoreFrontView(this: any, props: any) {
             if (staticMintList.length < resultValues.length){
                 console.log("staticMintList: "+staticMintList.length);
                 console.log("resultValues: "+resultValues.length);
-                
+
                 const extraList = new Array();
                 for (var item of resultValues){
 
@@ -1892,6 +1895,9 @@ export function StoreFrontView(this: any, props: any) {
 
                         <Tab icon={<RateReviewIcon />} aria-label="Topics" disabled={true} value={NavPanel.Topics} sx={{color:'white'}} />
                         <Tab icon={<ForumIcon />} aria-label="Chat" disabled={true} value={NavPanel.Chat} sx={{color:'white'}} />
+                        <Tab icon={<WorkIcon />} aria-label="Work" disabled={true} value={NavPanel.Work} sx={{color:'white'}} />
+
+                        
 
                         {collectionAuthority?.links?.twitter &&
                             <Tab icon={<TwitterIcon />} aria-label="Holders" value={NavPanel.SocialFeed} sx={{color:'white'}} title="Twitter Feed" />
