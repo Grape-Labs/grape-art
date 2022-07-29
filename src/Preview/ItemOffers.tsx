@@ -2092,6 +2092,18 @@ export default function ItemOffers(props: any) {
                                                 )}
                                                 </>
                                             }
+                                            <Button 
+                                                disabled={loading}
+                                                onClick={() => setRefreshOffers(true)}
+                                                size='small'
+                                                sx={{ml:1,borderRadius:'17px',color:'white'}}
+                                            >
+                                                {loading ?
+                                                    <>loading...</>
+                                                :
+                                                <RefreshIcon />
+                                                }                                           
+                                            </Button>
                                             <Typography component="div" variant="caption" id="grape-art-last-sale"></Typography>
                                         </Typography>
                                         {( (salePrice > 0) ?
