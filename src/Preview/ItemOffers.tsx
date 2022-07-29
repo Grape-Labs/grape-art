@@ -1821,8 +1821,8 @@ export default function ItemOffers(props: any) {
             //const auctionHouseObj = await anchorProgram.account.auctionHouse.fetch(auctionHouseKey,);
             const auctionHouseObj = await anchorProgram.account.auctionHouse.fetch(auctionHouseKey,);
             const escrow = (await getAuctionHouseBuyerEscrow(auctionHouseKey, publicKey))[0];
-            //const amount = await getTokenAmount(anchorProgram,escrow,auctionHouseObj.treasuryMint,);
-			const amount = await getTokenAmount(anchorProgram,escrow,mint,);
+            const amount = await getTokenAmount(anchorProgram,escrow,auctionHouseObj.treasuryMint,);
+			//const amount = await getTokenAmount(anchorProgram,escrow,mint,);
 			const escrowAmount = convertSolVal(amount);
             //if (amount === 0){
                 //const transactionInstr = await buyNowListing(salePrice, mint, sellerWalletKey.toString(), buyerPublicKey, updateAuthority, auctionHouseKey.toBase58());
