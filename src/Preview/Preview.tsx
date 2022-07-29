@@ -1651,6 +1651,7 @@ function GalleryItemMeta(props: any) {
                                         </Box>
                                     </ListItemText>
                                 </List>
+
                                 {tokenOwners?.data.parsed.info.owner &&
                                     <ItemOffers
                                         mintAta={mintAta} 
@@ -1663,6 +1664,7 @@ function GalleryItemMeta(props: any) {
                                         mintName={collectionitem.name}
                                         image={collectionitem.image}
                                         refreshOwner={refreshOwner}
+                                        royalties={collectionitem.seller_fee_basis_points}
                                         setRefreshOwner={setRefreshOwner} 
                                         setRefresh={props.setRefresh} 
                                         grape_member_balance={grape_member_balance}

@@ -675,6 +675,8 @@ function SellNowPrompt(props:any){
     const salePrice = props.salePrice || null;
     const weightedScore = props.grapeWeightedScore || 0;
     const collectionAuctionHouse = props.collectionAuctionHouse || null;
+    const royalties = props.royalties || null;
+
     //const salePrice = React.useState(props.salePrice);
 
     const handleClickOpenDialog = () => {
@@ -803,6 +805,26 @@ function SellNowPrompt(props:any){
                 </DialogTitle>
                 <form onSubmit={handleSellNow}>
                 <DialogContent>
+
+                <Box sx={{width:'100%'}}>
+                    {t('Mint')}: <MakeLinkableAddress addr={mint} trim={0} hasextlink={true} hascopy={false} fontsize={16} /> <br/>
+                    Auction House: <MakeLinkableAddress addr={collectionAuctionHouse || AUCTION_HOUSE_ADDRESS} trim={0} hasextlink={true} hascopy={false} fontsize={16} />
+                    <br/>
+                    Marketplace Fees: {verifiedCollection?.rate || 1}% {verifiedCollection?.rate && +sell_now_amount > 0 && <Typography variant="caption">~{+verifiedCollection.rate/100*+sell_now_amount} sol</Typography>}
+                    {verifiedCollection?.shr && verifiedCollection?.shr > 0 &&
+                        <Typography component='div' variant="caption">
+                            *{+verifiedCollection.shr*100}% is shared with {verifiedCollection.author} DAO
+                        </Typography>
+                    }
+                    {royalties &&
+                        <>
+                        Royalties: <Tooltip title={t('These are the original creator royalties if this NFT is sold again using the Metaplex Auction House program')}><Button variant='text' sx={{color:'white'}}>{(+royalties/100).toFixed(2)}%</Button></Tooltip>{royalties > 0 && +sell_now_amount>0 && <Typography variant="caption">~{+royalties/100/100*+sell_now_amount} sol</Typography>}<br/>
+                        </>
+                    }
+                    <br/>
+                  
+                </Box>
+
                     <RegexTextField
                         regex={/[^0-9]+\.?[^0-9]/gi}
                         autoFocus
@@ -1185,6 +1207,7 @@ export default function ItemOffers(props: any) {
     const [final_offeramount, setFinalOfferAmount] = React.useState(null);
     const [tradeState, setTradeState] = React.useState(null);
     const [final_offerfrom, setFinalOfferFrom] = React.useState(null);
+    const [royalties, setRoyalties] = React.useState(props.royalties || null);
     const [salePrice, setSalePrice] = React.useState(props.salePrice || 0);
     const [salePriceEscrow, setSalePriceEscrow] = React.useState(null);
     const [tokenSalePrice, setTokenSalePrice] = React.useState(0);
@@ -2199,8 +2222,14 @@ export default function ItemOffers(props: any) {
                                                                                             {t('Owner')}: <MakeLinkableAddress addr={mintOwner} trim={0} hasextlink={true} hascopy={false} fontsize={16} /><br/>
                                                                                             {t('Auction House')}: <MakeLinkableAddress addr={salePriceAH} trim={9} hasextlink={true} hascopy={false} fontsize={16} /><br/>
                                                                                             {verifiedAuctionHouse && 
-                                                                                                <>Marketplace: <strong>{verifiedAuctionHouse.name}</strong><br/><br/></>
+                                                                                                <>Marketplace: <strong>{verifiedAuctionHouse.name}</strong><br/></>
                                                                                             }
+                                                                                            {royalties &&
+                                                                                                <>
+                                                                                                Royalties: <Tooltip title={t('These are the original royalties if this NFT is sold again using the Metaplex Auction House program')}><Button variant='text' sx={{color:'white'}}>{(+royalties/100).toFixed(2)}%</Button></Tooltip><br/>
+                                                                                                </>
+                                                                                            }
+                                                                                            <br/><br/>
                                                                                             <Typography sx={{textAlign:'center'}}>
                                                                                                 {t('Make sure the above is correct')}<br/>{t('press BUY WITH WALLET to proceed')}
                                                                                             </Typography>   
@@ -2343,7 +2372,7 @@ export default function ItemOffers(props: any) {
                                                             </>
                                                             : 
                                                             <>
-                                                                <SellNowPrompt mintName={mintName} image={image} mint={mint} updateAuthority={updateAuthority} verifiedCollection={verifiedCollection} mintOwner={mintOwner} salePrice={salePrice} grapeWeightedScore={grape_weighted_score} setRefreshOffers={setRefreshOffers} collectionAuctionHouse={collectionAuctionHouse} />
+                                                                <SellNowPrompt royalties={royalties} mintName={mintName} image={image} mint={mint} updateAuthority={updateAuthority} verifiedCollection={verifiedCollection} mintOwner={mintOwner} salePrice={salePrice} grapeWeightedScore={grape_weighted_score} setRefreshOffers={setRefreshOffers} collectionAuctionHouse={collectionAuctionHouse} />
                                                             </>
                                                         )}
                                                     </Grid>
