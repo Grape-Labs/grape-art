@@ -15,6 +15,17 @@ export interface LikeListInfoArgs {
   type?: string;
 }
 
+export interface VoteListInfoArgs {
+  address: string;
+  namespace?: string;
+  network?: string;
+  voteFirst?: number;
+  voteAfter?: string;
+  votedFirst?: number;
+  votedAfter?: string;
+  type?: string;
+}
+
 export interface FollowListInfoArgs {
     address: string;
     namespace?: string;
@@ -67,6 +78,14 @@ export interface FollowListInfoArgs {
     type?: ConnectionType,
   }
 
+  export interface VoteListInfoResp {
+    voteCount: number;
+    votedCount: number;
+    votes?: FollowListInfo,
+    voteds?: FollowListInfo,
+    type?: ConnectionType,
+  }
+
   export interface FollowListInfoResp {
     followingCount: number;
     followerCount: number;
@@ -76,6 +95,8 @@ export interface FollowListInfoArgs {
     liked?: string,
     report?: string,
     reported?: string, 
+    vote?: string,
+    voted?: string, 
     type?: ConnectionType,
   }
   

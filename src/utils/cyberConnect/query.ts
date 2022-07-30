@@ -1,6 +1,7 @@
 import {
   RankingListInfoArgs,
   LikeListInfoArgs,
+  VoteListInfoArgs,
   FollowListInfoArgs,
   SearchUserInfoArgs,
   RankingListResp,
@@ -62,6 +63,61 @@ export const likeListInfoSchema = ({
       likeAfter,
       likedFirst,
       likedAfter,
+    },
+  };
+};
+
+export const voteListInfoSchema = ({
+  address,
+  namespace,
+  network,
+  voteFirst,
+  voteAfter,
+  votedFirst,
+  votedAfter,
+}: VoteListInfoArgs) => {
+  return {
+    operationName: "voteListInfo",
+    query: `query voteListInfo($address: String!, $namespace: String, $network: Network, $voteFirst: Int, $voteAfter: String, $votedFirst: Int, $votedAfter: String) {
+      identity(address: $address, network: $network) {
+        vote: followingCount(namespace: $namespace, type: VOTE)
+        voted: followerCount(namespace: $namespace, type: VOTE)
+        votes: followings(namespace: $namespace, first: $voteFirst, after: $voteAfter, type: VOTE) {
+          pageInfo {
+            endCursor
+            hasNextPage
+          }
+          list {
+            address
+            ens
+            avatar
+            namespace
+            alias
+          }
+        }
+        voteds: followers(namespace: $namespace, first: $votedFirst, after: $votedAfter, type: VOTE) {
+          pageInfo {
+            endCursor
+            hasNextPage
+          }
+          list {
+            address
+            ens
+            avatar
+            namespace
+            alias
+          }
+        }
+      }
+    },`,
+    variables: {
+      address,
+      namespace,
+      network,
+      voteFirst,
+      voteAfter,
+      votedFirst,
+      votedAfter,
     },
   };
 };
@@ -185,6 +241,7 @@ export const rankingInfoSchema = ({
 
 export const querySchemas = {
   likeListInfo: likeListInfoSchema,
+  voteListInfo: voteListInfoSchema,
   followListInfo: followListInfoSchema,
   searchUserInfo: searchUserInfoSchema,
   rankingsInfo: rankingInfoSchema,
@@ -228,6 +285,31 @@ export const rankingListInfoQuery = async ({
   const resp = await handleQuery(schema, endPoint);
 
   return (resp?.data?.rankings as RankingListResp) || null;
+};
+
+export const voteListInfoQuery = async ({
+  address,
+  namespace,
+  network,
+  voteFirst,
+  voteAfter,
+  votedFirst,
+  votedAfter,
+  type,
+}: VoteListInfoArgs) => {
+  const schema = querySchemas["voteListInfo"]({
+    address,
+    namespace,
+    network,
+    voteFirst,
+    voteAfter,
+    votedFirst,
+    votedAfter,
+    type,
+  });
+  const resp = await handleQuery(schema, endPoint);
+
+  return (resp?.data?.identity as LikeListInfoResp) || null;
 };
 
 export const likeListInfoQuery = async ({
