@@ -35,7 +35,7 @@ TRY IT OUT NOW:
 - https://grape.art
 
 Profile:
-<img width="1309" alt="Screen Shot 2022-05-10 at 1 08 28 PM" src="https://user-images.githubusercontent.com/13381905/167605066-b4f169d4-8a35-48d7-ac96-5abb6d894581.png">
+<img width="1646" alt="Screen Shot 2022-07-31 at 12 03 40 AM" src="https://user-images.githubusercontent.com/13381905/181996101-e4fc0d24-ad97-4586-899b-623dbf59a9d0.png">
 
 Community Discovery:
 <img width="1167" alt="Screen Shot 2022-07-30 at 11 59 35 PM" src="https://user-images.githubusercontent.com/13381905/181996003-bfbecba1-ae37-49e4-974a-9c19c869f48d.png">
