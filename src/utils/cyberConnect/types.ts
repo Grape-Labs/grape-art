@@ -68,6 +68,8 @@ export interface FollowListInfoArgs {
     liked?: string,
     report?: string,
     reported?: string, 
+    vote?: string,
+    voted?: string,
   }
 
   export interface LikeListInfoResp {

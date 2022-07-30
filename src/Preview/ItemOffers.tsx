@@ -870,15 +870,15 @@ function SellNowPrompt(props:any){
                                     </div>
                                 }
                                 
-                                {(+verifiedCollection.rate/100*+sell_now_amount + royalties/100/100*+sell_now_amount) > 0 &&
-                                    <><br/>Total Fees: {(+verifiedCollection.rate/100*+sell_now_amount + royalties/100/100*+sell_now_amount).toFixed(4)} <SolCurrencyIcon sx={{fontSize:"8px"}} /></>
+                                {verifiedCollection?.rate && (+verifiedCollection?.rate/100*+sell_now_amount + royalties/100/100*+sell_now_amount) > 0 &&
+                                    <><br/>Total Fees: {(+verifiedCollection?.rate/100*+sell_now_amount + royalties/100/100*+sell_now_amount).toFixed(4)} <SolCurrencyIcon sx={{fontSize:"8px"}} /></>
                                 }
 
                                 <Typography
                                     variant="body2"
                                 >
-                                {(+sell_now_amount - (+verifiedCollection.rate/100*+sell_now_amount + royalties/100/100*+sell_now_amount)) > 0 &&
-                                    <>You receive: {(+sell_now_amount - (+verifiedCollection.rate/100*+sell_now_amount + royalties/100/100*+sell_now_amount)).toFixed(4)} <SolCurrencyIcon sx={{fontSize:"8px"}} /></>
+                                {verifiedCollection?.rate && (+sell_now_amount - (+verifiedCollection?.rate/100*+sell_now_amount + royalties/100/100*+sell_now_amount)) > 0 &&
+                                    <>You receive: {(+sell_now_amount - (+verifiedCollection?.rate/100*+sell_now_amount + royalties/100/100*+sell_now_amount)).toFixed(4)} <SolCurrencyIcon sx={{fontSize:"8px"}} /></>
                                 }
                                 </Typography>
                             </Typography>
