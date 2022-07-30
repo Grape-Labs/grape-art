@@ -2,7 +2,7 @@
 
 - This is the Grape Art Dex | A Social. Stateless. Marketplace. powered by Solana!
 
-References:
+Primitive references:
 - Metaplex Auction House (https://github.com/metaplex-foundation/metaplex)
 - Realms/Governance (https://github.com/solana-labs/oyster/)
 - Dialect Labs (https://github.com/dialectlabs)
