@@ -4,7 +4,7 @@
 
 Primitive references:
 - Metaplex Auction House (https://github.com/metaplex-foundation/metaplex)
-- Realms/Governance (https://github.com/solana-labs/oyster/)
+- Realms/SPL Governance (https://github.com/solana-labs/oyster/)
 - Dialect Labs (https://github.com/dialectlabs)
 - Cyberconnect (https://github.com/cyberconnecthq)
 - GenesysGo Shadow Drive (https://github.com/GenesysGo/shadow-drive)
