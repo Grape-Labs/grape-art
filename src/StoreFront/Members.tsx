@@ -196,10 +196,9 @@ function RenderGovernanceMembersTable(props:any) {
             <Box sx={{ width: '100%' }}>
                 <LinearProgress sx={{borderRadius:'10px;'}} />
             </Box>
-            
         )
     }
-
+    
     const ProfilePicture = (props:any) => {
         const participating = props.participating;
         const [address, setAddress] = React.useState(props.address);
