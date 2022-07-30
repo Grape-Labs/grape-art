@@ -62,7 +62,7 @@ const GOVERNANNCE_STATE = {
     5:'Completed',
     6:'Cancelled',
     7:'Defeated',
-    8:'Executing with Errors!',
+    8:'Executing w/errors!',
 }
 
 TablePaginationActions.propTypes = {
@@ -198,7 +198,7 @@ function RenderGovernanceTable(props:any) {
                             }    
                             </>
                             }>
-                            <Button sx={{color:'white'}}>
+                            <Button sx={{color:'white',textTransform:'none'}}>
                                 {GOVERNANNCE_STATE[thisitem.account?.state]}
                             </Button>
                         </Tooltip>
