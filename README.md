@@ -34,6 +34,13 @@ GET LISTED IN THE MARKETPLACE:
 TRY IT OUT NOW:
 - https://grape.art
 
+Profile:
 <img width="1309" alt="Screen Shot 2022-05-10 at 1 08 28 PM" src="https://user-images.githubusercontent.com/13381905/167605066-b4f169d4-8a35-48d7-ac96-5abb6d894581.png">
+
+Community Discovery:
+<img width="1167" alt="Screen Shot 2022-07-30 at 11 59 35 PM" src="https://user-images.githubusercontent.com/13381905/181996003-bfbecba1-ae37-49e4-974a-9c19c869f48d.png">
+
+Marketplace:
+<img width="1204" alt="Screen Shot 2022-07-31 at 12 01 07 AM" src="https://user-images.githubusercontent.com/13381905/181996036-e4e3a193-8e9d-4a66-ada1-a0719a5779e7.png">
 
 
