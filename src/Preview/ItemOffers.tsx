@@ -849,7 +849,7 @@ function SellNowPrompt(props:any){
                                         <Button
                                             sx={{textTransform:'none', color:'white',fontSize:'12px',m:0,p:0}}
                                         >
-                                            Marketplace Fees: {verifiedCollection?.rate || 1}% {verifiedCollection?.rate && +sell_now_amount > 0 && <Typography variant="caption">~{+verifiedCollection.rate/100*+sell_now_amount} <SolCurrencyIcon sx={{fontSize:"8px"}} /></Typography>}
+                                            Marketplace Fees: {verifiedCollection?.rate || 1}% {+sell_now_amount > 0 && <Typography variant="caption">~{(+verifiedCollection?.rate || 1)/100*+sell_now_amount} <SolCurrencyIcon sx={{fontSize:"8px"}} /></Typography>}
                                         </Button>
                                     </Tooltip>
                                     {verifiedCollection?.shr && verifiedCollection?.shr > 0 &&
@@ -870,15 +870,15 @@ function SellNowPrompt(props:any){
                                     </div>
                                 }
                                 
-                                {verifiedCollection?.rate && (+verifiedCollection?.rate/100*+sell_now_amount + royalties/100/100*+sell_now_amount) > 0 &&
-                                    <><br/>Total Fees: {(+verifiedCollection?.rate/100*+sell_now_amount + royalties/100/100*+sell_now_amount).toFixed(4)} <SolCurrencyIcon sx={{fontSize:"8px"}} /></>
+                                {((+verifiedCollection?.rate || 1)/100*+sell_now_amount + royalties/100/100*+sell_now_amount) > 0 &&
+                                    <><br/>Total Fees: {((verifiedCollection?.rate || 1)/100*+sell_now_amount + royalties/100/100*+sell_now_amount).toFixed(4)} <SolCurrencyIcon sx={{fontSize:"8px"}} /></>
                                 }
 
                                 <Typography
                                     variant="body2"
                                 >
-                                {verifiedCollection?.rate && (+sell_now_amount - (+verifiedCollection?.rate/100*+sell_now_amount + royalties/100/100*+sell_now_amount)) > 0 &&
-                                    <>You receive: {(+sell_now_amount - (+verifiedCollection?.rate/100*+sell_now_amount + royalties/100/100*+sell_now_amount)).toFixed(4)} <SolCurrencyIcon sx={{fontSize:"8px"}} /></>
+                                {(+sell_now_amount - ((verifiedCollection?.rate || 1)/100*+sell_now_amount + royalties/100/100*+sell_now_amount)) > 0 &&
+                                    <>You receive: {(+sell_now_amount - ((verifiedCollection?.rate || 1)/100*+sell_now_amount + royalties/100/100*+sell_now_amount)).toFixed(4)} <SolCurrencyIcon sx={{fontSize:"8px"}} /></>
                                 }
                                 </Typography>
                             </Typography>
