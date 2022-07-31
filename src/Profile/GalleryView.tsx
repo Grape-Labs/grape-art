@@ -24,12 +24,14 @@ import {
     FormControl,
     NativeSelect,
     InputLabel,
-    LinearProgress
+    LinearProgress,
+    Select,
+    Divider
 } from '@mui/material';
-
 
 import { SelectChangeEvent } from '@mui/material/Select';
 
+import CancelIcon from '@mui/icons-material/Cancel';
 import SearchIcon from '@mui/icons-material/Search';
 
 import GalleryItem from './GalleryItem';
@@ -103,7 +105,8 @@ export default function GalleryView(props: any){
     const scrollLimit = 20;
     const [collectionAttributeTypes, setCollectionAttributeTypes] = React.useState(null);
     const [collectionAttributes, setCollectionAttributes] = React.useState(null);
-
+    const [thisAttribute, setThisAttribute] = React.useState(null);
+    const [selected, setSelected] = React.useState('')
     // If a gallery item is groupBySymbol > 0
     // start searching how many are grouped so we can do this as a collective :) 
 
@@ -116,11 +119,11 @@ export default function GalleryView(props: any){
             // Use the toLowerCase() method to make it case-insensitive
           });
             setFoundList(results);
-            const tmpScrollList = (results && results?.length > 19) ? results.slice(0, 20) : results;
+            const tmpScrollList = (results && results?.length > 39) ? results.slice(0, 40) : results;
             setScrollData(tmpScrollList);
         } else {
             setFoundList(collectionMintList);
-            const tmpScrollList = (collectionMintList && collectionMintList?.length > 19) ? collectionMintList.slice(0, 20) : collectionMintList;
+            const tmpScrollList = (collectionMintList && collectionMintList?.length > 39) ? collectionMintList.slice(0, 40) : collectionMintList;
             setScrollData(tmpScrollList);
         }
     
@@ -132,6 +135,30 @@ export default function GalleryView(props: any){
             sortMintList(type);
         } 
     };
+
+    const filterByAttribute = (category:string,attribute:string) => {
+        //const keyword = e.target.value;
+        if (attribute !== '') {
+            const tmpMintList = collectionMintList;
+            const results = tmpMintList.filter(obj => obj.attributes?.some(cat => cat.value === attribute));
+            setFoundList(results);
+            const tmpScrollList = (results && results?.length > 39) ? results.slice(0, 40) : results;
+            setScrollData(tmpScrollList);
+        } else {
+            setFoundList(collectionMintList);
+            const tmpScrollList = (collectionMintList && collectionMintList?.length > 39) ? collectionMintList.slice(0, 40) : collectionMintList;
+            setScrollData(tmpScrollList);
+        }
+        //setFilterVal(attribute);
+    };
+
+    const handleAttributeFilter = (category:string,attribute:string) => {
+        if (attribute !== ''){
+            filterByAttribute(category,attribute);
+            setThisAttribute(attribute);
+            setSelected(attribute);
+        }
+    }
 
     function sortMintList(type:number){
         setFilterVal("");
@@ -237,31 +264,47 @@ export default function GalleryView(props: any){
 
     function getCollectionAttributes(){
         const thisAttributes = new Array();
-
-        if (collectionMintList){
-            for(var item of collectionMintList){
-                //console.log("item: "+JSON.stringify(item))
-                if (item.attributes){
-                    let foundType = false;
-                    for  (var x of item.attributes){
-                        for (var y of thisAttributes){
-                            if ((y.trait_type === x.trait_type) && 
-                                (y.value === x.value))
-                                foundType = true;
-                        }
-                        if (!foundType){
-                            thisAttributes.push(x)
+        let sortedResults = null;
+        
+        if (!collectionAttributes){
+            if (collectionMintList){
+                for(var item of collectionMintList){
+                    //console.log("item: "+JSON.stringify(item))
+                    if (item.attributes){
+                        let toPush = true;
+                        for  (var x of item.attributes){
+                            for (var y of thisAttributes){
+                                if ((y.trait_type === x.trait_type) && (y.value === x.value)){
+                                    //console.log("found: "+JSON.stringify(x))
+                                    toPush = false;
+                                    //break;
+                                }
+                                
+                            }
+                            if (toPush){
+                                thisAttributes.push(x)
+                            }
                         }
                     }
                 }
+
+                // sort attributes
+                sortedResults = thisAttributes.sort((a:any,b:any) => (a.trait_type.toLowerCase().trim() > b.trait_type.toLowerCase().trim()) ? 1 : -1);
+                //thisAttributes.sort((a:any, b:any) => a.trait_type.toLowerCase().trim() > b.trait_type.toLowerCase().trim() ? 1 : -1);   
+                //console.log("attributeTypes: "+JSON.stringify(thisAttributes))
             }
-
-            // sort attributes
-            thisAttributes.sort((a:any, b:any) => a?.trait_type.toLowerCase().trim() > b?.trait_type.toLowerCase().trim() ? 1 : -1);   
-            //console.log("attributeTypes: "+JSON.stringify(thisAttributes))
+            setCollectionAttributes(sortedResults);
         }
+    }
 
-        setCollectionAttributes(thisAttributes);
+    function clearSelects() {
+        setThisAttribute(null);
+        for (var x of collectionAttributes){
+            //var dropDown = document.getElementById("attribute_select_"+x.trait_type);
+            //dropDown[0].selectedIndex = '';
+            //dropDown[0].value('').trigger('change');
+        }
+        setSelected('');
     }
 
     React.useEffect(() => {
@@ -345,37 +388,58 @@ export default function GalleryView(props: any){
                                     </Container>
                                 </Grid>
                             </Grid>
-                        {!initSorting && !sortingLoader && scrollData && foundList && foundList.length > 0 && (
+                        
                             <Grid container 
                                 spacing={{ xs: 2, md: 3 }} 
                                 alignItems="flex-start"
                                 >
                             
                                 <Hidden smDown>
-                                    <Grid item xs={0} sm={2}>
+                                    <Grid item xs={0} sm={2} sx={{mt:2}}>
                                         
-                                        {collectionAttributes ?
+                                        {collectionAttributes &&
                                             <>
+                                            {thisAttribute && 
+                                                <Typography variant='caption'>{thisAttribute} selected
+                                                    <Button
+                                                        size='small'
+                                                        onClick={clearSelects}
+                                                        sx={{color:'white',borderRadius:'17px',m:0,p:0}}
+                                                    >
+                                                        <CancelIcon fontSize="small" />
+                                                    </Button>
+                                                    <Divider />
+                                                </Typography>
+                                            }
+                                            
                                             {collectionAttributes.map((element:any, key:number) => ((key<=0 || (key>0 && collectionAttributes[key-1].trait_type != collectionAttributes[key].trait_type)) &&
-                                                
-                                                    <Button variant="outlined" sx={{m:1,color:'white',borderColor:'white',borderRadius:'17px'}} disabled>{element.trait_type} {/*element.value*/}</Button>
+                                                    <FormControl fullWidth sx={{mt:1.25}}>
+                                                        <InputLabel id="attribute_select_label">{element.trait_type}</InputLabel>
+                                                        <NativeSelect
+                                                            inputProps={{
+                                                                name: 'Sorting',
+                                                                id: 'attribute_select_'+element.trait_type,
+                                                            }}
+                                                            id="filter-select"
+                                                            value={selected}
+                                                            onChange={(e) => handleAttributeFilter(element.trait_type, e.target.value)}
+                                                            sx={{borderRadius:'17px', height:'40px'}}
+                                                        >
+                                                            <option selected value={''}></option>
+                                                            {collectionAttributes.map((inner:any, innerkey:number) => (element?.trait_type.toLowerCase() === inner?.trait_type.toLowerCase()) &&
+                                                                <option value={inner.value}>{inner.value}</option>
+                                                            )}
+                                                        </NativeSelect>
+                                                        
+                                                        {/*<Button variant="outlined" sx={{m:1,color:'white',borderColor:'white',borderRadius:'17px'}} disabled>{element.trait_type} {element.value}</Button>*/}
+                                                    </FormControl>
                                                 )
                                             )}
                                             </>
-                                        :
-                                        <>
-                                            {collectionAuthority && collectionAuthority?.attributes &&
-                                                
-                                                <>  
-                                                    {Object.keys(collectionAuthority.attributes).map(key => 
-                                                        <Button variant="outlined" sx={{m:1,color:'white',borderColor:'white',borderRadius:'17px'}} disabled>{key}</Button>
-                                                    )/* {JSON.stringify(collectionAuthority.attributes[key])} */}
-                                                </>
-                                                
-                                            }</>
                                         }
                                     </Grid>
                                 </Hidden>
+                                {!initSorting && !sortingLoader && scrollData && foundList && foundList.length > 0 && (
                                 <Grid item xs={12} sm={10}>
                                     <InfiniteScroll
                                         dataLength={scrollData.length}
@@ -414,8 +478,9 @@ export default function GalleryView(props: any){
                                         </Grid>
                                     </InfiniteScroll>
                                 </Grid>
+                                )}
                             </Grid>
-                        )}
+                        
                         </Box>
                 </>
             :
