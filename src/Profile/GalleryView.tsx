@@ -271,11 +271,12 @@ export default function GalleryView(props: any){
                 for(var item of collectionMintList){
                     //console.log("item: "+JSON.stringify(item))
                     if (item.attributes){
-                        let toPush = true;
+                        
                         for  (var x of item.attributes){
+                            let toPush = true;
                             for (var y of thisAttributes){
                                 if ((y.trait_type === x.trait_type) && (y.value === x.value)){
-                                    //console.log("found: "+JSON.stringify(x))
+                                    console.log("found: "+JSON.stringify(x))
                                     toPush = false;
                                     //break;
                                 }

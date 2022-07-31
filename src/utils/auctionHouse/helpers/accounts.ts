@@ -543,7 +543,7 @@ export async function loadAuctionHouseProgram(
   );
   
   const walletWrapper = new anchor.Wallet(walletKeyPair);
-  const provider = new anchor.Provider(solConnection, walletWrapper, {
+  const provider = new anchor.Provider(solConnection, walletWrapper!, {
     preflightCommitment: 'recent',
   });
   const idl = await anchor.Program.fetchIdl(AUCTION_HOUSE_PROGRAM_ID, provider);
