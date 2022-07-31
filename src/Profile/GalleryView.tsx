@@ -299,12 +299,8 @@ export default function GalleryView(props: any){
 
     function clearSelects() {
         setThisAttribute(null);
-        for (var x of collectionAttributes){
-            //var dropDown = document.getElementById("attribute_select_"+x.trait_type);
-            //dropDown[0].selectedIndex = '';
-            //dropDown[0].value('').trigger('change');
-        }
         setSelected('');
+        handleSortChange(0);
     }
 
     React.useEffect(() => {
@@ -542,8 +538,6 @@ export default function GalleryView(props: any){
                             spacing={{ xs: 2, md: 3 }} 
                             justifyContent="center"
                             alignItems="center">
-                            
-
 
                             { (finalCollection.length > 0 ? finalCollection
                                 .slice((page - 1) * rowsperpage, page * rowsperpage):finalCollection)
