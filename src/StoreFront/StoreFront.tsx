@@ -98,7 +98,8 @@ import {
     GRAPE_COLLECTION, 
     FEATURED_DAO_ARRAY, 
     GRAPE_COLLECTIONS_DATA,
-    PROXY
+    PROXY,
+    CLOUDFLARE_IPFS_CDN
 } from '../utils/grapeTools/constants';
 
 import { 
@@ -1250,7 +1251,15 @@ export function StoreFrontView(this: any, props: any) {
                                     //let meta_final = decodeMetadata(buf);
                                     try{
 
-                                        const metadata = await window.fetch(PROXY+meta_final.data.uri)
+                                        let file_metadata = meta_final.data.uri;
+                                        let file_metadata_url = new URL(file_metadata);
+
+                                        const IPFS = 'https://ipfs.io';
+                                        if (file_metadata.startsWith(IPFS)){
+                                            file_metadata = CLOUDFLARE_IPFS_CDN+file_metadata_url.pathname;
+                                        }
+
+                                        const metadata = await window.fetch(PROXY+file_metadata)
                                         .then(
                                             (res: any) => res.json()
                                         );

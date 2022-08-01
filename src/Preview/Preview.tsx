@@ -258,7 +258,6 @@ function GrapeVerified(props:any){
             let meta_final = decodeMetadata(meta_response.data);
             
             let file_metadata = meta_final.data.uri;
-            
             const file_metadata_url = new URL(file_metadata);
 
             const IPFS = 'https://ipfs.io';
@@ -270,16 +269,18 @@ function GrapeVerified(props:any){
                 (res: any) => res.json());
             
             setCollectionName(metadata.name);
-            console.log("found: "+metadata.image);
-            console.log("IPFS: "+IPFS);
+            //console.log("found: "+metadata.image);
+            //console.log("IPFS: "+IPFS);
             
+            let thisImage = metadata.image;
             if (metadata.image.startsWith(IPFS)){
                 const meta_image_url = new URL(metadata.image)
-                metadata.image = CLOUDFLARE_IPFS_CDN+meta_image_url.pathname;
+                thisImage = CLOUDFLARE_IPFS_CDN+meta_image_url.pathname;
             }
 
-            setCollectionImage(metadata.image) 
+            setCollectionImage(thisImage) 
 
+            //return metadata;
             return null;
         } catch (e) { // Handle errors from invalid calls
             console.log(e);
@@ -1859,7 +1860,6 @@ export function PreviewView(this: any, props: any) {
         const [vcLoading, setVcLoading] = React.useState(false);
         const [verifiedCollection, setVerifiedCollection] = React.useState(null);
         const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
-        const { connection } = useConnection();
         const MD_PUBKEY = METAPLEX_PROGRAM_ID;
         
         const handleExpandClick = () => {
@@ -1879,11 +1879,33 @@ export function PreviewView(this: any, props: any) {
 
                 let meta_final = decodeMetadata(meta_response.data);
                 
+                console.log("final: "+JSON.stringify(meta_final))
+
+
+                let file_metadata = meta_final.data.uri;
+                let file_metadata_url = new URL(file_metadata);
+
+                const IPFS = 'https://ipfs.io';
+                if (file_metadata.startsWith(IPFS)){
+                    file_metadata = CLOUDFLARE_IPFS_CDN+file_metadata_url.pathname;
+                }
+                
                 setCollectionRaw({meta_final,meta_response});
                 
-                const metadata = await window.fetch(meta_final.data.uri).then(
+                const metadata = await window.fetch(file_metadata).then(
                     (res: any) => res.json());
                 
+
+                if (metadata?.image){
+                    let img_metadata = metadata?.image;
+                    let img_metadata_url = new URL(img_metadata);
+
+                    const IPFS = 'https://ipfs.io';
+                    if (img_metadata.startsWith(IPFS)){
+                        metadata.image = CLOUDFLARE_IPFS_CDN+img_metadata_url.pathname;
+                    }
+                }
+
                 return metadata;
             } catch (e) { // Handle errors from invalid calls
                 console.log(e);
@@ -1940,6 +1962,7 @@ export function PreviewView(this: any, props: any) {
             if (!loading){
                 setLoading(true);
                 let [collectionmeta, vAH] = await Promise.all([getCollectionData(), fetchVerifiedAuctionHouses()]);
+
                 setCollectionMeta({
                     collectionmeta
                 });

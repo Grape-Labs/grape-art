@@ -82,7 +82,7 @@ export default function GalleryItem(props: any){
 
                         let file_metadata = meta_final.data.uri;
                         const file_metadata_url = new URL(file_metadata);
-
+                        
                         const IPFS = 'https://ipfs.io';
                         if (file_metadata.startsWith(IPFS)){
                             file_metadata = CLOUDFLARE_IPFS_CDN+file_metadata_url.pathname;
