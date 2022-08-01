@@ -10,6 +10,9 @@ export const ME_KEYBASE = process.env.REACT_APP_API_ME_KEYBASE || null;
 export const CROSSMINT_API = process.env.REACT_APP_API_ME_KEYBASE || null;
 export const TWITTER_BEARER = process.env.REACT_APP_API_TWITTER_BEARER || null;
 export const TWITTER_PROXY = process.env.REACT_APP_API_TWITTER_PROXY || null;
+export const DRIVE_PROXY = process.env.REACT_APP_API_DRIVE_PROXY || '';
+export const SHDW_PROXY = process.env.REACT_APP_API_SHDW_PROXY || null;
+export const CLOUDFLARE_IPFS_CDN = 'https://cloudflare-ipfs.com';
 
 export const GRAPE_PREVIEW = '/preview/';
 export const GRAPE_PROFILE = '/profile/';

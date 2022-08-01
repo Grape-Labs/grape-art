@@ -73,7 +73,8 @@ import {
 import { 
     GRAPE_RPC_ENDPOINT, 
     GRAPE_PREVIEW, 
-    GRAPE_PROFILE, 
+    GRAPE_PROFILE,
+    DRIVE_PROXY, 
 } from '../utils/grapeTools/constants';
 
 import { MakeLinkableAddress, ValidateCurve, trimAddress, timeAgo } from '../utils/grapeTools/WalletAddress'; // global key handling
@@ -382,7 +383,7 @@ export default function ActivityView(props: any){
                                 sx={{borderRadius:'24px'}}
                             >
                                 <Avatar
-                                    src={'https://solana-cdn.com/cdn-cgi/image/width=256/'+item.metadataParsed?.image}
+                                    src={DRIVE_PROXY+item.metadataParsed?.image}
                                     sx={{
                                         backgroundColor:'#222',
                                         width: 40, 

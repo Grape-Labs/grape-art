@@ -55,7 +55,7 @@ import SolIcon from '../components/static/SolIcon';
 import SolCurrencyIcon from '../components/static/SolCurrencyIcon';
 
 import { ValidateAddress, trimAddress, timeAgo, formatBlockTime } from '../utils/grapeTools/WalletAddress'; // global key handling
-import { GRAPE_RPC_ENDPOINT, GRAPE_PROFILE, GRAPE_PREVIEW } from '../utils/grapeTools/constants';
+import { GRAPE_RPC_ENDPOINT, GRAPE_PROFILE, GRAPE_PREVIEW, DRIVE_PROXY } from '../utils/grapeTools/constants';
 import { ConstructionOutlined, JavascriptRounded } from "@mui/icons-material";
 
 import { useTranslation } from 'react-i18next';
@@ -189,7 +189,7 @@ export function IdentityView(props: any){
         if (url)
             img_url = url.replace(/width=100/g, 'width=256');
 
-        const solcdn = 'https://solana-cdn.com/cdn-cgi/image/width=256/';
+        const solcdn = DRIVE_PROXY;
         if (img_url.indexOf(solcdn) > -1){
                 img_url = img_url.slice(solcdn.length, img_url.length);
         }

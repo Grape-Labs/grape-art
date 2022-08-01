@@ -37,7 +37,7 @@ import {
 } from '../utils/auctionHouse/helpers/constants';
 
 import { decodeMetadata } from '../utils/grapeTools/utils';
-import { GRAPE_RPC_ENDPOINT, GRAPE_PREVIEW } from '../utils/grapeTools/constants';
+import { GRAPE_RPC_ENDPOINT, GRAPE_PREVIEW, DRIVE_PROXY } from '../utils/grapeTools/constants';
 
 import { useTranslation } from 'react-i18next';
 import SolCurrencyIcon from '../components/static/SolCurrencyIcon';
@@ -400,7 +400,7 @@ export default function ListForCollectionView(props: any){
                                     >
                                     <ListItemAvatar>
                                         <Avatar
-                                            src={'https://solana-cdn.com/cdn-cgi/image/width=256/'+item.decodeMetadata?.image}
+                                            src={DRIVE_PROXY+item.decodeMetadata?.image}
                                             sx={{
                                                 backgroundColor:'#222',
                                                 width: 75, 

@@ -31,7 +31,7 @@ import {
 } from '../utils/auctionHouse/helpers/constants';
 
 import SolCurrencyIcon from '../components/static/SolCurrencyIcon';
-import { GRAPE_PREVIEW } from '../utils/grapeTools/constants';
+import { GRAPE_PREVIEW, DRIVE_PROXY, SHDW_PROXY, CLOUDFLARE_IPFS_CDN } from '../utils/grapeTools/constants';
 import { getImageOrFallback } from '../utils/grapeTools/WalletAddress';
 
 import { PreviewView } from "../Preview/Preview";
@@ -79,14 +79,22 @@ export default function GalleryItem(props: any){
                     //let meta_final = decodeMetadata(buf);
                     let meta_final = collectionitem.meta;
                     try{
-                        const metadata = await window.fetch(meta_final.data.uri)
+
+                        let file_metadata = meta_final.data.uri;
+                        const file_metadata_url = new URL(file_metadata);
+
+                        const IPFS = 'https://ipfs.io';
+                        if (file_metadata.startsWith(IPFS)){
+                            file_metadata = CLOUDFLARE_IPFS_CDN+file_metadata_url.pathname;
+                        }
+
+                        const metadata = await window.fetch(file_metadata)
                         .then(
                             (res: any) => res.json()
                         );
                         return metadata;
                     }catch(ie){
-                        // not on Arweave:
-                        //console.log("ERR: "+JSON.stringify(meta_final));
+                        // not found
                         return null;
                     }
                 } catch (e) { // Handle errors from invalid calls
@@ -151,13 +159,34 @@ export default function GalleryItem(props: any){
             let image = collectionmeta?.collectionmeta?.image || collectionitem?.image || null;
             try{
                 if (image){
-                    if ((image?.toLocaleUpperCase().indexOf('?EXT=PNG') > -1) ||
-                        (image?.toLocaleUpperCase().indexOf('?EXT=JPEG') > -1) ||
-                        (image?.toLocaleUpperCase().indexOf('.JPEG') > -1) ||
-                        (image?.toLocaleUpperCase().indexOf('.PNG') > -1) ||
-                        (image?.toLocaleUpperCase().indexOf('ipfs.io') > -1)){
-                            let image_url = 'https://solana-cdn.com/cdn-cgi/image/width=256/'+image;
+                    
+                    let img_url_string = image;
+                    let full_url = new URL(img_url_string);
+                    const ARWEAVE = 'https://arweave.net';
+                    const IPFS = 'https://ipfs.io';
+                    /*
+                    if (SHDW_PROXY) {
+                        if (img_url_string.startsWith(ARWEAVE)) {
+                            img_url_string = image.replace(ARWEAVE, SHDW_PROXY);
+
+                            img_url_string = img_url_string.replace(/\?.* /, "");
+                            console.log("SHDW UPLOAD: "+image);
+                            // full_url.pathname
+                        }
+                    }*/
+                    
+                    if ((img_url_string?.toLocaleUpperCase().indexOf('?EXT=PNG') > -1) ||
+                        (img_url_string?.toLocaleUpperCase().indexOf('?EXT=JPEG') > -1) ||
+                        (img_url_string?.toLocaleUpperCase().indexOf('.JPEG') > -1) ||
+                        (img_url_string?.toLocaleUpperCase().indexOf('.PNG') > -1) ||
+                        (img_url_string?.startsWith(IPFS) > -1)){
+                            
+                            if (img_url_string.startsWith(IPFS)){
+                                img_url_string = CLOUDFLARE_IPFS_CDN+full_url.pathname;
+                            }
+                            let image_url = DRIVE_PROXY+img_url_string;
                             image = image_url;
+                            //console.log("DRIVE_PROXY: "+image);
                             //image = setImageUrl(image_url, image);
                     }
                 }

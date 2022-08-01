@@ -103,7 +103,9 @@ import {
     GRAPE_COLLECTIONS_DATA,
     MARKET_LOGO,
     GRAPE_COLLECTION,
-    THEINDEX_RPC_ENDPOINT
+    THEINDEX_RPC_ENDPOINT,
+    SHDW_PROXY,
+    CLOUDFLARE_IPFS_CDN
 } from '../utils/grapeTools/constants';
 
 import {
@@ -255,10 +257,27 @@ function GrapeVerified(props:any){
 
             let meta_final = decodeMetadata(meta_response.data);
             
-            const metadata = await window.fetch(meta_final.data.uri).then(
+            let file_metadata = meta_final.data.uri;
+            
+            const file_metadata_url = new URL(file_metadata);
+
+            const IPFS = 'https://ipfs.io';
+            if (file_metadata.startsWith(IPFS)){
+                file_metadata = CLOUDFLARE_IPFS_CDN+file_metadata_url.pathname;
+            }
+
+            const metadata = await window.fetch(file_metadata).then(
                 (res: any) => res.json());
             
             setCollectionName(metadata.name);
+            console.log("found: "+metadata.image);
+            console.log("IPFS: "+IPFS);
+            
+            if (metadata.image.startsWith(IPFS)){
+                const meta_image_url = new URL(metadata.image)
+                metadata.image = CLOUDFLARE_IPFS_CDN+meta_image_url.pathname;
+            }
+
             setCollectionImage(metadata.image) 
 
             return null;
