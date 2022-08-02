@@ -352,18 +352,12 @@ export default function GalleryView(props: any){
                                 //(inner.count/collectionMintList.length*100)
                                 if (at_item.trait_type === at.trait_type && at_item.value === at.value){
                                     attribute_count++;
-                                    //var relative_rarity = (at_item.rarity/100)*at_item.count;
-                                    
                                     var rarity_weight = at_item.count/collection_len
                                     rarity_weight_sum += rarity_weight;
 
                                     if (nft_item.address === 'HdhVrid2C25H6hkesaqoeoSSRBuPrXcKgJQxnYiaApch'){
-                                        console.log("rarity: "+at_item.rarity)
-                                        console.log("count: "+at_item.count)
-                                        
-                                        console.log("rarity_weight: "+rarity_weight)
-
-                                        //console.log("rarity_aggregate: "+rarity_aggregate)
+                                        //console.log("rarity: "+at_item.rarity)
+                                        //console.log("count: "+at_item.count)
                                         //console.log("rarity_weight: "+rarity_weight)
                                     }
 
