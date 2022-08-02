@@ -389,7 +389,12 @@ export default function GalleryItem(props: any){
                                                     }
                                                     
                                                     {collectionitem.rarity && 
-                                                        <Tooltip title={`Rarity is calculated on the collection attribute commonality, lower percentage = higher score. Grape Rarity Score: ${collectionitem.rarity_score.toFixed(0)}`}>
+                                                        <Tooltip title={
+                                                            <>
+                                                            <strong>Grape Rarity Score: {collectionitem.rarity_score.toFixed(0)}</strong><br/>
+                                                            Rarity is calculated on the collection attribute commonality, lower percentage = higher score.
+                                                            </>}
+                                                        >
                                                             <Button sx={{borderRadius:'17px'}}>  
                                                                 <Typography variant="caption" textAlign="right" sx={{color:'yellow'}}>
                                                                     {(collectionitem.rarity*100).toFixed(2)}%
