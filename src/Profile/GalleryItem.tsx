@@ -179,11 +179,13 @@ export default function GalleryItem(props: any){
                         (img_url_string?.toLocaleUpperCase().indexOf('?EXT=JPEG') > -1) ||
                         (img_url_string?.toLocaleUpperCase().indexOf('.JPEG') > -1) ||
                         (img_url_string?.toLocaleUpperCase().indexOf('.PNG') > -1) ||
-                        (img_url_string?.startsWith(IPFS) > -1)){
+                        (img_url_string?.startsWith(IPFS))){
                             
+                            /*
                             if (img_url_string.startsWith(IPFS)){
                                 img_url_string = CLOUDFLARE_IPFS_CDN+full_url.pathname;
                             }
+                            */
                             let image_url = DRIVE_PROXY+img_url_string;
                             image = image_url;
                             //console.log("DRIVE_PROXY: "+image);
@@ -362,17 +364,17 @@ export default function GalleryItem(props: any){
                                                             </>
                                                         }> 
                                                             <Button sx={{color:collectionitem?.marketplaceListing ? `white` : `gray`,borderRadius:'17px'}}>  
-                                                            <Typography variant="h6">
-                                                            {+collectionitem.listingPrice.toFixed(3)}  <SolCurrencyIcon sx={{fontSize:"16px"}} />
-                                                            </Typography>
+                                                                <Typography variant="h6">
+                                                                {+collectionitem.listingPrice.toFixed(3)}  <SolCurrencyIcon sx={{fontSize:"16px"}} />
+                                                                </Typography>
                                                             </Button>
+                                                        
                                                         </Tooltip>
                                                     :
                                                         <Typography variant="caption" sx={{color:'#666'}}>
                                                             Not listed
                                                         </Typography>
                                                     }
-                                                    
                                                 </Grid>
                                                 <Grid item xs={5}>
                                                     {collectionitem?.highestOffer > 0 &&
@@ -385,6 +387,16 @@ export default function GalleryItem(props: any){
                                                             </Typography>
                                                         </>
                                                     }
+                                                    
+                                                    {collectionitem.rarity && 
+                                                        <Tooltip title={`Rarity is calculated on the collection attribute commonality. Grape Rarity Score: ${collectionitem.rarity_score.toFixed(0)}`}>
+                                                            <Button sx={{borderRadius:'17px'}}>  
+                                                                <Typography variant="caption" textAlign="right" sx={{color:'yellow'}}>
+                                                                    {(collectionitem.rarity*100).toFixed(2)}%
+                                                                </Typography>
+                                                            </Button>
+                                                        </Tooltip>
+                                                    }  
                                                 </Grid>
                                             </Grid>
                                         </Box>

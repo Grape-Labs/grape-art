@@ -26,11 +26,13 @@ import {
     InputLabel,
     LinearProgress,
     Select,
-    Divider
+    Divider,
+    MenuItem
 } from '@mui/material';
 
 import { SelectChangeEvent } from '@mui/material/Select';
 
+import SolCurrencyIcon from '../components/static/SolCurrencyIcon';
 import CancelIcon from '@mui/icons-material/Cancel';
 import SearchIcon from '@mui/icons-material/Search';
 
@@ -38,6 +40,7 @@ import GalleryItem from './GalleryItem';
 import GalleryGroupItem from './GalleryGroupItem';
 import { GRAPE_PREVIEW } from '../utils/grapeTools/constants';
 import { ConstructionOutlined } from "@mui/icons-material";
+import axios from "axios";
 
 const Search = styled('div')(({ theme }) => ({
     position: 'relative',
@@ -211,6 +214,11 @@ export default function GalleryView(props: any){
             setFoundList(sortedResults);
             const tmpScrollList = (sortedResults && sortedResults?.length > scrollLimit-1) ? sortedResults.slice(0, scrollLimit) : collectionMintList;
             setScrollData(tmpScrollList);
+        } else if (+type === 6){ // by rarity
+            const sortedResults = collectionMintList.sort((a:any,b:any) => (a.rarity != null ? a.rarity : Infinity) - (b.rarity != null ? b.rarity : Infinity)) 
+            setFoundList(sortedResults);
+            const tmpScrollList = (sortedResults && sortedResults?.length > scrollLimit-1) ? sortedResults.slice(0, scrollLimit) : collectionMintList;
+            setScrollData(tmpScrollList);
         }
         setSortingLoader(false);
     }
@@ -273,18 +281,99 @@ export default function GalleryView(props: any){
                     if (item.attributes){
                         for  (var x of item.attributes){
                             let toPush = true;
+                            x.floor = 0;
+                            x.ceiling = 0;
                             for (var y of thisAttributes){
                                 if ((y?.trait_type === x?.trait_type) && (y?.value === x?.value)){
                                     //console.log("found: "+JSON.stringify(x))
                                     toPush = false;
+                                    
+                                    //console.log("listingPricing: "+item.listingPrice)
+                                    // update this attribute
                                     //break;
-                                }
+
+                                    
+
+                                } 
                             }
                             if (toPush){
+                                // fetch floor
+                                // check all items again to see if the floor for this item attributes
                                 thisAttributes.push(x)
                             }
                         }
                     }
+                }
+
+                // Get general rarities
+                for (var at_item of thisAttributes){
+                    var at_count = 0;
+                    for (var cml_item of collectionMintList){
+                        if (cml_item.attributes){
+                            for (var at of cml_item.attributes){
+                                if (at_item.trait_type === at.trait_type && at_item.value === at.value){
+                                    at_count++;
+                                    if (cml_item.listingPrice > at_item.ceiling)
+                                        at_item.ceiling = cml_item.listingPrice;
+                                    
+                                    if (cml_item.listingPrice > 0){
+                                        if (at_item.floor > 0){
+                                            if (at_item.floor > cml_item.listingPrice)
+                                                at_item.floor = cml_item.listingPrice;
+                                        }else{
+                                            at_item.floor = cml_item.listingPrice;
+                                        }
+                                    }
+                                    at_item.count = at_count;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Get NFT Rarities
+                for (var at_item of thisAttributes){
+                    if (at_item && at_item.count)
+                        at_item.rarity = at_item.count/collectionMintList.length*100;
+                }
+
+                // Get individual rarities
+                const collection_len = collectionMintList.length;
+                for (var nft_item of collectionMintList){
+                    if (nft_item.attributes){
+                        //calculate trait rarity, total num collection / divide by the number that specific trait  
+                        nft_item.rarity = 0;
+                        var rarity_aggregate = 0;
+                        var attribute_count = 0;
+                        var rarity_weight_sum = 0;
+                        for (var at of nft_item.attributes){
+                            // check with the rarities we have
+                            for (var at_item of thisAttributes){
+                                //(inner.count/collectionMintList.length*100)
+                                if (at_item.trait_type === at.trait_type && at_item.value === at.value){
+                                    attribute_count++;
+                                    //var relative_rarity = (at_item.rarity/100)*at_item.count;
+                                    
+                                    var rarity_weight = at_item.count/collection_len
+                                    rarity_weight_sum += rarity_weight;
+
+                                    if (nft_item.address === 'HdhVrid2C25H6hkesaqoeoSSRBuPrXcKgJQxnYiaApch'){
+                                        console.log("rarity: "+at_item.rarity)
+                                        console.log("count: "+at_item.count)
+                                        
+                                        console.log("rarity_weight: "+rarity_weight)
+
+                                        //console.log("rarity_aggregate: "+rarity_aggregate)
+                                        //console.log("rarity_weight: "+rarity_weight)
+                                    }
+
+                                }
+                            }
+                        }
+                        nft_item.rarity = rarity_weight_sum/attribute_count;
+                        nft_item.rarity_score = 100-(nft_item.rarity*100);
+                    }
+
                 }
 
                 // sort attributes
@@ -306,9 +395,8 @@ export default function GalleryView(props: any){
         //console.log("refreshGallery: "+refreshGallery)
         
         if (!initSorting && collectionMintList){
-
             getCollectionAttributes();
-        //if (collectionMintList){
+            //if (collectionMintList){
                 //setScrollData((collectionMintList && collectionMintList?.length > scrollLimit-1) ? collectionMintList.slice(0, scrollLimit) : collectionMintList);
             setInitSorting(true);
             sortMintList(0);
@@ -354,6 +442,7 @@ export default function GalleryView(props: any){
                                             <option value={3} disabled>Most Offers</option>
                                             <option value={4}>Highest Offers</option>
                                             <option value={5}>Alphabetical</option>
+                                            <option value={6}>Rarity</option>
                                         </NativeSelect>
                                     </FormControl>
                                 </Grid>    
@@ -408,23 +497,19 @@ export default function GalleryView(props: any){
                                             }
                                             
                                             {collectionAttributes.map((element:any, key:number) => ((key<=0 || (key>0 && collectionAttributes[key-1].trait_type != collectionAttributes[key].trait_type)) &&
-                                                    <FormControl fullWidth sx={{mt:1.25}}>
+                                                    <FormControl variant="standard" fullWidth sx={{mt:1.25}}>
                                                         <InputLabel id="attribute_select_label">{element.trait_type}</InputLabel>
-                                                        <NativeSelect
-                                                            inputProps={{
-                                                                name: 'Sorting',
-                                                                id: 'attribute_select_'+element.trait_type,
-                                                            }}
-                                                            id="filter-select"
+                                                        <Select
+                                                            id={`attribute_select_${element.trait_type}`}
                                                             value={selected}
                                                             onChange={(e) => handleAttributeFilter(element.trait_type, e.target.value)}
-                                                            sx={{borderRadius:'17px', height:'40px'}}
+                                                            
                                                         >
-                                                            <option selected value={''}></option>
+                                                            <MenuItem selected value={''}></MenuItem>
                                                             {collectionAttributes.map((inner:any, innerkey:number) => (element?.trait_type.toLowerCase() === inner?.trait_type.toLowerCase()) &&
-                                                                <option value={inner.value}>{inner.value}</option>
+                                                                <MenuItem value={inner.value}>{inner.value} {inner?.floor > 0 && <small>&nbsp;-&nbsp;{inner.floor}<SolCurrencyIcon sx={{fontSize:"10px"}} /></small>} {inner?.rarity > 0 && <small>&nbsp;:&nbsp;{inner.rarity.toFixed(2)}%</small>}</MenuItem>
                                                             )}
-                                                        </NativeSelect>
+                                                        </Select>
                                                         
                                                         {/*<Button variant="outlined" sx={{m:1,color:'white',borderColor:'white',borderRadius:'17px'}} disabled>{element.trait_type} {element.value}</Button>*/}
                                                     </FormControl>
