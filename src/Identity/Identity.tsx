@@ -85,7 +85,7 @@ export function IdentityView(props: any){
     const { t, i18n } = useTranslation();
 
     const columns: GridColDef[] = [
-        { field: 'id', headerName: 'ID', width: 70 },
+        { field: 'id', headerName: 'ID', width: 70, hide: true },
         { field: 'mint', headerName: 'Mint', width: 70 },
         { field: 'logo', headerName: '', width: 130, 
             renderCell: (params) => {
@@ -353,7 +353,7 @@ export function IdentityView(props: any){
                                             color="inherit"
                                             display='flex'
                                             sx={{mb:3}}
-                                        ><SolIcon sx={{fontSize:'20px',mr:1}} /> {t('SOLANA IDENTITY')}</Typography>
+                                        ><SolIcon sx={{fontSize:'20px',mr:1}} />WALLET</Typography>
 
                                     </Grid>
                             </Grid>
@@ -400,7 +400,7 @@ export function IdentityView(props: any){
                                         <List dense={true}>
                                             {profilePictureUrl &&
                                                 <ListItem>
-                                                    {(profilePictureUrl.toLocaleUpperCase().indexOf("HTTPS://") > -1) ? (
+                                                    {(profilePictureUrl.toLocaleUpperCase().indexOf("HTTPS://") > -1)? (
                                                         <Tooltip title={t('View Image')}>
                                                             <ListItemButton
                                                                 component="a" 
@@ -432,7 +432,7 @@ export function IdentityView(props: any){
                                                                 />
                                                             </ListItemAvatar>
                                                             <ListItemText
-                                                                primary={profilePictureUrl}
+                                                                primary={(profilePictureUrl.toLocaleUpperCase().indexOf("DATA:IMAGE/SVG") > -1) && (<>No PFP Set</>)}
                                                                 secondary={t('Solana Profile Picture')}
                                                             />
                                                         </>
@@ -573,10 +573,10 @@ export function IdentityView(props: any){
                                                             <Grid item xs>
                                                             </Grid>
                                                             <Grid item>
-                                                                {selectionModel.length <= 10 ?
-                                                                    <BulkSend tokensSelected={selectionModel} solanaHoldingRows={solanaHoldingRows} tokenMap={tokenMap}  />
+                                                                {selectionModel.length <= 8 ?
+                                                                    <BulkSend tokensSelected={selectionModel} solanaHoldingRows={solanaHoldingRows} tokenMap={tokenMap} fetchSolanaTokens={fetchSolanaTokens}  />
                                                                 :
-                                                                    <Typography variant="caption">Currently limited to 10 items, next iteration this will be increased</Typography>
+                                                                    <Typography variant="caption">Currently limited to 8 items, next iteration this will be increased</Typography>
                                                                 }
                                                             </Grid>
                                                         </Grid>

@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { WalletError, WalletNotConnectedError } from '@solana/wallet-adapter-base';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { Signer, Connection, PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js';
-import { TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID, getOrCreateAssociatedTokenAccount, createAssociatedTokenAccount, createTransferInstruction } from "@solana/spl-token-v2";
+import { TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID, getAssociatedTokenAddress, createAssociatedTokenAccountInstruction, getOrCreateAssociatedTokenAccount, createAssociatedTokenAccount, createTransferInstruction } from "@solana/spl-token-v2";
 //import { TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID, Token } from "@solana/spl-token";
 
 import { GRAPE_RPC_ENDPOINT, TX_RPC_ENDPOINT, GRAPE_TREASURY } from '../utils/grapeTools/constants';
@@ -206,75 +206,45 @@ export default function SendToken(props: any) {
             console.log("fromWallet: "+fromWallet.toBase58())
             console.log("toWallet: "+toWallet.toBase58())
             
-            
-            let fromTokenAccount = await getOrCreateAssociatedTokenAccount(
-                connection,
-                fromWallet,
-                mintPubkey,
-                fromWallet,
-                !ValidateAddress(fromWallet.toBase58()),
-                TOKEN_PROGRAM_ID,
-                ASSOCIATED_TOKEN_PROGRAM_ID
-            );
-            
-            //console.log("validateAddress onCurve: "+ValidateAddress(toWallet.toBase58()))
             try{
-                console.log("trying...")
-                let toTokenAccount = null;
-                try{
-                    toTokenAccount = await getOrCreateAssociatedTokenAccount(
-                        connection,
-                        fromWallet,
+                const fromTokenAccount = await getAssociatedTokenAddress(
+                    mintPubkey,
+                    publicKey
+                )
+
+                const fromPublicKey = publicKey
+                const destPublicKey = new PublicKey(to)
+                const destTokenAccount = await getAssociatedTokenAddress(
+                    mintPubkey,
+                    destPublicKey
+                )
+                const receiverAccount = await connection.getAccountInfo(
+                    destTokenAccount
+                )
+
+                const transaction = new Transaction()
+                if (receiverAccount === null) {
+                    transaction.add(
+                    createAssociatedTokenAccountInstruction(
+                        fromPublicKey,
+                        destTokenAccount,
+                        destPublicKey,
                         mintPubkey,
-                        toWallet,
-                        !ValidateAddress(toWallet.toBase58()),
-                        //signTransaction,
                         TOKEN_PROGRAM_ID,
                         ASSOCIATED_TOKEN_PROGRAM_ID
-                    );
-                }catch(errs){
-                    console.log("ERR: "+JSON.stringify(errs));
-                    toTokenAccount = await createAssociatedTokenAccount(
-                        connection,
-                        fromWallet,
-                        mintPubkey,
-                        toWallet,
-                        TOKEN_PROGRAM_ID,
-                        ASSOCIATED_TOKEN_PROGRAM_ID
-                    );
-                } 
-                console.log("found?...")
-
-                const adjustedAmountToSend = (amountToSend * Math.pow(10, decimals));
-                
-                //console.log("fromTokenAccount: "+JSON.stringify(fromTokenAccount))
-                //console.log("toTokenAccount: "+JSON.stringify(toTokenAccount))
-                console.log("adjustedAmountToSend: "+adjustedAmountToSend);
-
-                const transaction = new Transaction();
-                if (toTokenAccount){
-                    transaction
-                    
-                    .add(
-                        createTransferInstruction(
-                            fromTokenAccount.address,
-                            toTokenAccount.address,
-                            publicKey,
-                            adjustedAmountToSend,
-                            [],
-                            TOKEN_PROGRAM_ID,
-                        )
                     )
-                    .add(
-                        new TransactionInstruction({
-                            keys: [{ pubkey: fromWallet, isSigner: true, isWritable: true }],
-                            data: Buffer.from(JSON.stringify(GRAPE_TT_MEMO), 'utf-8'),
-                            programId: new PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr"),
-                        })
-                    );
-                } else{
-                    console.log("Skipping: "+toWallet.toBase58()+ " could not get ATA (TokenAccountNotFoundError)");
-                } 
+                    )
+                }
+
+                const amount = (amountToSend * Math.pow(10, decimals));
+                transaction.add(
+                    createTransferInstruction(
+                    fromTokenAccount,
+                    destTokenAccount,
+                    fromPublicKey,
+                    amount
+                    )
+                )
                 
                 try{
                     enqueueSnackbar(`Preparing to send ${amountToSend} ${name} to ${toaddress}`,{ variant: 'info' });

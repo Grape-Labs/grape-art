@@ -101,7 +101,8 @@ export default function BulkSend(props: any) {
     const tokensSelected = props.tokensSelected;
     const solanaHoldingRows = props.solanaHoldingRows;
     const tokenMap = props.tokenMap;
-    
+    const fetchSolanaTokens = props.fetchSolanaTokens;
+
     const [holdingsSelected, setHoldingsSelected] = React.useState(null);
 
     const [open, setOpen] = React.useState(false);
@@ -193,9 +194,7 @@ export default function BulkSend(props: any) {
                 amount
                 )
             )
-
-            console.log("HERE... "+amount)
-
+            
             return transaction;
         }
     }
@@ -239,9 +238,8 @@ export default function BulkSend(props: any) {
 
     }
     
-    
     async function transferTokens(toaddress:string) {
-        var maxLen = 10;
+        var maxLen = 8;
             for (var item = 0; item < holdingsSelected.length / maxLen; item++) {
                 let batchtx = new Transaction;
                 for (var holding = 0; holding < maxLen; holding++) {
@@ -252,6 +250,9 @@ export default function BulkSend(props: any) {
                 }
                 await executeTransactions(batchtx, '');
             }
+        
+        fetchSolanaTokens()
+        
     }
     
     function HandleSendSubmit(event: any) {

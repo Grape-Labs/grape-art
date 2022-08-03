@@ -232,6 +232,10 @@ function DashboardContent(){
                                                                 <Route path=":handlekey" element={<IdentityView />} />
                                                             </Route>
 
+                                                            <Route path="dashboard/*" element={<IdentityView />}>
+                                                                <Route path=":handlekey" element={<IdentityView />} />
+                                                            </Route>
+
                                                             <Route path="*" element={<NotFound />} />
                                                         </Routes>
 
