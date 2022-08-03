@@ -21,6 +21,7 @@ import { useWallet } from '@solana/wallet-adapter-react';
 
 import {
     Button,
+    ButtonGroup,
     Stack,
     Typography,
     Grid,
@@ -350,9 +351,6 @@ export function IdentityView(props: any){
                                             <ListItem>
                                                 <Tooltip title={t('View on Solana Explorer')}>
                                                     <ListItemButton 
-                                                        component="a" 
-                                                        href={`https://explorer.solana.com/address/${pubkey}`}
-                                                        target="_blank"
                                                         sx={{borderRadius:'24px'}}
                                                     >
                                                         <ListItemAvatar>
@@ -368,6 +366,32 @@ export function IdentityView(props: any){
                                                         />
                                                     </ListItemButton>
                                                 </Tooltip>
+                                                <ButtonGroup>
+                                                    <Button
+                                                        component="a" 
+                                                        href={`https://explorer.solana.com/address/${pubkey}`}
+                                                        target="_blank"
+                                                        sx={{borderTopLeftRadius:'17px', borderBottomLeftRadius:'17px',textTransform:'none'}}
+                                                    >
+                                                        Explorer
+                                                    </Button>
+                                                    <Button
+                                                        component="a" 
+                                                        href={`https://solscan.io/account/${pubkey}`}
+                                                        target="_blank"
+                                                        sx={{textTransform:'none'}}
+                                                    >
+                                                        Solscan
+                                                    </Button>
+                                                    <Button
+                                                        component="a" 
+                                                        href={`https://solana.fm/address/${pubkey}`}
+                                                        target="_blank"
+                                                        sx={{borderTopRightRadius:'17px', borderBottomRightRadius:'17px',textTransform:'none'}}
+                                                    >
+                                                        SolanaFM
+                                                    </Button>
+                                                </ButtonGroup>
                                             </ListItem>
                                         </List>
 

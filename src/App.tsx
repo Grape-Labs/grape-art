@@ -127,7 +127,6 @@ function DashboardContent(){
             new PhantomWalletAdapter(),
             new GlowWalletAdapter(),
             new SolflareWalletAdapter(),
-            new SlopeWalletAdapter(),
             new LedgerWalletAdapter(),
             new ExodusWalletAdapter(),
             new SolletWalletAdapter({ network }),
@@ -143,6 +142,7 @@ function DashboardContent(){
             new SafePalWalletAdapter(),
             new BitpieWalletAdapter(),
             new NightlyWalletAdapter(),
+            new SlopeWalletAdapter(),
         ],
         [network]
     );
