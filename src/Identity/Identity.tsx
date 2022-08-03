@@ -8,6 +8,7 @@ import { decodeMetadata } from '../utils/grapeTools/utils';
 import { PublicKey, Connection, Commitment } from '@solana/web3.js';
 import {ENV, TokenInfo, TokenListProvider} from '@solana/spl-token-registry';
 
+import SendToken from '../StoreFront/Send';
 import BulkSend from './BulkSend';
 
 import { styled } from '@mui/material/styles';
@@ -322,28 +323,6 @@ export function IdentityView(props: any){
                                 alignItems="center"
                                 rowSpacing={8}
                             >
-                                
-                                <Grid 
-                                    item xs={12}
-                                >
-                                    <Tooltip title={t('Back go Profile')}>
-                                        <Button
-                                            component={Link} 
-                                            to={`${GRAPE_PROFILE}${pubkey}`}
-                                            sx={{borderRadius:'24px',textTransform:'none',color:'white'}}
-                                            >
-                                            <Typography
-                                                variant="h3"
-                                                color="inherit"
-                                                display='flex'
-                                                sx={{mt:2}}
-                                            >
-                                                <img src={MARKET_LOGO} width="300px" className="header-logo" alt="Grape" />
-                                                .art
-                                                </Typography>
-                                        </Button>
-                                    </Tooltip>
-                                    </Grid>
                                     <Grid 
                                         item xs={12}
                                         alignItems="center"
@@ -508,9 +487,9 @@ export function IdentityView(props: any){
                                     >
                                         SOL:
                                     </Typography>   
-                                    
+                                        
                                         <List dense={true}>
-                                            <ListItem>
+                                            <ListItem sx={{width:'100%'}}>
                                                 <ListItemAvatar>
                                                     <Avatar
                                                         sx={{backgroundColor:'#222'}}
@@ -518,10 +497,18 @@ export function IdentityView(props: any){
                                                         <SolCurrencyIcon sx={{color:'white'}} />
                                                     </Avatar>
                                                 </ListItemAvatar>
-                                                <ListItemText
-                                                    primary={(parseFloat(new TokenAmount(solanaBalance, 9).format()))}
-                                                    secondary="Solana"
-                                                />
+                                                <Grid container sx={{width:'100%'}}>
+                                                    <Grid item>
+                                                    <ListItemText
+                                                        primary={(parseFloat(new TokenAmount(solanaBalance, 9).format()))}
+                                                        secondary="Solana"
+                                                    />
+                                                    </Grid>
+
+                                                    <Grid item xs sx={{ml:2}}>
+                                                        <SendToken mint={'So11111111111111111111111111111111111111112'} name={'SOL'} logoURI={'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png'} balance={new TokenAmount(solanaBalance, 9).format()} conversionrate={0} showTokenName={false} sendType={0} />
+                                                    </Grid>
+                                                </Grid>
                                             </ListItem>
                                         </List>
 

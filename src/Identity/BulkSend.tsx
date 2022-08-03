@@ -211,7 +211,7 @@ export default function BulkSend(props: any) {
         }        
 
         try{
-            enqueueSnackbar(`Preparing to batch pay`,{ variant: 'info' });
+            enqueueSnackbar(`Preparing to batch send`,{ variant: 'info' });
             const signature = await sendTransaction(transactions, freeconnection);
             
             const snackprogress = (key:any) => (
@@ -228,7 +228,7 @@ export default function BulkSend(props: any) {
         
             closeSnackbar(cnfrmkey);
             
-            enqueueSnackbar(`Sent payments - ${signature}`,{ variant: 'success' });
+            enqueueSnackbar(`Sent token(s) - ${signature}`,{ variant: 'success' });
             
             //setTransactionSignature(signature);
         }catch(e:any){
