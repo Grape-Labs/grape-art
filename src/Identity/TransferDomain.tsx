@@ -221,9 +221,11 @@ export default function TransferDomain(props: any) {
                     <FormControl>
                         <Grid container spacing={2}>
                                 <>
-                                    <Typography variant="body2">
-                                        Enter the Solana address you would like to transfer this domain to
-                                    </Typography>
+                                    <Grid item xs={12} textAlign={'center'} sx={{mt:1}}>
+                                        <Typography variant="body2">
+                                            Enter the Solana address you would like to transfer this domain to
+                                        </Typography>
+                                    </Grid>
                                     <Grid item xs={12}>
                                         <TextField 
                                             id="send-to-address" 
