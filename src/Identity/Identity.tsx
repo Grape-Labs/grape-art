@@ -132,7 +132,7 @@ export function IdentityView(props: any){
             renderCell: (params) => {
                 return (
                     <>
-                           <SendToken mint={params.value.mint} name={params.value.name} logoURI={tokenMap.get(params.value.mint)?.logoURI} balance={new TokenAmount(params.value.tokenAmount.amount, params.value.tokenAmount.decimals).format()} conversionrate={0} showTokenName={true} sendType={0} fetchSolanaTokens={fetchSolanaTokens} />
+                           <SendToken mint={params.value.mint} name={tokenMap.get(params.value.mint)?.name || params.value.mint} logoURI={tokenMap.get(params.value.mint)?.logoURI} balance={new TokenAmount(params.value.tokenAmount.amount, params.value.tokenAmount.decimals).format()} conversionrate={0} showTokenName={true} sendType={0} fetchSolanaTokens={fetchSolanaTokens} />
                     </>
                 )
             }
