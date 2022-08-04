@@ -19,6 +19,10 @@ import { getProfilePicture } from '@solflare-wallet/pfp';
 import { TokenAmount } from '../utils/grapeTools/safe-math';
 import { useWallet } from '@solana/wallet-adapter-react';
 
+import {  
+    getTokenPrice,
+    getCoinGeckoPrice } from '../utils/grapeTools/helpers';
+
 import {
     Button,
     ButtonGroup,
@@ -105,7 +109,7 @@ export function IdentityView(props: any){
             }
         },
         { field: 'name', headerName: 'Token', width: 200 },
-        { field: 'balance', headerName: 'Balance', width: 130,
+        { field: 'balance', headerName: 'Balance', width: 130, align: 'right',
             renderCell: (params) => {
                 return (
                     <>
@@ -114,15 +118,15 @@ export function IdentityView(props: any){
                 )
             }
         },
-        { field: 'price', headerName: 'Price', width: 130},
-        { field: 'value', headerName: 'Value', width: 130,
+        { field: 'price', headerName: 'Price', width: 130, align: 'right'},
+        { field: 'value', headerName: 'Value', width: 130, align: 'right',
             renderCell: (params) => {
                 return (
                     <>
-                    {params.value.tokenAmount.decimals === 0 ?
+                    {params.value?.tokenDecimals === 0 ?
                         <Button component={Link} to={`${GRAPE_PREVIEW}${params.value.mint}`}>View</Button>
                     :
-                        <></>
+                        <>{params.value.tokenValue}</>
                     }
                     </>
                 )
@@ -244,7 +248,33 @@ export function IdentityView(props: any){
 
         var solholdingrows = new Array()
         var cnt = 0;
+
+        let cgArray = '';//new Array()
         for (var item of sortedholdings){
+            //console.log("item: "+JSON.stringify(item))
+            const tm = tokenMap.get(item.account.data.parsed.info.mint)
+            if (tm && tm?.extensions?.coingeckoId){
+                if (cgArray.length > 0)
+                    cgArray += ',';
+                cgArray+=tm.extensions.coingeckoId
+                item.coingeckoId = tm.extensions.coingeckoId;
+                //cgArray.push(tm.extensions.coingeckoId)
+            }
+
+        }    
+
+        const cgPrice = await getCoinGeckoPrice(cgArray);
+
+        for (var item of sortedholdings){
+            /*
+            try{
+                const tknPrice = await getTokenPrice(item.account.data.parsed.info.mint, "USDC");
+                item.account.data.parsed.info.tokenPrice = tknPrice.data.price
+            }catch(e){}
+            */
+            
+            const itemValue = cgPrice[item?.coingeckoId]?.usd ? (cgPrice[item.coingeckoId].usd * parseFloat(new TokenAmount(item.account.data.parsed.info.tokenAmount.amount, item.account.data.parsed.info.tokenAmount.decimals).format())).toFixed(item.account.data.parsed.info.tokenAmount.decimals) : 0;
+
             solholdingrows.push({
                 id:cnt,
                 mint:item.account.data.parsed.info.mint,
@@ -256,12 +286,17 @@ export function IdentityView(props: any){
                     tokenAmount:item.account.data.parsed.info.tokenAmount.amount, 
                     tokenDecimals:item.account.data.parsed.info.tokenAmount.decimals
                 },
-                price:item.account.data.parsed.info.tokenAmount.decimals === 0 ? 'NFT' : 'soon',
-                value:item.account.data.parsed.info,
+                price:item.account.data.parsed.info.tokenAmount.decimals === 0 ? 'NFT' : cgPrice[item?.coingeckoId]?.usd || 0,
+                value: {
+                    tokenAmount:item.account.data.parsed.info.tokenAmount.amount, 
+                    tokenDecimals:item.account.data.parsed.info.tokenAmount.decimals,
+                    tokenValue:itemValue,
+                },
                 send:item.account.data.parsed.info
             });
             cnt++;
         }
+
         setSolanaHoldingRows(solholdingrows)
 
         setSolanaHoldings(sortedholdings);
