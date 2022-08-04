@@ -159,7 +159,7 @@ export default function TransferDomain(props: any) {
                             Signature: {signedTransaction}
                         </Button>
                 );
-                enqueueSnackbar(`Transfered domain ${domain} to ${toaddress}`,{ variant: 'success', action });
+                enqueueSnackbar(`Transfered ${domain} to ${toaddress}`,{ variant: 'success', action });
                 try{
                     fetchSolanaDomain();
                 }catch(err:any){console.log("ERR: "+err)}
@@ -215,7 +215,7 @@ export default function TransferDomain(props: any) {
         >
             <form onSubmit={HandleSendSubmit}>
                 <BootstrapDialogTitle id="customized-dialog-title" onClose={handleClose}>
-                    Send {snsDomain}
+                    Transfer {snsDomain}
                 </BootstrapDialogTitle>
                 <DialogContent dividers>
                     <FormControl>
