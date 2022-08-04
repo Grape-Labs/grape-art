@@ -114,7 +114,8 @@ export function IdentityView(props: any){
                 )
             }
         },
-        { field: 'price', headerName: 'Price', width: 130}
+        { field: 'price', headerName: 'Price', width: 130},
+        { field: 'value', headerName: 'Value', width: 130}
       ];
 
     const handleChange = (event, newValue) => {
@@ -232,7 +233,8 @@ export function IdentityView(props: any){
                     tokenAmount:item.account.data.parsed.info.tokenAmount.amount, 
                     tokenDecimals:item.account.data.parsed.info.tokenAmount.decimals
                 },
-                price:'soon'
+                price:'soon',
+                value:'soon'
             });
             cnt++;
         }
@@ -349,49 +351,55 @@ export function IdentityView(props: any){
                                     </Typography>   
                                         <List dense={true}>
                                             <ListItem>
-                                                <Tooltip title={t('View on Solana Explorer')}>
-                                                    <ListItemButton 
-                                                        sx={{borderRadius:'24px'}}
-                                                    >
-                                                        <ListItemAvatar>
-                                                            <Avatar
-                                                                sx={{backgroundColor:'#222'}}
+                                                <Grid container>
+                                                    <Grid item sm>
+                                                        <Tooltip title={t('View on Solana Explorer')}>
+                                                            <ListItemButton 
+                                                                sx={{borderRadius:'24px'}}
                                                             >
-                                                                <AccountBalanceWalletIcon sx={{color:'white'}} />
-                                                            </Avatar>
-                                                        </ListItemAvatar>
-                                                        <ListItemText
-                                                            primary={pubkey}
-                                                            secondary={t('Solana Address')}
-                                                        />
-                                                    </ListItemButton>
-                                                </Tooltip>
-                                                <ButtonGroup>
-                                                    <Button
-                                                        component="a" 
-                                                        href={`https://explorer.solana.com/address/${pubkey}`}
-                                                        target="_blank"
-                                                        sx={{borderTopLeftRadius:'17px', borderBottomLeftRadius:'17px',textTransform:'none'}}
-                                                    >
-                                                        Explorer
-                                                    </Button>
-                                                    <Button
-                                                        component="a" 
-                                                        href={`https://solscan.io/account/${pubkey}`}
-                                                        target="_blank"
-                                                        sx={{textTransform:'none'}}
-                                                    >
-                                                        Solscan
-                                                    </Button>
-                                                    <Button
-                                                        component="a" 
-                                                        href={`https://solana.fm/address/${pubkey}`}
-                                                        target="_blank"
-                                                        sx={{borderTopRightRadius:'17px', borderBottomRightRadius:'17px',textTransform:'none'}}
-                                                    >
-                                                        SolanaFM
-                                                    </Button>
-                                                </ButtonGroup>
+                                                                <ListItemAvatar>
+                                                                    <Avatar
+                                                                        sx={{backgroundColor:'#222'}}
+                                                                    >
+                                                                        <AccountBalanceWalletIcon sx={{color:'white'}} />
+                                                                    </Avatar>
+                                                                </ListItemAvatar>
+                                                                <ListItemText
+                                                                    primary={pubkey}
+                                                                    secondary={t('Solana Address')}
+                                                                />
+                                                            </ListItemButton>
+                                                        </Tooltip>
+                                                    </Grid>
+                                                    <Grid item>
+                                                        <ButtonGroup>
+                                                            <Button
+                                                                component="a" 
+                                                                href={`https://explorer.solana.com/address/${pubkey}`}
+                                                                target="_blank"
+                                                                sx={{borderTopLeftRadius:'17px', borderBottomLeftRadius:'17px',textTransform:'none'}}
+                                                            >
+                                                                Explorer
+                                                            </Button>
+                                                            <Button
+                                                                component="a" 
+                                                                href={`https://solscan.io/account/${pubkey}`}
+                                                                target="_blank"
+                                                                sx={{textTransform:'none'}}
+                                                            >
+                                                                Solscan
+                                                            </Button>
+                                                            <Button
+                                                                component="a" 
+                                                                href={`https://solana.fm/address/${pubkey}`}
+                                                                target="_blank"
+                                                                sx={{borderTopRightRadius:'17px', borderBottomRightRadius:'17px',textTransform:'none'}}
+                                                            >
+                                                                SolanaFM
+                                                            </Button>
+                                                        </ButtonGroup>
+                                                    </Grid>
+                                                </Grid>
                                             </ListItem>
                                         </List>
 
