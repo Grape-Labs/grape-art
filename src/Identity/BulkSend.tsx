@@ -228,7 +228,7 @@ export default function BulkSend(props: any) {
         
             closeSnackbar(cnfrmkey);
             
-            enqueueSnackbar(`Sent token(s) - ${signature}`,{ variant: 'success' });
+            enqueueSnackbar(`Sent token token accounts - ${signature}`,{ variant: 'success' });
             
             //setTransactionSignature(signature);
         }catch(e:any){
@@ -331,7 +331,7 @@ export default function BulkSend(props: any) {
         >
             <form onSubmit={HandleSendSubmit}>
                 <BootstrapDialogTitle id="customized-dialog-title" onClose={handleClose}>
-                    Bulk Send {tokensSelected.length} tokens
+                    Bulk Send {tokensSelected.length} token accounts
                 </BootstrapDialogTitle>
                 <DialogContent dividers>
                     <FormControl>

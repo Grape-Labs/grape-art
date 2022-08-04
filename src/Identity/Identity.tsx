@@ -120,7 +120,7 @@ export function IdentityView(props: any){
                 return (
                     <>
                     {params.value.tokenAmount.decimals === 0 ?
-                        <Button component='a' target='_blank' href={`/${GRAPE_PREVIEW}/${params.value.mint}`}>View</Button>
+                        <Button component={Link} to={`${GRAPE_PREVIEW}${params.value.mint}`}>View</Button>
                     :
                         <></>
                     }
@@ -357,7 +357,15 @@ export function IdentityView(props: any){
                                             color="inherit"
                                             display='flex'
                                             sx={{mb:3}}
-                                        ><SolIcon sx={{fontSize:'20px',mr:1}} />WALLET</Typography>
+                                        >
+                                            <SolIcon sx={{fontSize:'20px',mr:1}} />WALLET
+                                        </Typography>
+                                        {publicKey && pubkey !== publicKey.toBase58() &&
+                                            <Button
+                                                component={Link} to={`./`}
+                                                sx={{borderRadius:'17px'}}
+                                            >Show my wallet</Button>
+                                        }
 
                                     </Grid>
                             </Grid>
@@ -559,9 +567,11 @@ export function IdentityView(props: any){
                                                     />
                                                     </Grid>
 
-                                                    <Grid item xs sx={{ml:2}}>
-                                                        <SendToken mint={'So11111111111111111111111111111111111111112'} name={'SOL'} logoURI={'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png'} balance={new TokenAmount(solanaBalance, 9).format()} conversionrate={0} showTokenName={false} sendType={0} fetchSolanaBalance={fetchSolanaBalance} />
-                                                    </Grid>
+                                                    {publicKey && pubkey !== publicKey.toBase58() &&
+                                                        <Grid item xs sx={{ml:2}}>
+                                                            <SendToken mint={'So11111111111111111111111111111111111111112'} name={'SOL'} logoURI={'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png'} balance={new TokenAmount(solanaBalance, 9).format()} conversionrate={0} showTokenName={false} sendType={0} fetchSolanaBalance={fetchSolanaBalance} />
+                                                        </Grid>
+                                                    }
                                                 </Grid>
                                             </ListItem>
                                         </List>
