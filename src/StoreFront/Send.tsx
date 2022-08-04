@@ -99,7 +99,7 @@ export default function SendToken(props: any) {
     const mint = props.mint;
     const logoURI = props.logoURI;
     const name = props.name;
-    const balance = props.balance;
+    const balance = Number(props.balance.replace(/[^0-9.-]+/g,""));
     const conversionrate = props.conversionrate;
     const sendtype = props.sendType || 0; // 0 regular
     const [memotype, setMemoType] = React.useState(0);
@@ -141,18 +141,19 @@ export default function SendToken(props: any) {
         const amountToSend = +amounttosend;
         const tokenAccount = new PublicKey(mintPubkey);
         
+        /*
         let GRAPE_TT_MEMO = {
             status:1, // status
             type:memotype, // AMA - SETUP 
             ref:memoref, // SOURCE
             notes:memonotes
-        };
+        };*/
         
+        /*
         if (memoText){
             GRAPE_TT_MEMO = memoText
-        }
+        }*/
         
-
         if (tokenMintAddress == "So11111111111111111111111111111111111111112"){ // Check if SOL
             const decimals = 9;
             const adjustedAmountToSend = amountToSend * Math.pow(10, decimals);
@@ -166,7 +167,7 @@ export default function SendToken(props: any) {
             ).add(
                 new TransactionInstruction({
                     keys: [{ pubkey: fromWallet, isSigner: true, isWritable: true }],
-                    data: Buffer.from(JSON.stringify(GRAPE_TT_MEMO), 'utf-8'),
+                    data: Buffer.from(JSON.stringify(memonotes), 'utf-8'),
                     programId: new PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr"),
                 })
             );

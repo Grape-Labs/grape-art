@@ -94,7 +94,7 @@ export function IdentityView(props: any){
 
     const columns: GridColDef[] = [
         { field: 'id', headerName: 'ID', width: 70, hide: true },
-        { field: 'mint', headerName: 'Mint', width: 70, align: 'center' },
+        { field: 'mint', headerName: 'Mint', width: 70, align: 'center', hide: true },
         { field: 'logo', headerName: '', width: 50, 
             renderCell: (params) => {
                 //console.log(params);
@@ -126,7 +126,7 @@ export function IdentityView(props: any){
                 return (
                     <>
                     {params.value?.tokenDecimals === 0 ?
-                        <Button component={Link} to={`${GRAPE_PREVIEW}${params.value.mint}`}>View</Button>
+                        <>0</>
                     :
                         <>
                             {params.value?.tokenValue < 0 ?
@@ -146,7 +146,7 @@ export function IdentityView(props: any){
                     <>
                         {publicKey && pubkey === publicKey.toBase58() &&
                             <>
-                            <SendToken mint={params.value.mint} name={tokenMap.get(params.value.mint)?.name || params.value.mint} logoURI={tokenMap.get(params.value.mint)?.logoURI} balance={new TokenAmount(params.value.tokenAmount.amount, params.value.tokenAmount.decimals).format()} conversionrate={0} showTokenName={true} sendType={0} fetchSolanaTokens={fetchSolanaTokens} />
+                            <SendToken mint={params.value.mint} name={tokenMap.get(params.value.mint)?.name} logoURI={tokenMap.get(params.value.mint)?.logoURI} balance={(new TokenAmount(params.value.tokenAmount.amount, params.value.tokenAmount.decimals).format())} conversionrate={0} showTokenName={true} sendType={0} fetchSolanaTokens={fetchSolanaTokens} />
                             </>          
                         }
                    </>
