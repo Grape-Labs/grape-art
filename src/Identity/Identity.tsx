@@ -9,7 +9,9 @@ import { PublicKey, Connection, Commitment } from '@solana/web3.js';
 import {ENV, TokenInfo, TokenListProvider} from '@solana/spl-token-registry';
 
 import SendToken from '../StoreFront/Send';
+import JupiterSwap from '../StoreFront/Swap';
 import BulkSend from './BulkSend';
+import TransferDomain from './TransferDomain';
 
 import { styled } from '@mui/material/styles';
 import { grey } from '@mui/material/colors';
@@ -92,8 +94,8 @@ export function IdentityView(props: any){
 
     const columns: GridColDef[] = [
         { field: 'id', headerName: 'ID', width: 70, hide: true },
-        { field: 'mint', headerName: 'Mint', width: 70 },
-        { field: 'logo', headerName: '', width: 130, 
+        { field: 'mint', headerName: 'Mint', width: 70, align: 'center' },
+        { field: 'logo', headerName: '', width: 50, 
             renderCell: (params) => {
                 //console.log(params);
                 return (<>
@@ -119,30 +121,51 @@ export function IdentityView(props: any){
             }
         },
         { field: 'price', headerName: 'Price', width: 130, align: 'right'},
-        { field: 'value', headerName: 'Value', width: 130, align: 'right',
+        { field: 'value', headerName: 'Value', width: 130, align: 'right', sortComparator: (params) => {return (params.value?.tokenValue)},
             renderCell: (params) => {
                 return (
                     <>
                     {params.value?.tokenDecimals === 0 ?
                         <Button component={Link} to={`${GRAPE_PREVIEW}${params.value.mint}`}>View</Button>
                     :
-                        <>{params.value.tokenValue}</>
+                        <>
+                            {params.value?.tokenValue < 0 ?
+                                <></>
+                            :
+                                <>{params.value.tokenValue}</>
+                            }
+                        </>
                     }
                     </>
                 )
             }
         },
-        { field: 'send', headerName: '', width: 130,
+        { field: 'send', headerName: '', width: 130,  align: 'center',
             renderCell: (params) => {
                 return (
                     <>
                         {publicKey && pubkey === publicKey.toBase58() &&
-                           <SendToken mint={params.value.mint} name={tokenMap.get(params.value.mint)?.name || params.value.mint} logoURI={tokenMap.get(params.value.mint)?.logoURI} balance={new TokenAmount(params.value.tokenAmount.amount, params.value.tokenAmount.decimals).format()} conversionrate={0} showTokenName={true} sendType={0} fetchSolanaTokens={fetchSolanaTokens} />
+                            <>
+                            <SendToken mint={params.value.mint} name={tokenMap.get(params.value.mint)?.name || params.value.mint} logoURI={tokenMap.get(params.value.mint)?.logoURI} balance={new TokenAmount(params.value.tokenAmount.amount, params.value.tokenAmount.decimals).format()} conversionrate={0} showTokenName={true} sendType={0} fetchSolanaTokens={fetchSolanaTokens} />
+                            </>          
                         }
                    </>
                 )
             }
-        }
+        },/*
+        { field: 'swap', headerName: '', width: 130,
+            renderCell: (params) => {
+                return (
+                    <>
+                        {publicKey && pubkey === publicKey.toBase58() &&
+                            <>
+                            <JupiterSwap swapfrom={'So11111111111111111111111111111111111111112'} swapto={params.value.mint} portfolioPositions={solanaHoldings} tokenMap={tokenMap}/>
+                            </>          
+                        }
+                   </>
+                )
+            }
+        }*/
       ];
 
     const handleChange = (event, newValue) => {
@@ -273,7 +296,7 @@ export function IdentityView(props: any){
             }catch(e){}
             */
             
-            const itemValue = cgPrice[item?.coingeckoId]?.usd ? (cgPrice[item.coingeckoId].usd * parseFloat(new TokenAmount(item.account.data.parsed.info.tokenAmount.amount, item.account.data.parsed.info.tokenAmount.decimals).format())).toFixed(item.account.data.parsed.info.tokenAmount.decimals) : 0;
+            const itemValue = +cgPrice[item?.coingeckoId]?.usd ? (cgPrice[item.coingeckoId].usd * parseFloat(new TokenAmount(item.account.data.parsed.info.tokenAmount.amount, item.account.data.parsed.info.tokenAmount.decimals).format())).toFixed(item.account.data.parsed.info.tokenAmount.decimals) : 0;
 
             solholdingrows.push({
                 id:cnt,
@@ -286,13 +309,14 @@ export function IdentityView(props: any){
                     tokenAmount:item.account.data.parsed.info.tokenAmount.amount, 
                     tokenDecimals:item.account.data.parsed.info.tokenAmount.decimals
                 },
-                price:item.account.data.parsed.info.tokenAmount.decimals === 0 ? 'NFT' : cgPrice[item?.coingeckoId]?.usd || 0,
+                price:item.account.data.parsed.info.tokenAmount.decimals === 0 ? 0 : cgPrice[item?.coingeckoId]?.usd || 0,
                 value: {
                     tokenAmount:item.account.data.parsed.info.tokenAmount.amount, 
                     tokenDecimals:item.account.data.parsed.info.tokenAmount.decimals,
                     tokenValue:itemValue,
                 },
-                send:item.account.data.parsed.info
+                send:item.account.data.parsed.info,
+                //swap:item.account.data.parsed.info
             });
             cnt++;
         }
@@ -538,27 +562,34 @@ export function IdentityView(props: any){
                                                     {solanaDomain && solanaDomain?.map((item: any) => (
                                                         <ListItem>
                                                             {(item.toLocaleUpperCase().indexOf(".SOL") > -1) ? (
-                                                                <Tooltip title={t('View registration')}>
-                                                                    <ListItemButton
-                                                                        component="a" 
-                                                                        href={`https://naming.bonfida.org/#/domain/${item.slice(0,item.indexOf(".sol"))}`}
-                                                                        target="_blank"
-                                                                        sx={{borderRadius:'24px'}}                                           
-                                                                    >
-                                                                        <ListItemAvatar>
-                                                                            <Avatar
-                                                                                sx={{backgroundColor:'#222'}}
-                                                                            >
-                                                                                <PublicIcon sx={{color:'white'}} />
-                                                                            </Avatar>
-                                                                        </ListItemAvatar>
-                                                                        <ListItemText
-                                                                            primary={JSON.stringify(item)}
-                                                                            secondary={t('Solana Domain')}
-                                                                            
-                                                                        />
-                                                                    </ListItemButton>
-                                                                </Tooltip>
+                                                                <>
+                                                                    <ListItemAvatar>
+                                                                        <Avatar
+                                                                            sx={{backgroundColor:'#222'}}
+                                                                        >
+                                                                            <PublicIcon sx={{color:'white'}} />
+                                                                        </Avatar>
+                                                                    </ListItemAvatar>
+                                                                    <ListItemText
+                                                                        primary={JSON.stringify(item)}
+                                                                        secondary={t('Solana Domain')}
+                                                                        
+                                                                    />
+                                                                    {publicKey && pubkey === publicKey.toBase58() &&
+                                                                    <>
+                                                                        <Button
+                                                                            variant='outlined'
+                                                                            size='small'
+                                                                            component="a" 
+                                                                            href={`https://naming.bonfida.org/domain/${item.slice(0,item.indexOf(".sol"))}`}
+                                                                            target="_blank"
+                                                                            sx={{borderRadius:'17px',mr:1}}
+                                                                        >Manage</Button>
+                                                                        <TransferDomain snsDomain={item} fetchSolanaDomain={fetchSolanaDomain} />
+                                                                    </>
+                                                                    }
+                                                                    
+                                                                </>
                                                             ):(
                                                                 <>
                                                                     <ListItemAvatar>
@@ -598,10 +629,13 @@ export function IdentityView(props: any){
                                                 </ListItemAvatar>
                                                 <Grid container sx={{width:'100%'}}>
                                                     <Grid item>
-                                                    <ListItemText
-                                                        primary={(parseFloat(new TokenAmount(solanaBalance, 9).format()))}
-                                                        secondary="Solana"
-                                                    />
+                                                        <ListItemText
+                                                            primary={
+                                                                <Typography variant='h6'>
+                                                                    {parseFloat(new TokenAmount(solanaBalance, 9).format())}
+                                                                </Typography>}
+                                                            secondary="Solana"
+                                                        />
                                                     </Grid>
 
                                                     {publicKey && pubkey === publicKey.toBase58() &&
@@ -631,23 +665,36 @@ export function IdentityView(props: any){
 
 
                                                     {solanaHoldingRows && 
-                                                        <div style={{ height: 400, width: '100%' }}>
+                                                        <div style={{ height: 600, width: '100%' }}>
                                                             <div style={{ display: 'flex', height: '100%' }}>
                                                                 <div style={{ flexGrow: 1 }}>
                                                                     {publicKey && publicKey.toBase58() === pubkey ?
                                                                         <DataGrid
                                                                             rows={solanaHoldingRows}
                                                                             columns={columns}
+                                                                            pageSize={25}
                                                                             rowsPerPageOptions={[5, 10, 25, 50, 100, 250, 500]}
                                                                             onSelectionModelChange={(newSelectionModel) => {
                                                                                 setSelectionModel(newSelectionModel);
                                                                             }}
+                                                                            /*initialState={{
+                                                                                sorting: {
+                                                                                    sortModel: [{ field: 'value', sort: 'desc' }],
+                                                                                },
+                                                                            }}*/
                                                                             checkboxSelection
+                                                                            disableSelectionOnClick
                                                                         />
                                                                     :
                                                                     <DataGrid
                                                                         rows={solanaHoldingRows}
                                                                         columns={columns}
+                                                                        initialState={{
+                                                                            sorting: {
+                                                                                sortModel: [{ field: 'value', sort: 'desc' }],
+                                                                            },
+                                                                        }}
+                                                                        pageSize={25}
                                                                         rowsPerPageOptions={[5, 10, 25, 50, 100, 250, 500]}
                                                                     />
                                                                     }
@@ -660,11 +707,17 @@ export function IdentityView(props: any){
                                                         <Grid container sx={{mt:1}}>
                                                             <Grid item xs>
                                                             </Grid>
-                                                            <Grid item>
-                                                                {selectionModel.length <= 8 ?
+                                                            <Grid item alignContent={'right'} textAlign={'right'}>
+                                                                {selectionModel.length <= 500 ?
                                                                     <BulkSend tokensSelected={selectionModel} solanaHoldingRows={solanaHoldingRows} tokenMap={tokenMap} fetchSolanaTokens={fetchSolanaTokens}  />
                                                                 :
-                                                                    <Typography variant="caption">Currently limited to 8 items, next iteration this will be increased</Typography>
+                                                                    <Typography variant="caption">Currently limited to 500 token accounts</Typography>
+                                                                }
+                                                                {selectionModel.length > 0 &&
+                                                                    <>
+                                                                        <br />
+                                                                        <Typography variant="caption">*If batch sending fails please try sending in bulks of 8</Typography>
+                                                                    </>
                                                                 }
                                                             </Grid>
                                                         </Grid>

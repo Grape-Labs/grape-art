@@ -235,24 +235,23 @@ export default function BulkSend(props: any) {
             closeSnackbar();
             enqueueSnackbar(e.message ? `${e.name}: ${e.message}` : e.name, { variant: 'error' });
         } 
-
     }
     
     async function transferTokens(toaddress:string) {
-        var maxLen = 8;
+        var maxLen = 7;
             for (var item = 0; item < holdingsSelected.length / maxLen; item++) {
                 let batchtx = new Transaction;
                 for (var holding = 0; holding < maxLen; holding++) {
                     if (holdingsSelected[item * maxLen + holding]) {
-                        var tti = await transferTokenInstruction(holdingsSelected[holding].mint, toaddress, holdingsSelected[holding].balance.tokenAmount);
+                        //console.log("item: "+JSON.stringify(holdingsSelected[item * maxLen + holding]));
+                        var tti = await transferTokenInstruction((holdingsSelected[item * maxLen + holding]).mint, toaddress, holdingsSelected[holding].balance.tokenAmount);
                         batchtx.add(tti);
                     }
                 }
-                await executeTransactions(batchtx, '');
+                await executeTransactions(batchtx, null);
             }
         
         fetchSolanaTokens()
-        
     }
     
     function HandleSendSubmit(event: any) {
