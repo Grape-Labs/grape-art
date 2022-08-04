@@ -132,8 +132,10 @@ export function IdentityView(props: any){
             renderCell: (params) => {
                 return (
                     <>
+                        {publicKey && pubkey === publicKey.toBase58() &&
                            <SendToken mint={params.value.mint} name={tokenMap.get(params.value.mint)?.name || params.value.mint} logoURI={tokenMap.get(params.value.mint)?.logoURI} balance={new TokenAmount(params.value.tokenAmount.amount, params.value.tokenAmount.decimals).format()} conversionrate={0} showTokenName={true} sendType={0} fetchSolanaTokens={fetchSolanaTokens} />
-                    </>
+                        }
+                   </>
                 )
             }
         }
@@ -567,7 +569,7 @@ export function IdentityView(props: any){
                                                     />
                                                     </Grid>
 
-                                                    {publicKey && pubkey !== publicKey.toBase58() &&
+                                                    {publicKey && pubkey === publicKey.toBase58() &&
                                                         <Grid item xs sx={{ml:2}}>
                                                             <SendToken mint={'So11111111111111111111111111111111111111112'} name={'SOL'} logoURI={'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png'} balance={new TokenAmount(solanaBalance, 9).format()} conversionrate={0} showTokenName={false} sendType={0} fetchSolanaBalance={fetchSolanaBalance} />
                                                         </Grid>
