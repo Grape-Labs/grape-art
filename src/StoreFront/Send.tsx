@@ -88,6 +88,8 @@ const BootstrapDialogTitle = (props: DialogTitleProps) => {
 };
 
 export default function SendToken(props: any) {
+    const fetchSolanaTokens = props.fetchSolanaTokens || null;
+    const fetchSolanaBalance = props.fetchSolanaBalance || null;
     const [open, setOpen] = React.useState(false);
     const [amounttosend, setTokensToSend] = React.useState(0);
     const [showTokenName, setShowTokenName] = React.useState(props.showTokenName);
@@ -99,7 +101,7 @@ export default function SendToken(props: any) {
     const name = props.name;
     const balance = props.balance;
     const conversionrate = props.conversionrate;
-    const sendtype = props.sendType || 0; // 0 regular 1 to grape treasury
+    const sendtype = props.sendType || 0; // 0 regular
     const [memotype, setMemoType] = React.useState(0);
     const [memoref, setMemoRef] = React.useState('');
     const [memonotes, setMemoNotes] = React.useState(''); 
@@ -268,6 +270,15 @@ export default function SendToken(props: any) {
                         </Button>
                     );
                     enqueueSnackbar(`Sent ${amountToSend} ${name} to ${toaddress}`,{ variant: 'success', action });
+
+                    try{
+                        if (fetchSolanaTokens)
+                            fetchSolanaTokens()
+                        if (fetchSolanaBalance)
+                            fetchSolanaBalance()
+                    } catch (ferr:any){
+                        console.log("Could not refresh please refresh your browser for updated balances")
+                    }
                 }catch(e:any){
                     closeSnackbar();
                     enqueueSnackbar(e.message ? `${e.name}: ${e.message}` : e.name, { variant: 'error' });

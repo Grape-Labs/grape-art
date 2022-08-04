@@ -115,7 +115,28 @@ export function IdentityView(props: any){
             }
         },
         { field: 'price', headerName: 'Price', width: 130},
-        { field: 'value', headerName: 'Value', width: 130}
+        { field: 'value', headerName: 'Value', width: 130,
+            renderCell: (params) => {
+                return (
+                    <>
+                    {params.value.tokenAmount.decimals === 0 ?
+                        <Button component='a' target='_blank' href={`/${GRAPE_PREVIEW}/${params.value.mint}`}>View</Button>
+                    :
+                        <></>
+                    }
+                    </>
+                )
+            }
+        },
+        { field: 'send', headerName: '', width: 130,
+            renderCell: (params) => {
+                return (
+                    <>
+                           <SendToken mint={params.value.mint} name={params.value.name} logoURI={tokenMap.get(params.value.mint)?.logoURI} balance={new TokenAmount(params.value.tokenAmount.amount, params.value.tokenAmount.decimals).format()} conversionrate={0} showTokenName={true} sendType={0} fetchSolanaTokens={fetchSolanaTokens} />
+                    </>
+                )
+            }
+        }
       ];
 
     const handleChange = (event, newValue) => {
@@ -233,8 +254,9 @@ export function IdentityView(props: any){
                     tokenAmount:item.account.data.parsed.info.tokenAmount.amount, 
                     tokenDecimals:item.account.data.parsed.info.tokenAmount.decimals
                 },
-                price:'soon',
-                value:'soon'
+                price:item.account.data.parsed.info.tokenAmount.decimals === 0 ? 'NFT' : 'soon',
+                value:item.account.data.parsed.info,
+                send:item.account.data.parsed.info
             });
             cnt++;
         }
@@ -538,7 +560,7 @@ export function IdentityView(props: any){
                                                     </Grid>
 
                                                     <Grid item xs sx={{ml:2}}>
-                                                        <SendToken mint={'So11111111111111111111111111111111111111112'} name={'SOL'} logoURI={'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png'} balance={new TokenAmount(solanaBalance, 9).format()} conversionrate={0} showTokenName={false} sendType={0} />
+                                                        <SendToken mint={'So11111111111111111111111111111111111111112'} name={'SOL'} logoURI={'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png'} balance={new TokenAmount(solanaBalance, 9).format()} conversionrate={0} showTokenName={false} sendType={0} fetchSolanaBalance={fetchSolanaBalance} />
                                                     </Grid>
                                                 </Grid>
                                             </ListItem>
