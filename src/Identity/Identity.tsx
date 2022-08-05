@@ -786,11 +786,11 @@ export function IdentityView(props: any){
 
                                                         <Tab disabled={true} sx={{color:'white', textTransform:'none'}} label={
                                                                 <Typography variant="h6">{t('Storage')}</Typography>
-                                                            } value="5" />
+                                                            } value="6" />
 
                                                         <Tab disabled={true} sx={{color:'white', textTransform:'none'}} label={
                                                             <Typography variant="h6">{t('Streaming')}</Typography>
-                                                        } value="6" />
+                                                        } value="7" />
 
                                                     </TabList>
                                                     </Box>
