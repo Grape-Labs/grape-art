@@ -113,33 +113,11 @@ export function IdentityView(props: any){
         { field: 'name', headerName: 'Token', width: 200 },
         { field: 'balance', headerName: 'Balance', width: 130, align: 'right',
             renderCell: (params) => {
-                return (
-                    <>
-                    {(new TokenAmount(params.value.tokenAmount, params.value.tokenDecimals).format())}
-                    </>
-                )
+                return (params.value)
             }
         },
         { field: 'price', headerName: 'Price', width: 130, align: 'right'},
-        { field: 'value', headerName: 'Value', width: 130, align: 'right', sortComparator: (params) => {return (params.value?.tokenValue)},
-            renderCell: (params) => {
-                return (
-                    <>
-                    {params.value?.tokenDecimals === 0 ?
-                        <>0</>
-                    :
-                        <>
-                            {params.value?.tokenValue < 0 ?
-                                <></>
-                            :
-                                <>{params.value.tokenValue}</>
-                            }
-                        </>
-                    }
-                    </>
-                )
-            }
-        },
+        { field: 'value', headerName: 'Value', width: 130, align: 'right'},
         { field: 'send', headerName: '', width: 130,  align: 'center',
             renderCell: (params) => {
                 return (
@@ -297,7 +275,8 @@ export function IdentityView(props: any){
             */
             
             const itemValue = +cgPrice[item?.coingeckoId]?.usd ? (cgPrice[item.coingeckoId].usd * parseFloat(new TokenAmount(item.account.data.parsed.info.tokenAmount.amount, item.account.data.parsed.info.tokenAmount.decimals).format())).toFixed(item.account.data.parsed.info.tokenAmount.decimals) : 0;
-
+            const itemBalance = Number(new TokenAmount(item.account.data.parsed.info.tokenAmount.amount, item.account.data.parsed.info.tokenAmount.decimals).format().replace(/[^0-9.-]+/g,""));
+            
             solholdingrows.push({
                 id:cnt,
                 mint:item.account.data.parsed.info.mint,
@@ -305,16 +284,9 @@ export function IdentityView(props: any){
                     mint: item.account.data.parsed.info.mint
                 },
                 name:tokenMap.get(item.account.data.parsed.info.mint)?.name || item.account.data.parsed.info.mint,
-                balance:{
-                    tokenAmount:item.account.data.parsed.info.tokenAmount.amount, 
-                    tokenDecimals:item.account.data.parsed.info.tokenAmount.decimals
-                },
+                balance:itemBalance,
                 price:item.account.data.parsed.info.tokenAmount.decimals === 0 ? 0 : cgPrice[item?.coingeckoId]?.usd || 0,
-                value: {
-                    tokenAmount:item.account.data.parsed.info.tokenAmount.amount, 
-                    tokenDecimals:item.account.data.parsed.info.tokenAmount.decimals,
-                    tokenValue:itemValue,
-                },
+                value: +itemValue,
                 send:item.account.data.parsed.info,
                 //swap:item.account.data.parsed.info
             });
@@ -677,11 +649,12 @@ export function IdentityView(props: any){
                                                                             onSelectionModelChange={(newSelectionModel) => {
                                                                                 setSelectionModel(newSelectionModel);
                                                                             }}
-                                                                            /*initialState={{
+                                                                            initialState={{
                                                                                 sorting: {
                                                                                     sortModel: [{ field: 'value', sort: 'desc' }],
                                                                                 },
-                                                                            }}*/
+                                                                            }}
+                                                                            sortingOrder={['asc', 'desc', null]}
                                                                             checkboxSelection
                                                                             disableSelectionOnClick
                                                                         />
