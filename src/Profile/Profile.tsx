@@ -714,11 +714,11 @@ const MainPanel = (props: any) => {
                                 <TabPanel value={tabvalue} index={NavPanel.Collection}>
                                     <GalleryView mode={0} finalCollection={finalCollection} isparent={true} />
                                 </TabPanel>
-
+                                {/*
                                 <TabPanel value={tabvalue} index={NavPanel.Identity}>
                                     <IdentityView mode={0} finalCollection={finalCollection} isparent={true} />
                                 </TabPanel>
-
+                                    */}
                                 <TabPanel value={tabvalue} index={NavPanel.Marketplace}>
                                     <MarketplaceView />
                                 </TabPanel>

@@ -631,11 +631,19 @@ export function IdentityView(props: any){
                                                                 sx={{borderRadius:'24px'}}
                                                             >
                                                                 <ListItemAvatar>
-                                                                    <Avatar
-                                                                        sx={{backgroundColor:'#222'}}
-                                                                    >
-                                                                        <AccountBalanceWalletIcon sx={{color:'white'}} />
-                                                                    </Avatar>
+                                                                    {profilePictureUrl ?
+                                                                        <Avatar
+                                                                            sx={{backgroundColor:'#222'}}
+                                                                            src={profilePictureUrl}
+                                                                            alt='Solana Profile Picture'
+                                                                        />
+                                                                    :
+                                                                        <Avatar
+                                                                            sx={{backgroundColor:'#222'}}
+                                                                        >
+                                                                            <AccountBalanceWalletIcon sx={{color:'white'}} />
+                                                                        </Avatar>
+                                                                    }
                                                                 </ListItemAvatar>
                                                                 <ListItemText
                                                                     primary={pubkey}
@@ -676,55 +684,6 @@ export function IdentityView(props: any){
                                             </ListItem>
                                         </List>
 
-                                    <Typography
-                                        variant="h6"
-                                    >
-                                        {t('PROFILE')}:
-                                    </Typography>   
-                                        <List dense={true}>
-                                            {profilePictureUrl &&
-                                                <ListItem>
-                                                    {(profilePictureUrl.toLocaleUpperCase().indexOf("HTTPS://") > -1)? (
-                                                        <Tooltip title={t('View Image')}>
-                                                            <ListItemButton
-                                                                component="a" 
-                                                                href={profilePictureUrl}
-                                                                target="_blank"
-                                                                sx={{borderRadius:'24px'}}                                           
-                                                            >
-                                                                <ListItemAvatar>
-                                                                    <Avatar
-                                                                        sx={{backgroundColor:'#222'}}
-                                                                        src={profilePictureUrl}
-                                                                        alt='PFP'
-                                                                    />
-                                                                </ListItemAvatar>
-                                                                <ListItemText
-                                                                    primary={profilePictureUrl}
-                                                                    secondary={t('Solana Profile Picture')}
-                                                                />
-                                                            </ListItemButton>
-                                                        </Tooltip>
-                                                    )
-                                                    :(
-                                                        <>
-                                                            <ListItemAvatar>
-                                                                <Avatar
-                                                                    sx={{backgroundColor:'#222'}}
-                                                                    src={profilePictureUrl}
-                                                                    alt='PFP'
-                                                                />
-                                                            </ListItemAvatar>
-                                                            <ListItemText
-                                                                primary={(profilePictureUrl.toLocaleUpperCase().indexOf("DATA:IMAGE/SVG") > -1) && (<>No PFP Set</>)}
-                                                                secondary={t('Solana Profile Picture')}
-                                                            />
-                                                        </>
-                                                    )}
-                                                </ListItem>
-                                            }
-                                        </List>
-                                            
                                     <Typography
                                         variant="h6"
                                     >
@@ -821,6 +780,12 @@ export function IdentityView(props: any){
                                                                             columns={columns}
                                                                             pageSize={25}
                                                                             rowsPerPageOptions={[5, 10, 25, 50, 100, 250, 500]}
+                                                                            sx={{
+                                                                                borderRadius:'17px',
+                                                                                borderColor:'rgba(255,255,255,0.25)',
+                                                                                '& .MuiDataGrid-cell':{
+                                                                                    borderColor:'rgba(255,255,255,0.25)'
+                                                                                }}}
                                                                             onSelectionModelChange={(newSelectionModel) => {
                                                                                 setSelectionModel(newSelectionModel);
                                                                             }}
@@ -842,6 +807,12 @@ export function IdentityView(props: any){
                                                                                 sortModel: [{ field: 'value', sort: 'desc' }],
                                                                             },
                                                                         }}
+                                                                        sx={{
+                                                                            borderRadius:'17px',
+                                                                            borderColor:'rgba(255,255,255,0.25)',
+                                                                            '& .MuiDataGrid-cell':{
+                                                                                borderColor:'rgba(255,255,255,0.25)'
+                                                                            }}}
                                                                         pageSize={25}
                                                                         rowsPerPageOptions={[5, 10, 25, 50, 100, 250, 500]}
                                                                     />
@@ -937,6 +908,12 @@ export function IdentityView(props: any){
                                                                                 onSelectionModelChange={(newSelectionModel) => {
                                                                                     setSelectionModel(newSelectionModel);
                                                                                 }}
+                                                                                sx={{
+                                                                                    borderRadius:'17px',
+                                                                                    borderColor:'rgba(255,255,255,0.25)',
+                                                                                    '& .MuiDataGrid-cell':{
+                                                                                        borderColor:'rgba(255,255,255,0.25)'
+                                                                                    }}}
                                                                                 checkboxSelection
                                                                                 disableSelectionOnClick
                                                                             />
@@ -944,6 +921,12 @@ export function IdentityView(props: any){
                                                                         <DataGrid
                                                                             rows={solanaClosableHoldingsRows}
                                                                             columns={columns}
+                                                                            sx={{
+                                                                                borderRadius:'17px',
+                                                                                borderColor:'rgba(255,255,255,0.25)',
+                                                                                '& .MuiDataGrid-cell':{
+                                                                                    borderColor:'rgba(255,255,255,0.25)'
+                                                                                }}}
                                                                             pageSize={25}
                                                                             rowsPerPageOptions={[5, 10, 25, 50, 100, 250, 500]}
                                                                         />
@@ -987,6 +970,12 @@ export function IdentityView(props: any){
                                                                                         sortModel: [{ field: 'value', sort: 'desc' }],
                                                                                     },
                                                                                 }}
+                                                                                sx={{
+                                                                                    borderRadius:'17px',
+                                                                                    borderColor:'rgba(255,255,255,0.25)',
+                                                                                    '& .MuiDataGrid-cell':{
+                                                                                        borderColor:'rgba(255,255,255,0.25)'
+                                                                                    }}}
                                                                                 sortingOrder={['asc', 'desc', null]}
                                                                                 checkboxSelection
                                                                                 disableSelectionOnClick
@@ -1000,6 +989,12 @@ export function IdentityView(props: any){
                                                                                     sortModel: [{ field: 'value', sort: 'desc' }],
                                                                                 },
                                                                             }}
+                                                                            sx={{
+                                                                                borderRadius:'17px',
+                                                                                borderColor:'rgba(255,255,255,0.25)',
+                                                                                '& .MuiDataGrid-cell':{
+                                                                                    borderColor:'rgba(255,255,255,0.25)'
+                                                                                }}}
                                                                             pageSize={25}
                                                                             rowsPerPageOptions={[5, 10, 25, 50, 100, 250, 500]}
                                                                         />
@@ -1029,6 +1024,12 @@ export function IdentityView(props: any){
                                                                                         sortModel: [{ field: 'domain', sort: 'desc' }],
                                                                                     },
                                                                                 }}
+                                                                                sx={{
+                                                                                    borderRadius:'17px',
+                                                                                    borderColor:'rgba(255,255,255,0.25)',
+                                                                                    '& .MuiDataGrid-cell':{
+                                                                                        borderColor:'rgba(255,255,255,0.25)'
+                                                                                    }}}
                                                                                 sortingOrder={['asc', 'desc', null]}
                                                                                 disableSelectionOnClick
                                                                             />
@@ -1041,6 +1042,12 @@ export function IdentityView(props: any){
                                                                                     sortModel: [{ field: 'domain', sort: 'desc' }],
                                                                                 },
                                                                             }}
+                                                                            sx={{
+                                                                                borderRadius:'17px',
+                                                                                borderColor:'rgba(255,255,255,0.25)',
+                                                                                '& .MuiDataGrid-cell':{
+                                                                                    borderColor:'rgba(255,255,255,0.25)'
+                                                                                }}}
                                                                             pageSize={25}
                                                                             rowsPerPageOptions={[5, 10, 25, 50, 100, 250, 500]}
                                                                         />
