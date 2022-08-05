@@ -299,14 +299,16 @@ export default function BulkSend(props: any) {
 
             {tokensSelected ? 
                 <Button
-                    variant="outlined" 
-                    //aria-controls={menuId}
+                    variant="contained"
+                    color="success" 
                     title={`Send Bulk Tokens`}
                     onClick={handleClickOpen}
+                    size="large"
+                    fullWidth
                     //onClick={isConnected ? handleProfileMenuOpen : handleOpen}
                     sx={{borderRadius:'17px'}}
                     >
-                    Send
+                    Send {tokensSelected.length} Token Accounts
                 </Button>
             :
                 <Button
@@ -317,7 +319,7 @@ export default function BulkSend(props: any) {
                     //onClick={isConnected ? handleProfileMenuOpen : handleOpen}
                     sx={{borderRadius:'17px'}}
                     >
-                    Send {tokensSelected.length} Tokens
+                    Send {tokensSelected.length} Token Accounts
                 </Button>
             }   
         <BootstrapDialog

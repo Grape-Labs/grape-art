@@ -634,7 +634,18 @@ export function IdentityView(props: any){
                                                     </TabList>
                                                     </Box>
                                                     <TabPanel value="1">
-
+                                                    
+                                                    {publicKey && publicKey.toBase58() === pubkey && selectionModel && selectionModel.length > 0 &&
+                                                        <Grid container sx={{mt:1,mb:1}}>
+                                                            <Grid item xs>
+                                                            </Grid>
+                                                            <Grid item alignContent={'right'} textAlign={'right'}>
+                                                                {selectionModel.length <= 500 &&
+                                                                    <BulkSend tokensSelected={selectionModel} solanaHoldingRows={solanaHoldingRows} tokenMap={tokenMap} fetchSolanaTokens={fetchSolanaTokens}  />
+                                                                }
+                                                            </Grid>
+                                                        </Grid>
+                                                    }
 
                                                     {solanaHoldingRows && 
                                                         <div style={{ height: 600, width: '100%' }}>
