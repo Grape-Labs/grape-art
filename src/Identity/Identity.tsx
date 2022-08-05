@@ -8,6 +8,8 @@ import { decodeMetadata } from '../utils/grapeTools/utils';
 import { PublicKey, Connection, Commitment } from '@solana/web3.js';
 import {ENV, TokenInfo, TokenListProvider} from '@solana/spl-token-registry';
 
+import { getRealm, getAllProposals, getGovernance, getTokenOwnerRecordsByOwner, getTokenOwnerRecord, getRealmConfigAddress, getGovernanceAccount, getAccountTypes, GovernanceAccountType, tryGetRealmConfig  } from '@solana/spl-governance';
+
 import SendToken from '../StoreFront/Send';
 import JupiterSwap from '../StoreFront/Swap';
 import BulkSend from './BulkSend';
@@ -65,18 +67,24 @@ import QrCode2Icon from '@mui/icons-material/QrCode2';
 import SolIcon from '../components/static/SolIcon';
 import SolCurrencyIcon from '../components/static/SolCurrencyIcon';
 
-import { ValidateAddress, trimAddress, timeAgo, formatBlockTime } from '../utils/grapeTools/WalletAddress'; // global key handling
+import { ValidateAddress, ValidateCurve, trimAddress, timeAgo, formatBlockTime } from '../utils/grapeTools/WalletAddress'; // global key handling
 import { GRAPE_RPC_ENDPOINT, GRAPE_PROFILE, GRAPE_PREVIEW, DRIVE_PROXY } from '../utils/grapeTools/constants';
 import { ConstructionOutlined, JavascriptRounded, LogoDevOutlined } from "@mui/icons-material";
 
 import { useTranslation } from 'react-i18next';
+import { getByPlaceholderText } from "@testing-library/react";
 
 export function IdentityView(props: any){
     const [profilePictureUrl, setProfilePictureUrl] = React.useState(null);
     const [solanaDomain, setSolanaDomain] = React.useState(null);
+    const [solanaDomainRows, setSolanaDomainRows] = React.useState(null);
     const [solanaHoldings, setSolanaHoldings] = React.useState(null);
+    const [solanaHoldingRows, setSolanaHoldingRows] = React.useState(null);
+    const [solanaClosableHoldings, setSolanaClosableHoldings] = React.useState(null);
+    const [solanaClosableHoldingsRows, setSolanaClosableHoldingsRows] = React.useState(null);
+    const [governanceRecord, setGovernanceRecord] = React.useState(null);
+    const [governanceRecordRows, setGovernanceRecordRows] = React.useState(null);
     const [solanaBalance, setSolanaBalance] = React.useState(null);
-    const [solanaHoldingRows, setSolanaHoldingRows] = React.useState(null)
     const [solanaTransactions, setSolanaTransactions] = React.useState(null);
     const [loading, setLoading] = React.useState(false);
     const [loadingTransactions, setLoadingTransactions] = React.useState(false);
@@ -144,6 +152,137 @@ export function IdentityView(props: any){
                 )
             }
         }*/
+      ];
+
+      const closablecolumns: GridColDef[] = [
+        { field: 'id', headerName: 'ID', width: 70, hide: true },
+        { field: 'mint', headerName: 'Mint', width: 70, align: 'center', hide: true },
+        { field: 'logo', headerName: '', width: 50, 
+            renderCell: (params) => {
+                //console.log(params);
+                return (<>
+                        <Avatar
+                            sx={{backgroundColor:'#222'}}
+                                src={tokenMap.get(params.value.mint)?.logoURI || params.value.mint}
+                                alt={tokenMap.get(params.value.mint)?.name || params.value.mint}
+                        >
+                            <QrCode2Icon sx={{color:'white'}} />
+                        </Avatar>
+                    
+                </>);
+            }
+        },
+        { field: 'name', headerName: 'Token', width: 250 },
+        { field: 'balance', headerName: 'Balance', width: 130, align: 'right',
+            renderCell: (params) => {
+                return (params.value)
+            }
+        },
+        { field: 'oncurve', headerName: 'onCurve', width: 130, align: 'right'},
+        { field: 'nft', headerName: 'NFT', width: 130, align: 'center'},
+        { field: 'close', headerName: '', width: 150,  align: 'center',
+            renderCell: (params) => {
+                return (
+                    <>Closing coming soon</>
+                )
+            }
+        },/*
+        { field: 'swap', headerName: '', width: 130,
+            renderCell: (params) => {
+                return (
+                    <>
+                        {publicKey && pubkey === publicKey.toBase58() &&
+                            <>
+                            <JupiterSwap swapfrom={'So11111111111111111111111111111111111111112'} swapto={params.value.mint} portfolioPositions={solanaHoldings} tokenMap={tokenMap}/>
+                            </>          
+                        }
+                   </>
+                )
+            }
+        }*/
+      ];
+
+      const domaincolumns: GridColDef[] = [
+        { field: 'id', headerName: 'ID', width: 70, hide: true },
+        { field: 'domain', headerName: 'Registration', width: 250 },
+        { field: 'type', headerName: 'Type', width: 150, align: 'center',
+            renderCell: (params) => {
+                return (
+                    <>
+                        {params.value.indexOf(".sol") ?
+                            <>Domain</>
+                        :
+                            <>Twitter Handle</>
+                        }
+                    </>
+                )
+            }
+        },
+        { field: 'manage', headerName: '', width: 150, align: 'center',
+            renderCell: (params) => {
+                return (
+                    <Button
+                        variant='outlined'
+                        size='small'
+                        component='a'
+                        href={`https://naming.bonfida.org/domain/${params.value.slice(0,params.value.indexOf(".sol"))}`}
+                        target='_blank'
+                        sx={{borderRadius:'17px'}}
+                    >
+                        Manage
+                    </Button>
+                )
+            }
+        },
+        { field: 'transfer', headerName: '', width: 200,  align: 'center',
+            renderCell: (params) => {
+                return (
+                    <TransferDomain snsDomain={params.value} fetchSolanaDomain={fetchSolanaDomain} />
+                )
+            }
+        },
+      ];
+      
+      const governancecolumns: GridColDef[] = [
+        { field: 'id', headerName: 'ID', width: 70, hide: true },
+        { field: 'pubkey', headerName: 'PublicKey', width: 70, hide: true },
+        { field: 'realm', headerName: 'Realm', width: 130, align: 'center' },
+        { field: 'governingTokenMint', headerName: 'Governing Mint', width: 130, align: 'center' },
+        { field: 'governingTokenDepositAmount', headerName: 'Votes', width: 130, align: 'center',
+            renderCell: (params) => {
+                return (
+                    <>
+                    {params.value > 0} ?    
+                        <>{params.value}</>
+                    :
+                        <>NFT</>
+                    </>
+                )
+            }
+        },
+        { field: 'unrelinquishedVotesCount', headerName: 'Unreliquinshed', width: 130, align: 'center'},
+        { field: 'totalVotesCount', headerName: 'Total Votes', width: 130, align: 'center' },
+        { field: 'relinquish', headerName: '', width: 150,  align: 'center',
+            renderCell: (params) => {
+                return (
+                    <>Withdraw coming soon</>
+                )
+            }
+        },
+        { field: 'link', headerName: '', width: 150,  align: 'center',
+            renderCell: (params) => {
+                return (
+                    <Button
+                        variant='outlined'
+                        size='small'
+                        component='a'
+                        href={`https://realms.today/dao/${params.value}`}
+                        target='_blank'
+                        sx={{borderRadius:'17px'}}
+                    >Visit</Button>
+                )
+            }
+        },
       ];
 
     const handleChange = (event, newValue) => {
@@ -236,11 +375,14 @@ export function IdentityView(props: any){
         //return resultValues;
 
         let holdings: any[] = [];
+        let closable = new Array();
         for (var item of resultValues){
             //let buf = Buffer.from(item.account, 'base64');
             //console.log("item: "+JSON.stringify(item));
             if (item.account.data.parsed.info.tokenAmount.amount > 0)
                 holdings.push(item);
+            else
+                closable.push(item);
             // consider using https://raw.githubusercontent.com/solana-labs/token-list/main/src/tokens/solana.tokenlist.json to view more details on the tokens held
         }
 
@@ -293,8 +435,38 @@ export function IdentityView(props: any){
             cnt++;
         }
 
-        setSolanaHoldingRows(solholdingrows)
+        let closableholdingsrows = new Array();
+        cnt = 0;
+        for (var item of closable){
+            /*
+            try{
+                const tknPrice = await getTokenPrice(item.account.data.parsed.info.mint, "USDC");
+                item.account.data.parsed.info.tokenPrice = tknPrice.data.price
+            }catch(e){}
+            */
+            
+            const itemValue = 0;
+            const itemBalance = 0;
+            
+            closableholdingsrows.push({
+                id:cnt,
+                mint:item.account.data.parsed.info.mint,
+                logo: {
+                    mint: item.account.data.parsed.info.mint
+                },
+                name:tokenMap.get(item.account.data.parsed.info.mint)?.name || item.account.data.parsed.info.mint,
+                balance:itemBalance,
+                oncurve: ValidateCurve(item.account.data.parsed.info.mint),
+                nft: item.account.data.parsed.info.tokenAmount.decimals === 0 ? true : false,
+                close:item.account.data.parsed.info,
+            });
+            cnt++;
+        }
 
+        setSolanaClosableHoldings(closable);
+        setSolanaClosableHoldingsRows(closableholdingsrows);
+
+        setSolanaHoldingRows(solholdingrows)
         setSolanaHoldings(sortedholdings);
     } 
 
@@ -315,8 +487,26 @@ export function IdentityView(props: any){
     const fetchSolanaDomain = async () => {
         const domain = await findDisplayName(ggoconnection, pubkey);
         if (domain){
-            if (domain.toString()!==pubkey)
-                setSolanaDomain(domain)
+            if (domain.toString()!==pubkey){
+                
+                
+                let cnt = 0;
+                const domains = new Array();
+                for (var item of domain){
+                    domains.push({
+                        id:cnt,
+                        domain:item,
+                        type:item,
+                        manage:item,
+                        transfer:item,
+                    });
+                    cnt++;
+                }
+                setSolanaDomainRows(domains);
+                setSolanaDomain(domain);
+                
+
+            }
         }
     }
 
@@ -329,6 +519,33 @@ export function IdentityView(props: any){
         }, new Map())
         setTokenMap(tokenMapValue);
         return tokenMapValue;
+    }
+
+    const fetchGovernance = async () => {
+        const GOVERNANCE_PROGRAM_ID = 'GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw';
+        const programId = new PublicKey(GOVERNANCE_PROGRAM_ID);
+        const ownerRecordsbyOwner = await getTokenOwnerRecordsByOwner(ggoconnection, programId, publicKey);
+        //console.log("ownerRecordsbyOwner "+JSON.stringify(ownerRecordsbyOwner))
+        const governance = new Array();
+        
+        let cnt = 0;
+        for (var item of ownerRecordsbyOwner){
+            governance.push({
+                id:cnt,
+                pubkey:item.pubkey,
+                realm:item.account.realm,
+                governingTokenMint:item.account.governingTokenMint,
+                governingTokenDepositAmount:item.account.governingTokenDepositAmount,
+                unrelinquishedVotesCount:item.account.unrelinquishedVotesCount,
+                totalVotesCount:item.account.totalVotesCount,
+                relinquish:item.pubkey,
+                link:item.account.realm
+            });
+            cnt++;
+        }
+
+        setGovernanceRecord(ownerRecordsbyOwner);
+        setGovernanceRecordRows(governance);
     }
 
     React.useEffect(() => {
@@ -356,6 +573,7 @@ export function IdentityView(props: any){
                 fetchProfilePicture();
                 fetchSolanaDomain();
                 fetchSolanaBalance();
+                fetchGovernance();
             setLoading(false);
         }
     }, [pubkey]);
@@ -402,8 +620,7 @@ export function IdentityView(props: any){
 
                                     </Grid>
                             </Grid>
-           
-           
+                            
                             <>
                                 {pubkey ?
                                     <>  
@@ -416,7 +633,7 @@ export function IdentityView(props: any){
                                             <ListItem>
                                                 <Grid container>
                                                     <Grid item sm>
-                                                        <Tooltip title={t('View on Solana Explorer')}>
+                                                        <Tooltip title={t('Wallet Address')}>
                                                             <ListItemButton 
                                                                 sx={{borderRadius:'24px'}}
                                                             >
@@ -514,76 +731,7 @@ export function IdentityView(props: any){
                                                 </ListItem>
                                             }
                                         </List>
-                                
-                                
-                                    
-                                    {solanaDomain &&
-                                        <>
-                                            <Typography
-                                                variant="h6"
-                                            >
-                                                {t('DOMAINS/REGISTRATIONS')}: 
-                                                <Typography
-                                                    variant="body2"
-                                                    sx={{ml:2}}
-                                                >{solanaDomain && <>{solanaDomain.length}</>}
-                                                </Typography>
-                                            </Typography> 
-                                        
-                                            <List dense={true}>
-                                                    {solanaDomain && solanaDomain?.map((item: any) => (
-                                                        <ListItem>
-                                                            {(item.toLocaleUpperCase().indexOf(".SOL") > -1) ? (
-                                                                <>
-                                                                    <ListItemAvatar>
-                                                                        <Avatar
-                                                                            sx={{backgroundColor:'#222'}}
-                                                                        >
-                                                                            <PublicIcon sx={{color:'white'}} />
-                                                                        </Avatar>
-                                                                    </ListItemAvatar>
-                                                                    <ListItemText
-                                                                        primary={JSON.stringify(item)}
-                                                                        secondary={t('Solana Domain')}
-                                                                        
-                                                                    />
-                                                                    {publicKey && pubkey === publicKey.toBase58() &&
-                                                                    <>
-                                                                        <Button
-                                                                            variant='outlined'
-                                                                            size='small'
-                                                                            component="a" 
-                                                                            href={`https://naming.bonfida.org/domain/${item.slice(0,item.indexOf(".sol"))}`}
-                                                                            target="_blank"
-                                                                            sx={{borderRadius:'17px',mr:1}}
-                                                                        >Manage</Button>
-                                                                        <TransferDomain snsDomain={item} fetchSolanaDomain={fetchSolanaDomain} />
-                                                                    </>
-                                                                    }
-                                                                    
-                                                                </>
-                                                            ):(
-                                                                <>
-                                                                    <ListItemAvatar>
-                                                                        <Avatar
-                                                                            sx={{backgroundColor:'#222'}}
-                                                                        >
-                                                                            <PublicIcon sx={{color:'white'}} />
-                                                                        </Avatar>
-                                                                    </ListItemAvatar>
-                                                                    <ListItemText
-                                                                        primary={JSON.stringify(item)}
-                                                                        secondary={(item.slice(0,1) === '@') && <>{t('Twitter Handle')}</>}
-                                                                        
-                                                                    />
-                                                                </>
-                                                            )}
-                                                        </ListItem>
-                                                    ))}
-                                            </List>
-                                        </>
-                                    }
-                                
+                                            
                                     <Typography
                                         variant="h6"
                                     >
@@ -603,15 +751,14 @@ export function IdentityView(props: any){
                                                     <Grid item>
                                                         <ListItemText
                                                             primary={
-                                                                <Typography variant='h6'>
+                                                                <Typography variant='h4'>
                                                                     {parseFloat(new TokenAmount(solanaBalance, 9).format())}
                                                                 </Typography>}
-                                                            secondary="Solana"
                                                         />
                                                     </Grid>
 
                                                     {publicKey && pubkey === publicKey.toBase58() &&
-                                                        <Grid item xs sx={{ml:2}}>
+                                                        <Grid item xs sx={{ml:2}} alignContent='middle' textAlign='right'>
                                                             <SendToken mint={'So11111111111111111111111111111111111111112'} name={'SOL'} logoURI={'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png'} balance={new TokenAmount(solanaBalance, 9).format()} conversionrate={0} showTokenName={false} sendType={0} fetchSolanaBalance={fetchSolanaBalance} />
                                                         </Grid>
                                                     }
@@ -622,17 +769,38 @@ export function IdentityView(props: any){
                                         {solanaHoldings &&
 
                                             <Box sx={{ width: '100%', typography: 'body1' }}>
-                                                <TabContext value={value}>
+                                                <TabContext value={value} >
                                                     <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                                                    <TabList onChange={handleChange} aria-label="lab API tabs example">
-                                                        <Tab sx={{color:'white'}} label={
+                                                    <TabList variant="scrollable" scrollButtons="auto" onChange={handleChange} aria-label="Wallet Navigation">
+                                                        <Tab sx={{color:'white', textTransform:'none'}} label={
                                                             <Typography variant="h6">{t('Tokens')} {solanaHoldings.length}</Typography>
                                                         } value="1" />
-                                                        <Tab sx={{color:'white'}} label={
+                                                        <Tab sx={{color:'white', textTransform:'none'}} label={
                                                             <Typography variant="h6">{t('Transactions')}</Typography>
                                                         } value="2" />
+
+                                                        {solanaClosableHoldings &&
+                                                            <Tab sx={{color:'white', textTransform:'none'}} label={
+                                                                <Typography variant="h6">{t('Closable')} {solanaClosableHoldings.length}</Typography>
+                                                            } value="3" />
+                                                        }
+                                                        {governanceRecord &&
+                                                            <Tab sx={{color:'white', textTransform:'none'}} label={
+                                                                <Typography variant="h6">{t('Governance')} {governanceRecord.length}</Typography>
+                                                            } value="4" />
+                                                        }
+                                                        {solanaDomain && 
+                                                            <Tab sx={{color:'white', textTransform:'none'}} label={
+                                                                <Typography variant="h6">{t('Domains/Registrations')} {solanaDomain.length}</Typography>
+                                                            } value="5" />
+                                                        }
+
+                                                            <Tab disabled={true} sx={{color:'white', textTransform:'none'}} label={
+                                                                <Typography variant="h6">{t('Streaming')}</Typography>
+                                                            } value="5" />
                                                     </TabList>
                                                     </Box>
+
                                                     <TabPanel value="1">
                                                     
                                                     {publicKey && publicKey.toBase58() === pubkey && selectionModel && selectionModel.length > 0 &&
@@ -754,6 +922,135 @@ export function IdentityView(props: any){
                                                             }
                                                         </List>
                                                     }
+
+                                                    </TabPanel>
+
+                                                    <TabPanel value="3">
+                                                        {solanaClosableHoldings && 
+                                                            <div style={{ height: 600, width: '100%' }}>
+                                                                <div style={{ display: 'flex', height: '100%' }}>
+                                                                    <div style={{ flexGrow: 1 }}>
+                                                                        {publicKey && publicKey.toBase58() === pubkey ?
+                                                                            <DataGrid
+                                                                                rows={solanaClosableHoldingsRows}
+                                                                                columns={closablecolumns}
+                                                                                pageSize={25}
+                                                                                rowsPerPageOptions={[5, 10, 25, 50, 100, 250, 500]}
+                                                                                onSelectionModelChange={(newSelectionModel) => {
+                                                                                    setSelectionModel(newSelectionModel);
+                                                                                }}
+                                                                                checkboxSelection
+                                                                                disableSelectionOnClick
+                                                                            />
+                                                                        :
+                                                                        <DataGrid
+                                                                            rows={solanaClosableHoldingsRows}
+                                                                            columns={columns}
+                                                                            pageSize={25}
+                                                                            rowsPerPageOptions={[5, 10, 25, 50, 100, 250, 500]}
+                                                                        />
+                                                                        }
+                                                                    </div>
+                                                                </div>
+
+                                                            </div>    
+                                                        }
+
+                                                        {publicKey && publicKey.toBase58() === pubkey &&
+                                                            <Grid container sx={{mt:1}}>
+                                                                <Grid item xs={12} alignContent={'right'} textAlign={'right'}>
+                                                                    <Grid item alignContent={'center'} textAlign={'center'}>
+                                                                        <>
+                                                                            <Typography variant="caption" color='error'>* IMPORTANT: Prior to closing any accounts; verify that you have removed any deposited positions in SPL Governance, Farming, Streaming services; visit those services and withdraw/transfer positions and deposits from those accounts first, i.e. SPL Governance Council Tokens should be withdrawn from the respective Realms first to avoid any permanent loss of those positions, Streaming services support tarnsfering of streams to a new account</Typography>
+                                                                        </>
+                                                                        
+                                                                    </Grid>
+                                                                </Grid>
+                                                            </Grid>
+                                                        }
+                                                    </TabPanel>
+
+                                                    <TabPanel value="4">
+                                                        {governanceRecord && 
+                                                            <div style={{ height: 600, width: '100%' }}>
+                                                                <div style={{ display: 'flex', height: '100%' }}>
+                                                                    <div style={{ flexGrow: 1 }}>
+                                                                        {publicKey && publicKey.toBase58() === pubkey ?
+                                                                            <DataGrid
+                                                                                rows={governanceRecordRows}
+                                                                                columns={governancecolumns}
+                                                                                pageSize={25}
+                                                                                rowsPerPageOptions={[5, 10, 25, 50, 100, 250, 500]}
+                                                                                onSelectionModelChange={(newSelectionModel) => {
+                                                                                    setSelectionModel(newSelectionModel);
+                                                                                }}
+                                                                                initialState={{
+                                                                                    sorting: {
+                                                                                        sortModel: [{ field: 'value', sort: 'desc' }],
+                                                                                    },
+                                                                                }}
+                                                                                sortingOrder={['asc', 'desc', null]}
+                                                                                checkboxSelection
+                                                                                disableSelectionOnClick
+                                                                            />
+                                                                        :
+                                                                        <DataGrid
+                                                                            rows={governanceRecordRows}
+                                                                            columns={governancecolumns}
+                                                                            initialState={{
+                                                                                sorting: {
+                                                                                    sortModel: [{ field: 'value', sort: 'desc' }],
+                                                                                },
+                                                                            }}
+                                                                            pageSize={25}
+                                                                            rowsPerPageOptions={[5, 10, 25, 50, 100, 250, 500]}
+                                                                        />
+                                                                        }
+                                                                    </div>
+                                                                </div>
+                                                            </div>    
+                                                        }
+                                                    </TabPanel>
+
+                                                    <TabPanel value="5">
+                                                        {solanaDomain &&
+                                                            <div style={{ height: 600, width: '100%' }}>
+                                                                <div style={{ display: 'flex', height: '100%' }}>
+                                                                    <div style={{ flexGrow: 1 }}>
+                                                                        {publicKey && publicKey.toBase58() === pubkey ?
+                                                                            <DataGrid
+                                                                                rows={solanaDomainRows}
+                                                                                columns={domaincolumns}
+                                                                                pageSize={25}
+                                                                                rowsPerPageOptions={[5, 10, 25, 50, 100, 250, 500]}
+                                                                                onSelectionModelChange={(newSelectionModel) => {
+                                                                                    setSelectionModel(newSelectionModel);
+                                                                                }}
+                                                                                initialState={{
+                                                                                    sorting: {
+                                                                                        sortModel: [{ field: 'domain', sort: 'desc' }],
+                                                                                    },
+                                                                                }}
+                                                                                sortingOrder={['asc', 'desc', null]}
+                                                                                disableSelectionOnClick
+                                                                            />
+                                                                        :
+                                                                        <DataGrid
+                                                                            rows={solanaDomainRows}
+                                                                            columns={domaincolumns}
+                                                                            initialState={{
+                                                                                sorting: {
+                                                                                    sortModel: [{ field: 'domain', sort: 'desc' }],
+                                                                                },
+                                                                            }}
+                                                                            pageSize={25}
+                                                                            rowsPerPageOptions={[5, 10, 25, 50, 100, 250, 500]}
+                                                                        />
+                                                                        }
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        }
 
                                                     </TabPanel>
                                                 </TabContext>

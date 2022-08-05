@@ -2,17 +2,11 @@ import React, { useCallback } from 'react';
 import { WalletError, WalletNotConnectedError } from '@solana/wallet-adapter-base';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { Signer, Connection, PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js';
-import { TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID, getAssociatedTokenAddress, createAssociatedTokenAccountInstruction, getOrCreateAssociatedTokenAccount, createAssociatedTokenAccount, createTransferInstruction } from "@solana/spl-token-v2";
+import { TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID, createCloseAccountInstruction, createBurnInstruction } from "@solana/spl-token-v2";
 //import { TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID, Token } from "@solana/spl-token";
 
 import { GRAPE_RPC_ENDPOINT, TX_RPC_ENDPOINT, GRAPE_TREASURY } from '../utils/grapeTools/constants';
 import { RegexTextField } from '../utils/grapeTools/RegexTextField';
-
-import {
-    transferNameOwnership,
-    NameRegistryState,
-    ROOT_DOMAIN_ACCOUNT,
-  } from "@bonfida/spl-name-service";
 
 import { styled } from '@mui/material/styles';
 
@@ -93,11 +87,25 @@ const BootstrapDialogTitle = (props: DialogTitleProps) => {
   );
 };
 
-export default function TransferDomain(props: any) {
-    const fetchSolanaDomain = props.fetchSolanaDomain;
-    const snsDomain = props.snsDomain;
+export default function CloseAccount(props: any) {
+    const fetchSolanaTokens = props.fetchSolanaTokens || null;
+    const fetchSolanaBalance = props.fetchSolanaBalance || null;
     const [open, setOpen] = React.useState(false);
+    const [amounttosend, setTokensToSend] = React.useState(0);
+    const [showTokenName, setShowTokenName] = React.useState(props.showTokenName);
     const [toaddress, setToAddress] = React.useState(null);
+    const [userTokenBalanceInput, setTokenBalanceInput] = React.useState(0);
+    const [convertedAmountValue, setConvertedAmountValue] = React.useState(null);
+    const mint = props.mint;
+    const logoURI = props.logoURI;
+    const name = props.name;
+    const balance = Number(props.balance.replace(/[^0-9.-]+/g,""));
+    const conversionrate = props.conversionrate;
+    const sendtype = props.sendType || 0; // 0 regular
+    const [memotype, setMemoType] = React.useState(0);
+    const [memoref, setMemoRef] = React.useState('');
+    const [memonotes, setMemoNotes] = React.useState(''); 
+    const [memoText, setMemoText] = React.useState(null); 
     const freeconnection = new Connection(TX_RPC_ENDPOINT);
     const connection = new Connection(GRAPE_RPC_ENDPOINT);//useConnection();
     const { publicKey, wallet, sendTransaction, signTransaction } = useWallet();
@@ -110,37 +118,51 @@ export default function TransferDomain(props: any) {
         [enqueueSnackbar]
     );
     const handleClickOpen = () => {
+
+        if (sendtype === 1) 
+            setToAddress(GRAPE_TREASURY);
+
+        setTokenBalanceInput(0);
+        setConvertedAmountValue(0);
         setOpen(true);
     };
     const handleClose = () => {
         setOpen(false);
     };
 
-    
-    
-    
-    async function transferDomain(domain: string, toaddress: string) {
-        const fromWallet = publicKey;
-        const toWallet = new PublicKey(toaddress);
-        console.log("domain: "+domain.substring(0,domain.indexOf('.sol')))
-        console.log("toWallet: "+toWallet)
-            const createTransferInstruction: TransactionInstruction = await transferNameOwnership(
-                connection,
-                domain.substring(0,domain.indexOf('.sol')),
-                toWallet,
-                undefined,
-                ROOT_DOMAIN_ACCOUNT
-            )
+    const handleSelectChange = (event: SelectChangeEvent) => {
+        setMemoType(+(event.target.value as string));
+      };
 
-            const transaction = new Transaction()
-            .add(createTransferInstruction)
+    async function closeAccount(tokenMintAddress: string) {
+        
+
+
+        const transaction = new Transaction()
+        /*.add(
+            createBurnInstruction(
+              new PublicKey(list[i].owner.associatedTokenAccountAddress),
+              new PublicKey(tokenMintAddress),
+              publicKey,
+              1,
+              [],
+              TOKEN_PROGRAM_ID
+            )
+        )*/
+        .add(
+            createCloseAccountInstruction(
+                new PublicKey(tokenMintAddress),
+                publicKey,
+                publicKey,
+                [],
+                TOKEN_PROGRAM_ID
+            )
+        )
+            
 
             try{
-                enqueueSnackbar(`Preparing to transfer domain ${domain} ${name} to ${toaddress}`,{ variant: 'info' });
-                const signedTransaction = await sendTransaction(transaction, connection, {
-                    skipPreflight: true,
-                    preflightCommitment: "confirmed"
-                });
+                enqueueSnackbar(`Preparing to close ${tokenMintAddress}`,{ variant: 'info' });
+                const signature = await sendTransaction(transaction, freeconnection);
                 const snackprogress = (key:any) => (
                     <CircularProgress sx={{padding:'10px'}} />
                 );
@@ -150,101 +172,87 @@ export default function TransferDomain(props: any) {
                 await connection.confirmTransaction({
                     blockhash: latestBlockHash.blockhash,
                     lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
-                    signature: signedTransaction}, 
+                    signature: signature}, 
                     'processed'
                 );
                 closeSnackbar(cnfrmkey);
                 const action = (key:any) => (
-                        <Button href={`https://explorer.solana.com/tx/${signedTransaction}`} target='_blank'  sx={{color:'white'}}>
-                            Signature: {signedTransaction}
+                        <Button href={`https://explorer.solana.com/tx/${signature}`} target='_blank'  sx={{color:'white'}}>
+                            Signature: {signature}
                         </Button>
                 );
-                enqueueSnackbar(`Transfered ${domain} to ${toaddress}`,{ variant: 'success', action });
-                try{
-                    fetchSolanaDomain();
-                }catch(err:any){console.log("ERR: "+err)}
+                enqueueSnackbar(`Closed ${tokenMintAddress}`,{ variant: 'success', action });
             }catch(e:any){
                 enqueueSnackbar(e.message ? `${e.name}: ${e.message}` : e.name, { variant: 'error' });
-            }   
+            } 
+        
     }
     
-    function HandleSendSubmit(event: any) {
+    function HandleCloseSubmit(event: any) {
         event.preventDefault();
-        if (snsDomain){
-            if (toaddress){
-                if ((toaddress.length >= 32) && 
-                    (toaddress.length <= 44)){ // very basic check / remove and add twitter handle support (handles are not bs58)
-                    transferDomain(snsDomain, toaddress);
-                    handleClose();
-                } else{
-                    // Invalid Wallet ID
-                    enqueueSnackbar(`Enter a valid Wallet Address!`,{ variant: 'error' });
-                    console.log("INVALID WALLET ID");
-                }
-            } else{
-                enqueueSnackbar(`Enter a valid Wallet Address!`,{ variant: 'error' });
-            }
+        if (mint){
+            closeAccount(mint);
+            handleClose();
+        }else{
+            enqueueSnackbar(`No mint selected`,{ variant: 'error' });
         }
     }
+
+    React.useEffect(() => {
+         setConvertedAmountValue(amounttosend*conversionrate);
+    }, [amounttosend]);
     
     return (
         <div>
 
-        <Button
-            variant="outlined" 
-            //aria-controls={menuId}
-            title={`Send ${snsDomain}`}
-            onClick={handleClickOpen}
-            size="small"
-            //onClick={isConnected ? handleProfileMenuOpen : handleOpen}
-            sx={{borderRadius:'17px'}}
-            >
-            Transfer
-        </Button>
+            
+
+            {showTokenName ? 
+                <Button
+                    variant="outlined" 
+                    //aria-controls={menuId}
+                    title={`Send ${name}`}
+                    onClick={handleClickOpen}
+                    size="small"
+                    //onClick={isConnected ? handleProfileMenuOpen : handleOpen}
+                    sx={{borderRadius:'17px'}}
+                    >
+                    Send
+                </Button>
+            :
+                <Button
+                    variant="outlined" 
+                    //aria-controls={menuId}
+                    title={`Send ${name}`}
+                    onClick={handleClickOpen}
+                    size="small"
+                    //onClick={isConnected ? handleProfileMenuOpen : handleOpen}
+                    sx={{borderRadius:'17px'}}
+                    >
+                    Send {name}
+                </Button>
+            }   
         <BootstrapDialog
             onClose={handleClose}
             aria-labelledby="customized-dialog-title"
             open={open}
-            PaperProps={{
+            PaperProps={{ 
                 style: {
                     boxShadow: '3',
                     borderRadius: '17px',
                     },
                 }}
         >
-            <form onSubmit={HandleSendSubmit}>
+            <form onSubmit={HandleCloseSubmit}>
                 <BootstrapDialogTitle id="customized-dialog-title" onClose={handleClose}>
-                    Transfer {snsDomain}
+                    Close {name}
                 </BootstrapDialogTitle>
                 <DialogContent dividers>
                     <FormControl>
                         <Grid container spacing={2}>
-                                <>
-                                    <Grid item xs={12} textAlign={'center'} sx={{mt:1}}>
-                                        <Typography variant="body2">
-                                            Enter the Solana address you would like to transfer this domain to
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        <TextField 
-                                            id="send-to-address" 
-                                            fullWidth 
-                                            placeholder="Enter a Solana address" 
-                                            label="To address" 
-                                            variant="standard"
-                                            autoComplete="off"
-                                            onChange={(e) => {setToAddress(e.target.value)}}
-                                            InputProps={{
-                                                inputProps: {
-                                                    style: {
-                                                        textAlign:'center'
-                                                    }
-                                                }
-                                            }}
-                                        />
-                                    </Grid>
-                                </>
-                          
+                            
+                            You are about to close X account, this is not reversable
+
                         </Grid>
                     </FormControl>
                 </DialogContent>
@@ -253,14 +261,9 @@ export default function TransferDomain(props: any) {
                         fullWidth
                         type="submit"
                         variant="outlined" 
-                        title="Send"
-                        disabled={
-                            (!toaddress || toaddress.length <= 0)
-                        }
-                        sx={{
-                            borderRadius:'17px'
-                        }}>
-                        Send
+                        title="Close"
+                    >
+                        Close
                     </Button>
                 </DialogActions>
             </form>

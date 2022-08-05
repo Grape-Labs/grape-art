@@ -246,9 +246,6 @@ export default function BulkSend(props: any) {
             const batchtx = new Transaction;
             for (var holding = 0; holding < maxLen; holding++) {
                 if (holdingsSelected[item * maxLen + holding]) {
-                    //console.log("item: "+(holdingsSelected[item * maxLen + holding]).mint+(holdingsSelected[item * maxLen + holding])?.name);
-                    
-                    //console.log("holding: "+Number(new TokenAmount(holdingsSelected[holding].balance.send.tokenAmount.amount, holdingsSelected[holding].balance.tokenAmount.decimals)))
                     let decimals = holdingsSelected[holding].send.tokenAmount.decimals;
                     let balance = holdingsSelected[holding].balance * Math.pow(10, decimals); //holdingsSelected[holding].balance;
                     
