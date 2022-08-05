@@ -245,6 +245,7 @@ export default function BulkSend(props: any) {
             for (var holding = 0; holding < maxLen; holding++) {
                 if (holdingsSelected[item * maxLen + holding]) {
                     //console.log("item: "+(holdingsSelected[item * maxLen + holding]).mint+(holdingsSelected[item * maxLen + holding])?.name);
+                    
                     var tti = await transferTokenInstruction((holdingsSelected[item * maxLen + holding]).mint, toaddress, holdingsSelected[holding].balance.tokenAmount);
                     if (tti)
                         batchtx.add(tti);
@@ -358,7 +359,7 @@ export default function BulkSend(props: any) {
                                                                 </ListItemAvatar>
                                                                 <ListItemText
                                                                     primary={item.name}
-                                                                    secondary={new TokenAmount(item.balance.tokenAmount, item.balance.tokenDecimals).format()}
+                                                                    secondary={new TokenAmount(item.send.tokenAmount.amount, item.send.tokenAmount.decimals).format()}
                                                                 />
                                                             </ListItemButton>
                                                         </Tooltip>
