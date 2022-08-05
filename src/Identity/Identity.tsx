@@ -579,7 +579,11 @@ export function IdentityView(props: any){
         return (
             <Container sx={{mt:4}}>
                     <Box
-                        className="grape-art-generic-placeholder-container"
+                        sx={{
+                            background: 'rgba(0, 0, 0, 0.60)',
+                            borderRadius: '17px',
+                            p:2
+                        }} 
                     > 
                             <Grid 
                                 container 

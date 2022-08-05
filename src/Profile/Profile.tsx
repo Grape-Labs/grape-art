@@ -102,12 +102,15 @@ import OffersView from './OffersView';
 import SocialView from './SocialView';
 import GalleryView from './GalleryView';
 import CurationView from './CurationView';
+import { IdentityView } from '../Identity/Identity';
+
 import { MakeLinkableAddress, ValidateAddress, trimAddress, timeAgo } from '../utils/grapeTools/WalletAddress'; // global key handling
 
 import { useTranslation } from 'react-i18next';
 import { ChatNavigationHelpers, useDialectUiId } from '@dialectlabs/react-ui';
 import { GRAPE_BOTTOM_CHAT_ID } from '../utils/ui-contants';
 import InboxView from './InboxView';
+import { AccountBalanceWalletOutlined } from '@mui/icons-material';
 
 const StyledTable = styled(Table)(({ theme }) => ({
     '& .MuiTableCell-root': {
@@ -536,6 +539,7 @@ export const TabActiveProvider = ({ children, initialActiveKey }) => {
 
 enum NavPanel {
     Collection,
+    Identity,
     Marketplace,
     Followers,
     Following,
@@ -619,6 +623,18 @@ const MainPanel = (props: any) => {
                                         sx={{ color: 'white', minWidth: '25px' }}
                                         {...a11yProps(NavPanel.Collection)}
                                     />
+                                    {/*
+                                    <Tab
+                                        icon={
+                                            <Hidden smUp>
+                                                <AccountBalanceWalletOutlined sx={{ fontSize: '18px' }} />
+                                            </Hidden>
+                                        }
+                                        label={<Hidden smDown>{t('Wallet')}</Hidden>}
+                                        sx={{ color: 'white', minWidth: '25px' }}
+                                        {...a11yProps(NavPanel.Identity)}
+                                    />
+                                    */}
                                     {/*<Tab icon={<Hidden smUp><RssFeedOutlinedIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>{t('Feed')}</Hidden>} sx={{color:'white',minWidth:'25px'}} {...a11yProps(1)} />*/}
                                     <Tab
                                         icon={
@@ -699,6 +715,10 @@ const MainPanel = (props: any) => {
                                     <GalleryView mode={0} finalCollection={finalCollection} isparent={true} />
                                 </TabPanel>
 
+                                <TabPanel value={tabvalue} index={NavPanel.Identity}>
+                                    <IdentityView mode={0} finalCollection={finalCollection} isparent={true} />
+                                </TabPanel>
+
                                 <TabPanel value={tabvalue} index={NavPanel.Marketplace}>
                                     <MarketplaceView />
                                 </TabPanel>
@@ -748,7 +768,7 @@ const MainPanel = (props: any) => {
     }
 };
 
-const IdentityView = (props: any) => {
+const GeneralProfileView = (props: any) => {
     const [expanded_collection, setExpandedCollection] = React.useState(true);
     const [pubkey, setPubKey] = React.useState<string>(props.pubkey || null);
     const [loading, setLoading] = React.useState(false);
@@ -1347,6 +1367,34 @@ const IdentityView = (props: any) => {
                                                         )}
                                                     </Typography>
                                                 </Grid>
+
+                                                <Grid item sx={{ mt: 1}}>
+
+                                                    <Tooltip title={t('View Solana ID')}>
+                                                        <Button
+                                                            size="small"
+                                                            variant="text"
+                                                            component={Link}
+                                                            to={`${GRAPE_IDENTITY}${pubkey}`}
+                                                            sx={{
+                                                                fontSize: '12px',
+                                                                textTransform: 'none',
+                                                                color: 'white',
+                                                                border: '1px solid #fff',
+                                                                borderRadius: '17px',
+                                                                pl: 5,
+                                                                pr: 5,
+                                                                pt: 0,
+                                                                pb: 0,
+                                                                m: 1,
+                                                            }}
+                                                        >
+                                                            <AccountBalanceWalletOutlined fontSize="small" sx={{mr:1}}/> Wallet
+                                                        </Button>
+                                                    </Tooltip>
+
+                                                </Grid>
+                                                
                                                 <Grid item sx={{ mt: 1 }}>
                                                     {!isYou && (
                                                         <Box sx={{ display: 'flex', justifyContent: 'center' }}>
@@ -1660,7 +1708,7 @@ export function ProfileView(this: any, props: any) {
             <Grid container direction="column" spacing={2} alignItems="center" rowSpacing={8}>
                 <Grid item xs={12}>
                     <Box height="100%" display="flex-grow" justifyContent="center">
-                        <IdentityView gallery={gallery} collection={collection} pubkey={pubkey} setPubkey={setPubkey} />
+                        <GeneralProfileView gallery={gallery} collection={collection} pubkey={pubkey} setPubkey={setPubkey} />
                     </Box>
                 </Grid>
             </Grid>
