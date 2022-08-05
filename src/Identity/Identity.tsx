@@ -637,9 +637,7 @@ export function IdentityView(props: any){
                                                     
                                                     {publicKey && publicKey.toBase58() === pubkey && selectionModel && selectionModel.length > 0 &&
                                                         <Grid container sx={{mt:1,mb:1}}>
-                                                            <Grid item xs>
-                                                            </Grid>
-                                                            <Grid item alignContent={'right'} textAlign={'right'}>
+                                                            <Grid item xs={12} alignContent={'right'} textAlign={'right'}>
                                                                 {selectionModel.length <= 500 &&
                                                                     <BulkSend tokensSelected={selectionModel} solanaHoldingRows={solanaHoldingRows} tokenMap={tokenMap} fetchSolanaTokens={fetchSolanaTokens}  />
                                                                 }
@@ -689,20 +687,24 @@ export function IdentityView(props: any){
 
                                                     {publicKey && publicKey.toBase58() === pubkey && selectionModel && selectionModel.length > 0 &&
                                                         <Grid container sx={{mt:1}}>
-                                                            <Grid item xs>
-                                                            </Grid>
-                                                            <Grid item alignContent={'right'} textAlign={'right'}>
-                                                                {selectionModel.length <= 500 ?
-                                                                    <BulkSend tokensSelected={selectionModel} solanaHoldingRows={solanaHoldingRows} tokenMap={tokenMap} fetchSolanaTokens={fetchSolanaTokens}  />
-                                                                :
-                                                                    <Typography variant="caption">Currently limited to 500 token accounts</Typography>
-                                                                }
-                                                                {selectionModel.length > 0 &&
-                                                                    <>
-                                                                        <br />
-                                                                        <Typography variant="caption">*If batch sending fails please try sending in bulks of 8</Typography>
-                                                                    </>
-                                                                }
+                                                            <Grid item xs={12} alignContent={'right'} textAlign={'right'}>
+                                                                <Grid item alignContent={'right'} textAlign={'right'}>
+                                                                    {selectionModel.length <= 500 ?
+                                                                        <BulkSend tokensSelected={selectionModel} solanaHoldingRows={solanaHoldingRows} tokenMap={tokenMap} fetchSolanaTokens={fetchSolanaTokens}  />
+                                                                    :
+                                                                        <Typography variant="caption">Currently limited to 500 token accounts</Typography>
+                                                                    }
+                                                                </Grid>
+
+                                                                <Grid item alignContent={'right'} textAlign={'right'}>
+                                                            
+                                                                    {selectionModel.length > 0 &&
+                                                                        <>
+                                                                            <br />
+                                                                            <Typography variant="caption">*If batch sending fails please try sending in bulks of 8</Typography>
+                                                                        </>
+                                                                    }
+                                                                </Grid>
                                                             </Grid>
                                                         </Grid>
                                                     }

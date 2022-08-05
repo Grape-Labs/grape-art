@@ -401,7 +401,8 @@ export default function BulkSend(props: any) {
                     <Button     
                         fullWidth
                         type="submit"
-                        variant="outlined" 
+                        variant="contained"
+                        color="error"  
                         title="Send"
                         disabled={!tokensSelected || (tokensSelected.length <= 0)}
                         sx={{
