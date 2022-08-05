@@ -139,6 +139,7 @@ export default function SendToken(props: any) {
         const toWallet = new PublicKey(toaddress);
         const mintPubkey = new PublicKey(tokenMintAddress);
         const amountToSend = +amounttosend;
+        console.log("amountToSend:"+amountToSend)
         const tokenAccount = new PublicKey(mintPubkey);
         
         /*

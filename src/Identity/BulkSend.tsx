@@ -8,6 +8,7 @@ import { TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID, getAssociatedTokenAddres
 import { GRAPE_RPC_ENDPOINT, TX_RPC_ENDPOINT, GRAPE_TREASURY } from '../utils/grapeTools/constants';
 import { RegexTextField } from '../utils/grapeTools/RegexTextField';
 import { TokenAmount } from '../utils/grapeTools/safe-math';
+import BN from "bn.js";
 
 import { styled } from '@mui/material/styles';
 
@@ -50,6 +51,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import ArrowCircleRightIcon from '@mui/icons-material/ArrowCircleRight';
 import ArrowCircleRightOutlinedIcon from '@mui/icons-material/ArrowCircleRightOutlined';
 import { HdrOnSelectRounded } from '@mui/icons-material';
+import { hostname } from 'os';
 
 function trimAddress(addr: string) {
     if (!addr) return addr;
@@ -140,7 +142,7 @@ export default function BulkSend(props: any) {
         
         if (tokenMintAddress == "So11111111111111111111111111111111111111112"){ // Check if SOL
             const decimals = 9;
-            const adjustedAmountToSend = amountToSend * Math.pow(10, decimals);
+            const adjustedAmountToSend = amountToSend;//amountToSend * Math.pow(10, decimals);
             const transaction = new Transaction()
             .add(
                 SystemProgram.transfer({
@@ -154,7 +156,7 @@ export default function BulkSend(props: any) {
         } else{
             const accountInfo = await connection.getParsedAccountInfo(tokenAccount);
             const accountParsed = JSON.parse(JSON.stringify(accountInfo.value.data));
-            const decimals = accountParsed.parsed.info.decimals;
+            //const decimals = accountParsed.parsed.info.decimals;
 
 
             const fromTokenAccount = await getAssociatedTokenAddress(
@@ -246,9 +248,14 @@ export default function BulkSend(props: any) {
                 if (holdingsSelected[item * maxLen + holding]) {
                     //console.log("item: "+(holdingsSelected[item * maxLen + holding]).mint+(holdingsSelected[item * maxLen + holding])?.name);
                     
-                    var tti = await transferTokenInstruction((holdingsSelected[item * maxLen + holding]).mint, toaddress, holdingsSelected[holding].balance.tokenAmount);
+                    //console.log("holding: "+Number(new TokenAmount(holdingsSelected[holding].balance.send.tokenAmount.amount, holdingsSelected[holding].balance.tokenAmount.decimals)))
+                    let decimals = holdingsSelected[holding].send.tokenAmount.decimals;
+                    let balance = holdingsSelected[holding].balance * Math.pow(10, decimals); //holdingsSelected[holding].balance;
+                    
+                    var tti = await transferTokenInstruction((holdingsSelected[item * maxLen + holding]).mint, toaddress, balance);
                     if (tti)
                         batchtx.add(tti);
+                    
                 }
             }
             await executeTransactions(batchtx, null);
