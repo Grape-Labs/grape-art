@@ -13,6 +13,7 @@ import { getRealm, getAllProposals, getGovernance, getTokenOwnerRecordsByOwner, 
 import SendToken from '../StoreFront/Send';
 import JupiterSwap from '../StoreFront/Swap';
 import BulkSend from './BulkSend';
+import BulkBurnClose from './BulkBurnClose';
 import TransferDomain from './TransferDomain';
 
 import { styled } from '@mui/material/styles';
@@ -97,6 +98,7 @@ export function IdentityView(props: any){
     const [value, setValue] = React.useState('1');
     const [tokenMap, setTokenMap] = React.useState<Map<string,TokenInfo>>(undefined);
     const [selectionModel, setSelectionModel] = React.useState(null);
+    const [selectionModelClose, setSelectionModelClose] = React.useState(null);
 
     const { t, i18n } = useTranslation();
 
@@ -180,26 +182,7 @@ export function IdentityView(props: any){
         },
         { field: 'oncurve', headerName: 'onCurve', width: 130, align: 'right'},
         { field: 'nft', headerName: 'NFT', width: 130, align: 'center'},
-        { field: 'close', headerName: '', width: 150,  align: 'center',
-            renderCell: (params) => {
-                return (
-                    <>Closing coming soon</>
-                )
-            }
-        },/*
-        { field: 'swap', headerName: '', width: 130,
-            renderCell: (params) => {
-                return (
-                    <>
-                        {publicKey && pubkey === publicKey.toBase58() &&
-                            <>
-                            <JupiterSwap swapfrom={'So11111111111111111111111111111111111111112'} swapto={params.value.mint} portfolioPositions={solanaHoldings} tokenMap={tokenMap}/>
-                            </>          
-                        }
-                   </>
-                )
-            }
-        }*/
+        { field: 'preview', headerName: '', width: 150,  align: 'center'},
       ];
 
       const domaincolumns: GridColDef[] = [
@@ -625,7 +608,7 @@ export function IdentityView(props: any){
                                         <List dense={true}>
                                             <ListItem>
                                                 <Grid container>
-                                                    <Grid item sm>
+                                                    <Grid item md>
                                                         <Tooltip title={t('Wallet Address')}>
                                                             <ListItemButton 
                                                                 sx={{borderRadius:'24px'}}
@@ -845,6 +828,20 @@ export function IdentityView(props: any){
                                                             </Grid>
                                                         </Grid>
                                                     }
+
+                                                    {publicKey && publicKey.toBase58() === pubkey && selectionModel && selectionModel.length > 0 &&
+                                                        <Grid container sx={{mt:1}}>
+                                                            <Grid item xs={12} alignContent={'right'} textAlign={'right'}>
+                                                                <Grid item alignContent={'right'} textAlign={'right'}>
+                                                                    {selectionModel.length <= 100 ?
+                                                                        <BulkBurnClose tokensSelected={selectionModel} solanaHoldingRows={solanaHoldingRows} tokenMap={tokenMap} fetchSolanaTokens={fetchSolanaTokens} type={0}  />
+                                                                    :
+                                                                        <Typography variant="caption">Currently limited to 100 token accounts</Typography>
+                                                                    }
+                                                                </Grid>
+                                                            </Grid>
+                                                        </Grid>
+                                                    }
                                                     
                                                     </TabPanel>
                                                     <TabPanel value="2">
@@ -906,7 +903,7 @@ export function IdentityView(props: any){
                                                                                 pageSize={25}
                                                                                 rowsPerPageOptions={[5, 10, 25, 50, 100, 250, 500]}
                                                                                 onSelectionModelChange={(newSelectionModel) => {
-                                                                                    setSelectionModel(newSelectionModel);
+                                                                                    setSelectionModelClose(newSelectionModel);
                                                                                 }}
                                                                                 sx={{
                                                                                     borderRadius:'17px',
@@ -937,6 +934,8 @@ export function IdentityView(props: any){
                                                             </div>    
                                                         }
 
+                                                        
+
                                                         {publicKey && publicKey.toBase58() === pubkey &&
                                                             <Grid container sx={{mt:1}}>
                                                                 <Grid item xs={12} alignContent={'right'} textAlign={'right'}>
@@ -945,6 +944,20 @@ export function IdentityView(props: any){
                                                                             <Typography variant="caption" color='error'>* IMPORTANT: Prior to closing any accounts; verify that you have removed any deposited positions in SPL Governance, Staking, Farming, Streaming services; visit those services and withdraw/transfer positions and deposits from those accounts first, i.e. SPL Governance Council Tokens should be withdrawn from the respective Realms first to avoid any permanent loss of those positions, Streaming services support tarnsfering of streams to a new account</Typography>
                                                                         </>
                                                                         
+                                                                    </Grid>
+                                                                </Grid>
+                                                            </Grid>
+                                                        }
+
+                                                        {publicKey && publicKey.toBase58() === pubkey && selectionModelClose && selectionModelClose.length > 0 &&
+                                                            <Grid container sx={{mt:1}}>
+                                                                <Grid item xs={12} alignContent={'right'} textAlign={'right'}>
+                                                                    <Grid item alignContent={'right'} textAlign={'right'}>
+                                                                        {selectionModelClose.length <= 100 ?
+                                                                            <BulkBurnClose tokensSelected={selectionModelClose} solanaHoldingRows={solanaClosableHoldings} tokenMap={tokenMap} fetchSolanaTokens={fetchSolanaTokens} type={1}  />
+                                                                        :
+                                                                            <Typography variant="caption">Currently limited to 100 token accounts</Typography>
+                                                                        }
                                                                     </Grid>
                                                                 </Grid>
                                                             </Grid>
@@ -977,7 +990,6 @@ export function IdentityView(props: any){
                                                                                         borderColor:'rgba(255,255,255,0.25)'
                                                                                     }}}
                                                                                 sortingOrder={['asc', 'desc', null]}
-                                                                                checkboxSelection
                                                                                 disableSelectionOnClick
                                                                             />
                                                                         :

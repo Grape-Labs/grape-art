@@ -99,8 +99,8 @@ const BootstrapDialogTitle = (props: DialogTitleProps) => {
   );
 };
 
-export default function BulkClose(props: any) {
-    const type = props.type; // 0 = burn 1 = close
+export default function BulkBurnClose(props: any) {
+    const type = props.type; // 0 = burn - 1 = close
     const tokensSelected = props.tokensSelected;
     const solanaHoldingRows = props.solanaHoldingRows;
     const tokenMap = props.tokenMap;
@@ -215,7 +215,7 @@ export default function BulkClose(props: any) {
         } 
     }
     
-    async function closeTokens(toaddress:string) {
+    async function closeTokens() {
         var maxLen = 7;
         for (var item = 0; item < holdingsSelected.length / maxLen; item++) {
             const batchtx = new Transaction;
@@ -235,7 +235,7 @@ export default function BulkClose(props: any) {
     
         fetchSolanaTokens()
     }
-    async function burnTokens(toaddress:string) {
+    async function burnTokens() {
         var maxLen = 7;
         for (var item = 0; item < holdingsSelected.length / maxLen; item++) {
             const batchtx = new Transaction;
@@ -243,7 +243,6 @@ export default function BulkClose(props: any) {
                 if (holdingsSelected[item * maxLen + holding]) {
                     let decimals = holdingsSelected[holding].send.tokenAmount.decimals;
                     let balance = holdingsSelected[holding].balance * Math.pow(10, decimals); //holdingsSelected[holding].balance;
-                    
                     var tti = await burnTokenInstruction((holdingsSelected[item * maxLen + holding]).mint);
                     if (tti)
                         batchtx.add(tti);
@@ -256,25 +255,14 @@ export default function BulkClose(props: any) {
         fetchSolanaTokens()
     }
     
-    function HandleSendSubmit(event: any) {
+    function HandleSubmit(event: any) {
         event.preventDefault();
-        //if (amounttosend >= 0){
-            if (toaddress){
-                if ((toaddress.length >= 32) && 
-                    (toaddress.length <= 44)){ // very basic check / remove and add twitter handle support (handles are not bs58)
-                    transferTokens(toaddress);
-                    handleClose();
-                } else{
-                    // Invalid Wallet ID
-                    enqueueSnackbar(`Enter a valid Wallet Address!`,{ variant: 'error' });
-                    console.log("INVALID WALLET ID");
-                }
-            } else{
-                enqueueSnackbar(`Enter a valid Wallet Address!`,{ variant: 'error' });
+            if (type === 0){ // burn
+                burnTokens();
+            }else if (type === 1){ // close
+                closeTokens();
             }
-        //}else{
-        //    enqueueSnackbar(`Enter the balance you would like to send`,{ variant: 'error' });
-        //}
+            handleClose();
     }
     
     React.useEffect(() => {
@@ -299,27 +287,17 @@ export default function BulkClose(props: any) {
             {tokensSelected ? 
                 <Button
                     variant="contained"
-                    color="success" 
-                    title={`Send Bulk Tokens`}
+                    color="error" 
+                    title={`Burn/Close Bulk Tokens`}
                     onClick={handleClickOpen}
-                    size="large"
-                    fullWidth
+                    size="small"
                     //onClick={isConnected ? handleProfileMenuOpen : handleOpen}
                     sx={{borderRadius:'17px'}}
                     >
-                    Send {tokensSelected.length} Token Accounts
+                    {type === 0 ? <>Burn</>:<>Close</>} {tokensSelected.length} Token Account{tokensSelected.length > 1 && <>s</>}
                 </Button>
             :
-                <Button
-                    variant="outlined" 
-                    //aria-controls={menuId}
-                    title={`Send Bulk Tokens`}
-                    onClick={handleClickOpen}
-                    //onClick={isConnected ? handleProfileMenuOpen : handleOpen}
-                    sx={{borderRadius:'17px'}}
-                    >
-                    Send {tokensSelected.length} Token Accounts
-                </Button>
+                <></>
             }   
         <BootstrapDialog
             onClose={handleClose}
@@ -332,9 +310,9 @@ export default function BulkClose(props: any) {
                     },
                 }}
         >
-            <form onSubmit={HandleSendSubmit}>
+            <form onSubmit={HandleSubmit}>
                 <BootstrapDialogTitle id="customized-dialog-title" onClose={handleClose}>
-                    Bulk Send {tokensSelected.length} token accounts
+                    {type === 0 ? <>Burn</>:<>Close</>}  {tokensSelected.length} token account{tokensSelected.length > 1 && <>s</>}
                 </BootstrapDialogTitle>
                 <DialogContent dividers>
                     <FormControl>
@@ -370,27 +348,14 @@ export default function BulkClose(props: any) {
                                     </Typography>
 
                                     <Typography variant="body2">
-                                    You have selected {holdingsSelected.length} tokens, please make sure that this is correct before sending
+                                    You have selected {holdingsSelected.length} token{tokensSelected.length > 1 && <>s</>} to {type === 0 ? <>BURN</>:<>CLOSE</>}, please make sure that this is correct before {type === 0 ? <>BURNING</>:<>CLOSING</>}
+                                    {type === 0 ? 
+                                        <>The balance of this asset will be burnt and will not be recoverable.</>
+                                    :
+                                        <>This asset is will be deleted forever.</>
+                                    }
                                     </Typography>
 
-                                    <Grid item xs={12}>
-                                            <TextField 
-                                                id="send-to-address" 
-                                                fullWidth 
-                                                placeholder="Enter a Solana address" 
-                                                label="To address" 
-                                                variant="standard"
-                                                autoComplete="off"
-                                                onChange={(e) => {setToAddress(e.target.value)}}
-                                                InputProps={{
-                                                    inputProps: {
-                                                        style: {
-                                                            textAlign:'center'
-                                                        }
-                                                    }
-                                                }}
-                                            />
-                                    </Grid>
                             </Grid>
                             }
                         </Grid>
@@ -407,7 +372,7 @@ export default function BulkClose(props: any) {
                         sx={{
                             borderRadius:'17px'
                         }}>
-                        Send
+                        {type === 0 ? <>Burn</>:<>Close</>} Token Account
                     </Button>
                 </DialogActions>
             </form>

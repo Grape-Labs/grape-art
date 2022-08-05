@@ -312,19 +312,10 @@ export default function BulkSend(props: any) {
                     //onClick={isConnected ? handleProfileMenuOpen : handleOpen}
                     sx={{borderRadius:'17px'}}
                     >
-                    Send {tokensSelected.length} Token Accounts
+                    Send {tokensSelected.length} Token Account{tokensSelected.length > 1 && <>s</>}
                 </Button>
             :
-                <Button
-                    variant="outlined" 
-                    //aria-controls={menuId}
-                    title={`Send Bulk Tokens`}
-                    onClick={handleClickOpen}
-                    //onClick={isConnected ? handleProfileMenuOpen : handleOpen}
-                    sx={{borderRadius:'17px'}}
-                    >
-                    Send {tokensSelected.length} Token Accounts
-                </Button>
+                <></>
             }   
         <BootstrapDialog
             onClose={handleClose}
@@ -339,7 +330,7 @@ export default function BulkSend(props: any) {
         >
             <form onSubmit={HandleSendSubmit}>
                 <BootstrapDialogTitle id="customized-dialog-title" onClose={handleClose}>
-                    Bulk Send {tokensSelected.length} token accounts
+                    Bulk Send {tokensSelected.length} token account{tokensSelected.length > 1 && <>s</>}
                 </BootstrapDialogTitle>
                 <DialogContent dividers>
                     <FormControl>
@@ -375,7 +366,7 @@ export default function BulkSend(props: any) {
                                     </Typography>
 
                                     <Typography variant="body2">
-                                    You have selected {holdingsSelected.length} tokens, please make sure that this is correct before sending
+                                    You have selected {holdingsSelected.length} token{tokensSelected.length > 1 && <>s</>}, please make sure that this is correct before sending
                                     </Typography>
 
                                     <Grid item xs={12}>

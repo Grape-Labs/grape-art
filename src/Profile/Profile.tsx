@@ -584,7 +584,7 @@ const MainPanel = (props: any) => {
 
     if (loading) {
         return (
-            <Grid item xs={12} sm={12} md={9} lg={9} xl={10}>
+            <Grid item xs={12} sm={12} md={12} lg={9} xl={10}>
                 <Box alignItems="center" justifyContent="center" sx={{}}>
                     <CircularProgress />
                 </Box>
@@ -592,7 +592,7 @@ const MainPanel = (props: any) => {
         );
     } else {
         return (
-            <Grid item xs={12} sm={12} md={9} lg={9} xl={10}>
+            <Grid item xs={12} sm={12} md={12} lg={9} xl={10}>
                 <Box sx={{}}>
                     <Grid container justifyContent="center" alignItems="center">
                         <Box
@@ -1164,8 +1164,8 @@ const GeneralProfileView = (props: any) => {
                             </Card>
                         )}
 
-                        <Grid container spacing={3}>
-                            <Grid item xs={12} sm={12} md={3} lg={3} xl={2} sx={{}}>
+                        <Grid container spacing={2}>
+                            <Grid item xs={12} sm={12} md={12} lg={3} xl={2}>
                                 <Box className="grape-profile-background">
                                     {featuredObj ? (
                                         <img src={featuredObj.img} alt="" className="grape-art-profile-img" />
