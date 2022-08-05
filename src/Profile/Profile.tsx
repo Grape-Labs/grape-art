@@ -623,7 +623,7 @@ const MainPanel = (props: any) => {
                                         sx={{ color: 'white', minWidth: '25px' }}
                                         {...a11yProps(NavPanel.Collection)}
                                     />
-                                    {/*
+                                    
                                     <Tab
                                         icon={
                                             <Hidden smUp>
@@ -634,7 +634,7 @@ const MainPanel = (props: any) => {
                                         sx={{ color: 'white', minWidth: '25px' }}
                                         {...a11yProps(NavPanel.Identity)}
                                     />
-                                    */}
+                                    
                                     {/*<Tab icon={<Hidden smUp><RssFeedOutlinedIcon sx={{fontSize:'18px'}}/></Hidden>} label={<Hidden smDown>{t('Feed')}</Hidden>} sx={{color:'white',minWidth:'25px'}} {...a11yProps(1)} />*/}
                                     <Tab
                                         icon={
@@ -714,11 +714,11 @@ const MainPanel = (props: any) => {
                                 <TabPanel value={tabvalue} index={NavPanel.Collection}>
                                     <GalleryView mode={0} finalCollection={finalCollection} isparent={true} />
                                 </TabPanel>
-                                {/*
+                                
                                 <TabPanel value={tabvalue} index={NavPanel.Identity}>
                                     <IdentityView mode={0} finalCollection={finalCollection} isparent={true} />
                                 </TabPanel>
-                                    */}
+                                
                                 <TabPanel value={tabvalue} index={NavPanel.Marketplace}>
                                     <MarketplaceView />
                                 </TabPanel>
