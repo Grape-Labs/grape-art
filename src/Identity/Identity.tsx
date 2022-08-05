@@ -248,18 +248,7 @@ export function IdentityView(props: any){
         { field: 'pubkey', headerName: 'PublicKey', width: 70, hide: true },
         { field: 'realm', headerName: 'Realm', width: 130, align: 'center' },
         { field: 'governingTokenMint', headerName: 'Governing Mint', width: 130, align: 'center' },
-        { field: 'governingTokenDepositAmount', headerName: 'Votes', width: 130, align: 'center',
-            renderCell: (params) => {
-                return (
-                    <>
-                    {params.value > 0} ?    
-                        <>{params.value}</>
-                    :
-                        <>NFT</>
-                    </>
-                )
-            }
-        },
+        { field: 'governingTokenDepositAmount', headerName: 'Votes', width: 130, align: 'center'},
         { field: 'unrelinquishedVotesCount', headerName: 'Unreliquinshed', width: 130, align: 'center'},
         { field: 'totalVotesCount', headerName: 'Total Votes', width: 130, align: 'center' },
         { field: 'relinquish', headerName: '', width: 150,  align: 'center',
@@ -795,9 +784,14 @@ export function IdentityView(props: any){
                                                             } value="5" />
                                                         }
 
-                                                            <Tab disabled={true} sx={{color:'white', textTransform:'none'}} label={
-                                                                <Typography variant="h6">{t('Streaming')}</Typography>
+                                                        <Tab disabled={true} sx={{color:'white', textTransform:'none'}} label={
+                                                                <Typography variant="h6">{t('Storage')}</Typography>
                                                             } value="5" />
+
+                                                        <Tab disabled={true} sx={{color:'white', textTransform:'none'}} label={
+                                                            <Typography variant="h6">{t('Streaming')}</Typography>
+                                                        } value="6" />
+
                                                     </TabList>
                                                     </Box>
 
@@ -961,7 +955,7 @@ export function IdentityView(props: any){
                                                                 <Grid item xs={12} alignContent={'right'} textAlign={'right'}>
                                                                     <Grid item alignContent={'center'} textAlign={'center'}>
                                                                         <>
-                                                                            <Typography variant="caption" color='error'>* IMPORTANT: Prior to closing any accounts; verify that you have removed any deposited positions in SPL Governance, Farming, Streaming services; visit those services and withdraw/transfer positions and deposits from those accounts first, i.e. SPL Governance Council Tokens should be withdrawn from the respective Realms first to avoid any permanent loss of those positions, Streaming services support tarnsfering of streams to a new account</Typography>
+                                                                            <Typography variant="caption" color='error'>* IMPORTANT: Prior to closing any accounts; verify that you have removed any deposited positions in SPL Governance, Staking, Farming, Streaming services; visit those services and withdraw/transfer positions and deposits from those accounts first, i.e. SPL Governance Council Tokens should be withdrawn from the respective Realms first to avoid any permanent loss of those positions, Streaming services support tarnsfering of streams to a new account</Typography>
                                                                         </>
                                                                         
                                                                     </Grid>
