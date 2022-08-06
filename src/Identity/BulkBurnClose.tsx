@@ -108,6 +108,7 @@ export default function BulkBurnClose(props: any) {
     const tokensSelected = props.tokensSelected;
     const solanaHoldingRows = props.solanaHoldingRows;
     const tokenMap = props.tokenMap;
+    const nftMap = props.nftMap;
     const fetchSolanaTokens = props.fetchSolanaTokens;
 
     const [holdingsSelected, setHoldingsSelected] = React.useState(null);
@@ -341,7 +342,10 @@ export default function BulkBurnClose(props: any) {
                                                                 <ListItemAvatar>
                                                                 <Avatar
                                                                     sx={{backgroundColor:'#222'}}
-                                                                        src={tokenMap.get(item.mint)?.logoURI || item.mint}
+                                                                        src={
+                                                                            tokenMap.get(item.mint)?.logoURI || 
+                                                                            item?.logo?.logo ||
+                                                                            item.mint}
                                                                         alt={tokenMap.get(item.mint)?.name || item.mint}
                                                                 >
                                                                     <QrCode2Icon sx={{color:'white'}} />

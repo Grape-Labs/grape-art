@@ -85,6 +85,7 @@ import { ConstructionOutlined, DoNotDisturb, JavascriptRounded, LogoDevOutlined 
 
 import { useTranslation } from 'react-i18next';
 import { getByPlaceholderText } from "@testing-library/react";
+import { parseMintAccount } from "@project-serum/common";
 
 export function IdentityView(props: any){
     const [profilePictureUrl, setProfilePictureUrl] = React.useState(null);
@@ -108,6 +109,7 @@ export function IdentityView(props: any){
     const urlParams = searchParams.get("pkey") || searchParams.get("address") || handlekey;
     const [value, setValue] = React.useState('1');
     const [tokenMap, setTokenMap] = React.useState<Map<string,TokenInfo>>(undefined);
+    const [nftMap, setNftMap] = React.useState(null);
     const [selectionModel, setSelectionModel] = React.useState(null);
     const [selectionModelClose, setSelectionModelClose] = React.useState(null);
     const [selectionGovernanceModel, setSelectionGovernanceModel] = React.useState(null);
@@ -123,8 +125,13 @@ export function IdentityView(props: any){
                 return (<>
                         <Avatar
                             sx={{backgroundColor:'#222'}}
-                                src={tokenMap.get(params.value.mint)?.logoURI || params.value.mint}
-                                alt={tokenMap.get(params.value.mint)?.name || params.value.mint}
+                                src={
+                                    params.value.logo ||
+                                    tokenMap.get(params.value.mint)?.logoURI || 
+                                    params.value.mint}
+                                alt={
+                                    tokenMap.get(params.value.mint)?.name || 
+                                    params.value.mint}
                         >
                             <QrCode2Icon sx={{color:'white'}} />
                         </Avatar>
@@ -409,6 +416,10 @@ export function IdentityView(props: any){
 
         const cgPrice = await getCoinGeckoPrice(cgArray);
 
+        const nftMeta = await fetchNFTMetadata(sortedholdings);
+
+        //console.log("nftMeta: "+JSON.stringify(nftMeta))
+
         for (var item of sortedholdings){
             /*
             try{
@@ -420,13 +431,39 @@ export function IdentityView(props: any){
             const itemValue = +cgPrice[item?.coingeckoId]?.usd ? (cgPrice[item.coingeckoId].usd * parseFloat(new TokenAmount(item.account.data.parsed.info.tokenAmount.amount, item.account.data.parsed.info.tokenAmount.decimals).format())).toFixed(item.account.data.parsed.info.tokenAmount.decimals) : 0;
             const itemBalance = Number(new TokenAmount(item.account.data.parsed.info.tokenAmount.amount, item.account.data.parsed.info.tokenAmount.decimals).format().replace(/[^0-9.-]+/g,""));
             
+            let logo = null;
+            let name = item.account.data.parsed.info.mint;
+            let metadata = null;
+
+            var foundMetaName = false;
+            for (var nft of nftMeta){
+                //console.log('meta: '+JSON.stringify(nft));
+                if (nft.meta.mint === item.account.data.parsed.info.mint){
+                    //console.log("nft: "+JSON.stringify(nft))
+                    name = nft.meta.data.name;
+                    metadata = nft.meta.data.uri;
+                    // fetch
+                    logo = nft.urimeta.image;
+                    foundMetaName = true;
+                }
+            }
+            
+            if (!foundMetaName){
+                name = tokenMap.get(item.account.data.parsed.info.mint)?.name;
+                logo = tokenMap.get(item.account.data.parsed.info.mint)?.logoURI;
+            }
+            if ((name && name?.length <= 0) || (!name))
+                name = item.account.data.parsed.info.mint;
+            
             solholdingrows.push({
                 id:cnt,
                 mint:item.account.data.parsed.info.mint,
                 logo: {
-                    mint: item.account.data.parsed.info.mint
+                    mint: item.account.data.parsed.info.mint,
+                    logo: logo,
+                    metadata: metadata
                 },
-                name:tokenMap.get(item.account.data.parsed.info.mint)?.name || item.account.data.parsed.info.mint,
+                name:name,
                 balance:itemBalance,
                 price:item.account.data.parsed.info.tokenAmount.decimals === 0 ? 0 : cgPrice[item?.coingeckoId]?.usd || 0,
                 change:item.account.data.parsed.info.tokenAmount.decimals === 0 ? 0 : cgPrice[item?.coingeckoId]?.usd_24h_change || 0,
@@ -506,8 +543,6 @@ export function IdentityView(props: any){
                 }
                 setSolanaDomainRows(domains);
                 setSolanaDomain(domain);
-                
-
             }
         }
     }
@@ -521,6 +556,115 @@ export function IdentityView(props: any){
         }, new Map())
         setTokenMap(tokenMapValue);
         return tokenMapValue;
+    }
+
+    const MD_PUBKEY = new PublicKey('metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s');
+    const rpclimit = 100;
+    const getCollectionData = async (start: number, sholdings: any) => {
+        try {
+            const mintsPDAs = [];
+            
+            const mintarr = sholdings
+                .slice(rpclimit * start, rpclimit * (start + 1))
+                .map((value: any, index: number) => {
+                    return value.account.data.parsed.info.mint;
+                });
+
+            for (const value of mintarr) {
+                if (value) {
+                    const mint_address = new PublicKey(value);
+                    const [pda, bump] = await PublicKey.findProgramAddress(
+                        [Buffer.from('metadata'), MD_PUBKEY.toBuffer(), new PublicKey(mint_address).toBuffer()],
+                        MD_PUBKEY
+                    );
+
+                    if (pda) {
+                        //console.log("pda: "+pda.toString());
+                        mintsPDAs.push(pda);
+                    }
+                }
+            }
+
+            //console.log("pushed pdas: "+JSON.stringify(mintsPDAs));
+            const final_meta = new Array();
+            const metadata = await ggoconnection.getMultipleAccountsInfo(mintsPDAs);
+            //console.log("returned: "+JSON.stringify(metadata));
+            // LOOP ALL METADATA WE HAVE
+            /*
+            for (const metavalue of metadata) {
+                //console.log("Metaplex val: "+JSON.stringify(metavalue));
+                if (metavalue?.data) {
+                    try {
+                        const meta_primer = metavalue;
+                        const buf = Buffer.from(metavalue.data);
+                        const meta_final = decodeMetadata(buf);
+                        final_meta.push(meta_final)
+                    } catch (etfm) {
+                        console.log('ERR: ' + etfm + ' for ' + JSON.stringify(metavalue));
+                    }
+                } else {
+                    console.log('Something not right...');
+                }
+            }
+            */
+            return metadata;
+        } catch (e) {
+            // Handle errors from invalid calls
+            console.log(e);
+            return null;
+        }
+    };  
+    
+    const fetchNFTMetadata = async (holdings:any) => {
+        if (holdings){
+            const walletlength = holdings.length;
+
+            const loops = Math.ceil(walletlength / rpclimit);
+            let collectionmeta: any[] = [];
+
+            const sholdings = new Array();
+            for (var item of holdings){
+                if (item){
+                    //console.log("item: "+JSON.stringify(item))
+                    if (item.account.data.parsed.info.tokenAmount.decimals === 0)
+                        sholdings.push(item)
+                }
+            }
+
+            //console.log('sholdings: ' + JSON.stringify(sholdings));
+            
+            for (let x = 0; x < loops; x++) {
+                const tmpcollectionmeta = await getCollectionData(x, sholdings);
+                //console.log('tmpcollectionmeta: ' + JSON.stringify(tmpcollectionmeta));
+                collectionmeta = collectionmeta.concat(tmpcollectionmeta);
+            }
+
+            const final_collection_meta: any[] = [];
+            for (var i = 0; i < collectionmeta.length; i++) {
+                //console.log(i+": "+JSON.stringify(collectionmeta[i])+" --- with --- "+JSON.stringify(wallet_collection[i]));
+                if (collectionmeta[i]) {
+                    collectionmeta[i]['wallet'] = sholdings[i];
+                    try {
+                        const meta_primer = collectionmeta[i];
+                        const buf = Buffer.from(meta_primer.data, 'base64');
+                        const meta_final = decodeMetadata(buf);
+                        collectionmeta[i]['meta'] = meta_final;
+                        collectionmeta[i]['urimeta'] = await window.fetch(meta_final.data.uri).then((res: any) => res.json());
+                        collectionmeta[i]['groupBySymbol'] = 0;
+                        collectionmeta[i]['groupBySymbolIndex'] = 0;
+                        collectionmeta[i]['floorPrice'] = 0;
+                        final_collection_meta.push(collectionmeta[i]);
+                    } catch (e) {
+                        console.log('ERR:' + e);
+                    }
+                }
+            }
+
+            setNftMap(final_collection_meta);
+            return final_collection_meta;
+            //console.log('final_collection_meta: ' + JSON.stringify(final_collection_meta));
+
+        }
     }
 
     const fetchGovernance = async () => {
@@ -845,7 +989,7 @@ export function IdentityView(props: any){
                                                             <Grid item xs={12} alignContent={'right'} textAlign={'right'}>
                                                                 <Grid item alignContent={'right'} textAlign={'right'}>
                                                                     {selectionModel.length <= 500 ?
-                                                                        <BulkSend tokensSelected={selectionModel} solanaHoldingRows={solanaHoldingRows} tokenMap={tokenMap} fetchSolanaTokens={fetchSolanaTokens}  />
+                                                                        <BulkSend tokensSelected={selectionModel} solanaHoldingRows={solanaHoldingRows} tokenMap={tokenMap} nftMap={nftMap} fetchSolanaTokens={fetchSolanaTokens}  />
                                                                     :
                                                                         <Typography variant="caption">Currently limited to 500 token accounts</Typography>
                                                                     }
@@ -869,7 +1013,7 @@ export function IdentityView(props: any){
                                                             <Grid item xs={12} alignContent={'right'} textAlign={'right'}>
                                                                 <Grid item alignContent={'right'} textAlign={'right'}>
                                                                     {selectionModel.length <= 100 ?
-                                                                        <BulkBurnClose tokensSelected={selectionModel} solanaHoldingRows={solanaHoldingRows} tokenMap={tokenMap} fetchSolanaTokens={fetchSolanaTokens} type={0}  />
+                                                                        <BulkBurnClose tokensSelected={selectionModel} solanaHoldingRows={solanaHoldingRows} tokenMap={tokenMap} nftMap={nftMap} fetchSolanaTokens={fetchSolanaTokens} type={0}  />
                                                                     :
                                                                         <Typography variant="caption">Currently limited to 100 token accounts</Typography>
                                                                     }
@@ -986,7 +1130,7 @@ export function IdentityView(props: any){
                                                                 <Grid item xs={12} alignContent={'right'} textAlign={'right'}>
                                                                     <Grid item alignContent={'right'} textAlign={'right'}>
                                                                         {selectionModelClose.length <= 100 ?
-                                                                            <BulkBurnClose tokensSelected={selectionModelClose} solanaHoldingRows={solanaClosableHoldingsRows} tokenMap={tokenMap} fetchSolanaTokens={fetchSolanaTokens} type={1}  />
+                                                                            <BulkBurnClose tokensSelected={selectionModelClose} solanaHoldingRows={solanaClosableHoldingsRows} tokenMap={tokenMap} nftMap={nftMap} fetchSolanaTokens={fetchSolanaTokens} type={1}  />
                                                                         :
                                                                             <Typography variant="caption">Currently limited to 100 token accounts</Typography>
                                                                         }
