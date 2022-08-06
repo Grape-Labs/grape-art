@@ -49,6 +49,7 @@ import {
     CssBaseline,
     Tab,
     Hidden,
+    Badge,
 } from '@mui/material';
 
 import {
@@ -106,6 +107,7 @@ export function IdentityView(props: any){
     const [tokenMap, setTokenMap] = React.useState<Map<string,TokenInfo>>(undefined);
     const [selectionModel, setSelectionModel] = React.useState(null);
     const [selectionModelClose, setSelectionModelClose] = React.useState(null);
+    const [selectionGovernanceModel, setSelectionGovernanceModel] = React.useState(null);
 
     const { t, i18n } = useTranslation();
 
@@ -714,8 +716,8 @@ export function IdentityView(props: any){
                                                     <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                                                     <TabList variant="scrollable" scrollButtons="auto" onChange={handleChange} aria-label="Wallet Navigation">
                                                         <Tab sx={{color:'white', textTransform:'none'}} 
-                                                            icon={<Hidden smUp><AccountBalanceWalletIcon /></Hidden>}
-                                                            label={<Hidden smDown><Typography variant="h6">{t('Tokens')} {solanaHoldings.length}</Typography></Hidden>
+                                                            icon={<Hidden smUp><Badge badgeContent={solanaHoldings.length} color="primary"><AccountBalanceWalletIcon /></Badge></Hidden>}
+                                                            label={<Hidden smDown><Badge badgeContent={solanaHoldings.length} color="primary"><Typography variant="h6">{t('Tokens')}</Typography></Badge></Hidden>
                                                         } value="1" />
                                                         <Tab sx={{color:'white', textTransform:'none'}} 
                                                             icon={<Hidden smUp><SwapHorizIcon /></Hidden>}
@@ -724,20 +726,20 @@ export function IdentityView(props: any){
 
                                                         {solanaClosableHoldings && solanaClosableHoldings.length > 0 &&
                                                             <Tab sx={{color:'white', textTransform:'none'}} 
-                                                                icon={<Hidden smUp><DoNotDisturbIcon /></Hidden>}
-                                                                label={<Hidden smDown><Typography variant="h6">{t('Closable')} {solanaClosableHoldings.length}</Typography></Hidden>
+                                                                icon={<Hidden smUp><Badge badgeContent={solanaClosableHoldings.length} color="error"><DoNotDisturbIcon /></Badge></Hidden>}
+                                                                label={<Hidden smDown><Badge badgeContent={solanaClosableHoldings.length} color="error"><Typography variant="h6">{t('Closable')}</Typography></Badge></Hidden>
                                                             } value="3" />
                                                         }
                                                         {governanceRecord &&
                                                             <Tab sx={{color:'white', textTransform:'none'}} 
-                                                                icon={<Hidden smUp><AccountBalanceIcon /></Hidden>}
-                                                                label={<Hidden smDown><Typography variant="h6">{t('Governance')} {governanceRecord.length}</Typography></Hidden>
+                                                                icon={<Hidden smUp><Badge badgeContent={governanceRecord.length} color="primary"><AccountBalanceIcon /></Badge></Hidden>}
+                                                                label={<Hidden smDown><Badge badgeContent={governanceRecord.length} color="primary"><Typography variant="h6">{t('Governance')} {governanceRecord.length}</Typography></Badge></Hidden>
                                                             } value="4" />
                                                         }
                                                         {solanaDomain && 
                                                             <Tab sx={{color:'white', textTransform:'none'}} 
-                                                                icon={<Hidden smUp><LanguageIcon /></Hidden>}
-                                                                label={<Hidden smDown><Typography variant="h6">{t('Domains')}</Typography></Hidden>
+                                                                icon={<Hidden smUp><Badge badgeContent={solanaDomain.length} color="primary"><LanguageIcon /></Badge></Hidden>}
+                                                                label={<Hidden smDown><Badge badgeContent={solanaDomain.length} color="primary"><Typography variant="h6">{t('Domains')}</Typography></Badge></Hidden>
                                                             } value="5" />
                                                         }
 
@@ -774,8 +776,7 @@ export function IdentityView(props: any){
                                                                         <DataGrid
                                                                             rows={solanaHoldingRows}
                                                                             columns={columns}
-                                                                            pageSize={25}
-                                                                            rowsPerPageOptions={[5, 10, 25, 50, 100, 250, 500]}
+                                                                            rowsPerPageOptions={[25, 50, 100, 250]}
                                                                             sx={{
                                                                                 borderRadius:'17px',
                                                                                 borderColor:'rgba(255,255,255,0.25)',
@@ -810,7 +811,7 @@ export function IdentityView(props: any){
                                                                                 borderColor:'rgba(255,255,255,0.25)'
                                                                             }}}
                                                                         pageSize={25}
-                                                                        rowsPerPageOptions={[5, 10, 25, 50, 100, 250, 500]}
+                                                                        rowsPerPageOptions={[]}
                                                                     />
                                                                     }
                                                                 </div>
@@ -842,7 +843,7 @@ export function IdentityView(props: any){
                                                         </Grid>
                                                     }
 
-                                                    {publicKey && publicKey.toBase58() === pubkey && selectionModel && selectionModel.length > 0 &&
+                                                    {publicKey && publicKey.toBase58() === pubkey && selectionModel && selectionModel.length > 0 && solanaHoldingRows && solanaHoldingRows.length > 0 &&
                                                         <Grid container sx={{mt:1}}>
                                                             <Grid item xs={12} alignContent={'right'} textAlign={'right'}>
                                                                 <Grid item alignContent={'right'} textAlign={'right'}>
@@ -913,10 +914,9 @@ export function IdentityView(props: any){
                                                                             <DataGrid
                                                                                 rows={solanaClosableHoldingsRows}
                                                                                 columns={closablecolumns}
-                                                                                pageSize={25}
-                                                                                rowsPerPageOptions={[5, 10, 25, 50, 100, 250, 500]}
-                                                                                onSelectionModelChange={(newSelectionModel) => {
-                                                                                    setSelectionModelClose(newSelectionModel);
+                                                                                rowsPerPageOptions={[25, 50, 100, 250]}
+                                                                                onSelectionModelChange={(newCloseSelectionModel) => {
+                                                                                    setSelectionModelClose(newCloseSelectionModel);
                                                                                 }}
                                                                                 sx={{
                                                                                     borderRadius:'17px',
@@ -938,7 +938,7 @@ export function IdentityView(props: any){
                                                                                     borderColor:'rgba(255,255,255,0.25)'
                                                                                 }}}
                                                                             pageSize={25}
-                                                                            rowsPerPageOptions={[5, 10, 25, 50, 100, 250, 500]}
+                                                                            rowsPerPageOptions={[]}
                                                                         />
                                                                         }
                                                                     </div>
@@ -946,8 +946,6 @@ export function IdentityView(props: any){
 
                                                             </div>    
                                                         }
-
-                                                        
 
                                                         {publicKey && publicKey.toBase58() === pubkey &&
                                                             <Grid container sx={{mt:1}}>
@@ -987,9 +985,9 @@ export function IdentityView(props: any){
                                                                                 rows={governanceRecordRows}
                                                                                 columns={governancecolumns}
                                                                                 pageSize={25}
-                                                                                rowsPerPageOptions={[5, 10, 25, 50, 100, 250, 500]}
-                                                                                onSelectionModelChange={(newSelectionModel) => {
-                                                                                    setSelectionModel(newSelectionModel);
+                                                                                rowsPerPageOptions={[]}
+                                                                                onSelectionModelChange={(newGovernanceSelectionModel) => {
+                                                                                    setSelectionGovernanceModel(newGovernanceSelectionModel);
                                                                                 }}
                                                                                 initialState={{
                                                                                     sorting: {
@@ -1021,7 +1019,7 @@ export function IdentityView(props: any){
                                                                                     borderColor:'rgba(255,255,255,0.25)'
                                                                                 }}}
                                                                             pageSize={25}
-                                                                            rowsPerPageOptions={[5, 10, 25, 50, 100, 250, 500]}
+                                                                            rowsPerPageOptions={[]}
                                                                         />
                                                                         }
                                                                     </div>
@@ -1040,7 +1038,7 @@ export function IdentityView(props: any){
                                                                                 rows={solanaDomainRows}
                                                                                 columns={domaincolumns}
                                                                                 pageSize={25}
-                                                                                rowsPerPageOptions={[5, 10, 25, 50, 100, 250, 500]}
+                                                                                rowsPerPageOptions={[]}
                                                                                 onSelectionModelChange={(newSelectionModel) => {
                                                                                     setSelectionModel(newSelectionModel);
                                                                                 }}
@@ -1074,7 +1072,7 @@ export function IdentityView(props: any){
                                                                                     borderColor:'rgba(255,255,255,0.25)'
                                                                                 }}}
                                                                             pageSize={25}
-                                                                            rowsPerPageOptions={[5, 10, 25, 50, 100, 250, 500]}
+                                                                            rowsPerPageOptions={[]}
                                                                         />
                                                                         }
                                                                     </div>

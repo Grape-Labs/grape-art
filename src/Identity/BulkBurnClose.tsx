@@ -324,7 +324,12 @@ export default function BulkBurnClose(props: any) {
                         <Grid container spacing={2}>
                             {holdingsSelected &&
                                 <Grid item>
-                                    <Alert severity="warning">This action is not reversable, please verify that the following are the tokens you would like to {type === 0 ? <>BURN</>:<>CLOSE</>}</Alert>
+                                    <Alert severity="warning">
+                                        {type === 0 ? <>This action is not reversable, please verify that the following are the tokens you would like to burn</>
+                                        :
+                                        <>Please verify that the following are the tokens you would like to close</>
+                                        }
+                                    </Alert>
                                     <Typography>
                                         <List dense={true}>
                                             {holdingsSelected.length > 0 && holdingsSelected.map((item: any) => (
