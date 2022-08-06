@@ -38,12 +38,16 @@ import {
   ListItemText,
   ListItemButton,
   Tooltip,
+  Alert,
+  FormControlLabel,
+  Checkbox
 } from '@mui/material';
 
 import { SelectChangeEvent } from '@mui/material/Select';
 import { MakeLinkableAddress, ValidateAddress } from '../utils/grapeTools/WalletAddress'; // global key handling
 import { useSnackbar } from 'notistack';
 
+import WhatshotIcon from '@mui/icons-material/Whatshot';
 import QrCode2Icon from '@mui/icons-material/QrCode2';
 import CircularProgress from '@mui/material/CircularProgress';
 import HelpIcon from '@mui/icons-material/Help';
@@ -107,6 +111,7 @@ export default function BulkBurnClose(props: any) {
     const fetchSolanaTokens = props.fetchSolanaTokens;
 
     const [holdingsSelected, setHoldingsSelected] = React.useState(null);
+    const [accept, setAccept] = React.useState(false);
 
     const [open, setOpen] = React.useState(false);
     const sendtype = props.sendType || 0; // just a type
@@ -122,6 +127,11 @@ export default function BulkBurnClose(props: any) {
         },
         [enqueueSnackbar]
     );
+
+    const handleAccept = () => {
+        setAccept(!accept);
+    };
+
     const handleClickOpen = () => {
         setOpen(true);
     };
@@ -221,9 +231,6 @@ export default function BulkBurnClose(props: any) {
             const batchtx = new Transaction;
             for (var holding = 0; holding < maxLen; holding++) {
                 if (holdingsSelected[item * maxLen + holding]) {
-                    let decimals = holdingsSelected[holding].send.tokenAmount.decimals;
-                    let balance = holdingsSelected[holding].balance * Math.pow(10, decimals); //holdingsSelected[holding].balance;
-                    
                     var tti = await closeTokenInstruction((holdingsSelected[item * maxLen + holding]).mint);
                     if (tti)
                         batchtx.add(tti);
@@ -241,8 +248,6 @@ export default function BulkBurnClose(props: any) {
             const batchtx = new Transaction;
             for (var holding = 0; holding < maxLen; holding++) {
                 if (holdingsSelected[item * maxLen + holding]) {
-                    let decimals = holdingsSelected[holding].send.tokenAmount.decimals;
-                    let balance = holdingsSelected[holding].balance * Math.pow(10, decimals); //holdingsSelected[holding].balance;
                     var tti = await burnTokenInstruction((holdingsSelected[item * maxLen + holding]).mint);
                     if (tti)
                         batchtx.add(tti);
@@ -319,6 +324,7 @@ export default function BulkBurnClose(props: any) {
                         <Grid container spacing={2}>
                             {holdingsSelected &&
                                 <Grid item>
+                                    <Alert severity="warning">This action is not reversable, please verify that the following are the tokens you would like to {type === 0 ? <>BURN</>:<>CLOSE</>}</Alert>
                                     <Typography>
                                         <List dense={true}>
                                             {holdingsSelected.length > 0 && holdingsSelected.map((item: any) => (
@@ -338,7 +344,7 @@ export default function BulkBurnClose(props: any) {
                                                                 </ListItemAvatar>
                                                                 <ListItemText
                                                                     primary={item.name}
-                                                                    secondary={new TokenAmount(item.send.tokenAmount.amount, item.send.tokenAmount.decimals).format()}
+                                                                    secondary={type === 0 ? new TokenAmount(item.send.tokenAmount.amount, item.send.tokenAmount.decimals).format() : ''}
                                                                 />
                                                             </ListItemButton>
                                                         </Tooltip>
@@ -348,11 +354,11 @@ export default function BulkBurnClose(props: any) {
                                     </Typography>
 
                                     <Typography variant="body2">
-                                    You have selected {holdingsSelected.length} token{tokensSelected.length > 1 && <>s</>} to {type === 0 ? <>BURN</>:<>CLOSE</>}, please make sure that this is correct before {type === 0 ? <>BURNING</>:<>CLOSING</>}
+                                    You have selected {holdingsSelected.length} token{tokensSelected.length > 1 && <>s</>} to {type === 0 ? <>BURN</>:<>CLOSE</>}, please make sure that this is correct before {type === 0 ? <>BURNING</>:<>CLOSING</>}.&nbsp;
                                     {type === 0 ? 
-                                        <>The balance of this asset will be burnt and will not be recoverable.</>
+                                        <>The balance of this asset will be burnt and will not be recoverable. Once burnt you can close those accounts.</>
                                     :
-                                        <>This asset is will be deleted forever.</>
+                                        <>This asset is will be deleted forever, if you are participating in SPL Governance, Staking, Farming, Streaming please make sure you close those accounts prior to closing this token account.</>
                                     }
                                     </Typography>
 
@@ -362,18 +368,30 @@ export default function BulkBurnClose(props: any) {
                     </FormControl>
                 </DialogContent>
                 <DialogActions>
-                    <Button     
-                        fullWidth
-                        type="submit"
-                        variant="contained"
-                        color="error"  
-                        title="Send"
-                        disabled={!tokensSelected || (tokensSelected.length <= 0)}
-                        sx={{
-                            borderRadius:'17px'
-                        }}>
-                        {type === 0 ? <>Burn</>:<>Close</>} Token Account
-                    </Button>
+                    <Grid item>
+                    <FormControlLabel
+                        control={
+                        <Checkbox checked={accept} onChange={handleAccept} name="" />
+                        }
+                        label={`I am aware the ${type === 0 ? `burning`:`closing`} of token accounts is not reversable`}
+                    />
+                    </Grid>
+                    <Grid item>
+                    {accept &&
+                        <Button     
+                            fullWidth
+                            type="submit"
+                            variant="contained"
+                            color="error"  
+                            title="Send"
+                            disabled={!tokensSelected || (tokensSelected.length <= 0)}
+                            sx={{
+                                borderRadius:'17px'
+                            }}>
+                            <WhatshotIcon sx={{mr:1}}/>{type === 0 ? <>Burn</>:<>Close</>} Token Account
+                        </Button>
+                    }
+                    </Grid>
                 </DialogActions>
             </form>
         </BootstrapDialog>

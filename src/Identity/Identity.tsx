@@ -48,6 +48,7 @@ import {
     SwipeableDrawer,
     CssBaseline,
     Tab,
+    Hidden,
 } from '@mui/material';
 
 import {
@@ -60,6 +61,12 @@ import {
     MARKET_LOGO
 } from '../utils/grapeTools/constants';
 
+import OpacityIcon from '@mui/icons-material/Opacity';
+import LanguageIcon from '@mui/icons-material/Language';
+import StorageIcon from '@mui/icons-material/Storage';
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import DoNotDisturbIcon from '@mui/icons-material/DoNotDisturb';
+import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 import PortraitIcon from '@mui/icons-material/Portrait';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import PublicIcon from '@mui/icons-material/Public';
@@ -70,7 +77,7 @@ import SolCurrencyIcon from '../components/static/SolCurrencyIcon';
 
 import { ValidateAddress, ValidateCurve, trimAddress, timeAgo, formatBlockTime } from '../utils/grapeTools/WalletAddress'; // global key handling
 import { GRAPE_RPC_ENDPOINT, GRAPE_PROFILE, GRAPE_PREVIEW, DRIVE_PROXY } from '../utils/grapeTools/constants';
-import { ConstructionOutlined, JavascriptRounded, LogoDevOutlined } from "@mui/icons-material";
+import { ConstructionOutlined, DoNotDisturb, JavascriptRounded, LogoDevOutlined } from "@mui/icons-material";
 
 import { useTranslation } from 'react-i18next';
 import { getByPlaceholderText } from "@testing-library/react";
@@ -702,40 +709,46 @@ export function IdentityView(props: any){
                                         </List>
 
                                         {solanaHoldings &&
-
                                             <Box sx={{ width: '100%', typography: 'body1' }}>
                                                 <TabContext value={value} >
                                                     <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                                                     <TabList variant="scrollable" scrollButtons="auto" onChange={handleChange} aria-label="Wallet Navigation">
-                                                        <Tab sx={{color:'white', textTransform:'none'}} label={
-                                                            <Typography variant="h6">{t('Tokens')} {solanaHoldings.length}</Typography>
+                                                        <Tab sx={{color:'white', textTransform:'none'}} 
+                                                            icon={<Hidden smUp><AccountBalanceWalletIcon /></Hidden>}
+                                                            label={<Hidden smDown><Typography variant="h6">{t('Tokens')} {solanaHoldings.length}</Typography></Hidden>
                                                         } value="1" />
-                                                        <Tab sx={{color:'white', textTransform:'none'}} label={
-                                                            <Typography variant="h6">{t('Transactions')}</Typography>
+                                                        <Tab sx={{color:'white', textTransform:'none'}} 
+                                                            icon={<Hidden smUp><SwapHorizIcon /></Hidden>}
+                                                            label={<Hidden smDown><Typography variant="h6">{t('Transactions')}</Typography></Hidden>
                                                         } value="2" />
 
-                                                        {solanaClosableHoldings &&
-                                                            <Tab sx={{color:'white', textTransform:'none'}} label={
-                                                                <Typography variant="h6">{t('Closable')} {solanaClosableHoldings.length}</Typography>
+                                                        {solanaClosableHoldings && solanaClosableHoldings.length > 0 &&
+                                                            <Tab sx={{color:'white', textTransform:'none'}} 
+                                                                icon={<Hidden smUp><DoNotDisturbIcon /></Hidden>}
+                                                                label={<Hidden smDown><Typography variant="h6">{t('Closable')} {solanaClosableHoldings.length}</Typography></Hidden>
                                                             } value="3" />
                                                         }
                                                         {governanceRecord &&
-                                                            <Tab sx={{color:'white', textTransform:'none'}} label={
-                                                                <Typography variant="h6">{t('Governance')} {governanceRecord.length}</Typography>
+                                                            <Tab sx={{color:'white', textTransform:'none'}} 
+                                                                icon={<Hidden smUp><AccountBalanceIcon /></Hidden>}
+                                                                label={<Hidden smDown><Typography variant="h6">{t('Governance')} {governanceRecord.length}</Typography></Hidden>
                                                             } value="4" />
                                                         }
                                                         {solanaDomain && 
-                                                            <Tab sx={{color:'white', textTransform:'none'}} label={
-                                                                <Typography variant="h6">{t('Domains/Registrations')} {solanaDomain.length}</Typography>
+                                                            <Tab sx={{color:'white', textTransform:'none'}} 
+                                                                icon={<Hidden smUp><LanguageIcon /></Hidden>}
+                                                                label={<Hidden smDown><Typography variant="h6">{t('Domains')}</Typography></Hidden>
                                                             } value="5" />
                                                         }
 
-                                                        <Tab disabled={true} sx={{color:'white', textTransform:'none'}} label={
-                                                                <Typography variant="h6">{t('Storage')}</Typography>
+                                                        <Tab disabled={true} sx={{color:'white', textTransform:'none'}} 
+                                                                icon={<Hidden smUp><StorageIcon /></Hidden>}
+                                                                label={<Hidden smDown><Typography variant="h6">{t('Storage')}</Typography></Hidden>
                                                             } value="6" />
 
-                                                        <Tab disabled={true} sx={{color:'white', textTransform:'none'}} label={
-                                                            <Typography variant="h6">{t('Streaming')}</Typography>
+                                                        <Tab disabled={true} sx={{color:'white', textTransform:'none'}} 
+                                                                icon={<Hidden smUp><OpacityIcon /></Hidden>}
+                                                                label={<Hidden smDown><Typography variant="h6">{t('Streaming')}</Typography></Hidden>
                                                         } value="7" />
 
                                                     </TabList>
@@ -954,7 +967,7 @@ export function IdentityView(props: any){
                                                                 <Grid item xs={12} alignContent={'right'} textAlign={'right'}>
                                                                     <Grid item alignContent={'right'} textAlign={'right'}>
                                                                         {selectionModelClose.length <= 100 ?
-                                                                            <BulkBurnClose tokensSelected={selectionModelClose} solanaHoldingRows={solanaClosableHoldings} tokenMap={tokenMap} fetchSolanaTokens={fetchSolanaTokens} type={1}  />
+                                                                            <BulkBurnClose tokensSelected={selectionModelClose} solanaHoldingRows={solanaClosableHoldingsRows} tokenMap={tokenMap} fetchSolanaTokens={fetchSolanaTokens} type={1}  />
                                                                         :
                                                                             <Typography variant="caption">Currently limited to 100 token accounts</Typography>
                                                                         }
