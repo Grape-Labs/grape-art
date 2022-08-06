@@ -156,7 +156,7 @@ export function IdentityView(props: any){
                             {+params.value < 0 ?
                                 <Typography variant='caption' color='error'>{params.value.toFixed(4)}<ArrowDownwardIcon sx={{ml:1,fontSize:'10px'}} /></Typography>
                             :
-                                <Typography variant='caption' color='green'>{params.value.toFixed(4)}<HorizontalRuleIcon sx={{ml:1,fontSize:'10px'}} /></Typography>
+                                <Typography variant='caption' color='green'>{params.value?.toFixed(4)}<HorizontalRuleIcon sx={{ml:1,fontSize:'10px'}} /></Typography>
                             }
                         </>
                     }</>
@@ -443,7 +443,8 @@ export function IdentityView(props: any){
                     name = nft.meta.data.name;
                     metadata = nft.meta.data.uri;
                     // fetch
-                    logo = nft.urimeta.image;
+                    if (nft?.urimeta)
+                        logo = nft.urimeta?.image;
                     foundMetaName = true;
                 }
             }
@@ -649,7 +650,12 @@ export function IdentityView(props: any){
                         const buf = Buffer.from(meta_primer.data, 'base64');
                         const meta_final = decodeMetadata(buf);
                         collectionmeta[i]['meta'] = meta_final;
-                        collectionmeta[i]['urimeta'] = await window.fetch(meta_final.data.uri).then((res: any) => res.json());
+                        try{
+                            if (collectionmeta.length <= 100) // limitd to 100 fetches (will need to optimize this so it does not delay)
+                                collectionmeta[i]['urimeta'] = await window.fetch(meta_final.data.uri).then((res: any) => res.json());
+                        }catch(err){
+                            console.log("ERR: "+err);
+                        }
                         collectionmeta[i]['groupBySymbol'] = 0;
                         collectionmeta[i]['groupBySymbolIndex'] = 0;
                         collectionmeta[i]['floorPrice'] = 0;
