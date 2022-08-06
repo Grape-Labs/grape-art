@@ -50,6 +50,8 @@ import {
     Tab,
     Hidden,
     Badge,
+    LinearProgress,
+    CircularProgress,
 } from '@mui/material';
 
 import {
@@ -100,6 +102,7 @@ export function IdentityView(props: any){
     const [solanaBalance, setSolanaBalance] = React.useState(null);
     const [solanaTransactions, setSolanaTransactions] = React.useState(null);
     const [loading, setLoading] = React.useState(false);
+    const [loadingTokens, setLoadingTokens] = React.useState(false);
     const [loadingTransactions, setLoadingTransactions] = React.useState(false);
     const { publicKey } = useWallet();
     const [pubkey, setPubkey] = React.useState(props.pubkey || null);
@@ -651,8 +654,8 @@ export function IdentityView(props: any){
                         const meta_final = decodeMetadata(buf);
                         collectionmeta[i]['meta'] = meta_final;
                         try{
-                            if (collectionmeta.length <= 100) // limitd to 100 fetches (will need to optimize this so it does not delay)
-                                collectionmeta[i]['urimeta'] = await window.fetch(meta_final.data.uri).then((res: any) => res.json());
+                            //if (collectionmeta.length <= 25) // limitd to 25 fetches (will need to optimize this so it does not delay)
+                            //    collectionmeta[i]['urimeta'] = await window.fetch(meta_final.data.uri).then((res: any) => res.json());
                         }catch(err){
                             console.log("ERR: "+err);
                         }
@@ -713,8 +716,10 @@ export function IdentityView(props: any){
 
     React.useEffect(() => {
         if (pubkey && tokenMap){
-            fetchSolanaTokens();
-            fetchSolanaTransactions();
+            setLoadingTokens(true);
+                fetchSolanaTokens();
+                fetchSolanaTransactions();
+            setLoadingTokens(false);
         }
     }, [tokenMap]);
 
@@ -731,14 +736,6 @@ export function IdentityView(props: any){
     }, [pubkey]);
 
 
-
-    if (loading){
-        return (
-            <>
-                {t('Loading your solana profile')}
-            </>
-        );
-    } else{
         return (
             <Container sx={{mt:4}}>
                     <Box
@@ -880,6 +877,30 @@ export function IdentityView(props: any){
                                                 </Grid>
                                             </ListItem>
                                         </List>
+                                        
+                                        <Box sx={{ width: '100%'}}>
+                                            <Grid container>
+                                                {JSON.stringify(loading)} - {JSON.stringify(loadingTokens)}
+                                                <LinearProgress />
+                                            </Grid>  
+                                        </Box>      
+
+                                        {(loading || loadingTokens) &&
+                                            <Grid container spacing={0} sx={{mt:-2}}>
+                                                <Grid item xs={12} sm={6} md={4} key={1}>
+                                                    <Box
+                                                        className='grape-store-stat-item'
+                                                        sx={{borderRadius:'24px',m:2,p:1}}
+                                                    >
+                                                        <Typography variant="body2" sx={{color:'yellow'}}>
+                                                            loading... 
+                                                            
+                                                            <LinearProgress />
+                                                        </Typography>
+                                                    </Box>
+                                                </Grid>
+                                            </Grid>
+                                        }
 
                                         {solanaHoldings &&
                                             <Box sx={{ width: '100%', typography: 'body1' }}>
@@ -1266,5 +1287,4 @@ export function IdentityView(props: any){
                     </Box>
                 </Container>
         );
-    }
 }
