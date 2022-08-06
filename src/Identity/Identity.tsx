@@ -898,7 +898,7 @@ export function IdentityView(props: any){
                                                         {governanceRecord &&
                                                             <Tab sx={{color:'white', textTransform:'none'}} 
                                                                 icon={<Hidden smUp><Badge badgeContent={governanceRecord.length} color="primary"><AccountBalanceIcon /></Badge></Hidden>}
-                                                                label={<Hidden smDown><Badge badgeContent={governanceRecord.length} color="primary"><Typography variant="h6">{t('Governance')} {governanceRecord.length}</Typography></Badge></Hidden>
+                                                                label={<Hidden smDown><Badge badgeContent={governanceRecord.length} color="primary"><Typography variant="h6">{t('Governance')}</Typography></Badge></Hidden>
                                                             } value="4" />
                                                         }
                                                         {solanaDomain && 
