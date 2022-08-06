@@ -62,6 +62,9 @@ import {
     MARKET_LOGO
 } from '../utils/grapeTools/constants';
 
+import HorizontalRuleIcon from '@mui/icons-material/HorizontalRule';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import OpacityIcon from '@mui/icons-material/Opacity';
 import LanguageIcon from '@mui/icons-material/Language';
 import StorageIcon from '@mui/icons-material/Storage';
@@ -136,6 +139,23 @@ export function IdentityView(props: any){
             }
         },
         { field: 'price', headerName: 'Price', width: 130, align: 'right'},
+        { field: 'change', headerName: '24h Change', width: 130, align: 'right',
+            renderCell: (params) => {
+                return (
+                    <>{+params.value > 0 ?
+                        <Typography variant='caption' color='green'>{params.value.toFixed(4)}<ArrowUpwardIcon sx={{ml:1,fontSize:'10px'}} /></Typography>
+                        :
+                        <>
+                            {+params.value < 0 ?
+                                <Typography variant='caption' color='error'>{params.value.toFixed(4)}<ArrowDownwardIcon sx={{ml:1,fontSize:'10px'}} /></Typography>
+                            :
+                                <Typography variant='caption' color='green'>{params.value.toFixed(4)}<HorizontalRuleIcon sx={{ml:1,fontSize:'10px'}} /></Typography>
+                            }
+                        </>
+                    }</>
+                )
+            }
+        },
         { field: 'value', headerName: 'Value', width: 130, align: 'right'},
         { field: 'send', headerName: '', width: 130,  align: 'center',
             renderCell: (params) => {
@@ -409,6 +429,7 @@ export function IdentityView(props: any){
                 name:tokenMap.get(item.account.data.parsed.info.mint)?.name || item.account.data.parsed.info.mint,
                 balance:itemBalance,
                 price:item.account.data.parsed.info.tokenAmount.decimals === 0 ? 0 : cgPrice[item?.coingeckoId]?.usd || 0,
+                change:item.account.data.parsed.info.tokenAmount.decimals === 0 ? 0 : cgPrice[item?.coingeckoId]?.usd_24h_change || 0,
                 value: +itemValue,
                 send:item.account.data.parsed.info,
                 //swap:item.account.data.parsed.info
