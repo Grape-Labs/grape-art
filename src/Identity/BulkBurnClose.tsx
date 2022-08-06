@@ -382,7 +382,7 @@ export default function BulkBurnClose(props: any) {
                         control={
                         <Checkbox checked={accept} onChange={handleAccept} name="" />
                         }
-                        label={`I am aware the ${type === 0 ? `burning`:`closing`} of token accounts is not reversable`}
+                        label={`${type === 0 ? `I am aware that burning of tokens accounts is not reversable`:`I am aware that I am closing these selected accounts`}`}
                     />
                     </Grid>
                     <Grid item>
