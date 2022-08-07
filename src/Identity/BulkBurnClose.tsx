@@ -357,7 +357,7 @@ export default function BulkBurnClose(props: any) {
                                                                 </ListItemAvatar>
                                                                 <ListItemText
                                                                     primary={item.name}
-                                                                    secondary={type === 0 ? new TokenAmount(item.send.tokenAmount.amount, item.send.tokenAmount.decimals).format() : ''}
+                                                                    secondary={type === 0 ? new TokenAmount(item.send.tokenAmount.amount, item.send.tokenAmount.decimals).format()+' '+item.mint : item.mint}
                                                                 />
                                                             </ListItemButton>
                                                         </Tooltip>
