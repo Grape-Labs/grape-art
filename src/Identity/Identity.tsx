@@ -101,9 +101,10 @@ export function IdentityView(props: any){
     const [governanceRecordRows, setGovernanceRecordRows] = React.useState(null);
     const [solanaBalance, setSolanaBalance] = React.useState(null);
     const [solanaTransactions, setSolanaTransactions] = React.useState(null);
-    const [loading, setLoading] = React.useState(false);
+    const [loadingWallet, setLoadingWallet] = React.useState(false);
     const [loadingTokens, setLoadingTokens] = React.useState(false);
     const [loadingTransactions, setLoadingTransactions] = React.useState(false);
+    const [loadingPosition, setLoadingPosition] = React.useState('');
     const { publicKey } = useWallet();
     const [pubkey, setPubkey] = React.useState(props.pubkey || null);
     const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
@@ -301,12 +302,14 @@ export function IdentityView(props: any){
     };
 
     const fetchSolanaBalance = async () => {
+        setLoadingPosition('SOL Balance');
         const response = await ggoconnection.getBalance(new PublicKey(pubkey));
         setSolanaBalance(response);
     }
 
     const fetchSolanaTransactions = async () => {
         setLoadingTransactions(true);
+        setLoadingPosition('Transations');
         const response = await ggoconnection.getSignaturesForAddress(new PublicKey(pubkey));
 
         let memos: any[] = [];
@@ -360,6 +363,7 @@ export function IdentityView(props: any){
     }
 
     const fetchSolanaTokens = async () => {
+        setLoadingPosition('Tokens');
         //const response = await ggoconnection.getTokenAccountsByOwner(new PublicKey(pubkey), {programId: new PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA")});
         /*
             let meta_final = JSON.parse(item.account.data);
@@ -528,6 +532,7 @@ export function IdentityView(props: any){
     }
     
     const fetchSolanaDomain = async () => {
+        setLoadingPosition('SNS Records');
         const domain = await findDisplayName(ggoconnection, pubkey);
         if (domain){
             if (domain.toString()!==pubkey){
@@ -552,6 +557,7 @@ export function IdentityView(props: any){
     }
 
     const fetchTokens = async () => {
+        setLoadingPosition('Wallet');
         const tokens = await new TokenListProvider().resolve();
         const tokenList = tokens.filterByChainId(ENV.MainnetBeta).getList();
         const tokenMapValue = tokenList.reduce((map, item) => {
@@ -677,6 +683,7 @@ export function IdentityView(props: any){
     }
 
     const fetchGovernance = async () => {
+        setLoadingPosition('Governance');
         const GOVERNANCE_PROGRAM_ID = 'GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw';
         const programId = new PublicKey(GOVERNANCE_PROGRAM_ID);
         const ownerRecordsbyOwner = await getTokenOwnerRecordsByOwner(ggoconnection, programId, publicKey);
@@ -714,27 +721,36 @@ export function IdentityView(props: any){
         }
     }, [urlParams, publicKey]);
 
+    const fetchTokenPositions = async () => {
+        setLoadingTokens(true);
+        await fetchSolanaTokens();
+        await fetchSolanaTransactions();
+        setLoadingTokens(false);
+    }
+
     React.useEffect(() => {
         if (pubkey && tokenMap){
-            setLoadingTokens(true);
-                fetchSolanaTokens();
-                fetchSolanaTransactions();
-            setLoadingTokens(false);
+            fetchTokenPositions();
         }
     }, [tokenMap]);
 
+    const fetchWalletPositions = async () => {
+        setLoadingWallet(true);
+        await fetchTokens();
+        await fetchProfilePicture();
+        await fetchSolanaDomain();
+        await fetchSolanaBalance();
+        await fetchGovernance();
+        setLoadingWallet(false);
+    }
+
     React.useEffect(() => {
         if (pubkey){
-            setLoading(true);
-                fetchTokens();
-                fetchProfilePicture();
-                fetchSolanaDomain();
-                fetchSolanaBalance();
-                fetchGovernance();
-            setLoading(false);
+            fetchWalletPositions();
         }
     }, [pubkey]);
 
+    {
 
         return (
             <Container sx={{mt:4}}>
@@ -878,16 +894,16 @@ export function IdentityView(props: any){
                                             </ListItem>
                                         </List>
                                         
-                                        {(loading || loadingTokens) &&
-                                            <Grid container spacing={0} sx={{mt:-2}}>
-                                                <Grid item xs={12} sm={6} md={4} key={1}>
+                                        {(loadingWallet || loadingTokens) &&
+                                            <Grid container spacing={0} sx={{}}>
+                                                <Grid item xs={12} key={1}>
                                                     <Box
                                                         className='grape-store-stat-item'
                                                         sx={{borderRadius:'24px',m:2,p:1}}
+                                                        textAlign='center'
                                                     >
                                                         <Typography variant="body2" sx={{color:'yellow'}}>
-                                                            loading... 
-                                                            
+                                                            loading {loadingPosition}...
                                                             <LinearProgress />
                                                         </Typography>
                                                     </Box>
@@ -1280,4 +1296,5 @@ export function IdentityView(props: any){
                     </Box>
                 </Container>
         );
+    }
 }
