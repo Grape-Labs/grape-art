@@ -214,7 +214,7 @@ export default function BulkSend(props: any) {
         }        
 
         try{
-            enqueueSnackbar(`Preparing to batch send`,{ variant: 'info' });
+            enqueueSnackbar(`Preparing transaction`,{ variant: 'info' });
             const signature = await sendTransaction(transactions, freeconnection);
             
             const snackprogress = (key:any) => (
@@ -243,10 +243,10 @@ export default function BulkSend(props: any) {
     
     async function transferTokens(toaddress:string) {
         var maxLen = 7;
-        var maxLenTx = holdingsSelected.length / maxLen;
+        var maxLenTx = Math.ceil(holdingsSelected.length / maxLen);
         for (var item = 0; item < maxLenTx; item++) {
             const batchtx = new Transaction;
-            enqueueSnackbar(`Processing transaction 1 of ${maxLenTx}`,{ variant: 'info' });
+            enqueueSnackbar(`Processing transaction ${item+1} of ${maxLenTx}`,{ variant: 'info' });
             for (var holding = 0; holding < maxLen; holding++) {
                 if (holdingsSelected[item * maxLen + holding]) {
                     let decimals = holdingsSelected[holding].send.tokenAmount.decimals;

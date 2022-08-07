@@ -199,7 +199,7 @@ export default function BulkBurnClose(props: any) {
         }       
 
         try{
-            enqueueSnackbar(`Preparing execute instructions`,{ variant: 'info' });
+            enqueueSnackbar(`Preparing transaction`,{ variant: 'info' });
             const signature = await sendTransaction(transactions, freeconnection);
             
             const snackprogress = (key:any) => (
@@ -228,7 +228,9 @@ export default function BulkBurnClose(props: any) {
     
     async function closeTokens() {
         var maxLen = 7;
-        for (var item = 0; item < holdingsSelected.length / maxLen; item++) {
+        var maxLenTx = Math.ceil(holdingsSelected.length / maxLen);
+        for (var item = 0; item < maxLenTx; item++) {
+            enqueueSnackbar(`Processing transaction ${item+1} of ${maxLenTx}`,{ variant: 'info' });
             const batchtx = new Transaction;
             for (var holding = 0; holding < maxLen; holding++) {
                 if (holdingsSelected[item * maxLen + holding]) {
@@ -245,9 +247,9 @@ export default function BulkBurnClose(props: any) {
     }
     async function burnTokens() {
         var maxLen = 7;
-        var maxLenTx = holdingsSelected.length / maxLen;
+        var maxLenTx = Math.ceil(holdingsSelected.length / maxLen);
         for (var item = 0; item < maxLenTx; item++) {
-            enqueueSnackbar(`Processing transaction 1 of ${maxLenTx}`,{ variant: 'info' });
+            enqueueSnackbar(`Processing transaction ${item+1} of ${maxLenTx}`,{ variant: 'info' });
             const batchtx = new Transaction;
             for (var holding = 0; holding < maxLen; holding++) {
                 if (holdingsSelected[item * maxLen + holding]) {
