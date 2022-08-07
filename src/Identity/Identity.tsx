@@ -925,7 +925,7 @@ export function IdentityView(props: any){
                                             </ListItem>
                                         </List>
                                         
-                                        {(loadingWallet || loadingTokens) &&
+                                        {(loadingWallet || loadingTokens || loadingGovernance) &&
                                             <Grid container spacing={0} sx={{}}>
                                                 <Grid item xs={12} key={1}>
                                                     <Box
