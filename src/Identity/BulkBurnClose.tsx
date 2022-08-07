@@ -371,7 +371,7 @@ export default function BulkBurnClose(props: any) {
                                     {type === 0 ? 
                                         <>The balance of this asset will be burnt and will not be recoverable. Once burnt you can close those accounts.</>
                                     :
-                                        <>This asset is will be deleted forever, if you are participating in SPL Governance, Staking, Farming, Streaming please make sure you close those accounts prior to closing this token account.</>
+                                        <>This asset is will be closed, if you are participating in SPL Governance, Staking, Farming, Streaming please make sure you close those accounts and withdraw positions prior to closing this token account.</>
                                     }
                                     </Typography>
 
