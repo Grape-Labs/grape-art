@@ -1,6 +1,6 @@
 {
     "name": "@grape-labs/grape-art",
-    "version": "1.1.325",
+    "version": "1.1.326",
     "author": "Grape devDAO",
     "repository": "https://github.com/grape-labs/grape-art",
     "license": "Apache-2.0",
@@ -97,6 +97,7 @@
         "react-i18next": "^11.16.1",
         "react-infinite-scroll-component": "^6.1.0",
         "react-jazzicon": "^1.0.3",
+        "react-material-file-upload": "^0.0.4",
         "react-query": "^4.0.0",
         "react-router": "^6.3.0",
         "react-router-dom": "^6.2.1",

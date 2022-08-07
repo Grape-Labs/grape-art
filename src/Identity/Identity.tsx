@@ -8,8 +8,9 @@ import { decodeMetadata } from '../utils/grapeTools/utils';
 import { PublicKey, Connection, Commitment } from '@solana/web3.js';
 import {ENV, TokenInfo, TokenListProvider} from '@solana/spl-token-registry';
 
-import { getRealm, getAllProposals, getGovernance, getTokenOwnerRecordsByOwner, getTokenOwnerRecord, getRealmConfigAddress, getGovernanceAccount, getAccountTypes, GovernanceAccountType, tryGetRealmConfig  } from '@solana/spl-governance';
+import { getRealm, getRealms, getAllProposals, getGovernance, getTokenOwnerRecordsByOwner, getTokenOwnerRecord, getRealmConfigAddress, getGovernanceAccount, getAccountTypes, GovernanceAccountType, tryGetRealmConfig  } from '@solana/spl-governance';
 
+import { StorageView } from './plugins/Storage';
 import SendToken from '../StoreFront/Send';
 import JupiterSwap from '../StoreFront/Swap';
 import BulkSend from './BulkSend';
@@ -82,7 +83,7 @@ import SolIcon from '../components/static/SolIcon';
 import SolCurrencyIcon from '../components/static/SolCurrencyIcon';
 
 import { ValidateAddress, ValidateCurve, trimAddress, timeAgo, formatBlockTime } from '../utils/grapeTools/WalletAddress'; // global key handling
-import { GRAPE_RPC_ENDPOINT, GRAPE_PROFILE, GRAPE_PREVIEW, DRIVE_PROXY } from '../utils/grapeTools/constants';
+import { GRAPE_RPC_ENDPOINT, THEINDEX_RPC_ENDPOINT, GRAPE_PROFILE, GRAPE_PREVIEW, DRIVE_PROXY } from '../utils/grapeTools/constants';
 import { ConstructionOutlined, DoNotDisturb, JavascriptRounded, LogoDevOutlined } from "@mui/icons-material";
 
 import { useTranslation } from 'react-i18next';
@@ -104,10 +105,13 @@ export function IdentityView(props: any){
     const [loadingWallet, setLoadingWallet] = React.useState(false);
     const [loadingTokens, setLoadingTokens] = React.useState(false);
     const [loadingTransactions, setLoadingTransactions] = React.useState(false);
+    const [loadingGovernance, setLoadingGovernance] = React.useState(false);
     const [loadingPosition, setLoadingPosition] = React.useState('');
+    const [realms, setRealms] = React.useState(null);
     const { publicKey } = useWallet();
     const [pubkey, setPubkey] = React.useState(props.pubkey || null);
     const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
+    const ticonnection = new Connection(THEINDEX_RPC_ENDPOINT);
     const {handlekey} = useParams<{ handlekey: string }>();
     const [searchParams, setSearchParams] = useSearchParams();
     const urlParams = searchParams.get("pkey") || searchParams.get("address") || handlekey;
@@ -686,18 +690,39 @@ export function IdentityView(props: any){
         setLoadingPosition('Governance');
         const GOVERNANCE_PROGRAM_ID = 'GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw';
         const programId = new PublicKey(GOVERNANCE_PROGRAM_ID);
-        const ownerRecordsbyOwner = await getTokenOwnerRecordsByOwner(ggoconnection, programId, publicKey);
+        
+        const rlms = await getRealms(ticonnection, programId);
+        const uTable = rlms.reduce((acc, it) => (acc[it.pubkey.toBase58()] = it, acc), {})
+        setRealms(uTable);
+        
+        const ownerRecordsbyOwner = await getTokenOwnerRecordsByOwner(ticonnection, programId, publicKey);
+
         //console.log("ownerRecordsbyOwner "+JSON.stringify(ownerRecordsbyOwner))
         const governance = new Array();
         
         let cnt = 0;
+        console.log("all uTable "+JSON.stringify(uTable))
+
         for (var item of ownerRecordsbyOwner){
+            const realm = uTable[item.account.realm.toBase58()];
+            console.log("realm: "+JSON.stringify(realm))
+            const name = realm.account.name;
+            let votes = item.account.governingTokenDepositAmount.toString();
+            
+            let thisToken = tokenMap.get(item.account.governingTokenMint.toBase58());
+            
+            if (thisToken){
+                votes = (new TokenAmount(+item.account.governingTokenDepositAmount, thisToken.decimals).format())
+            } else{
+                votes = 'NFT/Council';
+            }
+
             governance.push({
                 id:cnt,
                 pubkey:item.pubkey,
-                realm:item.account.realm,
+                realm:name,
                 governingTokenMint:item.account.governingTokenMint,
-                governingTokenDepositAmount:item.account.governingTokenDepositAmount,
+                governingTokenDepositAmount:votes,
                 unrelinquishedVotesCount:item.account.unrelinquishedVotesCount,
                 totalVotesCount:item.account.totalVotesCount,
                 relinquish:item.pubkey,
@@ -721,6 +746,12 @@ export function IdentityView(props: any){
         }
     }, [urlParams, publicKey]);
 
+    const fetchGovernancePositions = async () => {
+        setLoadingGovernance(true);
+        await fetchGovernance();
+        setLoadingGovernance(false);
+    }
+
     const fetchTokenPositions = async () => {
         setLoadingTokens(true);
         await fetchSolanaTokens();
@@ -731,16 +762,16 @@ export function IdentityView(props: any){
     React.useEffect(() => {
         if (pubkey && tokenMap){
             fetchTokenPositions();
+            fetchGovernancePositions();
         }
     }, [tokenMap]);
 
     const fetchWalletPositions = async () => {
         setLoadingWallet(true);
-        await fetchTokens();
+        const tmap = await fetchTokens();
         await fetchProfilePicture();
         await fetchSolanaDomain();
         await fetchSolanaBalance();
-        await fetchGovernance();
         setLoadingWallet(false);
     }
 
@@ -1282,6 +1313,11 @@ export function IdentityView(props: any){
                                                         }
 
                                                     </TabPanel>
+
+                                                    <TabPanel value="6">
+                                                        <StorageView />
+                                                    </TabPanel>
+
                                                 </TabContext>
                                             </Box>
                                         }
