@@ -515,6 +515,7 @@ export function StoreFrontView(this: any, props: any) {
     const [final_collection, setCollectionMetaFinal] = React.useState(null);
     //const isConnected = session && session.isConnected;
     const [loading, setLoading] = React.useState(false);
+    const [loadingPosition, setLoadingPosition] = React.useState(null);
     const [tokenPrice, setTokenPrice] = React.useState(null);
     const [floorPrice, setFloorPrice] = React.useState(0);
     const [crossListings, setCrossListings] = React.useState(0);
@@ -561,6 +562,7 @@ export function StoreFrontView(this: any, props: any) {
 
     const fetchVerifiedCollection = async(address:string) => {
         setLoadingVerifiedCollection(true);
+        setLoadingPosition("Verified Collection");
         try{
             //const url = './verified_collections.json';
             const url = GRAPE_COLLECTIONS_DATA+'verified_collections.json';
@@ -593,6 +595,7 @@ export function StoreFrontView(this: any, props: any) {
             id: "1",
         };
         try{
+            setLoadingPosition("Dynamic Mint List");
             const staticMintList = await fetchMintList(updateAuthority)
 
             const response = await window.fetch(THEINDEX_RPC_ENDPOINT, {
@@ -673,6 +676,7 @@ export function StoreFrontView(this: any, props: any) {
 
     const fetchMintList = async(address:string) => {
         try{
+            setLoadingPosition("Indexed Mints");
             const url = GRAPE_COLLECTIONS_DATA+address.substring(0,9)+'.json';
             console.log("with: "+url);
             const response = await window.fetch(url, {
@@ -693,6 +697,7 @@ export function StoreFrontView(this: any, props: any) {
 
     const fetchMintStates = async(address:string) => {
         try{
+            setLoadingPosition("Collection States");
             await getCollectionStates(address);
         } catch(e){console.log("ERR: "+e)}
         
@@ -700,6 +705,7 @@ export function StoreFrontView(this: any, props: any) {
 
     const fetchMintEscrowStates = async(address:string) => {
         try{
+            setLoadingPosition("Escrow States");
             await getEscrowStates(address);
         } catch(e){console.log("ERR: "+e)}
         
@@ -739,6 +745,7 @@ export function StoreFrontView(this: any, props: any) {
             //console.log("pushed pdas: "+JSON.stringify(mintsPDAs));
             
             let metadata = null;
+            setLoadingPosition("Collection Metadata");
             try{
                 metadata = await ticonnection.getMultipleAccountsInfo(mintsPDAs);
             } catch(err){
@@ -848,6 +855,7 @@ export function StoreFrontView(this: any, props: any) {
         
         if (!stateLoading){
             setStateLoading(true);
+            setLoadingPosition("Auction House states");
             const results = await getReceiptsFromAuctionHouse(collectionAuthority.auctionHouse || AUCTION_HOUSE_ADDRESS, null, null, null, false, null);
 
             const ahActivity = new Array();
@@ -1794,8 +1802,11 @@ export function StoreFrontView(this: any, props: any) {
                                                 sx={{borderRadius:'24px',m:2,p:1}}
                                             >
                                                 <Typography variant="body2" sx={{color:'yellow'}}>
-                                                    FLOOR/LISTINGS  
-                                                    
+                                                    {stateLoading ?
+                                                        <>loading {loadingPosition}</>
+                                                    :
+                                                        <>FLOOR/LISTINGS</>
+                                                    }
                                                     {!stateLoading ?
                                                         <Button
                                                             onClick={refreshMintStates}
