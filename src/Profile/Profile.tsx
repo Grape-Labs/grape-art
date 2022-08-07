@@ -983,7 +983,7 @@ const GeneralProfileView = (props: any) => {
                         console.log('ERR: ' + etfm + ' for ' + JSON.stringify(metavalue));
                     }
                 } else {
-                    console.log('Something not right...');
+                    console.log('Something not right with '+JSON.stringify(metavalue)+'...');
                 }
             }
 

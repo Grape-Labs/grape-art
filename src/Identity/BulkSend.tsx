@@ -243,8 +243,10 @@ export default function BulkSend(props: any) {
     
     async function transferTokens(toaddress:string) {
         var maxLen = 7;
-        for (var item = 0; item < holdingsSelected.length / maxLen; item++) {
+        var maxLenTx = holdingsSelected.length / maxLen;
+        for (var item = 0; item < maxLenTx; item++) {
             const batchtx = new Transaction;
+            enqueueSnackbar(`Processing transaction 1 of ${maxLenTx}`,{ variant: 'info' });
             for (var holding = 0; holding < maxLen; holding++) {
                 if (holdingsSelected[item * maxLen + holding]) {
                     let decimals = holdingsSelected[holding].send.tokenAmount.decimals;

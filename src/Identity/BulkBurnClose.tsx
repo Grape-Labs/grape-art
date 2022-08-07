@@ -245,7 +245,9 @@ export default function BulkBurnClose(props: any) {
     }
     async function burnTokens() {
         var maxLen = 7;
-        for (var item = 0; item < holdingsSelected.length / maxLen; item++) {
+        var maxLenTx = holdingsSelected.length / maxLen;
+        for (var item = 0; item < maxLenTx; item++) {
+            enqueueSnackbar(`Processing transaction 1 of ${maxLenTx}`,{ variant: 'info' });
             const batchtx = new Transaction;
             for (var holding = 0; holding < maxLen; holding++) {
                 if (holdingsSelected[item * maxLen + holding]) {

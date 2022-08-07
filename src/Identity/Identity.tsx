@@ -878,13 +878,6 @@ export function IdentityView(props: any){
                                             </ListItem>
                                         </List>
                                         
-                                        <Box sx={{ width: '100%'}}>
-                                            <Grid container>
-                                                {JSON.stringify(loading)} - {JSON.stringify(loadingTokens)}
-                                                <LinearProgress />
-                                            </Grid>  
-                                        </Box>      
-
                                         {(loading || loadingTokens) &&
                                             <Grid container spacing={0} sx={{mt:-2}}>
                                                 <Grid item xs={12} sm={6} md={4} key={1}>
