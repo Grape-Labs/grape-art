@@ -230,10 +230,11 @@ export default function BulkBurnClose(props: any) {
         var maxLen = 7;
         var maxLenTx = Math.ceil(holdingsSelected.length / maxLen);
         for (var item = 0; item < maxLenTx; item++) {
-            enqueueSnackbar(`Processing transaction ${item+1} of ${maxLenTx}`,{ variant: 'info' });
+            enqueueSnackbar(`Processing close transaction ${item+1} of ${maxLenTx}`,{ variant: 'info' });
             const batchtx = new Transaction;
             for (var holding = 0; holding < maxLen; holding++) {
                 if (holdingsSelected[item * maxLen + holding]) {
+                    console.log("adding to close ("+(item * maxLen + holding)+"): "+(holdingsSelected[item * maxLen + holding]).mint)
                     var tti = await closeTokenInstruction((holdingsSelected[item * maxLen + holding]).mint);
                     if (tti)
                         batchtx.add(tti);
@@ -249,10 +250,11 @@ export default function BulkBurnClose(props: any) {
         var maxLen = 7;
         var maxLenTx = Math.ceil(holdingsSelected.length / maxLen);
         for (var item = 0; item < maxLenTx; item++) {
-            enqueueSnackbar(`Processing transaction ${item+1} of ${maxLenTx}`,{ variant: 'info' });
+            enqueueSnackbar(`Processing burn transaction ${item+1} of ${maxLenTx}`,{ variant: 'info' });
             const batchtx = new Transaction;
             for (var holding = 0; holding < maxLen; holding++) {
                 if (holdingsSelected[item * maxLen + holding]) {
+                    console.log("adding to burn ("+(item * maxLen + holding)+"): "+(holdingsSelected[item * maxLen + holding]).mint)
                     var tti = await burnTokenInstruction((holdingsSelected[item * maxLen + holding]).mint);
                     if (tti)
                         batchtx.add(tti);
