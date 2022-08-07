@@ -309,7 +309,7 @@ export function IdentityView(props: any){
 
     const fetchSolanaTransactions = async () => {
         setLoadingTransactions(true);
-        setLoadingPosition('Transations');
+        setLoadingPosition(' last (100) Transactions');
         const response = await ggoconnection.getSignaturesForAddress(new PublicKey(pubkey));
 
         let memos: any[] = [];
