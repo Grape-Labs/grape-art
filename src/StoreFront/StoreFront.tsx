@@ -117,6 +117,7 @@ import ActivityView from './Activity';
 import { SocialMediaView } from './SocialMedia';
 import { GovernanceView } from './Governance';
 import { MembersView } from './Members';
+import { HoldersView } from './Holders';
 import { TokenView } from './Token';
 
 import { MakeLinkableAddress, ValidateAddress, trimAddress, timeAgo } from '../utils/grapeTools/WalletAddress'; // global key handling
@@ -443,8 +444,9 @@ const MainMenu = (props:any) => {
 enum NavPanel {
     Token,
     Marketplace,
-    Governance,
     Holders,
+    Governance,
+    Members,
     Topics,
     Chat,
     Work,
@@ -1906,11 +1908,14 @@ export function StoreFrontView(this: any, props: any) {
                         {collectionAuthority?.tokenType && collectionAuthority?.tokenType === 'NFT' &&
                             <Tab icon={<StorefrontIcon />} aria-label="Marketplace" value={NavPanel.Marketplace} sx={{color:'white'}} title="Marketplace" />
                         }
+                        {collectionAuthority?.tokenType && collectionAuthority?.tokenType === 'NFT' &&
+                            <Tab icon={<PeopleIcon />} aria-label="Holders" value={NavPanel.Holders} sx={{color:'white'}} title="Holders" />
+                        }
                         {collectionAuthority?.governance &&
                             <Tab icon={<AccountBalanceIcon />} aria-label="Governance" value={NavPanel.Governance} sx={{color:'white'}} title="Governance" />
                         }
                         {collectionAuthority?.governance &&
-                            <Tab icon={<PeopleIcon />} aria-label="Holders" value={NavPanel.Holders} sx={{color:'white'}} title="Members" />
+                            <Tab icon={<PeopleIcon />} aria-label="Members" value={NavPanel.Members} sx={{color:'white'}} title="Members" />
                         }
 
                         <Tab icon={<RateReviewIcon />} aria-label="Topics" disabled={true} value={NavPanel.Topics} sx={{color:'white'}} />
@@ -1941,6 +1946,14 @@ export function StoreFrontView(this: any, props: any) {
                         </Box>
                     </TabPanel>
 
+                    <TabPanel value={tabValue} index={NavPanel.Holders}>
+                        <Box> 
+                            {collectionAuthority &&  
+                                <HoldersView collectionAuthority={collectionAuthority} />
+                            }
+                        </Box>
+                    </TabPanel>
+
                     <TabPanel value={tabValue} index={NavPanel.Governance}>
                         <Box> 
                             {collectionAuthority &&  
@@ -1949,7 +1962,7 @@ export function StoreFrontView(this: any, props: any) {
                         </Box>
                     </TabPanel>
 
-                    <TabPanel value={tabValue} index={NavPanel.Holders}>
+                    <TabPanel value={tabValue} index={NavPanel.Members}>
                         <Box> 
                             {collectionAuthority &&  
                                 <MembersView collectionAuthority={collectionAuthority} />
