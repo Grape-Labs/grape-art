@@ -450,7 +450,7 @@ function RenderGovernanceMembersTable(props:any) {
                     <TableFooter>
                         <TableRow>
                             <TablePagination
-                            rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
+                            rowsPerPageOptions={[5, 10, 25]}
                             colSpan={5}
                             count={members && members.length}
                             rowsPerPage={rowsPerPage}

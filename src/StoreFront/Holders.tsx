@@ -37,7 +37,8 @@ import {
   LinearProgress,
   Dialog,
   DialogActions,
-  DialogContent
+  DialogContent,
+  ButtonGroup
 } from '@mui/material/';
 
 import { PreviewView } from "../Preview/Preview";
@@ -47,6 +48,7 @@ import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
 
 import moment from 'moment';
 
+import ParaglidingIcon from '@mui/icons-material/Paragliding';
 import DownloadIcon from '@mui/icons-material/Download';
 import Chat from '@mui/icons-material/Chat';
 import FirstPageIcon from '@mui/icons-material/FirstPage';
@@ -74,6 +76,7 @@ import {
 
 import { formatAmount, getFormattedNumberToLocale } from '../utils/grapeTools/helpers'
 import { MakeLinkableAddress, ValidateAddress, ValidateCurve, trimAddress, timeAgo } from '../utils/grapeTools/WalletAddress'; // global key handling
+import { Paragliding } from '@mui/icons-material';
 //import { RevokeCollectionAuthority } from '@metaplex-foundation/mpl-token-metadata';
 
 interface Nft {
@@ -443,7 +446,7 @@ function RenderHoldersTable(props:any) {
                     <TableFooter>
                         <TableRow>
                             <TablePagination
-                            rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
+                            rowsPerPageOptions={[5, 10, 25]}
                             colSpan={5}
                             count={nfts && nfts.length}
                             rowsPerPage={rowsPerPage}
@@ -533,22 +536,26 @@ export function HoldersView(props: any) {
 
     React.useEffect(() => {
         if (nfts){
-            if (!holderExport){
-                const harray = new Array();
-                for (var item of nfts){
-                    harray.push({
-                        mint:item.mintAddress,
-                        name:item.name,
-                        owner:item.owner.address
-                    })
-                }
+            if (nfts.length > 0){
+                if (!holderExport){
+                    let harray = new Array();
+                    for(var item of nfts){
+                        try{
+                            harray.push({
+                                mint:item.mintAddress,
+                                name:item.name,
+                                owner:item.owner.address
+                            })
+                        }catch(e){console.log("ERR: "+e)}
+                    }
 
-                setHolderExport(harray);
-                const jsonString = `data:text/json;chatset=utf-8,${encodeURIComponent(
-                    JSON.stringify(harray)
-                )}`;
-                
-                setFileGenerated(jsonString);
+                    setHolderExport(harray);
+                    const jsonString = `data:text/json;chatset=utf-8,${encodeURIComponent(
+                        JSON.stringify(harray)
+                    )}`;
+
+                    setFileGenerated(jsonString);
+                }
             }
         }
     }, [nfts]);
@@ -592,14 +599,24 @@ export function HoldersView(props: any) {
                                     </Typography>
                                 </Grid>
                                 <Grid item xs textAlign={'right'}>
-                                    <Button
-                                        variant='outlined'
-                                        download={`${collectionAuthority.collection || collectionAuthority.updateAuthority}_holders_grape.json`}
-                                        href={fileGenerated}
-                                        sx={{borderRadius:'17px', color:'white'}}
-                                    >
-                                        <DownloadIcon /> Export
-                                    </Button>
+                                    <ButtonGroup variant='outlined' sx={{borderRadius:'17px'}}>
+                                        <Button
+                                            disabled={true}
+                                            sx={{borderRadius:'17px', color:'white'}}
+                                        >
+                                            <ParaglidingIcon /> Airdrop
+                                        </Button>
+                                        {fileGenerated &&
+                                            <Button
+                                                variant='outlined'
+                                                download={`${collectionAuthority.collection || collectionAuthority.updateAuthority}_holders_grape.json`}
+                                                href={fileGenerated}
+                                                sx={{borderRadius:'17px', ml:1 ,color:'white'}}
+                                            >
+                                                <DownloadIcon /> Export
+                                            </Button>
+                                        }
+                                    </ButtonGroup>
                                 </Grid>
                             </Grid>
                         </>
