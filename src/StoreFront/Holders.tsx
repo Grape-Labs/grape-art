@@ -1,6 +1,7 @@
 
 import { gql } from '@apollo/client'
 import gql_client from '../gql_client'
+import { Link } from "react-router-dom";
 import { getRealm, getAllTokenOwnerRecords, getTokenOwnerRecordsByOwner } from '@solana/spl-governance';
 import { PublicKey, TokenAmount, Connection } from '@solana/web3.js';
 import { ENV, TokenListProvider, TokenInfo } from '@solana/spl-token-registry';
@@ -34,14 +35,19 @@ import {
   Tooltip,
   CircularProgress,
   LinearProgress,
+  Dialog,
+  DialogActions,
+  DialogContent
 } from '@mui/material/';
 
+import { PreviewView } from "../Preview/Preview";
 import { getProfilePicture } from '@solflare-wallet/pfp';
 import { findDisplayName } from '../utils/name-service';
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
 
 import moment from 'moment';
 
+import DownloadIcon from '@mui/icons-material/Download';
 import Chat from '@mui/icons-material/Chat';
 import FirstPageIcon from '@mui/icons-material/FirstPage';
 import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
@@ -61,6 +67,7 @@ import { GRAPE_BOTTOM_CHAT_ID } from '../utils/ui-contants';
 
 import PropTypes from 'prop-types';
 import { 
+    GRAPE_PREVIEW,
     GRAPE_RPC_ENDPOINT, 
     THEINDEX_RPC_ENDPOINT,
     TWITTER_PROXY } from '../utils/grapeTools/constants';
@@ -75,6 +82,15 @@ interface Nft {
     image: string
     owner: any
 }
+
+const BootstrapDialog = styled(Dialog)(({ theme }) => ({
+    '& .MuDialogContent-root': {
+      padding: theme.spacing(2),
+    },
+    '& .MuDialogActions-root': {
+      padding: theme.spacing(1),
+    },
+}));
 
 const StyledTable = styled(Table)(({ theme }) => ({
     '& .MuiTableCell-root': {
@@ -164,6 +180,15 @@ function RenderHoldersTable(props:any) {
     const token = props.token;
     const tokenDecimals = token?.decimals || 6;
     const { navigation, open } = useDialectUiId<ChatNavigationHelpers>(GRAPE_BOTTOM_CHAT_ID);
+    const [openPreviewDialog, setOpenPreviewDialog] = React.useState(false);
+
+    const handleClickOpenPreviewDialog = () => {
+        setOpenPreviewDialog(true);
+    };
+    
+    const handleClosePreviewDialog = () => {
+        setOpenPreviewDialog(false);
+    };
 
     const handleChangePage = (event:any, newPage:number) => {
         setPage(newPage);
@@ -352,7 +377,11 @@ function RenderHoldersTable(props:any) {
                                         
                                         <TableCell align="center" >
                                             <Typography variant="h6">
-                                                {item.image}
+                                                <Avatar
+                                                    sx={{backgroundColor:'#222'}}
+                                                    src={item.image}
+                                                    alt={item.name}
+                                                />
                                             </Typography>
                                         </TableCell>
                                         <TableCell align="center" >
@@ -366,6 +395,42 @@ function RenderHoldersTable(props:any) {
                                                 {item.mintAddress}
                                             </Typography>
                                         </TableCell>
+
+                                        <TableCell align="center"> 
+                                            <Tooltip title='View'>
+                                                <Button 
+                                                    component={Link} to={`${GRAPE_PREVIEW}${item.mintAddress}`}
+                                                    sx={{
+                                                        borderRadius: '24px',color:'white'
+                                                    }}
+                                                >
+                                                    view
+                                                </Button>
+                                            </Tooltip>
+                                        </TableCell>
+
+                                        {/*
+                                        <BootstrapDialog 
+                                            fullWidth={true}
+                                            maxWidth={"lg"}
+                                            open={openPreviewDialog} onClose={handleClosePreviewDialog}
+                                            PaperProps={{
+                                                style: {
+                                                    background: '#13151C',
+                                                    border: '1px solid rgba(255,255,255,0.05)',
+                                                    borderTop: '1px solid rgba(255,255,255,0.1)',
+                                                    borderRadius: '20px'
+                                                }
+                                            }}
+                                        >
+                                            <DialogContent>
+                                                <PreviewView handlekey={item.mintAddress} />
+                                            </DialogContent>
+                                            <DialogActions>
+                                                <Button variant="text" onClick={handleClosePreviewDialog}>Close</Button>
+                                            </DialogActions>
+                                        </BootstrapDialog>
+                                        */}
                                     </TableRow>
                                 }
                             </>
@@ -406,14 +471,11 @@ function RenderHoldersTable(props:any) {
 export function HoldersView(props: any) {
     const collectionAuthority = props.collectionAuthority;
     const [loading, setLoading] = React.useState(false);
-    const [members, setMembers] = React.useState(null);
     const { connection } = useConnection();
     const { publicKey } = useWallet();
-    const [realm, setRealm] = React.useState(null);
-    const [participating, setParticipating] = React.useState(false)
-    const [participatingRealm, setParticipatingRealm] = React.useState(null)
-    const GOVERNANCE_PROGRAM_ID = 'GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw';
     const [nfts, setNfts] = React.useState<Nft[]>([])
+    const [holderExport, setHolderExport] = React.useState(null);
+    const [fileGenerated, setFileGenerated] = React.useState(null);
 
     const GET_NFTS_BY_COLLECTION = gql`
         query GetNfts($collections: [PublicKey!], $limit: Int!, $offset: Int!) {
@@ -462,10 +524,34 @@ export function HoldersView(props: any) {
                     }
                     })
                     .then(res => setNfts(res.data.nfts))
+
+                
             }catch(e){console.log("ERR: "+e)}
             setLoading(false);
         }
     }
+
+    React.useEffect(() => {
+        if (nfts){
+            if (!holderExport){
+                const harray = new Array();
+                for (var item of nfts){
+                    harray.push({
+                        mint:item.mintAddress,
+                        name:item.name,
+                        owner:item.owner.address
+                    })
+                }
+                
+                setHolderExport(harray);
+                const jsonString = `data:text/json;chatset=utf-8,${encodeURIComponent(
+                    JSON.stringify(harray)
+                )}`;
+                
+                setFileGenerated(jsonString);
+            }
+        }
+    }, [nfts]);
 
     React.useEffect(() => { 
         if (publicKey && !loading){   
@@ -499,17 +585,23 @@ export function HoldersView(props: any) {
                     > 
                         
                         <>
-                            <Typography variant="h4">
-                                HOLDERS
-                                
-                                <Button
-                                    size='small'
-                                    sx={{ml:1, color:'white', borderRadius:'17px'}}
-                                
-                                >
-                                    <OpenInNewIcon/>
-                                </Button>
-                            </Typography>
+                            <Grid container>
+                                <Grid item>
+                                    <Typography variant="h4">
+                                        HOLDERS
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs textAlign={'right'}>
+                                    <Button
+                                        variant='outlined'
+                                        download={`${collectionAuthority.collection || collectionAuthority.updateAuthority}_holders_grape.json`}
+                                        href={fileGenerated}
+                                        sx={{borderRadius:'17px', color:'white'}}
+                                    >
+                                        <DownloadIcon /> Export
+                                    </Button>
+                                </Grid>
+                            </Grid>
                         </>
                         <RenderHoldersTable nfts={nfts} />
                     </Box>

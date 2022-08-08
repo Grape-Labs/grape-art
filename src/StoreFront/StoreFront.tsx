@@ -63,6 +63,7 @@ import StorefrontIcon from '@mui/icons-material/Storefront';
 import PeopleIcon from '@mui/icons-material/People';
 import WorkIcon from '@mui/icons-material/Work';
 
+import HowToRegIcon from '@mui/icons-material/HowToReg';
 import RateReviewIcon from '@mui/icons-material/RateReview';
 import DiscordIcon from '../components/static/DiscordIcon';
 import RefreshIcon from '@mui/icons-material/Refresh';
@@ -1915,7 +1916,7 @@ export function StoreFrontView(this: any, props: any) {
                             <Tab icon={<AccountBalanceIcon />} aria-label="Governance" value={NavPanel.Governance} sx={{color:'white'}} title="Governance" />
                         }
                         {collectionAuthority?.governance &&
-                            <Tab icon={<PeopleIcon />} aria-label="Members" value={NavPanel.Members} sx={{color:'white'}} title="Members" />
+                            <Tab icon={<HowToRegIcon />} aria-label="Members" value={NavPanel.Members} sx={{color:'white'}} title="Members" />
                         }
 
                         <Tab icon={<RateReviewIcon />} aria-label="Topics" disabled={true} value={NavPanel.Topics} sx={{color:'white'}} />

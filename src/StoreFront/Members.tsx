@@ -32,7 +32,6 @@ import {
   CircularProgress,
   LinearProgress,
 } from '@mui/material/';
-
 import { getProfilePicture } from '@solflare-wallet/pfp';
 import { findDisplayName } from '../utils/name-service';
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
@@ -579,7 +578,7 @@ export function MembersView(props: any) {
                         {realm &&
                             <>
                                 <Typography variant="h4">
-                                    {realm.account.name}
+                                    {realm.account.name} Governance Members
 
                                     <Button
                                         size='small'
