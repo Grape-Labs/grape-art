@@ -99,7 +99,13 @@ export default function SendToken(props: any) {
     const mint = props.mint;
     const logoURI = props.logoURI;
     const name = props.name;
-    const balance = Number(props.balance.replace(/[^0-9.-]+/g,""));
+
+    let balance = 0;
+    try{
+        balance = Number(props.balance.replace(/[^0-9.-]+/g,""))
+    } catch(e){
+        balance = +props.balance;
+    };
     const conversionrate = props.conversionrate;
     const sendtype = props.sendType || 0; // 0 regular
     const [memotype, setMemoType] = React.useState(0);
