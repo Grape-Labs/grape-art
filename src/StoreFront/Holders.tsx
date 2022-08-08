@@ -478,8 +478,8 @@ export function HoldersView(props: any) {
     const [fileGenerated, setFileGenerated] = React.useState(null);
 
     const GET_NFTS_BY_COLLECTION = gql`
-        query GetNfts($collections: [PublicKey!], $limit: Int!, $offset: Int!) {
-            nfts(collections: $collections, limit: $limit, offset: $offset) {
+        query GetNfts($uac: [PublicKey!], $limit: Int!, $offset: Int!) {
+            nfts(collections: $uac, limit: $limit, offset: $offset) {
                 mintAddress
                 name
                 image
@@ -542,7 +542,7 @@ export function HoldersView(props: any) {
                         owner:item.owner.address
                     })
                 }
-                
+
                 setHolderExport(harray);
                 const jsonString = `data:text/json;chatset=utf-8,${encodeURIComponent(
                     JSON.stringify(harray)
