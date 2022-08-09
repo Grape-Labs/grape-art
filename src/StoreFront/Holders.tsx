@@ -358,6 +358,7 @@ function RenderHoldersTable(props:any) {
                     <TableHead>
                         <TableRow>
                             <TableCell><Typography variant="caption">Holder</Typography></TableCell>
+                            {/*<TableCell><Typography variant="caption">Holding</Typography></TableCell>*/}
                             <TableCell><Typography variant="caption">Image</Typography></TableCell>
                             <TableCell><Typography variant="caption">Name</Typography></TableCell>
                             <TableCell><Typography variant="caption">Mint Address</Typography></TableCell>
@@ -371,11 +372,11 @@ function RenderHoldersTable(props:any) {
                                 : nfts
                             ).map((item:any, index:number) => (
                             <>
-                                {item?.owner.address &&
+                                {item?.owner?.address &&
                                     <TableRow key={index} sx={{borderBottom:"none"}}>
                                         <TableCell>
                                             <Typography variant="h6">
-                                                <ProfilePicture address={item.owner.address} />
+                                                <ProfilePicture address={item.owner?.address || item.owner} />
                                             </Typography>
                                         </TableCell>
                                         
@@ -388,6 +389,13 @@ function RenderHoldersTable(props:any) {
                                                 />
                                             </Typography>
                                         </TableCell>
+                                        {/*
+                                        <TableCell align="center" >
+                                            <Typography variant="h6">
+                                                {item?.count}
+                                            </Typography>
+                                        </TableCell>
+                                        */}
                                         <TableCell align="center" >
                                             <Typography variant="h6">
                                                 {item.name}
@@ -482,6 +490,7 @@ export function HoldersView(props: any) {
     const [fileGenerated, setFileGenerated] = React.useState(null);
     const [uniqueFileGenerated, setUniqueFileGenerated] = React.useState(null);
     const [uniqueHolders, setUniqueHolders] = React.useState(null);
+    const [displayHolders, setDisplayHolders] = React.useState(null);
 
     const GET_NFTS_BY_COLLECTION = gql`
         query GetNfts($uac: [PublicKey!], $limit: Int!, $offset: Int!) {
@@ -555,15 +564,23 @@ export function HoldersView(props: any) {
                     // get unique holders
                     const count = {};
                     
+                    let display = new Array();
                     let unique = new Array();
                     for(var item of nfts){
                         var found = false
+                        var x = 0;
                         for (var inner of unique){
                             if (inner.owner === item.owner.address){
                                 found = true;
                                 inner.mint+=','+item.mintAddress
                                 inner.count++;
+                                display[x].mint+=','+item.mintAddress;
+                                display[x].name+=','+item.name;
+                                display[x].image+=','+item.image;
+                                display[x].count++;
+
                             }
+                            x++;
                         }
                         if (!found){
                             unique.push({
@@ -572,9 +589,22 @@ export function HoldersView(props: any) {
                                 owner:item.owner.address,
                                 count:1.
                             })
+                            display.push({
+                                mint:item.mintAddress,
+                                name:item.name,
+                                owner:item.owner.address,
+                                image:item.image,
+                                count:1.
+                            })
                         }
                     }
                     
+                    const sortedDisplayResults = display.sort((a:any, b:any) => b.count - a.count)
+
+                    console.log("sortedDisplayResults: "+JSON.stringify(sortedDisplayResults))
+
+                    setDisplayHolders(sortedDisplayResults);
+
                     const sortedResults = unique.sort((a:any, b:any) => b.count - a.count)
 
                     setUniqueHolders(sortedResults)

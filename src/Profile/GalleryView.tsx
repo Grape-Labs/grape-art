@@ -496,7 +496,7 @@ export default function GalleryView(props: any){
                                                         >
                                                             <MenuItem selected value={''}></MenuItem>
                                                             {collectionAttributes.map((inner:any, innerkey:number) => (element?.trait_type.toLowerCase() === inner?.trait_type.toLowerCase()) &&
-                                                                <MenuItem value={inner.value}>{inner.value} {inner?.floor > 0 && <small>&nbsp;-&nbsp;{inner.floor}<SolCurrencyIcon sx={{fontSize:"10px"}} /></small>} {inner?.rarity > 0 && <small>&nbsp;:&nbsp;{inner.rarity.toFixed(2)}%</small>}</MenuItem>
+                                                                <MenuItem value={inner.value}>{inner.value} {inner?.floor > 0 && <small>&nbsp;-&nbsp;{inner.floor}<SolCurrencyIcon sx={{fontSize:"10px"}} /></small>} {inner?.rarity > 0 && <Typography color='yellow'><small>&nbsp;:&nbsp;{inner.rarity.toFixed(2)}%</small></Typography>}</MenuItem>
                                                             )}
                                                         </Select>
                                                         

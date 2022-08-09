@@ -43,6 +43,8 @@ import {
   Checkbox
 } from '@mui/material';
 
+import { createBurnNftInstruction } from './BurnNFT';
+
 import { SelectChangeEvent } from '@mui/material/Select';
 import { MakeLinkableAddress, ValidateAddress } from '../utils/grapeTools/WalletAddress'; // global key handling
 import { useSnackbar } from 'notistack';
@@ -255,9 +257,29 @@ export default function BulkBurnClose(props: any) {
             for (var holding = 0; holding < maxLen; holding++) {
                 if (holdingsSelected[item * maxLen + holding]) {
                     console.log("adding to burn ("+(item * maxLen + holding)+"): "+(holdingsSelected[item * maxLen + holding]).mint)
-                    var tti = await burnTokenInstruction((holdingsSelected[item * maxLen + holding]).mint);
-                    if (tti)
-                        batchtx.add(tti);
+                    console.log("burning: "+JSON.stringify(holdingsSelected[item * maxLen + holding]))
+                    
+                    // check if NFT
+                    /*if (nft){
+                        const accounts = {
+
+                            metadata: web3.PublicKey;
+                            owner: web3.PublicKey;
+                            mint: web3.PublicKey;
+                            tokenAccount: web3.PublicKey;
+                            masterEditionAccount: web3.PublicKey;
+                            splTokenProgram: web3.PublicKey;
+                            collectionMetadata?: web3.PublicKey;
+                        }
+                        var tti = await createBurnNftInstruction(accounts)
+                        if (tti)
+                            batchtx.add(tti);
+                    }else{*/
+                    {
+                        var tt = await burnTokenInstruction((holdingsSelected[item * maxLen + holding]).mint);
+                        if (tt)
+                            batchtx.add(tt);
+                    }
                     
                 }
             }

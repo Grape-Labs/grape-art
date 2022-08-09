@@ -4,6 +4,9 @@ import { Helmet } from 'react-helmet';
 import { decodeMetadata } from '../utils/grapeTools/utils';
 // @ts-ignore
 
+import { gql } from '@apollo/client'
+import gql_client from '../gql_client'
+
 import { findDisplayName } from '../utils/name-service';
 
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
@@ -544,6 +547,7 @@ export function StoreFrontView(this: any, props: any) {
     const [profilePictureUrl, setProfilePictureUrl] = React.useState(null);
     const [hasProfilePicture, setHasProfilePicture] = React.useState(false);
     const [solanaDomain, setSolanaDomain] = React.useState(null);
+    const [marketplaceStates, setMarketplaceStates] = React.useState(null);
 
     //const { handlekey } = useParams() as { 
     //    handlekey: string;
@@ -854,17 +858,72 @@ export function StoreFrontView(this: any, props: any) {
         }
     }, [stateLoading]);
 
+    const getGqlCollectionStates = async(auctionHouses: string) => {
+        try{
+
+            const GET_ACTIVITIES = gql`
+                query GetActivities($auctionHouses: [PublicKey!]!) {
+                    activities(auctionHouses: $auctionHouses) {
+                    id
+                    metadata
+                    auctionHouse {
+                        address
+                        treasuryMint
+                    }
+                    price
+                    createdAt
+                    wallets {
+                        address
+                        profile {
+                        handle
+                        profileImageUrlLowres
+                        }
+                    }
+                    activityType
+                    nft {
+                        name
+                        image
+                        address
+                    }
+                    }
+                }
+                `
+
+            let using = auctionHouses;
+            let usequery = GET_ACTIVITIES;
+            
+            const results = await gql_client
+                .query({
+                query: usequery,
+                variables: {
+                    auctionHouses: [using]
+                }
+                })
+                .then(res => setMarketplaceStates(res.data.nfts))
+
+
+            console.log("results: "+JSON.stringify(results));
+
+            return results;
+        }catch(e){console.log("ERR: "+e)}
+    }
+
     const getCollectionStates = async (address:string) => {
         
         if (!stateLoading){
             setStateLoading(true);
+            
+            //setLoadingPosition("GQL Listing states");
+            //const gqlResults = await getGqlCollectionStates(collectionAuthority.auctionHouse || AUCTION_HOUSE_ADDRESS)
+
             setLoadingPosition("Auction House states");
             const results = await getReceiptsFromAuctionHouse(collectionAuthority.auctionHouse || AUCTION_HOUSE_ADDRESS, null, null, null, false, null);
-
+            
             const ahActivity = new Array();
             const ahListingsMints = new Array();
 
             for (var item of results){
+                setLoadingPosition("Mint verified metadata");
                 const mintitem = await getMintFromVerifiedMetadata(item.metadata.toBase58(), fetchedCollectionMintList);
                 //console.log("item: "+JSON.stringify(item));
                 //console.log("mintitem: "+JSON.stringify(mintitem));
