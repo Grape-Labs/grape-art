@@ -22,6 +22,7 @@ import {
   Box,
   Paper,
   Avatar,
+  Badge,
   Skeleton,
   Table,
   TableContainer,
@@ -479,6 +480,8 @@ export function HoldersView(props: any) {
     const [nfts, setNfts] = React.useState<Nft[]>([])
     const [holderExport, setHolderExport] = React.useState(null);
     const [fileGenerated, setFileGenerated] = React.useState(null);
+    const [uniqueFileGenerated, setUniqueFileGenerated] = React.useState(null);
+    const [uniqueHolders, setUniqueHolders] = React.useState(null);
 
     const GET_NFTS_BY_COLLECTION = gql`
         query GetNfts($uac: [PublicKey!], $limit: Int!, $offset: Int!) {
@@ -549,12 +552,45 @@ export function HoldersView(props: any) {
                         }catch(e){console.log("ERR: "+e)}
                     }
 
+                    // get unique holders
+                    const count = {};
+                    
+                    let unique = new Array();
+                    for(var item of nfts){
+                        var found = false
+                        for (var inner of unique){
+                            if (inner.owner === item.owner.address){
+                                found = true;
+                                inner.mint+=','+item.mintAddress
+                                inner.count++;
+                            }
+                        }
+                        if (!found){
+                            unique.push({
+                                mint:item.mintAddress,
+                                name:item.name,
+                                owner:item.owner.address,
+                                count:1.
+                            })
+                        }
+                    }
+
+                    const sortedResults = unique.sort((a:any, b:any) => b.count - a.count)
+
+                    setUniqueHolders(sortedResults)
+
                     setHolderExport(harray);
                     const jsonString = `data:text/json;chatset=utf-8,${encodeURIComponent(
                         JSON.stringify(harray)
                     )}`;
 
                     setFileGenerated(jsonString);
+
+                    const jsonUniqueString = `data:text/json;chatset=utf-8,${encodeURIComponent(
+                        JSON.stringify(sortedResults)
+                    )}`;
+                    
+                    setUniqueFileGenerated(jsonUniqueString);
                 }
             }
         }
@@ -595,7 +631,7 @@ export function HoldersView(props: any) {
                             <Grid container>
                                 <Grid item>
                                     <Typography variant="h4">
-                                        HOLDERS
+                                        {uniqueHolders ? <Badge badgeContent={uniqueHolders.length} max={99999} color="primary">HOLDERS</Badge>:<>HOLDERS</>}
                                     </Typography>
                                 </Grid>
                                 <Grid item xs textAlign={'right'}>
@@ -606,15 +642,29 @@ export function HoldersView(props: any) {
                                         >
                                             <ParaglidingIcon /> Airdrop
                                         </Button>
+                                        {uniqueFileGenerated &&
+                                            <Tooltip title='Export unique holders'>
+                                                <Button
+                                                    variant='outlined'
+                                                    download={`${collectionAuthority.collection || collectionAuthority.updateAuthority}_uniqueholders_grape.json`}
+                                                    href={uniqueFileGenerated}
+                                                    sx={{borderRadius:'17px', ml:1 ,color:'white'}}
+                                                >
+                                                    <DownloadIcon /> Unique Holders
+                                                </Button>
+                                            </Tooltip>
+                                        }
                                         {fileGenerated &&
-                                            <Button
-                                                variant='outlined'
-                                                download={`${collectionAuthority.collection || collectionAuthority.updateAuthority}_holders_grape.json`}
-                                                href={fileGenerated}
-                                                sx={{borderRadius:'17px', ml:1 ,color:'white'}}
-                                            >
-                                                <DownloadIcon /> Export
-                                            </Button>
+                                            <Tooltip title="Export all holders">
+                                                <Button
+                                                    variant='outlined'
+                                                    download={`${collectionAuthority.collection || collectionAuthority.updateAuthority}_holders_grape.json`}
+                                                    href={fileGenerated}
+                                                    sx={{borderRadius:'17px', ml:1 ,color:'white'}}
+                                                >
+                                                    <DownloadIcon /> All
+                                                </Button>
+                                            </Tooltip>
                                         }
                                     </ButtonGroup>
                                 </Grid>
