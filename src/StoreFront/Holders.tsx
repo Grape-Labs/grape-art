@@ -574,7 +574,7 @@ export function HoldersView(props: any) {
                             })
                         }
                     }
-
+                    
                     const sortedResults = unique.sort((a:any, b:any) => b.count - a.count)
 
                     setUniqueHolders(sortedResults)
