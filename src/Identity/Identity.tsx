@@ -368,6 +368,74 @@ export function IdentityView(props: any){
         setLoadingTransactions(false);
     }
 
+    const getGqlNfts = async(publicKeys: any) => {
+        try{
+
+            const GET_NFTS = gql`
+                query nftsByMintAddress($addresses: [PublicKey!]!) {
+                    nftsByMintAddress(addresses: $addresses) {
+                    address
+                    name
+                    sellerFeeBasisPoints
+                    mintAddress
+                    primarySaleHappened
+                    updateAuthorityAddress
+                    description
+                    category
+                    parser
+                    image
+                    animationUrl
+                    externalUrl
+                    creators {
+                        ...NftCreatorFragment
+                    }
+                    attributes {
+                        ...NftAttributeFragment
+                    }
+                    owner {
+                        ...NftOwnerFragment
+                    }
+                    activities {
+                        ...NftActivityFragment
+                    }
+                    listings {
+                        ...AhListingFragment
+                    }
+                    purchases {
+                        ...PurchaseFragment
+                    }
+                    offers {
+                        ...OfferFragment
+                    }
+                    files {
+                        ...NftFileFragment
+                    }
+                    collection {
+                        ...NftFragment
+                    }
+                    createdAt
+                    }
+                }
+                `
+
+            let using = publicKeys;
+            let usequery = GET_NFTS;
+            
+            const results = await gql_client
+                .query({
+                query: usequery,
+                variables: {
+                    adresses: [using]
+                }
+                })
+
+                //.then(res => setMarketplaceStates(res.data.nfts))
+            console.log("results: "+JSON.stringify(results));
+
+            return results;
+        }catch(e){console.log("ERR: "+e)}
+    }
+
     const fetchSolanaTokens = async () => {
         setLoadingPosition('Tokens');
         //const response = await ggoconnection.getTokenAccountsByOwner(new PublicKey(pubkey), {programId: new PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA")});

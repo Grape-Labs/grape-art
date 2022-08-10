@@ -3,6 +3,10 @@ import { WalletError, WalletNotConnectedError } from '@solana/wallet-adapter-bas
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { Signer, Connection, PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js';
 import { TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID, createBurnInstruction, createCloseAccountInstruction, getAssociatedTokenAddress } from "@solana/spl-token-v2";
+
+
+
+//import {  } from '@metaplex-foundation/mpl-token-metadata';
 //import { TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID, Token } from "@solana/spl-token";
 
 import { GRAPE_RPC_ENDPOINT, TX_RPC_ENDPOINT, GRAPE_TREASURY } from '../utils/grapeTools/constants';
@@ -42,6 +46,8 @@ import {
   FormControlLabel,
   Checkbox
 } from '@mui/material';
+
+import { getMasterEdition } from '../utils/auctionHouse/helpers/accounts';
 
 import { createBurnNftInstruction } from './BurnNFT';
 
@@ -262,27 +268,34 @@ export default function BulkBurnClose(props: any) {
                     console.log("burning: "+JSON.stringify(holdingsSelected[item * maxLen + holding]))
 
                     // check if NFT
-                    /*if (nft){
-                        const mint_address = new PublicKey(value);
+                    if (holdingsSelected[item * maxLen + holding].send.tokenAmount.decimals === 0){
+                        const mintPubkey = new PublicKey((holdingsSelected[item * maxLen + holding]).mint);
                         const [pda, bump] = await PublicKey.findProgramAddress(
-                            [Buffer.from('metadata'), MD_PUBKEY.toBuffer(), new PublicKey((holdingsSelected[item * maxLen + holding]).mint).toBuffer()],
+                            [Buffer.from('metadata'), MD_PUBKEY.toBuffer(), mintPubkey.toBuffer()],
                             MD_PUBKEY
+                        );
+
+                        const masterEdition = await getMasterEdition(new PublicKey((holdingsSelected[item * maxLen + holding]).mint))
+                        
+                        const tokenAta = await getAssociatedTokenAddress(
+                            mintPubkey,
+                            publicKey,
+                            true
                         );
                         
                         const accounts = {
-                            metadata: pda;
-                            owner: publicKey;
-                            mint: new PublicKey((holdingsSelected[item * maxLen + holding]).mint);
-                            tokenAccount: web3.PublicKey;
-                            masterEditionAccount: web3.PublicKey;
-                            splTokenProgram: web3.PublicKey;
-                            collectionMetadata?: web3.PublicKey;
+                            metadata: pda,
+                            owner: publicKey,
+                            mint: mintPubkey,
+                            tokenAccount: tokenAta,
+                            masterEditionAccount: masterEdition,
+                            splTokenProgram: new PublicKey(TOKEN_PROGRAM_ID),
+                            //collectionMetadata?: web3.PublicKey;
                         }
                         var tti = await createBurnNftInstruction(accounts)
                         if (tti)
                             batchtx.add(tti);
-                    }else{*/
-                    {
+                    }else{
                         var tt = await burnTokenInstruction((holdingsSelected[item * maxLen + holding]).mint);
                         if (tt)
                             batchtx.add(tt);
