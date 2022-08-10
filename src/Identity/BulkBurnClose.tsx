@@ -248,6 +248,8 @@ export default function BulkBurnClose(props: any) {
     
         fetchSolanaTokens()
     }
+
+    const MD_PUBKEY = new PublicKey('metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s');
     async function burnTokens() {
         var maxLen = 7;
         var maxLenTx = Math.ceil(holdingsSelected.length / maxLen);
@@ -258,14 +260,19 @@ export default function BulkBurnClose(props: any) {
                 if (holdingsSelected[item * maxLen + holding]) {
                     console.log("adding to burn ("+(item * maxLen + holding)+"): "+(holdingsSelected[item * maxLen + holding]).mint)
                     console.log("burning: "+JSON.stringify(holdingsSelected[item * maxLen + holding]))
-                    
+
                     // check if NFT
                     /*if (nft){
+                        const mint_address = new PublicKey(value);
+                        const [pda, bump] = await PublicKey.findProgramAddress(
+                            [Buffer.from('metadata'), MD_PUBKEY.toBuffer(), new PublicKey((holdingsSelected[item * maxLen + holding]).mint).toBuffer()],
+                            MD_PUBKEY
+                        );
+                        
                         const accounts = {
-
-                            metadata: web3.PublicKey;
-                            owner: web3.PublicKey;
-                            mint: web3.PublicKey;
+                            metadata: pda;
+                            owner: publicKey;
+                            mint: new PublicKey((holdingsSelected[item * maxLen + holding]).mint);
                             tokenAccount: web3.PublicKey;
                             masterEditionAccount: web3.PublicKey;
                             splTokenProgram: web3.PublicKey;
@@ -315,9 +322,6 @@ export default function BulkBurnClose(props: any) {
 
     return (
         <div>
-
-            
-
             {tokensSelected ? 
                 <Button
                     variant="contained"

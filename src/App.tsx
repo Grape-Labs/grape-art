@@ -48,6 +48,7 @@ import {
     TorusWalletAdapter,
     CloverWalletAdapter,
     MathWalletAdapter,
+    MagicEdenWalletAdapter,
     Coin98WalletAdapter,
     SolongWalletAdapter,
     BitKeepWalletAdapter,
@@ -124,9 +125,9 @@ function DashboardContent(){
     const endpoint = TX_RPC_ENDPOINT;
     const wallets = useMemo(
         () => [
+            new SolflareWalletAdapter(),
             new PhantomWalletAdapter(),
             new GlowWalletAdapter(),
-            new SolflareWalletAdapter(),
             new LedgerWalletAdapter(),
             new ExodusWalletAdapter(),
             new SolletWalletAdapter({ network }),
@@ -142,6 +143,7 @@ function DashboardContent(){
             new SafePalWalletAdapter(),
             new BitpieWalletAdapter(),
             new NightlyWalletAdapter(),
+            new MagicEdenWalletAdapter(),
             new SlopeWalletAdapter(),
         ],
         [network]

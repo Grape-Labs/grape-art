@@ -1,4 +1,3 @@
-
 import React, { useEffect, Suspense } from "react";
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import { Global } from '@emotion/react';
@@ -9,6 +8,9 @@ import { PublicKey, Connection, Commitment } from '@solana/web3.js';
 import {ENV, TokenInfo, TokenListProvider} from '@solana/spl-token-registry';
 
 import { getRealm, getRealms, getAllProposals, getGovernance, getTokenOwnerRecordsByOwner, getTokenOwnerRecord, getRealmConfigAddress, getGovernanceAccount, getAccountTypes, GovernanceAccountType, tryGetRealmConfig  } from '@solana/spl-governance';
+
+import { gql } from '@apollo/client'
+import gql_client from '../gql_client'
 
 import { StorageView } from './plugins/Storage';
 import SendToken from '../StoreFront/Send';
@@ -450,7 +452,8 @@ export function IdentityView(props: any){
             for (var nft of nftMeta){
                 //console.log('meta: '+JSON.stringify(nft));
                 if (nft.meta.mint === item.account.data.parsed.info.mint){
-                    //console.log("nft: "+JSON.stringify(nft))
+                    console.log("nft: "+JSON.stringify(nft))
+                    
                     name = nft.meta.data.name;
                     metadata = nft.meta.data.uri;
                     // fetch
