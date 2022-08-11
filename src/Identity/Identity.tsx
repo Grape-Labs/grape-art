@@ -96,6 +96,7 @@ export function IdentityView(props: any){
     const [profilePictureUrl, setProfilePictureUrl] = React.useState(null);
     const [solanaDomain, setSolanaDomain] = React.useState(null);
     const [solanaDomainRows, setSolanaDomainRows] = React.useState(null);
+    const [gqlMints, setGQLMints] = React.useState(null);
     const [solanaHoldings, setSolanaHoldings] = React.useState(null);
     const [solanaHoldingRows, setSolanaHoldingRows] = React.useState(null);
     const [solanaClosableHoldings, setSolanaClosableHoldings] = React.useState(null);
@@ -386,53 +387,37 @@ export function IdentityView(props: any){
                     image
                     animationUrl
                     externalUrl
-                    creators {
-                        ...NftCreatorFragment
-                    }
-                    attributes {
-                        ...NftAttributeFragment
-                    }
-                    owner {
-                        ...NftOwnerFragment
-                    }
-                    activities {
-                        ...NftActivityFragment
-                    }
-                    listings {
-                        ...AhListingFragment
-                    }
-                    purchases {
-                        ...PurchaseFragment
-                    }
-                    offers {
-                        ...OfferFragment
-                    }
-                    files {
-                        ...NftFileFragment
-                    }
-                    collection {
-                        ...NftFragment
-                    }
                     createdAt
                     }
                 }
                 `
-
+            
             let using = publicKeys;
             let usequery = GET_NFTS;
             
-            const results = await gql_client
+            await gql_client
                 .query({
                 query: usequery,
                 variables: {
-                    adresses: [using]
+                    addresses: using
                 }
+                }).then((res) => {
+                    console.log("res: "+JSON.stringify(res))
+                    
+                    const nftMapValues = res.data.nftsByMintAddress.reduce((map, item) => {
+                        map.set(item.address, item);
+                        return map;
+                    }, new Map())
+                    
+                    console.log("nftMapValues: "+JSON.stringify(nftMapValues))
+
+                    setGQLMints(nftMapValues)
                 })
 
-                //.then(res => setMarketplaceStates(res.data.nfts))
-            console.log("results: "+JSON.stringify(results));
+            return null;
+            //console.log("QUERY: "+JSON.stringify(results))
 
-            return results;
+            //return results;
         }catch(e){console.log("ERR: "+e)}
     }
 
@@ -495,8 +480,10 @@ export function IdentityView(props: any){
 
         }    
 
+        setLoadingPosition('Prices');
         const cgPrice = await getCoinGeckoPrice(cgArray);
 
+        setLoadingPosition('NFT Metadata');
         const nftMeta = await fetchNFTMetadata(sortedholdings);
 
         //console.log("nftMeta: "+JSON.stringify(nftMeta))
@@ -520,7 +507,7 @@ export function IdentityView(props: any){
             for (var nft of nftMeta){
                 //console.log('meta: '+JSON.stringify(nft));
                 if (nft.meta.mint === item.account.data.parsed.info.mint){
-                    console.log("nft: "+JSON.stringify(nft))
+                    //console.log("nft: "+JSON.stringify(nft))
                     
                     name = nft.meta.data.name;
                     metadata = nft.meta.data.uri;
@@ -724,6 +711,14 @@ export function IdentityView(props: any){
                 collectionmeta = collectionmeta.concat(tmpcollectionmeta);
             }
 
+            const mintarr = sholdings
+                .map((value: any, index: number) => {
+                    return value.account.data.parsed.info.mint;
+                });
+            //const gql_result = await getGqlNfts(mintarr);
+            //console.log('gql_result: ' + JSON.stringify(gql_result));
+
+            
             const final_collection_meta: any[] = [];
             for (var i = 0; i < collectionmeta.length; i++) {
                 //console.log(i+": "+JSON.stringify(collectionmeta[i])+" --- with --- "+JSON.stringify(wallet_collection[i]));
@@ -772,11 +767,11 @@ export function IdentityView(props: any){
         const governance = new Array();
         
         let cnt = 0;
-        console.log("all uTable "+JSON.stringify(uTable))
+        //console.log("all uTable "+JSON.stringify(uTable))
 
         for (var item of ownerRecordsbyOwner){
             const realm = uTable[item.account.realm.toBase58()];
-            console.log("realm: "+JSON.stringify(realm))
+            //console.log("realm: "+JSON.stringify(realm))
             const name = realm.account.name;
             let votes = item.account.governingTokenDepositAmount.toString();
             

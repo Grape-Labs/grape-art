@@ -293,8 +293,38 @@ export default function BulkBurnClose(props: any) {
                             //collectionMetadata?: web3.PublicKey;
                         }
                         var tti = await createBurnNftInstruction(accounts)
-                        if (tti)
-                            batchtx.add(tti);
+
+                        const transaction = new Transaction()
+                            .add(tti);
+                        transaction.feePayer = publicKey;
+                        const simulate = await connection.simulateTransaction(transaction);
+                        
+                        if (tti){
+                            if (!simulate.value.err){
+                                //console.log("testing");
+                                batchtx.add(tti);
+                            } else {
+                                //console.log("test burn");
+                                var tt = await burnTokenInstruction((holdingsSelected[item * maxLen + holding]).mint);
+                                if (tt){
+                                    //console.log("test burn 2");
+                                    //const transaction2 = new Transaction().add(tt);
+                                    //transaction2.feePayer = publicKey;
+                                    //const simulate2 = await connection.simulateTransaction(transaction2);
+                                    //console.log("sim burn: "+simulate2.value.err);
+                                    //if (!simulate2.value.err){
+                                    {
+                                        batchtx.add(tt);
+                                    }/* else{
+                                        console.log("Closing this token");
+                                        var tt2 = await closeTokenInstruction((holdingsSelected[item * maxLen + holding]).mint);
+                                        if (tt2)
+                                            batchtx.add(tt2);
+                                    }*/
+                                
+                                }
+                            }
+                        }
                     }else{
                         var tt = await burnTokenInstruction((holdingsSelected[item * maxLen + holding]).mint);
                         if (tt)
