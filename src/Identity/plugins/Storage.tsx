@@ -121,14 +121,20 @@ export function StorageView(props: any){
         { field: 'link', headerName: '', width: 150,  align: 'center',
             renderCell: (params) => {
                 return (
-                    <Button
-                        variant='outlined'
-                        size='small'
-                        component='a'
-                        href={`https://grapedrive.vercel.app`}
-                        target='_blank'
-                        sx={{borderRadius:'17px'}}
-                    >Manage</Button>
+                    <>
+                    {publicKey && pubkey === publicKey.toBase58() ?
+                        <Button
+                            variant='outlined'
+                            size='small'
+                            component='a'
+                            href={`https://grapedrive.vercel.app`}
+                            target='_blank'
+                            sx={{borderRadius:'17px'}}
+                        >Manage</Button>
+                    :
+                        <></>
+                    }
+                    </>
                 )
             }
         },
