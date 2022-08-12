@@ -820,7 +820,7 @@ export function IdentityView(props: any){
                 //console.log("mintarr: "+JSON.stringify(mintarr))
                 const gql_result = await getGqlNfts(mintarr);
                 nftMap = gql_result;
-                console.log('gql_results: ' + JSON.stringify(nftMap));
+                //console.log('gql_results: ' + JSON.stringify(nftMap));
             }
             
             const final_collection_meta: any[] = [];
@@ -835,24 +835,15 @@ export function IdentityView(props: any){
                         collectionmeta[i]['meta'] = meta_final;
                         //console.log("meta: "+JSON.stringify(collectionmeta[i]['meta'].mint))
                         try{
-                            console.log("checking: "+collectionmeta[i]['meta'].mint);
+                            //console.log("checking: "+collectionmeta[i]['meta'].mint);
                             if (nftMap)
                                 //var index = Object.keys(nftMap).indexOf(collectionmeta[i]['meta'].mint);
                                 for (const [key, value] of Object.entries(nftMap)){
                                     if (key === collectionmeta[i]['meta'].mint){
-                                        collectionmeta[i]['image'] = value?.image;
-                                        console.log("image: "+ value?.image);
+                                        collectionmeta[i]['image'] = DRIVE_PROXY+value?.image;
+                                        //console.log("image: "+ value?.image);
                                     }
                                 }
-
-                                
-                                //var val = Object.values(nftMap).indexOf(collectionmeta[i]['meta'].mint);
-
-                                //var val = Object.entries(nftMap).map(([key,value])=>{ if key === index; return  } );
-                                
-                                //console.log("image: "+ JSON.stringify(data ) )
-                                
-                                //console.log("image: " + JSON.stringify(nftMap.map.get(collectionmeta[i]['meta'].mint)) );
                             //if (collectionmeta.length <= 25) // limitd to 25 fetches (will need to optimize this so it does not delay)
                             //    collectionmeta[i]['urimeta'] = await window.fetch(meta_final.data.uri).then((res: any) => res.json());
                         }catch(err){
