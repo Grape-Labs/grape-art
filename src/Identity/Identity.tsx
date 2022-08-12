@@ -259,7 +259,22 @@ export function IdentityView(props: any){
         },
         { field: 'oncurve', headerName: 'onCurve', width: 130, align: 'right'},
         { field: 'nft', headerName: 'NFT', width: 130, align: 'center'},
-        { field: 'preview', headerName: '', width: 150,  align: 'center'},
+        { field: 'preview', headerName: '', width: 150,  align: 'center',
+            renderCell: (params) => {
+                return (
+                    <Button
+                        variant='outlined'
+                        size='small'
+                        component='a'
+                        href={`https://explorer.solana.com/address/${params.value}`}
+                        target='_blank'
+                        sx={{borderRadius:'17px'}}
+                    >
+                        Explorer
+                    </Button>
+                )
+            }
+        },
       ];
 
       const domaincolumns: GridColDef[] = [
@@ -646,6 +661,7 @@ export function IdentityView(props: any){
                 oncurve: ValidateCurve(item.account.data.parsed.info.mint),
                 nft: item.account.data.parsed.info.tokenAmount.decimals === 0 ? true : false,
                 close:item.account.data.parsed.info,
+                preview:item.account.data.parsed.info.mint
             });
             cnt++;
         }
