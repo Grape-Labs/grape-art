@@ -93,6 +93,7 @@ import { ConstructionOutlined, DoNotDisturb, JavascriptRounded, LogoDevOutlined 
 import { useTranslation } from 'react-i18next';
 import { getByPlaceholderText } from "@testing-library/react";
 import { parseMintAccount } from "@project-serum/common";
+import { any } from "prop-types";
 
 function isImage(url:string) {
     return /\.(jpg|jpeg|png|webp|avif|gif|svg)$/.test(url);
@@ -463,8 +464,7 @@ export function IdentityView(props: any){
     }
 
     const getGqlNfts = async(publicKeys: any) => {
-        try{
-
+        
             const GET_NFTS = gql`
                 query nftsByMintAddress($addresses: [PublicKey!]!) {
                     nftsByMintAddress(addresses: $addresses) {
@@ -480,7 +480,6 @@ export function IdentityView(props: any){
                     image
                     animationUrl
                     externalUrl
-                    createdAt
                     }
                 }
                 `
@@ -488,30 +487,34 @@ export function IdentityView(props: any){
             let using = publicKeys;
             let usequery = GET_NFTS;
             
-            await gql_client
+            return await gql_client
                 .query({
-                query: usequery,
-                variables: {
-                    addresses: using
-                }
+                    query: usequery,
+                    variables: {
+                        addresses: using
+                    }
                 }).then((res) => {
-                    console.log("res: "+JSON.stringify(res))
                     
-                    const nftMapValues = res.data.nftsByMintAddress.reduce((map, item) => {
-                        map.set(item.address, item);
+                    //console.log("res: "+JSON.stringify(res.data.nftsByMintAddress))
+                    
+                    const response = res.data.nftsByMintAddress;
+                    
+                    const final = new Array();
+
+                    const nftMapValues = response.reduce(function(map: Map<any,any>, item:any) {
+                        map[item.mintAddress] = item;
                         return map;
                     }, new Map())
                     
-                    console.log("nftMapValues: "+JSON.stringify(nftMapValues))
-
+                    //console.log("final: "+JSON.stringify(final))
                     setGQLMints(nftMapValues)
+                    return nftMapValues;
+                }).catch((err) => {
+                    console.log("ERR: "+JSON.stringify(err))
                 })
-
-            return null;
             //console.log("QUERY: "+JSON.stringify(results))
 
             //return results;
-        }catch(e){console.log("ERR: "+e)}
     }
 
     const fetchSolanaTokens = async () => {
@@ -605,7 +608,9 @@ export function IdentityView(props: any){
                     name = nft.meta.data.name;
                     metadata = nft.meta.data.uri;
                     // fetch
-                    if (nft?.urimeta)
+                    if (nft?.image)
+                        logo = nft.image;
+                    else if (nft?.urimeta?.image)
                         logo = nft.urimeta?.image;
                     foundMetaName = true;
                 }
@@ -809,13 +814,18 @@ export function IdentityView(props: any){
                 .map((value: any, index: number) => {
                     return value.account.data.parsed.info.mint;
                 });
-            //const gql_result = await getGqlNfts(mintarr);
-            //console.log('gql_result: ' + JSON.stringify(gql_result));
-
+            
+            let nftMap = null;
+            if (mintarr){
+                //console.log("mintarr: "+JSON.stringify(mintarr))
+                const gql_result = await getGqlNfts(mintarr);
+                nftMap = gql_result;
+                console.log('gql_results: ' + JSON.stringify(nftMap));
+            }
             
             const final_collection_meta: any[] = [];
             for (var i = 0; i < collectionmeta.length; i++) {
-                //console.log(i+": "+JSON.stringify(collectionmeta[i])+" --- with --- "+JSON.stringify(wallet_collection[i]));
+                //console.log(i+": "+JSON.stringify(collectionmeta[i])+" --- with --- "+JSON.stringify(collectionmeta[i]));
                 if (collectionmeta[i]) {
                     collectionmeta[i]['wallet'] = sholdings[i];
                     try {
@@ -823,7 +833,26 @@ export function IdentityView(props: any){
                         const buf = Buffer.from(meta_primer.data, 'base64');
                         const meta_final = decodeMetadata(buf);
                         collectionmeta[i]['meta'] = meta_final;
+                        //console.log("meta: "+JSON.stringify(collectionmeta[i]['meta'].mint))
                         try{
+                            console.log("checking: "+collectionmeta[i]['meta'].mint);
+                            if (nftMap)
+                                //var index = Object.keys(nftMap).indexOf(collectionmeta[i]['meta'].mint);
+                                for (const [key, value] of Object.entries(nftMap)){
+                                    if (key === collectionmeta[i]['meta'].mint){
+                                        collectionmeta[i]['image'] = value?.image;
+                                        console.log("image: "+ value?.image);
+                                    }
+                                }
+
+                                
+                                //var val = Object.values(nftMap).indexOf(collectionmeta[i]['meta'].mint);
+
+                                //var val = Object.entries(nftMap).map(([key,value])=>{ if key === index; return  } );
+                                
+                                //console.log("image: "+ JSON.stringify(data ) )
+                                
+                                //console.log("image: " + JSON.stringify(nftMap.map.get(collectionmeta[i]['meta'].mint)) );
                             //if (collectionmeta.length <= 25) // limitd to 25 fetches (will need to optimize this so it does not delay)
                             //    collectionmeta[i]['urimeta'] = await window.fetch(meta_final.data.uri).then((res: any) => res.json());
                         }catch(err){
