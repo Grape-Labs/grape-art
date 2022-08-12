@@ -128,6 +128,7 @@ import { MakeLinkableAddress, ValidateAddress, trimAddress, timeAgo } from '../u
 import { ConstructionOutlined, SettingsRemoteOutlined } from "@mui/icons-material";
 
 import { useTranslation } from 'react-i18next';
+import moment from "moment";
 
 const StyledTable = styled(Table)(({ theme }) => ({
     '& .MuiTableCell-root': {
@@ -859,8 +860,6 @@ export function StoreFrontView(this: any, props: any) {
     }, [stateLoading]);
 
     const getGqlCollectionStates = async(auctionHouses: string) => {
-        try{
-
             const GET_ACTIVITIES = gql`
                 query GetActivities($auctionHouses: [PublicKey!]!) {
                     activities(auctionHouses: $auctionHouses) {
@@ -892,20 +891,18 @@ export function StoreFrontView(this: any, props: any) {
             let using = auctionHouses;
             let usequery = GET_ACTIVITIES;
             
-            const results = await gql_client
+            return await gql_client
                 .query({
                 query: usequery,
                 variables: {
                     auctionHouses: [using]
                 }
                 })
-                .then(res => setMarketplaceStates(res.data.nfts))
-
-
-            console.log("results: "+JSON.stringify(results));
-
-            return results;
-        }catch(e){console.log("ERR: "+e)}
+                .then(res => {
+                    //console.log("RES: "+JSON.stringify(res))
+                    setMarketplaceStates(res.data.activities)
+                    return res.data.activities;
+                }).catch(err => console.log("ERR: "+err))
     }
 
     const getCollectionStates = async (address:string) => {
@@ -913,12 +910,56 @@ export function StoreFrontView(this: any, props: any) {
         if (!stateLoading){
             setStateLoading(true);
             
-            //setLoadingPosition("GQL Listing states");
-            //const gqlResults = await getGqlCollectionStates(collectionAuthority.auctionHouse || AUCTION_HOUSE_ADDRESS)
+            setLoadingPosition("GQL Listing states");
+            const gqlResults = await getGqlCollectionStates(collectionAuthority.auctionHouse || AUCTION_HOUSE_ADDRESS)
+            //console.log("gqlResults "+JSON.stringify(gqlResults));
+            
+            // map gql to listing receipt:
+            const mappedReceipts = new Array()
+            
+            for (var item of gqlResults){
+                var receipt_type = item.activityType;
+                var purchase_receipt = null;
+                if (item.activityType === 'listing'){
+                    receipt_type = 'listing_receipt';
+                }else if (item.activityType === 'purchase'){
+                    receipt_type = 'purchase_receipt';
+                    purchase_receipt = new PublicKey(1);
+                    console.log("purchase: "+JSON.stringify(item));
+                }else{
+                    console.log("non - listing: "+JSON.stringify(item));
+                }
+
+                var createdAt = moment(item.createdAt).valueOf();
+                var canceledAt = null;
+                if (item.canceledAt) 
+                    canceledAt = moment(item.canceledAt).valueOf()
+                
+                mappedReceipts.push({
+                    tradeState: '',
+                    bookkeeper: new PublicKey(item.wallets[0].address),
+                    auctionHouse: new PublicKey(item.auctionHouse.address),
+                    seller: new PublicKey(item.wallets[0].address),
+                    metadata: new PublicKey(item.metadata),
+                    purchaseReceipt: purchase_receipt,
+                    price: item.price/(1000000000),
+                    tokenSize: 1,
+                    bump: 255,
+                    tradeStateBump: 255,
+                    createdAt: createdAt,
+                    canceledAt: canceledAt,
+                    receipt_type: receipt_type
+                });
+            }
+
+            //console.log("mappedReceipts "+JSON.stringify(mappedReceipts));
 
             setLoadingPosition("Auction House states");
             const results = await getReceiptsFromAuctionHouse(collectionAuthority.auctionHouse || AUCTION_HOUSE_ADDRESS, null, null, null, false, null);
+            //const results = mappedReceipts;
             
+            //console.log("results "+JSON.stringify(results));
+
             const ahActivity = new Array();
             const ahListingsMints = new Array();
 
@@ -935,6 +976,7 @@ export function StoreFrontView(this: any, props: any) {
                         //console.log("found: "+purchaseReceipt.toBase58().length+": "+purchaseReceipt.toBase58());
                     }
                     if (!purchaseReceipt){ // push only null receipts
+                        console.log("push "+JSON.stringify(item))
                         ahActivity.push({
                             buyeraddress: item.bookkeeper.toBase58(), 
                             bookkeeper: item.bookkeeper.toBase58(), 
