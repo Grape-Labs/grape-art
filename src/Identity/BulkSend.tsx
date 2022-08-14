@@ -215,7 +215,10 @@ export default function BulkSend(props: any) {
 
         try{
             enqueueSnackbar(`Preparing transaction`,{ variant: 'info' });
-            const signature = await sendTransaction(transactions, freeconnection);
+            const signature = await sendTransaction(transactions, freeconnection, {
+                skipPreflight: true,
+                preflightCommitment: "confirmed"
+            });
             
             const snackprogress = (key:any) => (
                 <CircularProgress sx={{padding:'10px'}} />

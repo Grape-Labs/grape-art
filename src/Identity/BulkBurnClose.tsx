@@ -208,7 +208,13 @@ export default function BulkBurnClose(props: any) {
 
         try{
             enqueueSnackbar(`Preparing transaction`,{ variant: 'info' });
-            const signature = await sendTransaction(transactions, freeconnection);
+            //console.log("transactions: "+JSON.stringify(transactions))
+            //const signed = await signTransaction(transactions);
+            //enqueueSnackbar(`Signed transaction`,{ variant: 'info' });
+            const signature = await sendTransaction(transactions, freeconnection, {
+                skipPreflight: true,
+                preflightCommitment: "confirmed"
+            });
             
             const snackprogress = (key:any) => (
                 <CircularProgress sx={{padding:'10px'}} />
