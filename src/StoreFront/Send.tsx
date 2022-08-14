@@ -180,7 +180,10 @@ export default function SendToken(props: any) {
             );
             try{
                 enqueueSnackbar(`Preparing to send ${amountToSend} ${name} to ${toaddress}`,{ variant: 'info' });
-                const signature = await sendTransaction(transaction, freeconnection);
+                const signature = await sendTransaction(transaction, freeconnection, {
+                    skipPreflight: true,
+                    preflightCommitment: "confirmed"
+                });
                 const snackprogress = (key:any) => (
                     <CircularProgress sx={{padding:'10px'}} />
                 );
