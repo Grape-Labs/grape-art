@@ -49,7 +49,7 @@ import {
     TorusWalletAdapter,
     CloverWalletAdapter,
     MathWalletAdapter,
-    MagicEdenWalletAdapter,
+    //MagicEdenWalletAdapter,
     Coin98WalletAdapter,
     SolongWalletAdapter,
     BitKeepWalletAdapter,
@@ -145,7 +145,7 @@ function DashboardContent(){
             new SafePalWalletAdapter(),
             new BitpieWalletAdapter(),
             new NightlyWalletAdapter(),
-            new MagicEdenWalletAdapter(),
+            //new MagicEdenWalletAdapter(),
             new SlopeWalletAdapter(),
         ],
         [network]
