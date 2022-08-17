@@ -1,5 +1,6 @@
 // ADD CODE FOR JUPITER SWAP IMPLEMENTATION
 import React, {useEffect, useState} from 'react';
+import JSBI from 'jsbi';
 import {WalletAdapterNetwork} from '@solana/wallet-adapter-base';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { Connection, PublicKey } from '@solana/web3.js';
@@ -187,7 +188,7 @@ function JupiterForm(props: any) {
     }, []);
 
     const jupiter = useJupiter({
-        amount: tokenMap?.get(swapfrom) ? amounttoswap * (10 ** tokenMap.get(swapfrom).decimals) : 0, // raw input amount of tokens
+        amount: JSBI.BigInt(tokenMap?.get(swapfrom) ? amounttoswap * (10 ** tokenMap.get(swapfrom).decimals) : 0), // raw input amount of tokens
         inputMint: new PublicKey(swapfrom),
         outputMint: new PublicKey(swapto),
         slippage: 1, // 1% slippage

@@ -84,6 +84,7 @@
         "i18next": "^21.8.2",
         "i18next-browser-languagedetector": "^6.1.4",
         "i18next-http-backend": "^1.4.0",
+        "jsbi": "^4.3.0",
         "lodash-es": "^4.17.21",
         "loglevel": "^1.8.0",
         "moment": "^2.29.4",
