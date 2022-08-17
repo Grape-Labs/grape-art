@@ -311,9 +311,9 @@ function JupiterForm(props: any) {
         setLpFees([]);
         setPriceImpacts([]);
         
-        setConvertedAmountValue(routes[0].outAmount[0] / (10 ** (tokenMap.get(swapto)!.decimals || 6)));
+        setConvertedAmountValue(+(String(routes[0].outAmount)) / (10 ** (tokenMap.get(swapto)!.decimals || 6)));
 
-        if (routes[0].outAmount[0] > 0){
+        if (+(String(routes[0].outAmount)) > 0){
             routes[0].marketInfos.forEach(mi => {
                 console.log("rount: "+mi.amm.label)
                 setTradeRoute(tr => tr + (tr && " x ") + mi.amm.label)
