@@ -42,7 +42,7 @@ import {
     ListItemText,
 } from '@mui/material';
 
-import { CrossmintPayButton } from '@crossmint/client-sdk-react-ui';
+//import { CrossmintPayButton } from '@crossmint/client-sdk-react-ui';
 
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
 
@@ -2277,7 +2277,7 @@ export default function ItemOffers(props: any) {
                                                                         </DialogContent>
                                                                         <DialogActions>
                                                                             <Button onClick={handleAlertBuyNowClose}>Cancel</Button>
-                                                                            {verifiedCollection?.crossmint && (salePrice*tokenSalePrice) < 750 &&
+                                                                            {/*verifiedCollection?.crossmint && (salePrice*tokenSalePrice) < 750 &&
                                                                                 <CrossmintPayButton
                                                                                     collectionTitle={mintName}
                                                                                     collectionDescription={mintName}
@@ -2292,7 +2292,7 @@ export default function ItemOffers(props: any) {
                                                                                     }}
                                                                                     className="grape-crossmint-button"
                                                                                 />
-                                                                            }
+                                                                            */}
                                                                             <Button 
                                                                                 onClick={() => handleBuyNow(salePrice, salePriceAH)}
                                                                                 autoFocus>
