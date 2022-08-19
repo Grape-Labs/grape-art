@@ -22,7 +22,7 @@ import {
 } from '@mui/material';
 
 import { SelectChangeEvent } from '@mui/material/Select';
-import { MakeLinkableAddress, ValidateAddress } from '../utils/grapeTools/WalletAddress'; // global key handling
+//import { MakeLinkableAddress, ValidateAddress } from '../utils/grapeTools/WalletAddress'; // global key handling
 import { useSnackbar } from 'notistack';
 
 import CircularProgress from '@mui/material/CircularProgress';
