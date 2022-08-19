@@ -107,12 +107,14 @@ import {
     getMetadata,
   } from '../utils/auctionHouse/helpers/accounts';
 
+  /*
 import { cancelOffer } from '../utils/auctionHouse/cancelOffer';
 import { submitOffer } from '../utils/auctionHouse/submitOffer';
 import { acceptOffer } from '../utils/auctionHouse/acceptOffer';
 import { cancelListing } from '../utils/auctionHouse/cancelListing';
 import { sellNowListing } from '../utils/auctionHouse/sellNowListing';
 import { buyNowListing } from '../utils/auctionHouse/buyNowListing';
+*/
 //import { withdrawOffer } from '../utils/auctionHouse/withdrawOffer';
 import { gah_makeOffer } from '../utils/auctionHouse/gah_makeOffer';
 import { gah_cancelOffer } from '../utils/auctionHouse/gah_cancelOffer';
@@ -122,9 +124,9 @@ import { gah_sellListing } from '../utils/auctionHouse/gah_sellListing';
 import { gah_cancelListing } from '../utils/auctionHouse/gah_cancelListing';
 import { cancelWithdrawOffer } from '../utils/auctionHouse/cancelWithdrawOffer';
 import { depositInGrapeVine } from '../utils/auctionHouse/depositInGrapeVine';
-import { voteSell } from '../utils/auctionHouse/voteSell';
-import { voteListing } from '../utils/auctionHouse/voteListing';
-import { voteOffer } from '../utils/auctionHouse/voteOffer';
+//import { voteSell } from '../utils/auctionHouse/voteSell';
+//import { voteListing } from '../utils/auctionHouse/voteListing';
+//import { voteOffer } from '../utils/auctionHouse/voteOffer';
 import { createProposal } from '../utils/auctionHouse/createProposal';
 
 import "../App.less";
@@ -498,10 +500,13 @@ function SellNowVotePrompt(props:any){
                 const transaction = new Transaction();
                 if (daoPublicKey){
                     //voteListing2
+                    /*
                     const daoTransactionInstr = await voteListing(+sell_now_amount, mint, publicKey.toString(), mintOwner, weightedScore, daoPublicKey, updateAuthority, collectionAuctionHouse);
+                    */
                     //params from original voteListing
                     //const daoTransactionInstr = await voteListing(+sell_now_amount, mint, daoPublicKey.toString(), publicKey);
-                    console.log('transactionInstr' +JSON.stringify(daoTransactionInstr));
+                    //console.log('transactionInstr' +JSON.stringify(daoTransactionInstr));
+                    
                     /*const instructionsArray = [daoTransactionInstr.instructions].flat();            
                     transaction.add(
                         ...instructionsArray
@@ -509,11 +514,13 @@ function SellNowVotePrompt(props:any){
                     //console.log(daoTransactionInstr);
                     //console.log(daoTransactionInstr.instructions[1].data.buffer.toString());
                     //console.log(Utf8ArrayToStr(daoTransactionInstr.instructions[1].data));
+                    /*
                     const proposalPk = await createProposal(+sell_now_amount, mint, publicKey.toString(), mintOwner, weightedScore, daoPublicKey, connection, daoTransactionInstr, sendTransaction, anchorWallet, 2, updateAuthority, collectionAuctionHouse);
 
                     if (proposalPk){
                         enqueueSnackbar(`Proposal: ${proposalPk} created for accepting Listing Price Set to ${sell_now_amount} SOL`,{ variant: 'success' });
                     }
+                    */
                 } else {
                     //const transactionInstr = await sellNowListing(+sell_now_amount, mint, publicKey.toString(), mintOwner, weightedScore, daoPublicKey, updateAuthority, collectionAuctionHouse);
                     const transactionInstr = await gah_makeListing(+sell_now_amount, mint, publicKey.toString(), mintOwner, weightedScore, daoPublicKey, updateAuthority, collectionAuctionHouse);
@@ -1400,6 +1407,7 @@ export default function ItemOffers(props: any) {
                 enqueueSnackbar(`${t('NFT transaction completed')} `,{ variant: 'success', action:snackaction });
             } else {
                 //set instruction to sell state before sending proposal to realm
+                /*
                 const transactionInstrSell = await voteSell(+offerAmount, mint, publicKey.toString(), mintOwner, mintOwner.toString(), updateAuthority);
                 const instructionsArray = [transactionInstrSell.instructions].flat();            
                 transaction.add(
@@ -1434,6 +1442,7 @@ export default function ItemOffers(props: any) {
                 if (proposalPk){
                     enqueueSnackbar(`Proposal: ${proposalPk} created and offer for ${offerAmount} SOL will be voted if to be accepted.`,{ variant: 'success' });
                 }
+                */
             }
             
             const eskey = enqueueSnackbar(`${t('Metadata will be refreshed in a few seconds')}`, {
