@@ -859,6 +859,51 @@ export function StoreFrontView(this: any, props: any) {
         }
     }, [stateLoading]);
 
+
+    const getGqlCollectionFeaturedListings = async(auctionHouses: string, sellerExclusions: string, limitPerSeller: string, limit: string, offset: string) => {
+        const GET_FEATURED = gql`
+            query featuredListings($auctionHouses: [PublicKey!], $sellerExclusions: [PublicKey!], $limitPerSeller: Int, $limit: Int!, $offset: Int) {
+                featuredListings(auctionHouses: $auctionHouses, sellerExclusions: $sellerExclusions, limitPerSeller: $limitPerSeller, limit: $limit, offset: $offset) {
+                    id
+                    tradeState
+                    seller
+                    metadata
+                    purchaseId
+                    price
+                    tokenSize
+                    tradeStateBump
+                    createdAt
+                    canceledAt
+                    nft {
+                        name
+                        image
+                        address
+                    }
+                }
+            }
+        `;
+
+        let using = auctionHouses;
+            let usequery = GET_FEATURED;
+            
+            return await gql_client
+                .query({
+                query: usequery,
+                variables: {
+                    auctionHouses: [using],
+                    sellerExclusions: null,
+                    limitPerSeller: 987,
+                    limit: 123,
+                    offset: 987,
+                }
+                })
+                .then(res => {
+                    console.log("FEAT: "+JSON.stringify(res))
+                    //setMarketplaceStates(res.data.featuredListings)
+                    return res.data.featuredListings;
+                }).catch(err => console.log("ERR: "+err))
+    }
+
     const getGqlCollectionStates = async(auctionHouses: string) => {
             const GET_ACTIVITIES = gql`
                 query GetActivities($auctionHouses: [PublicKey!]!) {
@@ -879,11 +924,11 @@ export function StoreFrontView(this: any, props: any) {
                         }
                     }
                     activityType
-                    nft {
-                        name
-                        image
-                        address
-                    }
+                        nft {
+                            name
+                            image
+                            address
+                        }
                     }
                 }
                 `
@@ -910,6 +955,9 @@ export function StoreFrontView(this: any, props: any) {
         if (!stateLoading){
             setStateLoading(true);
             
+            //const Featured = await getGqlCollectionFeaturedListings(collectionAuthority.auctionHouse || AUCTION_HOUSE_ADDRESS, null, null, null, null);
+            
+            /*
             setLoadingPosition("GQL Listing states");
             const gqlResults = await getGqlCollectionStates(collectionAuthority.auctionHouse || AUCTION_HOUSE_ADDRESS)
             //console.log("gqlResults "+JSON.stringify(gqlResults));
@@ -922,12 +970,13 @@ export function StoreFrontView(this: any, props: any) {
                 var purchase_receipt = null;
                 if (item.activityType === 'listing'){
                     receipt_type = 'listing_receipt';
+                    console.log("listing_receipt: "+JSON.stringify(item));
                 }else if (item.activityType === 'purchase'){
                     receipt_type = 'purchase_receipt';
                     purchase_receipt = new PublicKey(1);
                     console.log("purchase: "+JSON.stringify(item));
                 }else{
-                    console.log("non - listing: "+JSON.stringify(item));
+                    console.log("other? - listing: "+JSON.stringify(item));
                 }
 
                 var createdAt = moment(item.createdAt).valueOf();
@@ -951,12 +1000,14 @@ export function StoreFrontView(this: any, props: any) {
                     receipt_type: receipt_type
                 });
             }
-
+            const results = mappedReceipts;
             //console.log("mappedReceipts "+JSON.stringify(mappedReceipts));
+            
+            */
 
+            
             setLoadingPosition("Auction House states");
             const results = await getReceiptsFromAuctionHouse(collectionAuthority.auctionHouse || AUCTION_HOUSE_ADDRESS, null, null, null, false, null);
-            //const results = mappedReceipts;
             
             //console.log("results "+JSON.stringify(results));
 

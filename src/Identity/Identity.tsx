@@ -15,6 +15,7 @@ import { gql } from '@apollo/client'
 import gql_client from '../gql_client'
 
 import { StorageView } from './plugins/Storage';
+import { StreamingPaymentsView } from './plugins/StreamingPayments';
 import SendToken from '../StoreFront/Send';
 import JupiterSwap from '../StoreFront/Swap';
 import BulkSend from './BulkSend';
@@ -1169,7 +1170,7 @@ export function IdentityView(props: any){
                                                                 label={<Hidden smDown><Typography variant="h6">{t('Storage')}</Typography></Hidden>
                                                             } value="6" />
 
-                                                        <Tab disabled={true} sx={{color:'white', textTransform:'none'}} 
+                                                        <Tab sx={{color:'white', textTransform:'none'}} 
                                                                 icon={<Hidden smUp><OpacityIcon /></Hidden>}
                                                                 label={<Hidden smDown><Typography variant="h6">{t('Streaming')}</Typography></Hidden>
                                                         } value="7" />
@@ -1502,9 +1503,13 @@ export function IdentityView(props: any){
                                                         }
 
                                                     </TabPanel>
-
+                                                    
                                                     <TabPanel value="6">
                                                         <StorageView pubkey={pubkey} setLoadingPosition={setLoadingPosition} />
+                                                    </TabPanel>
+
+                                                    <TabPanel value="7">
+                                                        <StreamingPaymentsView pubkey={pubkey} setLoadingPosition={setLoadingPosition} tokenMap={tokenMap} />
                                                     </TabPanel>
 
                                                 </TabContext>
