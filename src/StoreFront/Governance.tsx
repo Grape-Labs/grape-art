@@ -465,7 +465,6 @@ export function GovernanceView(props: any) {
     const getTokens = async () => {
         const tarray:any[] = [];
         try{
-        
             const tlp = await new TokenListProvider().resolve().then(tokens => {
                 const tokenList = tokens.filterByChainId(ENV.MainnetBeta).getList();
                 setTokenMap(tokenList.reduce((map, item) => {
