@@ -1,6 +1,6 @@
 import React, { FC, ReactNode, useCallback, useMemo, Suspense, Component } from 'react';
 import { styled, ThemeProvider } from '@mui/material/styles';
-import { HashRouter, BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 //import { LogView } from "./Log/Log";
 import { ProfileView } from './Profile/Profile';
 import { PreviewView } from './Preview/Preview';
@@ -23,7 +23,7 @@ import { Box, Grid, Paper, Container, Typography, AppBar } from '@mui/material';
 
 import Header from './Header/Header';
 import { SnackbarProvider } from 'notistack';
-import { useConnection, ConnectionProvider, WalletProvider, useWallet } from '@solana/wallet-adapter-react';
+import { ConnectionProvider, WalletProvider, useWallet } from '@solana/wallet-adapter-react';
 import { WalletAdapterNetwork, WalletError, WalletNotConnectedError } from '@solana/wallet-adapter-base';
 //import { Connection, Keypair, SystemProgram, Transaction, clusterApiUrl } from '@solana/web3.js';
 //import { Helmet } from 'react-helmet';
@@ -66,7 +66,6 @@ import { GRAPE_RPC_ENDPOINT, TX_RPC_ENDPOINT, GENSYSGO_RPC_ENDPOINT } from './ut
 import { BottomChat as DialectBottomChat, DialectUiManagementProvider } from '@dialectlabs/react-ui';
 import { getDialectVariables, GRAPE_BOTTOM_CHAT_ID } from './utils/ui-contants';
 import { ClassNames } from '@emotion/react';
-import { render } from '@testing-library/react';
 
 function BottomChat() {
     const wallet = useWallet();
@@ -101,11 +100,6 @@ function Copyright(props: any): JSX.Element {
     return (
         <Typography sx={{ background: 'transparent' }} variant="body2" color="text.secondary" align="center" {...props}>
             {t('Powered by Grape on Solana')}
-            {/*
-      <Link color="inherit" href="https://verify.grapes.network">
-        Grape Network | Dashboard v1.1.5
-      </Link>
-      */}
         </Typography>
     );
 }
@@ -216,9 +210,6 @@ function DashboardContent(){
                                                                 <Route path=":handlekey" element={<StoreFrontView />} />
                                                             </Route>
                                                             <Route path="collection/*" element={<StoreFrontView />}>
-                                                                <Route path=":handlekey" element={<StoreFrontView />} />
-                                                            </Route>
-                                                            <Route path="community/*" element={<StoreFrontView />}>
                                                                 <Route path=":handlekey" element={<StoreFrontView />} />
                                                             </Route>
 

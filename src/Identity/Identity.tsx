@@ -1157,7 +1157,7 @@ export function IdentityView(props: any){
                                                                 label={<Hidden smDown><Typography variant="h6">{t('Storage')}</Typography></Hidden>
                                                             } value="6" />
 
-                                                        <Tab sx={{color:'white', textTransform:'none'}} 
+                                                        <Tab disabled={true} sx={{color:'white', textTransform:'none'}} 
                                                                 icon={<Hidden smUp><OpacityIcon /></Hidden>}
                                                                 label={<Hidden smDown><Typography variant="h6">{t('Streaming')}</Typography></Hidden>
                                                         } value="7" />
