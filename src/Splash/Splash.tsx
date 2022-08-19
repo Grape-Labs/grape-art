@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback, memo, Suspense } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
-import { decodeMetadata } from '../utils/grapeTools/utils';
+//import { decodeMetadata } from '../utils/grapeTools/utils';
 // @ts-ignore
 import fetch from 'node-fetch';
 import BN from "bn.js";
@@ -16,7 +16,7 @@ import {
   } from "@bonfida/spl-name-service";
 
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
-import { getProfilePicture } from '@solflare-wallet/pfp';
+//import { getProfilePicture } from '@solflare-wallet/pfp';
 
 import { TokenAmount, lt } from '../utils/grapeTools/safe-math';
 import { Connection, PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js';

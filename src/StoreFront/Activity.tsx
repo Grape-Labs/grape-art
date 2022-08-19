@@ -28,16 +28,9 @@ import {
 import { PreviewView } from "../Preview/Preview";
 
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
-import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
-import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import SolCurrencyIcon from '../components/static/SolCurrencyIcon';
-import GrapeIcon from '../components/static/GrapeIcon';
-import IconButton, { IconButtonProps } from '@mui/material/IconButton';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import CircularProgress from '@mui/material/CircularProgress';
-import CancelIcon from '@mui/icons-material/Cancel';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
 import { WalletConnectButton } from "@solana/wallet-adapter-material-ui";

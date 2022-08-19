@@ -6,15 +6,15 @@ import { ProfileView } from './Profile/Profile';
 import { PreviewView } from './Preview/Preview';
 import { FeaturedView } from './Featured/Featured';
 import { IdentityView } from './Identity/Identity';
-import { SplashView } from './Splash/Splash';
+//import { SplashView } from './Splash/Splash';
 import { StoreFrontView } from './StoreFront/StoreFront';
 //import { MessagesView } from './Messages/Messages';
 //import { NotificationsView } from "./NotificationsTest/NotificationsTest";
 import CssBaseline from '@mui/material/CssBaseline';
 
-import STATIC_APPLE_TOUCH from './public/apple-touch-icon.png';
-import STATIC_FAVICON_32x32 from './public/favicon-32x32.png';
-import STATIC_FAVICON_16x16 from './public/favicon-16x16.png';
+//import STATIC_APPLE_TOUCH from './public/apple-touch-icon.png';
+//import STATIC_FAVICON_32x32 from './public/favicon-32x32.png';
+//import STATIC_FAVICON_16x16 from './public/favicon-16x16.png';
 //import STATIC_GRAPEDEX from './public/grapedex.png';
 
 import './dialect.css';
@@ -25,10 +25,9 @@ import Header from './Header/Header';
 import { SnackbarProvider } from 'notistack';
 import { useConnection, ConnectionProvider, WalletProvider, useWallet } from '@solana/wallet-adapter-react';
 import { WalletAdapterNetwork, WalletError, WalletNotConnectedError } from '@solana/wallet-adapter-base';
-import { Connection, Keypair, SystemProgram, Transaction, clusterApiUrl } from '@solana/web3.js';
-import { Helmet } from 'react-helmet';
-
-import { useSnackbar } from 'notistack';
+//import { Connection, Keypair, SystemProgram, Transaction, clusterApiUrl } from '@solana/web3.js';
+//import { Helmet } from 'react-helmet';
+//import { useSnackbar } from 'notistack';
 
 import ConfirmDialog from './components/ConfirmDialog/ConfirmDialog';
 
@@ -201,7 +200,7 @@ function DashboardContent(){
                                                         <BottomChat />
 
                                                         <Routes>
-                                                            <Route path="/splash" element={<SplashView />} />
+                                                            {/*<Route path="/splash" element={<SplashView />} />*/}
 
                                                             <Route path="/featured" element={<FeaturedView />} />
 

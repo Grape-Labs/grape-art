@@ -23,8 +23,6 @@ import {
     Stack,
 } from '@mui/material';
 
-import { createFilterOptions} from '@mui/material/useAutocomplete'
-
 import { 
     GRAPE_RPC_ENDPOINT, 
 } from '../utils/grapeTools/constants';

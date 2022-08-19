@@ -2,7 +2,6 @@ import { PublicKey, TokenAmount, Connection } from '@solana/web3.js';
 import { ENV, TokenListProvider, TokenInfo } from '@solana/spl-token-registry';
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token-v2';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
-import { getOwnedTokenAccounts } from '../utils/governanceTools/tokens';
 import * as React from 'react';
 import BN from 'bn.js';
 import { styled, useTheme } from '@mui/material/styles';
@@ -15,22 +14,9 @@ import {
   Card,
   CardActions,
   CardContent,
-  Paper,
   Avatar,
-  Skeleton,
   Table,
-  TableContainer,
-  TableCell,
-  TableHead,
-  TableBody,
-  TableFooter,
-  TableRow,
-  TablePagination,
-  Collapse,
-  Tooltip,
-  CircularProgress,
   LinearProgress,
-  ButtonGroup,
 } from '@mui/material/';
 
 import {  
