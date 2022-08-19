@@ -23,7 +23,6 @@ import {
   Paper,
   Avatar,
   Badge,
-  Skeleton,
   Table,
   TableContainer,
   TableCell,

@@ -1,7 +1,6 @@
 
 import { SOFLARE_NOTIFICATIONS_API_KEY } from '../grapeTools/constants'; 
 import { AUCTION_HOUSE_ADDRESS } from '../auctionHouse/helpers/constants';
-import { linkSync } from 'fs';
 
 export async function unicastGrapeSolflareMessage (title:string,message:string,image:string,publicKey:string,actionUrl:string, signedTransaction: any, auctionHouse: string) {
     try{

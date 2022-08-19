@@ -5,12 +5,12 @@ import { Link } from "react-router-dom";
 import CyberConnect, { Env, Blockchain, solana } from '@cyberlab/cyberconnect';
 import { LikeListInfoResp, FollowListInfoResp, SearchUserInfoResp, Network } from '../utils/cyberConnect/types';
 import { removeDuplicate } from '../utils/cyberConnect/helper';
-import { followListInfoQuery, likeListInfoQuery } from '../utils/cyberConnect/query';
+import { likeListInfoQuery } from '../utils/cyberConnect/query';
 
 import { decodeMetadata } from '../utils/grapeTools/utils';
 
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
-import { getProfilePicture } from '@solflare-wallet/pfp';
+//import { getProfilePicture } from '@solflare-wallet/pfp';
 
 import { Connection, PublicKey} from '@solana/web3.js';
 
@@ -18,19 +18,10 @@ import {
     METAPLEX_PROGRAM_ID,
 } from '../utils/auctionHouse/helpers/constants';
 
-import Jazzicon, { jsNumberForAddress } from 'react-jazzicon'
-
-import { Button } from '@mui/material';
+//import Jazzicon, { jsNumberForAddress } from 'react-jazzicon'
 
 import {
-    Typography,
     Grid,
-    Box,
-    Avatar,
-    ListItem,
-    ListItemText,
-    ListItemButton,
-    ListItemAvatar,
 } from '@mui/material';
 
 import CircularProgress from '@mui/material/CircularProgress';

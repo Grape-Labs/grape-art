@@ -20,8 +20,6 @@ import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import ShareSocialURL from '../utils/grapeTools/ShareUrl';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 
-import { MakeLinkableAddress, ValidateAddress, trimAddress, timeAgo } from '../utils/grapeTools/WalletAddress'; // global key handling
-
 import { CardActionArea } from '@mui/material';
 
 import { useTranslation } from 'react-i18next';

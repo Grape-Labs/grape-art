@@ -9,7 +9,7 @@ import { PublicKey, Connection, Commitment } from '@solana/web3.js';
 import {ENV, TokenInfo, TokenListProvider} from '@solana/spl-token-registry';
 
 import { getRealm, getRealms, getAllProposals, getGovernance, getTokenOwnerRecordsByOwner, getTokenOwnerRecord, getRealmConfigAddress, getGovernanceAccount, getAccountTypes, GovernanceAccountType, tryGetRealmConfig  } from '@solana/spl-governance';
-import { ShdwDrive } from "@shadow-drive/sdk";
+//import { ShdwDrive } from "@shadow-drive/sdk";
 
 import { gql } from '@apollo/client'
 import gql_client from '../gql_client'
@@ -17,13 +17,10 @@ import gql_client from '../gql_client'
 import { StorageView } from './plugins/Storage';
 import { StreamingPaymentsView } from './plugins/StreamingPayments';
 import SendToken from '../StoreFront/Send';
-import JupiterSwap from '../StoreFront/Swap';
+//import JupiterSwap from '../StoreFront/Swap';
 import BulkSend from './BulkSend';
 import BulkBurnClose from './BulkBurnClose';
 import TransferDomain from './TransferDomain';
-
-import { styled } from '@mui/material/styles';
-import { grey } from '@mui/material/colors';
 
 import { findDisplayName } from '../utils/name-service';
 import { getProfilePicture } from '@solflare-wallet/pfp';
@@ -37,27 +34,21 @@ import {
 import {
     Button,
     ButtonGroup,
-    Stack,
     Typography,
     Grid,
     Box,
     Container,
-    Skeleton,
     Avatar,
     List,
     ListItem,
     ListItemAvatar,
-    ListItemIcon,
     ListItemText,
     ListItemButton,
     Tooltip,
-    SwipeableDrawer,
-    CssBaseline,
     Tab,
     Hidden,
     Badge,
     LinearProgress,
-    CircularProgress,
 } from '@mui/material';
 
 import {

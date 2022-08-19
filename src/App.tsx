@@ -29,7 +29,7 @@ import { WalletAdapterNetwork, WalletError, WalletNotConnectedError } from '@sol
 //import { Helmet } from 'react-helmet';
 //import { useSnackbar } from 'notistack';
 
-import ConfirmDialog from './components/ConfirmDialog/ConfirmDialog';
+//import ConfirmDialog from './components/ConfirmDialog/ConfirmDialog';
 
 import { useTranslation } from 'react-i18next';
 
@@ -196,7 +196,6 @@ function DashboardContent(){
                                                     }}
                                                 >
                                                     <Container maxWidth="xl" sx={{ mb: 4 }}>
-                                                        <ConfirmDialog />
                                                         <BottomChat />
 
                                                         <Routes>

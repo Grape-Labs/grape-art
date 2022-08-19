@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { Link } from "react-router-dom";
 
-import { sendSignedTransaction } from '../utils/governanceTools/sendTransactions'
+//import { sendSignedTransaction } from '../utils/governanceTools/sendTransactions'
 
 import { Connection, PublicKey, Transaction, TransactionInstruction } from '@solana/web3.js';
 import * as anchor from '@project-serum/anchor';
@@ -122,12 +122,12 @@ import { gah_acceptOffer } from '../utils/auctionHouse/gah_acceptOffer';
 import { gah_makeListing } from '../utils/auctionHouse/gah_makeListing';
 import { gah_sellListing } from '../utils/auctionHouse/gah_sellListing';
 import { gah_cancelListing } from '../utils/auctionHouse/gah_cancelListing';
-import { cancelWithdrawOffer } from '../utils/auctionHouse/cancelWithdrawOffer';
-import { depositInGrapeVine } from '../utils/auctionHouse/depositInGrapeVine';
+//import { cancelWithdrawOffer } from '../utils/auctionHouse/cancelWithdrawOffer';
+//import { depositInGrapeVine } from '../utils/auctionHouse/depositInGrapeVine';
 //import { voteSell } from '../utils/auctionHouse/voteSell';
 //import { voteListing } from '../utils/auctionHouse/voteListing';
 //import { voteOffer } from '../utils/auctionHouse/voteOffer';
-import { createProposal } from '../utils/auctionHouse/createProposal';
+//import { createProposal } from '../utils/auctionHouse/createProposal';
 
 import "../App.less";
 

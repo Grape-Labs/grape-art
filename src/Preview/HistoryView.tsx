@@ -26,27 +26,11 @@ import {
     TableRow,
     InputBase,
     Tooltip,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogContentText,
-    DialogTitle,
     List,
     ListItemButton,
     ListItemIcon,
     ListItemText,
 } from '@mui/material';
-
-import {
-    AUCTION_HOUSE_PROGRAM_ID,
-    ENV_AH,
-    AUCTION_HOUSE_ADDRESS,
-    WRAPPED_SOL_MINT,
-    TOKEN_PROGRAM_ID,
-} from '../utils/auctionHouse/helpers/constants';
-
-import { AuctionHouseProgram  } from '@metaplex-foundation/mpl-auction-house';
-import { Metadata } from '@metaplex-foundation/mpl-token-metadata';
 
 import { 
     GRAPE_RPC_ENDPOINT,
@@ -64,17 +48,9 @@ import { TokenAmount } from '../utils/grapeTools/safe-math';
 
 import Chat from '@mui/icons-material/Chat';
 import BarChartOutlinedIcon from '@mui/icons-material/BarChartOutlined';
-import HowToVoteIcon from '@mui/icons-material/HowToVote';
 import SolCurrencyIcon from '../components/static/SolCurrencyIcon';
-import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
-import BallotIcon from '@mui/icons-material/Ballot';
-import SellIcon from '@mui/icons-material/Sell';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLess from '@mui/icons-material/ExpandLess';
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-import CircularProgress from '@mui/material/CircularProgress';
-import CancelIcon from '@mui/icons-material/Cancel';
-import { ConstructionOutlined, SentimentSatisfiedSharp } from "@mui/icons-material";
 
 function convertSolVal(sol: any){
     try{

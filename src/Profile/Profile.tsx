@@ -96,7 +96,6 @@ import {
     FEATURED_DAO_ARRAY,
 } from '../utils/grapeTools/constants';
 import ShareSocialURL from '../utils/grapeTools/ShareUrl';
-import FeedView from './FeedView';
 import MarketplaceView from './MarketplaceView';
 import OffersView from './OffersView';
 import SocialView from './SocialView';

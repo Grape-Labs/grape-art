@@ -19,8 +19,6 @@ import {
 } from '@mui/material';
 
 import GalleryItem from './GalleryItem';
-import { GRAPE_PREVIEW } from '../utils/grapeTools/constants';
-import { ConstructionOutlined } from "@mui/icons-material";
 
 export default function GalleryGroupItem(props: any){
     const [page, setPage] = React.useState(1);

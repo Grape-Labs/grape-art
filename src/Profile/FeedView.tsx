@@ -20,9 +20,6 @@ import {
     ENV_AH,
     AUCTION_HOUSE_ADDRESS,
   } from '../utils/auctionHouse/helpers/constants';
-import {
-    loadAuctionHouseProgram,
-  } from '../utils/auctionHouse/helpers/accounts';
 
 import { web3 } from '@project-serum/anchor';
 
