@@ -15,7 +15,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import STATIC_APPLE_TOUCH from './public/apple-touch-icon.png';
 import STATIC_FAVICON_32x32 from './public/favicon-32x32.png';
 import STATIC_FAVICON_16x16 from './public/favicon-16x16.png';
-import STATIC_GRAPEDEX from './public/grapedex.png';
+//import STATIC_GRAPEDEX from './public/grapedex.png';
 
 import './dialect.css';
 
