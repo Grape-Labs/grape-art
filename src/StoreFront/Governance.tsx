@@ -468,14 +468,12 @@ export function GovernanceView(props: any) {
         
             const tlp = await new TokenListProvider().resolve().then(tokens => {
                 const tokenList = tokens.filterByChainId(ENV.MainnetBeta).getList();
-                //console.log("tokenList: "+JSON.stringify(tokenList));
                 setTokenMap(tokenList.reduce((map, item) => {
                     tarray.push({address:item.address, decimals:item.decimals})
                     map.set(item.address, item);
                     return map;
                 },new Map()));
                 setTokenArray(tarray);
-                //console.log("tokenMap::: "+JSON.stringify(tokenArray))
             });
         } catch(e){console.log("ERR: "+e)}
     }
