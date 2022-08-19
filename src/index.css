@@ -1,13 +1,13 @@
 @font-face {
   font-family: GrapeFont;
-  src: url(./grape_font/Gilroy-Light.ttf);
+  src: url(https://shdw-drive.genesysgo.net/5VhicqNTPgvJNVPHPp8PSH91YQ6KnVAeukW1K37GJEEV/Gilroy-Light.ttf);
   font-weight:normal;
   font-style:normal;
 }
 
 @font-face {
   font-family: GrapeFont;
-  src: url(./grape_font/Gilroy-ExtraBold.ttf);
+  src: url(https://shdw-drive.genesysgo.net/5VhicqNTPgvJNVPHPp8PSH91YQ6KnVAeukW1K37GJEEV/Gilroy-ExtraBold.ttf);
   font-weight:bold;
   font-style:normal;
 }

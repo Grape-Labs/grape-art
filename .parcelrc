@@ -3,5 +3,8 @@
     "resolvers": ["@parcel/resolver-glob", "..."],
     "transformers": {
         "*.ico": ["@parcel/transformer-raw"]
-    }
+    },
+    "compressors": {
+        "*.{html,css,js,svg,map}": ["@parcel/compressor-gzip"]
+      }
 }

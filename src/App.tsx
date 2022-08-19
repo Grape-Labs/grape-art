@@ -8,7 +8,7 @@ import { FeaturedView } from './Featured/Featured';
 import { IdentityView } from './Identity/Identity';
 import { SplashView } from './Splash/Splash';
 import { StoreFrontView } from './StoreFront/StoreFront';
-import { MessagesView } from './Messages/Messages';
+//import { MessagesView } from './Messages/Messages';
 //import { NotificationsView } from "./NotificationsTest/NotificationsTest";
 import CssBaseline from '@mui/material/CssBaseline';
 
@@ -205,7 +205,7 @@ function DashboardContent(){
 
                                                             <Route path="/featured" element={<FeaturedView />} />
 
-                                                            <Route path="/messages" element={<MessagesView />} />
+                                                            {/*<Route path="/messages" element={<MessagesView />} />*/}
 
                                                             {/*<Route path="/solflaretest" element={<NotificationsView/>} />*/}
 

@@ -2929,6 +2929,20 @@
   dependencies:
     chalk "^4.1.0"
 
+"@parcel/compressor-brotli@^2.7.0":
+  version "2.7.0"
+  resolved "https://registry.yarnpkg.com/@parcel/compressor-brotli/-/compressor-brotli-2.7.0.tgz#a895f517c0252d75abcfc6eb6af2d0129b687389"
+  integrity sha512-dXyV/jXS2fqhU9Uj+29xPt/txTXnSJcvUtjo3R8cjKbJYK2vu4e1s0QCo5rndpCYgbYKevwNdHmIuxN2us+A3Q==
+  dependencies:
+    "@parcel/plugin" "2.7.0"
+
+"@parcel/compressor-gzip@^2.7.0":
+  version "2.7.0"
+  resolved "https://registry.yarnpkg.com/@parcel/compressor-gzip/-/compressor-gzip-2.7.0.tgz#8fc14be2553d53b1c7ce06e966a6941605f24b6f"
+  integrity sha512-k4qwF7i+2ouGAyjXfCeeT8nEcSAXQVPdF0eG35pZeMsT+vrQ1+MI1L3AwBhLIuXRPXDMv47Eqx+KTsatP9gVmg==
+  dependencies:
+    "@parcel/plugin" "2.7.0"
+
 "@parcel/compressor-raw@2.7.0":
   version "2.7.0"
   resolved "https://registry.yarnpkg.com/@parcel/compressor-raw/-/compressor-raw-2.7.0.tgz#3f8677e6371ef099cd9e4bd2a899884dc8eb571b"

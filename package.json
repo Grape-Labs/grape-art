@@ -114,6 +114,8 @@
         "zustand": "^3.6.8"
     },
     "devDependencies": {
+        "@parcel/compressor-brotli": "^2.7.0",
+        "@parcel/compressor-gzip": "^2.7.0",
         "@parcel/packager-raw-url": "2.7.0",
         "@parcel/resolver-glob": "^2.7.0",
         "@parcel/transformer-less": "2.7.0",
