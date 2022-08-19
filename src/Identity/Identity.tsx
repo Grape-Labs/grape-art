@@ -57,10 +57,6 @@ import {
     TabPanel,
 } from '@mui/lab';
 
-import { 
-    MARKET_LOGO
-} from '../utils/grapeTools/constants';
-
 import HorizontalRuleIcon from '@mui/icons-material/HorizontalRule';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
