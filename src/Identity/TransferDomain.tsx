@@ -105,9 +105,6 @@ export default function TransferDomain(props: any) {
     const handleClose = () => {
         setOpen(false);
     };
-
-    
-    
     
     async function transferDomain(domain: string, toaddress: string) {
         const fromWallet = publicKey;
@@ -183,7 +180,7 @@ export default function TransferDomain(props: any) {
         <Button
             variant="outlined" 
             //aria-controls={menuId}
-            title={`Send ${snsDomain}`}
+            title={`Transfer ${snsDomain}`}
             onClick={handleClickOpen}
             size="small"
             //onClick={isConnected ? handleProfileMenuOpen : handleOpen}
@@ -243,14 +240,14 @@ export default function TransferDomain(props: any) {
                         fullWidth
                         type="submit"
                         variant="outlined" 
-                        title="Send"
+                        title="Transfer"
                         disabled={
                             (!toaddress || toaddress.length <= 0)
                         }
                         sx={{
                             borderRadius:'17px'
                         }}>
-                        Send
+                        Transfer
                     </Button>
                 </DialogActions>
             </form>

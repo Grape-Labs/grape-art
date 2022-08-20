@@ -9,6 +9,8 @@ import {ENV, TokenInfo, TokenListProvider} from '@solana/spl-token-registry';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useSnackbar } from 'notistack';
 
+import { styled } from '@mui/material/styles';
+
 import {
     Button,
     ButtonGroup,
@@ -19,6 +21,13 @@ import {
     Container,
     Skeleton,
     Avatar,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    FormControl,
+    IconButton,
+    TextField,
     List,
     ListItem,
     ListItemAvatar,
@@ -35,6 +44,7 @@ import {
     CircularProgress,
 } from '@mui/material';
 
+import CloseIcon from '@mui/icons-material/Close';
 import SettingsIcon from '@mui/icons-material/Settings';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import DownloadingIcon from '@mui/icons-material/Downloading';
@@ -79,6 +89,45 @@ function secondsToHms(d:number) {
     return hDisplay + mDisplay + sDisplay; 
 }
 
+const BootstrapDialog = styled(Dialog)(({ theme }) => ({
+    '& .MuDialogContent-root': {
+      padding: theme.spacing(2),
+    },
+    '& .MuDialogActions-root': {
+      padding: theme.spacing(1),
+    },
+  }));
+  
+  export interface DialogTitleProps {
+    id: string;
+    children?: React.ReactNode;
+    onClose: () => void;
+  }
+  
+  const BootstrapDialogTitle = (props: DialogTitleProps) => {
+    const { children, onClose, ...other } = props;
+  
+    return (
+      <DialogTitle sx={{ m: 0, p: 2 }} {...other}>
+        {children}
+        {onClose ? (
+          <IconButton
+            aria-label="close"
+            onClick={onClose}
+            sx={{
+              position: 'absolute',
+              right: 8,
+              top: 8,
+              color: (theme) => theme.palette.grey[500],
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+        ) : null}
+      </DialogTitle>
+    );
+  };
+
 export function StreamingPaymentsView(props: any){
     const setLoadingPosition = props.setLoadingPosition;
     const pubkey = props.pubkey;
@@ -88,9 +137,130 @@ export function StreamingPaymentsView(props: any){
     const [streamingPaymentsRows, setStreamingPaymentsRows] = React.useState(null);
     const [loadingStreamingPayments, setLoadingStreamingPayments] = React.useState(false);
     const wallet = useWallet();
-    const { publicKey, sendTransaction, signTransaction } = useWallet();
+    
+    const { publicKey, sendTransaction } = useWallet();
     const connection = new Connection(GRAPE_RPC_ENDPOINT);
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+
+
+    function TransferStreamComponent(props:any){
+        const streamName = props.streamName;
+        const streamId = props.streamId;
+        const [openTransfer, setTransferOpen] = React.useState(false);
+        const [toAddress, setToAddress] = React.useState(null);
+
+        const handleClickTransferOpen = () => {
+            setTransferOpen(true);
+        };
+        const handleTransferClose = () => {
+            setTransferOpen(false);
+        };
+        function HandleSendSubmit(event: any) {
+            event.preventDefault();
+            if (toAddress){
+                if ((toAddress.length >= 32) && 
+                    (toAddress.length <= 44)){ // very basic check / remove and add twitter handle support (handles are not bs58)
+                    transferStream(streamId, toAddress)
+                    handleTransferClose();
+                } else{
+                    // Invalid Wallet ID
+                    enqueueSnackbar(`Enter a valid Wallet Address!`,{ variant: 'error' });
+                    console.log("INVALID WALLET ID");
+                }
+            } else{
+                enqueueSnackbar(`Enter a valid Wallet Address!`,{ variant: 'error' });
+            }
+        }
+        
+        return (
+            <div>
+    
+                <Button
+                    variant="outlined" 
+                    title={`Transfer`}
+                    onClick={handleClickTransferOpen}
+                    size="small"
+                    >
+                    Transfer
+                </Button>
+                <BootstrapDialog
+                    onClose={handleTransferClose}
+                    aria-labelledby="customized-dialog-title"
+                    open={openTransfer}
+                    PaperProps={{
+                        style: {
+                            boxShadow: '3',
+                            borderRadius: '17px',
+                            },
+                        }}
+                >
+                    <form onSubmit={HandleSendSubmit}>
+                        <BootstrapDialogTitle id="customized-dialog-title" onClose={handleTransferClose}>
+                            Transfer Stream
+                        </BootstrapDialogTitle>
+                        <DialogContent dividers>
+                            <FormControl>
+                                <Grid container spacing={2}>
+                                        <>
+                                            <Grid item xs={12} textAlign={'left'} sx={{mt:1}}>
+                                                <Typography variant="caption">
+                                                    Stream: {streamId}
+                                                </Typography>
+                                                <br/>
+                                                <Typography variant="caption">
+                                                    Name: {streamName}
+                                                </Typography>
+                                            </Grid>
+                                            <Grid item xs={12} textAlign={'center'} sx={{mt:1}}>
+                                                <Typography variant="body1">
+                                                    Enter the Solana address you would like to transfer this stream to
+                                                </Typography>
+                                            </Grid>
+                                            <Grid item xs={12}>
+                                                <TextField 
+                                                    id="send-to-address" 
+                                                    fullWidth 
+                                                    placeholder="Enter a Solana address" 
+                                                    label="To address" 
+                                                    variant="standard"
+                                                    autoComplete="off"
+                                                    onChange={(e) => {setToAddress(e.target.value)}}
+                                                    InputProps={{
+                                                        inputProps: {
+                                                            style: {
+                                                                textAlign:'center'
+                                                            }
+                                                        }
+                                                    }}
+                                                />
+                                            </Grid>
+                                        </>
+                                
+                                </Grid>
+                            </FormControl>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button     
+                                fullWidth
+                                type="submit"
+                                variant="outlined" 
+                                title="Transfer"
+                                disabled={
+                                    (!toAddress || toAddress.length <= 0)
+                                }
+                                sx={{
+                                    borderRadius:'17px'
+                                }}>
+                                Transfer
+                            </Button>
+                        </DialogActions>
+                    </form>
+                </BootstrapDialog>
+            </div>
+        );
+    }
+
+
 
     const StreamPaymentClient = new StreamClient(
         GRAPE_RPC_ENDPOINT, // "https://api.mainnet-beta.solana.com",
@@ -106,12 +276,23 @@ export function StreamingPaymentsView(props: any){
 
     const streamingcolumns: GridColDef[] = [
         { field: 'id', headerName: 'ID', width: 70, hide: true },
-        { field: 'source', headerName: 'Source', width: 100 },
+        { field: 'source', headerName: 'Source', width: 150,
+            renderCell: (params) => {
+                return(
+                    <>
+                        <Avatar alt={params.value} src={params.value.logoURI} sx={{ width: 20, height: 20, bgcolor: 'rgb(0, 0, 0)', mr:1 }}>
+                            {params.value.name.substr(0,2)}
+                        </Avatar>
+                        {params.value.name}
+                    </>
+                )
+            }
+        },
         { field: 'mint', headerName: 'Mint', width: 150, align: 'center',
             renderCell: (params) => {
                 return(
                     <>
-                        <Avatar alt={params.value} src={tokenMap.get(params.value).logoURI} sx={{ width: 40, height: 40, bgcolor: 'rgb(0, 0, 0)', mr:1 }}>
+                        <Avatar alt={params.value} src={tokenMap.get(params.value).logoURI} sx={{ width: 20, height: 20, bgcolor: 'rgb(0, 0, 0)', mr:1 }}>
                             {params.value.substr(0,2)}
                         </Avatar>
                         {tokenMap.get(params.value).name}
@@ -129,11 +310,38 @@ export function StreamingPaymentsView(props: any){
                 );
             }
         },
+        { field: 'depositedAmount', headerName: 'Total', width: 100, align: 'center',
+            renderCell: (params) => {
+                return(
+                    <>
+                        {+params.value.depositedAmount/(10 ** tokenMap.get(params.value.mint)?.decimals)} {tokenMap.get(params.value.mint)?.symbol}
+                    </>
+                );
+            }
+        },
+        { field: 'withdrawnAmount', headerName: 'Withdrawn', width: 100, align: 'center',
+            renderCell: (params) => {
+                return(
+                    <>
+                        {+params.value.withdrawnAmount/(10 ** tokenMap.get(params.value.mint)?.decimals)} {tokenMap.get(params.value.mint)?.symbol}
+                    </>
+                );
+            }
+        },
+        { field: 'availableAmount', headerName: 'Available', width: 100, align: 'center',
+            renderCell: (params) => {
+                return(
+                    <>
+                        {(+params.value.depositedAmount/(10 ** tokenMap.get(params.value.mint)?.decimals) - +params.value.withdrawnAmount/(10 ** tokenMap.get(params.value.mint)?.decimals)).toFixed(2)} {tokenMap.get(params.value.mint)?.symbol}
+                    </>
+                );
+            }
+        },
         { field: 'amountPerPeriod', headerName: 'Payout Period', width: 200, align: 'center',
             renderCell: (params) => {
                 return(
                     <>
-                        <Typography variant='body2' color='green'>
+                        <Typography variant='body2' color='#FF5733'>
                         {+params.value.amountPerPeriod/(10 ** tokenMap.get(params.value.mint)?.decimals)} <OpacityIcon sx={{fontSize:'14px'}} /> every {secondsToHms(params.value.period)}
                         </Typography>
                     </>
@@ -145,7 +353,9 @@ export function StreamingPaymentsView(props: any){
                 return(
                     <>
                     {+params.value !== 0 ?
-                        moment.unix(+params.value).format("MMMM Do YYYY, h:mm a")
+                        <Typography variant='caption'>
+                            {moment.unix(+params.value).format("MMMM Do YYYY, h:mm a")}
+                        </Typography>
                     :
                         <></>
                     }
@@ -158,7 +368,9 @@ export function StreamingPaymentsView(props: any){
                 return(
                     <>
                     {+params.value !== 0 ?
-                        moment.unix(+params.value).format("MMMM Do YYYY, h:mm a")
+                        <Typography variant='caption'>
+                            {moment.unix(+params.value).format("MMMM Do YYYY, h:mm a")}
+                        </Typography>
                     :
                         <></>
                     }
@@ -171,7 +383,9 @@ export function StreamingPaymentsView(props: any){
                 return(
                     <>
                     {+params.value !== 0 ?
-                        moment.unix(+params.value).format("MMMM Do YYYY, h:mm a")
+                        <Typography variant='caption'>
+                            {moment.unix(+params.value).format("MMMM Do YYYY, h:mm a")}
+                        </Typography>
                     :
                         <></>
                     }
@@ -184,7 +398,9 @@ export function StreamingPaymentsView(props: any){
                 return(
                     <>
                         {+params.value !== 0 &&
-                            <>{moment.unix(+params.value).format("MMMM Do YYYY, h:mm a")}</>
+                            <Typography variant='caption'>
+                                {moment.unix(+params.value).format("MMMM Do YYYY, h:mm a")}
+                            </Typography>
                         }
                     </>
                 )
@@ -204,7 +420,7 @@ export function StreamingPaymentsView(props: any){
                 return(
                     <>  
                         {params.value ?
-                            <CheckCircleIcon sx={{color:'green'}} />
+                            <CheckCircleIcon sx={{color:'#FF5733'}} />
                         :
                             <CancelIcon sx={{color:'red'}} />
                         }
@@ -214,24 +430,24 @@ export function StreamingPaymentsView(props: any){
         },
         { field: 'manage', headerName: '', width: 250,  align: 'center',
             renderCell: (params) => {
+                const withdrawAmount =  getBN(+params.value.withdrawnAmount, tokenMap.get(params.value.mint)?.decimals);//new BN(+params.value.depositedAmount/(10 ** tokenMap.get(params.value.mint)?.decimals) - +params.value.withdrawnAmount/(10 ** tokenMap.get(params.value.mint)?.decimals));
+                
+                //alert("withdraw: "+(+params.value.depositedAmount/(10 ** tokenMap.get(params.value.mint)?.decimals) - +params.value.withdrawnAmount/(10 ** tokenMap.get(params.value.mint)?.decimals)));
                 return (
                     <>
                     {publicKey && pubkey === publicKey.toBase58() ?
                         <ButtonGroup>
-                            {/*
+                            
                             <Button
                                 variant='outlined'
                                 size='small'
-                                onClick={(e) => withdrawStream(params.value.id)}
+                                onClick={(e) => withdrawStream(params.value.id, withdrawAmount)}
                                 sx={{borderTopLeftRadius:'17px',borderBottomLeftRadius:'17px'}}
                             >Withdraw</Button>
                             {params.value?.transferableByRecipient === true &&
-                                <Button
-                                    variant='outlined'
-                                    size='small'
-                                >Transfer</Button>
+                                <TransferStreamComponent streamId={params.value.id} streamName={params.value.name} />
                             }
-                        */}
+                        
                             <Button
                                 variant='outlined'
                                 size='small'
@@ -253,19 +469,82 @@ export function StreamingPaymentsView(props: any){
         
       ];
 
-      async function withdrawStream(stream:string) {
+      async function transferStream(stream:string, recipientId: string) {
+        
+        const data = {
+            invoker: wallet, // Wallet/Keypair signing the transaction.
+            id: stream, // Identifier of a stream to be withdrawn from.
+            recipientId: recipientId, // Identifier of a stream to be transferred.
+        };
+        
+        try {
+            
+            enqueueSnackbar(`Preparing to transfer stream to ${recipientId}`,{ variant: 'info' });
+            
+            const { tx } = await StreamPaymentClient.transfer(data);
+            
+            /*
+            //console.log("tx: "+JSON.stringify(tx))
+            const transaction = new Transaction()
+            .add(
+            //    tx
+            )
+            const signedTransaction = await sendTransaction(transaction, connection, {
+                skipPreflight: true,
+                preflightCommitment: "confirmed"
+            });
+            */
+           const signedTransaction = tx;
+
+            const snackprogress = (key:any) => (
+                <CircularProgress sx={{padding:'10px'}} />
+            );
+            const cnfrmkey = enqueueSnackbar(`Confirming transaction`,{ variant: 'info', action:snackprogress, persist: true });
+            const latestBlockHash = await connection.getLatestBlockhash();
+            await connection.confirmTransaction({
+                blockhash: latestBlockHash.blockhash,
+                lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+                signature: signedTransaction}, 
+                'processed'
+            );
+            closeSnackbar(cnfrmkey);
+            const action = (key:any) => (
+                    <Button href={`https://explorer.solana.com/tx/${signedTransaction}`} target='_blank'  sx={{color:'white'}}>
+                        Signature: {signedTransaction}
+                    </Button>
+            );
+            enqueueSnackbar(`Transfer complete`,{ variant: 'success', action });
+            try{
+                //refresh...
+            }catch(err:any){console.log("ERR: "+err)}
+        }catch(e:any){
+            enqueueSnackbar(e.message ? `${e.name}: ${e.message}` : e.name, { variant: 'error' });
+        }   
+    }
+
+      async function withdrawStream(stream:string, amount:BN) {
         
         const withdrawStreamParams = {
             invoker: wallet, // Wallet/Keypair signing the transaction.
             id: stream, // Identifier of a stream to be withdrawn from.
-            amount: null//getBN(100000000000, 9), // Requested amount to withdraw. If stream is completed, the whole amount will be withdrawn.
+            amount: amount, // Requested amount to withdraw. If stream is completed, the whole amount will be withdrawn.
         };
         
         try {
             const { ixs, tx } = await StreamPaymentClient.withdraw(withdrawStreamParams);
-
             const transaction = new Transaction()
-            .add(ixs[0])
+            //.add(ixs);
+
+            /*
+            const transaction = new Transaction()
+            for (const i of [tx, ixs]) {
+                if (i) {
+                    transaction.add(i);
+                }
+            }*/
+
+
+           //.add(tokenInstruction)
 
             enqueueSnackbar(`Preparing to withdraw`,{ variant: 'info' });
             const signedTransaction = await sendTransaction(transaction, connection, {
@@ -319,13 +598,30 @@ export function StreamingPaymentsView(props: any){
                         id:item[0],
                         name:item[1].name,
                         sender:item[1].sender,
-                        source:'Streamflow',
+                        source:{
+                            name:'Streamflow',
+                            logoURI:'https://shdw-drive.genesysgo.net/5VhicqNTPgvJNVPHPp8PSH91YQ6KnVAeukW1K37GJEEV/Streamflow-Logo-SIgn-White@2x.png'
+                        },
+                        mint:item[1].mint,
+                        depositedAmount:{
+                            depositedAmount:item[1].depositedAmount,
+                            mint:item[1].mint,
+                        },
+                        withdrawnAmount:{
+                            withdrawnAmount:item[1].withdrawnAmount,
+                            mint:item[1].mint,
+                        },
+                        availableAmount:{
+                            depositedAmount:item[1].depositedAmount,
+                            withdrawnAmount:item[1].withdrawnAmount,
+                            mint:item[1].mint,
+                        },
                         amountPerPeriod:{
                             mint:item[1].mint,
                             amountPerPeriod:item[1].amountPerPeriod,
                             period:item[1].period,
+                            depositedAmount:item[1].depositedAmount
                         },
-                        mint:item[1].mint,
                         createdAt:item[1].createdAt,
                         canceledAt:item[1].canceledAt,
                         end:item[1].end,
@@ -334,7 +630,11 @@ export function StreamingPaymentsView(props: any){
                         transferableByRecipient:item[1].transferableByRecipient,
                         manage:{
                             id:item[0],
+                            mint:item[1].mint,
+                            name:item[1].name,
                             transferableByRecipient:item[1].transferableByRecipient,
+                            depositedAmount: item[1].depositedAmount,
+                            withdrawnAmount: item[1].withdrawnAmount,
                         }
                     });
                     
