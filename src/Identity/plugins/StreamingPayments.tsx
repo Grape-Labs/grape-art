@@ -439,6 +439,7 @@ export function StreamingPaymentsView(props: any){
                         <ButtonGroup>
                             
                             <Button
+                                disabled={true}
                                 variant='outlined'
                                 size='small'
                                 onClick={(e) => withdrawStream(params.value.id, withdrawAmount)}
