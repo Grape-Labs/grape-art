@@ -328,7 +328,7 @@ export function StreamingPaymentsView(props: any){
                 );
             }
         },
-        { field: 'remainingAmount', headerName: 'Remaining', width: 100, align: 'center',
+        { field: 'remainingAmount', headerName: 'Balance', width: 100, align: 'center',
             renderCell: (params) => {
                 return(
                     <>
