@@ -328,7 +328,7 @@ export function StreamingPaymentsView(props: any){
                 );
             }
         },
-        { field: 'availableAmount', headerName: 'Available', width: 100, align: 'center',
+        { field: 'remainingAmount', headerName: 'Remaining', width: 100, align: 'center',
             renderCell: (params) => {
                 return(
                     <>
@@ -612,7 +612,7 @@ export function StreamingPaymentsView(props: any){
                             withdrawnAmount:item[1].withdrawnAmount,
                             mint:item[1].mint,
                         },
-                        availableAmount:{
+                        remainingAmount:{
                             depositedAmount:item[1].depositedAmount,
                             withdrawnAmount:item[1].withdrawnAmount,
                             mint:item[1].mint,
