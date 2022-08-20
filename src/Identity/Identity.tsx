@@ -128,6 +128,7 @@ export function IdentityView(props: any){
     const [loadingTransactions, setLoadingTransactions] = React.useState(false);
     const [loadingGovernance, setLoadingGovernance] = React.useState(false);
     const [loadingStorage, setLoadingStorage] = React.useState(false);
+    const [loadingStreamingPayments, setLoadingStreamingPayments] = React.useState(false);
     const [loadingPosition, setLoadingPosition] = React.useState('');
     const [realms, setRealms] = React.useState(null);
     const { publicKey } = useWallet();
@@ -421,7 +422,7 @@ export function IdentityView(props: any){
             //    console.log(signatures[cnt]+': '+JSON.stringify(tvalue));
             
             let txtype = "";
-            if (tvalue.meta?.logMessages){
+            if (tvalue?.meta?.logMessages){
                 for (var logvalue of tvalue.meta.logMessages){
                     //console.log("txvalue: "+JSON.stringify(logvalue));
                     if (logvalue.includes("Program log: Instruction: ")){
@@ -1102,8 +1103,15 @@ export function IdentityView(props: any){
                                             </ListItem>
                                         </List>
                                         
-                                        {(loadingWallet || loadingTokens || loadingGovernance || loadingStorage) &&
+                                        {(loadingWallet || loadingTokens || loadingGovernance || loadingStorage || loadingStreamingPayments) &&
                                             <Grid container spacing={0} sx={{}}>
+                                                {/*
+                                                a. {JSON.stringify(loadingWallet)}
+                                                b. {JSON.stringify(loadingTokens)}
+                                                c. {JSON.stringify(loadingGovernance)}
+                                                d. {JSON.stringify(loadingStorage)}
+                                                e. {JSON.stringify(loadingStreamingPayments)}
+                                                */}
                                                 <Grid item xs={12} key={1}>
                                                     <Box
                                                         className='grape-store-stat-item'

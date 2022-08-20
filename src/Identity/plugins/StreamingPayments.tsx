@@ -4,9 +4,10 @@ import moment from 'moment';
 import { Global } from '@emotion/react';
 import { Link, useParams, useSearchParams } from "react-router-dom";
 // @ts-ignore
-import { PublicKey, Connection, Commitment } from '@solana/web3.js';
+import { Signer, Connection, PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js';
 import {ENV, TokenInfo, TokenListProvider} from '@solana/spl-token-registry';
 import { useWallet } from '@solana/wallet-adapter-react';
+import { useSnackbar } from 'notistack';
 
 import {
     Button,
@@ -34,6 +35,13 @@ import {
     CircularProgress,
 } from '@mui/material';
 
+import SettingsIcon from '@mui/icons-material/Settings';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import DownloadingIcon from '@mui/icons-material/Downloading';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import CancelIcon from '@mui/icons-material/Cancel';
+import OpacityIcon from '@mui/icons-material/Opacity';
+
 import {
     StreamClient,
     Stream,
@@ -56,6 +64,20 @@ import {
 
 import { GRAPE_RPC_ENDPOINT, THEINDEX_RPC_ENDPOINT, GRAPE_PROFILE, GRAPE_PREVIEW, DRIVE_PROXY } from '../../utils/grapeTools/constants';
 import { load } from "../../browser";
+import { PanoramaVerticalSelect } from "@mui/icons-material";
+import { trimAddress } from "../../utils/grapeTools/WalletAddress";
+
+function secondsToHms(d:number) {
+    d = Number(d);
+    var h = Math.floor(d / 3600);
+    var m = Math.floor(d % 3600 / 60);
+    var s = Math.floor(d % 3600 % 60);
+
+    var hDisplay = h > 0 ? h + (h == 1 ? " hour " : " hours ") : "";
+    var mDisplay = m > 0 ? m + (m == 1 ? " minute " : " minutes ") : "";
+    var sDisplay = s > 0 ? s + (s == 1 ? " second" : " seconds") : "";
+    return hDisplay + mDisplay + sDisplay; 
+}
 
 export function StreamingPaymentsView(props: any){
     const setLoadingPosition = props.setLoadingPosition;
@@ -65,9 +87,10 @@ export function StreamingPaymentsView(props: any){
     const [streamingPayments, setStreamingPayments] = React.useState(null);
     const [streamingPaymentsRows, setStreamingPaymentsRows] = React.useState(null);
     const [loadingStreamingPayments, setLoadingStreamingPayments] = React.useState(false);
-    const { publicKey } = useWallet();
     const wallet = useWallet();
+    const { publicKey, sendTransaction, signTransaction } = useWallet();
     const connection = new Connection(GRAPE_RPC_ENDPOINT);
+    const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
     const StreamPaymentClient = new StreamClient(
         GRAPE_RPC_ENDPOINT, // "https://api.mainnet-beta.solana.com",
@@ -82,10 +105,9 @@ export function StreamingPaymentsView(props: any){
     }, [pubkey]);
 
     const streamingcolumns: GridColDef[] = [
-        { field: 'id', headerName: 'ID', width: 70 },
-        { field: 'name', headerName: 'Name', width: 200, align: 'center' },
-        { field: 'sender', headerName: 'sender', width: 200, align: 'center' },
-        { field: 'mint', headerName: 'Mint', width: 200, align: 'center',
+        { field: 'id', headerName: 'ID', width: 70, hide: true },
+        { field: 'source', headerName: 'Source', width: 100 },
+        { field: 'mint', headerName: 'Mint', width: 150, align: 'center',
             renderCell: (params) => {
                 return(
                     <>
@@ -97,20 +119,23 @@ export function StreamingPaymentsView(props: any){
                 )
             }
         },
-        { field: 'amountPerPeriod', headerName: 'amountPerPeriod', width: 200, align: 'center',
+        { field: 'name', headerName: 'Name', width: 200, align: 'center' },
+        { field: 'sender', headerName: 'Sender', width: 100, align: 'center',
             renderCell: (params) => {
                 return(
                     <>
-                        {+params.value.amountPerPeriod/(10 ** tokenMap.get(params.value.mint)?.decimals)}
+                        {trimAddress(params.value,4)}
                     </>
                 );
             }
         },
-        { field: 'period', headerName: 'period', width: 200, align: 'center',
+        { field: 'amountPerPeriod', headerName: 'Payout Period', width: 200, align: 'center',
             renderCell: (params) => {
                 return(
                     <>
-                        {moment.utc(params.value*1000).format('HH:mm:ss')}
+                        <Typography variant='body2' color='green'>
+                        {+params.value.amountPerPeriod/(10 ** tokenMap.get(params.value.mint)?.decimals)} <OpacityIcon sx={{fontSize:'14px'}} /> every {secondsToHms(params.value.period)}
+                        </Typography>
                     </>
                 );
             }
@@ -128,7 +153,7 @@ export function StreamingPaymentsView(props: any){
                 )
             }
         },
-        { field: 'canceledAt', headerName: 'canceledAt', width: 200, align: 'center',
+        { field: 'canceledAt', headerName: 'Canceled', width: 200, align: 'center',
             renderCell: (params) => {
                 return(
                     <>
@@ -141,7 +166,7 @@ export function StreamingPaymentsView(props: any){
                 )
             }
         },
-        { field: 'end', headerName: 'end', width: 200, align: 'center',
+        { field: 'end', headerName: 'End Date', width: 200, align: 'center',
             renderCell: (params) => {
                 return(
                     <>
@@ -154,40 +179,70 @@ export function StreamingPaymentsView(props: any){
                 )
             }
         },
-        { field: 'lastWithdrawnAt', headerName: 'lastWithdrawnAt', width: 200, align: 'center',
+        { field: 'lastWithdrawnAt', headerName: 'Last Withdraw', width: 200, align: 'center',
             renderCell: (params) => {
                 return(
                     <>
                         {+params.value !== 0 &&
-                            <>{params.value}</>
+                            <>{moment.unix(+params.value).format("MMMM Do YYYY, h:mm a")}</>
                         }
                     </>
                 )
             }
         },
-        { field: 'withdrawalFrequency', headerName: 'withdrawalFrequency', width: 200, align: 'center',
+        { field: 'withdrawalFrequency', headerName: 'withdrawalFrequency', width: 200, align: 'center', hide: true,
             renderCell: (params) => {
                 return(
                     <>
-                        {moment.utc(params.value*1000).format('HH:mm:ss')}
+                        {secondsToHms(+params.value)}
                     </>
                 );
             } 
         },
-        { field: 'transferableByRecipient', headerName: 'transferableByRecipient', width: 200, align: 'center' },
-        { field: 'link', headerName: '', width: 150,  align: 'center',
+        { field: 'transferableByRecipient', headerName: 'Transferable', width: 100, align: 'center',
+            renderCell: (params) => {
+                return(
+                    <>  
+                        {params.value ?
+                            <CheckCircleIcon sx={{color:'green'}} />
+                        :
+                            <CancelIcon sx={{color:'red'}} />
+                        }
+                    </>
+                )
+            }
+        },
+        { field: 'manage', headerName: '', width: 250,  align: 'center',
             renderCell: (params) => {
                 return (
                     <>
                     {publicKey && pubkey === publicKey.toBase58() ?
-                        <Button
-                            variant='outlined'
-                            size='small'
-                            component='a'
-                            href={`https://app.streamflow.finance/all-streams`}
-                            target='_blank'
-                            sx={{borderRadius:'17px'}}
-                        >Manage</Button>
+                        <ButtonGroup>
+                            {/*
+                            <Button
+                                variant='outlined'
+                                size='small'
+                                onClick={(e) => withdrawStream(params.value.id)}
+                                sx={{borderTopLeftRadius:'17px',borderBottomLeftRadius:'17px'}}
+                            >Withdraw</Button>
+                            {params.value?.transferableByRecipient === true &&
+                                <Button
+                                    variant='outlined'
+                                    size='small'
+                                >Transfer</Button>
+                            }
+                        */}
+                            <Button
+                                variant='outlined'
+                                size='small'
+                                component='a'
+                                href={`https://app.streamflow.finance/all-streams`}
+                                target='_blank'
+                                sx={{borderTopRightRadius:'17px',borderBottomRightRadius:'17px'}}
+                            >
+                                <SettingsIcon />
+                            </Button>
+                        </ButtonGroup>
                     :
                         <></>
                     }
@@ -197,6 +252,52 @@ export function StreamingPaymentsView(props: any){
         },
         
       ];
+
+      async function withdrawStream(stream:string) {
+        
+        const withdrawStreamParams = {
+            invoker: wallet, // Wallet/Keypair signing the transaction.
+            id: stream, // Identifier of a stream to be withdrawn from.
+            amount: null//getBN(100000000000, 9), // Requested amount to withdraw. If stream is completed, the whole amount will be withdrawn.
+        };
+        
+        try {
+            const { ixs, tx } = await StreamPaymentClient.withdraw(withdrawStreamParams);
+
+            const transaction = new Transaction()
+            .add(ixs[0])
+
+            enqueueSnackbar(`Preparing to withdraw`,{ variant: 'info' });
+            const signedTransaction = await sendTransaction(transaction, connection, {
+                skipPreflight: true,
+                preflightCommitment: "confirmed"
+            });
+            const snackprogress = (key:any) => (
+                <CircularProgress sx={{padding:'10px'}} />
+            );
+            const cnfrmkey = enqueueSnackbar(`Confirming transaction`,{ variant: 'info', action:snackprogress, persist: true });
+            //await connection.confirmTransaction(signature, 'processed');
+            const latestBlockHash = await connection.getLatestBlockhash();
+            await connection.confirmTransaction({
+                blockhash: latestBlockHash.blockhash,
+                lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+                signature: signedTransaction}, 
+                'processed'
+            );
+            closeSnackbar(cnfrmkey);
+            const action = (key:any) => (
+                    <Button href={`https://explorer.solana.com/tx/${signedTransaction}`} target='_blank'  sx={{color:'white'}}>
+                        Signature: {signedTransaction}
+                    </Button>
+            );
+            enqueueSnackbar(`Withdraw complete`,{ variant: 'success', action });
+            try{
+                //refresh...
+            }catch(err:any){console.log("ERR: "+err)}
+        }catch(e:any){
+            enqueueSnackbar(e.message ? `${e.name}: ${e.message}` : e.name, { variant: 'error' });
+        }   
+    }
 
       const fetchStreamingPayments = async () => {
         setLoadingStreamingPayments(true);
@@ -218,10 +319,11 @@ export function StreamingPaymentsView(props: any){
                         id:item[0],
                         name:item[1].name,
                         sender:item[1].sender,
-                        period:item[1].period,
+                        source:'Streamflow',
                         amountPerPeriod:{
                             mint:item[1].mint,
                             amountPerPeriod:item[1].amountPerPeriod,
+                            period:item[1].period,
                         },
                         mint:item[1].mint,
                         createdAt:item[1].createdAt,
@@ -230,12 +332,16 @@ export function StreamingPaymentsView(props: any){
                         lastWithdrawnAt:item[1].lastWithdrawnAt,
                         withdrawalFrequency:item[1].withdrawalFrequency,
                         transferableByRecipient:item[1].transferableByRecipient,
-                        manage:item[0]
+                        manage:{
+                            id:item[0],
+                            transferableByRecipient:item[1].transferableByRecipient,
+                        }
                     });
                     
                 }
                 setStreamingPayments(streams);
                 setStreamingPaymentsRows(streamingTable);
+                setLoadingStreamingPayments(false);
             }
             //console.log("streams: "+JSON.stringify(streams))
         } catch (exception) {

@@ -755,7 +755,7 @@ export function StoreFrontView(this: any, props: any) {
             let metadata = null;
             setLoadingPosition("Collection Metadata");
             try{
-                metadata = await ticonnection.getMultipleAccountsInfo(mintsPDAs);
+                metadata = await ggoconnection.getMultipleAccountsInfo(mintsPDAs);
             } catch(err){
                 metadata = await ggoconnection.getMultipleAccountsInfo(mintsPDAs);
             }
@@ -1391,7 +1391,7 @@ export function StoreFrontView(this: any, props: any) {
                 //console.log("pushed pdas: "+JSON.stringify(mintsPDAs));
                 let metadata = null;
                 try{
-                    metadata = await ticonnection.getMultipleAccountsInfo(mintsPDAs);
+                    metadata = await ggoconnection.getMultipleAccountsInfo(mintsPDAs);
                 } catch(err){
                     metadata = await ggoconnection.getMultipleAccountsInfo(mintsPDAs);
                 }
