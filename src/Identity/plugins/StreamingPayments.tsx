@@ -173,13 +173,12 @@ export function StreamingPaymentsView(props: any){
         }
         
         return (
-            <div>
+            <>
     
                 <Button
                     variant="outlined" 
                     title={`Transfer`}
                     onClick={handleClickTransferOpen}
-                    size="small"
                     >
                     Transfer
                 </Button>
@@ -256,7 +255,7 @@ export function StreamingPaymentsView(props: any){
                         </DialogActions>
                     </form>
                 </BootstrapDialog>
-            </div>
+            </>
         );
     }
 
