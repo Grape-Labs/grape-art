@@ -259,8 +259,6 @@ export function StreamingPaymentsView(props: any){
         );
     }
 
-
-
     const StreamPaymentClient = new StreamClient(
         GRAPE_RPC_ENDPOINT, // "https://api.mainnet-beta.solana.com",
         Cluster.Mainnet,
@@ -332,6 +330,15 @@ export function StreamingPaymentsView(props: any){
                 return(
                     <>
                         {(+params.value.depositedAmount/(10 ** tokenMap.get(params.value.mint)?.decimals) - +params.value.withdrawnAmount/(10 ** tokenMap.get(params.value.mint)?.decimals)).toFixed(2)} {tokenMap.get(params.value.mint)?.symbol}
+                    </>
+                );
+            }
+        },
+        { field: 'availableWithdraw', headerName: 'Available', width: 100, align: 'center',
+            renderCell: (params) => {
+                return(
+                    <>
+                        {(Math.floor(moment(Date.now()).diff(moment.unix(params.value.lastWithdrawnAt), 'seconds')/params.value.withdrawalFrequency) * +params.value?.amountPerPeriod)/(10 ** tokenMap.get(params.value.mint)?.decimals)} {tokenMap.get(params.value.mint)?.symbol}
                     </>
                 );
             }
@@ -429,7 +436,10 @@ export function StreamingPaymentsView(props: any){
         },
         { field: 'manage', headerName: '', width: 250,  align: 'center',
             renderCell: (params) => {
-                const withdrawAmount =  getBN(+params.value.withdrawnAmount, tokenMap.get(params.value.mint)?.decimals);//new BN(+params.value.depositedAmount/(10 ** tokenMap.get(params.value.mint)?.decimals) - +params.value.withdrawnAmount/(10 ** tokenMap.get(params.value.mint)?.decimals));
+                const withdrawRaw = (Math.floor(moment(Date.now()).diff(moment.unix(params.value.lastWithdrawnAt), 'seconds')/params.value.withdrawalFrequency) * +params.value?.amountPerPeriod);
+                
+                //console.log("withdrawRaw: "+withdrawRaw);
+                const withdrawAmount =  getBN(withdrawRaw, tokenMap.get(params.value.mint)?.decimals);//new BN(+params.value.depositedAmount/(10 ** tokenMap.get(params.value.mint)?.decimals) - +params.value.withdrawnAmount/(10 ** tokenMap.get(params.value.mint)?.decimals));
                 
                 //alert("withdraw: "+(+params.value.depositedAmount/(10 ** tokenMap.get(params.value.mint)?.decimals) - +params.value.withdrawnAmount/(10 ** tokenMap.get(params.value.mint)?.decimals)));
                 return (
@@ -480,21 +490,8 @@ export function StreamingPaymentsView(props: any){
         try {
             
             enqueueSnackbar(`Preparing to transfer stream to ${recipientId}`,{ variant: 'info' });
-            
             const { tx } = await StreamPaymentClient.transfer(data);
-            
-            /*
-            //console.log("tx: "+JSON.stringify(tx))
-            const transaction = new Transaction()
-            .add(
-            //    tx
-            )
-            const signedTransaction = await sendTransaction(transaction, connection, {
-                skipPreflight: true,
-                preflightCommitment: "confirmed"
-            });
-            */
-           const signedTransaction = tx;
+            const signedTransaction = tx;
 
             const snackprogress = (key:any) => (
                 <CircularProgress sx={{padding:'10px'}} />
@@ -529,10 +526,16 @@ export function StreamingPaymentsView(props: any){
             id: stream, // Identifier of a stream to be withdrawn from.
             amount: amount, // Requested amount to withdraw. If stream is completed, the whole amount will be withdrawn.
         };
+
+        console.log("withdrawStreamParams: "+(withdrawStreamParams.id)+" - "+withdrawStreamParams.amount)
         
         try {
+            enqueueSnackbar(`Preparing to withdraw`,{ variant: 'info' });
+            //const { ixs, tx } = await StreamPaymentClient.cancel(withdrawStreamParams);
+            //const { ixs, tx } = await StreamPaymentClient.topup(withdrawStreamParams);
             const { ixs, tx } = await StreamPaymentClient.withdraw(withdrawStreamParams);
-            const transaction = new Transaction()
+            
+            //const transaction = new Transaction()
             //.add(ixs);
 
             /*
@@ -545,12 +548,14 @@ export function StreamingPaymentsView(props: any){
 
 
            //.add(tokenInstruction)
-
+            /*
             enqueueSnackbar(`Preparing to withdraw`,{ variant: 'info' });
             const signedTransaction = await sendTransaction(transaction, connection, {
                 skipPreflight: true,
                 preflightCommitment: "confirmed"
             });
+            */
+           /*
             const snackprogress = (key:any) => (
                 <CircularProgress sx={{padding:'10px'}} />
             );
@@ -569,6 +574,7 @@ export function StreamingPaymentsView(props: any){
                         Signature: {signedTransaction}
                     </Button>
             );
+            */ 
             enqueueSnackbar(`Withdraw complete`,{ variant: 'success', action });
             try{
                 //refresh...
@@ -616,6 +622,12 @@ export function StreamingPaymentsView(props: any){
                             withdrawnAmount:item[1].withdrawnAmount,
                             mint:item[1].mint,
                         },
+                        availableWithdraw:{
+                            mint:item[1].mint,
+                            lastWithdrawnAt:item[1].lastWithdrawnAt,
+                            withdrawalFrequency:item[1].withdrawalFrequency,
+                            amountPerPeriod:item[1].amountPerPeriod,
+                        },
                         amountPerPeriod:{
                             mint:item[1].mint,
                             amountPerPeriod:item[1].amountPerPeriod,
@@ -635,6 +647,9 @@ export function StreamingPaymentsView(props: any){
                             transferableByRecipient:item[1].transferableByRecipient,
                             depositedAmount: item[1].depositedAmount,
                             withdrawnAmount: item[1].withdrawnAmount,
+                            lastWithdrawnAt:item[1].lastWithdrawnAt,
+                            withdrawalFrequency:item[1].withdrawalFrequency,
+                            amountPerPeriod:item[1].amountPerPeriod,
                         }
                     });
                     
