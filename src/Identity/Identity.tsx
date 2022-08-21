@@ -229,15 +229,20 @@ export function IdentityView(props: any){
         { field: 'logo', headerName: '', width: 50, 
             renderCell: (params) => {
                 //console.log(params);
-                return (<>
+                return (
+                    <>
                         <Avatar
                             sx={{backgroundColor:'#222'}}
-                                src={tokenMap.get(params.value.mint)?.logoURI || params.value.mint}
-                                alt={tokenMap.get(params.value.mint)?.name || params.value.mint}
+                                src={
+                                    params.value.logo ||
+                                    tokenMap.get(params.value.mint)?.logoURI || 
+                                    params.value.mint}
+                                alt={
+                                    tokenMap.get(params.value.mint)?.name || 
+                                    params.value.mint}
                         >
                             <QrCode2Icon sx={{color:'white'}} />
                         </Avatar>
-                    
                 </>);
             }
         },
@@ -436,7 +441,7 @@ export function IdentityView(props: any){
 
             tx.push({
                 signature:signatures[cnt],
-                blockTime:tvalue.blockTime,
+                blockTime:tvalue?.blockTime,
                 //amount:tx_cost,
                 //owner:owner,
                 memo:memos[cnt],
@@ -643,14 +648,45 @@ export function IdentityView(props: any){
             
             const itemValue = 0;
             const itemBalance = 0;
+
+
+            let logo = null;
+            let name = item.account.data.parsed.info.mint;
+            let metadata = null;
+
+            var foundMetaName = false;
+            for (var nft of nftMeta){
+                //console.log('meta: '+JSON.stringify(nft));
+                if (nft.meta.mint === item.account.data.parsed.info.mint){
+                    //console.log("nft: "+JSON.stringify(nft))
+                    
+                    name = nft.meta.data.name;
+                    metadata = nft.meta.data.uri;
+                    // fetch
+                    if (nft?.image)
+                        logo = nft.image;
+                    else if (nft?.urimeta?.image)
+                        logo = nft.urimeta?.image;
+                    foundMetaName = true;
+                }
+            }
+
+            if (!foundMetaName){
+                name = tokenMap.get(item.account.data.parsed.info.mint)?.name;
+                logo = tokenMap.get(item.account.data.parsed.info.mint)?.logoURI;
+            }
+            if ((name && name?.length <= 0) || (!name))
+                name = item.account.data.parsed.info.mint;
             
             closableholdingsrows.push({
                 id:cnt,
                 mint:item.account.data.parsed.info.mint,
                 logo: {
-                    mint: item.account.data.parsed.info.mint
+                    mint: item.account.data.parsed.info.mint,
+                    logo: logo,
+                    metadata: metadata
                 },
-                name:tokenMap.get(item.account.data.parsed.info.mint)?.name || item.account.data.parsed.info.mint,
+                name:name,
                 balance:itemBalance,
                 oncurve: ValidateCurve(item.account.data.parsed.info.mint),
                 nft: item.account.data.parsed.info.tokenAmount.decimals === 0 ? true : false,

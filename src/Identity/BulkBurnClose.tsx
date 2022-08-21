@@ -252,7 +252,6 @@ export default function BulkBurnClose(props: any) {
                     var tti = await closeTokenInstruction((holdingsSelected[item * maxLen + holding]).mint);
                     if (tti)
                         batchtx.add(tti);
-                    
                 }
             }
             await executeTransactions(batchtx, null);
