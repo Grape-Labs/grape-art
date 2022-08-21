@@ -174,14 +174,15 @@ export function StreamingPaymentsView(props: any){
         
         return (
             <>
-    
-                <Button
-                    variant="outlined" 
-                    title={`Transfer`}
-                    onClick={handleClickTransferOpen}
-                    >
-                    Transfer
-                </Button>
+                <Tooltip title="Transfer this stream">
+                    <Button
+                        variant="outlined" 
+                        title={`Transfer`}
+                        onClick={handleClickTransferOpen}
+                        >
+                        Transfer
+                    </Button>
+                </Tooltip>
                 <BootstrapDialog
                     onClose={handleTransferClose}
                     aria-labelledby="customized-dialog-title"
@@ -421,7 +422,7 @@ export function StreamingPaymentsView(props: any){
                 );
             } 
         },
-        { field: 'transferableByRecipient', headerName: 'Transferable', width: 100, align: 'center',
+        { field: 'transferableByRecipient', headerName: 'Transferable', width: 100, align: 'center', hide: true, 
             renderCell: (params) => {
                 return(
                     <>  
@@ -434,7 +435,7 @@ export function StreamingPaymentsView(props: any){
                 )
             }
         },
-        { field: 'manage', headerName: '', width: 250,  align: 'center',
+        { field: 'manage', headerName: '', width: 270,  align: 'center',
             renderCell: (params) => {
                 const withdrawRaw = (Math.floor(moment(Date.now()).diff(moment.unix(params.value.lastWithdrawnAt), 'seconds')/params.value.withdrawalFrequency) * +params.value?.amountPerPeriod);
                 
@@ -446,28 +447,42 @@ export function StreamingPaymentsView(props: any){
                     <>
                     {publicKey && pubkey === publicKey.toBase58() ?
                         <ButtonGroup>
-                            
-                            <Button
-                                disabled={true}
-                                variant='outlined'
-                                size='small'
-                                onClick={(e) => withdrawStream(params.value.id, withdrawAmount)}
-                                sx={{borderTopLeftRadius:'17px',borderBottomLeftRadius:'17px'}}
-                            >Withdraw</Button>
+                            <Tooltip title="Withdraw unlocked balance">
+                                <Button
+                                    disabled={true}
+                                    variant='outlined'
+                                    size='small'
+                                    onClick={(e) => withdrawStream(params.value.id, withdrawAmount)}
+                                    sx={{borderTopLeftRadius:'17px',borderBottomLeftRadius:'17px'}}
+                                >Withdraw</Button>
+                            </Tooltip>
                             {params.value?.transferableByRecipient === true &&
                                 <TransferStreamComponent streamId={params.value.id} streamName={params.value.name} />
                             }
-                        
-                            <Button
-                                variant='outlined'
-                                size='small'
-                                component='a'
-                                href={`https://app.streamflow.finance/all-streams`}
-                                target='_blank'
-                                sx={{borderTopRightRadius:'17px',borderBottomRightRadius:'17px'}}
-                            >
-                                <SettingsIcon />
-                            </Button>
+                            {params.value?.cancelableByRecipient === true &&
+                                <Tooltip title="Cancel this stream">
+                                    <Button
+                                        variant='outlined'
+                                        size='small'
+                                        color="error"
+                                        onClick={(e) => cancelStream(params.value.id)}
+                                        sx={{borderTopLeftRadius:'17px',borderBottomLeftRadius:'17px'}}
+                                    ><CloseIcon /></Button>
+                                </Tooltip>
+                            }
+
+                            <Tooltip title="Manage this stream">
+                                <Button
+                                    variant='outlined'
+                                    size='small'
+                                    component='a'
+                                    href={`https://app.streamflow.finance/all-streams`}
+                                    target='_blank'
+                                    sx={{borderTopRightRadius:'17px',borderBottomRightRadius:'17px'}}
+                                >
+                                    <SettingsIcon />
+                                </Button>
+                            </Tooltip>
                         </ButtonGroup>
                     :
                         <></>
@@ -519,6 +534,46 @@ export function StreamingPaymentsView(props: any){
         }   
     }
 
+    async function cancelStream(stream:string) {
+        
+        const withdrawStreamParams = {
+            invoker: wallet, // Wallet/Keypair signing the transaction.
+            id: stream, // Identifier of a stream to be withdrawn from.
+        };
+
+        try {
+            enqueueSnackbar(`Preparing to withdraw`,{ variant: 'info' });
+            const { ixs, tx } = await StreamPaymentClient.cancel(withdrawStreamParams);
+            
+            const snackprogress = (key:any) => (
+                <CircularProgress sx={{padding:'10px'}} />
+            );
+            
+            const cnfrmkey = enqueueSnackbar(`Confirming transaction`,{ variant: 'info', action:snackprogress, persist: true });
+            //await connection.confirmTransaction(signature, 'processed');
+            const latestBlockHash = await connection.getLatestBlockhash();
+            await connection.confirmTransaction({
+                blockhash: latestBlockHash.blockhash,
+                lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+                signature: tx}, 
+                'processed'
+            );
+            closeSnackbar(cnfrmkey);
+            const action = (key:any) => (
+                    <Button href={`https://explorer.solana.com/tx/${tx}`} target='_blank'  sx={{color:'white'}}>
+                        Signature: {tx}
+                    </Button>
+            );
+            
+            enqueueSnackbar(`Stream canceled`,{ variant: 'success', action });
+            try{
+                //refresh...
+            }catch(err:any){console.log("ERR: "+err)}
+        }catch(e:any){
+            enqueueSnackbar(e.message ? `${e.name}: ${e.message}` : e.name, { variant: 'error' });
+        }   
+    }
+
       async function withdrawStream(stream:string, amount:BN) {
         
         const withdrawStreamParams = {
@@ -531,31 +586,10 @@ export function StreamingPaymentsView(props: any){
         
         try {
             enqueueSnackbar(`Preparing to withdraw`,{ variant: 'info' });
-            //const { ixs, tx } = await StreamPaymentClient.cancel(withdrawStreamParams);
             //const { ixs, tx } = await StreamPaymentClient.topup(withdrawStreamParams);
             const { ixs, tx } = await StreamPaymentClient.withdraw(withdrawStreamParams);
             
-            //const transaction = new Transaction()
-            //.add(ixs);
-
-            /*
-            const transaction = new Transaction()
-            for (const i of [tx, ixs]) {
-                if (i) {
-                    transaction.add(i);
-                }
-            }*/
-
-
-           //.add(tokenInstruction)
-            /*
-            enqueueSnackbar(`Preparing to withdraw`,{ variant: 'info' });
-            const signedTransaction = await sendTransaction(transaction, connection, {
-                skipPreflight: true,
-                preflightCommitment: "confirmed"
-            });
-            */
-           /*
+            
             const snackprogress = (key:any) => (
                 <CircularProgress sx={{padding:'10px'}} />
             );
@@ -565,16 +599,16 @@ export function StreamingPaymentsView(props: any){
             await connection.confirmTransaction({
                 blockhash: latestBlockHash.blockhash,
                 lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
-                signature: signedTransaction}, 
+                signature: tx}, 
                 'processed'
             );
             closeSnackbar(cnfrmkey);
             const action = (key:any) => (
-                    <Button href={`https://explorer.solana.com/tx/${signedTransaction}`} target='_blank'  sx={{color:'white'}}>
-                        Signature: {signedTransaction}
+                    <Button href={`https://explorer.solana.com/tx/${tx}`} target='_blank'  sx={{color:'white'}}>
+                        Signature: {tx}
                     </Button>
             );
-            */ 
+            
             enqueueSnackbar(`Withdraw complete`,{ variant: 'success', action });
             try{
                 //refresh...
@@ -650,6 +684,7 @@ export function StreamingPaymentsView(props: any){
                             lastWithdrawnAt:item[1].lastWithdrawnAt,
                             withdrawalFrequency:item[1].withdrawalFrequency,
                             amountPerPeriod:item[1].amountPerPeriod,
+                            cancelableByRecipient:item[1].cancelableByRecipient,
                         }
                     });
                     
