@@ -496,7 +496,6 @@ export function StreamingPaymentsView(props: any){
                                                 size='small'
                                                 color="error"
                                                 onClick={(e) => cancelStream(params.value.id)}
-                                                sx={{borderTopLeftRadius:'17px',borderBottomLeftRadius:'17px'}}
                                             ><CloseIcon /></Button>
                                         </Tooltip>
                                     }
