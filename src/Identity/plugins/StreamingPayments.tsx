@@ -292,7 +292,7 @@ export function StreamingPaymentsView(props: any){
                     {pubkey === params.value.recipient ?
                         <>
                             {pubkey === params.value.sender &&
-                                <>*</>
+                                <></>
                             }
                             <><ArrowDownwardIcon color="success" /></>
                         </>
