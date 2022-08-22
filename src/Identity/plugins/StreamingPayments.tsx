@@ -625,6 +625,7 @@ export function StreamingPaymentsView(props: any){
             enqueueSnackbar(`Stream canceled`,{ variant: 'success', action });
             try{
                 //refresh...
+                fetchStreamingPayments();
             }catch(err:any){console.log("ERR: "+err)}
         }catch(e:any){
             enqueueSnackbar(e.message ? `${e.name}: ${e.message}` : e.name, { variant: 'error' });
@@ -671,7 +672,7 @@ export function StreamingPaymentsView(props: any){
             enqueueSnackbar(`Withdraw complete`,{ variant: 'success', action });
             try{
                 //refresh...
-
+                fetchStreamingPayments();
             }catch(err:any){console.log("ERR: "+err)}
         }catch(e:any){
             enqueueSnackbar(e.message ? `${e.name}: ${e.message}` : e.name, { variant: 'error' });
