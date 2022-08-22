@@ -57,6 +57,7 @@ import {
     TabPanel,
 } from '@mui/lab';
 
+import SettingsIcon from '@mui/icons-material/Settings';
 import HorizontalRuleIcon from '@mui/icons-material/HorizontalRule';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
@@ -288,26 +289,24 @@ export function IdentityView(props: any){
                 )
             }
         },
-        { field: 'manage', headerName: '', width: 150, align: 'center',
+        { field: 'manage', headerName: '', width: 170, align: 'center',
             renderCell: (params) => {
                 return (
-                    <Button
-                        variant='outlined'
-                        size='small'
-                        component='a'
-                        href={`https://naming.bonfida.org/domain/${params.value.slice(0,params.value.indexOf(".sol"))}`}
-                        target='_blank'
-                        sx={{borderRadius:'17px'}}
-                    >
-                        Manage
-                    </Button>
-                )
-            }
-        },
-        { field: 'transfer', headerName: '', width: 200,  align: 'center',
-            renderCell: (params) => {
-                return (
-                    <TransferDomain snsDomain={params.value} fetchSolanaDomain={fetchSolanaDomain} />
+                    <>
+                        <TransferDomain snsDomain={params.value} fetchSolanaDomain={fetchSolanaDomain} />
+                        <Tooltip title='Manage SNS Record'>
+                            <Button
+                                variant='outlined'
+                                size='small'
+                                component='a'
+                                href={`https://naming.bonfida.org/domain/${params.value.slice(0,params.value.indexOf(".sol"))}`}
+                                target='_blank'
+                                sx={{borderRadius:'17px',ml:1}}
+                            >
+                                <SettingsIcon />
+                            </Button>
+                        </Tooltip>
+                    </>
                 )
             }
         },
@@ -732,7 +731,6 @@ export function IdentityView(props: any){
                         domain:item,
                         type:item,
                         manage:item,
-                        transfer:item,
                     });
                     cnt++;
                 }

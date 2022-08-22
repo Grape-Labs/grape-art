@@ -36,6 +36,8 @@ import {
     CircularProgress,
 } from '@mui/material';
 
+import SettingsIcon from '@mui/icons-material/Settings';
+
 import { GRAPE_RPC_ENDPOINT, THEINDEX_RPC_ENDPOINT, GRAPE_PROFILE, GRAPE_PREVIEW, DRIVE_PROXY } from '../../utils/grapeTools/constants';
 import { load } from "../../browser";
 
@@ -123,14 +125,16 @@ export function StorageView(props: any){
                 return (
                     <>
                     {publicKey && pubkey === publicKey.toBase58() ?
-                        <Button
-                            variant='outlined'
-                            size='small'
-                            component='a'
-                            href={`https://grapedrive.vercel.app`}
-                            target='_blank'
-                            sx={{borderRadius:'17px'}}
-                        >Manage</Button>
+                        <Tooltip title='Manage Storage Pool'>
+                            <Button
+                                variant='outlined'
+                                size='small'
+                                component='a'
+                                href={`https://grapedrive.vercel.app`}
+                                target='_blank'
+                                sx={{borderRadius:'17px'}}
+                            ><SettingsIcon /></Button>
+                        </Tooltip>
                     :
                         <></>
                     }
