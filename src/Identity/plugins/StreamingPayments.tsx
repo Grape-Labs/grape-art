@@ -473,7 +473,7 @@ export function StreamingPaymentsView(props: any){
                         <>
                             {pubkey === params.value.recipient ?
                                 <ButtonGroup>
-                                    {params.value.canceledAt === null &&
+                                    {params.value.canceledAt !== null &&
                                     <>
                                         <Tooltip title="Withdraw unlocked balance">
                                             <Button
