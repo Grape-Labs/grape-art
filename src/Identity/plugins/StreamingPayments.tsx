@@ -473,17 +473,21 @@ export function StreamingPaymentsView(props: any){
                         <>
                             {pubkey === params.value.recipient ?
                                 <ButtonGroup>
-                                    <Tooltip title="Withdraw unlocked balance">
-                                        <Button
-                                            disabled={params.value.availableToWithdraw > 0 ? false : true}
-                                            variant='outlined'
-                                            size='small'
-                                            onClick={(e) => withdrawStream(params.value.id, availableToWithdraw)}
-                                            sx={{borderTopLeftRadius:'17px',borderBottomLeftRadius:'17px'}}
-                                        >Withdraw</Button>
-                                    </Tooltip>
-                                    {params.value?.transferableByRecipient === true &&
-                                        <TransferStreamComponent streamId={params.value.id} streamName={params.value.name} />
+                                    {params.value.canceledAt === null &&
+                                    <>
+                                        <Tooltip title="Withdraw unlocked balance">
+                                            <Button
+                                                disabled={params.value.availableToWithdraw > 0 ? false : true}
+                                                variant='outlined'
+                                                size='small'
+                                                onClick={(e) => withdrawStream(params.value.id, availableToWithdraw)}
+                                                sx={{borderTopLeftRadius:'17px',borderBottomLeftRadius:'17px'}}
+                                            >Withdraw</Button>
+                                        </Tooltip>
+                                        {params.value?.transferableByRecipient === true &&
+                                            <TransferStreamComponent streamId={params.value.id} streamName={params.value.name} />
+                                        }
+                                    </>
                                     }
                                     {params.value?.cancelableByRecipient === true &&
                                         <Tooltip title="Cancel this stream">
