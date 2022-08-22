@@ -46,6 +46,7 @@ import {
 
 import CloseIcon from '@mui/icons-material/Close';
 import SettingsIcon from '@mui/icons-material/Settings';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import DownloadingIcon from '@mui/icons-material/Downloading';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -284,6 +285,24 @@ export function StreamingPaymentsView(props: any){
                 )
             }
         },
+        { field: 'direction', headerName: 'Direction', width: 75, align: 'center',
+        renderCell: (params) => {
+            return(
+                <>
+                    {pubkey === params.value.recipient ?
+                        <>
+                            {pubkey === params.value.sender &&
+                                <>*</>
+                            }
+                            <><ArrowDownwardIcon color="success" /></>
+                        </>
+                    :
+                        <><ArrowUpwardIcon sx={{color:'red'}} /></>
+                    }
+                </>
+            )
+        }
+        },
         { field: 'mint', headerName: 'Mint', width: 150, align: 'center',
             renderCell: (params) => {
                 return(
@@ -298,6 +317,15 @@ export function StreamingPaymentsView(props: any){
         },
         { field: 'name', headerName: 'Name', width: 200, align: 'center' },
         { field: 'sender', headerName: 'Sender', width: 100, align: 'center',
+            renderCell: (params) => {
+                return(
+                    <>
+                        {trimAddress(params.value,4)}
+                    </>
+                );
+            }
+        },
+        { field: 'recipient', headerName: 'Recipient', width: 100, align: 'center',
             renderCell: (params) => {
                 return(
                     <>
@@ -337,7 +365,8 @@ export function StreamingPaymentsView(props: any){
             renderCell: (params) => {
                 return(
                     <>
-                        {(Math.floor(moment(Date.now()).diff(moment.unix(params.value.lastWithdrawnAt), 'seconds')/params.value.withdrawalFrequency) * +params.value?.amountPerPeriod)/(10 ** tokenMap.get(params.value.mint)?.decimals)} {tokenMap.get(params.value.mint)?.symbol}
+                        {params.value.availableToWithdraw} {tokenMap.get(params.value.mint)?.symbol}
+                        {/*(Math.floor(moment(Date.now()).diff(moment.unix(params.value.lastWithdrawnAt), 'seconds')/params.value.withdrawalFrequency) * +params.value?.amountPerPeriod)/(10 ** tokenMap.get(params.value.mint)?.decimals)} {tokenMap.get(params.value.mint)?.symbol*/}
                     </>
                 );
             }
@@ -441,44 +470,76 @@ export function StreamingPaymentsView(props: any){
                 return (
                     <>
                     {publicKey && pubkey === publicKey.toBase58() ?
-                        <ButtonGroup>
-                            <Tooltip title="Withdraw unlocked balance">
-                                <Button
-                                    disabled={params.value.availableToWithdraw > 0 ? false : true}
-                                    variant='outlined'
-                                    size='small'
-                                    onClick={(e) => withdrawStream(params.value.id, availableToWithdraw)}
-                                    sx={{borderTopLeftRadius:'17px',borderBottomLeftRadius:'17px'}}
-                                >Withdraw</Button>
-                            </Tooltip>
-                            {params.value?.transferableByRecipient === true &&
-                                <TransferStreamComponent streamId={params.value.id} streamName={params.value.name} />
-                            }
-                            {params.value?.cancelableByRecipient === true &&
-                                <Tooltip title="Cancel this stream">
-                                    <Button
-                                        variant='outlined'
-                                        size='small'
-                                        color="error"
-                                        onClick={(e) => cancelStream(params.value.id)}
-                                        sx={{borderTopLeftRadius:'17px',borderBottomLeftRadius:'17px'}}
-                                    ><CloseIcon /></Button>
-                                </Tooltip>
-                            }
+                        <>
+                            {pubkey === params.value.recipient ?
+                                <ButtonGroup>
+                                    <Tooltip title="Withdraw unlocked balance">
+                                        <Button
+                                            disabled={params.value.availableToWithdraw > 0 ? false : true}
+                                            variant='outlined'
+                                            size='small'
+                                            onClick={(e) => withdrawStream(params.value.id, availableToWithdraw)}
+                                            sx={{borderTopLeftRadius:'17px',borderBottomLeftRadius:'17px'}}
+                                        >Withdraw</Button>
+                                    </Tooltip>
+                                    {params.value?.transferableByRecipient === true &&
+                                        <TransferStreamComponent streamId={params.value.id} streamName={params.value.name} />
+                                    }
+                                    {params.value?.cancelableByRecipient === true &&
+                                        <Tooltip title="Cancel this stream">
+                                            <Button
+                                                variant='outlined'
+                                                size='small'
+                                                color="error"
+                                                onClick={(e) => cancelStream(params.value.id)}
+                                                sx={{borderTopLeftRadius:'17px',borderBottomLeftRadius:'17px'}}
+                                            ><CloseIcon /></Button>
+                                        </Tooltip>
+                                    }
 
-                            <Tooltip title="Manage this stream">
-                                <Button
-                                    variant='outlined'
-                                    size='small'
-                                    component='a'
-                                    href={`https://app.streamflow.finance/all-streams`}
-                                    target='_blank'
-                                    sx={{borderTopRightRadius:'17px',borderBottomRightRadius:'17px'}}
-                                >
-                                    <SettingsIcon />
-                                </Button>
-                            </Tooltip>
-                        </ButtonGroup>
+                                    <Tooltip title="Manage this stream">
+                                        <Button
+                                            variant='outlined'
+                                            size='small'
+                                            component='a'
+                                            href={`https://app.streamflow.finance/all-streams`}
+                                            target='_blank'
+                                            sx={{borderTopRightRadius:'17px',borderBottomRightRadius:'17px'}}
+                                        >
+                                            <SettingsIcon />
+                                        </Button>
+                                    </Tooltip>
+                                </ButtonGroup>
+                            :
+                                <>
+                                {params.value?.cancelableBySender === true &&
+                                
+                                    <Tooltip title="Cancel this stream">
+                                        <Button
+                                            variant='outlined'
+                                            size='small'
+                                            color="error"
+                                            onClick={(e) => cancelStream(params.value.id)}
+                                            sx={{borderRadius:'17px'}}
+                                        ><CloseIcon /></Button>
+                                    </Tooltip>
+                                }
+
+                                    <Tooltip title="Manage this stream">
+                                        <Button
+                                            variant='outlined'
+                                            size='small'
+                                            component='a'
+                                            href={`https://app.streamflow.finance/all-streams`}
+                                            target='_blank'
+                                            sx={{borderRadius:'17px'}}
+                                        >
+                                            <SettingsIcon />
+                                        </Button>
+                                    </Tooltip>
+                                </>
+                            }
+                        </>
                     :
                         <></>
                     }
@@ -664,9 +725,14 @@ export function StreamingPaymentsView(props: any){
                         id:item[0],
                         name:item[1].name,
                         sender:item[1].sender,
+                        recipient:item[1].recipient,
                         source:{
                             name:'Streamflow',
                             logoURI:'https://shdw-drive.genesysgo.net/5VhicqNTPgvJNVPHPp8PSH91YQ6KnVAeukW1K37GJEEV/Streamflow-Logo-SIgn-White@2x.png'
+                        },
+                        direction:{
+                            sender:item[1].sender,
+                            recipient:item[1].recipient
                         },
                         mint:item[1].mint,
                         depositedAmount:{
@@ -687,6 +753,7 @@ export function StreamingPaymentsView(props: any){
                             lastWithdrawnAt:item[1].lastWithdrawnAt,
                             withdrawalFrequency:item[1].withdrawalFrequency,
                             amountPerPeriod:item[1].amountPerPeriod,
+                            availableToWithdraw:availableToWithdraw,
                         },
                         amountPerPeriod:{
                             mint:item[1].mint,
@@ -711,7 +778,10 @@ export function StreamingPaymentsView(props: any){
                             withdrawalFrequency:item[1].withdrawalFrequency,
                             amountPerPeriod:item[1].amountPerPeriod,
                             cancelableByRecipient:item[1].cancelableByRecipient,
-                            availableToWithdraw:availableToWithdraw
+                            cancelableBySender:item[1].cancelableBySender,
+                            availableToWithdraw:availableToWithdraw,
+                            sender:item[1].sender,
+                            recipient:item[1].recipient
                         }
                     });
                     
