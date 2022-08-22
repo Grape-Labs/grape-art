@@ -376,7 +376,7 @@ export function StreamingPaymentsView(props: any){
                 return(
                     <>
                         <Typography variant='body2' color='#FF5733'>
-                        {+params.value.amountPerPeriod/(10 ** tokenMap.get(params.value.mint)?.decimals)} <OpacityIcon sx={{fontSize:'14px'}} /> every {secondsToHms(params.value.period)}
+                        {+params.value.amountPerPeriod/(10 ** tokenMap.get(params.value.mint)?.decimals)} {tokenMap.get(params.value.mint)?.symbol} <OpacityIcon sx={{fontSize:'14px'}} /> every {secondsToHms(params.value.period)}
                         </Typography>
                     </>
                 );
@@ -473,7 +473,7 @@ export function StreamingPaymentsView(props: any){
                         <>
                             {pubkey === params.value.recipient ?
                                 <ButtonGroup>
-                                    {params.value.canceledAt !== null &&
+                                    {(params.value.canceledAt === null && params.value.canceledAt !== 0) &&
                                     <>
                                         <Tooltip title="Withdraw unlocked balance">
                                             <Button
@@ -515,7 +515,7 @@ export function StreamingPaymentsView(props: any){
                                 </ButtonGroup>
                             :
                                 <>
-                                {params.value?.cancelableBySender === true && params.value.canceledAt === null &&
+                                {params.value?.cancelableBySender === true && (params.value.canceledAt === null && params.value.canceledAt !== 0) &&
                                 
                                     <Tooltip title="Cancel this stream">
                                         <Button
