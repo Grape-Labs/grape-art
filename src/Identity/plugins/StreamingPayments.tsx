@@ -512,7 +512,7 @@ export function StreamingPaymentsView(props: any){
                                 </ButtonGroup>
                             :
                                 <>
-                                {params.value?.cancelableBySender === true &&
+                                {params.value?.cancelableBySender === true && params.value.canceledAt === null &&
                                 
                                     <Tooltip title="Cancel this stream">
                                         <Button
@@ -778,6 +778,7 @@ export function StreamingPaymentsView(props: any){
                             lastWithdrawnAt:item[1].lastWithdrawnAt,
                             withdrawalFrequency:item[1].withdrawalFrequency,
                             amountPerPeriod:item[1].amountPerPeriod,
+                            canceledAt:item[1].canceledAt,
                             cancelableByRecipient:item[1].cancelableByRecipient,
                             cancelableBySender:item[1].cancelableBySender,
                             availableToWithdraw:availableToWithdraw,
