@@ -142,7 +142,6 @@ export function StreamingPaymentsView(props: any){
     const connection = new Connection(GRAPE_RPC_ENDPOINT);
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
-
     function TransferStreamComponent(props:any){
         const streamName = props.streamName;
         const streamId = props.streamId;
@@ -177,7 +176,6 @@ export function StreamingPaymentsView(props: any){
                 <Tooltip title="Transfer this stream">
                     <Button
                         variant="outlined" 
-                        title={`Transfer`}
                         onClick={handleClickTransferOpen}
                         >
                         Transfer
@@ -437,22 +435,19 @@ export function StreamingPaymentsView(props: any){
         },
         { field: 'manage', headerName: '', width: 270,  align: 'center',
             renderCell: (params) => {
-                const withdrawRaw = (Math.floor(moment(Date.now()).diff(moment.unix(params.value.lastWithdrawnAt), 'seconds')/params.value.withdrawalFrequency) * +params.value?.amountPerPeriod);
+                //const withdrawRaw = (Math.floor(moment(Date.now()).diff(moment.unix(params.value.lastWithdrawnAt), 'seconds')/params.value.withdrawalFrequency) * +params.value?.amountPerPeriod);
+                const availableToWithdraw = getBN(params.value.availableToWithdraw, tokenMap.get(params.value.mint)?.decimals);
                 
-                //console.log("withdrawRaw: "+withdrawRaw);
-                const withdrawAmount =  getBN(withdrawRaw, tokenMap.get(params.value.mint)?.decimals);//new BN(+params.value.depositedAmount/(10 ** tokenMap.get(params.value.mint)?.decimals) - +params.value.withdrawnAmount/(10 ** tokenMap.get(params.value.mint)?.decimals));
-                
-                //alert("withdraw: "+(+params.value.depositedAmount/(10 ** tokenMap.get(params.value.mint)?.decimals) - +params.value.withdrawnAmount/(10 ** tokenMap.get(params.value.mint)?.decimals)));
                 return (
                     <>
                     {publicKey && pubkey === publicKey.toBase58() ?
                         <ButtonGroup>
                             <Tooltip title="Withdraw unlocked balance">
                                 <Button
-                                    disabled={true}
+                                    disabled={params.value.availableToWithdraw > 0 ? false : true}
                                     variant='outlined'
                                     size='small'
-                                    onClick={(e) => withdrawStream(params.value.id, withdrawAmount)}
+                                    onClick={(e) => withdrawStream(params.value.id, availableToWithdraw)}
                                     sx={{borderTopLeftRadius:'17px',borderBottomLeftRadius:'17px'}}
                                 >Withdraw</Button>
                             </Tooltip>
@@ -528,6 +523,7 @@ export function StreamingPaymentsView(props: any){
             enqueueSnackbar(`Transfer complete`,{ variant: 'success', action });
             try{
                 //refresh...
+                fetchStreamingPayments();
             }catch(err:any){console.log("ERR: "+err)}
         }catch(e:any){
             enqueueSnackbar(e.message ? `${e.name}: ${e.message}` : e.name, { variant: 'error' });
@@ -576,6 +572,9 @@ export function StreamingPaymentsView(props: any){
 
       async function withdrawStream(stream:string, amount:BN) {
         
+        //const unlocked = streamingPayments.unlocked;
+        //console.log("unlocked: "+JSON.stringify(unlocked));
+
         const withdrawStreamParams = {
             invoker: wallet, // Wallet/Keypair signing the transaction.
             id: stream, // Identifier of a stream to be withdrawn from.
@@ -588,7 +587,6 @@ export function StreamingPaymentsView(props: any){
             enqueueSnackbar(`Preparing to withdraw`,{ variant: 'info' });
             //const { ixs, tx } = await StreamPaymentClient.topup(withdrawStreamParams);
             const { ixs, tx } = await StreamPaymentClient.withdraw(withdrawStreamParams);
-            
             
             const snackprogress = (key:any) => (
                 <CircularProgress sx={{padding:'10px'}} />
@@ -612,6 +610,7 @@ export function StreamingPaymentsView(props: any){
             enqueueSnackbar(`Withdraw complete`,{ variant: 'success', action });
             try{
                 //refresh...
+
             }catch(err:any){console.log("ERR: "+err)}
         }catch(e:any){
             enqueueSnackbar(e.message ? `${e.name}: ${e.message}` : e.name, { variant: 'error' });
@@ -628,12 +627,39 @@ export function StreamingPaymentsView(props: any){
                 type: StreamType.All, // (optional) Type, default is StreamType.All
                 direction: StreamDirection.All, // (optional) Direction, default is StreamDirection.All)
             });
-
+            
             if (streams){
                 const streamingTable = new Array();
                 for (var item of streams){
                     console.log("item: "+JSON.stringify(item))
-                    
+                    const currentTimeStamp = Date.now();
+                    const timestampInSeconds = Math.floor(+new Date / 1000);
+
+                    const deposited = +item[1].depositedAmount / (10 ** tokenMap.get(item[1].mint)?.decimals)
+
+                    let availableToWithdraw = 0;
+
+                    if (timestampInSeconds < item[1].cliff) {
+                        availableToWithdraw = 0;
+                    } else if (timestampInSeconds > item[1].end) {
+                        availableToWithdraw = deposited;
+                    } else{
+                        const streamedBN = item[1].cliffAmount.add(
+                            new BN(Math.floor((timestampInSeconds - item[1].cliff) / item[1].period)).mul(
+                                item[1].amountPerPeriod
+                            )
+                        );
+                        const streamed = +streamedBN / (10 ** tokenMap.get(item[1].mint)?.decimals);
+                        const available = (+streamedBN - +item[1].withdrawnAmount) / (10 ** tokenMap.get(item[1].mint)?.decimals);
+                        //console.log("streamed: "+streamed);
+                        console.log("available to withdraw: "+available);
+
+                        if (available < deposited) 
+                            availableToWithdraw = available
+                        else 
+                            availableToWithdraw = deposited;
+                    }
+
                     streamingTable.push({
                         id:item[0],
                         name:item[1].name,
@@ -685,6 +711,7 @@ export function StreamingPaymentsView(props: any){
                             withdrawalFrequency:item[1].withdrawalFrequency,
                             amountPerPeriod:item[1].amountPerPeriod,
                             cancelableByRecipient:item[1].cancelableByRecipient,
+                            availableToWithdraw:availableToWithdraw
                         }
                     });
                     
