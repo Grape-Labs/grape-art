@@ -294,10 +294,10 @@ export function StreamingPaymentsView(props: any){
                             {pubkey === params.value.sender &&
                                 <></>
                             }
-                            <><ArrowDownwardIcon color="success" /></>
+                            <><Tooltip title="Incoming"><Button><ArrowDownwardIcon color="success" /></Button></Tooltip></>
                         </>
                     :
-                        <><ArrowUpwardIcon sx={{color:'red'}} /></>
+                        <><Tooltip title="Outgoing"><Button><ArrowUpwardIcon sx={{color:'red'}} /></Button></Tooltip></>
                     }
                 </>
             )
