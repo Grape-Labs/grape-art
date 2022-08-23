@@ -148,7 +148,7 @@ export default function BulkBurnClose(props: any) {
         setOpen(false);
     };
 
-    async function burnTokenInstruction(tokenMintAddress: string) {
+    async function burnTokenInstruction(tokenMintAddress: string, amountToBurn: number) {
         const mintPubkey = new PublicKey(tokenMintAddress);
 
         const tokenAta = await getAssociatedTokenAddress(
@@ -163,7 +163,7 @@ export default function BulkBurnClose(props: any) {
                 new PublicKey(tokenAta),
                 mintPubkey,
                 publicKey,
-                1,
+                amountToBurn || 1,
                 [],
                 TOKEN_PROGRAM_ID
             )
@@ -310,7 +310,7 @@ export default function BulkBurnClose(props: any) {
                                 batchtx.add(tti);
                             } else {
                                 //console.log("test burn");
-                                var tt = await burnTokenInstruction((holdingsSelected[item * maxLen + holding]).mint);
+                                var tt = await burnTokenInstruction((holdingsSelected[item * maxLen + holding]).mint, 1);
                                 if (tt){
                                     //console.log("test burn 2");
                                     //const transaction2 = new Transaction().add(tt);
@@ -331,7 +331,9 @@ export default function BulkBurnClose(props: any) {
                             }
                         }
                     }else{
-                        var tt = await burnTokenInstruction((holdingsSelected[item * maxLen + holding]).mint);
+                        // get tokens to burn
+                        const amountToBurn = holdingsSelected[item * maxLen + holding].send.tokenAmount.amount;
+                        var tt = await burnTokenInstruction((holdingsSelected[item * maxLen + holding]).mint, amountToBurn);
                         if (tt)
                             batchtx.add(tt);
                     }
