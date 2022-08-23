@@ -203,11 +203,11 @@ export function IdentityView(props: any){
                         {publicKey && pubkey === publicKey.toBase58() &&
                             <>
                             <SendToken 
-                                mint={params.value.mint} 
+                                mint={params.value.info.mint} 
                                 name={params.value.name} 
                                 logoURI={
-                                    params.value.logo ||
-                                    tokenMap.get(params.value.mint)?.logoURI
+                                    params.value.info.logo ||
+                                    tokenMap.get(params.value.info.mint)?.logoURI
                                 } 
                                 balance={(new TokenAmount(params.value.info.tokenAmount.amount, params.value.info.tokenAmount.decimals).format())} 
                                 conversionrate={0} 
@@ -641,10 +641,11 @@ export function IdentityView(props: any){
                 change:item.account.data.parsed.info.tokenAmount.decimals === 0 ? 0 : cgPrice[item?.coingeckoId]?.usd_24h_change || 0,
                 value: +itemValue,
                 send:{
-                    mint:item.account.data.parsed.info.mint,
                     name:name,
                     logo:logo,
                     info:item.account.data.parsed.info,
+                    tokenAmount:item.account.data.parsed.info.tokenAmount,
+                    decimals:item.account.data.parsed.info.decimals,
                 }
                 //swap:item.account.data.parsed.info
             });

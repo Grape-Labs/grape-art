@@ -367,7 +367,7 @@ export default function BulkSend(props: any) {
                                                                 </ListItemAvatar>
                                                                 <ListItemText
                                                                     primary={item.name}
-                                                                    secondary={new TokenAmount(item.send.tokenAmount.amount, item.send.tokenAmount.decimals).format()}
+                                                                    secondary={new TokenAmount(item.send.tokenAmount?.amount, item.send.tokenAmount?.decimals).format()}
                                                                 />
                                                             </ListItemButton>
                                                         </Tooltip>
