@@ -114,6 +114,7 @@ import {
 
 import ItemOffers from './ItemOffers';
 import { SocialLikes, SocialFlags } from './Social';
+import ExplorerView from '../utils/grapeTools/Explorer';
 import ShareSocialURL from '../utils/grapeTools/ShareUrl';
 import { MakeLinkableAddress, ValidateAddress, ValidateCurve, trimAddress, timeAgo } from '../utils/grapeTools/WalletAddress'; // global key handling
 
@@ -1266,7 +1267,7 @@ function GalleryItemMeta(props: any) {
                                                         <TableRow>
                                                             <TableCell>{t('Mint')}:</TableCell>
                                                             <TableCell>
-                                                                <MakeLinkableAddress addr={mint} trim={5} hasextlink={true} hascopy={true} fontsize={14} />
+                                                                <ExplorerView address={mint} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
                                                             </TableCell>
                                                         </TableRow>
                                                         
@@ -1275,7 +1276,7 @@ function GalleryItemMeta(props: any) {
                                                             <TableCell>
                                                                 
                                                             {tokenOwners && (
-                                                                <MakeLinkableAddress addr={tokenOwners?.data.parsed.info.owner} trim={5} hasextlink={true} hascopy={true} fontsize={14} />
+                                                                <ExplorerView address={tokenOwners?.data.parsed.info.owner} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
                                                             )}  
                                                             </TableCell>
                                                         </TableRow>
@@ -1328,14 +1329,17 @@ function GalleryItemMeta(props: any) {
                                                                                     {collectionitem.properties.creators.length > 0 && collectionitem.properties.creators.map((item: any) => (
                                                                                         <TableRow>
                                                                                             <TableCell>
-                                                                                            <Button
-                                                                                                title={t('Visit Profile')}
-                                                                                                component={Link} 
-                                                                                                to={`${GRAPE_PROFILE}${item.address}`}
-                                                                                            >
-                                                                                                <AccountCircleOutlinedIcon sx={{fontSize:'14px'}}/>
-                                                                                            </Button>
-                                                                                                <MakeLinkableAddress addr={item.address} trim={5} hasextlink={true} hascopy={false} fontsize={14} />
+                                                                                                <Button
+                                                                                                    title={t('Visit Profile')}
+                                                                                                    component={Link} 
+                                                                                                    to={`${GRAPE_PROFILE}${item.address}`}
+                                                                                                    sx={{borderRadius:'17px',color:'white'}}
+                                                                                                >
+                                                                                                    <AccountCircleOutlinedIcon sx={{fontSize:'14px'}}/>
+                                                                                                </Button>
+
+                                                                                                <ExplorerView address={item.address} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
+                                                                                            
                                                                                             </TableCell>
                                                                                             <TableCell align="right">{item.share}%</TableCell>
                                                                                         </TableRow>
@@ -1366,7 +1370,7 @@ function GalleryItemMeta(props: any) {
                                                             <TableRow>
                                                                 <TableCell>{t('Update Authority')}:</TableCell>
                                                                 <TableCell>
-                                                                    <MakeLinkableAddress addr={collectionrawdata.updateAuthority} trim={5} hasextlink={true} hascopy={true} fontsize={14} />
+                                                                    <ExplorerView address={collectionrawdata.updateAuthority} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
                                                                 </TableCell>
                                                             </TableRow>
                                                         : null }
@@ -1375,7 +1379,7 @@ function GalleryItemMeta(props: any) {
                                                             <TableRow>
                                                                 <TableCell>{t('Collection')}:</TableCell>
                                                                 <TableCell>
-                                                                    <MakeLinkableAddress addr={collectionrawdata?.collection?.key} trim={5} hasextlink={true} hascopy={true} fontsize={14} />
+                                                                    <ExplorerView address={collectionrawdata?.collection?.key} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
                                                                 </TableCell>
                                                             </TableRow>
                                                         : null }
@@ -1504,7 +1508,6 @@ function GalleryItemMeta(props: any) {
                                                                                 </>
                                                                             ):(
                                                                                 <>
-                                                                                    <Button size="small" variant="text" component="a" href={`https://explorer.solana.com/address/${mint}`} target="_blank" sx={{ml:1}}>
                                                                                         {filteredMarket.logo &&
                                                                                         <Avatar 
                                                                                             component={Paper} 
@@ -1514,9 +1517,7 @@ function GalleryItemMeta(props: any) {
                                                                                             sx={{ width: 14, height: 14, bgcolor: "#eee", mr:0.5}}
                                                                                         />
                                                                                         }
-                                                                                        {filteredMarket.name} 
-                                                                                        <OpenInNewIcon sx={{fontSize:'14px', ml:1}} />
-                                                                                    </Button>
+                                                                                        <ExplorerView address={mint} type='address' title={filteredMarket.name}/>
                                                                                 </>
                                                                             )}
                                                                         </>
@@ -1574,18 +1575,16 @@ function GalleryItemMeta(props: any) {
                                                                         display: "flex",
                                                                         justifyContent: 'flex-end'
                                                                     }}>
-                                                                    <Tooltip title={t('Explorer')}>
-                                                                        <Button size="small" variant="text" component="a" href={`https://explorer.solana.com/address/${tokenOwners?.data.parsed.info.owner}`} target="_blank" sx={{borderRadius:'24px', color:'white', pl:0, pr:0}}> <OpenInNewIcon sx={{fontSize:'14px'}} /></Button>
-                                                                    </Tooltip>
+                                                                    <ExplorerView address={tokenOwners?.data.parsed.info.owner} type='address' hideTitle={true} style='text' color='white' fontSize='14px' />
                                                                     {publicKey && publicKey.toBase58() === tokenOwners?.data.parsed.info.owner ?
                                                                     <>
                                                                         <Tooltip title={t('Set this NFT as your avatar')}>
                                                                             <Button 
                                                                                 variant="text" 
                                                                                 onClick={HandleSetAvatar}
-                                                                                size="small"
+                                                                                
                                                                                 className="profileAvatarIcon"
-                                                                                sx={{borderRadius:'24px', color:'white'}}
+                                                                                sx={{borderRadius:'17px', color:'white'}}
                                                                                 >
                                                                                 <AccountCircleOutlinedIcon 
                                                                                     sx={{

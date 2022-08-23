@@ -21,6 +21,7 @@ import SendToken from '../StoreFront/Send';
 import BulkSend from './BulkSend';
 import BulkBurnClose from './BulkBurnClose';
 import TransferDomain from './TransferDomain';
+import ExplorerView from '../utils/grapeTools/Explorer';
 
 import { findDisplayName } from '../utils/name-service';
 import { getProfilePicture } from '@solflare-wallet/pfp';
@@ -269,16 +270,9 @@ export function IdentityView(props: any){
         { field: 'preview', headerName: '', width: 150,  align: 'center',
             renderCell: (params) => {
                 return (
-                    <Button
-                        variant='outlined'
-                        size='small'
-                        component='a'
-                        href={`https://explorer.solana.com/address/${params.value}`}
-                        target='_blank'
-                        sx={{borderRadius:'17px'}}
-                    >
-                        Explorer
-                    </Button>
+                    <>
+                        <ExplorerView address={params.value} type='address' title={'Explore'}/>
+                    </>
                 )
             }
         },
@@ -1095,32 +1089,7 @@ export function IdentityView(props: any){
                                                         </Tooltip>
                                                     </Grid>
                                                     <Grid item>
-                                                        <ButtonGroup>
-                                                            <Button
-                                                                component="a" 
-                                                                href={`https://explorer.solana.com/address/${pubkey}`}
-                                                                target="_blank"
-                                                                sx={{borderTopLeftRadius:'17px', borderBottomLeftRadius:'17px',textTransform:'none'}}
-                                                            >
-                                                                Explorer
-                                                            </Button>
-                                                            <Button
-                                                                component="a" 
-                                                                href={`https://solscan.io/account/${pubkey}`}
-                                                                target="_blank"
-                                                                sx={{textTransform:'none'}}
-                                                            >
-                                                                Solscan
-                                                            </Button>
-                                                            <Button
-                                                                component="a" 
-                                                                href={`https://solana.fm/address/${pubkey}`}
-                                                                target="_blank"
-                                                                sx={{borderTopRightRadius:'17px', borderBottomRightRadius:'17px',textTransform:'none'}}
-                                                            >
-                                                                SolanaFM
-                                                            </Button>
-                                                        </ButtonGroup>
+                                                        <ExplorerView address={pubkey} type='address' title={'Explore'}/>
                                                     </Grid>
                                                 </Grid>
                                             </ListItem>
@@ -1346,14 +1315,8 @@ export function IdentityView(props: any){
                                                                                         {timeAgo(item.blockTime)}
                                                                                         </Button>
                                                                                     </Tooltip> - {item.type}<br/> 
-                                                                                    <ListItemButton 
-                                                                                        component="a" 
-                                                                                        href={`https://explorer.solana.com/tx/${item.signature}`}
-                                                                                        target="_blank"
-                                                                                        sx={{borderRadius:'24px'}}
-                                                                                    >
-                                                                                        {item.signature}
-                                                                                    </ListItemButton>
+                                                                                    
+                                                                                    <ExplorerView address={item.signature} type='tx' title={item.signature}/>
                                                                                 </>}
                                                                             secondary={
                                                                                 <>
