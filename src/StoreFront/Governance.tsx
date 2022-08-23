@@ -519,8 +519,8 @@ export function GovernanceView(props: any) {
                         console.log("config: "+JSON.stringify(realmConfig));
                         //setRealmConfig(realmConfigPK)
 
-                        if (realmConfig && realmConfig?.account && realmConfig?.account?.communityVoterWeightAddin){
-                            if (realmConfig?.account?.communityVoterWeightAddin.toBase58() === 'GnftV5kLjd67tvHpNGyodwWveEKivz3ZWvvE3Z4xi2iw'){ // NFT based community
+                        if (realmConfig && realmConfig?.account && realmConfig?.account?.communityTokenConfig.maxVoterWeightAddin){
+                            if (realmConfig?.account?.communityTokenConfig.maxVoterWeightAddin.toBase58() === 'GnftV5kLjd67tvHpNGyodwWveEKivz3ZWvvE3Z4xi2iw'){ // NFT based community
                                 setNftBasedGovernance(true);
                             }
                         }
