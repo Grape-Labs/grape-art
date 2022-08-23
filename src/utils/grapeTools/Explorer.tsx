@@ -107,14 +107,13 @@ export default function ExplorerView(props:any){
                     </CopyToClipboard>
                     <MenuItem 
                         component='a'
-                        href={`https://explorer.solana.com/${type}/${address}`}
+                        href={`https://solana.fm/${type}/${address}`}
                         target='_blank'
-                        onClick={handleClose}
-                    >
-                        <ListItemIcon>
-                            <ExploreOutlinedIcon fontSize="small" />
-                        </ListItemIcon>
-                        Explorer
+                        onClick={handleClose}>
+                            <ListItemIcon>
+                                <ExploreOutlinedIcon fontSize="small" />
+                            </ListItemIcon>
+                            SolanaFM
                     </MenuItem>
                     <MenuItem 
                         component='a'
@@ -128,13 +127,14 @@ export default function ExplorerView(props:any){
                     </MenuItem>
                     <MenuItem 
                         component='a'
-                        href={`https://solana.fm/${type}/${address}`}
+                        href={`https://explorer.solana.com/${type}/${address}`}
                         target='_blank'
-                        onClick={handleClose}>
-                            <ListItemIcon>
-                                <ExploreOutlinedIcon fontSize="small" />
-                            </ListItemIcon>
-                            Solana.FM
+                        onClick={handleClose}
+                    >
+                        <ListItemIcon>
+                            <ExploreOutlinedIcon fontSize="small" />
+                        </ListItemIcon>
+                        Explorer
                     </MenuItem>
                 </StyledMenu>
             </Paper>
