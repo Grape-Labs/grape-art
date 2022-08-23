@@ -349,6 +349,8 @@ export default function BulkSend(props: any) {
                                                 <ListItem>
                                                         <Tooltip title='Token selected'>
                                                             <ListItemButton
+                                                                href={`https://explorer.solana.com/address/${item.mint}`}
+                                                                target='_blank'
                                                                 sx={{borderRadius:'24px'}}                                           
                                                             >
                                                                 <ListItemAvatar>
