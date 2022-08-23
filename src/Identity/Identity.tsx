@@ -182,13 +182,13 @@ export function IdentityView(props: any){
             renderCell: (params) => {
                 return (
                     <>{+params.value > 0 ?
-                        <Typography variant='caption' color='green'>{params.value.toFixed(4)}<ArrowUpwardIcon sx={{ml:1,fontSize:'10px'}} /></Typography>
+                        <Typography variant='caption' color='green'>{params.value.toFixed(4)}% <ArrowUpwardIcon sx={{ml:1,fontSize:'10px'}} /></Typography>
                         :
                         <>
                             {+params.value < 0 ?
-                                <Typography variant='caption' color='error'>{params.value.toFixed(4)}<ArrowDownwardIcon sx={{ml:1,fontSize:'10px'}} /></Typography>
+                                <Typography variant='caption' color='error'>{params.value.toFixed(4)}% <ArrowDownwardIcon sx={{ml:1,fontSize:'10px'}} /></Typography>
                             :
-                                <Typography variant='caption' color='green'>{params.value?.toFixed(4)}<HorizontalRuleIcon sx={{ml:1,fontSize:'10px'}} /></Typography>
+                                <Typography variant='caption' color='green'>{params.value?.toFixed(4)}% <HorizontalRuleIcon sx={{ml:1,fontSize:'10px'}} /></Typography>
                             }
                         </>
                     }</>
@@ -549,6 +549,7 @@ export function IdentityView(props: any){
         //return resultValues;
 
         let holdings: any[] = [];
+        let allholdings: any[] = [];
         let closable = new Array();
         for (var item of resultValues){
             //let buf = Buffer.from(item.account, 'base64');
@@ -567,7 +568,7 @@ export function IdentityView(props: any){
         var cnt = 0;
 
         let cgArray = '';//new Array()
-        for (var item of sortedholdings){
+        for (var item of resultValues){
             //console.log("item: "+JSON.stringify(item))
             const tm = tokenMap.get(item.account.data.parsed.info.mint)
             if (tm && tm?.extensions?.coingeckoId){
@@ -577,18 +578,17 @@ export function IdentityView(props: any){
                 item.coingeckoId = tm.extensions.coingeckoId;
                 //cgArray.push(tm.extensions.coingeckoId)
             }
-
         }    
 
         setLoadingPosition('Prices');
         const cgPrice = await getCoinGeckoPrice(cgArray);
 
         setLoadingPosition('NFT Metadata');
-        const nftMeta = await fetchNFTMetadata(sortedholdings);
+        const nftMeta = await fetchNFTMetadata(resultValues);
 
         //console.log("nftMeta: "+JSON.stringify(nftMeta))
 
-        for (var item of sortedholdings){
+        for (var item of resultValues){
             /*
             try{
                 const tknPrice = await getTokenPrice(item.account.data.parsed.info.mint, "USDC");
@@ -596,8 +596,9 @@ export function IdentityView(props: any){
             }catch(e){}
             */
             
-            const itemValue = +cgPrice[item?.coingeckoId]?.usd ? (cgPrice[item.coingeckoId].usd * parseFloat(new TokenAmount(item.account.data.parsed.info.tokenAmount.amount, item.account.data.parsed.info.tokenAmount.decimals).format())).toFixed(item.account.data.parsed.info.tokenAmount.decimals) : 0;
+            const itemValue = item?.coingeckoId ? +cgPrice[item?.coingeckoId]?.usd ? (cgPrice[item?.coingeckoId].usd * parseFloat(new TokenAmount(item.account.data.parsed.info.tokenAmount.amount, item.account.data.parsed.info.tokenAmount.decimals).format())).toFixed(item.account.data.parsed.info.tokenAmount.decimals) : 0 :0;
             const itemBalance = Number(new TokenAmount(item.account.data.parsed.info.tokenAmount.amount, item.account.data.parsed.info.tokenAmount.decimals).format().replace(/[^0-9.-]+/g,""));
+            
             
             let logo = null;
             let name = item.account.data.parsed.info.mint;
@@ -668,7 +669,7 @@ export function IdentityView(props: any){
             let logo = null;
             let name = item.account.data.parsed.info.mint;
             let metadata = null;
-
+            
             var foundMetaName = false;
             for (var nft of nftMeta){
                 //console.log('meta: '+JSON.stringify(nft));
