@@ -415,8 +415,10 @@ export default function BulkBurnClose(props: any) {
                                         <List dense={true}>
                                             {holdingsSelected.length > 0 && holdingsSelected.map((item: any) => (
                                                 <ListItem>
-                                                        <Tooltip title='Token selected'>
+                                                        <Tooltip title='View Token on Explorer'>
                                                             <ListItemButton
+                                                                href={`https://explorer.solana.com/address/${item.mint}`}
+                                                                target='_blank'
                                                                 sx={{borderRadius:'24px'}}                                           
                                                             >
                                                                 <ListItemAvatar>

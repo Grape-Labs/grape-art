@@ -817,7 +817,7 @@ export function IdentityView(props: any){
             const sholdings = new Array();
             for (var item of holdings){
                 if (item){
-                    //console.log("item: "+JSON.stringify(item))
+                    // comment to fetch social tokens which have metaplex metadata
                     //if (item.account.data.parsed.info.tokenAmount.decimals === 0)
                         sholdings.push(item)
                 }
@@ -857,16 +857,23 @@ export function IdentityView(props: any){
                         //console.log("meta: "+JSON.stringify(collectionmeta[i]['meta'].mint))
                         try{
                             //console.log("checking: "+collectionmeta[i]['meta'].mint);
-                            if (nftMap)
+                            if (nftMap){
                                 //var index = Object.keys(nftMap).indexOf(collectionmeta[i]['meta'].mint);
+                                var found_from_map = false;
                                 for (const [key, value] of Object.entries(nftMap)){
                                     if (key === collectionmeta[i]['meta'].mint){
                                         collectionmeta[i]['image'] = DRIVE_PROXY+value?.image;
+                                        found_from_map = true;
                                         //console.log("image: "+ value?.image);
                                     }
                                 }
-                            //if (collectionmeta.length <= 25) // limitd to 25 fetches (will need to optimize this so it does not delay)
-                            //    collectionmeta[i]['urimeta'] = await window.fetch(meta_final.data.uri).then((res: any) => res.json());
+                                if (!found_from_map){
+                                    //if (collectionmeta.length <= 25){ // limitd to 25 fetches (will need to optimize this so it does not delay)
+                                        collectionmeta[i]['urimeta'] = await window.fetch(meta_final.data.uri).then((res: any) => res.json());
+                                        collectionmeta[i]['image'] = DRIVE_PROXY+collectionmeta[i]['urimeta'].image;
+                                    //}
+                                }
+                            } 
                         }catch(err){
                             console.log("ERR: "+err);
                         }
