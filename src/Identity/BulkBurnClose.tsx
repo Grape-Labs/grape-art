@@ -310,7 +310,8 @@ export default function BulkBurnClose(props: any) {
                                 batchtx.add(tti);
                             } else {
                                 //console.log("test burn");
-                                var tt = await burnTokenInstruction((holdingsSelected[item * maxLen + holding]).mint, 1);
+                                const amountToBurn = holdingsSelected[item * maxLen + holding].send.tokenAmount.amount;
+                                var tt = await burnTokenInstruction((holdingsSelected[item * maxLen + holding]).mint, amountToBurn);
                                 if (tt){
                                     //console.log("test burn 2");
                                     //const transaction2 = new Transaction().add(tt);
