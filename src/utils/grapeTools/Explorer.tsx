@@ -63,7 +63,7 @@ export default function ExplorerView(props:any){
                 aria-expanded={open ? 'true' : undefined}
                 onClick={handleClick}
                 variant={buttonStyle}
-                sx={{m:0,p:0.5,borderRadius:'17px',color:`${buttonColor}` }}
+                sx={{m:0,ml:0.5,mr:0.5,p:0.5,borderRadius:'17px',color:`${buttonColor}` }}
                 startIcon={
                     <ExploreIcon sx={{color:`${buttonColor}`,fontSize:`${fontSize}`}} />
                 }
