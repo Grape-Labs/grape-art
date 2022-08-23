@@ -1575,7 +1575,7 @@ function GalleryItemMeta(props: any) {
                                                                         display: "flex",
                                                                         justifyContent: 'flex-end'
                                                                     }}>
-                                                                    <ExplorerView address={tokenOwners?.data.parsed.info.owner} type='address' hideTitle={true} style='text' color='white' fontSize='14px' />
+                                                                    <ExplorerView address={tokenOwners?.data.parsed.info.owner} type='address' hideTitle={true} style='text' color='white' fontSize={'12px'} />
                                                                     {publicKey && publicKey.toBase58() === tokenOwners?.data.parsed.info.owner ?
                                                                     <>
                                                                         <Tooltip title={t('Set this NFT as your avatar')}>
@@ -1588,7 +1588,7 @@ function GalleryItemMeta(props: any) {
                                                                                 >
                                                                                 <AccountCircleOutlinedIcon 
                                                                                     sx={{
-                                                                                        fontSize:'14px',
+                                                                                        fontSize:'17px',
                                                                                     }} 
                                                                                 />
                                                                             </Button>
