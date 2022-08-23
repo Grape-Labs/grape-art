@@ -10,11 +10,23 @@ import {
     ListItemIcon,
     ListItemText,
     Typography,
+    Paper,
 } from '@mui/material';
 
+import ExploreOutlinedIcon from '@mui/icons-material/ExploreOutlined';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import ExploreIcon from '@mui/icons-material/Explore';
 
 import { trimAddress } from "./WalletAddress";
+
+const StyledMenu = styled(Menu)(({ theme }) => ({
+    '& .MuiMenu-root': {
+    },
+    '& .MuiMenu-paper': {
+        backgroundColor:'rgba(0,0,0,0.95)',
+        borderRadius:'17px'
+    },
+}));
 
 export default function ExplorerView(props:any){
     const address = props.address;
@@ -46,15 +58,15 @@ export default function ExplorerView(props:any){
     return (
         <>
             <Button
-                    aria-controls={open ? 'basic-menu' : undefined}
-                    aria-haspopup="true"
-                    aria-expanded={open ? 'true' : undefined}
-                    onClick={handleClick}
-                    variant={buttonStyle}
-                    sx={{borderRadius:'17px',color:`${buttonColor}` }}
-                    startIcon={
-                        <ExploreIcon sx={{color:`${buttonColor}`,fontSize:`${fontSize}`}} />
-                    }
+                aria-controls={open ? 'basic-menu' : undefined}
+                aria-haspopup="true"
+                aria-expanded={open ? 'true' : undefined}
+                onClick={handleClick}
+                variant={buttonStyle}
+                sx={{m:0,p:0.5,borderRadius:'17px',color:`${buttonColor}` }}
+                startIcon={
+                    <ExploreIcon sx={{color:`${buttonColor}`,fontSize:`${fontSize}`}} />
+                }
             >
                 <Typography sx={{color:`${buttonColor}`,fontSize:`${fontSize}`}}>
                     {!hideTitle &&
@@ -66,51 +78,66 @@ export default function ExplorerView(props:any){
                     }
                 </Typography>
             </Button>
-            <Menu
-                id="basic-menu"
-                anchorEl={anchorEl}
-                open={open}
-                onClose={handleClose}
-                MenuListProps={{
-                'aria-labelledby': 'basic-button',
-                }}
-                sx={{
-                }}
-            >
-                <CopyToClipboard 
-                        text={address} 
-                        onCopy={handleCopyClick}
-                    >
+            <Paper sx={{backgroundColor:'rgba(255,255,255,0.5)'}}>
+                <StyledMenu
+                    id="basic-menu"
+                    anchorEl={anchorEl}
+                    open={open}
+                    onClose={handleClose}
+                    MenuListProps={{
+                        'aria-labelledby': 'basic-button',
+                    }}
+                    sx={{
+                    }}
+                >
+                    <CopyToClipboard 
+                            text={address} 
+                            onCopy={handleCopyClick}
+                        >
+                        <MenuItem 
+                            onClick={handleClose}
+                        >
+
+                            <ListItemIcon>
+                                <ContentCopyIcon fontSize="small" />
+                            </ListItemIcon>
+                            Copy
+                            
+                        </MenuItem>
+                    </CopyToClipboard>
                     <MenuItem 
+                        component='a'
+                        href={`https://explorer.solana.com/${type}/${address}`}
+                        target='_blank'
                         onClick={handleClose}
                     >
-                        Copy
-                        
+                        <ListItemIcon>
+                            <ExploreOutlinedIcon fontSize="small" />
+                        </ListItemIcon>
+                        Explorer
                     </MenuItem>
-                </CopyToClipboard>
-                <MenuItem 
-                    component='a'
-                    href={`https://explorer.solana.com/${type}/${address}`}
-                    target='_blank'
-                    onClick={handleClose}
-                >
-                    Explorer
-                </MenuItem>
-                <MenuItem 
-                    component='a'
-                    href={`https://solscan.io/${type === 'address' ? 'account' : type}/${address}`}
-                    target='_blank'
-                    onClick={handleClose}>
-                        SolScan
-                </MenuItem>
-                <MenuItem 
-                    component='a'
-                    href={`https://solana.fm/${type}/${address}`}
-                    target='_blank'
-                    onClick={handleClose}>
-                        Solana.FM
-                </MenuItem>
-            </Menu>
+                    <MenuItem 
+                        component='a'
+                        href={`https://solscan.io/${type === 'address' ? 'account' : type}/${address}`}
+                        target='_blank'
+                        onClick={handleClose}>
+                            <ListItemIcon>
+                                <ExploreOutlinedIcon fontSize="small" />
+                            </ListItemIcon>
+                            SolScan
+                    </MenuItem>
+                    <MenuItem 
+                        component='a'
+                        href={`https://solana.fm/${type}/${address}`}
+                        target='_blank'
+                        onClick={handleClose}>
+                            <ListItemIcon>
+                                <ExploreOutlinedIcon fontSize="small" />
+                            </ListItemIcon>
+                            Solana.FM
+                    </MenuItem>
+                </StyledMenu>
+            </Paper>
         </>
         
     ); 
