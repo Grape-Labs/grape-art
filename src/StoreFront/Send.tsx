@@ -417,7 +417,7 @@ export default function SendToken(props: any) {
                                     }}
                                 />
                             </Grid>
-                            <Grid item xs={6}>
+                            <Grid item xs={12} textAlign='right'>
                                 <Typography
                                     variant="caption"
                                 >

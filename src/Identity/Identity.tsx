@@ -202,7 +202,18 @@ export function IdentityView(props: any){
                     <>
                         {publicKey && pubkey === publicKey.toBase58() &&
                             <>
-                            <SendToken mint={params.value.mint} name={tokenMap.get(params.value.mint)?.name} logoURI={tokenMap.get(params.value.mint)?.logoURI} balance={(new TokenAmount(params.value.tokenAmount.amount, params.value.tokenAmount.decimals).format())} conversionrate={0} showTokenName={true} sendType={0} fetchSolanaTokens={fetchSolanaTokens} />
+                            <SendToken 
+                                mint={params.value.mint} 
+                                name={params.value.name} 
+                                logoURI={
+                                    params.value.logo ||
+                                    tokenMap.get(params.value.mint)?.logoURI
+                                } 
+                                balance={(new TokenAmount(params.value.info.tokenAmount.amount, params.value.info.tokenAmount.decimals).format())} 
+                                conversionrate={0} 
+                                showTokenName={true} 
+                                sendType={0} 
+                                fetchSolanaTokens={fetchSolanaTokens} />
                             </>          
                         }
                    </>
@@ -629,7 +640,12 @@ export function IdentityView(props: any){
                 price:item.account.data.parsed.info.tokenAmount.decimals === 0 ? 0 : cgPrice[item?.coingeckoId]?.usd || 0,
                 change:item.account.data.parsed.info.tokenAmount.decimals === 0 ? 0 : cgPrice[item?.coingeckoId]?.usd_24h_change || 0,
                 value: +itemValue,
-                send:item.account.data.parsed.info,
+                send:{
+                    mint:item.account.data.parsed.info.mint,
+                    name:name,
+                    logo:logo,
+                    info:item.account.data.parsed.info,
+                }
                 //swap:item.account.data.parsed.info
             });
             cnt++;
