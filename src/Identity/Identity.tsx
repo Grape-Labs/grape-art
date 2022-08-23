@@ -648,7 +648,6 @@ export function IdentityView(props: any){
             const itemValue = 0;
             const itemBalance = 0;
 
-
             let logo = null;
             let name = item.account.data.parsed.info.mint;
             let metadata = null;
@@ -721,7 +720,6 @@ export function IdentityView(props: any){
         const domain = await findDisplayName(ggoconnection, pubkey);
         if (domain){
             if (domain.toString()!==pubkey){
-                
                 
                 let cnt = 0;
                 const domains = new Array();
@@ -820,7 +818,7 @@ export function IdentityView(props: any){
             for (var item of holdings){
                 if (item){
                     //console.log("item: "+JSON.stringify(item))
-                    if (item.account.data.parsed.info.tokenAmount.decimals === 0)
+                    //if (item.account.data.parsed.info.tokenAmount.decimals === 0)
                         sholdings.push(item)
                 }
             }
