@@ -321,7 +321,15 @@ export function IdentityView(props: any){
         { field: 'id', headerName: 'ID', width: 70, hide: true },
         { field: 'pubkey', headerName: 'PublicKey', width: 70, hide: true },
         { field: 'realm', headerName: 'Realm', width: 130, align: 'center' },
-        { field: 'governingTokenMint', headerName: 'Governing Mint', width: 130, align: 'center' },
+        { field: 'governingTokenMint', headerName: 'Governing Mint', width: 150, align: 'center',
+            renderCell: (params) => {
+                return (
+                    <>
+                        <ExplorerView address={params.value} type='address'/>
+                    </>
+                );
+            }
+        },
         { field: 'governingTokenDepositAmount', headerName: 'Votes', width: 130, align: 'center'},
         { field: 'unrelinquishedVotesCount', headerName: 'Unreliquinshed', width: 130, align: 'center'},
         { field: 'totalVotesCount', headerName: 'Total Votes', width: 130, align: 'center' },
