@@ -67,6 +67,7 @@ import {
 
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
 
+import { AccountBalanceWalletOutlined } from '@mui/icons-material';
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import CollectionsOutlinedIcon from '@mui/icons-material/CollectionsOutlined';
@@ -109,7 +110,6 @@ import { useTranslation } from 'react-i18next';
 import { ChatNavigationHelpers, useDialectUiId } from '@dialectlabs/react-ui';
 import { GRAPE_BOTTOM_CHAT_ID } from '../utils/ui-contants';
 import InboxView from './InboxView';
-import { AccountBalanceWalletOutlined } from '@mui/icons-material';
 
 const StyledTable = styled(Table)(({ theme }) => ({
     '& .MuiTableCell-root': {

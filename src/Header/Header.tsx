@@ -38,9 +38,6 @@ import {
     ListItemText,
 } from '@mui/material';
 
-import parse from 'autosuggest-highlight/parse';
-import match from 'autosuggest-highlight/match';
-
 import { createFilterOptions } from '@mui/material/Autocomplete';
 
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';

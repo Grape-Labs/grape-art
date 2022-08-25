@@ -725,6 +725,13 @@ export function StreamingPaymentsView(props: any){
                             availableToWithdraw = deposited;
                     }
 
+                    var name = item[1].name;
+                    try{
+                        name = decodeURIComponent(item[1].name);
+                    }catch(ern){
+                        console.log("ERR: "+ern)
+                    }
+
                     streamingTable.push({
                         id:item[0],
                         name:item[1].name,
