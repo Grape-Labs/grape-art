@@ -506,6 +506,7 @@ export async function findOwnedNameAccountsForUser(
 }
 
 export function StoreFrontView(this: any, props: any) {
+    const effectCalled = React.useRef(false);
     const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
     const ticonnection = new Connection(THEINDEX_RPC_ENDPOINT);
     //const [provider, setProvider] = React.useState(getParam('provider'));
@@ -706,7 +707,9 @@ export function StoreFrontView(this: any, props: any) {
     const fetchMintStates = async(address:string) => {
         try{
             setLoadingPosition("Collection States");
-            await getCollectionStates(address);
+            console.log("stateLoading: "+stateLoading)
+            if (!stateLoading)
+                await getCollectionStates(address);
         } catch(e){console.log("ERR: "+e)}
         
     }
@@ -825,19 +828,6 @@ export function StoreFrontView(this: any, props: any) {
     const refreshMintStates = async () => {
         fetchMintStates(collectionAuthority);
     }
-
-    React.useEffect(() => { 
-        if (collectionAuthority){
-            //console.log("with collectionAuthority: "+JSON.stringify(collectionAuthority));
-            //if (ValidateAddress(collectionAuthority.address)){
-                if (fetchedCollectionMintList){
-                    getCollectionMeta(0);
-                    //console.log("collectionAuthority: "+JSON.stringify(collectionAuthority))
-                    fetchMintStates(collectionAuthority);
-                }
-            //}
-        }
-    }, [fetchedCollectionMintList, refresh]);
 
     React.useEffect(() => { 
         if (collectionAuthority){
@@ -1005,7 +995,6 @@ export function StoreFrontView(this: any, props: any) {
             
             */
 
-            
             setLoadingPosition("Auction House states");
             const results = await getReceiptsFromAuctionHouse(collectionAuthority.auctionHouse || AUCTION_HOUSE_ADDRESS, null, null, null, false, null);
             
@@ -1172,47 +1161,7 @@ export function StoreFrontView(this: any, props: any) {
 
             setGrapeTotalListings(thisTotalListings);
             setGrapeFloorPrice(thisFloorPrice);
-            /*
-            try{
-                if (collectionAuthority.me_symbol){
-                    
-                    const jsonStats = await fetchMEStatsWithTimeout(collectionAuthority.me_symbol);
-
-                    if (jsonStats){
-                        setMEStats(jsonStats);
-                    }
-
-                    const json1 = await fetchMEWithTimeout(collectionAuthority.me_symbol,0);
-                    const json2 = await fetchMEWithTimeout(collectionAuthority.me_symbol,20);
-                    const json3 = await fetchMEWithTimeout(collectionAuthority.me_symbol,40);
-                    const json4 = await fetchMEWithTimeout(collectionAuthority.me_symbol,60);
-                    const json5 = await fetchMEWithTimeout(collectionAuthority.me_symbol,80);
-                    const json6 = await fetchMEWithTimeout(collectionAuthority.me_symbol,100);
-                    
-                    const json = [...json1,...json2,...json3,...json4,...json5,...json6];
-
-                    try{
-                        let found = false;
-                        for (var item of json){
-                            for (var mintListItem of tempCollectionMintList){
-                                if (mintListItem.address === item.tokenMint){
-                                    if (mintListItem.listingPrice === null){
-                                        thisTotalListings++;
-                                    } else{
-                                        crossTotalListings++;
-                                    }
-                                    // no need to check date as this is an escrow check
-                                    mintListItem.listingPrice = item.price;
-                                    mintListItem.marketplaceListing = false;
-                                }
-                            }
-                            if ((thisFloorPrice > +item.price)||(!thisFloorPrice))
-                                thisFloorPrice = +item.price;
-                        }
-                    }catch(e){console.log("ERR: "+e);}
-                }
-            }catch(err){console.log("ERR: "+err)}
-            */
+            
             console.log("Cross Listings: "+crossTotalListings);
             setTotalListings(thisTotalListings);
             setFloorPrice(thisFloorPrice);
@@ -1277,12 +1226,22 @@ export function StoreFrontView(this: any, props: any) {
                         setMEStats(jsonStats);
                     }
 
-                    const json1 = await fetchMEWithTimeout(collectionAuthority.me_symbol,0);
-                    const json2 = await fetchMEWithTimeout(collectionAuthority.me_symbol,20);
-                    const json3 = await fetchMEWithTimeout(collectionAuthority.me_symbol,40);
-                    const json4 = await fetchMEWithTimeout(collectionAuthority.me_symbol,60);
-                    const json5 = await fetchMEWithTimeout(collectionAuthority.me_symbol,80);
-                    const json6 = await fetchMEWithTimeout(collectionAuthority.me_symbol,100);
+                    let json1 = null;
+                    let json2 = null;
+                    let json3 = null;
+                    let json4 = null;
+                    let json5 = null;
+                    let json6 = null;
+                    try{
+                        json1 = await fetchMEWithTimeout(collectionAuthority.me_symbol,0);
+                        json2 = await fetchMEWithTimeout(collectionAuthority.me_symbol,20);
+                        json3 = await fetchMEWithTimeout(collectionAuthority.me_symbol,40);
+                        json4 = await fetchMEWithTimeout(collectionAuthority.me_symbol,60);
+                        json5 = await fetchMEWithTimeout(collectionAuthority.me_symbol,80);
+                        json6 = await fetchMEWithTimeout(collectionAuthority.me_symbol,100);
+                    } catch(erf){
+                        console.log("ERR: "+erf);
+                    }
                     
                     const json = [...json1,...json2,...json3,...json4,...json5,...json6];
                     
