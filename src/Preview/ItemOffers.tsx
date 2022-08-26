@@ -327,7 +327,10 @@ function SellNowVotePrompt(props:any){
                         console.log("txn: "+JSON.stringify(txn))
                         
                         enqueueSnackbar(`Preparing to buy now at ${meListing[0].price} SOL`,{ variant: 'info' });
-                        const signedTransaction = await sendTransaction(txn, connection);     
+                        const signedTransaction = await sendTransaction(txn, connection, {
+                            skipPreflight: true,
+                            preflightCommitment: "confirmed"
+                        });   
                         
                         const snackprogress = (key:any) => (
                             <CircularProgress sx={{padding:'10px'}} />
@@ -467,7 +470,7 @@ function SellNowVotePrompt(props:any){
                     {meListing && meListing[0]?.auctionHouse ?
                     <Tooltip title={`This NFT is listed on Magic Eden using an escrow program: ${meListing[0]?.auctionHouse}`}>
                         <Button sx={{borderRadius:'10px'}}
-                            //onClick={handleEscrowBuyNow}
+                            onClick={handleEscrowBuyNow}
                         >
                             <Alert severity="info" sx={{borderRadius:'10px'}}>
                                 Listed on Magic Eden for <strong>{meListing && meListing[0]?.price} SOL</strong>
