@@ -84,9 +84,6 @@
      },
    ];
    
-   console.log("collectionMetadata burn: "+JSON.stringify(accounts.collectionMetadata));
-   console.log("accounts burn: "+JSON.stringify(accounts));
-   
    if (accounts.collectionMetadata != null) {
      keys.push({
        pubkey: accounts.collectionMetadata,
