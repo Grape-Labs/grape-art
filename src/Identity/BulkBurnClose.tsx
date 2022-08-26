@@ -273,7 +273,7 @@ export default function BulkBurnClose(props: any) {
             for (var holding = 0; holding < maxLen; holding++) {
                 if (holdingsSelected[item * maxLen + holding]) {
                     console.log("adding to burn ("+(item * maxLen + holding)+"): "+(holdingsSelected[item * maxLen + holding]).mint)
-                    console.log("burning: "+JSON.stringify(holdingsSelected[item * maxLen + holding]))
+                    //console.log("burning: "+JSON.stringify(holdingsSelected[item * maxLen + holding]))
 
                     // check if NFT
                     if (holdingsSelected[item * maxLen + holding].send.tokenAmount.decimals === 0){
@@ -299,7 +299,6 @@ export default function BulkBurnClose(props: any) {
                         var collectionMetadata = null as PublicKey;
 
                         try{
-                            console.log("HERE...")
                             if (holdingsSelected[item * maxLen + holding]?.metadata_decoded){
                                 // check if verified
                                 
