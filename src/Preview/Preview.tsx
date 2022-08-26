@@ -319,7 +319,7 @@ function GrapeVerified(props:any){
                             }
                         }
                     }
-                    }
+                }
                 
                 
                 // third stage verification

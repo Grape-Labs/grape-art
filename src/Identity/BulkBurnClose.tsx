@@ -4,9 +4,11 @@ import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { Signer, Connection, PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js';
 import { TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID, createBurnInstruction, createCloseAccountInstruction, getAssociatedTokenAddress } from "@solana/spl-token-v2";
 
+//import { * as anchor } from '@project-serum/anchor';
 
+//import { } from '@metaplex-foundation/mpl-token-metadata';
+//import { } from '@metaplex-foundation/mpl-token';
 
-//import {  } from '@metaplex-foundation/mpl-token-metadata';
 //import { TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID, Token } from "@solana/spl-token";
 
 import { GRAPE_RPC_ENDPOINT, TX_RPC_ENDPOINT, GRAPE_TREASURY } from '../utils/grapeTools/constants';
@@ -47,7 +49,7 @@ import {
   Checkbox
 } from '@mui/material';
 
-import { getMasterEdition } from '../utils/auctionHouse/helpers/accounts';
+import { getMasterEdition, getMetadata } from '../utils/auctionHouse/helpers/accounts';
 
 import { createBurnNftInstruction } from './BurnNFT';
 
@@ -261,6 +263,7 @@ export default function BulkBurnClose(props: any) {
     }
 
     const MD_PUBKEY = new PublicKey('metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s');
+
     async function burnTokens() {
         var maxLen = 7;
         var maxLenTx = Math.ceil(holdingsSelected.length / maxLen);
@@ -287,7 +290,41 @@ export default function BulkBurnClose(props: any) {
                             publicKey,
                             true
                         );
+
+                        // check if we have loaded the metadata
                         
+                        
+                        
+                        // get collectionMetadata
+                        var collectionMetadata = null as PublicKey;
+
+                        try{
+                            console.log("HERE...")
+                            if (holdingsSelected[item * maxLen + holding]?.metadata_decoded){
+                                // check if verified
+                                
+                                if (holdingsSelected[item * maxLen + holding]?.metadata_decoded.data?.creators){
+                                    //console.log("Update Authority "+holdingsSelected[item * maxLen + holding]?.metadata_decoded?.updateAuthority);
+                                    //for (var element of (holdingsSelected[item * maxLen + holding]?.metadata_decoded.data.creators)){
+                                        //console.log("element "+JSON.stringify(element));
+                                        //console.log("ela "+element.address);
+                                        //console.log("uauth "+holdingsSelected[item * maxLen + holding]?.metadata_decoded?.updateAuthority);
+                                        //if (element.address === holdingsSelected[item * maxLen + holding]?.metadata_decoded?.updateAuthority){
+                                            if (holdingsSelected[item * maxLen + holding]?.metadata_decoded.collection){
+                                                if (holdingsSelected[item * maxLen + holding]?.metadata_decoded.collection.verified === 1){
+                                                    collectionMetadata = await getMetadata(new PublicKey(holdingsSelected[item * maxLen + holding].metadata_decoded.collection.key));
+                                                        //collectionMetadata = await getMetadata(new PublicKey(mintPubkey));
+                                                        //console.log("collectionMetadata this: "+JSON.stringify(collectionMetadata));
+                                                }
+                                            }
+                                        //}
+                                    //}
+                                }
+                            }
+                        }catch (cmerr){
+                            console.log("ERR: "+cmerr);
+                        }
+
                         const accounts = {
                             metadata: pda,
                             owner: publicKey,
@@ -295,7 +332,7 @@ export default function BulkBurnClose(props: any) {
                             tokenAccount: tokenAta,
                             masterEditionAccount: masterEdition,
                             splTokenProgram: new PublicKey(TOKEN_PROGRAM_ID),
-                            //collectionMetadata?: web3.PublicKey;
+                            collectionMetadata: collectionMetadata || null
                         }
                         var tti = await createBurnNftInstruction(accounts)
 

@@ -597,12 +597,17 @@ export function IdentityView(props: any){
             let logo = null;
             let name = item.account.data.parsed.info.mint;
             let metadata = null;
+            let metadata_decoded = null;
 
             var foundMetaName = false;
+
             for (var nft of nftMeta){
                 //console.log('meta: '+JSON.stringify(nft));
                 if (nft.meta.mint === item.account.data.parsed.info.mint){
                     //console.log("nft: "+JSON.stringify(nft))
+
+                    metadata_decoded = decodeMetadata(nft.data);
+                    //console.log("meta_final: "+JSON.stringify(metadata_decoded))
                     
                     name = nft.meta.data.name;
                     metadata = nft.meta.data.uri;
@@ -641,7 +646,8 @@ export function IdentityView(props: any){
                     info:item.account.data.parsed.info,
                     tokenAmount:item.account.data.parsed.info.tokenAmount,
                     decimals:item.account.data.parsed.info.decimals,
-                }
+                },
+                metadata_decoded:metadata_decoded,
                 //swap:item.account.data.parsed.info
             });
             cnt++;
