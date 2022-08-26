@@ -304,21 +304,13 @@ export default function BulkBurnClose(props: any) {
                                 // check if verified
                                 
                                 if (holdingsSelected[item * maxLen + holding]?.metadata_decoded.data?.creators){
-                                    //console.log("Update Authority "+holdingsSelected[item * maxLen + holding]?.metadata_decoded?.updateAuthority);
-                                    //for (var element of (holdingsSelected[item * maxLen + holding]?.metadata_decoded.data.creators)){
-                                        //console.log("element "+JSON.stringify(element));
-                                        //console.log("ela "+element.address);
-                                        //console.log("uauth "+holdingsSelected[item * maxLen + holding]?.metadata_decoded?.updateAuthority);
-                                        //if (element.address === holdingsSelected[item * maxLen + holding]?.metadata_decoded?.updateAuthority){
-                                            if (holdingsSelected[item * maxLen + holding]?.metadata_decoded.collection){
-                                                if (holdingsSelected[item * maxLen + holding]?.metadata_decoded.collection.verified === 1){
-                                                    collectionMetadata = await getMetadata(new PublicKey(holdingsSelected[item * maxLen + holding].metadata_decoded.collection.key));
-                                                        //collectionMetadata = await getMetadata(new PublicKey(mintPubkey));
-                                                        //console.log("collectionMetadata this: "+JSON.stringify(collectionMetadata));
-                                                }
-                                            }
-                                        //}
-                                    //}
+                                    if (holdingsSelected[item * maxLen + holding]?.metadata_decoded.collection){
+                                        if (holdingsSelected[item * maxLen + holding]?.metadata_decoded.collection.verified === 1){
+                                            collectionMetadata = await getMetadata(new PublicKey(holdingsSelected[item * maxLen + holding].metadata_decoded.collection.key));
+                                                //collectionMetadata = await getMetadata(new PublicKey(mintPubkey));
+                                                //console.log("collectionMetadata this: "+JSON.stringify(collectionMetadata));
+                                        }
+                                    }
                                 }
                             }
                         }catch (cmerr){
