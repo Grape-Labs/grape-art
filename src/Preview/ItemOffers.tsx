@@ -327,7 +327,7 @@ function SellNowVotePrompt(props:any){
                         console.log("txn: "+JSON.stringify(txn))
                         
                         enqueueSnackbar(`Preparing to buy now at ${meListing[0].price} SOL`,{ variant: 'info' });
-                        const signedTransaction = await sendTransaction(txn, connection, {
+                        const signedTransaction = await sendTransaction(txSigned, connection, {
                             skipPreflight: true,
                             preflightCommitment: "confirmed"
                         });   
