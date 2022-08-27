@@ -1392,7 +1392,7 @@ const deserialized = deserializeUnchecked(dataSchema, AccoundData, metavalue?.da
                                         {!storageAccount.account.toBeDeleted &&
                                             <ResizeStoragePool storageAccount={storageAccount} />
                                         }
-                                        {console.log(JSON.stringify(storageAccount))}
+                                        
                                         {!storageAccount.account.immutable && !storageAccount.account.toBeDeleted ?
                                             <Button onClick={HandleLockStoragePool} sx={{borderRadius:'17px'}}>
                                                 <LockOpenIcon sx={{mr:1}} /> Lock
