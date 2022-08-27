@@ -456,20 +456,21 @@ function SellNowVotePrompt(props:any){
 
             return response;
             */
-          
-            const resp = await window.fetch(apiUrl, {
-                body: JSON.stringify({
-                    buyer:publicKey.toBase58(),
-                    seller:meListing[0].seller,
-                    auctionHouseAddress:meListing[0].auctionHouse,
-                    tokenMint:meListing[0].tokenMint,
-                    tokenATA:tokenAta.toBase58(),
-                    price:meListing[0].price,
-                    buyerReferral:buyer_referral,
-                    sellerReferral:seller_referral,
-                    buyerExpiry:0,
-                    sellerExpiry:0
-                }),
+            
+            const body = JSON.stringify({
+                buyer:publicKey.toBase58(),
+                seller:meListing[0].seller,
+                auctionHouseAddress:meListing[0].auctionHouse,
+                tokenMint:meListing[0].tokenMint,
+                tokenATA:tokenAta.toBase58(),
+                price:meListing[0].price,
+                buyerReferral:buyer_referral,
+                sellerReferral:seller_referral,
+                buyerExpiry:0,
+                sellerExpiry:0
+            });
+
+            const resp = await window.fetch(apiUrl+"?"+body, {
                 method: 'GET',
                 redirect: 'follow',
                 signal: Timeout(5).signal,
