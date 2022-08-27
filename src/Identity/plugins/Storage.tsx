@@ -1,4 +1,5 @@
-import React, { useEffect, Suspense } from "react";
+import React, { useEffect, Suspense, useCallback } from "react";
+import { styled } from '@mui/material/styles';
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import moment from 'moment';
 import { Global } from '@emotion/react';
@@ -6,9 +7,11 @@ import { Link, useParams, useSearchParams } from "react-router-dom";
 // @ts-ignore
 import { PublicKey, Connection, Commitment } from '@solana/web3.js';
 import {ENV, TokenInfo, TokenListProvider} from '@solana/spl-token-registry';
-import { useWallet } from '@solana/wallet-adapter-react';
-
+import { useConnection, useWallet } from '@solana/wallet-adapter-react';
+import { WalletError } from '@solana/wallet-adapter-base';
+import { useTranslation } from 'react-i18next';
 import { ShdwDrive } from "@shadow-drive/sdk";
+import { useSnackbar } from 'notistack';
 
 import {
     Button,
@@ -17,6 +20,15 @@ import {
     Typography,
     Grid,
     Box,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    FormControl,
+    TextField,
+    InputLabel,
+    Select,
+    MenuItem,
     Container,
     Skeleton,
     Avatar,
@@ -36,10 +48,25 @@ import {
     CircularProgress,
 } from '@mui/material';
 
+import { SelectChangeEvent } from '@mui/material/Select';
+
 import SettingsIcon from '@mui/icons-material/Settings';
 
 import { GRAPE_RPC_ENDPOINT, THEINDEX_RPC_ENDPOINT, GRAPE_PROFILE, GRAPE_PREVIEW, DRIVE_PROXY } from '../../utils/grapeTools/constants';
 import { load } from "../../browser";
+
+const Input = styled('input')({
+    display: 'none',
+});
+
+const BootstrapDialog = styled(Dialog)(({ theme }) => ({
+    '& .MuDialogContent-root': {
+      padding: theme.spacing(2),
+    },
+    '& .MuDialogActions-root': {
+      padding: theme.spacing(1),
+    },
+  }));
 
 function isImage(url:string) {
     return /\.(jpg|jpeg|png|webp|avif|gif|svg)$/.test(url);
@@ -71,6 +98,7 @@ function calculateStorageUsed(available: any, allocated: any){
 export function StorageView(props: any){
     const setLoadingPosition = props.setLoadingPosition;
     const pubkey = props.pubkey;
+    const { connection } = useConnection();
     const [selectionModel, setSelectionModel] = React.useState(null);
     const [selectionModelClose, setSelectionModelClose] = React.useState(null);
     const [solanaStorage, setSolanaStorage] = React.useState(null);
@@ -80,7 +108,231 @@ export function StorageView(props: any){
     const [thisDrive, setThisDrive] = React.useState(null);
     const [accountV1, setAccountV1] = React.useState(null);
 	const [accountV2, setAccountV2] = React.useState(null);
+    
     const wallet = useWallet();
+    const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+    const onError = useCallback(
+        (error: WalletError) => {
+            enqueueSnackbar(error.message ? `${error.name}: ${error.message}` : error.name, { variant: 'error' });
+            console.error(error);
+        },
+        [enqueueSnackbar]
+    );
+
+
+    const createStoragePool = async (name: string, size: string, version: string) => { 
+        try{
+            enqueueSnackbar(`Preparing to create storage ${name}`,{ variant: 'info' });
+            const snackprogress = (key:any) => (
+                <CircularProgress sx={{padding:'10px'}} />
+            );
+            const cnfrmkey = enqueueSnackbar(`Confirming transaction`,{ variant: 'info', action:snackprogress, persist: true });
+            const signedTransaction = await thisDrive.createStorageAccount(name, size, version || 'v2')
+            //const signedTransaction = await thisDrive.createStorageAccount(name, size)
+            
+            const latestBlockHash = await connection.getLatestBlockhash();
+            console.log("Signature: "+JSON.stringify(signedTransaction));
+            
+            await connection.confirmTransaction({
+                blockhash: latestBlockHash.blockhash,
+                lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+                signature: signedTransaction.transaction_signature}, 
+                'max'
+            );
+            
+            closeSnackbar(cnfrmkey);
+            const snackaction = (key:any) => (
+                <Button href={`https://explorer.solana.com/tx/${signedTransaction?.transaction_signature}`} target='_blank'  sx={{color:'white'}}>
+                    {signedTransaction?.transaction_signature}
+                </Button>
+            );
+            enqueueSnackbar(`Transaction Confirmed`,{ variant: 'success', action:snackaction });
+            setTimeout(function() {
+                fetchStorage();
+            }, 2000);
+        }catch(e){
+            closeSnackbar();
+            enqueueSnackbar(`${e}`,{ variant: 'error' });
+            console.log("Error: "+e);
+            //console.log("Error: "+JSON.stringify(e));
+        } 
+    }
+
+    const deleteStoragePool = async (storagePublicKey: PublicKey, version: string) => { 
+        try{
+            enqueueSnackbar(`Preparing to delete storage ${storagePublicKey.toString()}`,{ variant: 'info' });
+            const snackprogress = (key:any) => (
+                <CircularProgress sx={{padding:'10px'}} />
+            );
+            const cnfrmkey = enqueueSnackbar(`Confirming transaction`,{ variant: 'info', action:snackprogress, persist: true });
+            
+            console.log("version: "+version)
+            const signedTransaction = await thisDrive.deleteStorageAccount(storagePublicKey, version || 'v2');
+            
+            const latestBlockHash = await connection.getLatestBlockhash();
+            await connection.confirmTransaction({
+                blockhash: latestBlockHash.blockhash,
+                lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+                signature: signedTransaction.txid}, 
+                'processed'
+            );
+            
+            closeSnackbar(cnfrmkey);
+            const snackaction = (key:any) => (
+                <Button href={`https://explorer.solana.com/tx/${signedTransaction.txid}`} target='_blank'  sx={{color:'white'}}>
+                    {signedTransaction.txid}
+                </Button>
+            );
+            enqueueSnackbar(`Transaction Confirmed`,{ variant: 'success', action:snackaction });
+            setTimeout(function() {
+                fetchStorage();
+            }, 2000);
+            
+        }catch(e){
+            closeSnackbar();
+            enqueueSnackbar(`${e}`,{ variant: 'error' });
+            console.log("Error: "+e);
+            //console.log("Error: "+JSON.stringify(e));
+        } 
+    }
+
+    function AddStoragePool(props:any){
+        const { t, i18n } = useTranslation();
+        //const storageAccount = props.storageAccount;
+        const [storageSize, setStorageSize] = React.useState(1);
+        const [storageSizeUnits, setStorageSizeUnits] = React.useState('MB');
+        const [storageLabel, setStorageLabel] = React.useState('My Storage');
+        const [open_snackbar, setSnackbarState] = React.useState(false);
+        const { enqueueSnackbar } = useSnackbar();
+        const { publicKey, wallet } = useWallet();
+    
+        const [open, setOpen] = React.useState(false);
+    
+        const handleCloseDialog = () => {
+            setOpen(false);
+        }
+    
+        const handleClickOpen = () => {
+            setOpen(true);
+        };
+    
+        const handleClose = () => {
+            setOpen(false);
+        };
+
+        const HandleAllocateNewStoragePool = (event: any) => {
+            event.preventDefault();
+            if (thisDrive && storageLabel && storageSizeUnits && storageSize){
+                setOpen(false);
+                createStoragePool(storageLabel, storageSize+storageSizeUnits, 'v2');
+            }
+        };
+
+        const handleStorageSizeUnitsChange = (event: SelectChangeEvent) => {
+            setStorageSizeUnits(event.target.value as string);
+          };
+    
+        return (
+            <>
+                <Grid container sx={{mt:1,mb:1}}>
+                    <Grid item xs={12} alignContent={'right'} textAlign={'right'}>
+                        <Button
+                            variant="contained"
+                            color="success" 
+                            title={`Add Storage Pool`}
+                            onClick={handleClickOpen}
+                            size="large"
+                            fullWidth
+                            sx={{borderRadius:'17px'}}
+                            >
+                            Add Storage Pool
+                        </Button>
+                    </Grid>
+                </Grid>
+                <BootstrapDialog 
+                    maxWidth={"lg"}
+                    open={open} onClose={handleClose}
+                    PaperProps={{
+                        style: {
+                            background: '#13151C',
+                            border: '1px solid rgba(255,255,255,0.05)',
+                            borderTop: '1px solid rgba(255,255,255,0.1)',
+                            borderRadius: '20px'
+                        }
+                        }}
+                    >
+                    <DialogTitle>
+                    {t('Create new storage pool')}
+                    </DialogTitle>
+                    <form onSubmit={HandleAllocateNewStoragePool}>
+                        <DialogContent>
+                            <FormControl fullWidth>
+                                <TextField
+                                    autoFocus
+                                    autoComplete='off'
+                                    margin="dense"
+                                    id=""
+                                    label={t('Label')}
+                                    type="text"
+                                    fullWidth
+                                    variant="standard"
+                                    value={storageLabel}
+                                    onChange={(e: any) => {
+                                        setStorageLabel(e.target.value)
+                                    }}
+                                />
+                                Label
+                            </FormControl>
+
+                            <FormControl sx={{ m: 1, minWidth: 120 }}>
+                                <TextField
+                                    autoFocus
+                                    autoComplete='off'
+                                    margin="dense"
+                                    id=""
+                                    label={t('Set your storage size')}
+                                    type="number"
+                                    variant="standard"
+                                    value={storageSize}
+                                    onChange={(e: any) => {
+                                    setStorageSize(e.target.value)
+                                    }}
+                                />
+                                Allocation
+                            </FormControl>
+
+                            <FormControl sx={{ m: 1, minWidth: 120 }}>
+                                <InputLabel id="demo-simple-select-label">Units</InputLabel>
+                                <Select
+                                    labelId="demo-simple-select-label"
+                                    id="demo-simple-select"
+                                    value={storageSizeUnits}
+                                    label="units"
+                                    onChange={handleStorageSizeUnitsChange}
+                                    >
+                                    <MenuItem value={'KB'}>KB</MenuItem>
+                                    <MenuItem value={'MB'}>MB</MenuItem>
+                                    <MenuItem value={'GB'}>GB</MenuItem>
+                                </Select>
+                            </FormControl>
+                            
+                        </DialogContent> 
+                        <DialogActions>
+                            <Button onClick={handleCloseDialog}>Cancel</Button>
+                            <Button 
+                                type="submit"
+                                variant="text" 
+                                //disabled={((+offer_amount > sol_balance) || (+offer_amount < 0.001) || (+offer_amount < props.highestOffer))}
+                                title="Create">
+                                    Create
+                            </Button>
+                        </DialogActions> 
+                    </form>
+                </BootstrapDialog>
+            </>
+            
+        ); 
+    }
 
     React.useEffect(() => {
         if (pubkey){
@@ -226,28 +478,31 @@ export function StorageView(props: any){
                         <div style={{ display: 'flex', height: '100%' }}>
                             <div style={{ flexGrow: 1 }}>
                                 {publicKey && publicKey.toBase58() === pubkey ?
-                                    <DataGrid
-                                        rows={solanaStorageRows}
-                                        columns={storagecolumns}
-                                        pageSize={25}
-                                        rowsPerPageOptions={[]}
-                                        onSelectionModelChange={(newSelectionModel) => {
-                                            setSelectionModel(newSelectionModel);
-                                        }}
-                                        initialState={{
-                                            sorting: {
-                                                sortModel: [{ field: 'domain', sort: 'desc' }],
-                                            },
-                                        }}
-                                        sx={{
-                                            borderRadius:'17px',
-                                            borderColor:'rgba(255,255,255,0.25)',
-                                            '& .MuiDataGrid-cell':{
-                                                borderColor:'rgba(255,255,255,0.25)'
-                                            }}}
-                                        sortingOrder={['asc', 'desc', null]}
-                                        disableSelectionOnClick
-                                    />
+                                    <Box>
+                                        <AddStoragePool />
+                                        <DataGrid
+                                            rows={solanaStorageRows}
+                                            columns={storagecolumns}
+                                            pageSize={25}
+                                            rowsPerPageOptions={[]}
+                                            onSelectionModelChange={(newSelectionModel) => {
+                                                setSelectionModel(newSelectionModel);
+                                            }}
+                                            initialState={{
+                                                sorting: {
+                                                    sortModel: [{ field: 'domain', sort: 'desc' }],
+                                                },
+                                            }}
+                                            sx={{
+                                                borderRadius:'17px',
+                                                borderColor:'rgba(255,255,255,0.25)',
+                                                '& .MuiDataGrid-cell':{
+                                                    borderColor:'rgba(255,255,255,0.25)'
+                                                }}}
+                                            sortingOrder={['asc', 'desc', null]}
+                                            disableSelectionOnClick
+                                        />
+                                    </Box>
                                 :
                                 <DataGrid
                                     rows={solanaStorageRows}

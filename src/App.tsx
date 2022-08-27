@@ -1,11 +1,18 @@
-import React, { FC, ReactNode, useCallback, useMemo, Suspense, Component } from 'react';
+import React, { FC, ReactNode, useCallback, useMemo, Suspense, lazy, Component } from 'react';
 import { styled, ThemeProvider } from '@mui/material/styles';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 //import { LogView } from "./Log/Log";
+
 import { ProfileView } from './Profile/Profile';
 import { PreviewView } from './Preview/Preview';
 import { FeaturedView } from './Featured/Featured';
 import { IdentityView } from './Identity/Identity';
+/*
+const ProfileView = lazy(() => import('./Profile/Profile'));
+const PreviewView = lazy(() => import('./Preview/Preview'));
+const FeaturedView = lazy(() => import('./Featured/Featured'));
+const IdentityView = lazy(() => import('./Identity/Identity'));
+*/
 //import { SplashView } from './Splash/Splash';
 import { StoreFrontView } from './StoreFront/StoreFront';
 //import { MessagesView } from './Messages/Messages';
@@ -107,7 +114,6 @@ function Copyright(props: any): JSX.Element {
 }
 
 function DashboardContent(){
-//export default class DashboardContent extends Component {
     const [open, setOpen] = React.useState(true);
     const toggleDrawer = () => {
         setOpen(!open);
@@ -148,6 +154,8 @@ function DashboardContent(){
         [network]
     );
 
+    const renderLoader = () => <p>Loading</p>;
+
     /*
   const { enqueueSnackbar } = useSnackbar();
   const onError = useCallback(
@@ -162,7 +170,7 @@ function DashboardContent(){
     //render(){
         return (
         <>
-            <Suspense fallback="loading">
+            <Suspense fallback={renderLoader()}>
                 <DialectUiManagementProvider>
                     <ThemeProvider theme={grapeTheme}>
                         <div className="grape-gradient-background">
