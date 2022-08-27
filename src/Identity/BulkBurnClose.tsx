@@ -116,6 +116,7 @@ const BootstrapDialogTitle = (props: DialogTitleProps) => {
 export default function BulkBurnClose(props: any) {
     const type = props.type; // 0 = burn - 1 = close
     const tokensSelected = props.tokensSelected;
+    const clearSelectionModels = props.clearSelectionModels;
     const solanaHoldingRows = props.solanaHoldingRows;
     const tokenMap = props.tokenMap;
     const nftMap = props.nftMap;
@@ -239,6 +240,9 @@ export default function BulkBurnClose(props: any) {
         }catch(e:any){
             closeSnackbar();
             enqueueSnackbar(e.message ? `${e.name}: ${e.message}` : e.name, { variant: 'error' });
+            try{
+                clearSelectionModels();
+            }catch(err){console.log("ERR: "+err)}
         } 
     }
     
@@ -258,8 +262,11 @@ export default function BulkBurnClose(props: any) {
             }
             await executeTransactions(batchtx, null);
         }
-    
-        fetchSolanaTokens()
+        
+        fetchSolanaTokens();
+        try{
+            clearSelectionModels();
+        }catch(e){console.log("ERR: "+e)}
     }
 
     const MD_PUBKEY = new PublicKey('metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s');
@@ -332,7 +339,7 @@ export default function BulkBurnClose(props: any) {
                         transaction.feePayer = publicKey;
                         const simulate = await connection.simulateTransaction(transaction);
                         console.log("simulate: "+JSON.stringify(simulate));
-                        
+
                         if (tti){
                             if (!simulate.value.err){
                                 //console.log("testing");
@@ -373,7 +380,10 @@ export default function BulkBurnClose(props: any) {
             await executeTransactions(batchtx, null);
         }
     
-        fetchSolanaTokens()
+        fetchSolanaTokens();
+        try{
+            clearSelectionModels();
+        }catch(e){console.log("ERR: "+e)}
     }
     
     function HandleSubmit(event: any) {

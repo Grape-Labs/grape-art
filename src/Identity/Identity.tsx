@@ -143,8 +143,8 @@ export function IdentityView(props: any){
     const [value, setValue] = React.useState('1');
     const [tokenMap, setTokenMap] = React.useState<Map<string,TokenInfo>>(undefined);
     const [nftMap, setNftMap] = React.useState(null);
-    const [selectionModel, setSelectionModel] = React.useState(null);
-    const [selectionModelClose, setSelectionModelClose] = React.useState(null);
+    const [selectionModel, setSelectionModel] = React.useState([]);
+    const [selectionModelClose, setSelectionModelClose] = React.useState([]);
     const [selectionGovernanceModel, setSelectionGovernanceModel] = React.useState(null);
     
     const { t, i18n } = useTranslation();
@@ -513,6 +513,13 @@ export function IdentityView(props: any){
             //console.log("QUERY: "+JSON.stringify(results))
 
             //return results;
+    }
+
+    function clearSelectionModels(){
+        try{
+            setSelectionModel([]);
+            setSelectionModelClose([]);
+        }catch(e){console.log("ERR: "+e)}
     }
 
     const fetchSolanaTokens = async () => {
@@ -1232,6 +1239,7 @@ export function IdentityView(props: any){
                                                                                 '& .MuiDataGrid-cell':{
                                                                                     borderColor:'rgba(255,255,255,0.25)'
                                                                                 }}}
+                                                                            selectionModel={selectionModel}
                                                                             onSelectionModelChange={(newSelectionModel) => {
                                                                                 setSelectionModel(newSelectionModel);
                                                                             }}
@@ -1297,7 +1305,7 @@ export function IdentityView(props: any){
                                                             <Grid item xs={12} alignContent={'right'} textAlign={'right'}>
                                                                 <Grid item alignContent={'right'} textAlign={'right'}>
                                                                     {selectionModel.length <= 100 ?
-                                                                        <BulkBurnClose tokensSelected={selectionModel} solanaHoldingRows={solanaHoldingRows} tokenMap={tokenMap} nftMap={nftMap} fetchSolanaTokens={fetchSolanaTokens} type={0}  />
+                                                                        <BulkBurnClose tokensSelected={selectionModel} clearSelectionModels={clearSelectionModels} solanaHoldingRows={solanaHoldingRows} tokenMap={tokenMap} nftMap={nftMap} fetchSolanaTokens={fetchSolanaTokens} type={0}  />
                                                                     :
                                                                         <Typography variant="caption">Currently limited to 100 token accounts</Typography>
                                                                     }
@@ -1358,6 +1366,7 @@ export function IdentityView(props: any){
                                                                                 rows={solanaClosableHoldingsRows}
                                                                                 columns={closablecolumns}
                                                                                 rowsPerPageOptions={[25, 50, 100, 250]}
+                                                                                selectionModel={selectionModelClose}
                                                                                 onSelectionModelChange={(newCloseSelectionModel) => {
                                                                                     setSelectionModelClose(newCloseSelectionModel);
                                                                                 }}
