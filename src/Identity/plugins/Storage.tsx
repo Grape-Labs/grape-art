@@ -29,6 +29,10 @@ import {
     InputLabel,
     Select,
     MenuItem,
+    FormLabel,
+    FormControlLabel,
+    Radio,
+    RadioGroup,
     Container,
     Skeleton,
     Avatar,
@@ -50,7 +54,9 @@ import {
 
 import { SelectChangeEvent } from '@mui/material/Select';
 
+import ExpandIcon from '@mui/icons-material/Expand';
 import SettingsIcon from '@mui/icons-material/Settings';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 import { GRAPE_RPC_ENDPOINT, THEINDEX_RPC_ENDPOINT, GRAPE_PROFILE, GRAPE_PREVIEW, DRIVE_PROXY } from '../../utils/grapeTools/constants';
 import { load } from "../../browser";
@@ -177,6 +183,75 @@ export function StorageView(props: any){
                 'processed'
             );
             
+            closeSnackbar(cnfrmkey);
+            const snackaction = (key:any) => (
+                <Button href={`https://explorer.solana.com/tx/${signedTransaction.txid}`} target='_blank'  sx={{color:'white'}}>
+                    {signedTransaction.txid}
+                </Button>
+            );
+            enqueueSnackbar(`Transaction Confirmed`,{ variant: 'success', action:snackaction });
+            setTimeout(function() {
+                fetchStorage();
+            }, 2000);
+            
+        }catch(e){
+            closeSnackbar();
+            enqueueSnackbar(`${e}`,{ variant: 'error' });
+            console.log("Error: "+e);
+            //console.log("Error: "+JSON.stringify(e));
+        } 
+    }
+
+    const resizeAddStoragePool = async (storagePublicKey: PublicKey, size: string, version: string) => { 
+        try{
+            enqueueSnackbar(`Preparing to resize/add storage ${storagePublicKey.toString()}`,{ variant: 'info' });
+            const snackprogress = (key:any) => (
+                <CircularProgress sx={{padding:'10px'}} />
+            );
+            const cnfrmkey = enqueueSnackbar(`Confirming transaction`,{ variant: 'info', action:snackprogress, persist: true });
+            const signedTransaction = await thisDrive.addStorage(storagePublicKey, size, version || 'v2');
+            //const signedTransaction = await thisDrive.addStorage(storagePublicKey, size);
+            const latestBlockHash = await connection.getLatestBlockhash();
+            await connection.confirmTransaction({
+                blockhash: latestBlockHash.blockhash,
+                lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+                signature: signedTransaction.txid}, 
+                'processed'
+            );
+            closeSnackbar(cnfrmkey);
+            const snackaction = (key:any) => (
+                <Button href={`https://explorer.solana.com/tx/${signedTransaction.txid}`} target='_blank'  sx={{color:'white'}}>
+                    {signedTransaction.txid}
+                </Button>
+            );
+            enqueueSnackbar(`Transaction Confirmed`,{ variant: 'success', action:snackaction });
+            setTimeout(function() {
+                fetchStorage();
+            }, 2000);
+            
+        }catch(e){
+            closeSnackbar();
+            enqueueSnackbar(`${e}`,{ variant: 'error' });
+            console.log("Error: "+e);
+            //console.log("Error: "+JSON.stringify(e));
+        } 
+    }
+
+    const resizeReduceStoragePool = async (storagePublicKey: PublicKey, size: string, version: string) => { 
+        try{
+            enqueueSnackbar(`Preparing to resize/reduce storage ${storagePublicKey.toString()}`,{ variant: 'info' });
+            const snackprogress = (key:any) => (
+                <CircularProgress sx={{padding:'10px'}} />
+            );
+            const cnfrmkey = enqueueSnackbar(`Confirming transaction`,{ variant: 'info', action:snackprogress, persist: true });
+            const signedTransaction = await thisDrive.reduceStorage(storagePublicKey, size, version || 'v2');
+            const latestBlockHash = await connection.getLatestBlockhash();
+            await connection.confirmTransaction({
+                blockhash: latestBlockHash.blockhash,
+                lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+                signature: signedTransaction.txid}, 
+                'processed'
+            );
             closeSnackbar(cnfrmkey);
             const snackaction = (key:any) => (
                 <Button href={`https://explorer.solana.com/tx/${signedTransaction.txid}`} target='_blank'  sx={{color:'white'}}>
@@ -334,6 +409,143 @@ export function StorageView(props: any){
         ); 
     }
 
+    function ResizeStoragePool(props:any){
+        const { t, i18n } = useTranslation();
+        const storageAccount = props.storageAccount;
+        const [storageSize, setStorageSize] = React.useState(1);
+        const [storageSizeUnits, setStorageSizeUnits] = React.useState('MB');
+        const [storageLabel, setStorageLabel] = React.useState('My Storage');
+        const [open_snackbar, setSnackbarState] = React.useState(false);
+        const { enqueueSnackbar } = useSnackbar();
+        const { publicKey, wallet } = useWallet();
+        const [add, setAdd] = React.useState("1");
+
+        const [open, setOpen] = React.useState(false);
+    
+        const handleCloseDialog = () => {
+            setOpen(false);
+        }
+    
+        const handleClickOpen = () => {
+            setOpen(true);
+        };
+    
+        const handleClose = () => {
+            setOpen(false);
+        };
+
+        const HandleAllocateResizeStoragePool = (event: any) => {
+            event.preventDefault();
+            if (thisDrive && storageLabel && storageSizeUnits && storageSize){
+                setOpen(false);
+                
+                if (add === "1")
+                    resizeAddStoragePool(new PublicKey(storageAccount.publicKey), storageSize+storageSizeUnits, 'v2')
+                else
+                    resizeReduceStoragePool(new PublicKey(storageAccount.publicKey), storageSize+storageSizeUnits, 'v2')
+            }
+        };
+
+        const handleStorageSizeUnitsChange = (event: SelectChangeEvent) => {
+            setStorageSizeUnits(event.target.value as string);
+          };
+
+        const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+            const val = (event.target as HTMLInputElement).value;
+            setAdd(val);
+        };
+    
+        return (
+            <>
+                <Tooltip title="Resize Storage Pool">
+                    <Button 
+                        onClick={handleClickOpen} 
+                        sx={{borderTopLeftRadius:'17px',borderBottomLeftRadius:'17px'}}
+                    >
+                        <ExpandIcon />
+                    </Button>
+                </Tooltip>
+                <BootstrapDialog 
+                    maxWidth={"lg"}
+                    open={open} onClose={handleClose}
+                    PaperProps={{
+                        style: {
+                            background: '#13151C',
+                            border: '1px solid rgba(255,255,255,0.05)',
+                            borderTop: '1px solid rgba(255,255,255,0.1)',
+                            borderRadius: '20px'
+                        }
+                        }}
+                    >
+                    <DialogTitle>
+                        {t('Resize storage pool')}
+                    </DialogTitle>
+                    <form onSubmit={HandleAllocateResizeStoragePool}>
+                        <DialogContent>
+                            <FormControl>
+                                <FormLabel id="demo-radio-buttons-group-label">Resize</FormLabel>
+                                    <RadioGroup
+                                        aria-labelledby="demo-radio-buttons-group-label"
+                                        defaultValue="female"
+                                        name="radio-buttons-group"
+
+                                        value={add}
+                                        onChange={handleChange}
+                                    >
+                                        <FormControlLabel control={<Radio />} label="Add" value="1"/>
+                                        <FormControlLabel control={<Radio />} label="Remove" value="0"/>
+                                </RadioGroup>
+                            </FormControl>
+                            <FormControl sx={{ m: 1, minWidth: 120 }}>
+                                <TextField
+                                    autoFocus
+                                    autoComplete='off'
+                                    margin="dense"
+                                    id=""
+                                    label={t('Set your storage size')}
+                                    type="number"
+                                    variant="standard"
+                                    value={storageSize}
+                                    onChange={(e: any) => {
+                                    setStorageSize(e.target.value)
+                                    }}
+                                />
+                                Allocation
+                            </FormControl>
+
+                            <FormControl sx={{ m: 1, minWidth: 120 }}>
+                                <InputLabel id="demo-simple-select-label">Units</InputLabel>
+                                <Select
+                                    labelId="demo-simple-select-label"
+                                    id="demo-simple-select"
+                                    value={storageSizeUnits}
+                                    label="units"
+                                    onChange={handleStorageSizeUnitsChange}
+                                    >
+                                    <MenuItem value={'KB'}>KB</MenuItem>
+                                    <MenuItem value={'MB'}>MB</MenuItem>
+                                    <MenuItem value={'GB'}>GB</MenuItem>
+                                </Select>
+                            </FormControl>
+                            
+                        </DialogContent> 
+                        <DialogActions>
+                            <Button onClick={handleCloseDialog}>Cancel</Button>
+                            <Button 
+                                type="submit"
+                                variant="text" 
+                                //disabled={((+offer_amount > sol_balance) || (+offer_amount < 0.001) || (+offer_amount < props.highestOffer))}
+                                title="Create">
+                                    Resize
+                            </Button>
+                        </DialogActions> 
+                    </form>
+                </BootstrapDialog>
+            </>
+            
+        ); 
+    }
+
     React.useEffect(() => {
         if (pubkey){
             fetchStorage();
@@ -372,24 +584,36 @@ export function StorageView(props: any){
             } 
         },
         { field: 'immutable', headerName: 'Immutable', width: 130, align: 'center'},
-        { field: 'link', headerName: '', width: 150,  align: 'center',
+        { field: 'manage', headerName: '', width: 200,  align: 'center',
             renderCell: (params) => {
                 return (
                     <>
-                    {publicKey && pubkey === publicKey.toBase58() ?
-                        <Tooltip title='Manage Storage Pool'>
-                            <Button
-                                variant='outlined'
-                                size='small'
-                                component='a'
-                                href={`https://grapedrive.vercel.app`}
-                                target='_blank'
-                                sx={{borderRadius:'17px'}}
-                            ><SettingsIcon /></Button>
-                        </Tooltip>
-                    :
-                        <></>
-                    }
+                        {publicKey && pubkey === publicKey.toBase58() ?
+                            <ButtonGroup>
+                                <ResizeStoragePool storageAccount={params.value.storageAccount} />
+                                <Tooltip title='Delete Storage Pool'>
+                                    <Button onClick={(e) =>
+                                        //e.preventDefault();
+                                        deleteStoragePool(new PublicKey(params.value.id), params.value.version)
+                                    } 
+                                        color="error" 
+                                        >
+                                        <DeleteIcon/>
+                                    </Button>
+                                </Tooltip>
+                                <Tooltip title='Manage Storage Pool'>
+                                    <Button
+                                        variant='outlined'
+                                        component='a'
+                                        href={`https://grapedrive.vercel.app`}
+                                        target='_blank'
+                                        sx={{borderTopRightRadius:'17px',borderBottomRightRadius:'17px'}}
+                                    ><SettingsIcon /></Button>
+                                </Tooltip>
+                            </ButtonGroup>
+                        :
+                            <></>
+                        }
                     </>
                 )
             }
@@ -447,7 +671,11 @@ export function StorageView(props: any){
                         used:json.current_usage,
                         available:+item.account.storage - +json.current_usage,
                         immutable:item.account.immutable,
-                        link:item.publicKey.toBase58()
+                        manage:{
+                            id:item.publicKey.toBase58(),
+                            version:json.version,
+                            storageAccount:item,
+                        }
                     });
 
                     console.log("storage: "+JSON.stringify(storage));
