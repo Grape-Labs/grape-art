@@ -315,7 +315,7 @@ export function StreamingPaymentsView(props: any){
                 )
             }
         },
-        { field: 'name', headerName: 'Name', width: 200, align: 'center' },
+        { field: 'name', headerName: 'Name', width: 200, align: 'left' },
         { field: 'sender', headerName: 'Sender', width: 100, align: 'center',
             renderCell: (params) => {
                 return(
