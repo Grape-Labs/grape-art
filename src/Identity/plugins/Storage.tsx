@@ -635,7 +635,7 @@ export function StorageView(props: any){
                 )
             }
         },
-        { field: 'name', headerName: 'Name', width: 200, align: 'center', 
+        { field: 'name', headerName: 'Name', width: 200, align: 'left', 
             renderCell: (params) => {
                 return(
                     params.value
