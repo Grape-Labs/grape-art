@@ -409,11 +409,13 @@ function SellNowVotePrompt(props:any){
             console.log("seller_referral: "+seller_referral);
             */
 
-            const apiUrl = PROXY+"https://api-mainnet.magiceden.dev/v2/instructions/buy_now";
-            
+            //const apiUrl = PROXY+"https://api-mainnet.magiceden.dev/v2/instructions/buy_now";
+            const apiUrl = PROXY+"https://hyper.solana.fm/v3/instructions/buy_now";
+
             var response = await axios.get(
                 apiUrl, {
                 params: {
+                    network:'mainnet',
                     buyer:publicKey.toBase58(),
                     seller:meListing[0].seller,
                     auctionHouseAddress:meListing[0].auctionHouse,
