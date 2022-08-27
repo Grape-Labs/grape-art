@@ -478,14 +478,14 @@ export function StreamingPaymentsView(props: any){
                                     <>
                                         <Tooltip title="Withdraw unlocked balance">
                                             <Button
-                                                disabled={(params.value.availableToWithdraw > 0 && balance > 0) ? false : true}
+                                                disabled={(params.value.availableToWithdraw > 0) ? false : true}
                                                 variant='outlined'
                                                 size='small'
                                                 onClick={(e) => withdrawStream(params.value.id, availableToWithdraw)}
                                                 sx={{borderTopLeftRadius:'17px',borderBottomLeftRadius:'17px'}}
                                             >Withdraw</Button>
                                         </Tooltip>
-                                        {params.value?.transferableByRecipient === true &&
+                                        {(params.value?.transferableByRecipient === true && balance > 0) &&
                                             <TransferStreamComponent streamId={params.value.id} streamName={params.value.name} />
                                         }
                                     </>
