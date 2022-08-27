@@ -7,6 +7,7 @@ import { ProfileView } from './Profile/Profile';
 import { PreviewView } from './Preview/Preview';
 import { FeaturedView } from './Featured/Featured';
 import { IdentityView } from './Identity/Identity';
+import { StorageView } from './Identity/plugins/Storage';
 /*
 const ProfileView = lazy(() => import('./Profile/Profile'));
 const PreviewView = lazy(() => import('./Preview/Preview'));
@@ -243,6 +244,10 @@ function DashboardContent(){
 
                                                             <Route path="wallet/*" element={<IdentityView />}>
                                                                 <Route path=":wallet" element={<IdentityView />} />
+                                                            </Route>
+
+                                                            <Route path="storage/*" element={<StorageView />}>
+                                                                <Route path=":handlekey" element={<StorageView />} />
                                                             </Route>
 
                                                             <Route path="*" element={<NotFound />} />
