@@ -466,6 +466,7 @@ export function StreamingPaymentsView(props: any){
             renderCell: (params) => {
                 //const withdrawRaw = (Math.floor(moment(Date.now()).diff(moment.unix(params.value.lastWithdrawnAt), 'seconds')/params.value.withdrawalFrequency) * +params.value?.amountPerPeriod);
                 const availableToWithdraw = getBN(params.value.availableToWithdraw, tokenMap.get(params.value.mint)?.decimals);
+                const balance = (+params.value.depositedAmount/(10 ** tokenMap.get(params.value.mint)?.decimals) - +params.value.withdrawnAmount/(10 ** tokenMap.get(params.value.mint)?.decimals));
                 
                 return (
                     <>
@@ -477,7 +478,7 @@ export function StreamingPaymentsView(props: any){
                                     <>
                                         <Tooltip title="Withdraw unlocked balance">
                                             <Button
-                                                disabled={params.value.availableToWithdraw > 0 ? false : true}
+                                                disabled={(params.value.availableToWithdraw > 0 && balance > 0) ? false : true}
                                                 variant='outlined'
                                                 size='small'
                                                 onClick={(e) => withdrawStream(params.value.id, availableToWithdraw)}
