@@ -309,6 +309,8 @@ function SellNowVotePrompt(props:any){
                 try {
                     const transaction = new Transaction();
                     const transactionInstr = await fetchMEBuyNowTimeout();
+
+
                     if (transactionInstr){
                         //const transferAuthority = web3.Keypair.generate();
                         //const signers = isNative ? [] : [transferAuthority];
@@ -372,7 +374,7 @@ function SellNowVotePrompt(props:any){
                         }, GRAPE_RPC_REFRESH); 
                     } else{
                         closeSnackbar();
-                        enqueueSnackbar(`Invalid transaction instructions...`,{ variant: 'error' });
+                        enqueueSnackbar(`Invalid transaction instructions, this because the Magic Eden API is centralized, and is returning null results!!!`,{ variant: 'error' });
                     }       
                     
                 } catch(e){
