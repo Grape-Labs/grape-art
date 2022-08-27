@@ -623,6 +623,18 @@ export function StorageView(props: any){
 
     const storagecolumns: GridColDef[] = [
         { field: 'id', headerName: 'Pool', width: 70, hide: true },
+        { field: 'source', headerName: 'Source', width: 150,
+            renderCell: (params) => {
+                return(
+                    <>
+                        <Avatar alt={params.value} src={params.value.logoURI} sx={{ width: 20, height: 20, bgcolor: 'rgb(0, 0, 0)', mr:1 }}>
+                            {params.value.name.substr(0,2)}
+                        </Avatar>
+                        {params.value.name}
+                    </>
+                )
+            }
+        },
         { field: 'name', headerName: 'Name', width: 200, align: 'center', 
             renderCell: (params) => {
                 return(
@@ -778,6 +790,10 @@ export function StorageView(props: any){
 
                     storageTable.push({
                         id:item.publicKey.toBase58(),
+                        source:{
+                            name: 'Shadow Drive',
+                            logoURI: 'https://shdw-drive.genesysgo.net/5VhicqNTPgvJNVPHPp8PSH91YQ6KnVAeukW1K37GJEEV/genesysgo.png'
+                        },
                         name:item.account.identifier,
                         created:item.account.creationTime,
                         storage:item.account.storage,
