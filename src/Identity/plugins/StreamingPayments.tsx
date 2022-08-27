@@ -334,7 +334,7 @@ export function StreamingPaymentsView(props: any){
                 );
             }
         },
-        { field: 'depositedAmount', headerName: 'Total', width: 100, align: 'center',
+        { field: 'depositedAmount', headerName: 'Total', width: 130, align: 'center',
             renderCell: (params) => {
                 return(
                     <>
@@ -343,7 +343,7 @@ export function StreamingPaymentsView(props: any){
                 );
             }
         },
-        { field: 'withdrawnAmount', headerName: 'Withdrawn', width: 100, align: 'center',
+        { field: 'withdrawnAmount', headerName: 'Withdrawn', width: 130, align: 'center',
             renderCell: (params) => {
                 return(
                     <>
@@ -352,7 +352,7 @@ export function StreamingPaymentsView(props: any){
                 );
             }
         },
-        { field: 'remainingAmount', headerName: 'Balance', width: 100, align: 'center',
+        { field: 'remainingAmount', headerName: 'Balance', width: 130, align: 'center',
             renderCell: (params) => {
                 return(
                     <>
@@ -361,7 +361,7 @@ export function StreamingPaymentsView(props: any){
                 );
             }
         },
-        { field: 'availableWithdraw', headerName: 'Available', width: 100, align: 'center',
+        { field: 'availableWithdraw', headerName: 'Available', width: 130, align: 'center',
             renderCell: (params) => {
                 return(
                     <>
@@ -398,6 +398,21 @@ export function StreamingPaymentsView(props: any){
             }
         },
         { field: 'canceledAt', headerName: 'Canceled', width: 200, align: 'center',
+            renderCell: (params) => {
+                return(
+                    <>
+                    {+params.value !== 0 ?
+                        <Typography variant='caption'>
+                            {moment.unix(+params.value).format("MMMM Do YYYY, h:mm a")}
+                        </Typography>
+                    :
+                        <></>
+                    }
+                    </>
+                )
+            }
+        },
+        { field: 'start', headerName: 'Start Date', width: 200, align: 'center',
             renderCell: (params) => {
                 return(
                     <>
@@ -775,6 +790,7 @@ export function StreamingPaymentsView(props: any){
                         },
                         createdAt:item[1].createdAt,
                         canceledAt:item[1].canceledAt,
+                        start:item[1].start,
                         end:item[1].end,
                         lastWithdrawnAt:item[1].lastWithdrawnAt,
                         withdrawalFrequency:item[1].withdrawalFrequency,

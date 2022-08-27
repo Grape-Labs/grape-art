@@ -54,6 +54,9 @@ import {
 
 import { SelectChangeEvent } from '@mui/material/Select';
 
+import RestoreIcon from '@mui/icons-material/Restore';
+import LockOpenIcon from '@mui/icons-material/LockOpen';
+import LockIcon from '@mui/icons-material/Lock';
 import ExpandIcon from '@mui/icons-material/Expand';
 import SettingsIcon from '@mui/icons-material/Settings';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -194,6 +197,72 @@ export function StorageView(props: any){
                 fetchStorage();
             }, 2000);
             
+        }catch(e){
+            closeSnackbar();
+            enqueueSnackbar(`${e}`,{ variant: 'error' });
+            console.log("Error: "+e);
+            //console.log("Error: "+JSON.stringify(e));
+        } 
+    }
+
+    const cancelDeleteStoragePool = async (storagePublicKey: PublicKey, version: string) => { 
+        try{
+            enqueueSnackbar(`Preparing to delete storage ${storagePublicKey.toString()}`,{ variant: 'info' });
+            const snackprogress = (key:any) => (
+                <CircularProgress sx={{padding:'10px'}} />
+            );
+            const cnfrmkey = enqueueSnackbar(`Confirming transaction`,{ variant: 'info', action:snackprogress, persist: true });
+            const signedTransaction = await thisDrive.cancelDeleteStorageAccount(storagePublicKey, version || 'v2');
+            const latestBlockHash = await connection.getLatestBlockhash();
+            await connection.confirmTransaction({
+                blockhash: latestBlockHash.blockhash,
+                lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+                signature: signedTransaction.txid}, 
+                'processed'
+            );
+            closeSnackbar(cnfrmkey);
+            const snackaction = (key:any) => (
+                <Button href={`https://explorer.solana.com/tx/${signedTransaction.txid}`} target='_blank'  sx={{color:'white'}}>
+                    {signedTransaction.txid}
+                </Button>
+            );
+            enqueueSnackbar(`Transaction Confirmed`,{ variant: 'success', action:snackaction });
+            setTimeout(function() {
+                fetchStorage();
+            }, 2000);
+        }catch(e){
+            closeSnackbar();
+            enqueueSnackbar(`${e}`,{ variant: 'error' });
+            console.log("Error: "+e);
+            //console.log("Error: "+JSON.stringify(e));
+        } 
+    }
+
+    const lockStoragePool = async (storagePublicKey: PublicKey, version: string) => { 
+        try{
+            enqueueSnackbar(`Preparing to lock storage ${storagePublicKey.toString()}`,{ variant: 'info' });
+            const snackprogress = (key:any) => (
+                <CircularProgress sx={{padding:'10px'}} />
+            );
+            const cnfrmkey = enqueueSnackbar(`Confirming transaction`,{ variant: 'info', action:snackprogress, persist: true });
+            const signedTransaction = await thisDrive.makeStorageImmutable(storagePublicKey, version || 'v2');
+            const latestBlockHash = await connection.getLatestBlockhash();
+            await connection.confirmTransaction({
+                blockhash: latestBlockHash.blockhash,
+                lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+                signature: signedTransaction.txid}, 
+                'processed'
+            );
+            closeSnackbar(cnfrmkey);
+            const snackaction = (key:any) => (
+                <Button href={`https://explorer.solana.com/tx/${signedTransaction.txid}`} target='_blank'  sx={{color:'white'}}>
+                    {signedTransaction.txid}
+                </Button>
+            );
+            enqueueSnackbar(`Transaction Confirmed`,{ variant: 'success', action:snackaction });
+            setTimeout(function() {
+                fetchStorage();
+            }, 2000);
         }catch(e){
             closeSnackbar();
             enqueueSnackbar(`${e}`,{ variant: 'error' });
@@ -460,7 +529,7 @@ export function StorageView(props: any){
                 <Tooltip title="Resize Storage Pool">
                     <Button 
                         onClick={handleClickOpen} 
-                        sx={{borderTopLeftRadius:'17px',borderBottomLeftRadius:'17px'}}
+                        sx={{borderTopRightRadius:'17px',borderBottomRightRadius:'17px'}}
                     >
                         <ExpandIcon />
                     </Button>
@@ -554,63 +623,107 @@ export function StorageView(props: any){
 
     const storagecolumns: GridColDef[] = [
         { field: 'id', headerName: 'Pool', width: 70, hide: true },
-        { field: 'name', headerName: 'Name', width: 200, align: 'center' },
-        { field: 'created', headerName: 'Created', width: 200, align: 'center',
+        { field: 'name', headerName: 'Name', width: 200, align: 'center', 
             renderCell: (params) => {
                 return(
-                    moment.unix(+params.value).format("MMMM Do YYYY, h:mm a")
+                    params.value
                 )
             }
         },
-        { field: 'storage', headerName: 'Storage', width: 130, align: 'center',
+        { field: 'created', headerName: 'Created', width: 180, align: 'center',
+            renderCell: (params) => {
+                return(
+                    <Typography variant='caption'>
+                        {moment.unix(+params.value).format("MMMM Do YYYY, h:mm a")}
+                    </Typography>
+                )
+            }
+        },
+        { field: 'storage', headerName: 'Storage', width: 100, align: 'center',
             renderCell: (params) => {
                 return (
                     formatBytes(+params.value)
                 )
             } 
         },
-        { field: 'used', headerName: 'Used', width: 130, align: 'center',
+        { field: 'used', headerName: 'Used', width: 100, align: 'center',
             renderCell: (params) => {
                 return (
                     formatBytes(+params.value)
                 )
             } 
         },
-        { field: 'available', headerName: 'Available', width: 130, align: 'center',
+        { field: 'available', headerName: 'Available', width: 100, align: 'center',
             renderCell: (params) => {
                 return (
                     formatBytes(+params.value)
                 )
             } 
         },
-        { field: 'immutable', headerName: 'Immutable', width: 130, align: 'center'},
-        { field: 'manage', headerName: '', width: 200,  align: 'center',
+        { field: 'immutable', headerName: 'Immutable', width: 130, align: 'center', hide:true},
+        { field: 'manage', headerName: '', width: 260,  align: 'center',
             renderCell: (params) => {
                 return (
                     <>
                         {publicKey && pubkey === publicKey.toBase58() ?
+                            <>
                             <ButtonGroup>
+                                {!params.value.storageAccount.account.immutable && !params.value.storageAccount.account.toBeDeleted ?
+                                     <Tooltip title='Lock Storage Pool'>
+                                        <Button onClick={
+                                            (e) =>
+                                                //e.preventDefault();
+                                                lockStoragePool(new PublicKey(params.value.id), params.value.version)
+                                            } 
+                                            sx={{borderTopLeftRadius:'17px',borderBottomLeftRadius:'17px'}} >
+                                            <LockOpenIcon />
+                                        </Button>
+                                    </Tooltip>
+                                :
+                                    <Tooltip title='Storage Pool is locked'>
+                                        <Button 
+                                            sx={{borderTopLeftRadius:'17px',borderBottomLeftRadius:'17px'}}
+                                            disabled>
+                                            <LockIcon/>
+                                        </Button>
+                                    </Tooltip>
+                                }
+                                
+                                {!params.value.storageAccount.account.toBeDeleted ?
+                                    <Tooltip title='Delete Storage Pool'>
+                                        <Button onClick={(e) =>
+                                            //e.preventDefault();
+                                            deleteStoragePool(new PublicKey(params.value.id), params.value.version)
+                                        }  color="error">
+                                            <DeleteIcon />
+                                        </Button>
+                                    </Tooltip>
+                                :
+                                    <Tooltip title='Restore Storage Pool'>
+                                        <Button onClick={(e) =>
+                                            //e.preventDefault();
+                                            cancelDeleteStoragePool(new PublicKey(params.value.id), params.value.version)
+                                        }  color="warning">
+                                            <RestoreIcon />
+                                        </Button>
+                                    </Tooltip>
+                                }
+                                
                                 <ResizeStoragePool storageAccount={params.value.storageAccount} />
-                                <Tooltip title='Delete Storage Pool'>
-                                    <Button onClick={(e) =>
-                                        //e.preventDefault();
-                                        deleteStoragePool(new PublicKey(params.value.id), params.value.version)
-                                    } 
-                                        color="error" 
-                                        >
-                                        <DeleteIcon/>
-                                    </Button>
-                                </Tooltip>
-                                <Tooltip title='Manage Storage Pool'>
-                                    <Button
-                                        variant='outlined'
-                                        component='a'
-                                        href={`https://grapedrive.vercel.app`}
-                                        target='_blank'
-                                        sx={{borderTopRightRadius:'17px',borderBottomRightRadius:'17px'}}
-                                    ><SettingsIcon /></Button>
-                                </Tooltip>
+                                
+                                
                             </ButtonGroup>
+
+                            <Tooltip title='Manage Storage Pool'>
+                                <Button
+                                    variant='outlined'
+                                    component='a'
+                                    href={`https://grapedrive.vercel.app`}
+                                    target='_blank'
+                                    sx={{borderRadius:'17px',ml:1}}
+                                ><SettingsIcon /></Button>
+                            </Tooltip>
+                            </>
                         :
                             <></>
                         }
