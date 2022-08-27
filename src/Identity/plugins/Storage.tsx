@@ -478,31 +478,33 @@ export function StorageView(props: any){
                         <div style={{ display: 'flex', height: '100%' }}>
                             <div style={{ flexGrow: 1 }}>
                                 {publicKey && publicKey.toBase58() === pubkey ?
-                                    <Box>
+                                    <>
                                         <AddStoragePool />
-                                        <DataGrid
-                                            rows={solanaStorageRows}
-                                            columns={storagecolumns}
-                                            pageSize={25}
-                                            rowsPerPageOptions={[]}
-                                            onSelectionModelChange={(newSelectionModel) => {
-                                                setSelectionModel(newSelectionModel);
-                                            }}
-                                            initialState={{
-                                                sorting: {
-                                                    sortModel: [{ field: 'domain', sort: 'desc' }],
-                                                },
-                                            }}
-                                            sx={{
-                                                borderRadius:'17px',
-                                                borderColor:'rgba(255,255,255,0.25)',
-                                                '& .MuiDataGrid-cell':{
-                                                    borderColor:'rgba(255,255,255,0.25)'
-                                                }}}
-                                            sortingOrder={['asc', 'desc', null]}
-                                            disableSelectionOnClick
-                                        />
-                                    </Box>
+                                        <Grid container sx={{mt:1,mb:1}}>
+                                            <DataGrid
+                                                rows={solanaStorageRows}
+                                                columns={storagecolumns}
+                                                pageSize={25}
+                                                rowsPerPageOptions={[]}
+                                                onSelectionModelChange={(newSelectionModel) => {
+                                                    setSelectionModel(newSelectionModel);
+                                                }}
+                                                initialState={{
+                                                    sorting: {
+                                                        sortModel: [{ field: 'domain', sort: 'desc' }],
+                                                    },
+                                                }}
+                                                sx={{
+                                                    borderRadius:'17px',
+                                                    borderColor:'rgba(255,255,255,0.25)',
+                                                    '& .MuiDataGrid-cell':{
+                                                        borderColor:'rgba(255,255,255,0.25)'
+                                                    }}}
+                                                sortingOrder={['asc', 'desc', null]}
+                                                disableSelectionOnClick
+                                            />
+                                        </Grid>
+                                    </>
                                 :
                                 <DataGrid
                                     rows={solanaStorageRows}
