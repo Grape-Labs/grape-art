@@ -36,7 +36,7 @@
     },
     "dependencies": {
         "@apollo/client": "^3.6.9",
-        "@bonfida/spl-name-service": "^0.1.48",
+        "@bonfida/spl-name-service": "^0.1.49",
         "@cardinal/namespaces": "3.2.0",
         "@cyberlab/cyberconnect": "^4.4.2",
         "@dialectlabs/react": "^0.5.6",

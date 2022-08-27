@@ -11,7 +11,7 @@ import { getAssociatedTokenAddress, getOrCreateAssociatedTokenAccount } from '@s
 
 import { TokenAmount } from '../utils/grapeTools/safe-math';
 import { styled } from '@mui/material/styles';
-import { Button, LinearProgress } from '@mui/material';
+import { accordionActionsClasses, Button, LinearProgress } from '@mui/material';
 import { useSnackbar } from 'notistack';
 import moment from 'moment';
 
@@ -143,6 +143,7 @@ import { InstructionsAndSignersSet } from "../utils/auctionHouse/helpers/types";
 import { useTranslation } from 'react-i18next';
 import GrapeIcon from "../components/static/GrapeIcon";
 import { CannotMatchFreeSalesWithoutAuctionHouseOrSellerSignoffError } from "@metaplex-foundation/mpl-auction-house/dist/src/generated/errors";
+import axios from "axios";
 
 const StyledTable = styled(Table)(({ theme }) => ({
     '& .MuiTableCell-root': {
@@ -405,6 +406,7 @@ function SellNowVotePrompt(props:any){
               console.log("onemore ATA (GhBVuTNXeavyVDznEfSaU9wK3VzKRvoXk3YzPqjZcPwT): "+onemore[0].toBase58())
             */
             
+            /*
             console.log("buyer: "+publicKey.toBase58());
             console.log("seller: "+meListing[0].seller);
             console.log("auctionHouse: "+meListing[0].auctionHouse);
@@ -413,12 +415,61 @@ function SellNowVotePrompt(props:any){
             console.log("tokenPDA: "+meListing[0].pdaAddress);
             console.log("price: "+meListing[0].price);
             console.log("seller_referral: "+seller_referral);
-            
-            const apiUrl = PROXY+"https://api-mainnet.magiceden.dev/v2/instructions/buy_now?buyer="+publicKey.toBase58()+"&seller="+meListing[0].seller+"&auctionHouseAddress="+meListing[0].auctionHouse+"&tokenMint="+meListing[0].tokenMint+"&tokenATA="+tokenAta.toBase58()+"&price="+meListing[0].price+"&buyerReferral="+buyer_referral+"&sellerReferral="+seller_referral+"&buyerExpiry=0&sellerExpiry=0";
-            console.log("apiUrl: " + apiUrl);
+            */
+
+            //const apiUrl = PROXY+"https://api-mainnet.magiceden.dev/v2/instructions/buy_now?buyer="+publicKey.toBase58()+"&seller="+meListing[0].seller+"&auctionHouseAddress="+meListing[0].auctionHouse+"&tokenMint="+meListing[0].tokenMint+"&tokenATA="+tokenAta.toBase58()+"&price="+meListing[0].price+"&buyerReferral="+buyer_referral+"&sellerReferral="+seller_referral+"&buyerExpiry=0&sellerExpiry=0";
+            const apiUrl = PROXY+"https://api-mainnet.magiceden.dev/v2/instructions/buy_now";
+            //console.log("apiUrl: " + apiUrl);
 
             //const apiUrl = PROXY+"https://api-mainnet.magiceden.dev/v2/instructions/buy?buyer="+publicKey.toBase58()+"&seller="+meListing[0].seller+"&auctionHouseAddress="+meListing[0].auctionHouse+"&tokenMint="+meListing[0].tokenMint+"&price="+meListing[0].price;
+            /*
+            var response = await axios.get(
+                'https://api-mainnet.magiceden.dev/v2/instructions/buy_now', {
+                params: {
+                    buyer:publicKey.toBase58(),
+                    seller:meListing[0].seller,
+                    auctionHouseAddress:meListing[0].auctionHouse,
+                    tokenMint:meListing[0].tokenMint,
+                    tokenATA:tokenAta.toBase58(),
+                    price:meListing[0].price,
+                    buyerReferral:buyer_referral,
+                    sellerReferral:seller_referral,
+                    buyerExpiry:0,
+                    sellerExpiry:0
+                },
+                headers: { Authorization: "Bearer " + ME_KEYBASE }
+            }).then((res) => {
+                // sign and send txn here
+                const txSigned = res.data.txSigned
+                
+                const txn = Web3.Transaction.from(Buffer.from(txSigned.data))
+                return txn;
+                const signature = Web3.sendAndConfirmTransaction(
+                    connection,
+                    txn,
+                    [keypair]
+                )
+            }).catch((err) => {
+                return null;  
+            })
+
+
+            return response;
+            */
+          
             const resp = await window.fetch(apiUrl, {
+                body: JSON.stringify({
+                    buyer:publicKey.toBase58(),
+                    seller:meListing[0].seller,
+                    auctionHouseAddress:meListing[0].auctionHouse,
+                    tokenMint:meListing[0].tokenMint,
+                    tokenATA:tokenAta.toBase58(),
+                    price:meListing[0].price,
+                    buyerReferral:buyer_referral,
+                    sellerReferral:seller_referral,
+                    buyerExpiry:0,
+                    sellerExpiry:0
+                }),
                 method: 'GET',
                 redirect: 'follow',
                 signal: Timeout(5).signal,
@@ -433,6 +484,7 @@ function SellNowVotePrompt(props:any){
                 return json;
             else
                 return null;
+            
         }
 
         const fetchMEMintWithTimeout = async () => {
@@ -470,7 +522,7 @@ function SellNowVotePrompt(props:any){
                     {meListing && meListing[0]?.auctionHouse ?
                     <Tooltip title={`This NFT is listed on Magic Eden using an escrow program: ${meListing[0]?.auctionHouse}`}>
                         <Button sx={{borderRadius:'10px'}}
-                            //onClick={handleEscrowBuyNow}
+                            onClick={handleEscrowBuyNow}
                         >
                             <Alert severity="info" sx={{borderRadius:'10px'}}>
                                 Listed on Magic Eden for <strong>{meListing && meListing[0]?.price} SOL</strong>

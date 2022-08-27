@@ -1146,10 +1146,10 @@
     "@solana/spl-token" "0.2.0"
     ethers "^5.6.2"
 
-"@bonfida/spl-name-service@^0.1.48":
-  version "0.1.48"
-  resolved "https://registry.yarnpkg.com/@bonfida/spl-name-service/-/spl-name-service-0.1.48.tgz#79ecd2074da6ef6b70818aff16ccd0bf7a7a7f24"
-  integrity sha512-Lareo+EHvD3trxcVZvY31QGrGvGk8FEFwbu+CDtuGJrLSjITwBQUqndIj55/giKZulMLVoTtRQF1oKqKASov7Q==
+"@bonfida/spl-name-service@^0.1.49":
+  version "0.1.49"
+  resolved "https://registry.yarnpkg.com/@bonfida/spl-name-service/-/spl-name-service-0.1.49.tgz#288fcd56a0b9810240584ddb6e2fafc6ce386006"
+  integrity sha512-Pjvncwwr7rSdXncOZznW0Iqe0VhJwGlbf0N2Cg8+QiskNlrP8MHUIeGsrfKW3mq8+jvlZf3VcVPNAhCYB2GR9w==
   dependencies:
     "@bonfida/name-offers" "^0.0.1"
     "@ethersproject/sha2" "^5.5.0"

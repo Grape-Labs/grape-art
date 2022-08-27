@@ -158,7 +158,7 @@ export default function BulkBurnClose(props: any) {
             publicKey,
             true
         );
-
+        
         const transaction = new Transaction()
         .add(
             createBurnInstruction(
@@ -331,6 +331,7 @@ export default function BulkBurnClose(props: any) {
                             .add(tti);
                         transaction.feePayer = publicKey;
                         const simulate = await connection.simulateTransaction(transaction);
+                        console.log("simulate: "+JSON.stringify(simulate));
                         
                         if (tti){
                             if (!simulate.value.err){
