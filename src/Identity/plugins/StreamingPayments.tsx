@@ -376,7 +376,7 @@ export function StreamingPaymentsView(props: any){
                 return(
                     <>
                         <Typography variant='body2' color='#FF5733'>
-                        {+params.value.amountPerPeriod/(10 ** tokenMap.get(params.value.mint)?.decimals)} {tokenMap.get(params.value.mint)?.symbol} <OpacityIcon sx={{fontSize:'14px'}} /> every {secondsToHms(params.value.period)}
+                        {+params.value.amountPerPeriod/(10 ** tokenMap.get(params.value.mint)?.decimals)} {tokenMap.get(params.value.mint)?.symbol} <OpacityIcon sx={{fontSize:'14px'}} /> / {secondsToHms(params.value.period)}
                         </Typography>
                     </>
                 );
