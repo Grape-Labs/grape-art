@@ -478,7 +478,7 @@ export function StreamingPaymentsView(props: any){
                                     <>
                                         <Tooltip title="Withdraw unlocked balance">
                                             <Button
-                                                disabled={(params.value.availableToWithdraw > 0) ? false : true}
+                                                disabled={(params.value.availableToWithdraw > 0 && balance > 0) ? false : true}
                                                 variant='outlined'
                                                 size='small'
                                                 onClick={(e) => withdrawStream(params.value.id, availableToWithdraw)}
