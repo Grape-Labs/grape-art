@@ -374,7 +374,7 @@ function SellNowVotePrompt(props:any){
                         }, GRAPE_RPC_REFRESH); 
                     } else{
                         closeSnackbar();
-                        enqueueSnackbar(`Invalid transaction instructions, this because the Magic Eden API is centralized, and is returning null results!!!`,{ variant: 'error' });
+                        enqueueSnackbar(`Invalid transaction instructions returned by the Magic Eden API, this occurs because transactions are generated from their centralized API!!!`,{ variant: 'error' });
                     }       
                     
                 } catch(e){
