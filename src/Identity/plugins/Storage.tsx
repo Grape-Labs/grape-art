@@ -3,6 +3,7 @@ import { styled } from '@mui/material/styles';
 import { DataGridPro } from '@mui/x-data-grid-pro';
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import moment from 'moment';
+import PropTypes from 'prop-types';
 import { Global } from '@emotion/react';
 import { Link, useParams, useSearchParams } from "react-router-dom";
 // @ts-ignore
@@ -84,10 +85,41 @@ import { GRAPE_RPC_ENDPOINT,
 import { load } from "../../browser";
 import { ParaglidingSharp } from "@mui/icons-material";
 import { stateDiscriminator } from "@project-serum/anchor/dist/cjs/coder";
+import { UniqueOperationNamesRule } from "graphql";
 
 const Input = styled('input')({
     display: 'none',
 });
+
+LinearProgressWithLabel.propTypes = {
+    /**
+     * The value of the progress indicator for the determinate and buffer variants.
+     * Value between 0 and 100.
+     */
+    value: PropTypes.number.isRequired,
+};
+
+function LinearProgressWithLabel(props:any) {
+    return (
+        <>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <Box sx={{ width: '100%', mr: 1 }}>
+                <LinearProgress color="inherit" variant="determinate" {...props} />
+                </Box>
+                <Box sx={{ minWidth: 35 }}>
+                <Typography variant="body2" color="text.secondary">{`${Math.round(
+                props.value,
+                )}%`}</Typography>
+            </Box>
+            </Box>
+            <Box sx={{ alignItems: 'center', textAlign: 'center', mt:-2}}>
+                <Typography variant="caption">
+                    storage used
+                </Typography>
+            </Box>
+        </>
+    );
+  }
 
 export interface DialogTitleProps {
     id: string;
@@ -669,7 +701,8 @@ export function StorageView(props: any){
     function StoragePoolDetails(props:any){
         const { t, i18n } = useTranslation();
         const storageAccount = props.storageAccount;
-        const version = props.version;
+        const version = props.version || 'V2';
+        const current_usage = props.current_usage || 0;
         const [open_snackbar, setSnackbarState] = React.useState(false);
         const { enqueueSnackbar } = useSnackbar();
         const { publicKey, wallet } = useWallet();
@@ -678,6 +711,9 @@ export function StorageView(props: any){
         const [loadingStorageFiles, setLoadingStorageFiles] = React.useState(false);
         const [open, setOpen] = React.useState(false);
         const [uploadFiles, setUploadFiles] = React.useState(null);
+
+        const available = storageAccount.account.storage - current_usage;
+        const allocated = storageAccount.account.storage;
 
         const handleCloseDialog = () => {
             setOpen(false);
@@ -1038,7 +1074,10 @@ const deserialized = deserializeUnchecked(dataSchema, AccoundData, metavalue?.da
                         }}
                     >
                     <BootstrapDialogTitle id="manage-storage-files" onClose={handleCloseDialog}>
-                        View/Manage Files
+                        View/Manage Files: {storageAccount.account.identifier}
+                        <Box sx={{ width: '100%' }}>
+                            <LinearProgressWithLabel value={100-(+available/+allocated*100)} />
+                        </Box>
                     </BootstrapDialogTitle>
                         <DialogContent>
                            {!loadingStorageFiles && solanaStorageFileRows ?
@@ -1144,7 +1183,7 @@ const deserialized = deserializeUnchecked(dataSchema, AccoundData, metavalue?.da
             renderCell: (params) => {
                 return(
                     <>
-                        <StoragePoolDetails storageAccount={params.value.storageAccount} version={params.value.version} />
+                        <StoragePoolDetails storageAccount={params.value.storageAccount} version={params.value.version} current_usage={params.value.current_usage} />
                     </>
                 )
             }
@@ -1307,6 +1346,7 @@ const deserialized = deserializeUnchecked(dataSchema, AccoundData, metavalue?.da
                         expand:{
                             storageAccount:item,
                             version:json.version,
+                            current_usage:json.current_usage,
                         },
                         source:{
                             name: 'Shadow Drive',
