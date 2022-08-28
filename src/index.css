@@ -241,10 +241,6 @@ ul li .grape-wallet-button{
     display:none;
   }
 
-  .dt-w-full{
-    width:90% !important;
-  }
-
   /* Overriding MUI Stylings for mobile screens */
   .wallet-adapter-button,
   .grape-wallet-button {
@@ -259,5 +255,14 @@ ul li .grape-wallet-button{
 
   .header-logo {
     width: 120px !important;
+  }
+
+  .dt-w-full{
+    width:92.5% !important;
+  }
+  
+  .\!dt-translate-y-\[calc\(100\%-3\.5rem\)\] {
+    --tw-translate-y: calc(100% - 2.5rem) !important;
+    transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y)) !important;
   }
 }
