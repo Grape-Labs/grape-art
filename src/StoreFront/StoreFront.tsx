@@ -1234,14 +1234,22 @@ export function StoreFrontView(this: any, props: any) {
                     let json6 = null;
                     try{
                         json1 = await fetchMEWithTimeout(collectionAuthority.me_symbol,0);
+                    } catch(erf){ console.log("ERR: "+erf);}
+                    try{
                         json2 = await fetchMEWithTimeout(collectionAuthority.me_symbol,20);
+                    } catch(erf){ console.log("ERR: "+erf);}
+                    try{
                         json3 = await fetchMEWithTimeout(collectionAuthority.me_symbol,40);
+                    } catch(erf){ console.log("ERR: "+erf);}
+                    try{
                         json4 = await fetchMEWithTimeout(collectionAuthority.me_symbol,60);
+                    } catch(erf){ console.log("ERR: "+erf);}
+                    try{
                         json5 = await fetchMEWithTimeout(collectionAuthority.me_symbol,80);
+                    } catch(erf){ console.log("ERR: "+erf);}
+                    try{
                         json6 = await fetchMEWithTimeout(collectionAuthority.me_symbol,100);
-                    } catch(erf){
-                        console.log("ERR: "+erf);
-                    }
+                    } catch(erf){ console.log("ERR: "+erf);}
                     
                     const json = [...json1,...json2,...json3,...json4,...json5,...json6];
                     
