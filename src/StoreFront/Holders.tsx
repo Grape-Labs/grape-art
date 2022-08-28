@@ -409,7 +409,7 @@ function RenderHoldersTable(props:any) {
                                         </TableCell>
 
                                         <TableCell align="center"> 
-                                            <Tooltip title='View'>
+                                            <Tooltip title='View Mint'>
                                                 <Button 
                                                     component={Link} to={`${GRAPE_PREVIEW}${item.mintAddress}`}
                                                     sx={{
