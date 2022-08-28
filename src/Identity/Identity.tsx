@@ -298,19 +298,23 @@ export function IdentityView(props: any){
             renderCell: (params) => {
                 return (
                     <>
-                        <TransferDomain snsDomain={params.value} fetchSolanaDomain={fetchSolanaDomain} />
-                        <Tooltip title='Manage SNS Record'>
-                            <Button
-                                variant='outlined'
-                                size='small'
-                                component='a'
-                                href={`https://naming.bonfida.org/domain/${params.value.slice(0,params.value.indexOf(".sol"))}`}
-                                target='_blank'
-                                sx={{borderRadius:'17px',ml:1}}
-                            >
-                                <SettingsIcon />
-                            </Button>
-                        </Tooltip>
+                        {publicKey && publicKey.toBase58() === pubkey &&
+                        <>
+                            <TransferDomain snsDomain={params.value} fetchSolanaDomain={fetchSolanaDomain} />
+                            <Tooltip title='Manage SNS Record'>
+                                <Button
+                                    variant='outlined'
+                                    size='small'
+                                    component='a'
+                                    href={`https://naming.bonfida.org/domain/${params.value.slice(0,params.value.indexOf(".sol"))}`}
+                                    target='_blank'
+                                    sx={{borderRadius:'17px',ml:1}}
+                                >
+                                    <SettingsIcon />
+                                </Button>
+                            </Tooltip>
+                        </>
+                        }
                     </>
                 )
             }
@@ -1461,23 +1465,23 @@ export function IdentityView(props: any){
                                                                                 disableSelectionOnClick
                                                                             />
                                                                         :
-                                                                        <DataGrid
-                                                                            rows={solanaDomainRows}
-                                                                            columns={domaincolumns}
-                                                                            initialState={{
-                                                                                sorting: {
-                                                                                    sortModel: [{ field: 'domain', sort: 'desc' }],
-                                                                                },
-                                                                            }}
-                                                                            sx={{
-                                                                                borderRadius:'17px',
-                                                                                borderColor:'rgba(255,255,255,0.25)',
-                                                                                '& .MuiDataGrid-cell':{
-                                                                                    borderColor:'rgba(255,255,255,0.25)'
-                                                                                }}}
-                                                                            pageSize={25}
-                                                                            rowsPerPageOptions={[]}
-                                                                        />
+                                                                            <DataGrid
+                                                                                rows={solanaDomainRows}
+                                                                                columns={domaincolumns}
+                                                                                initialState={{
+                                                                                    sorting: {
+                                                                                        sortModel: [{ field: 'domain', sort: 'desc' }],
+                                                                                    },
+                                                                                }}
+                                                                                sx={{
+                                                                                    borderRadius:'17px',
+                                                                                    borderColor:'rgba(255,255,255,0.25)',
+                                                                                    '& .MuiDataGrid-cell':{
+                                                                                        borderColor:'rgba(255,255,255,0.25)'
+                                                                                    }}}
+                                                                                pageSize={25}
+                                                                                rowsPerPageOptions={[]}
+                                                                            />
                                                                         }
                                                                     </div>
                                                                 </div>
