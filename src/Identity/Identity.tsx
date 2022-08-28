@@ -172,7 +172,7 @@ export function IdentityView(props: any){
                 </>);
             }
         },
-        { field: 'name', headerName: 'Token', width: 200 },
+        { field: 'name', headerName: 'Token', minWidth: 200, flex: 1, },
         { field: 'balance', headerName: 'Balance', width: 130, align: 'right',
             renderCell: (params) => {
                 return (params.value)
@@ -259,7 +259,7 @@ export function IdentityView(props: any){
                 </>);
             }
         },
-        { field: 'name', headerName: 'Token', width: 250 },
+        { field: 'name', headerName: 'Token', minWidth: 250, flex: 1, },
         { field: 'balance', headerName: 'Balance', width: 130, align: 'right',
             renderCell: (params) => {
                 return (params.value)
@@ -280,7 +280,7 @@ export function IdentityView(props: any){
 
       const domaincolumns: GridColDef[] = [
         { field: 'id', headerName: 'ID', width: 70, hide: true },
-        { field: 'domain', headerName: 'Registration', width: 250 },
+        { field: 'domain', headerName: 'Registration', minWidth: 250, flex: 1, },
         { field: 'type', headerName: 'Type', width: 150, align: 'center',
             renderCell: (params) => {
                 return (
@@ -320,7 +320,7 @@ export function IdentityView(props: any){
       const governancecolumns: GridColDef[] = [
         { field: 'id', headerName: 'ID', width: 70, hide: true },
         { field: 'pubkey', headerName: 'PublicKey', width: 70, hide: true },
-        { field: 'realm', headerName: 'Realm', width: 130, align: 'center' },
+        { field: 'realm', headerName: 'Realm', minWidth: 130, flex: 1, align: 'left' },
         { field: 'governingTokenMint', headerName: 'Governing Mint', width: 150, align: 'center'},
         { field: 'governingTokenDepositAmount', headerName: 'Votes', width: 130, align: 'center'},
         { field: 'unrelinquishedVotesCount', headerName: 'Unreliquinshed', width: 130, align: 'center'},
@@ -343,54 +343,6 @@ export function IdentityView(props: any){
                         target='_blank'
                         sx={{borderRadius:'17px'}}
                     >Visit</Button>
-                )
-            }
-        },
-      ];
-
-      const storagecolumns: GridColDef[] = [
-        { field: 'id', headerName: 'Pool', width: 70, hide: true },
-        { field: 'name', headerName: 'Name', width: 200, align: 'center' },
-        { field: 'created', headerName: 'Created', width: 200, align: 'center',
-            renderCell: (params) => {
-                return(
-                    moment.unix(+params.value).format("MMMM Do YYYY, h:mm a")
-                )
-            }
-        },
-        { field: 'storage', headerName: 'Storage', width: 130, align: 'center',
-            renderCell: (params) => {
-                return (
-                    formatBytes(+params.value)
-                )
-            } 
-        },
-        { field: 'available', headerName: 'Available', width: 130, align: 'center',
-            renderCell: (params) => {
-                return (
-                    formatBytes(+params.value)
-                )
-            } 
-        },
-        { field: 'used', headerName: 'Used', width: 130, align: 'center',
-            renderCell: (params) => {
-                return (
-                    formatBytes(+params.value)
-                )
-            } 
-        },
-        { field: 'immutable', headerName: 'Immutable', width: 130, align: 'center'},
-        { field: 'link', headerName: '', width: 150,  align: 'center',
-            renderCell: (params) => {
-                return (
-                    <Button
-                        variant='outlined'
-                        size='small'
-                        component='a'
-                        href={`https://grapedrive.vercel.app`}
-                        target='_blank'
-                        sx={{borderRadius:'17px'}}
-                    >Manage</Button>
                 )
             }
         },

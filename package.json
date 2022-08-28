@@ -1,6 +1,6 @@
 {
     "name": "@grape-labs/grape-art",
-    "version": "1.1.344",
+    "version": "1.1.345",
     "author": "Grape devDAO",
     "repository": "https://github.com/grape-labs/grape-art",
     "license": "Apache-2.0",
@@ -51,6 +51,7 @@
         "@mui/lab": "^5.0.0-alpha.96",
         "@mui/material": "^5.10.2",
         "@mui/x-data-grid": "^5.16.0",
+        "@mui/x-data-grid-pro": "^5.16.0",
         "@project-serum/anchor": "0.18.2",
         "@project-serum/common": "^0.0.1-beta.3",
         "@react-native-async-storage/async-storage": "^1.15.17",
@@ -78,6 +79,7 @@
         "bs58": "^4.0.1",
         "commander": "^8.3.0",
         "ethers": "^5.5.4",
+        "file_size_url": "^1.0.4",
         "formidable": "v3",
         "graphql": "^16.6.0",
         "graphql-request": "^4.3.0",
@@ -155,6 +157,7 @@
         "shx": "^0.3.4",
         "stream-http": "^3.2.0",
         "tslib": "^2.3.1",
+        "url": "^0.11.0",
         "util": "^0.12.4"
     },
     "resolutions": {

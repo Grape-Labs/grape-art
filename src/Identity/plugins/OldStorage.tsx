@@ -1285,7 +1285,6 @@ const deserialized = deserializeUnchecked(dataSchema, AccoundData, metavalue?.da
             migrateStoragePool(new PublicKey(storageAccount.publicKey));
         };
 
-        
 
         const HandleClaimStake = (event: any) => {
             event.preventDefault();
