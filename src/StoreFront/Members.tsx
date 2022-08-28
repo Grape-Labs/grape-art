@@ -573,7 +573,7 @@ export function MembersView(props: any) {
                                     <Button
                                         size='small'
                                         sx={{ml:1, color:'white', borderRadius:'17px'}}
-                                        href={'https://realms.today/dao/'+collectionAuthority.governanceVanityUrl}
+                                        href={'https://realms.today/dao/'+(collectionAuthority.governanceVanityUrl || collectionAuthority.governance)}
                                         target='blank'
                                     >
                                         <OpenInNewIcon/>

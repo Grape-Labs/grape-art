@@ -350,7 +350,7 @@ function RenderGovernanceTable(props:any) {
                                                     (
                                                         <Typography variant="caption">
                                                             <Tooltip title={`Started: ${item.account?.votingAt && (moment.unix((item.account?.votingAt).toNumber()).format("MMMM Da, YYYY, h:mm a"))} - Ended: ${item.account?.votingAt && (moment.unix((item.account?.votingCompletedAt).toNumber()).format("MMMM Da, YYYY, h:mm a"))}`}>
-                                                                <Button sx={{color:'white',borderRadius:'17px'}} href={`https://realms.today/dao/${collectionAuthority.governanceVanityUrl}/proposal/${item?.pubkey}`} target='_blank'>
+                                                                <Button sx={{color:'white',borderRadius:'17px'}} href={`https://realms.today/dao/${collectionAuthority.governanceVanityUrl || collectionAuthority.governance}/proposal/${item?.pubkey}`} target='_blank'>
                                                                     {item.account?.votingAt && (moment.unix((item.account?.votingCompletedAt).toNumber()).format("MMMM D, YYYY"))}
                                                                 </Button>
                                                             </Tooltip>
@@ -358,13 +358,13 @@ function RenderGovernanceTable(props:any) {
                                                     ): (<>
                                                         { item.account?.state === 2 ?
                                                             <Tooltip title={`Started: ${item.account?.votingAt && (moment.unix((item.account?.votingAt).toNumber()).format("MMMM Da, YYYY, h:mm a"))}`}>
-                                                                <Button sx={{color:'white',borderRadius:'17px'}} href={`https://realms.today/dao/${collectionAuthority.governanceVanityUrl}/proposal/${item?.pubkey}`} target='_blank'>
+                                                                <Button sx={{color:'white',borderRadius:'17px'}} href={`https://realms.today/dao/${collectionAuthority.governanceVanityUrl || collectionAuthority.governance}/proposal/${item?.pubkey}`} target='_blank'>
                                                                     <TimerIcon sx={{ fontSize:"small"}} />
                                                                 </Button>
                                                             </Tooltip>
                                                         : 
                                                             <Tooltip title={`Started: ${item.account?.votingAt && (moment.unix((item.account?.votingAt).toNumber()).format("MMMM Da, YYYY, h:mm a"))}`}>
-                                                                <Button sx={{color:'white',borderRadius:'17px'}} href={`https://realms.today/dao/${collectionAuthority.governanceVanityUrl}/proposal/${item?.pubkey}`} target='_blank'>
+                                                                <Button sx={{color:'white',borderRadius:'17px'}} href={`https://realms.today/dao/${collectionAuthority.governanceVanityUrl || collectionAuthority.governance}/proposal/${item?.pubkey}`} target='_blank'>
                                                                     <CancelOutlinedIcon sx={{ fontSize:"small", color:"red"}} />
                                                                 </Button>
                                                             </Tooltip>
@@ -601,7 +601,7 @@ export function GovernanceView(props: any) {
                                         <Button
                                             size='small'
                                             sx={{ml:1, color:'white', borderRadius:'17px'}}
-                                            href={'https://realms.today/dao/'+collectionAuthority.governanceVanityUrl}
+                                            href={'https://realms.today/dao/'+(collectionAuthority.governanceVanityUrl || collectionAuthority.governance)}
                                             target='blank'
                                         >
                                             <OpenInNewIcon/>
