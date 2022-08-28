@@ -361,6 +361,7 @@ function RenderHoldersTable(props:any) {
                             <TableCell><Typography variant="caption">Image</Typography></TableCell>
                             <TableCell><Typography variant="caption">Name</Typography></TableCell>
                             <TableCell><Typography variant="caption">Mint Address</Typography></TableCell>
+                            <TableCell></TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
