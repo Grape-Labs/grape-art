@@ -241,6 +241,10 @@ ul li .grape-wallet-button{
     display:none;
   }
 
+  .dt-w-full{
+    width:90% !important;
+  }
+
   /* Overriding MUI Stylings for mobile screens */
   .wallet-adapter-button,
   .grape-wallet-button {

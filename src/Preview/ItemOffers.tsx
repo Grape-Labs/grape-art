@@ -304,34 +304,15 @@ function SellNowVotePrompt(props:any){
             if (meListing && meListing[0].price > 0) {
                 
                 //handleCloseDialog();
-                
                 //const setSellNowPrice = async () => {
                 try {
                     const transaction = new Transaction();
                     const transactionInstr = await fetchMEBuyNowTimeout();
 
-
                     if (transactionInstr){
-                        //const transferAuthority = web3.Keypair.generate();
-                        //const signers = isNative ? [] : [transferAuthority];
-                        
                         const txSigned = transactionInstr;//transactionInstr.txSigned;
 
-                        console.log("txSigned: "+JSON.stringify(txSigned));
-
-                        //const instructionsArray = [transactionInstr.instructions].flat();   
-                        //const instructionsArray = transactionInstr.txSigned; 
-
-                        /*
-                        const txn = anchor.Transaction.from(Buffer.from(txSigned.data))
-                        return txn;
-                        const signature = Web3.sendAndConfirmTransaction(
-                            connection,
-                            txn,
-                            [keypair]
-                        )*/
-
-                        
+                        //console.log("txSigned: "+JSON.stringify(txSigned));
                         const txn = anchor.web3.Transaction.from(Buffer.from(txSigned.data));
 
                         enqueueSnackbar(`Preparing to buy now from Magic Eden at ${meListing[0].price} SOL`,{ variant: 'info' });
@@ -501,8 +482,6 @@ function SellNowVotePrompt(props:any){
                 </Grid>  
             )
         }
-        
-
     }
 
     async function handleSellNow(event: any) {
@@ -634,61 +613,61 @@ function SellNowVotePrompt(props:any){
                         {t('PROPOSE A SELL NOW PRICE')}
                         </DialogTitle>
                         <form onSubmit={handleSellNow}>
-                        <DialogContent>
-                            <RegexTextField
-                                regex={/[^0-9]+\.?[^0-9]/gi}
-                                autoFocus
-                                autoComplete='off'
-                                margin="dense"
-                                id="preview_sell_now_id"
-                                label={t('Set your sale price')}
-                                type="text"
-                                fullWidth
-                                variant="standard"
-                                value={sell_now_amount}
-                                onChange={(e: any) => {
-                                    setSellNowAmount(e.target.value)}
-                                }
-                                inputProps={{
-                                    style: { 
-                                        textAlign:'center', 
-                                        fontSize: '34px'
+                            <DialogContent>
+                                <RegexTextField
+                                    regex={/[^0-9]+\.?[^0-9]/gi}
+                                    autoFocus
+                                    autoComplete='off'
+                                    margin="dense"
+                                    id="preview_sell_now_id"
+                                    label={t('Set your sale price')}
+                                    type="text"
+                                    fullWidth
+                                    variant="standard"
+                                    value={sell_now_amount}
+                                    onChange={(e: any) => {
+                                        setSellNowAmount(e.target.value)}
                                     }
-                                }}
-                            />
-                            <Grid 
-                                container
-                                alignContent='flex-end'
-                                justifyContent='flex-end'
-                            >
-                                <Grid item
-                                    sx={{textAlign:'right'}}
+                                    inputProps={{
+                                        style: { 
+                                            textAlign:'center', 
+                                            fontSize: '34px'
+                                        }
+                                    }}
+                                />
+                                <Grid 
+                                    container
+                                    alignContent='flex-end'
+                                    justifyContent='flex-end'
                                 >
-                                    <Typography
-                                        variant="caption"
+                                    <Grid item
+                                        sx={{textAlign:'right'}}
                                     >
-                                        {t('Price set in SOL')} <SolCurrencyIcon sx={{fontSize:"12px"}} />
-                                    </Typography>
+                                        <Typography
+                                            variant="caption"
+                                        >
+                                            {t('Price set in SOL')} <SolCurrencyIcon sx={{fontSize:"12px"}} />
+                                        </Typography>
+                                    </Grid>
                                 </Grid>
-                            </Grid>
-                        </DialogContent>
-                        <DialogActions>
-                            <Button onClick={handleCloseDialog}>{t('Cancel')}</Button>
-                            <Button 
-                                type="submit"
-                                variant="text" 
-                                disabled={+sell_now_amount < 0.001}
-                                title="Submit">
-                                    {t('SUBMIT')}
-                            </Button>
-                        </DialogActions>
+                            </DialogContent>
+                            <DialogActions>
+                                <Button onClick={handleCloseDialog}>{t('Cancel')}</Button>
+                                <Button 
+                                    type="submit"
+                                    variant="text" 
+                                    disabled={+sell_now_amount < 0.001}
+                                    title="Submit">
+                                        {t('SUBMIT')}
+                                </Button>
+                            </DialogActions>
                         </form>
                     </BootstrapDialog> 
                 </>
             :
-            <>
-                <ThirdPartyHolder />
-            </>
+                <>
+                    <ThirdPartyHolder />
+                </>
             }  
         </React.Fragment>
     );
@@ -2715,7 +2694,7 @@ export default function ItemOffers(props: any) {
                 </Box>
                 {mint && 
                     <>
-                    <HistoryView mint={mint} />
+                    <HistoryView mint={mint} salePrice={salePrice} setSalePrice={setSalePrice} setSalePriceAH={setSalePriceAH} setSaleDate={setSaleDate} setSaleTimeAgo={setSaleTimeAgo} />
                     </>
                 }
             </>
