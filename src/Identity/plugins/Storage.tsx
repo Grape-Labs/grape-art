@@ -1401,13 +1401,13 @@ const deserialized = deserializeUnchecked(dataSchema, AccoundData, metavalue?.da
                         id:item.publicKey.toBase58(),
                         expand:{
                             storageAccount:item,
-                            version:"v1",
+                            version:"V1",
                             current_usage:+item.account.storage - +item.account.storageAvailable,
                         },
                         source:{
                             name: 'Shadow Drive',
                             logoURI: 'https://shdw-drive.genesysgo.net/5VhicqNTPgvJNVPHPp8PSH91YQ6KnVAeukW1K37GJEEV/genesysgo.png',
-                            version: "v1"
+                            version: "V1"
                         },
                         name:item.account.identifier,
                         created:item.account.creationTime,
@@ -1415,10 +1415,10 @@ const deserialized = deserializeUnchecked(dataSchema, AccoundData, metavalue?.da
                         used:+item.account.storage - +item.account.storageAvailable,
                         available:+item.account.storageAvailable,
                         immutable:item.account.immutable,
-                        version:"v1",
+                        version:"V1",
                         manage:{
                             id:item.publicKey.toBase58(),
-                            version:"v1",
+                            version:"V1",
                             storageAccount:item,
                         }
                     })
