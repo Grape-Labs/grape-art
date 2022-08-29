@@ -1252,6 +1252,7 @@ const deserialized = deserializeUnchecked(dataSchema, AccoundData, metavalue?.da
             } 
         },
         { field: 'immutable', headerName: 'Immutable', width: 130, align: 'center', hide:true},
+        { field: 'version', headerName: 'Version', width: 50, align: 'center', hide:true},
         { field: 'manage', headerName: '', width: 200,  align: 'center',
             renderCell: (params) => {
                 return (
@@ -1371,6 +1372,7 @@ const deserialized = deserializeUnchecked(dataSchema, AccoundData, metavalue?.da
                         used:json.current_usage,
                         available:+item.account.storage - +json.current_usage,
                         immutable:item.account.immutable,
+                        version:json.version,
                         manage:{
                             id:item.publicKey.toBase58(),
                             version:json.version,
@@ -1411,6 +1413,7 @@ const deserialized = deserializeUnchecked(dataSchema, AccoundData, metavalue?.da
                         used:+item.account.storage - +item.account.storageAvailable,
                         available:+item.account.storageAvailable,
                         immutable:item.account.immutable,
+                        version:"v1",
                         manage:{
                             id:item.publicKey.toBase58(),
                             version:"v1",
