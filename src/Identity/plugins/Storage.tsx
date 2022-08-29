@@ -1209,7 +1209,7 @@ const deserialized = deserializeUnchecked(dataSchema, AccoundData, metavalue?.da
                         <Avatar alt={params.value} src={params.value.logoURI} sx={{ width: 20, height: 20, bgcolor: 'rgb(0, 0, 0)', mr:1 }}>
                             {params.value.name.substr(0,2)}
                         </Avatar>
-                        {params.value.name} {params.value.version}
+                        {params.value.name} {params.value.version.toLowerCase()}
                     </>
                 )
             }
@@ -1284,7 +1284,9 @@ const deserialized = deserializeUnchecked(dataSchema, AccoundData, metavalue?.da
                                 
                                 {!params.value.storageAccount.account.toBeDeleted ?
                                     <Tooltip title='Delete Storage Pool'>
-                                        <Button onClick={(e) =>
+                                        <Button 
+                                            sx={{borderTopRightRadius:'17px',borderBottomRightRadius:'17px'}}
+                                            onClick={(e) =>
                                             //e.preventDefault();
                                             deleteStoragePool(new PublicKey(params.value.id), params.value.version)
                                         }  color="error">
@@ -1293,7 +1295,9 @@ const deserialized = deserializeUnchecked(dataSchema, AccoundData, metavalue?.da
                                     </Tooltip>
                                 :
                                     <Tooltip title='Restore Storage Pool'>
-                                        <Button onClick={(e) =>
+                                        <Button 
+                                            sx={{borderTopRightRadius:'17px',borderBottomRightRadius:'17px'}}
+                                            onClick={(e) =>
                                             //e.preventDefault();
                                             cancelDeleteStoragePool(new PublicKey(params.value.id), params.value.version)
                                         }  color="warning">
