@@ -1395,7 +1395,7 @@ const GeneralProfileView = (props: any) => {
                                                 </Grid>
                                                 
                                                 <Grid item sx={{ mt: 1 }}>
-                                                    {!isYou && (
+                                                    {(!isYou && publicKey) && (
                                                         <Box sx={{ display: 'flex', justifyContent: 'center' }}>
                                                             <Button
                                                                 onClick={() => {
