@@ -1226,12 +1226,12 @@ export function StoreFrontView(this: any, props: any) {
                         setMEStats(jsonStats);
                     }
                     
-                    let json1 = null;
-                    let json2 = null;
-                    let json3 = null;
-                    let json4 = null;
-                    let json5 = null;
-                    let json6 = null;
+                    let json1 = [];
+                    let json2 = [];
+                    let json3 = [];
+                    let json4 = [];
+                    let json5 = [];
+                    let json6 = [];
                     try{
                         json1 = await fetchMEWithTimeout(collectionAuthority.me_symbol,0);
                     } catch(erf){ console.log("ERR: "+erf);}
