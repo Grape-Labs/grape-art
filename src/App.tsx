@@ -343,8 +343,8 @@ function DashboardContent(){
 
 export const NotFound = () => {
     return (
-        <div style={{ height: '100%', overflow: 'auto' }}>
-            <Paper className="grape-paper-background">
+        <div style={{ height: '100%', overflow: 'auto'}}>
+            <Paper className="grape-paper-background" sx={{borderRadius:'17px',mt:5,p:2}}>
                 <Grid
                     className="grape-paper"
                     container
