@@ -1901,80 +1901,86 @@ export default function ItemOffers(props: any) {
                 //await connection.confirmTransaction(signedTransaction, 'processed');
 
                 const simulate = await connection.simulateTransaction(transaction);
-                console.log("simulate: "+JSON.stringify(simulate));
-                
-                enqueueSnackbar(`${t('Executing transaction for')}: ${mint.toString()}`,{ variant: 'info' });
-                
-                const signedTransaction2 = await sendTransaction(transaction, connection, {
-                    skipPreflight: true,
-                    preflightCommitment: "confirmed"
-                });
-                
-                const snackprogress = (key:any) => (
-                    <CircularProgress sx={{padding:'10px'}} />
-                );
-                const cnfrmkey = enqueueSnackbar(`${t('Confirming transaction')}`,{ variant: 'info', action:snackprogress, persist: true });
-                const latestBlockHash = await connection.getLatestBlockhash();
-                await ggoconnection.confirmTransaction({
-                    blockhash: latestBlockHash.blockhash,
-                    lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
-                    signature: signedTransaction2}, 
-                    'processed'
-                );
-                closeSnackbar(cnfrmkey);
-                const snackaction = (key:any) => (
-                    <Button href={`https://explorer.solana.com/tx/${signedTransaction2}`} target='_blank'  sx={{color:'white'}}>
-                        {signedTransaction2}
-                    </Button>
-                );
-                enqueueSnackbar(`${t('Transaction Complete')} `,{ variant: 'success', action:snackaction });
-                /*
-                if (escrowAmount > 0){
-                    //check the amount to redeposit 
-                    let depositAmount = 0;
-                    if (escrowAmount > salePrice){
-                        depositAmount = salePrice;
-                    } else {
-                        depositAmount = escrowAmount;
-                    }
-                    const transactionInstr = await depositInGrapeVine(depositAmount, buyerPublicKey);
-                    const instructionsArray = [transactionInstr.instructions].flat();        
-                    const transaction = new Transaction()
-                    .add(
-                        ...instructionsArray
-                    );
+
+                if (!simulate.value.err){
+
+                    //console.log("simulate: "+JSON.stringify(simulate));
                     
-                    enqueueSnackbar(`${t('Preparing to Deposit amount back in GrapeVine')}: ${depositAmount} SOL ${t('to')}: ${buyerPublicKey.toBase58()}`,{ variant: 'info' });
-                    const signedTransaction = await sendTransaction(transaction, connection);
+                    enqueueSnackbar(`${t('Executing transaction for')}: ${mint.toString()}`,{ variant: 'info' });
+                    
+                    const signedTransaction2 = await sendTransaction(transaction, connection, {
+                        skipPreflight: true,
+                        preflightCommitment: "confirmed"
+                    });
                     
                     const snackprogress = (key:any) => (
                         <CircularProgress sx={{padding:'10px'}} />
                     );
                     const cnfrmkey = enqueueSnackbar(`${t('Confirming transaction')}`,{ variant: 'info', action:snackprogress, persist: true });
-                    await ggoconnection.confirmTransaction(signedTransaction, 'processed');
+                    const latestBlockHash = await connection.getLatestBlockhash();
+                    await ggoconnection.confirmTransaction({
+                        blockhash: latestBlockHash.blockhash,
+                        lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+                        signature: signedTransaction2}, 
+                        'processed'
+                    );
                     closeSnackbar(cnfrmkey);
                     const snackaction = (key:any) => (
-                        <Button href={`https://explorer.solana.com/tx/${signedTransaction}`} target='_blank'  sx={{color:'white'}}>
-                            {signedTransaction}
+                        <Button href={`https://explorer.solana.com/tx/${signedTransaction2}`} target='_blank'  sx={{color:'white'}}>
+                            {signedTransaction2}
                         </Button>
                     );
-                    enqueueSnackbar(`${t('Deposit back to GrapeVine completed')}`,{ variant: 'success', action:snackaction });
+                    enqueueSnackbar(`${t('Transaction Complete')} `,{ variant: 'success', action:snackaction });
+                    /*
+                    if (escrowAmount > 0){
+                        //check the amount to redeposit 
+                        let depositAmount = 0;
+                        if (escrowAmount > salePrice){
+                            depositAmount = salePrice;
+                        } else {
+                            depositAmount = escrowAmount;
+                        }
+                        const transactionInstr = await depositInGrapeVine(depositAmount, buyerPublicKey);
+                        const instructionsArray = [transactionInstr.instructions].flat();        
+                        const transaction = new Transaction()
+                        .add(
+                            ...instructionsArray
+                        );
+                        
+                        enqueueSnackbar(`${t('Preparing to Deposit amount back in GrapeVine')}: ${depositAmount} SOL ${t('to')}: ${buyerPublicKey.toBase58()}`,{ variant: 'info' });
+                        const signedTransaction = await sendTransaction(transaction, connection);
+                        
+                        const snackprogress = (key:any) => (
+                            <CircularProgress sx={{padding:'10px'}} />
+                        );
+                        const cnfrmkey = enqueueSnackbar(`${t('Confirming transaction')}`,{ variant: 'info', action:snackprogress, persist: true });
+                        await ggoconnection.confirmTransaction(signedTransaction, 'processed');
+                        closeSnackbar(cnfrmkey);
+                        const snackaction = (key:any) => (
+                            <Button href={`https://explorer.solana.com/tx/${signedTransaction}`} target='_blank'  sx={{color:'white'}}>
+                                {signedTransaction}
+                            </Button>
+                        );
+                        enqueueSnackbar(`${t('Deposit back to GrapeVine completed')}`,{ variant: 'success', action:snackaction });
+                    }
+                    */
+                    const eskey = enqueueSnackbar(`${t('Metadata will be refreshed in a few seconds')}`, {
+                            anchorOrigin: {
+                                vertical: 'top',
+                                horizontal: 'center',
+                            },
+                            persist: true,
+                    });
+                    
+                    setTimeout(function() {
+                        closeSnackbar(eskey);
+                        try{
+                            props.setRefresh(true);
+                        }catch(err){console.log("ERR: "+err);}
+                    }, GRAPE_RPC_REFRESH);
+                } else{
+                    enqueueSnackbar(`${t('Transaction Simulation Failed! Check if you have enough SOL to make this purchase')}`,{ variant: 'error' });
                 }
-                */
-                const eskey = enqueueSnackbar(`${t('Metadata will be refreshed in a few seconds')}`, {
-                        anchorOrigin: {
-                            vertical: 'top',
-                            horizontal: 'center',
-                        },
-                        persist: true,
-                });
-                
-                setTimeout(function() {
-                    closeSnackbar(eskey);
-                    try{
-                        props.setRefresh(true);
-                    }catch(err){console.log("ERR: "+err);}
-                }, GRAPE_RPC_REFRESH);
 
             /*}
             else {
