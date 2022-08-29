@@ -766,14 +766,14 @@ const deserialized = deserializeUnchecked(dataSchema, AccoundData, metavalue?.da
             }*/
             
             console.log("Fetching files for: "+storagePublicKey.toBase58())
-            
+
             const body = {
                 storageAccount: storagePublicKey.toBase58()
             };
 
             const response = await thisDrive.listObjects(storagePublicKey)
 
-            console.log("response: "+JSON.stringify(response));
+            //console.log("response: "+JSON.stringify(response));
 
             var file_items = new Array();
             if (response?.keys){
@@ -1093,31 +1093,35 @@ const deserialized = deserializeUnchecked(dataSchema, AccoundData, metavalue?.da
                                 <>
                                     {!storageAccount.account.toBeDeleted && 
                                         <>
-                                            <Grid 
-                                                item xs={12}
-                                            >
-                                                    <FileUpload value={uploadFiles} onChange={setUploadFiles} />
-                                            </Grid>
-                                            <Grid 
-                                                item xs={12}
-                                            >
-                                                    {/*uploadFiles && (uploadFiles.length > 0) && uploadFiles.length*/}
-                                            </Grid>
-                                            {uploadFiles &&
+                                            {publicKey && publicKey.toBase58() === pubkey &&
+                                            <>
                                                 <Grid 
                                                     item xs={12}
-                                                    textAlign='right'
-                                                    sx={{mt:1,mb:1}}
                                                 >
-                                                        <Button 
-                                                            disabled={!uploadFiles ||(uploadFiles.length < 1)}
-                                                            variant="outlined"
-                                                            component="span" 
-                                                            onClick={handleFileUpload}
-                                                            sx={{borderRadius:'17px'}}>
-                                                                <SaveIcon sx={{mr:1}} /> Upload File
-                                                        </Button>
+                                                        <FileUpload value={uploadFiles} onChange={setUploadFiles} />
                                                 </Grid>
+                                                <Grid 
+                                                    item xs={12}
+                                                >
+                                                        {/*uploadFiles && (uploadFiles.length > 0) && uploadFiles.length*/}
+                                                </Grid>
+                                                {uploadFiles &&
+                                                    <Grid 
+                                                        item xs={12}
+                                                        textAlign='right'
+                                                        sx={{mt:1,mb:1}}
+                                                    >
+                                                            <Button 
+                                                                disabled={!uploadFiles ||(uploadFiles.length < 1)}
+                                                                variant="outlined"
+                                                                component="span" 
+                                                                onClick={handleFileUpload}
+                                                                sx={{borderRadius:'17px'}}>
+                                                                    <SaveIcon sx={{mr:1}} /> Upload File
+                                                            </Button>
+                                                    </Grid>
+                                                }
+                                            </>
                                             }
                                         </>
                                     }
