@@ -1202,7 +1202,7 @@ const deserialized = deserializeUnchecked(dataSchema, AccoundData, metavalue?.da
             }
         },
         { field: 'id', headerName: 'Pool', width: 70, hide: true },
-        { field: 'source', headerName: 'Source', width: 150,
+        { field: 'source', headerName: 'Source', width: 160,
             renderCell: (params) => {
                 return(
                     <>
