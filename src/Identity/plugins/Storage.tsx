@@ -1020,31 +1020,36 @@ const deserialized = deserializeUnchecked(dataSchema, AccoundData, metavalue?.da
                 renderCell: (params) => {
                     return(
                         <>
-                            <CopyToClipboard 
-                                text={`https://shdw-drive.genesysgo.net/${storageAccount.publicKey}/${params.value}`} 
-                                onCopy={handleCopyClick}
-                                >
-                                <Button sx={{color:'white',borderRadius:'17px'}} title="Copy" size="small">
-                                    <ContentCopyIcon />
-                                </Button>
-                            </CopyToClipboard> 
-                            <Button 
-                                sx={{color:'white',borderRadius:'17px'}} 
-                                href={`https://shdw-drive.genesysgo.net/${storageAccount.publicKey}/${params.value}`}
-                                target="_blank"
-                                title="View"
-                            >   
-                                <OpenInNewIcon />
-                            </Button>
-                            
-                            <Button 
-                                onClick={(e) => 
-                                    deleteStoragePoolFile(new PublicKey(storageAccount.publicKey), params.value, version)
-                                } 
-                                color="error" title="delete" size="small" sx={{borderRadius:'17px'}} >
-                                <DeleteIcon />
-                            </Button>
+                            {publicKey && publicKey.toBase58() === pubkey &&
+                                <>
+                                    <CopyToClipboard 
+                                        text={`https://shdw-drive.genesysgo.net/${storageAccount.publicKey}/${params.value}`} 
+                                        onCopy={handleCopyClick}
+                                        >
+                                        <Button sx={{color:'white',borderRadius:'17px'}} title="Copy" size="small">
+                                            <ContentCopyIcon />
+                                        </Button>
+                                    </CopyToClipboard> 
+                                    <Button 
+                                        sx={{color:'white',borderRadius:'17px'}} 
+                                        href={`https://shdw-drive.genesysgo.net/${storageAccount.publicKey}/${params.value}`}
+                                        target="_blank"
+                                        title="View"
+                                    >   
+                                        <OpenInNewIcon />
+                                    </Button>
+                                    
+                                    <Button 
+                                        onClick={(e) => 
+                                            deleteStoragePoolFile(new PublicKey(storageAccount.publicKey), params.value, version)
+                                        } 
+                                        color="error" title="delete" size="small" sx={{borderRadius:'17px'}} >
+                                        <DeleteIcon />
+                                    </Button>
+                                </>
+                            }
                         </>
+
                     )
                 }
             }

@@ -1225,7 +1225,7 @@ export function StoreFrontView(this: any, props: any) {
                     if (jsonStats){
                         setMEStats(jsonStats);
                     }
-
+                    
                     let json1 = null;
                     let json2 = null;
                     let json3 = null;
