@@ -765,24 +765,28 @@ const deserialized = deserializeUnchecked(dataSchema, AccoundData, metavalue?.da
                 }
             }*/
             
+            console.log("Fetching files for: "+storagePublicKey.toBase58())
+            
             const body = {
-                storageAccount: storagePublicKey.toString()
+                storageAccount: storagePublicKey.toBase58()
             };
 
             const response = await thisDrive.listObjects(storagePublicKey)
 
-            //console.log("response: "+JSON.stringify(response));
+            console.log("response: "+JSON.stringify(response));
 
             var file_items = new Array();
-            for (var item of response.keys){
+            if (response?.keys){
+                for (var item of response.keys){
 
-                file_items.push({
-                    id:item,
-                    file:item,
-                    created:'',
-                    size:item,
-                    manage:item,
-                })
+                    file_items.push({
+                        id:item,
+                        file:item,
+                        created:'',
+                        size:item,
+                        manage:item,
+                    })
+                }
             }
 
             setSolanaStorageFileRows(file_items);
@@ -1270,7 +1274,7 @@ const deserialized = deserializeUnchecked(dataSchema, AccoundData, metavalue?.da
                                         </Button>
                                     </Tooltip>
                                 }
-                                
+
                                 <ResizeStoragePool storageAccount={params.value.storageAccount} />
                                 
                                 {!params.value.storageAccount.account.toBeDeleted ?
@@ -1372,18 +1376,48 @@ const deserialized = deserializeUnchecked(dataSchema, AccoundData, metavalue?.da
 
                     console.log("storage: "+JSON.stringify(storage));
                 }
+
                 //setAccountV2(asa_v2);
                 setAccountV2(asa_v2_array);
                 
                 setSolanaStorage(asa_v2_array);
-                setSolanaStorageRows(storageTable);
+                
             } else{
                 //createStoragePool('grape-test-storage', '1MB');
             }
 
             if (asa_v1){
                 setAccountV1(asa_v1);
+
+                for (var item of asa_v1){
+                    storageTable.push({
+                        id:item.publicKey.toBase58(),
+                        expand:{
+                            storageAccount:item,
+                            version:"v1",
+                            current_usage:+item.account.storage - +item.account.storageAvailable,
+                        },
+                        source:{
+                            name: 'Shadow Drive',
+                            logoURI: 'https://shdw-drive.genesysgo.net/5VhicqNTPgvJNVPHPp8PSH91YQ6KnVAeukW1K37GJEEV/genesysgo.png'
+                        },
+                        name:item.account.identifier,
+                        created:item.account.creationTime,
+                        storage:item.account.storage,
+                        used:+item.account.storage - +item.account.storageAvailable,
+                        available:+item.account.storageAvailable,
+                        immutable:item.account.immutable,
+                        manage:{
+                            id:item.publicKey.toBase58(),
+                            version:"v1",
+                            storageAccount:item,
+                        }
+                    })
+                }
+
+                console.log("asa_v1: "+JSON.stringify(asa_v1));
             }
+            setSolanaStorageRows(storageTable);
         setLoadingStorage(false);
     }
 
