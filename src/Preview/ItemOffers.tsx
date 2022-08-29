@@ -1893,13 +1893,22 @@ export default function ItemOffers(props: any) {
                 const transaction = new Transaction()
                 .add(
                     ...instructionsArray
-                );
+                );  
+                transaction.feePayer = publicKey;
                 
                 enqueueSnackbar(`${t('Preparing to Buy Now')}: ${salePrice} SOL ${t('from')}: ${buyerPublicKey.toBase58()}`,{ variant: 'info' });
                 //const signedTransaction = await sendTransaction(transaction, connection);
                 //await connection.confirmTransaction(signedTransaction, 'processed');
+
+                const simulate = await connection.simulateTransaction(transaction);
+                console.log("simulate: "+JSON.stringify(simulate));
+                
                 enqueueSnackbar(`${t('Executing transaction for')}: ${mint.toString()}`,{ variant: 'info' });
-                const signedTransaction2 = await sendTransaction(transaction, connection);
+                
+                const signedTransaction2 = await sendTransaction(transaction, connection, {
+                    skipPreflight: true,
+                    preflightCommitment: "confirmed"
+                });
                 
                 const snackprogress = (key:any) => (
                     <CircularProgress sx={{padding:'10px'}} />
