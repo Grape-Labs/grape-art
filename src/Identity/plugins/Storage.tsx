@@ -612,7 +612,7 @@ export function StorageView(props: any){
                 <Tooltip title="Resize Storage Pool">
                     <Button 
                         onClick={handleClickOpen} 
-                        sx={{borderTopRightRadius:'17px',borderBottomRightRadius:'17px'}}
+                        sx={{color:'white',borderTopRightRadius:'17px',borderBottomRightRadius:'17px'}}
                     >
                         <ExpandIcon />
                     </Button>
@@ -1257,14 +1257,14 @@ const deserialized = deserializeUnchecked(dataSchema, AccoundData, metavalue?.da
                                                 //e.preventDefault();
                                                 lockStoragePool(new PublicKey(params.value.id), params.value.version)
                                             } 
-                                            sx={{borderTopLeftRadius:'17px',borderBottomLeftRadius:'17px'}} >
+                                            sx={{color:'white',borderTopLeftRadius:'17px',borderBottomLeftRadius:'17px'}} >
                                             <LockOpenIcon />
                                         </Button>
                                     </Tooltip>
                                 :
                                     <Tooltip title='Storage Pool is locked'>
                                         <Button 
-                                            sx={{borderTopLeftRadius:'17px',borderBottomLeftRadius:'17px'}}
+                                            sx={{color:'white',borderTopLeftRadius:'17px',borderBottomLeftRadius:'17px'}}
                                             disabled>
                                             <LockIcon/>
                                         </Button>
