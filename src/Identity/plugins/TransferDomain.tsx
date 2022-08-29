@@ -4,7 +4,7 @@ import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { Signer, Connection, PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js';
 //import { TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID, Token } from "@solana/spl-token";
 
-import { GRAPE_RPC_ENDPOINT, TX_RPC_ENDPOINT, GRAPE_TREASURY } from '../utils/grapeTools/constants';
+import { GRAPE_RPC_ENDPOINT, TX_RPC_ENDPOINT, GRAPE_TREASURY } from '../../utils/grapeTools/constants';
 
 import {
     transferNameOwnership,
@@ -28,7 +28,7 @@ import {
 } from '@mui/material';
 
 import { SelectChangeEvent } from '@mui/material/Select';
-import { MakeLinkableAddress, ValidateAddress } from '../utils/grapeTools/WalletAddress'; // global key handling
+import { MakeLinkableAddress, ValidateAddress } from '../../utils/grapeTools/WalletAddress'; // global key handling
 import { useSnackbar } from 'notistack';
 
 import CircularProgress from '@mui/material/CircularProgress';
@@ -83,7 +83,7 @@ const BootstrapDialogTitle = (props: DialogTitleProps) => {
   );
 };
 
-export default function TransferDomain(props: any) {
+export default function TransferDomainView(props: any) {
     const fetchSolanaDomain = props.fetchSolanaDomain;
     const snsDomain = props.snsDomain;
     const [open, setOpen] = React.useState(false);

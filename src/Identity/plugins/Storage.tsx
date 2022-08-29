@@ -1271,6 +1271,8 @@ const deserialized = deserializeUnchecked(dataSchema, AccoundData, metavalue?.da
                                     </Tooltip>
                                 }
                                 
+                                <ResizeStoragePool storageAccount={params.value.storageAccount} />
+                                
                                 {!params.value.storageAccount.account.toBeDeleted ?
                                     <Tooltip title='Delete Storage Pool'>
                                         <Button onClick={(e) =>
@@ -1290,8 +1292,6 @@ const deserialized = deserializeUnchecked(dataSchema, AccoundData, metavalue?.da
                                         </Button>
                                     </Tooltip>
                                 }
-                                
-                                <ResizeStoragePool storageAccount={params.value.storageAccount} />
                                 
                             </ButtonGroup>
                         :

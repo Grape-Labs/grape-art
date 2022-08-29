@@ -20,7 +20,8 @@ import SendToken from '../StoreFront/Send';
 //import JupiterSwap from '../StoreFront/Swap';
 import BulkSend from './BulkSend';
 import BulkBurnClose from './BulkBurnClose';
-import TransferDomain from './TransferDomain';
+import TransferDomainView from './plugins/TransferDomain';
+import BuyDomainView from './plugins/BuyDomain';
 import ExplorerView from '../utils/grapeTools/Explorer';
 
 import { findDisplayName } from '../utils/name-service';
@@ -300,7 +301,7 @@ export function IdentityView(props: any){
                     <>
                         {publicKey && publicKey.toBase58() === pubkey &&
                         <>
-                            <TransferDomain snsDomain={params.value} fetchSolanaDomain={fetchSolanaDomain} />
+                            <TransferDomainView snsDomain={params.value} fetchSolanaDomain={fetchSolanaDomain} />
                             <Tooltip title='Manage SNS Record'>
                                 <Button
                                     variant='outlined'
@@ -1437,6 +1438,10 @@ export function IdentityView(props: any){
                                                     </TabPanel>
 
                                                     <TabPanel value="5">
+                                                        {/*
+                                                        <BuyDomainView pubkey={pubkey} />
+                                                        */}
+                                                        
                                                         {solanaDomain &&
                                                             <div style={{ height: 600, width: '100%' }}>
                                                                 <div style={{ display: 'flex', height: '100%' }}>

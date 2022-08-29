@@ -31,9 +31,13 @@ import { Box, Grid, Paper, Container, Typography, AppBar } from '@mui/material';
 
 import Header from './Header/Header';
 import { SnackbarProvider } from 'notistack';
-import { ConnectionProvider, WalletProvider, useWallet } from '@solana/wallet-adapter-react';
+import { ConnectionProvider, 
+    useConnection,
+    WalletProvider, 
+    useWallet,
+    WalletContextState } from '@solana/wallet-adapter-react';
 import { WalletAdapterNetwork, WalletError, WalletNotConnectedError } from '@solana/wallet-adapter-base';
-//import { Connection, Keypair, SystemProgram, Transaction, clusterApiUrl } from '@solana/web3.js';
+import { Connection } from '@solana/web3.js';
 //import { Helmet } from 'react-helmet';
 //import { useSnackbar } from 'notistack';
 
@@ -73,37 +77,117 @@ import {
 import grapeTheme from './utils/config/theme';
 //import "./App.less";
 import { GRAPE_RPC_ENDPOINT, TX_RPC_ENDPOINT, GENSYSGO_RPC_ENDPOINT } from './utils/grapeTools/constants';
-import { BottomChat as DialectBottomChat, DialectUiManagementProvider } from '@dialectlabs/react-ui';
+import { BottomChat as DialectBottomChat, 
+    DialectUiManagementProvider, 
+    DialectContextProvider, 
+    DialectThemeProvider, 
+    DialectWalletAdapter, 
+    useDialectUiId,
+    ThemeProvider as DThemeProvider,
+    Config,
+    ChatNavigationHelpers,
+    Backend,
+} from '@dialectlabs/react-ui';
+import { DialectDappsIdentityResolver } from '@dialectlabs/identity-dialect-dapps';
+import { SNSIdentityResolver } from '@dialectlabs/identity-sns';
+import { CardinalTwitterIdentityResolver } from '@dialectlabs/identity-cardinal';
+
 import { getDialectVariables, GRAPE_BOTTOM_CHAT_ID } from './utils/ui-contants';
 import { ClassNames } from '@emotion/react';
 
-function BottomChat() {
-    const wallet = useWallet();
-    const { publicKey } = wallet;
 
+const walletToDialectWallet = (
+    wallet: WalletContextState
+  ): DialectWalletAdapter => ({
+    publicKey: wallet.publicKey!,
+    connected:
+      wallet.connected &&
+      !wallet.connecting &&
+      !wallet.disconnecting &&
+      Boolean(wallet.publicKey),
+    signMessage: wallet.signMessage,
+    signTransaction: wallet.signTransaction,
+    signAllTransactions: wallet.signAllTransactions,
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    //@ts-ignore
+    diffieHellman: wallet.wallet?.adapter?._wallet?.diffieHellman
+      ? async (pubKey) => {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          //@ts-ignore
+          return wallet.wallet?.adapter?._wallet?.diffieHellman(pubKey);
+        }
+      : undefined,
+  });
+
+function BottomChatView(): JSX.Element {
+    const { connection } = useConnection();
+    const wallet = useWallet();
+    const [dialectWalletAdapter, setDialectWalletAdapter] = React.useState<DialectWalletAdapter>(() => walletToDialectWallet(wallet));
+  
+    React.useEffect(() => {
+      setDialectWalletAdapter(walletToDialectWallet(wallet));
+    }, [wallet]);
+  
+    const dialectConfig = useMemo(
+      (): Config => ({
+        backends: [Backend.DialectCloud, Backend.Solana],
+        environment: 'production',
+        dialectCloud: {
+          tokenStore: 'local-storage',
+        },
+        solana: {
+          rpcUrl: connection.rpcEndpoint,
+        },
+        identity: {
+          resolvers: [
+            new DialectDappsIdentityResolver(),
+            new SNSIdentityResolver(new Connection(GENSYSGO_RPC_ENDPOINT)),
+            new CardinalTwitterIdentityResolver(new Connection(GENSYSGO_RPC_ENDPOINT)),
+          ],
+        },
+      }),
+      [connection]
+    );
+  
     return (
-        publicKey && (
-            <ClassNames>
-                {({ css }) => (
+      <DialectContextProvider
+        wallet={dialectWalletAdapter}
+        config={dialectConfig}
+      >
+        <DialectUiManagementProvider>
+          <DThemeProvider theme={'dark'}>
+            <BottomChatElement />
+          </DThemeProvider>
+        </DialectUiManagementProvider>
+      </DialectContextProvider>
+    );
+  }
+
+  function BottomChatElement() {
+    const { navigation } = useDialectUiId<ChatNavigationHelpers>('dialect-inbox');
+  
+    return (
+        <ClassNames>
+            {({ css }) => (
+                <>
                     <Container
                         sx={{
                             zIndex: 'tooltip',
                         }}
                     >
-                        <DialectBottomChat
-                            dialectId={GRAPE_BOTTOM_CHAT_ID}
-                            wallet={wallet}
-                            rpcUrl={GENSYSGO_RPC_ENDPOINT}
-                            theme="dark"
-                            network="mainnet"
-                            variables={getDialectVariables(css, 'popup')}
-                        />
+                        <DialectThemeProvider variables={getDialectVariables(css, 'popup')} theme="dark">
+                            <DialectBottomChat
+                                dialectId={GRAPE_BOTTOM_CHAT_ID}
+                            />
+                        </DialectThemeProvider>
                     </Container>
-                )}
-            </ClassNames>
-        )
+                </>
+            )}
+        </ClassNames>
+
     );
-}
+  }
+
 
 function Copyright(props: any): JSX.Element {
     const { t, i18n } = useTranslation();
@@ -121,7 +205,7 @@ function DashboardContent(){
     };
 
     // You can also provide a custom RPC endpoint
-    const network = WalletAdapterNetwork.Mainnet; //.Devnet; //.Mainnet;
+    const network = WalletAdapterNetwork.Mainnet; //.Devnet;
     // You can also provide a custom RPC endpoint
     //const endpoint =  useMemo(() => clusterApiUrl(network), [network]); // GRAPE_RPC_ENDPOINT;
     //const endpoint =  GRAPE_RPC_ENDPOINT;
@@ -154,21 +238,9 @@ function DashboardContent(){
         ],
         [network]
     );
-
+    
     const renderLoader = () => <p>Loading</p>;
 
-    /*
-  const { enqueueSnackbar } = useSnackbar();
-  const onError = useCallback(
-      (error) => {
-          enqueueSnackbar(error.message ? `${error.name}: ${error.message}` : error.name, { variant: 'error' });
-          console.error(error);
-      },
-      [enqueueSnackbar]
-  );
-  */
-
-    //render(){
         return (
         <>
             <Suspense fallback={renderLoader()}>
@@ -203,7 +275,7 @@ function DashboardContent(){
                                                     }}
                                                 >
                                                     <Container maxWidth="xl" sx={{ mb: 4 }}>
-                                                        <BottomChat />
+                                                        <BottomChatView />
 
                                                         <Routes>
                                                             {/*<Route path="/splash" element={<SplashView />} />*/}
@@ -267,7 +339,6 @@ function DashboardContent(){
             </Suspense>
         </>
         );
-    //}
 }
 
 export const NotFound = () => {
@@ -292,7 +363,6 @@ export const NotFound = () => {
     );
 };
 
-//export const Dashboard: FC<{ children: ReactNode }> = ({ children }) => {
 export default function Dashboard() {
     return <DashboardContent />;
 }

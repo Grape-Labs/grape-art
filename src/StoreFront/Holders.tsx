@@ -7,11 +7,11 @@ import { PublicKey, TokenAmount, Connection } from '@solana/web3.js';
 import { ENV, TokenListProvider, TokenInfo } from '@solana/spl-token-registry';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import axios from "axios";
-
+/*
 import { 
     tryGetName,
 } from '@cardinal/namespaces';
-
+*/
 import * as React from 'react';
 import BN from 'bn.js';
 import { styled, useTheme } from '@mui/material/styles';
@@ -237,11 +237,13 @@ function RenderHoldersTable(props:any) {
         const fetchSolanaDomain = async () => {
             
             console.log("fetching tryGetName: "+address);
+            const cardinal_registration = null;
+            /*
             const cardinal_registration = await tryGetName(
                 ggoconnection, 
                 new PublicKey(address)
             );
-
+            */
             if (cardinal_registration){
                 //console.log("FOUND: "+JSON.stringify(cardinal_registration))
                 setSolanaDomain(cardinal_registration);
