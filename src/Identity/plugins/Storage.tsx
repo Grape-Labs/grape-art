@@ -1209,7 +1209,7 @@ const deserialized = deserializeUnchecked(dataSchema, AccoundData, metavalue?.da
                         <Avatar alt={params.value} src={params.value.logoURI} sx={{ width: 20, height: 20, bgcolor: 'rgb(0, 0, 0)', mr:1 }}>
                             {params.value.name.substr(0,2)}
                         </Avatar>
-                        {params.value.name}
+                        {params.value.name} {params.value.version}
                     </>
                 )
             }
@@ -1364,7 +1364,8 @@ const deserialized = deserializeUnchecked(dataSchema, AccoundData, metavalue?.da
                         },
                         source:{
                             name: 'Shadow Drive',
-                            logoURI: 'https://shdw-drive.genesysgo.net/5VhicqNTPgvJNVPHPp8PSH91YQ6KnVAeukW1K37GJEEV/genesysgo.png'
+                            logoURI: 'https://shdw-drive.genesysgo.net/5VhicqNTPgvJNVPHPp8PSH91YQ6KnVAeukW1K37GJEEV/genesysgo.png',
+                            version: json.version,
                         },
                         name:item.account.identifier,
                         created:item.account.creationTime,
@@ -1405,7 +1406,8 @@ const deserialized = deserializeUnchecked(dataSchema, AccoundData, metavalue?.da
                         },
                         source:{
                             name: 'Shadow Drive',
-                            logoURI: 'https://shdw-drive.genesysgo.net/5VhicqNTPgvJNVPHPp8PSH91YQ6KnVAeukW1K37GJEEV/genesysgo.png'
+                            logoURI: 'https://shdw-drive.genesysgo.net/5VhicqNTPgvJNVPHPp8PSH91YQ6KnVAeukW1K37GJEEV/genesysgo.png',
+                            version: "v1"
                         },
                         name:item.account.identifier,
                         created:item.account.creationTime,
