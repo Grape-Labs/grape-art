@@ -66,7 +66,7 @@
         "@solana/wallet-adapter-material-ui": "^0.16.14",
         "@solana/wallet-adapter-react": "^0.15.18",
         "@solana/wallet-adapter-wallets": "^0.18.7",
-        "@solana/web3.js": "^1.54.1",
+        "@solana/web3.js": "^1.55.0",
         "@solflare-wallet/pfp": "^0.0.6",
         "@streamflow/stream": "^3.0.12",
         "@testing-library/jest-dom": "^5.16.4",
