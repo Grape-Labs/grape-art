@@ -8,6 +8,7 @@ import {
     tryGetName,
 } from '@cardinal/namespaces';
 */
+import { CardinalTwitterIdentityResolver } from '@dialectlabs/identity-cardinal';
 import * as React from 'react';
 import BN from 'bn.js';
 import { styled, useTheme } from '@mui/material/styles';

@@ -12,6 +12,8 @@ import {
     tryGetName,
 } from '@cardinal/namespaces';
 */
+import { CardinalTwitterIdentityResolver } from '@dialectlabs/identity-cardinal';
+
 import * as React from 'react';
 import BN from 'bn.js';
 import { styled, useTheme } from '@mui/material/styles';
@@ -238,6 +240,15 @@ function RenderHoldersTable(props:any) {
             
             console.log("fetching tryGetName: "+address);
             const cardinal_registration = null;
+            
+            const cardinalResolver = new CardinalTwitterIdentityResolver(ggoconnection);
+            try{
+            const cardinal_registration_from_resolver = await cardinalResolver.resolve(new PublicKey(address));
+            console.log("cardinal_registration_from_resolver "+JSON.stringify(cardinal_registration_from_resolver))
+            }catch(e){
+                console.log("ERR: "+e);
+            }
+            
             /*
             const cardinal_registration = await tryGetName(
                 ggoconnection, 
