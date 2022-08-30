@@ -109,7 +109,7 @@ import {
       }),
       [connection]
     );
-  
+
     return (
       <DialectContextProvider
         wallet={dialectWalletAdapter}
