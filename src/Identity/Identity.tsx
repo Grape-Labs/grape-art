@@ -8,7 +8,19 @@ import { decodeMetadata } from '../utils/grapeTools/utils';
 import { PublicKey, Connection, Commitment } from '@solana/web3.js';
 import {ENV, TokenInfo, TokenListProvider} from '@solana/spl-token-registry';
 
-import { getRealm, getRealms, getAllProposals, getGovernance, getTokenOwnerRecordsByOwner, getTokenOwnerRecord, getRealmConfigAddress, getGovernanceAccount, getAccountTypes, GovernanceAccountType, tryGetRealmConfig  } from '@solana/spl-governance';
+import { getRealm, 
+    getRealms, 
+    getAllProposals, 
+    getGovernance, 
+    getTokenOwnerRecordsByOwner,
+    getTokenOwnerRecord, 
+    getRealmConfigAddress, 
+    getGovernanceAccount, 
+    getAccountTypes, 
+    GovernanceAccountType, 
+    tryGetRealmConfig,
+    GovernanceInstruction,
+} from '@solana/spl-governance';
 //import { ShdwDrive } from "@shadow-drive/sdk";
 
 import { gql } from '@apollo/client'
@@ -59,6 +71,7 @@ import {
     TabPanel,
 } from '@mui/lab';
 
+import InventoryIcon from '@mui/icons-material/Inventory';
 import SettingsIcon from '@mui/icons-material/Settings';
 import HorizontalRuleIcon from '@mui/icons-material/HorizontalRule';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
@@ -295,13 +308,25 @@ export function IdentityView(props: any){
                 )
             }
         },
-        { field: 'manage', headerName: '', width: 170, align: 'center',
+        { field: 'manage', headerName: '', width: 210, align: 'center',
             renderCell: (params) => {
                 return (
                     <>
                         {publicKey && publicKey.toBase58() === pubkey &&
                         <>
-                            <TransferDomainView snsDomain={params.value} fetchSolanaDomain={fetchSolanaDomain} />
+                            {/*
+                                <Tooltip title='Wrap Domain'>
+                                    <Button
+                                        variant='outlined'
+                                        size='small'
+                                        sx={{borderRadius:'17px',mr:1}}
+                                    >
+                                        <InventoryIcon />
+                                    </Button>
+                                </Tooltip>
+                            */}
+                                <TransferDomainView snsDomain={params.value} fetchSolanaDomain={fetchSolanaDomain} />
+                            
                             <Tooltip title='Manage SNS Record'>
                                 <Button
                                     variant='outlined'
@@ -1441,7 +1466,6 @@ export function IdentityView(props: any){
                                                         {/*
                                                         <BuyDomainView pubkey={pubkey} />
                                                         */}
-                                                        
                                                         {solanaDomain &&
                                                             <div style={{ height: 600, width: '100%' }}>
                                                                 <div style={{ display: 'flex', height: '100%' }}>
