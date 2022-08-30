@@ -3,11 +3,11 @@ import { PublicKey, TokenAmount, Connection } from '@solana/web3.js';
 import { ENV, TokenListProvider, TokenInfo } from '@solana/spl-token-registry';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import axios from "axios";
-/*
+
 import { 
     tryGetName,
 } from '@cardinal/namespaces';
-*/
+
 import { CardinalTwitterIdentityResolver } from '@dialectlabs/identity-cardinal';
 import * as React from 'react';
 import BN from 'bn.js';
@@ -217,32 +217,33 @@ function RenderGovernanceMembersTable(props:any) {
         const fetchSolanaDomain = async () => {
             
             console.log("fetching tryGetName: "+address);
-            const cardinal_registration = null;
-            /*
-            const cardinal_registration = await tryGetName(
-                ggoconnection, 
-                new PublicKey(address)
-            );
-            */
-           
-            if (cardinal_registration){
-                //console.log("FOUND: "+JSON.stringify(cardinal_registration))
-                setSolanaDomain(cardinal_registration);
-                const url = `${TWITTER_PROXY}https://api.twitter.com/2/users/by&usernames=${cardinal_registration.slice(1)}&user.fields=profile_image_url,public_metrics`;
-                /*
-                const response = await window.fetch(url, {
-                    method: 'GET',
-                    headers: {
+            let found_cardinal = false;
+            //const cardinalResolver = new CardinalTwitterIdentityResolver(ggoconnection);
+            try{
+                //const cardinal_registration = await cardinalResolver.resolve(new PublicKey(address));
+                //const identity = await cardinalResolver.resolveReverse(address);
+                //console.log("identity "+JSON.stringify(cardinal_registration))
+                const cardinal_registration = await tryGetName(
+                    ggoconnection, 
+                    new PublicKey(address)
+                );
+
+                if (cardinal_registration){
+                    found_cardinal = true;
+                    setSolanaDomain(cardinal_registration);
+                    const url = `${TWITTER_PROXY}https://api.twitter.com/2/users/by&usernames=${cardinal_registration.slice(1)}&user.fields=profile_image_url,public_metrics`;
+                    const response = await axios.get(url);
+                    //const twitterImage = response?.data?.data[0]?.profile_image_url;
+                    if (response?.data?.data[0]?.profile_image_url){
+                        setProfilePictureUrl(response?.data?.data[0]?.profile_image_url);
+                        setHasProfilePicture(true);
                     }
-                });
-                */
-                const response = await axios.get(url);
-                //const twitterImage = response?.data?.data[0]?.profile_image_url;
-                if (response?.data?.data[0]?.profile_image_url){
-                    setProfilePictureUrl(response?.data?.data[0]?.profile_image_url);
-                    setHasProfilePicture(true);
                 }
-            } else{
+            }catch(e){
+                console.log("ERR: "+e);
+            }
+
+            if (!found_cardinal){
                 const domain = await findDisplayName(ggoconnection, address);
                 if (domain) {
                     if (domain[0] !== address) {

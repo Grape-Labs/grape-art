@@ -1162,7 +1162,7 @@
     tiny-invariant "^1.2.0"
     tslib "^2.3.1"
 
-"@cardinal/namespaces@^4.1.55":
+"@cardinal/namespaces@^4.1.55", "@cardinal/namespaces@^4.1.56":
   version "4.1.56"
   resolved "https://registry.yarnpkg.com/@cardinal/namespaces/-/namespaces-4.1.56.tgz#3fe5c3c8077f12af16765dc13ebc281bc197f97c"
   integrity sha512-7XCT1hxJ8o3qDZt+tGpVgC9OkTn/20wxThNs9BVBK7RGt8hOqmsx3EDk0H5cpRh63g7b436cAEINPMxi8D3bhA==
