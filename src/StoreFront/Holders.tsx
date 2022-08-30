@@ -252,11 +252,12 @@ function RenderHoldersTable(props:any) {
                     new PublicKey(address)
                 );
                 //console.log("identity "+JSON.stringify(cardinal_registration))
-
+                
                 if (cardinal_registration){
                     found_cardinal = true;
-                    setSolanaDomain(cardinal_registration);
-                    const url = `${TWITTER_PROXY}https://api.twitter.com/2/users/by&usernames=${cardinal_registration.slice(1)}&user.fields=profile_image_url,public_metrics`;
+                    console.log("cardinal_registration: "+JSON.stringify(cardinal_registration));
+                    setSolanaDomain(cardinal_registration[0]);
+                    const url = `${TWITTER_PROXY}https://api.twitter.com/2/users/by&usernames=${cardinal_registration[0].slice(1)}&user.fields=profile_image_url,public_metrics`;
                     const response = await axios.get(url);
                     //const twitterImage = response?.data?.data[0]?.profile_image_url;
                     if (response?.data?.data[0]?.profile_image_url){
