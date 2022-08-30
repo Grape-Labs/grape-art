@@ -2053,7 +2053,7 @@ export default function ItemOffers(props: any) {
 
         return (
             <>
-            {(OTHER_MARKETPLACES.filter(e => e.address === mintOwner).length > 0) ? (
+            {(OTHER_MARKETPLACES.filter(e => e.address === mintOwner && (e?.transact && e?.transact !== true)).length > 0) ? (
                 <></>
             ):(
                 <Box
