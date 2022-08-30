@@ -120,7 +120,7 @@ const walletToDialectWallet = (
   });
 
 function BottomChatView(): JSX.Element {
-    const { connection } = useConnection();
+    const connection = new Connection(GENSYSGO_RPC_ENDPOINT);
     const wallet = useWallet();
     const [dialectWalletAdapter, setDialectWalletAdapter] = React.useState<DialectWalletAdapter>(() => walletToDialectWallet(wallet));
   

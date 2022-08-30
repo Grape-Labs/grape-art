@@ -1905,7 +1905,7 @@ export default function ItemOffers(props: any) {
                 if (!simulate.value.err){
 
                     //console.log("simulate: "+JSON.stringify(simulate));
-                    
+                    //enqueueSnackbar(`${t('Preparing to Buy Now')}: ${salePrice} SOL ${t('from')}: ${buyerPublicKey.toBase58()}`,{ variant: 'info' });
                     enqueueSnackbar(`${t('Executing transaction for')}: ${mint.toString()}`,{ variant: 'info' });
                     
                     const signedTransaction2 = await sendTransaction(transaction, connection, {

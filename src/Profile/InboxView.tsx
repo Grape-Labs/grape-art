@@ -81,7 +81,7 @@ import {
   }
   
   export default function InboxView(): JSX.Element {
-    const { connection } = useConnection();
+    const connection = new Connection(GENSYSGO_RPC_ENDPOINT);
     const wallet = useWallet();
     const [dialectWalletAdapter, setDialectWalletAdapter] = useState<DialectWalletAdapter>(() => walletToDialectWallet(wallet));
   
