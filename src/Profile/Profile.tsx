@@ -1758,7 +1758,10 @@ export function ProfileView(this: any, props: any) {
 
     React.useEffect(() => {
         if (withPubKey) {
+            
             if (ValidateAddress(withPubKey)) {
+                console.log("withPubKey: "+withPubKey)
+                
                 setPubkey(withPubKey);
                 navigate(
                     {
@@ -1776,7 +1779,7 @@ export function ProfileView(this: any, props: any) {
                         getTwitterLookup(withPubKey);
                     }
                 } else {
-                    console.log('Nothing send reverting to default profile');
+                    console.log('Nothing sent reverting to default profile');
                     navigate(
                         {
                             pathname: '/profile',
@@ -1792,6 +1795,7 @@ export function ProfileView(this: any, props: any) {
         if (urlParams) {
             setWithPubKey(urlParams);
         } else if (pubkey) {
+
         } else if (publicKey) {
             setWithPubKey(publicKey.toBase58());
         }

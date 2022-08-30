@@ -65,6 +65,13 @@ export const OTHER_MARKETPLACES = new Array(
         name: 'Magic Eden',
         logo: 'https://magiceden.io/static/media/logo.ca418d75.svg',
         //logo: 'https://magiceden.io/img/logo.png',
+        address: '1BWutmTvYPwDtmw9abTkS4Ssr8no61spGAvW1X6NDix',
+        previewUrl: 'https://www.magiceden.io/item-details/',
+        url: 'https://www.magiceden.io'
+    },{
+        name: 'Magic Eden',
+        logo: 'https://magiceden.io/static/media/logo.ca418d75.svg',
+        //logo: 'https://magiceden.io/img/logo.png',
         address: 'GUfCR9mK6azb9vcpsxgXyj7XRPAKJd4KMHTTVvtncGgp',
         previewUrl: 'https://www.magiceden.io/item-details/',
         url: 'https://www.magiceden.io'

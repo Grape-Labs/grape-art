@@ -1489,12 +1489,15 @@ function GalleryItemMeta(props: any) {
                                                                 <>
                                                                 {t('Listed on')}
                                                                     {(filteredMarket.name.length > 0) ? (
-                                                                        <>  
-                                                                            
-                                                                            {(filteredMarket.previewUrl.length > 0) ? (
+                                                                        <>&nbsp;
+                                                                        {filteredMarket.name}
+
+                                                                            {/*(filteredMarket.previewUrl.length > 0) ? (
                                                                                 <>
                                                                                     <Button size="small" variant="text" component="a" href={`${filteredMarket.previewUrl}${mint}`} target="_blank" sx={{ml:1}}>
+                                                                                    
                                                                                         {filteredMarket.logo &&
+                                                                                            <Grid item>
                                                                                         <Avatar 
                                                                                             component={Paper} 
                                                                                             elevation={4}
@@ -1502,24 +1505,29 @@ function GalleryItemMeta(props: any) {
                                                                                             src={filteredMarket.logo}
                                                                                             sx={{ width: 14, height: 14, bgcolor: "#eee", mr:0.5}}
                                                                                         />
+                                                                                        </Grid>
                                                                                         }
-                                                                                        {filteredMarket.name} <OpenInNewIcon sx={{fontSize:'14px', ml:1}} />
+                                                                                        <Grid item>
+                                                                                            {filteredMarket.name}
+                                                                                        </Grid>
                                                                                     </Button>
                                                                                 </>
                                                                             ):(
-                                                                                <>
-                                                                                        {filteredMarket.logo &&
-                                                                                        <Avatar 
-                                                                                            component={Paper} 
-                                                                                            elevation={4}
-                                                                                            alt={filteredMarket.name}
-                                                                                            src={filteredMarket.logo}
-                                                                                            sx={{ width: 14, height: 14, bgcolor: "#eee", mr:0.5}}
-                                                                                        />
-                                                                                        }
-                                                                                        <ExplorerView address={mint} type='address' title={filteredMarket.name}/>
-                                                                                </>
+                                                                                <Grid item>
+                                                                                    {filteredMarket.logo &&
+                                                                                    <Avatar 
+                                                                                        component={Paper} 
+                                                                                        elevation={4}
+                                                                                        alt={filteredMarket.name}
+                                                                                        src={filteredMarket.logo}
+                                                                                        sx={{ width: 14, height: 14, bgcolor: "#eee", mr:0.5}}
+                                                                                    />
+                                                                                    }
+                                                                                    <ExplorerView address={mint} type='address' title={filteredMarket.name}/>
+                                                                                </Grid>
                                                                             )}
+                                                                        </Grid>
+                                                                        */}
                                                                         </>
                                                                     ):(
                                                                         <>
