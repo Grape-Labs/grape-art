@@ -99,10 +99,6 @@ import { getByPlaceholderText } from "@testing-library/react";
 import { parseMintAccount } from "@project-serum/common";
 import { any } from "prop-types";
 
-function isImage(url:string) {
-    return /\.(jpg|jpeg|png|webp|avif|gif|svg)$/.test(url);
-}
-  
 function formatBytes(bytes: any, decimals = 2) {
     if (bytes === 0) return '0 Bytes';
 
