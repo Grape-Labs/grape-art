@@ -31,11 +31,13 @@ import { Box, Grid, Paper, Container, Typography, AppBar } from '@mui/material';
 
 import Header from './Header/Header';
 import { SnackbarProvider } from 'notistack';
-import { ConnectionProvider, 
+import {
+    ConnectionProvider,
     useConnection,
-    WalletProvider, 
+    WalletProvider,
     useWallet,
-    WalletContextState } from '@solana/wallet-adapter-react';
+    WalletContextState,
+} from '@solana/wallet-adapter-react';
 import { WalletAdapterNetwork, WalletError, WalletNotConnectedError } from '@solana/wallet-adapter-base';
 import { Connection } from '@solana/web3.js';
 //import { Helmet } from 'react-helmet';
@@ -77,11 +79,12 @@ import {
 import grapeTheme from './utils/config/theme';
 //import "./App.less";
 import { GRAPE_RPC_ENDPOINT, TX_RPC_ENDPOINT, GENSYSGO_RPC_ENDPOINT } from './utils/grapeTools/constants';
-import { BottomChat as DialectBottomChat, 
-    DialectUiManagementProvider, 
-    DialectContextProvider, 
-    DialectThemeProvider, 
-    DialectWalletAdapter, 
+import {
+    BottomChat as DialectBottomChat,
+    DialectUiManagementProvider,
+    DialectContextProvider,
+    DialectThemeProvider,
+    DialectWalletAdapter,
     useDialectUiId,
     ThemeProvider as DThemeProvider,
     Config,
@@ -95,77 +98,65 @@ import { CardinalTwitterIdentityResolver } from '@dialectlabs/identity-cardinal'
 import { getDialectVariables, GRAPE_BOTTOM_CHAT_ID } from './utils/ui-contants';
 import { ClassNames } from '@emotion/react';
 
-
-const walletToDialectWallet = (
-    wallet: WalletContextState
-  ): DialectWalletAdapter => ({
+const walletToDialectWallet = (wallet: WalletContextState): DialectWalletAdapter => ({
     publicKey: wallet.publicKey!,
-    connected:
-      wallet.connected &&
-      !wallet.connecting &&
-      !wallet.disconnecting &&
-      Boolean(wallet.publicKey),
+    connected: wallet.connected && !wallet.connecting && !wallet.disconnecting && Boolean(wallet.publicKey),
     signMessage: wallet.signMessage,
     signTransaction: wallet.signTransaction,
     signAllTransactions: wallet.signAllTransactions,
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     //@ts-ignore
     diffieHellman: wallet.wallet?.adapter?._wallet?.diffieHellman
-      ? async (pubKey) => {
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          //@ts-ignore
-          return wallet.wallet?.adapter?._wallet?.diffieHellman(pubKey);
-        }
-      : undefined,
-  });
+        ? async (pubKey) => {
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              //@ts-ignore
+              return wallet.wallet?.adapter?._wallet?.diffieHellman(pubKey);
+          }
+        : undefined,
+});
 
-function BottomChatView(): JSX.Element {
+function DialectProviders({ children }: { children: ReactNode }): JSX.Element {
     const connection = new Connection(GENSYSGO_RPC_ENDPOINT);
     const wallet = useWallet();
-    const [dialectWalletAdapter, setDialectWalletAdapter] = React.useState<DialectWalletAdapter>(() => walletToDialectWallet(wallet));
-  
-    React.useEffect(() => {
-      setDialectWalletAdapter(walletToDialectWallet(wallet));
-    }, [wallet]);
-  
-    const dialectConfig = useMemo(
-      (): Config => ({
-        backends: [Backend.DialectCloud, Backend.Solana],
-        environment: 'production',
-        dialectCloud: {
-          tokenStore: 'local-storage',
-        },
-        solana: {
-          rpcUrl: connection.rpcEndpoint,
-        },
-        identity: {
-          resolvers: [
-            new DialectDappsIdentityResolver(),
-            new SNSIdentityResolver(new Connection(GENSYSGO_RPC_ENDPOINT)),
-            new CardinalTwitterIdentityResolver(new Connection(GENSYSGO_RPC_ENDPOINT)),
-          ],
-        },
-      }),
-      [connection]
+    const [dialectWalletAdapter, setDialectWalletAdapter] = React.useState<DialectWalletAdapter>(() =>
+        walletToDialectWallet(wallet)
     );
-  
-    return (
-      <DialectContextProvider
-        wallet={dialectWalletAdapter}
-        config={dialectConfig}
-      >
-        <DialectUiManagementProvider>
-          <DThemeProvider theme={'dark'}>
-            <BottomChatElement />
-          </DThemeProvider>
-        </DialectUiManagementProvider>
-      </DialectContextProvider>
-    );
-  }
 
-  function BottomChatElement() {
+    React.useEffect(() => {
+        setDialectWalletAdapter(walletToDialectWallet(wallet));
+    }, [wallet]);
+
+    const dialectConfig = useMemo(
+        (): Config => ({
+            backends: [Backend.DialectCloud, Backend.Solana],
+            environment: 'production',
+            dialectCloud: {
+                tokenStore: 'local-storage',
+            },
+            solana: {
+                rpcUrl: connection.rpcEndpoint,
+            },
+            identity: {
+                resolvers: [
+                    new DialectDappsIdentityResolver(),
+                    new SNSIdentityResolver(new Connection(GENSYSGO_RPC_ENDPOINT)),
+                    new CardinalTwitterIdentityResolver(new Connection(GENSYSGO_RPC_ENDPOINT)),
+                ],
+            },
+        }),
+        [connection]
+    );
+
+    return (
+        <DialectContextProvider wallet={dialectWalletAdapter} config={dialectConfig}>
+            <DialectUiManagementProvider>{children}</DialectUiManagementProvider>
+        </DialectContextProvider>
+    );
+}
+
+function BottomChatElement() {
     const { navigation } = useDialectUiId<ChatNavigationHelpers>('dialect-inbox');
-  
+
     return (
         <ClassNames>
             {({ css }) => (
@@ -176,18 +167,14 @@ function BottomChatView(): JSX.Element {
                         }}
                     >
                         <DialectThemeProvider variables={getDialectVariables(css, 'popup')} theme="dark">
-                            <DialectBottomChat
-                                dialectId={GRAPE_BOTTOM_CHAT_ID}
-                            />
+                            <DialectBottomChat dialectId={GRAPE_BOTTOM_CHAT_ID} />
                         </DialectThemeProvider>
                     </Container>
                 </>
             )}
         </ClassNames>
-
     );
-  }
-
+}
 
 function Copyright(props: any): JSX.Element {
     const { t, i18n } = useTranslation();
@@ -198,7 +185,7 @@ function Copyright(props: any): JSX.Element {
     );
 }
 
-function DashboardContent(){
+function DashboardContent() {
     const [open, setOpen] = React.useState(true);
     const toggleDrawer = () => {
         setOpen(!open);
@@ -238,18 +225,18 @@ function DashboardContent(){
         ],
         [network]
     );
-    
+
     const renderLoader = () => <p>Loading</p>;
 
-        return (
+    return (
         <>
             <Suspense fallback={renderLoader()}>
-                <DialectUiManagementProvider>
-                    <ThemeProvider theme={grapeTheme}>
-                        <div className="grape-gradient-background">
-                            <SnackbarProvider>
-                                <ConnectionProvider endpoint={endpoint}>
-                                    <WalletProvider wallets={wallets} autoConnect>
+                <ThemeProvider theme={grapeTheme}>
+                    <div className="grape-gradient-background">
+                        <SnackbarProvider>
+                            <ConnectionProvider endpoint={endpoint}>
+                                <WalletProvider wallets={wallets} autoConnect>
+                                    <DialectProviders>
                                         <Grid
                                             //color={grapeTheme.palette.primary.light}
                                             sx={{
@@ -275,7 +262,7 @@ function DashboardContent(){
                                                     }}
                                                 >
                                                     <Container maxWidth="xl" sx={{ mb: 4 }}>
-                                                        <BottomChatView />
+                                                        <BottomChatElement />
 
                                                         <Routes>
                                                             {/*<Route path="/splash" element={<SplashView />} />*/}
@@ -330,21 +317,21 @@ function DashboardContent(){
                                                 </Grid>
                                             </Router>
                                         </Grid>
-                                    </WalletProvider>
-                                </ConnectionProvider>
-                            </SnackbarProvider>
-                        </div>
-                    </ThemeProvider>
-                </DialectUiManagementProvider>
+                                    </DialectProviders>
+                                </WalletProvider>
+                            </ConnectionProvider>
+                        </SnackbarProvider>
+                    </div>
+                </ThemeProvider>
             </Suspense>
         </>
-        );
+    );
 }
 
 export const NotFound = () => {
     return (
-        <div style={{ height: '100%', overflow: 'auto'}}>
-            <Paper className="grape-paper-background" sx={{borderRadius:'17px',mt:5,p:2}}>
+        <div style={{ height: '100%', overflow: 'auto' }}>
+            <Paper className="grape-paper-background" sx={{ borderRadius: '17px', mt: 5, p: 2 }}>
                 <Grid
                     className="grape-paper"
                     container
