@@ -1665,9 +1665,9 @@ export function ProfileView(this: any, props: any) {
             setRDLoading(true);
 
             const SOL_TLD_AUTHORITY = new PublicKey('58PwtjSDuFHuUkYjH9BYnnQKHfwo9reZhC2zMJv9JPkx');
-            const ROOT_TLD_AUTHORITY = new PublicKey('ZoAhWEqTVqHVqupYmEanDobY7dee5YKbQox9BNASZzU');
-            const PROGRAM_ID = new PublicKey('jCebN34bUfdeUYJT13J1yG16XWQpt5PDx6Mse9GUqhR');
-            const centralState = new PublicKey('33m47vH6Eav6jr5Ry86XjhRft2jRBLDnDgPSHoquXi2Z');
+            //const ROOT_TLD_AUTHORITY = new PublicKey('ZoAhWEqTVqHVqupYmEanDobY7dee5YKbQox9BNASZzU');
+            //const PROGRAM_ID = new PublicKey('jCebN34bUfdeUYJT13J1yG16XWQpt5PDx6Mse9GUqhR');
+            //const centralState = new PublicKey('33m47vH6Eav6jr5Ry86XjhRft2jRBLDnDgPSHoquXi2Z');
 
             const domainName = url.slice(0, url.indexOf('.'));
             const hashedName = await getHashedName(domainName);
@@ -1761,7 +1761,7 @@ export function ProfileView(this: any, props: any) {
             
             if (ValidateAddress(withPubKey)) {
                 console.log("withPubKey: "+withPubKey)
-                
+
                 setPubkey(withPubKey);
                 navigate(
                     {
