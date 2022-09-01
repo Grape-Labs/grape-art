@@ -330,7 +330,7 @@ export function IdentityView(props: any){
                                     variant='outlined'
                                     size='small'
                                     component='a'
-                                    href={`https://naming.bonfida.org/domain/${params.value.slice(0,params.value.indexOf(".sol"))}`}
+                                    href={params.value.indexOf(".sol") > -1 ? `https://naming.bonfida.org/domain/${params.value.slice(0,params.value.indexOf(".sol"))}`: `https://naming.bonfida.org/twitter`}
                                     target='_blank'
                                     sx={{borderRadius:'17px',ml:1}}
                                 >
