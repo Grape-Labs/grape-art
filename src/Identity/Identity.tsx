@@ -1406,7 +1406,6 @@ export function IdentityView(props: any){
                                                                                         borderColor:'rgba(255,255,255,0.25)'
                                                                                     }}}
                                                                                 checkboxSelection
-                                                                                disableSelectionOnClick
                                                                             />
                                                                         :
                                                                         <DataGrid
