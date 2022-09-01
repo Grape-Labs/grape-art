@@ -85,10 +85,11 @@ const BootstrapDialogTitle = (props: DialogTitleProps) => {
 };
 
 export default function BuyDomainView(props: any) {
-    const fetchSolanaDomain = props.fetchSolanaDomain;
-    const snsDomain = props.snsDomain;
     const [open, setOpen] = React.useState(false);
     const [toaddress, setToAddress] = React.useState(null);
+    const [spaceAllocated, setSpaceAllocated] = React.useState(null);
+    const [snsDomain, setSNSDomain] = React.useState(null);
+
     const freeconnection = new Connection(TX_RPC_ENDPOINT);
     const connection = new Connection(GRAPE_RPC_ENDPOINT);//useConnection();
     const { publicKey, wallet, sendTransaction, signTransaction } = useWallet();
@@ -107,12 +108,12 @@ export default function BuyDomainView(props: any) {
         setOpen(false);
     };
     
-    async function buyDomain(domain: string, spaceAllocated: number) {
-        
+    async function buyDomain(domain: string, tokenAccount: string) {
+        const fetchSolanaDomain = props.fetchSolanaDomain; // refresh function
         const name = domain;//"bonfida"; // We want to register bonfida.sol
         const space = spaceAllocated * 1_000; // We want a 1kB sized domain (max 10kB)
         
-        const buyerTokenAccount = new PublicKey("..."); // Publickey of the buyer
+        const buyerTokenAccount = new PublicKey(tokenAccount || "EchesyfXePKdLtoiZSL8pBe8Myagyy8ZRqsACNCFGnvp");
         
         const [, ix] = await registerDomainName(name, space, publicKey, new PublicKey(buyerTokenAccount));
         //const createInstruction: TransactionInstruction = await registerDomainName(name, space, publicKey, buyerTokenAccount);
@@ -161,18 +162,10 @@ export default function BuyDomainView(props: any) {
     function HandleSendSubmit(event: any) {
         event.preventDefault();
         if (snsDomain){
-            if (toaddress){
-                if ((toaddress.length >= 32) && 
-                    (toaddress.length <= 44)){ // very basic check / remove and add twitter handle support (handles are not bs58)
-                    buyDomain(snsDomain, toaddress);
-                    handleClose();
-                } else{
-                    // Invalid Wallet ID
-                    enqueueSnackbar(`Enter a valid Wallet Address!`,{ variant: 'error' });
-                    console.log("INVALID WALLET ID");
-                }
+            if (spaceAllocated){
+                buyDomain(snsDomain, "EchesyfXePKdLtoiZSL8pBe8Myagyy8ZRqsACNCFGnvp"); // domain, space allocated
             } else{
-                enqueueSnackbar(`Enter a valid Wallet Address!`,{ variant: 'error' });
+                enqueueSnackbar(`Enter a domain you would like to acquire!`,{ variant: 'error' });
             }
         }
     }
@@ -221,13 +214,44 @@ export default function BuyDomainView(props: any) {
                                     </Grid>
                                     <Grid item xs={12}>
                                         <TextField 
-                                            id="send-to-address" 
+                                            id="solana-desired-domain" 
                                             fullWidth 
                                             placeholder="Enter a Solana address" 
-                                            label="To address" 
+                                            label="Domain" 
                                             variant="standard"
                                             autoComplete="off"
-                                            onChange={(e) => {setToAddress(e.target.value)}}
+                                            onChange={(e) => {setSNSDomain(e.target.value)}}
+                                            InputProps={{
+                                                inputProps: {
+                                                    style: {
+                                                        textAlign:'center'
+                                                    }
+                                                }
+                                            }}
+                                        />
+                                    </Grid>
+                                </>
+                          
+                        </Grid>
+                    </FormControl>
+                    <FormControl>
+                        <Grid container spacing={2}>
+                                <>
+                                    <Grid item xs={12} textAlign={'center'} sx={{mt:1}}>
+                                        <Typography variant="body2">
+                                            Space Allocation
+                                        </Typography>
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <TextField 
+                                            id="size-allocation" 
+                                            fullWidth 
+                                            placeholder="Space Allocation" 
+                                            label="Allocation" 
+                                            variant="standard"
+                                            autoComplete="off"
+                                            type="number"
+                                            onChange={(e) => {setSpaceAllocated(e.target.value)}}
                                             InputProps={{
                                                 inputProps: {
                                                     style: {
@@ -249,7 +273,7 @@ export default function BuyDomainView(props: any) {
                         variant="outlined" 
                         title="Transfer"
                         disabled={
-                            (!toaddress || toaddress.length <= 0)
+                            (!snsDomain || snsDomain.length <= 0)
                         }
                         sx={{
                             borderRadius:'17px'

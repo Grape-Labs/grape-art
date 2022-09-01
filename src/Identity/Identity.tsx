@@ -127,6 +127,7 @@ export function IdentityView(props: any){
     const [solanaDomain, setSolanaDomain] = React.useState(null);
     const [solanaDomainRows, setSolanaDomainRows] = React.useState(null);
     const [gqlMints, setGQLMints] = React.useState(null);
+    const [gqlRealms, setGQLRealms] = React.useState(null);
     const [solanaHoldings, setSolanaHoldings] = React.useState(null);
     const [solanaHoldingRows, setSolanaHoldingRows] = React.useState(null);
     const [solanaClosableHoldings, setSolanaClosableHoldings] = React.useState(null);
@@ -295,7 +296,7 @@ export function IdentityView(props: any){
             renderCell: (params) => {
                 return (
                     <>
-                        {params.value.indexOf(".sol") ?
+                        {params.value.indexOf(".sol") > -1 ?
                             <>Domain</>
                         :
                             <>Twitter Handle</>
@@ -321,8 +322,9 @@ export function IdentityView(props: any){
                                     </Button>
                                 </Tooltip>
                             */}
+                            {params.value.indexOf(".sol") > -1 &&
                                 <TransferDomainView snsDomain={params.value} fetchSolanaDomain={fetchSolanaDomain} />
-                            
+                            }
                             <Tooltip title='Manage SNS Record'>
                                 <Button
                                     variant='outlined'
@@ -492,6 +494,56 @@ export function IdentityView(props: any){
 
             //return results;
     }
+
+    const getGqlRealms = async(publicKeys: any) => {
+        
+        const GET_REALMS = gql`
+            query realms($addresses: [PublicKey!], $communityMints: [PublicKey!]) {
+                realms(addresses: $addresses, communityMints: $communityMints) {
+                address
+                communityMint
+                votingProposalCount
+                authority
+                name
+                realmConfig {
+                    ...RealmConfigFragment
+                }
+                }
+            }    
+        `
+        
+        let using = publicKeys;
+        let usequery = GET_REALMS;
+        
+        return await gql_client
+            .query({
+                query: usequery,
+                variables: {
+                    addresses: using
+                }
+            }).then((res) => {
+                
+                //console.log("res: "+JSON.stringify(res.data.nftsByMintAddress))
+                
+                const response = res.data.nftsByMintAddress;
+                
+                const final = new Array();
+
+                const nftMapValues = response.reduce(function(map: Map<any,any>, item:any) {
+                    map[item.mintAddress] = item;
+                    return map;
+                }, new Map())
+                
+                //console.log("final: "+JSON.stringify(final))
+                setGQLRealms(nftMapValues)
+                return nftMapValues;
+            }).catch((err) => {
+                console.log("ERR: "+JSON.stringify(err))
+            })
+        //console.log("QUERY: "+JSON.stringify(results))
+
+        //return results;
+}
 
     function clearSelectionModels(){
         try{
@@ -1228,7 +1280,6 @@ export function IdentityView(props: any){
                                                                             }}
                                                                             sortingOrder={['asc', 'desc', null]}
                                                                             checkboxSelection
-                                                                            disableSelectionOnClick
                                                                         />
                                                                     :
                                                                     <DataGrid
@@ -1457,7 +1508,7 @@ export function IdentityView(props: any){
                                                             </div>    
                                                         }
                                                     </TabPanel>
-
+                                                    
                                                     <TabPanel value="5">
                                                         {/*
                                                         <BuyDomainView pubkey={pubkey} />
