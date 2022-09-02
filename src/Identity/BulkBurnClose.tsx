@@ -502,12 +502,12 @@ export default function BulkBurnClose(props: any) {
                 </DialogContent>
                 <DialogActions>
                     <Grid item>
-                    <FormControlLabel
-                        control={
-                        <Checkbox checked={accept} onChange={handleAccept} name="" />
-                        }
-                        label={`${type === 0 ? `I am aware that burning of tokens accounts is not reversable`:`I am aware that I am closing these selected accounts`}`}
-                    />
+                        <FormControlLabel
+                            control={
+                            <Checkbox checked={accept} onChange={handleAccept} name="" />
+                            }
+                            label={`${type === 0 ? `I am aware that burning of tokens accounts is not reversable`:`I am aware that I am closing these selected accounts`}`}
+                        />
                     </Grid>
                     <Grid item>
                     {accept &&

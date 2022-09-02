@@ -40,6 +40,11 @@ import {
     ListItemButton,
     ListItemIcon,
     ListItemText,
+    ListItemAvatar,
+    ListItem,
+    Checkbox,
+    FormControl,
+    FormControlLabel,
 } from '@mui/material';
 
 //import { CrossmintPayButton } from '@crossmint/client-sdk-react-ui';
@@ -266,6 +271,7 @@ function SellNowVotePrompt(props:any){
     //const salePrice = React.useState(props.salePrice);
     //const provider = new anchor.Provider(connection, wallet, anchor.Provider.defaultOptions)
 
+    
     const handleClickOpenDialog = () => {
         setSellNowAmount('');
         //console.log('SalePrice in handleSellNow:' ,salePrice);
@@ -291,6 +297,22 @@ function SellNowVotePrompt(props:any){
     function ThirdPartyHolder (){
         const [loadingTP, setLoadingTP] = React.useState(false);
         const [meListing, setMEListing] = React.useState(null);
+        const [alertBuyEscrowOpen, setAlertBuyEscrowOpen] = React.useState(false);
+        const [donateAccept, setDonateAccept] = React.useState(false);
+
+        const handleAlertBuyEscrowClose = () => {
+            setAlertBuyEscrowOpen(false);
+        };
+        const handleAlertBuyEscrowOpen = () => {
+            setAlertBuyEscrowOpen(true);
+        };
+        const setBuyEscrowPrompt = () => {
+            //setAlertBuyEscrowOpen();
+        }
+
+        const handleDonateAccept = () => {
+            setDonateAccept(!donateAccept);
+        };
 
         const Timeout = (time:number) => {
             let controller = new AbortController();
@@ -299,6 +321,7 @@ function SellNowVotePrompt(props:any){
         };
 
         async function handleEscrowBuyNow(event: any) {
+            handleAlertBuyEscrowClose();
             event.preventDefault();
             
             if (meListing && meListing[0].price > 0) {
@@ -452,24 +475,105 @@ function SellNowVotePrompt(props:any){
             return (
                 <Grid item>
                     {meListing && meListing[0]?.auctionHouse ?
-                        <ButtonGroup>
-                            <Tooltip title={`Buy this NFT which is listed on Magic Eden using an escrow program: ${meListing[0]?.auctionHouse}`}>
-                                <Button sx={{borderTopLeftRadius:'17px',borderBottomLeftRadius:'17px'}}
-                                    onClick={handleEscrowBuyNow}
-                                >
-                                    Listed on Magic Eden for {meListing && meListing[0]?.price} SOL
-                                </Button>
-                            </Tooltip>
-                            <Tooltip title={`Buy from Magic Eden listing on escrow: ${meListing[0]?.auctionHouse}`}>
-                                <Button sx={{borderTopRightRadius:'17px',borderBottomRightRadius:'17px'}}
-                                    variant='contained'
-                                    color='error'
-                                    onClick={handleEscrowBuyNow}
-                                >
-                                    <ShoppingCartIcon />
-                                </Button>
-                            </Tooltip>
-                        </ButtonGroup>
+                        <>
+                            <BootstrapDialog 
+                                    fullWidth={true}
+                                    maxWidth={"sm"}
+                                    PaperProps={{
+                                        style: {
+                                            borderRadius: '20px'
+                                        }
+                                    }}
+                                    open={alertBuyEscrowOpen}
+                                    onClose={handleAlertBuyEscrowClose}
+                                    aria-labelledby="alert-bn-dialog-title"
+                                    aria-describedby="alert-bn-dialog-description"
+                                    >
+                                    <DialogTitle id="alert-bn-dialog-title">
+                                        <Typography>
+                                            {t('BUY NOW CONFIRMATION')}
+                                        </Typography>
+                                    </DialogTitle>
+                                    <DialogContent>
+                                        <FormControl>
+                                            <Grid container spacing={2}>
+                                                    <Grid item>
+                                                        <Alert severity="warning">
+                                                            <>Please verify the following is correct</>
+                                                        </Alert>
+                                                        <Typography>
+                                                            <List dense={true}>
+                                                                <ListItem>
+                                                                    {t('Amount')}:&nbsp;<strong>{meListing[0].price}<SolCurrencyIcon sx={{ml:1,fontSize:"10px"}} /></strong>
+                                                                </ListItem>
+                                                                <ListItem>
+                                                                    {t('Mint')}: <MakeLinkableAddress addr={mint} trim={9} hasextlink={true} hascopy={false} fontsize={16} /> <br/>
+                                                                </ListItem>
+                                                                <ListItem>
+                                                                    {t('Owner')}: <MakeLinkableAddress addr={meListing[0].seller} trim={9} hasextlink={true} hascopy={false} fontsize={16} /><br/>
+                                                                </ListItem>
+                                                                <ListItem>
+                                                                    {t('Escrow')}: <MakeLinkableAddress addr={mintOwner} trim={9} hasextlink={true} hascopy={false} fontsize={16} /><br/>
+                                                                </ListItem>
+                                                                <ListItem>
+                                                                    {t('Market Address')}: <MakeLinkableAddress addr={meListing[0]?.auctionHouse} trim={9} hasextlink={true} hascopy={false} fontsize={16} /><br/>
+                                                                </ListItem>
+                                                                <ListItem>
+                                                                    <>Marketplace:&nbsp;<strong>Magic Eden</strong><br/></>
+                                                                </ListItem>
+                                                                {/*royalties &&
+                                                                <Typography variant='body2' sx={{mt:1}}>
+                                                                Royalties: {(+royalties/100).toFixed(2)}%
+                                                                <Typography component='div' variant='caption'>*These are the original creator royalties of this NFT, if this NFT is sold again the seller pays for these royalties</Typography>
+                                                                <br/>
+                                                                </Typography>
+                                                                */}
+                                                            </List>
+                                                        </Typography>
+                                                        {/*
+                                                        <Grid item>
+                                                            <FormControlLabel
+                                                                control={
+                                                                <Checkbox checked={donateAccept} onChange={handleDonateAccept} name="" />
+                                                                }
+                                                                label={`Would you like to donate X to the XYZ DAO during this purchase?`}
+                                                            />
+                                                        </Grid>
+                                                        */}
+
+                                                </Grid>
+                                            </Grid>
+                                        </FormControl>
+                                
+                                    </DialogContent>
+                                    <DialogActions>
+                                        <Button onClick={handleAlertBuyEscrowClose}>Cancel</Button>
+                                        <Button 
+                                            onClick={(e) => handleEscrowBuyNow(e)}
+                                            autoFocus>
+                                        {t('Buy Now')}
+                                        </Button>
+                                    </DialogActions>
+                                </BootstrapDialog>
+                            <ButtonGroup>
+                                <Tooltip title={`Buy this NFT which is listed on Magic Eden using an escrow program: ${meListing[0]?.auctionHouse}`}>
+                                    <Button sx={{borderTopLeftRadius:'17px',borderBottomLeftRadius:'17px'}}
+                                        onClick={handleAlertBuyEscrowOpen}
+                                    >
+                                        Listed on Magic Eden for {meListing && meListing[0]?.price} SOL
+                                    </Button>
+                                </Tooltip>
+                                <Tooltip title={`Buy from Magic Eden listing on escrow: ${meListing[0]?.auctionHouse}`}>
+                                    <Button sx={{borderTopRightRadius:'17px',borderBottomRightRadius:'17px'}}
+                                        variant='contained'
+                                        color='error'
+                                        onClick={handleAlertBuyEscrowOpen}
+                                    >
+                                        <ShoppingCartIcon />
+                                    </Button>
+                                </Tooltip>
+                            </ButtonGroup>
+                        </>
                     :
                     <Tooltip title={t('This NFT is currently owned by a program and may be listed on a third party marketplace escrow')}>
                         <Button sx={{borderRadius:'10px'}}>
@@ -2241,83 +2345,83 @@ export default function ItemOffers(props: any) {
                                                     alignItems="center"
                                                     justifyContent="center">
                                                         <>
-                                                                    <BootstrapDialog 
-                                                                        fullWidth={true}
-                                                                        maxWidth={"sm"}
-                                                                        PaperProps={{
-                                                                            style: {
-                                                                                background: '#13151C',
-                                                                                border: '1px solid rgba(255,255,255,0.05)',
-                                                                                borderTop: '1px solid rgba(255,255,255,0.1)',
-                                                                                borderRadius: '20px'
-                                                                            }
-                                                                        }}
-                                                                        open={alertbuynowopen}
-                                                                        onClose={handleAlertBuyNowClose}
-                                                                        aria-labelledby="alert-bn-dialog-title"
-                                                                        aria-describedby="alert-bn-dialog-description"
-                                                                        >
-                                                                        <DialogTitle id="alert-bn-dialog-title">
-                                                                            <Typography>
-                                                                                {t('BUY NOW CONFIRMATION')}
-                                                                            </Typography>
-                                                                        </DialogTitle>
-                                                                        <DialogContent>
-                                                                            <DialogContentText id="alert-bn-dialog-description">
-                                                                            <br />
-                                                                                <Alert 
-                                                                                    severity="info" variant="outlined"
-                                                                                    sx={{backgroundColor:'black'}}
-                                                                                    >
-                                                                                        <Box sx={{width:'100%'}}>
-                                                                                            {t('Amount')}: <strong>{salePrice}<SolCurrencyIcon sx={{ml:1,fontSize:"10px"}} /></strong><br/>
-                                                                                            {t('Mint')}: <MakeLinkableAddress addr={mint} trim={0} hasextlink={true} hascopy={false} fontsize={16} /> <br/>
-                                                                                            {t('Owner')}: <MakeLinkableAddress addr={mintOwner} trim={0} hasextlink={true} hascopy={false} fontsize={16} /><br/>
-                                                                                            {t('Auction House')}: <MakeLinkableAddress addr={salePriceAH} trim={9} hasextlink={true} hascopy={false} fontsize={16} /><br/>
-                                                                                            {verifiedAuctionHouse && 
-                                                                                                <>Marketplace: <strong>{verifiedAuctionHouse.name}</strong><br/></>
-                                                                                            }
-                                                                                            {royalties &&
-                                                                                                <Typography variant='body2' sx={{mt:1}}>
-                                                                                                Royalties: {(+royalties/100).toFixed(2)}%
-                                                                                                <Typography component='div' variant='caption'>*These are the original creator royalties of this NFT, if this NFT is sold again the seller pays for these royalties</Typography>
-                                                                                                <br/>
-                                                                                                </Typography>
-                                                                                            }
-                                                                                            <br/>
-                                                                                            <Typography sx={{textAlign:'center'}}>
-                                                                                                {t('Make sure the above is correct')}<br/>{t('press BUY WITH WALLET to proceed')}
-                                                                                            </Typography>   
-                                                                                        </Box>
-                                                                                </Alert>
-                                                                            
-                                                                            </DialogContentText>
-                                                                        </DialogContent>
-                                                                        <DialogActions>
-                                                                            <Button onClick={handleAlertBuyNowClose}>Cancel</Button>
-                                                                            {/*verifiedCollection?.crossmint && (salePrice*tokenSalePrice) < 750 &&
-                                                                                <CrossmintPayButton
-                                                                                    collectionTitle={mintName}
-                                                                                    collectionDescription={mintName}
-                                                                                    collectionPhoto={image}
-                                                                                    clientId={verifiedCollection?.crossmint}
-                                                                                    mintConfig={{
-                                                                                        type: "solana-auction-house",
-                                                                                        mintHash: {mint},
-                                                                                        sellerWallet: {mintOwner},
-                                                                                        buyPrice: +salePrice,
-                                                                                        totalPrice: salePrice.toString(),
-                                                                                    }}
-                                                                                    className="grape-crossmint-button"
-                                                                                />
-                                                                            */}
-                                                                            <Button 
-                                                                                onClick={() => handleBuyNow(salePrice, salePriceAH)}
-                                                                                autoFocus>
-                                                                            {t('Buy with Wallet')}
-                                                                            </Button>
-                                                                        </DialogActions>
-                                                                    </BootstrapDialog>
+                                                            <BootstrapDialog 
+                                                                fullWidth={true}
+                                                                maxWidth={"sm"}
+                                                                PaperProps={{
+                                                                    style: {
+                                                                        background: '#13151C',
+                                                                        border: '1px solid rgba(255,255,255,0.05)',
+                                                                        borderTop: '1px solid rgba(255,255,255,0.1)',
+                                                                        borderRadius: '20px'
+                                                                    }
+                                                                }}
+                                                                open={alertbuynowopen}
+                                                                onClose={handleAlertBuyNowClose}
+                                                                aria-labelledby="alert-bn-dialog-title"
+                                                                aria-describedby="alert-bn-dialog-description"
+                                                                >
+                                                                <DialogTitle id="alert-bn-dialog-title">
+                                                                    <Typography>
+                                                                        {t('BUY NOW CONFIRMATION')}
+                                                                    </Typography>
+                                                                </DialogTitle>
+                                                                <DialogContent>
+                                                                    <DialogContentText id="alert-bn-dialog-description">
+                                                                    <br />
+                                                                        <Alert 
+                                                                            severity="info" variant="outlined"
+                                                                            sx={{backgroundColor:'black'}}
+                                                                            >
+                                                                                <Box sx={{width:'100%'}}>
+                                                                                    {t('Amount')}: <strong>{salePrice}<SolCurrencyIcon sx={{ml:1,fontSize:"10px"}} /></strong><br/>
+                                                                                    {t('Mint')}: <MakeLinkableAddress addr={mint} trim={0} hasextlink={true} hascopy={false} fontsize={16} /> <br/>
+                                                                                    {t('Owner')}: <MakeLinkableAddress addr={mintOwner} trim={0} hasextlink={true} hascopy={false} fontsize={16} /><br/>
+                                                                                    {t('Auction House')}: <MakeLinkableAddress addr={salePriceAH} trim={9} hasextlink={true} hascopy={false} fontsize={16} /><br/>
+                                                                                    {verifiedAuctionHouse && 
+                                                                                        <>Marketplace: <strong>{verifiedAuctionHouse.name}</strong><br/></>
+                                                                                    }
+                                                                                    {royalties &&
+                                                                                        <Typography variant='body2' sx={{mt:1}}>
+                                                                                        Royalties: {(+royalties/100).toFixed(2)}%
+                                                                                        <Typography component='div' variant='caption'>*These are the original creator royalties of this NFT, if this NFT is sold again the seller pays for these royalties</Typography>
+                                                                                        <br/>
+                                                                                        </Typography>
+                                                                                    }
+                                                                                    <br/>
+                                                                                    <Typography sx={{textAlign:'center'}}>
+                                                                                        {t('Make sure the above is correct')}<br/>{t('press BUY WITH WALLET to proceed')}
+                                                                                    </Typography>   
+                                                                                </Box>
+                                                                        </Alert>
+                                                                    
+                                                                    </DialogContentText>
+                                                                </DialogContent>
+                                                                <DialogActions>
+                                                                    <Button onClick={handleAlertBuyNowClose}>Cancel</Button>
+                                                                    {/*verifiedCollection?.crossmint && (salePrice*tokenSalePrice) < 750 &&
+                                                                        <CrossmintPayButton
+                                                                            collectionTitle={mintName}
+                                                                            collectionDescription={mintName}
+                                                                            collectionPhoto={image}
+                                                                            clientId={verifiedCollection?.crossmint}
+                                                                            mintConfig={{
+                                                                                type: "solana-auction-house",
+                                                                                mintHash: {mint},
+                                                                                sellerWallet: {mintOwner},
+                                                                                buyPrice: +salePrice,
+                                                                                totalPrice: salePrice.toString(),
+                                                                            }}
+                                                                            className="grape-crossmint-button"
+                                                                        />
+                                                                    */}
+                                                                    <Button 
+                                                                        onClick={() => handleBuyNow(salePrice, salePriceAH)}
+                                                                        autoFocus>
+                                                                    {t('Buy with Wallet')}
+                                                                    </Button>
+                                                                </DialogActions>
+                                                            </BootstrapDialog>
                                                                     
                                                                     <Grid item>
                                                                         {( (salePrice > 0) ?
