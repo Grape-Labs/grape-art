@@ -10,7 +10,7 @@ import { Link, useParams, useSearchParams } from "react-router-dom";
 import { BN } from '@project-serum/anchor';
 import { PublicKey, Connection, Commitment } from '@solana/web3.js';
 import {ENV, TokenInfo, TokenListProvider} from '@solana/spl-token-registry';
-import { useConnection, useWallet } from '@solana/wallet-adapter-react';
+import { AnchorWallet, useAnchorWallet, useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { WalletError } from '@solana/wallet-adapter-base';
 import { useTranslation } from 'react-i18next';
 import { ShdwDrive } from "@shadow-drive/sdk";
@@ -1319,7 +1319,10 @@ const deserialized = deserializeUnchecked(dataSchema, AccoundData, metavalue?.da
       const fetchStorage = async () => {
         setLoadingStorage(true);
         setLoadingPosition('Storage');
-        
+
+            //new Wallet(pubkey);
+            //const tmpWallet = useAnchorWallet();
+            //tmpWallet.publicKey = pubkey;
             const drive = await new ShdwDrive(new Connection(GRAPE_RPC_ENDPOINT), wallet).init();
             //console.log("drive: "+JSON.stringify(drive));
             setThisDrive(drive);
