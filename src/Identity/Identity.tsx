@@ -1228,11 +1228,13 @@ export function IdentityView(props: any){
                                                                 label={<Hidden smDown><Badge badgeContent={solanaDomain.length} color="primary"><Typography variant="h6">{t('Domains')}</Typography></Badge></Hidden>
                                                             } value="5" />
                                                         }
-                                                         
-                                                        <Tab sx={{color:'white', textTransform:'none'}} 
-                                                                icon={<Hidden smUp><StorageIcon /></Hidden>}
-                                                                label={<Hidden smDown><Typography variant="h6">{t('Storage')}</Typography></Hidden>
-                                                            } value="6" />
+                                                        
+                                                        {publicKey && publicKey.toBase58() === pubkey &&
+                                                            <Tab sx={{color:'white', textTransform:'none'}} 
+                                                                    icon={<Hidden smUp><StorageIcon /></Hidden>}
+                                                                    label={<Hidden smDown><Typography variant="h6">{t('Storage')}</Typography></Hidden>
+                                                                } value="6" />
+                                                        }
 
                                                         <Tab sx={{color:'white', textTransform:'none'}} 
                                                                 icon={<Hidden smUp><OpacityIcon /></Hidden>}
