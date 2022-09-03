@@ -958,7 +958,7 @@ export function IdentityView(props: any){
         const uTable = rlms.reduce((acc, it) => (acc[it.pubkey.toBase58()] = it, acc), {})
         setRealms(uTable);
         
-        const ownerRecordsbyOwner = await getTokenOwnerRecordsByOwner(ticonnection, programId, pubkey);
+        const ownerRecordsbyOwner = await getTokenOwnerRecordsByOwner(ticonnection, programId, new PublicKey(pubkey));
 
         //console.log("ownerRecordsbyOwner "+JSON.stringify(ownerRecordsbyOwner))
         const governance = new Array();
