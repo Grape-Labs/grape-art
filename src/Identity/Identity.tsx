@@ -960,7 +960,7 @@ export function IdentityView(props: any){
         
         const ownerRecordsbyOwner = await getTokenOwnerRecordsByOwner(ticonnection, programId, new PublicKey(pubkey));
 
-        //console.log("ownerRecordsbyOwner "+JSON.stringify(ownerRecordsbyOwner))
+        console.log("ownerRecordsbyOwner "+JSON.stringify(ownerRecordsbyOwner))
         const governance = new Array();
         
         let cnt = 0;
