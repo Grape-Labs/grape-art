@@ -1,6 +1,6 @@
 import React, { useEffect, Suspense, useCallback } from "react";
 import { styled } from '@mui/material/styles';
-import { DataGridPro } from '@mui/x-data-grid-pro';
+//import { DataGridPro } from '@mui/x-data-grid-pro';
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import moment from 'moment';
 import PropTypes from 'prop-types';
