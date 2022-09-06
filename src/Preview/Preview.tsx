@@ -1588,13 +1588,9 @@ function GalleryItemMeta(props: any) {
                                                                 {solanaDomain && solanaDomain.length > 0 ?
                                                                 <>
                                                                     {t('Owned by')} &nbsp;
-                                                                    <Button
-                                                                        component={Link} 
-                                                                        to={`${GRAPE_PROFILE}${tokenOwners?.data.parsed.info.owner}`}
-                                                                        sx={{borderRadius:'24px', color:'white'}}
-                                                                    >
-                                                                        <ExplorerView grapeArtProfile={true} title={solanaDomain} address={tokenOwners?.data.parsed.info.owner} type='address' hideTitle={false} style='text' color='white' fontSize={'12px'} />
-                                                                    </Button>
+                                                                    
+                                                                    <ExplorerView grapeArtProfile={true} title={solanaDomain} address={tokenOwners?.data.parsed.info.owner} type='address' hideTitle={false} style='text' color='white' fontSize={'12px'} />
+                                                                    
                                                                 </>
                                                                 :
                                                                 <>
