@@ -1587,34 +1587,19 @@ function GalleryItemMeta(props: any) {
                                                                 <Grid item>
                                                                 {solanaDomain && solanaDomain.length > 0 ?
                                                                 <>
-                                                                    {t('Owned by')} 
-                                                                    <Tooltip title={t('Visit Profile')}>
-                                                                        <Button
-                                                                            component={Link} 
-                                                                            to={`${GRAPE_PROFILE}${tokenOwners?.data.parsed.info.owner}`}
-                                                                            sx={{borderRadius:'24px', color:'white'}}
-                                                                        >
-                                                                            <Typography variant="caption">
-                                                                                <strong>{solanaDomain}</strong>
-                                                                            </Typography>
-                                                                        </Button>
-                                                                    </Tooltip>
+                                                                    {t('Owned by')} &nbsp;
+                                                                    <Button
+                                                                        component={Link} 
+                                                                        to={`${GRAPE_PROFILE}${tokenOwners?.data.parsed.info.owner}`}
+                                                                        sx={{borderRadius:'24px', color:'white'}}
+                                                                    >
+                                                                        <ExplorerView grapeArtProfile={true} title={solanaDomain} address={tokenOwners?.data.parsed.info.owner} type='address' hideTitle={false} style='text' color='white' fontSize={'12px'} />
+                                                                    </Button>
                                                                 </>
                                                                 :
                                                                 <>
-                                                                    {t('Owned by')} 
-                                                                    <Tooltip title={t('Visit Profile')}>
-                                                                        <Button
-                                                                            component={Link} 
-                                                                            to={`${GRAPE_PROFILE}${tokenOwners?.data.parsed.info.owner}`}
-                                                                            sx={{borderRadius:'24px', color:'white'}}
-                                                                        >
-                                                                            <Typography variant="caption">
-                                                                                <strong>{trimAddress(tokenOwners?.data.parsed.info.owner, 4)}</strong>
-                                                                            </Typography>
-                                                                        </Button>
-                                                                    </Tooltip>
-
+                                                                    {t('Owned by')} &nbsp;
+                                                                    <ExplorerView grapeArtProfile={true} shorten={4} address={tokenOwners?.data.parsed.info.owner} type='address' hideTitle={false} style='text' color='white' fontSize={'12px'} />
                                                                 </>
                                                                 }
                                                                 
@@ -1624,7 +1609,6 @@ function GalleryItemMeta(props: any) {
                                                                         display: "flex",
                                                                         justifyContent: 'flex-end'
                                                                     }}>
-                                                                    <ExplorerView address={tokenOwners?.data.parsed.info.owner} type='address' hideTitle={true} style='text' color='white' fontSize={'12px'} />
                                                                     {publicKey && publicKey.toBase58() === tokenOwners?.data.parsed.info.owner ?
                                                                     <>
                                                                         <Tooltip title={t('Set this NFT as your avatar')}>

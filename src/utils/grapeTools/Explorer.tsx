@@ -36,7 +36,7 @@ const StyledMenu = styled(Menu)(({ theme }) => ({
 
 export default function ExplorerView(props:any){
     const address = props.address;
-    const title = props.title || address;
+    const title = props.title || null;
     const type = props.type || 'address';
     const buttonStyle = props?.style || 'outlined';
     const buttonColor = props?.color || 'white';
@@ -76,13 +76,20 @@ export default function ExplorerView(props:any){
                 }
             >
                 <Typography sx={{color:`${buttonColor}`,fontSize:`${fontSize}`}}>
-                    {!hideTitle &&
+                    {title ?
+                        <>{title}</>
+                    :
                         <>
-                            {(shorten && shorten > 0) ? 
-                                trimAddress(title,shorten) : title
-                            } 
+                            {!hideTitle &&
+                                <>
+                                    {(shorten && shorten > 0) ? 
+                                        trimAddress(address,shorten) : address
+                                    } 
+                                </>
+                            }
                         </>
                     }
+                    
                 </Typography>
             </Button>
             <Paper sx={{backgroundColor:'rgba(255,255,255,0.5)'}}>
