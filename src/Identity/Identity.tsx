@@ -1158,7 +1158,7 @@ export function IdentityView(props: any){
                                                         <ListItemText
                                                             primary={
                                                                 <Typography variant='h4'>
-                                                                    {solanaBalance && parseFloat(new TokenAmount(solanaBalance, 9).format())}
+                                                                    {solanaBalance  && solanaBalance/(10 ** 9)}
                                                                 </Typography>}
                                                         />
                                                     </Grid>
