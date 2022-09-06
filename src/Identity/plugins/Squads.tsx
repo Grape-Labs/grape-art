@@ -53,7 +53,9 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 import OpacityIcon from '@mui/icons-material/Opacity';
 
-import { GRAPE_RPC_ENDPOINT, THEINDEX_RPC_ENDPOINT, GRAPE_PROFILE, GRAPE_PREVIEW, DRIVE_PROXY } from '../../utils/grapeTools/constants';
+import Squads from "@sqds/sdk";
+
+import { GRAPE_RPC_ENDPOINT, GRAPE_PROFILE, GRAPE_PREVIEW, DRIVE_PROXY } from '../../utils/grapeTools/constants';
 import { load } from "../../browser";
 import { PanoramaVerticalSelect } from "@mui/icons-material";
 import { trimAddress } from "../../utils/grapeTools/WalletAddress";
@@ -188,6 +190,17 @@ export function SquadsView(props: any){
         
         try {
             // add loading code here...
+
+            const squads = Squads.localnet(wallet); // or Squads.devnet(...); Squads.mainnet(...)
+
+            setSquads(squads);
+
+            //const multisigAccount = await squads.getMultisig(...);
+            //const multisigAccounts = await squads.getMultisigs([...]);
+            //const msTransaction = await squads.getTransaction(...);
+            //const multisigAccount = await squads.createMultisig(threshold, createKey, members);
+            
+
             setLoadingSquads(false);
             //console.log("squads: "+JSON.stringify(squads))
         } catch (exception) {
