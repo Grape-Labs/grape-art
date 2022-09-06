@@ -1276,7 +1276,7 @@ function GalleryItemMeta(props: any) {
                                                             <TableCell>
                                                                 
                                                             {tokenOwners && (
-                                                                <ExplorerView address={tokenOwners?.data.parsed.info.owner} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
+                                                                <ExplorerView grapeArtProfile={true} address={tokenOwners?.data.parsed.info.owner} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
                                                             )}  
                                                             </TableCell>
                                                         </TableRow>
@@ -1329,16 +1329,8 @@ function GalleryItemMeta(props: any) {
                                                                                     {collectionitem.properties.creators.length > 0 && collectionitem.properties.creators.map((item: any) => (
                                                                                         <TableRow>
                                                                                             <TableCell>
-                                                                                                <Button
-                                                                                                    title={t('Visit Profile')}
-                                                                                                    component={Link} 
-                                                                                                    to={`${GRAPE_PROFILE}${item.address}`}
-                                                                                                    sx={{borderRadius:'17px',color:'white'}}
-                                                                                                >
-                                                                                                    <AccountCircleOutlinedIcon sx={{fontSize:'14px'}}/>
-                                                                                                </Button>
-
-                                                                                                <ExplorerView address={item.address} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
+                                                                                                
+                                                                                                <ExplorerView grapeArtProfile={true} address={item.address} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
                                                                                             
                                                                                             </TableCell>
                                                                                             <TableCell align="right">{item.share}%</TableCell>
@@ -1384,16 +1376,8 @@ function GalleryItemMeta(props: any) {
                                                                                         {collectionrawdata.data.creators.length > 0 && collectionrawdata.data.creators.map((item: any) => (
                                                                                             <TableRow>
                                                                                                 <TableCell>
-                                                                                                    <Button
-                                                                                                        title={t('Visit Profile')}
-                                                                                                        component={Link} 
-                                                                                                        to={`${GRAPE_PROFILE}${item.address}`}
-                                                                                                        sx={{borderRadius:'17px',color:'white'}}
-                                                                                                    >
-                                                                                                        <AccountCircleOutlinedIcon sx={{fontSize:'14px'}}/>
-                                                                                                    </Button>
-
-                                                                                                    <ExplorerView address={item.address} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
+                                                                                                    
+                                                                                                    <ExplorerView grapeArtProfile={true} address={item.address} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
                                                                                                 
                                                                                                 </TableCell>
                                                                                                 <TableCell align="right">{item.share}%</TableCell>

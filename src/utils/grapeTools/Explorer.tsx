@@ -2,6 +2,7 @@ import React from "react"
 import {CopyToClipboard} from 'react-copy-to-clipboard';
 import { styled } from '@mui/material/styles';
 import { useSnackbar } from 'notistack';
+import { Link } from "react-router-dom";
 
 import { 
     Button,
@@ -13,9 +14,14 @@ import {
     Paper,
 } from '@mui/material';
 
+import {
+    GRAPE_PROFILE
+} from '../grapeTools/constants';
+
 import ExploreOutlinedIcon from '@mui/icons-material/ExploreOutlined';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import ExploreIcon from '@mui/icons-material/Explore';
+import PersonIcon from '@mui/icons-material/Person';
 
 import { trimAddress } from "./WalletAddress";
 
@@ -36,6 +42,7 @@ export default function ExplorerView(props:any){
     const buttonColor = props?.color || 'white';
     const hideTitle = props?.hideTitle || false;
     const fontSize = props?.fontSize || '14px';
+    const grapeArtProfile = props?.grapeArtProfile || false;
     const shorten = props?.shorten || 0;
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
@@ -105,6 +112,19 @@ export default function ExplorerView(props:any){
                             
                         </MenuItem>
                     </CopyToClipboard>
+                    
+                    {grapeArtProfile &&
+                        <MenuItem 
+                            component={Link}
+                            to={`${GRAPE_PROFILE}${address}`}
+                            onClick={handleClose}>
+                                <ListItemIcon>
+                                    <PersonIcon fontSize="small" />
+                                </ListItemIcon>
+                                Grape Profile
+                        </MenuItem>
+                    }
+                    
                     <MenuItem 
                         component='a'
                         href={`https://solana.fm/${type}/${address}`}
