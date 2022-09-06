@@ -1326,7 +1326,7 @@ function GalleryItemMeta(props: any) {
                                                                                             <TableCell align="right"><Typography variant="caption">% {t('Royalty')}</Typography></TableCell>
                                                                                         </TableRow>
                                                                                     </TableHead>
-                                                                                    {collectionitem.creators.length > 0 && collectionitem.creators.map((item: any) => (
+                                                                                    {collectionitem.creators.length >= 0 && collectionitem.creators.map((item: any) => (
                                                                                         <TableRow>
                                                                                             <TableCell>
                                                                                                 <Button
@@ -1381,7 +1381,7 @@ function GalleryItemMeta(props: any) {
                                                                                             <TableCell align="right"><Typography variant="caption">% {t('Royalty')}</Typography></TableCell>
                                                                                         </TableRow>
                                                                                     </TableHead>
-                                                                                    {collectionitem.properties.creators.length > 0 && collectionitem.properties.creators.map((item: any) => (
+                                                                                    {collectionitem.properties.creators.length >= 0 && collectionitem.properties.creators.map((item: any) => (
                                                                                         <TableRow>
                                                                                             <TableCell>
                                                                                                 <Button
