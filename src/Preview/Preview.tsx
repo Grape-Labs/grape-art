@@ -1297,6 +1297,61 @@ function GalleryItemMeta(props: any) {
                                                             </TableRow>
                                                         : null }
 
+                                                        {collectionitem?.creators ?
+                                                            <>
+                                                                <TableRow
+                                                                    onClick={() => setOpenCreatorCollapse(!open_creator_collapse)}
+                                                                >
+                                                                    <TableCell>{t('Creators')}:</TableCell>
+                                                                    <TableCell>
+                                                                        {collectionitem?.creators?.length}
+                                                                        <IconButton
+                                                                            aria-label="expand row"
+                                                                            size="small"
+                                                                            sx={{ textAlign:"right" }}
+                                                                        >
+                                                                            {open_creator_collapse ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+                                                                        </IconButton>
+                                                                        
+                                                                    </TableCell>
+                                                                </TableRow>
+                                                                <TableRow>
+                                                                    <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+                                                                        <Collapse in={open_creator_collapse} timeout="auto" unmountOnExit>
+                                                                            <Box sx={{ margin: 1 }}>
+                                                                                <Table size="small" aria-label="purchases">
+                                                                                    <TableHead>
+                                                                                        <TableRow>
+                                                                                            <TableCell><Typography variant="caption">{t('Creator Address')}</Typography></TableCell>
+                                                                                            <TableCell align="right"><Typography variant="caption">% {t('Royalty')}</Typography></TableCell>
+                                                                                        </TableRow>
+                                                                                    </TableHead>
+                                                                                    {collectionitem.creators.length > 0 && collectionitem.creators.map((item: any) => (
+                                                                                        <TableRow>
+                                                                                            <TableCell>
+                                                                                                <Button
+                                                                                                    title={t('Visit Profile')}
+                                                                                                    component={Link} 
+                                                                                                    to={`${GRAPE_PROFILE}${item.address}`}
+                                                                                                    sx={{borderRadius:'17px',color:'white'}}
+                                                                                                >
+                                                                                                    <AccountCircleOutlinedIcon sx={{fontSize:'14px'}}/>
+                                                                                                </Button>
+
+                                                                                                <ExplorerView address={item.address} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
+                                                                                            
+                                                                                            </TableCell>
+                                                                                            <TableCell align="right">{item.share}%</TableCell>
+                                                                                        </TableRow>
+                                                                                    ))}
+                                                                                </Table>
+                                                                            </Box>
+                                                                        </Collapse>
+                                                                    </TableCell>
+                                                                </TableRow>
+                                                            </>
+                                                        : null }
+
                                                         {collectionitem.properties?.creators ?
                                                             <>
                                                                 <TableRow
@@ -1304,7 +1359,7 @@ function GalleryItemMeta(props: any) {
                                                                 >
                                                                     <TableCell>{t('Creators')}:</TableCell>
                                                                     <TableCell>
-                                                                        {collectionitem.properties.creators.length}
+                                                                        {collectionitem.properties?.creators?.length}
                                                                         <IconButton
                                                                             aria-label="expand row"
                                                                             size="small"
