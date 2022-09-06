@@ -12,6 +12,7 @@ import {
     ListItemText,
     Typography,
     Paper,
+    Divider,
 } from '@mui/material';
 
 import {
@@ -119,7 +120,7 @@ export default function ExplorerView(props:any){
                             
                         </MenuItem>
                     </CopyToClipboard>
-                    
+                    <Divider />
                     {grapeArtProfile &&
                         <MenuItem 
                             component={Link}
