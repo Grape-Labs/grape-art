@@ -22,6 +22,8 @@ import {
     Hidden,
 } from '@mui/material';
 
+
+import ExplorerView from '../utils/grapeTools/Explorer';
 import { PreviewView } from "../Preview/Preview";
 
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
@@ -318,17 +320,8 @@ export default function ActivityView(props: any){
             <>
                 <TableRow sx={{border:'none'}} key={key}>
                     <TableCell>
-                        <Tooltip title={t('Visit Bookkeeper Profile')}>
-                            <Button
-                                variant="text"
-                                component={Link} to={`${GRAPE_PROFILE}${item.bookkeeper}`}
-                                sx={{borderRadius:'24px'}}
-                            >
-                                <AccountCircleOutlinedIcon sx={{fontSize:"14px", mr:1}} />
-                                <Typography variant="caption">
-                                    {trimAddress(item.bookkeeper, 3)}
-                                </Typography>
-                            </Button>
+                        <Tooltip title={t('View Bookkeeper Profile')}>
+                            <ExplorerView grapeArtProfile={true} shorten={4} address={item.bookkeeper} type='address' hideTitle={false} style='text' color='white' fontSize={'12px'} />
                         </Tooltip>
                     </TableCell>
                     <TableCell  align="center"><Typography variant="h6">
