@@ -26,6 +26,7 @@ import { getRealm,
 import { gql } from '@apollo/client'
 import gql_client from '../gql_client'
 
+import { SquadsView } from './plugins/Squads';
 import { StorageView } from './plugins/Storage';
 import { StreamingPaymentsView } from './plugins/StreamingPayments';
 import SendToken from '../StoreFront/Send';
@@ -71,6 +72,7 @@ import {
     TabPanel,
 } from '@mui/lab';
 
+import ViewComfyIcon from '@mui/icons-material/ViewComfy';
 import InventoryIcon from '@mui/icons-material/Inventory';
 import SettingsIcon from '@mui/icons-material/Settings';
 import HorizontalRuleIcon from '@mui/icons-material/HorizontalRule';
@@ -1241,6 +1243,11 @@ export function IdentityView(props: any){
                                                                 label={<Hidden smDown><Typography variant="h6">{t('Streaming')}</Typography></Hidden>
                                                         } value="7" />
 
+                                                        <Tab sx={{color:'white', textTransform:'none'}} disabled={true}
+                                                                icon={<Hidden smUp><ViewComfyIcon /></Hidden>}
+                                                                label={<Hidden smDown><Typography variant="h6">{t('Squads')}</Typography></Hidden>
+                                                        } value="7" />
+
                                                     </TabList>
                                                     </Box>
 
@@ -1573,6 +1580,10 @@ export function IdentityView(props: any){
 
                                                     <TabPanel value="7">
                                                         <StreamingPaymentsView pubkey={pubkey} setLoadingPosition={setLoadingPosition} tokenMap={tokenMap} />
+                                                    </TabPanel>
+
+                                                    <TabPanel value="8">
+                                                        <SquadsView pubkey={pubkey} setLoadingPosition={setLoadingPosition} tokenMap={tokenMap} />
                                                     </TabPanel>
 
                                                 </TabContext>
