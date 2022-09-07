@@ -2404,7 +2404,7 @@ export default function ItemOffers(props: any) {
                                                                     <br />
                                                                         <>
                                                                             <Box sx={{width:'100%'}}>
-                                                                            <List>
+                                                                            <List dense={true}>
                                                                                 <ListItem>
                                                                                     {t('Amount')}:&nbsp;<strong>{salePrice}<SolCurrencyIcon sx={{ml:1,fontSize:"10px"}} /></strong>
                                                                                 </ListItem>
