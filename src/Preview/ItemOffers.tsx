@@ -2402,10 +2402,7 @@ export default function ItemOffers(props: any) {
                                                                 <DialogContent>
                                                                     <DialogContentText id="alert-bn-dialog-description">
                                                                     <br />
-                                                                        <Alert 
-                                                                            severity="info" variant="outlined"
-                                                                            sx={{backgroundColor:'black'}}
-                                                                            >
+                                                                        <>
                                                                                 <Box sx={{width:'100%'}}>
                                                                                     {t('Amount')}: <strong>{salePrice}<SolCurrencyIcon sx={{ml:1,fontSize:"10px"}} /></strong><br/>
                                                                                     {t('Mint')}: <ExplorerView address={mint} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' /><br/>
@@ -2426,7 +2423,7 @@ export default function ItemOffers(props: any) {
                                                                                         {t('Make sure the above is correct')}<br/>{t('press BUY WITH WALLET to proceed')}
                                                                                     </Typography>   
                                                                                 </Box>
-                                                                        </Alert>
+                                                                        </>
                                                                     
                                                                     </DialogContentText>
                                                                 </DialogContent>
@@ -2709,7 +2706,7 @@ export default function ItemOffers(props: any) {
                                                     <DialogContent>
                                                         <DialogContentText id="alert-dialog-description">
                                                         <br />
-                                                        <Alert severity="info" variant="outlined" sx={{backgroundColor:'black'}} >
+                                                        <>
                                                             {t('Amount')}: <strong>{final_offeramount}<SolCurrencyIcon sx={{ml:1,fontSize:"10px"}} /></strong><br/>
                                                             {t('Mint')}: <MakeLinkableAddress addr={mint} trim={0} hasextlink={true} hascopy={false} fontsize={16} /> <br/>
                                                             {t('From')}: <MakeLinkableAddress addr={final_offerfrom} trim={0} hasextlink={true} hascopy={false} fontsize={16} /><br/>
@@ -2722,7 +2719,7 @@ export default function ItemOffers(props: any) {
                                                                 )
                                                             }
                                                             </Typography><br/>
-                                                        </Alert>
+                                                        </>
                                                         
                                                         </DialogContentText>
                                                     </DialogContent>
