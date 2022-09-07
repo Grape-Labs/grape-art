@@ -999,6 +999,13 @@ export function StoreFrontView(this: any, props: any) {
             const results = await getReceiptsFromAuctionHouse(collectionAuthority.auctionHouse || AUCTION_HOUSE_ADDRESS, null, null, null, null, false, null);
             
             //console.log("results "+JSON.stringify(results));
+            // if we have a secondary auction house?
+            if (collectionAuthority?.otherAuctionHouses){
+                for (var x of collectionAuthority.otherAuctionHouses){
+                    console.log("other: "+x);
+                }
+            }
+
 
             const ahActivity = new Array();
             const ahListingsMints = new Array();
