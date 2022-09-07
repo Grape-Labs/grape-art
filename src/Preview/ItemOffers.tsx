@@ -795,6 +795,7 @@ function SellNowPrompt(props:any){
     const weightedScore = props.grapeWeightedScore || 0;
     const collectionAuctionHouse = props.collectionAuctionHouse || null;
     const royalties = props.royalties || null;
+    const [adjustedSurcharge, setAdjusteSurcharge] = React.useState(false);
 
     //const salePrice = React.useState(props.salePrice);
 
@@ -808,13 +809,15 @@ function SellNowPrompt(props:any){
                 console.log("multiplier: "+multiplier);
                 console.log("sell_now_amount: "+sell_now_amount);
                 const adjusted = +sell_now_amount + +sell_now_amount * multiplier;
-                setSellNowAmount( adjusted.toFixed(2) );
+                setSellNowAmount( adjusted.toFixed(6) );
+                setAdjusteSurcharge(true);
             }
         }
     }
 
     const handleClickOpenDialog = () => {
         setSellNowAmount('');
+        setAdjusteSurcharge(false);
         setOpenSPDialog(true);
     };
     
@@ -957,7 +960,9 @@ function SellNowPrompt(props:any){
                         variant="standard"
                         value={sell_now_amount}
                         onChange={(e: any) => {
-                            setSellNowAmount(e.target.value)}
+                            setSellNowAmount(e.target.value)
+                            setAdjusteSurcharge(false);
+                        }
                         }
                         inputProps={{
                             style: { 
@@ -1015,7 +1020,7 @@ function SellNowPrompt(props:any){
                                     <>You receive: {(+sell_now_amount - ((verifiedCollection?.rate || 1)/100*+sell_now_amount + royalties/100/100*+sell_now_amount)).toFixed(4)} <SolCurrencyIcon sx={{fontSize:"8px"}} /></>
                                 }
 
-                                {+sell_now_amount > 0 &&
+                                {(!adjustedSurcharge && +sell_now_amount > 0) &&
                                     <><br/>
                                         <Tooltip title="Adjust total to include fees">
                                             <Button
