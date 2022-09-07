@@ -803,6 +803,9 @@ function SellNowPrompt(props:any){
             if (+sell_now_amount !== salePrice){
                 const total_rate = (verifiedCollection?.rate || 1)/100 + royalties/100/100;
                 const multiplier = total_rate/+((verifiedCollection?.rate || 1)/100*+sell_now_amount + royalties/100/100*+sell_now_amount);
+                console.log("total_rate: "+total_rate);
+                console.log("multiplier: "+multiplier);
+                
                 const adjusted = +sell_now_amount * multiplier;
                 setSellNowAmount( adjusted.toFixed(2) );
             }
