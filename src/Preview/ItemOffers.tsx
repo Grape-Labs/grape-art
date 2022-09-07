@@ -97,6 +97,8 @@ import {
 import { RegexTextField } from '../utils/grapeTools/RegexTextField';
 import { MakeLinkableAddress, ValidateCurve, trimAddress, timeAgo } from '../utils/grapeTools/WalletAddress'; // global key handling
 
+import ExplorerView from '../utils/grapeTools/Explorer';
+
 import {
     AUCTION_HOUSE_PROGRAM_ID,
     ENV_AH,
@@ -924,8 +926,8 @@ function SellNowPrompt(props:any){
                 <DialogContent>
 
                 <Box sx={{width:'100%'}}>
-                    {t('Mint')}: <MakeLinkableAddress addr={mint} trim={0} hasextlink={true} hascopy={false} fontsize={16} /> <br/>
-                    Auction House: <MakeLinkableAddress addr={collectionAuctionHouse || AUCTION_HOUSE_ADDRESS} trim={0} hasextlink={true} hascopy={false} fontsize={16} />
+                    {t('Mint')}: <ExplorerView address={mint} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
+                    Auction House: <ExplorerView address={collectionAuctionHouse || AUCTION_HOUSE_ADDRESS} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
                 </Box>
 
                     <RegexTextField
