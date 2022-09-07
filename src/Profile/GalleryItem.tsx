@@ -76,7 +76,7 @@ export default function GalleryItem(props: any){
 
                         let file_metadata = meta_final.data.uri;
                         const file_metadata_url = new URL(file_metadata);
-                        
+
                         const IPFS = 'https://ipfs.io';
                         if (file_metadata.startsWith(IPFS)){
                             file_metadata = CLOUDFLARE_IPFS_CDN+file_metadata_url.pathname;
@@ -181,6 +181,10 @@ export default function GalleryItem(props: any){
                             }
                             */
                             let image_url = DRIVE_PROXY+img_url_string;
+                            if (img_url_string.startsWith(IPFS)){
+                                image_url = CLOUDFLARE_IPFS_CDN+img_url_string;
+                            }
+                            
                             image = image_url;
                             //console.log("DRIVE_PROXY: "+image);
                             //image = setImageUrl(image_url, image);
