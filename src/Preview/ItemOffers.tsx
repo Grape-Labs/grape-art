@@ -2406,26 +2406,26 @@ export default function ItemOffers(props: any) {
                                                                             <Box sx={{width:'100%'}}>
                                                                             <List>
                                                                                 <ListItem>
-                                                                                    {t('Amount')}: <strong>{salePrice}<SolCurrencyIcon sx={{ml:1,fontSize:"10px"}} /></strong>
+                                                                                    {t('Amount')}:&nbsp;<strong>{salePrice}<SolCurrencyIcon sx={{ml:1,fontSize:"10px"}} /></strong>
                                                                                 </ListItem>
                                                                                 <ListItem>
-                                                                                    {t('Mint')}: <ExplorerView address={mint} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
+                                                                                    {t('Mint')}:&nbsp;<ExplorerView address={mint} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
                                                                                 </ListItem>
                                                                                 <ListItem>
-                                                                                    {t('Owner')}: <ExplorerView address={mintOwner} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
+                                                                                    {t('Owner')}:&nbsp;<ExplorerView address={mintOwner} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
                                                                                 </ListItem>
                                                                                 <ListItem>
-                                                                                    {t('Auction House')}: <ExplorerView address={salePriceAH} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
+                                                                                    {t('Auction House')}:&nbsp;<ExplorerView address={salePriceAH} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
                                                                                 </ListItem>
                                                                                     {verifiedAuctionHouse && 
                                                                                         <ListItem>
-                                                                                        <>Marketplace: <strong>{verifiedAuctionHouse.name}</strong></>
+                                                                                        <>Marketplace:&nbsp;<strong>{verifiedAuctionHouse.name}</strong></>
                                                                                         </ListItem>
                                                                                     }
                                                                                     {royalties &&
                                                                                         <ListItem>
                                                                                             <Typography variant='body2' sx={{mt:1}}>
-                                                                                                Royalties: {(+royalties/100).toFixed(2)}%
+                                                                                                Royalties:&nbsp;{(+royalties/100).toFixed(2)}%
                                                                                                     <Typography component='div' variant='caption'>*These are the original creator royalties of this NFT, if this NFT is sold again the seller pays for these royalties</Typography>
                                                                                             </Typography>
                                                                                         </ListItem>
