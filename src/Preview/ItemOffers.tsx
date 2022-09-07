@@ -1013,9 +1013,11 @@ function SellNowPrompt(props:any){
 
                                 {+sell_now_amount > 0 &&
                                     <><br/>
-                                        <Button
-                                            onClick={handleSurchargeAdjust}
-                                        >Surcharge fees - net {sell_now_amount} sol?</Button>
+                                        <Tooltip title="Adjust total to include fees">
+                                            <Button
+                                                onClick={handleSurchargeAdjust}
+                                            >Set to net {sell_now_amount} sol?</Button>
+                                        </Tooltip>
                                     
                                     </>
                                 }
