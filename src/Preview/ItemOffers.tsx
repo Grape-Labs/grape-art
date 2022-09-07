@@ -801,7 +801,7 @@ function SellNowPrompt(props:any){
     const handleSurchargeAdjust = () => {
         if (royalties > 0){
             if (+sell_now_amount !== salePrice){
-                const total_rate = (verifiedCollection?.rate || 1)/100 + +royalties/100;
+                const total_rate = (verifiedCollection?.rate || 1)/100 + +royalties/100/100;
                 const net_receive = (+sell_now_amount - ((verifiedCollection?.rate || 1)/100*+sell_now_amount + royalties/100/100*+sell_now_amount));
                 
                 const multiplier = total_rate/net_receive;
