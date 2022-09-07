@@ -800,8 +800,12 @@ function SellNowPrompt(props:any){
 
     const handleSurchargeAdjust = () => {
         if (royalties > 0){
-            if (+sell_now_amount !== salePrice)
-                setSellNowAmount( (+sell_now_amount + +((verifiedCollection?.rate || 1)/100*+sell_now_amount + royalties/100/100*+sell_now_amount)).toFixed(4) )
+            if (+sell_now_amount !== salePrice){
+                const total_rate = (verifiedCollection?.rate || 1)/100 + royalties/100/100;
+                const multiplier = total_rate/+((verifiedCollection?.rate || 1)/100*+sell_now_amount + royalties/100/100*+sell_now_amount);
+                const adjusted = +sell_now_amount * multiplier;
+                setSellNowAmount( adjusted.toFixed(2) );
+            }
         }
     }
 
