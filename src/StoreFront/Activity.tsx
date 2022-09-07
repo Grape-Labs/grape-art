@@ -141,7 +141,14 @@ export default function ActivityView(props: any){
                 if (mode === 0){
                     if (!recentActivity){
                         //console.log("with aH: "+ collectionAuthority.auctionHouse+" - "+JSON.stringify(collectionAuthority))
-                        const results = await getReceiptsFromAuctionHouse(collectionAuthority.auctionHouse || AUCTION_HOUSE_ADDRESS, null, null, null, false, null);
+                        const results = await getReceiptsFromAuctionHouse(collectionAuthority.auctionHouse || AUCTION_HOUSE_ADDRESS, null, null, null, null, false, null);
+
+                        // if we have a secondary auction house?
+                        if (collectionAuthority?.otherAuctionHouses){
+                            for (var x of collectionAuthority.otherAuctionHouses){
+                                console.log("other: "+x);
+                            }
+                        }
 
                         const activityResults = new Array();
 
@@ -180,7 +187,7 @@ export default function ActivityView(props: any){
                 } else if (mode === 1){
                     if (!recentActivity){
                         //console.log("with aH: "+ collectionAuthority.auctionHouse+" - "+JSON.stringify(collectionAuthority))
-                        const results = await getReceiptsFromAuctionHouse(collectionAuthority.auctionHouse || AUCTION_HOUSE_ADDRESS, null, null, null, false, null);
+                        const results = await getReceiptsFromAuctionHouse(collectionAuthority.auctionHouse || AUCTION_HOUSE_ADDRESS, null, null, null, null, false, null);
 
                         const activityResults = new Array();
 
@@ -219,7 +226,7 @@ export default function ActivityView(props: any){
                 } else if (mode === 2){
 
                     //console.log("with aH: "+ collectionAuthority.auctionHouse+" - "+JSON.stringify(collectionAuthority))
-                    const results = await getReceiptsFromAuctionHouse(collectionAuthority.auctionHouse || AUCTION_HOUSE_ADDRESS, publicKey.toBase58(), null, null, false, null);
+                    const results = await getReceiptsFromAuctionHouse(collectionAuthority.auctionHouse || AUCTION_HOUSE_ADDRESS, null, publicKey.toBase58(), null, null, false, null);
 
                     const activityResults = new Array();
 

@@ -798,6 +798,13 @@ function SellNowPrompt(props:any){
 
     //const salePrice = React.useState(props.salePrice);
 
+    const handleSurchargeAdjust = () => {
+        if (royalties > 0){
+            if (+sell_now_amount !== salePrice)
+                setSellNowAmount( +sell_now_amount+((verifiedCollection?.rate || 1)/100*+sell_now_amount + royalties/100/100*+sell_now_amount).toFixed(4) )
+        }
+    }
+
     const handleClickOpenDialog = () => {
         setSellNowAmount('');
         setOpenSPDialog(true);
@@ -998,6 +1005,12 @@ function SellNowPrompt(props:any){
                                 >
                                 {(+sell_now_amount - ((verifiedCollection?.rate || 1)/100*+sell_now_amount + royalties/100/100*+sell_now_amount)) > 0 &&
                                     <>You receive: {(+sell_now_amount - ((verifiedCollection?.rate || 1)/100*+sell_now_amount + royalties/100/100*+sell_now_amount)).toFixed(4)} <SolCurrencyIcon sx={{fontSize:"8px"}} /></>
+                                }
+
+                                {+sell_now_amount > 0 &&
+                                    <Button
+                                        onClick={handleSurchargeAdjust}
+                                    >Want to surcharge fees so you make a net of {sell_now_amount} sol?</Button>
                                 }
                                 </Typography>
                             </Typography>
@@ -1776,7 +1789,7 @@ export default function ItemOffers(props: any) {
                 console.log("with aH: "+ collectionAuctionHouse)
                 
                 const auctionHouseKey = collectionAuctionHouse || AUCTION_HOUSE_ADDRESS;
-                const results = await getReceiptsFromAuctionHouse(auctionHouseKey, null, mint, null, true, null);
+                const results = await getReceiptsFromAuctionHouse(auctionHouseKey, null, null, mint, null, true, null);
                 // we need to get listing_receipt too to show the latest price listed, do in two calls or in one with a filter????
                 
                 const open_offers = 0;
@@ -2377,9 +2390,9 @@ export default function ItemOffers(props: any) {
                                                                             >
                                                                                 <Box sx={{width:'100%'}}>
                                                                                     {t('Amount')}: <strong>{salePrice}<SolCurrencyIcon sx={{ml:1,fontSize:"10px"}} /></strong><br/>
-                                                                                    {t('Mint')}: <MakeLinkableAddress addr={mint} trim={0} hasextlink={true} hascopy={false} fontsize={16} /> <br/>
-                                                                                    {t('Owner')}: <MakeLinkableAddress addr={mintOwner} trim={0} hasextlink={true} hascopy={false} fontsize={16} /><br/>
-                                                                                    {t('Auction House')}: <MakeLinkableAddress addr={salePriceAH} trim={9} hasextlink={true} hascopy={false} fontsize={16} /><br/>
+                                                                                    {t('Mint')}: <ExplorerView address={mint} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' /><br/>
+                                                                                    {t('Owner')}: <ExplorerView address={mintOwner} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' /><br/>
+                                                                                    {t('Auction House')}: <ExplorerView address={salePriceAH} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' /><br/>
                                                                                     {verifiedAuctionHouse && 
                                                                                         <>Marketplace: <strong>{verifiedAuctionHouse.name}</strong><br/></>
                                                                                     }

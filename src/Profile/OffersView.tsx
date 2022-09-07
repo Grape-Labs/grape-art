@@ -555,7 +555,7 @@ export default function OffersView(props:any){
             setMaxPage(false);
 
             //console.log("with aH: "+ collectionAuthority.auctionHouse+" - "+JSON.stringify(collectionAuthority))
-            const results = await getReceiptsFromAuctionHouse(null, thisPublicKey, null, null, true, null);
+            const results = await getReceiptsFromAuctionHouse(null, null, thisPublicKey, null, null, true, null);
 
             const offerResults = new Array();
             const listingResults: any[] = [];

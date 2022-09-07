@@ -132,7 +132,7 @@ export default function HistoryView(props: any){
         if ((!loading) && (mint)){
             setLoading(true);
 
-            const results = await getReceiptsFromAuctionHouse(null, null, mint, null, true, null);
+            const results = await getReceiptsFromAuctionHouse(null, null, null, mint, null, true, null);
 
             const activityResults = new Array();
 

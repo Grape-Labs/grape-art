@@ -188,7 +188,7 @@ export async function getMintFromVerifiedMetadata(metadata:string, collectionMin
     return null;
 }
 
-export async function getReceiptsFromAuctionHouse(auctionHouse_filter: string, wallet_filter: string, mint_filter: string, bid_receipt_filter:string, getAllAh: boolean, rpcEndpoint: string) {
+export async function getReceiptsFromAuctionHouse(auctionHouse_filter: string, collection_filter: string, wallet_filter: string, mint_filter: string, bid_receipt_filter:string, getAllAh: boolean, rpcEndpoint: string) {
     // if wallet is set we should also filter by wallet address
     
     //const ticonnection = new Connection(rpcEndpoint || THEINDEX_RPC_ENDPOINT);  
@@ -438,7 +438,7 @@ export async function getReceiptsFromAuctionHouse(auctionHouse_filter: string, w
               
           }
     }catch(e){ // if RPC error resend it?
-      const receipts = await getReceiptsFromAuctionHouse(auctionHouse_filter, wallet_filter, mint_filter, bid_receipt_filter, getAllAh, GRAPE_RPC_ENDPOINT)
+      const receipts = await getReceiptsFromAuctionHouse(auctionHouse_filter, collection_filter, wallet_filter, mint_filter, bid_receipt_filter, getAllAh, GRAPE_RPC_ENDPOINT)
       //console.log("JSON: "+JSON.stringify(receipts))
       return receipts;
     }
