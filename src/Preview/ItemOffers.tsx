@@ -801,7 +801,7 @@ function SellNowPrompt(props:any){
     const handleSurchargeAdjust = () => {
         if (royalties > 0){
             if (+sell_now_amount !== salePrice)
-                setSellNowAmount( +sell_now_amount+((verifiedCollection?.rate || 1)/100*+sell_now_amount + royalties/100/100*+sell_now_amount).toFixed(4) )
+                setSellNowAmount( (+sell_now_amount + +((verifiedCollection?.rate || 1)/100*+sell_now_amount + royalties/100/100*+sell_now_amount)).toFixed(4) )
         }
     }
 
@@ -1008,9 +1008,13 @@ function SellNowPrompt(props:any){
                                 }
 
                                 {+sell_now_amount > 0 &&
-                                    <Button
-                                        onClick={handleSurchargeAdjust}
-                                    >Want to surcharge fees so you make a net of {sell_now_amount} sol?</Button>
+                                    <><br/>
+                                    {+sell_now_amount === salePrice &&
+                                        <Button
+                                            onClick={handleSurchargeAdjust}
+                                        >Surcharge fees - net {sell_now_amount} sol?</Button>
+                                    }
+                                    </>
                                 }
                                 </Typography>
                             </Typography>
