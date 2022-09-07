@@ -2720,18 +2720,18 @@ export default function ItemOffers(props: any) {
                                                         <DialogContentText id="alert-dialog-description">
                                                         <br />
                                                         <>
-                                                            <List>
+                                                            <List dense={true}>
                                                                 <ListItem>
-                                                                {t('Amount')}: <strong>{final_offeramount}<SolCurrencyIcon sx={{ml:1,fontSize:"10px"}} /></strong>
+                                                                {t('Amount')}:&nbsp;<strong>{final_offeramount}<SolCurrencyIcon sx={{ml:1,fontSize:"10px"}} /></strong>
                                                                 </ListItem>
                                                                 <ListItem>
-                                                                {t('Mint')}: <MakeLinkableAddress addr={mint} trim={0} hasextlink={true} hascopy={false} fontsize={16} />
+                                                                {t('Mint')}:&nbsp;<MakeLinkableAddress addr={mint} trim={0} hasextlink={true} hascopy={false} fontsize={16} />
                                                                 </ListItem>
                                                                 <ListItem>
-                                                                {t('From')}: <MakeLinkableAddress addr={final_offerfrom} trim={0} hasextlink={true} hascopy={false} fontsize={16} />
+                                                                {t('From')}:&nbsp;<MakeLinkableAddress addr={final_offerfrom} trim={0} hasextlink={true} hascopy={false} fontsize={16} />
                                                                 </ListItem>
                                                                 <ListItem>
-                                                                {t('Auction House')}: <MakeLinkableAddress addr={collectionAuctionHouse || AUCTION_HOUSE_ADDRESS} trim={9} hasextlink={true} hascopy={false} fontsize={16} />
+                                                                {t('Auction House')}:&nbsp;<MakeLinkableAddress addr={collectionAuctionHouse || AUCTION_HOUSE_ADDRESS} trim={9} hasextlink={true} hascopy={false} fontsize={16} />
                                                                 </ListItem>
                                                             </List>
                                                             <Typography sx={{textAlign:'center'}}>

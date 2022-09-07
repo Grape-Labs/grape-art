@@ -12,6 +12,7 @@ Primitive references:
 - Cardinal (https://github.com/cardinal-labs)
 - Solflare (https://github.com/solflare-wallet)
 - Jupiter Aggregator (https://www.npmjs.com/package/@jup-ag/react-hook)
+- Streamflow (https://github.com/streamflow-finance)
 - Crossmint (https://www.npmjs.com/package/@crossmint/client-sdk-react-ui)
 
 Wallet Adapter:
