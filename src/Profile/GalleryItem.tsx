@@ -182,7 +182,7 @@ export default function GalleryItem(props: any){
                             */
                             let image_url = DRIVE_PROXY+img_url_string;
                             if (img_url_string.startsWith(IPFS)){
-                                image_url = CLOUDFLARE_IPFS_CDN+img_url_string;
+                                image_url = CLOUDFLARE_IPFS_CDN+'/'+img_url_string;
                             }
                             
                             image = image_url;
