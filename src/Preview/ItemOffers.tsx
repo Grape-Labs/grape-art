@@ -2403,26 +2403,39 @@ export default function ItemOffers(props: any) {
                                                                     <DialogContentText id="alert-bn-dialog-description">
                                                                     <br />
                                                                         <>
-                                                                                <Box sx={{width:'100%'}}>
-                                                                                    {t('Amount')}: <strong>{salePrice}<SolCurrencyIcon sx={{ml:1,fontSize:"10px"}} /></strong><br/>
-                                                                                    {t('Mint')}: <ExplorerView address={mint} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' /><br/>
-                                                                                    {t('Owner')}: <ExplorerView address={mintOwner} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' /><br/>
-                                                                                    {t('Auction House')}: <ExplorerView address={salePriceAH} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' /><br/>
+                                                                            <Box sx={{width:'100%'}}>
+                                                                            <List>
+                                                                                <ListItem>
+                                                                                    {t('Amount')}: <strong>{salePrice}<SolCurrencyIcon sx={{ml:1,fontSize:"10px"}} /></strong>
+                                                                                </ListItem>
+                                                                                <ListItem>
+                                                                                    {t('Mint')}: <ExplorerView address={mint} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
+                                                                                </ListItem>
+                                                                                <ListItem>
+                                                                                    {t('Owner')}: <ExplorerView address={mintOwner} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
+                                                                                </ListItem>
+                                                                                <ListItem>
+                                                                                    {t('Auction House')}: <ExplorerView address={salePriceAH} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
+                                                                                </ListItem>
                                                                                     {verifiedAuctionHouse && 
-                                                                                        <>Marketplace: <strong>{verifiedAuctionHouse.name}</strong><br/></>
+                                                                                        <ListItem>
+                                                                                        <>Marketplace: <strong>{verifiedAuctionHouse.name}</strong></>
+                                                                                        </ListItem>
                                                                                     }
                                                                                     {royalties &&
-                                                                                        <Typography variant='body2' sx={{mt:1}}>
-                                                                                        Royalties: {(+royalties/100).toFixed(2)}%
-                                                                                        <Typography component='div' variant='caption'>*These are the original creator royalties of this NFT, if this NFT is sold again the seller pays for these royalties</Typography>
-                                                                                        <br/>
-                                                                                        </Typography>
+                                                                                        <ListItem>
+                                                                                            <Typography variant='body2' sx={{mt:1}}>
+                                                                                                Royalties: {(+royalties/100).toFixed(2)}%
+                                                                                                    <Typography component='div' variant='caption'>*These are the original creator royalties of this NFT, if this NFT is sold again the seller pays for these royalties</Typography>
+                                                                                            </Typography>
+                                                                                        </ListItem>
                                                                                     }
-                                                                                    <br/>
+                                                                            </List>
+                                                                                    
                                                                                     <Typography sx={{textAlign:'center'}}>
                                                                                         {t('Make sure the above is correct')}<br/>{t('press BUY WITH WALLET to proceed')}
                                                                                     </Typography>   
-                                                                                </Box>
+                                                                            </Box>
                                                                         </>
                                                                     
                                                                     </DialogContentText>
@@ -2707,17 +2720,28 @@ export default function ItemOffers(props: any) {
                                                         <DialogContentText id="alert-dialog-description">
                                                         <br />
                                                         <>
-                                                            {t('Amount')}: <strong>{final_offeramount}<SolCurrencyIcon sx={{ml:1,fontSize:"10px"}} /></strong><br/>
-                                                            {t('Mint')}: <MakeLinkableAddress addr={mint} trim={0} hasextlink={true} hascopy={false} fontsize={16} /> <br/>
-                                                            {t('From')}: <MakeLinkableAddress addr={final_offerfrom} trim={0} hasextlink={true} hascopy={false} fontsize={16} /><br/>
-                                                            {t('Auction House')}: <MakeLinkableAddress addr={collectionAuctionHouse || AUCTION_HOUSE_ADDRESS} trim={9} hasextlink={true} hascopy={false} fontsize={16} /><br/>
+                                                            <List>
+                                                                <ListItem>
+                                                                {t('Amount')}: <strong>{final_offeramount}<SolCurrencyIcon sx={{ml:1,fontSize:"10px"}} /></strong>
+                                                                </ListItem>
+                                                                <ListItem>
+                                                                {t('Mint')}: <MakeLinkableAddress addr={mint} trim={0} hasextlink={true} hascopy={false} fontsize={16} />
+                                                                </ListItem>
+                                                                <ListItem>
+                                                                {t('From')}: <MakeLinkableAddress addr={final_offerfrom} trim={0} hasextlink={true} hascopy={false} fontsize={16} />
+                                                                </ListItem>
+                                                                <ListItem>
+                                                                {t('Auction House')}: <MakeLinkableAddress addr={collectionAuctionHouse || AUCTION_HOUSE_ADDRESS} trim={9} hasextlink={true} hascopy={false} fontsize={16} />
+                                                                </ListItem>
+                                                            </List>
                                                             <Typography sx={{textAlign:'center'}}>
-                                                            {t('Make sure the above is correct')}<br/>{t('press BUY WITH WALLET to proceed')}
+                                                                {t('Make sure the above is correct')}<br/>{t('press BUY WITH WALLET to proceed')}
 
-                                                            {salePrice && salePrice > 0 && (
-                                                                <Typography variant="body2"><br/><br/>IMPORTANT: Your NFT is currently listed, you will need to accept <strong>two</strong> wallet transactions to cancel the listing and then accept the offer</Typography>    
-                                                                )
-                                                            }
+                                                                {salePrice && salePrice > 0 && (
+                                                                    <Typography variant="body2"><br/><br/>IMPORTANT: Your NFT is currently listed, you will need to accept <strong>two</strong> wallet transactions to cancel the listing and then accept the offer</Typography>    
+                                                                    )
+                                                                }
+                                                            
                                                             </Typography><br/>
                                                         </>
                                                         
