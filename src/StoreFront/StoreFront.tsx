@@ -1003,11 +1003,11 @@ export function StoreFrontView(this: any, props: any) {
             //console.log("results "+JSON.stringify(results));
             // if we have a secondary auction house?
             if (collectionAuthority?.otherAuctionHouses){
-                for (var x of collectionAuthority.otherAuctionHouses){
-                    console.log("listings: "+JSON.stringify(results));
+                //for (var x of collectionAuthority.otherAuctionHouses){
+                //    console.log("listings: "+JSON.stringify(results));
                     //const results = await getReceiptsFromAuctionHouse(x, null, null, null, null, false, null);
-                    console.log("other: "+x);
-                }
+                //    console.log("other: "+x);
+                //}
             }
 
 
