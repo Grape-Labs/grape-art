@@ -707,7 +707,6 @@ export function StoreFrontView(this: any, props: any) {
     const fetchMintStates = async(address:string) => {
         try{
             setLoadingPosition("Collection States");
-            console.log("stateLoading: "+stateLoading)
             if (!stateLoading)
                 await getCollectionStates(address);
         } catch(e){console.log("ERR: "+e)}
@@ -942,6 +941,7 @@ export function StoreFrontView(this: any, props: any) {
 
     const getCollectionStates = async (address:string) => {
         
+        console.log("stateLoading: "+stateLoading);
         if (!stateLoading){
             setStateLoading(true);
             
@@ -998,6 +998,8 @@ export function StoreFrontView(this: any, props: any) {
             setLoadingPosition("Auction House states");
             const results = await getReceiptsFromAuctionHouse(collectionAuthority.auctionHouse || AUCTION_HOUSE_ADDRESS, null, null, null, null, false, null);
             
+
+
             //console.log("results "+JSON.stringify(results));
             // if we have a secondary auction house?
             if (collectionAuthority?.otherAuctionHouses){
@@ -1335,6 +1337,8 @@ export function StoreFrontView(this: any, props: any) {
         const rpclimit = 100;
         const wallet_collection = missing_collection;
         
+        console.log("Fetching missing collection data...")
+
         if (wallet_collection){
             try {
                 let mintsPDAs = new Array();
