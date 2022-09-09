@@ -1406,6 +1406,7 @@ export default function ItemOffers(props: any) {
     const [salePrice, setSalePrice] = React.useState(props.salePrice || 0);
     const [salePriceEscrow, setSalePriceEscrow] = React.useState(null);
     const [tokenSalePrice, setTokenSalePrice] = React.useState(0);
+    const [saleMade, setSaleMade] = React.useState(false);
     const [saleDate, setSaleDate] = React.useState(null);
     const [saleTimeAgo, setSaleTimeAgo] = React.useState(null);
     const [highestOffer, setHighestOffer] = React.useState(0);
@@ -2123,6 +2124,8 @@ export default function ItemOffers(props: any) {
                         enqueueSnackbar(`${t('Deposit back to GrapeVine completed')}`,{ variant: 'success', action:snackaction });
                     }
                     */
+                    setSaleMade(true);
+                    
                     const eskey = enqueueSnackbar(`${t('Metadata will be refreshed in a few seconds')}`, {
                             anchorOrigin: {
                                 vertical: 'top',
@@ -2480,6 +2483,10 @@ export default function ItemOffers(props: any) {
                                                                             className="grape-crossmint-button"
                                                                         />
                                                                     */}
+                                                                    <Confetti
+                                                                        active={ saleMade }
+                                                                        config={ config }
+                                                                    />
                                                                     <Button 
                                                                         onClick={() => handleBuyNow(salePrice, salePriceAH)}
                                                                         autoFocus>
