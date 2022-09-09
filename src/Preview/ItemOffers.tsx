@@ -14,6 +14,7 @@ import { styled } from '@mui/material/styles';
 import { accordionActionsClasses, Button, LinearProgress } from '@mui/material';
 import { useSnackbar } from 'notistack';
 import moment from 'moment';
+import Confetti from 'react-dom-confetti';
 
 import { unicastGrapeSolflareMessage } from "../utils/walletNotifications/walletNotifications";
 
@@ -152,6 +153,20 @@ import { useTranslation } from 'react-i18next';
 import GrapeIcon from "../components/static/GrapeIcon";
 import { CannotMatchFreeSalesWithoutAuctionHouseOrSellerSignoffError } from "@metaplex-foundation/mpl-auction-house/dist/src/generated/errors";
 import axios from "axios";
+
+const config = {
+    angle: 90,
+    spread: 360,
+    startVelocity: 40,
+    elementCount: 70,
+    dragFriction: 0.12,
+    duration: 3000,
+    stagger: 3,
+    width: "10px",
+    height: "10px",
+    perspective: "500px",
+    colors: ["#f00", "#0f0", "#00f"]
+  };
 
 const StyledTable = styled(Table)(({ theme }) => ({
     '& .MuiTableCell-root': {
@@ -1235,6 +1250,11 @@ export function OfferPrompt(props: any) {
                     borderRadius: '10px',
                 }}
             >
+                <Confetti
+                    active={ open_dialog }
+                    config={ config }
+                />
+
                 <SellIcon sx={{mr:1}}/> {t('Make offer')}
             </Button> 
             
