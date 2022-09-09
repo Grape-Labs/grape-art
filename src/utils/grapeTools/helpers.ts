@@ -232,26 +232,31 @@ export async function getReceiptsFromAuctionHouse(auctionHouse_filter: string, c
                     console.log('execute with wallet_filter');
                     accounts = await ticonnection.getProgramAccounts(
                       AUCTION_HOUSE_PROGRAM_ID,
-                    {
-                      //commitment: 'confirmed',
-                      filters: [
-                        {
-                          dataSize: size,
-                        },
-                        {
-                          memcmp: {
-                              offset: 40,
-                              bytes: wallet_filter,
+                      {
+                        //commitment: 'confirmed',
+                        /*
+                        dataSlice: {
+                          offset: 0, // number of bytes
+                          length: 10000, // number of bytes
+                        },*/
+                        filters: [
+                          {
+                            dataSize: size,
                           },
-                        },
-                        {
-                          memcmp: {
-                              offset: ahPosition,
-                              bytes: collectionAuctionHouse,
+                          {
+                            memcmp: {
+                                offset: 40,
+                                bytes: wallet_filter,
+                            },
                           },
-                        },
-                      ],
-                    }
+                          {
+                            memcmp: {
+                                offset: ahPosition,
+                                bytes: collectionAuctionHouse,
+                            },
+                          },
+                        ],
+                      }
                   );
                   } else if (wallet_filter != null && mint_filter != null && !getAllAh) {
                     console.log('execute with all filters');

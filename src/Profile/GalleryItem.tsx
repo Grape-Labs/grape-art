@@ -390,6 +390,7 @@ export default function GalleryItem(props: any){
                                                         <Tooltip title={
                                                             <>
                                                             <strong>Grape Rarity Score: {collectionitem.rarity_score.toFixed(0)}</strong><br/>
+                                                            <strong>Grape Rank: #{(collectionitem.rarity_score/100*collectionitem.collection_len).toFixed(0)}</strong><br/>
                                                             Rarity is calculated on the collection attribute commonality, lower percentage = higher score.
                                                             </>}
                                                         >

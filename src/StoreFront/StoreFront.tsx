@@ -997,8 +997,6 @@ export function StoreFrontView(this: any, props: any) {
 
             setLoadingPosition("Auction House states");
             const results = await getReceiptsFromAuctionHouse(collectionAuthority.auctionHouse || AUCTION_HOUSE_ADDRESS, null, null, null, null, false, null);
-            
-
 
             //console.log("results "+JSON.stringify(results));
             // if we have a secondary auction house?
