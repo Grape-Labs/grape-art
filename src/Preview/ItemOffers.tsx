@@ -1188,7 +1188,7 @@ export function OfferPrompt(props: any) {
                         } */
                     }
                     setOfferMade(true);
-
+                    
                     if (publicKey)
                         unicastGrapeSolflareMessage(`Bid ${name}`, 'You have placed a bid on grape.art', image, publicKey.toString(), `https://grape.art${GRAPE_PREVIEW}${mint}`, signedTransaction, collectionAuctionHouse);
                     if (mintOwner)
@@ -1244,7 +1244,7 @@ export function OfferPrompt(props: any) {
                 size="large" 
                 variant="outlined" 
                 value="Make Offer" 
-                disabled={offerMade}
+                disabled={hasOffer}
                 onClick={handleClickOpenDialog}
                 sx={{
                     color: '#fff',
@@ -1253,7 +1253,7 @@ export function OfferPrompt(props: any) {
                 }}
             >
                 <Confetti
-                    active={ open_dialog }
+                    active={ offerMade }
                     config={ config }
                 />
 
