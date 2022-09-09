@@ -1068,6 +1068,7 @@ function SellNowPrompt(props:any){
 
 export function OfferPrompt(props: any) {
     const [open_dialog, setOpenOPDialog] = React.useState(false);
+    const [offerMade, setOfferMade] = React.useState(false);
     const [offer_amount, setOfferAmount] = React.useState('');
     const [hasOffer, setHasOffer] = React.useState(false);
     const offers = props.offers || null;
@@ -1186,7 +1187,8 @@ export function OfferPrompt(props: any) {
                             offcnt++;
                         } */
                     }
-                    
+                    setOfferMade(true);
+
                     if (publicKey)
                         unicastGrapeSolflareMessage(`Bid ${name}`, 'You have placed a bid on grape.art', image, publicKey.toString(), `https://grape.art${GRAPE_PREVIEW}${mint}`, signedTransaction, collectionAuctionHouse);
                     if (mintOwner)
@@ -1242,7 +1244,7 @@ export function OfferPrompt(props: any) {
                 size="large" 
                 variant="outlined" 
                 value="Make Offer" 
-                disabled={hasOffer}
+                disabled={offerMade}
                 onClick={handleClickOpenDialog}
                 sx={{
                     color: '#fff',
