@@ -59,8 +59,8 @@ import GrapeIcon from "../components/static/GrapeIcon";
 
 const config = {
     angle: 90,
-    spread: 360,
-    startVelocity: 40,
+    spread: 180,
+    startVelocity: 20,
     elementCount: 200,
     dragFriction: 0.12,
     duration: 2000,
