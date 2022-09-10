@@ -63,7 +63,7 @@ const config = {
     startVelocity: 40,
     elementCount: 200,
     dragFriction: 0.12,
-    duration: 4000,
+    duration: 2000,
     stagger: 3,
     width: "10px",
     height: "10px",
@@ -185,6 +185,7 @@ export function SocialLikes(props: any){
         .catch(function (error) {
             console.log(error);
         });
+        setJustLiked(false);
         initFollowListInfo();
         getLikeStatus();
     };
