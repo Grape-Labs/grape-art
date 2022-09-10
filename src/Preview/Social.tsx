@@ -20,6 +20,7 @@ import {
     DialogContentText,
     DialogTitle,
 } from '@mui/material';
+import Confetti from 'react-dom-confetti';
 
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
 
@@ -56,6 +57,20 @@ import "../App.less";
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import GrapeIcon from "../components/static/GrapeIcon";
 
+const config = {
+    angle: 90,
+    spread: 360,
+    startVelocity: 40,
+    elementCount: 200,
+    dragFriction: 0.12,
+    duration: 4000,
+    stagger: 3,
+    width: "10px",
+    height: "10px",
+    perspective: "500px",
+    colors: ["#f00", "#0f0", "#00f"]
+  };
+
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
     props,
     ref,
@@ -75,6 +90,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 export function SocialLikes(props: any){
     const [solanaDomain, setSolanaDomain] = React.useState(null);
     const [isLiked, setIsLiked] = React.useState(false);
+    const [justLiked, setJustLiked] = React.useState(false);
     const [loadingLikedState, setLoadingLikedState] = React.useState(false);
     const [loading, setLoading] = React.useState(false);
     const [searchAddrInfo, setSearchAddrInfo] = useState<SearchUserInfoResp | null>(null);
@@ -159,6 +175,7 @@ export function SocialLikes(props: any){
         .catch(function (error) {
             console.log(error);
         });
+        setJustLiked(true);
         initFollowListInfo();
         getLikeStatus();
     };
@@ -187,6 +204,10 @@ export function SocialLikes(props: any){
             </Button>
         :
             <>
+            <Confetti
+                active={ justLiked }
+                config={ config }
+            />
             {isLiked ?  
                     <Tooltip title="Unlike">
                         <Button 
