@@ -158,9 +158,9 @@ const config = {
     angle: 90,
     spread: 360,
     startVelocity: 40,
-    elementCount: 70,
+    elementCount: 200,
     dragFriction: 0.12,
-    duration: 3000,
+    duration: 4000,
     stagger: 3,
     width: "10px",
     height: "10px",
@@ -2125,7 +2125,7 @@ export default function ItemOffers(props: any) {
                     }
                     */
                     setSaleMade(true);
-                    
+
                     const eskey = enqueueSnackbar(`${t('Metadata will be refreshed in a few seconds')}`, {
                             anchorOrigin: {
                                 vertical: 'top',
