@@ -196,6 +196,10 @@ export function SocialLikes(props: any){
 
     return ( 
         <>
+            <Confetti
+                active={ justLiked }
+                config={ config }
+            />
         {loadingLikedState ?
             <Button 
                 sx={{borderRadius:'24px'}}
@@ -204,10 +208,7 @@ export function SocialLikes(props: any){
             </Button>
         :
             <>
-            <Confetti
-                active={ justLiked }
-                config={ config }
-            />
+            
             {isLiked ?  
                     <Tooltip title="Unlike">
                         <Button 
