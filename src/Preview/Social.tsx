@@ -61,7 +61,7 @@ const config = {
     angle: 90,
     spread: 180,
     startVelocity: 20,
-    elementCount: 200,
+    elementCount: 100,
     dragFriction: 0.12,
     duration: 2000,
     stagger: 3,
