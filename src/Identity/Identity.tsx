@@ -1246,7 +1246,7 @@ export function IdentityView(props: any){
                                                         <Tab sx={{color:'white', textTransform:'none'}} disabled={true}
                                                                 icon={<Hidden smUp><ViewComfyIcon /></Hidden>}
                                                                 label={<Hidden smDown><Typography variant="h6">{t('Squads')}</Typography></Hidden>
-                                                        } value="7" />
+                                                        } value="8" />
 
                                                     </TabList>
                                                     </Box>

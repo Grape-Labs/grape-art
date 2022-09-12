@@ -1607,6 +1607,7 @@ function GalleryItemMeta(props: any) {
                                                                     }}>
                                                                     {publicKey && publicKey.toBase58() === tokenOwners?.data.parsed.info.owner ?
                                                                     <>
+                                                                        
                                                                         <Tooltip title={t('Set this NFT as your avatar')}>
                                                                             <Button 
                                                                                 variant="text" 
