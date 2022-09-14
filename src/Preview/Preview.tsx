@@ -58,6 +58,8 @@ import {
 
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
 
+import BlurOnIcon from '@mui/icons-material/BlurOn';
+import BlurOffIcon from '@mui/icons-material/BlurOff';
 import Chat from '@mui/icons-material/Chat';
 import Mail from '@mui/icons-material/Mail';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
@@ -240,6 +242,7 @@ function GrapeVerified(props:any){
     const ticonnection = new Connection(THEINDEX_RPC_ENDPOINT);
     const verifiedCollection = props.verifiedCollection;
     const [collectionRawData, setCollectionRawData]  = React.useState(props?.collectionRawData);
+    
     let grape_verified = -1;
 
     const MD_PUBKEY = METAPLEX_PROGRAM_ID;
@@ -437,6 +440,7 @@ function GalleryItemMeta(props: any) {
     const navigate = useNavigate();
     const { enqueueSnackbar, closeSnackbar} = useSnackbar();
     const { navigation, open } = useDialectUiId<ChatNavigationHelpers>(GRAPE_BOTTOM_CHAT_ID);
+    const [previewBlur, setPreviewBlur] = React.useState(0);
 
     const [searchAddrInfo, setSearchAddrInfo] = useState<SearchUserInfoResp | null>(null);
     const solanaProvider = useWallet();
@@ -1081,6 +1085,7 @@ function GalleryItemMeta(props: any) {
                                                                     p: '2px'
                                                                 }}
                                                             >
+
                                                                 <img
                                                                     src={`${collectionitem.image}`}
                                                                     srcSet={`${collectionitem.image}`}
@@ -1090,8 +1095,8 @@ function GalleryItemMeta(props: any) {
                                                                     height="auto"
                                                                     style={{
                                                                         width:'100%',
-                                                                        borderRadius:'24px'
-                                                                    }}
+                                                                        borderRadius:'24px',
+                                                                        filter:`blur(${previewBlur}px)`,                                                                    }}
                                                                 />
                                                             </ListItemButton>
                                                         </Grid>
@@ -1102,6 +1107,27 @@ function GalleryItemMeta(props: any) {
                                                                 sx={{color:'white',borderRadius:'24px'}}
                                                             >
                                                                 {t('Preview')} <OpenInFullIcon sx={{ fontSize:'16px', ml:1 }}/></Button>
+                                                            {previewBlur && previewBlur !== 0 ?
+                                                                <Tooltip title="DeBlur / Clean this up">
+                                                                    <Button
+                                                                        size="small" variant="text" 
+                                                                        sx={{color:'white',borderRadius:'24px'}}
+                                                                        onClick={ () => setPreviewBlur(0) }
+                                                                    >
+                                                                        <BlurOffIcon />
+                                                                    </Button>
+                                                                </Tooltip>
+                                                            :
+                                                                <Tooltip title="Blur">
+                                                                    <Button
+                                                                        size="small" variant="text" 
+                                                                        sx={{color:'white',borderRadius:'24px'}}
+                                                                        onClick={ () => setPreviewBlur(20) }
+                                                                    >
+                                                                        <BlurOnIcon />
+                                                                    </Button>
+                                                                </Tooltip>
+                                                            }
                                                         </Grid>
                                                     </Grid>
                                                 
@@ -1905,36 +1931,39 @@ export function PreviewView(this: any, props: any) {
                 ], MD_PUBKEY)
                 
                 const meta_response = await ggoconnection.getAccountInfo(pda);
+                console.log("meta_response: "+JSON.stringify(meta_response));
 
-                let meta_final = decodeMetadata(meta_response.data);
-                
-                console.log("final: "+JSON.stringify(meta_final))
+                if (meta_response){
+                    let meta_final = decodeMetadata(meta_response.data);
+                    
+                    console.log("final: "+JSON.stringify(meta_final))
 
-                let file_metadata = meta_final.data.uri;
-                let file_metadata_url = new URL(file_metadata);
-
-                const IPFS = 'https://ipfs.io';
-                if (file_metadata.startsWith(IPFS)){
-                    file_metadata = CLOUDFLARE_IPFS_CDN+file_metadata_url.pathname;
-                }
-                
-                setCollectionRaw({meta_final,meta_response});
-                
-                const metadata = await window.fetch(file_metadata).then(
-                    (res: any) => res.json());
-                
-
-                if (metadata?.image){
-                    let img_metadata = metadata?.image;
-                    let img_metadata_url = new URL(img_metadata);
+                    let file_metadata = meta_final.data.uri;
+                    let file_metadata_url = new URL(file_metadata);
 
                     const IPFS = 'https://ipfs.io';
-                    if (img_metadata.startsWith(IPFS)){
-                        metadata.image = CLOUDFLARE_IPFS_CDN+img_metadata_url.pathname;
+                    if (file_metadata.startsWith(IPFS)){
+                        file_metadata = CLOUDFLARE_IPFS_CDN+file_metadata_url.pathname;
                     }
-                }
+                    
+                    setCollectionRaw({meta_final,meta_response});
+                    
+                    const metadata = await window.fetch(file_metadata).then(
+                        (res: any) => res.json());
+                    
 
-                return metadata;
+                    if (metadata?.image){
+                        let img_metadata = metadata?.image;
+                        let img_metadata_url = new URL(img_metadata);
+
+                        const IPFS = 'https://ipfs.io';
+                        if (img_metadata.startsWith(IPFS)){
+                            metadata.image = CLOUDFLARE_IPFS_CDN+img_metadata_url.pathname;
+                        }
+                    }
+
+                    return metadata;
+                } 
             } catch (e) { // Handle errors from invalid calls
                 console.log(e);
                 return null;
