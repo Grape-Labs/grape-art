@@ -524,16 +524,16 @@ function SellNowVotePrompt(props:any){
                                                                     {t('Amount')}:&nbsp;<strong>{meListing[0].price}<SolCurrencyIcon sx={{ml:1,fontSize:"10px"}} /></strong>
                                                                 </ListItem>
                                                                 <ListItem>
-                                                                    {t('Mint')}: <MakeLinkableAddress addr={mint} trim={9} hasextlink={true} hascopy={false} fontsize={16} /> <br/>
+                                                                    {t('Mint')}: <ExplorerView address={mint} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
                                                                 </ListItem>
                                                                 <ListItem>
-                                                                    {t('Owner')}: <MakeLinkableAddress addr={meListing[0].seller} trim={9} hasextlink={true} hascopy={false} fontsize={16} /><br/>
+                                                                    {t('Owner')}: <ExplorerView address={meListing[0].seller} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
                                                                 </ListItem>
                                                                 <ListItem>
-                                                                    {t('Escrow')}: <MakeLinkableAddress addr={mintOwner} trim={9} hasextlink={true} hascopy={false} fontsize={16} /><br/>
+                                                                    {t('Escrow')}: <ExplorerView address={mintOwner} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
                                                                 </ListItem>
                                                                 <ListItem>
-                                                                    {t('Market Address')}: <MakeLinkableAddress addr={meListing[0]?.auctionHouse} trim={9} hasextlink={true} hascopy={false} fontsize={16} /><br/>
+                                                                    {t('Market Address')}: <ExplorerView address={meListing[0]?.auctionHouse} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
                                                                 </ListItem>
                                                                 <ListItem>
                                                                     <>Marketplace:&nbsp;<strong>Magic Eden</strong><br/></>
