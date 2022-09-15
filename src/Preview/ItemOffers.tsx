@@ -515,6 +515,7 @@ function SellNowVotePrompt(props:any){
                                         <FormControl>
                                             <Grid container spacing={2}>
                                                     <Grid item>
+                                                        
                                                         <Alert severity="warning">
                                                             <>Please verify the following is correct</>
                                                         </Alert>
@@ -524,16 +525,16 @@ function SellNowVotePrompt(props:any){
                                                                     {t('Amount')}:&nbsp;<strong>{meListing[0].price}<SolCurrencyIcon sx={{ml:1,fontSize:"10px"}} /></strong>
                                                                 </ListItem>
                                                                 <ListItem>
-                                                                    {t('Mint')}: <ExplorerView address={mint} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
+                                                                    {t('Mint')}:&nbsp;<ExplorerView address={mint} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
                                                                 </ListItem>
                                                                 <ListItem>
-                                                                    {t('Owner')}: <ExplorerView address={meListing[0].seller} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
+                                                                    {t('Owner')}:&nbsp;<ExplorerView address={meListing[0].seller} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
                                                                 </ListItem>
                                                                 <ListItem>
-                                                                    {t('Escrow')}: <ExplorerView address={mintOwner} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
+                                                                    {t('Escrow')}:&nbsp;<ExplorerView address={mintOwner} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
                                                                 </ListItem>
                                                                 <ListItem>
-                                                                    {t('Market Address')}: <ExplorerView address={meListing[0]?.auctionHouse} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
+                                                                    {t('Market Address')}:&nbsp;<ExplorerView address={meListing[0]?.auctionHouse} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
                                                                 </ListItem>
                                                                 <ListItem>
                                                                     <>Marketplace:&nbsp;<strong>Magic Eden</strong><br/></>
