@@ -1084,8 +1084,13 @@ const deserialized = deserializeUnchecked(dataSchema, AccoundData, metavalue?.da
                     >
                     <BootstrapDialogTitle id="manage-storage-files" onClose={handleCloseDialog}>
                         View/Manage Files: {storageAccount.account.identifier}
+                        <Box sx={{ width: '100%',mt:-1 }}>
+                            <Typography variant='caption'>
+                                Storage Pool: {storageAccount.publicKey.toBase58()}
+                            </Typography>
+                        </Box>
                         <Box sx={{ width: '100%' }}>
-                            <LinearProgressWithLabel value={100-(+available/+allocated*100)} />
+                            <LinearProgressWithLabel value={100-(+available/+allocated*100)}/>
                         </Box>
                     </BootstrapDialogTitle>
                         <DialogContent>
