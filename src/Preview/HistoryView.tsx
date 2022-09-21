@@ -455,7 +455,7 @@ export default function HistoryView(props: any){
                                             <Table size="small" aria-label="purchases">
                                                 <TableHead>
                                                     <TableRow>
-                                                        <TableCell><Typography variant="caption">Bookeeper</Typography></TableCell>
+                                                        <TableCell><Typography variant="caption">Bookkeeper</Typography></TableCell>
                                                         <TableCell><Typography variant="caption">Status</Typography></TableCell>
                                                         <TableCell align="center"><Typography variant="caption">Amount</Typography></TableCell>
                                                         <TableCell align="center"><Typography variant="caption">Date</Typography></TableCell>
