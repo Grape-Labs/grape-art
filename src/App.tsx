@@ -56,6 +56,7 @@ import {
     SolflareWalletAdapter,
     SolletExtensionWalletAdapter,
     BackpackWalletAdapter,
+    WalletConnectWalletAdapter,
     SlopeWalletAdapter,
     SolletWalletAdapter,
     BraveWalletAdapter,
@@ -205,6 +206,20 @@ function DashboardContent() {
             new LedgerWalletAdapter(),
             new BackpackWalletAdapter(),
             new ExodusWalletAdapter(),
+            new WalletConnectWalletAdapter({
+                network,
+                options: {
+                    relayUrl: 'wss://relay.walletconnect.com',
+                    // example WC dapp project ID
+                    projectId: 'f84d0a55da814eb378cc432010765260',
+                    metadata: {
+                        name: 'GrapeArt',
+                        description: 'Grape Art | Social. Stateless. Marketplace. on Solana',
+                        url: 'https://github.com/solana-labs/wallet-adapter',
+                        icons: ['https://avatars.githubusercontent.com/u/35608259?s=200'],
+                    },
+                },
+            }),
             new SolletWalletAdapter({ network }),
             new SolletExtensionWalletAdapter({ network }),
             new BraveWalletAdapter(),
