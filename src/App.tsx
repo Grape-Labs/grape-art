@@ -215,8 +215,8 @@ function DashboardContent() {
                     metadata: {
                         name: 'GrapeArt',
                         description: 'Grape Art | Social. Stateless. Marketplace. on Solana',
-                        url: 'https://github.com/solana-labs/wallet-adapter',
-                        icons: ['https://avatars.githubusercontent.com/u/35608259?s=200'],
+                        url: 'https://grape.art',
+                        icons: ['https://shdw-drive.genesysgo.net/5pKmUSyh4VEpVhCCYon1kFf6fn5REtmk1rz4sGXyMrAZ/8upjSpvjc.logo.png'],
                     },
                 },
             }),
