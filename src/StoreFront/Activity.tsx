@@ -525,7 +525,7 @@ export default function ActivityView(props: any){
                             <Tooltip title={meStats ? 
                                 <>
                                     <strong>{((meStats.volumeAll/1000000000000)*tokenPrice).toFixed(2)}K {tokenToSymbol}</strong>
-                                    <>{ahStats > 0 && <><br/>{ahStats} SOL / {ahStats*tokenPrice} {tokenToSymbol} from Auction House</>}</>
+                                    <>{ahStats > 0 && <><br/>{ahStats.toFixed(2)} SOL / {(ahStats*tokenPrice).toFixed(2)} {tokenToSymbol} from Auction House</>}</>
                                 </> : `Volume`}>
                                 <Button 
                                     variant="text"
