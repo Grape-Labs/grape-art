@@ -200,6 +200,7 @@ export default function ActivityView(props: any){
                         const results = await getReceiptsFromAuctionHouse(collectionAuthority.auctionHouse || AUCTION_HOUSE_ADDRESS, null, null, null, null, false, null);
 
                         const activityResults = new Array();
+                        let totalSales = 0;
 
                         for (let item of results){
 
@@ -225,7 +226,13 @@ export default function ActivityView(props: any){
                                     seller: item?.seller, 
                                     buyer: item?.buyer});
                             }
+
+                            if (item?.receipt_type === "purchase_receipt"){
+                                totalSales += +item.price;
+                            }
                         }
+
+                        //setAhStats(totalSales);
 
                         // sort by date
                         activityResults.sort((a:any,b:any) => (a.blockTime < b.blockTime) ? 1 : -1);
@@ -509,7 +516,7 @@ export default function ActivityView(props: any){
                             <Tooltip title={meStats ? 
                                 <>
                                     <strong>{((meStats.volumeAll/1000000000000)*tokenPrice).toFixed(2)}K {tokenToSymbol}</strong>
-                                    <><br/>{ahStats} SOL from Auction House</>
+                                    <>{ahStats > 0 && <><br/>{ahStats} SOL / {ahStats*tokenPrice} {tokenToSymbol} from Auction House</>}</>
                                 </> : `Volume`}>
                                 <Button 
                                     variant="text"
