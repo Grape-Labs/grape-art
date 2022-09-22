@@ -159,7 +159,7 @@ export default function ActivityView(props: any){
                         for (let item of results){
 
                             const mintitem = await getMintFromVerifiedMetadata(item.metadata.toBase58(), collectionMintList);
-                            //console.log("> item: "+JSON.stringify(item));
+                            console.log("> item: "+JSON.stringify(item));
                             //console.log("mintitem: "+JSON.stringify(mintitem));
                             if (mintitem?.address){
                                 activityResults.push({
