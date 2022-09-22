@@ -159,7 +159,7 @@ export default function ActivityView(props: any){
                         for (let item of results){
 
                             const mintitem = await getMintFromVerifiedMetadata(item.metadata.toBase58(), collectionMintList);
-                            console.log("> item: "+JSON.stringify(item));
+                            //console.log("> item: "+JSON.stringify(item));
                             //console.log("mintitem: "+JSON.stringify(mintitem));
                             if (mintitem?.address){
                                 activityResults.push({
@@ -304,6 +304,7 @@ export default function ActivityView(props: any){
             console.log("With recent activity");
             // transpose auctionHouseListings
             const activityResults = new Array();
+            let totalSales = 0;
             for (let item of auctionHouseListings){
                 if (item?.mint){
                     activityResults.push({
@@ -317,8 +318,15 @@ export default function ActivityView(props: any){
                         purchaseReceipt: item?.purchaseReceipt, 
                         seller: item?.seller
                     })
+                    if (item?.receipt_type === "purchase_receipt"){
+                        console.log("pushing: "+item.price);
+                        totalSales += +item.price;
+                    }
                 }
+                
             }
+
+            setAhStats(totalSales);
             
             setRecentActivity(auctionHouseListings);
             
