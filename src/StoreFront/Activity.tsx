@@ -179,10 +179,11 @@ export default function ActivityView(props: any){
                                     purchaseReceipt: item.purchaseReceipt, 
                                     seller: item?.seller, 
                                     buyer: item?.buyer});
-                            }
-                        
-                            if (item?.receipt_type === "purchase_receipt"){
-                                totalSales += +item.price;
+
+                                if (item?.receipt_type === "purchase_receipt"){
+                                    console.log("pushing: "+item.price);
+                                    totalSales += +item.price;
+                                }
                             }
                         }
 
@@ -225,11 +226,11 @@ export default function ActivityView(props: any){
                                     purchaseReceipt: item.purchaseReceipt,
                                     seller: item?.seller, 
                                     buyer: item?.buyer});
-                            }
 
-                            if (item?.receipt_type === "purchase_receipt"){
-                                totalSales += +item.price;
-                            }
+                                if (item?.receipt_type === "purchase_receipt"){
+                                    totalSales += +item.price;
+                                }
+                            }                            
                         }
 
                         //setAhStats(totalSales);
