@@ -158,7 +158,7 @@ export default function SendToken(props: any) {
         
         /*
         if (memoText){
-            GRAPE_TT_MEMO = memoText
+            memonotes = memoText
         }*/
         
         if (tokenMintAddress == "So11111111111111111111111111111111111111112"){ // Check if SOL
@@ -174,7 +174,7 @@ export default function SendToken(props: any) {
             ).add(
                 new TransactionInstruction({
                     keys: [{ pubkey: fromWallet, isSigner: true, isWritable: true }],
-                    data: Buffer.from(JSON.stringify(memonotes), 'utf-8'),
+                    data: Buffer.from(JSON.stringify(memoText || ''), 'utf-8'),
                     programId: new PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr"),
                 })
             );
