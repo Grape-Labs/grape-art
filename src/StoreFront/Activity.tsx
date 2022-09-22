@@ -111,7 +111,7 @@ export default function ActivityView(props: any){
     const tokenPrice = props.tokenPrice;
     const tokenToSymbol = props?.tokenToSymbol || 'USDC';
     const meStats = props.meStats;
-    const [ahStats, setAhStats] = React.useState(0);
+    const [ahStats, setAhStats] = React.useState(props?.ahStats || 0);
     const MD_PUBKEY = METAPLEX_PROGRAM_ID;
     const [open, setOpenDialog] = React.useState(false);
     const { t, i18n } = useTranslation();
@@ -181,7 +181,7 @@ export default function ActivityView(props: any){
                                     buyer: item?.buyer});
 
                                 if (item?.receipt_type === "purchase_receipt"){
-                                    console.log("pushing: "+item.price);
+                                    //console.log("pushing: "+item.price);
                                     totalSales += +item.price;
                                 }
                             }
@@ -319,7 +319,7 @@ export default function ActivityView(props: any){
                         seller: item?.seller
                     })
                     if (item?.receipt_type === "purchase_receipt"){
-                        console.log("pushing: "+item.price);
+                        //console.log("pushing: "+item.price);
                         totalSales += +item.price;
                     }
                 }

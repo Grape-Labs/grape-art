@@ -531,6 +531,7 @@ export function StoreFrontView(this: any, props: any) {
     const [grapeFloorPrice, setGrapeFloorPrice] = React.useState(0);
     const [grapeTotalListings, setGrapeTotalListings] = React.useState(0); 
     const [meStats, setMEStats] = React.useState(null);
+    const [ahStats, setAhStats] = React.useState(null);
     const [refreshGallery, setRefreshGallery] = React.useState(0);
     const [stateLoading, setStateLoading] = React.useState(false);
     const [escrowStateLoading, setEscrowStateLoading] = React.useState(false);
@@ -1011,6 +1012,7 @@ export function StoreFrontView(this: any, props: any) {
 
             const ahActivity = new Array();
             const ahListingsMints = new Array();
+            let totalSales = 0;
 
             for (var item of results){
                 setLoadingPosition("Mint verified metadata");
@@ -1042,9 +1044,16 @@ export function StoreFrontView(this: any, props: any) {
                             purchaseReceipt: purchaseReceipt,
                             marketplaceListing:true});
                         ahListingsMints.push(mintitem.address);
+
+                        if (item?.receipt_type === "purchase_receipt"){
+                            //console.log("pushing: "+item.price);
+                            totalSales += +item.price;
+                        }
                     }
                 }
             }
+
+            setAhStats(totalSales);
 
             // sort by date
             ahActivity.sort((a:any,b:any) => (a.createdAt < b.createdAt) ? 1 : -1);
@@ -2009,7 +2018,7 @@ export function StoreFrontView(this: any, props: any) {
                                         */}
                                         <Grid item xs={12} sm={6} md={4} key={1}>
                                             {!stateLoading ?
-                                                <ActivityView collectionAuthority={collectionAuthority} collectionMintList={collectionMintList} activity={auctionHouseListings} meStats={meStats} tokenPrice={tokenPrice} mode={0} />
+                                                <ActivityView collectionAuthority={collectionAuthority} collectionMintList={collectionMintList} activity={auctionHouseListings} ahStats={ahStats} meStats={meStats} tokenPrice={tokenPrice} mode={0} />
                                             :
                                                 <CircularProgress sx={{color:'yellow',p:'2px'}} />
                                             }
