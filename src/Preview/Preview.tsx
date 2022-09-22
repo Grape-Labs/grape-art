@@ -1931,7 +1931,7 @@ export function PreviewView(this: any, props: any) {
                 ], MD_PUBKEY)
                 
                 const meta_response = await ggoconnection.getAccountInfo(pda);
-                console.log("meta_response: "+JSON.stringify(meta_response));
+                //console.log("meta_response: "+JSON.stringify(meta_response));
 
                 if (meta_response){
                     let meta_final = decodeMetadata(meta_response.data);

@@ -382,6 +382,8 @@ function SellNowVotePrompt(props:any){
                         );
                         enqueueSnackbar(`Purchased NFT for ${sell_now_amount} SOL`,{ variant: 'success', action:snackaction });  
                         
+                        //unicastGrapeSolflareMessage(`NFT SOLD`, `${mintName} was sold for ${meListing[0].price} SOL on grape.art`, image, meListing[0].seller, `https://grape.art${GRAPE_PREVIEW}${mint}`, signedTransaction, collectionAuctionHouse);
+
                         const eskey = enqueueSnackbar(`${t('Metadata will be refreshed in a few seconds')}`, {
                             anchorOrigin: {
                                 vertical: 'top',
@@ -2126,6 +2128,8 @@ export default function ItemOffers(props: any) {
                     }
                     */
                     setSaleMade(true);
+
+                    unicastGrapeSolflareMessage(`NFT SOLD`, `${mintName} was sold for ${salePrice} SOL on grape.art`, image, sellerWalletKey.toString(), `https://grape.art${GRAPE_PREVIEW}${mint}`, signedTransaction2, collectionAuctionHouse);
 
                     const eskey = enqueueSnackbar(`${t('Metadata will be refreshed in a few seconds')}`, {
                             anchorOrigin: {

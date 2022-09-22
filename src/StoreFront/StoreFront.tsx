@@ -1025,7 +1025,7 @@ export function StoreFrontView(this: any, props: any) {
                         //console.log("found: "+purchaseReceipt.toBase58().length+": "+purchaseReceipt.toBase58());
                     }
                     if (!purchaseReceipt){ // push only null receipts
-                        console.log("push "+JSON.stringify(item))
+                        //console.log("push "+JSON.stringify(item))
                         ahActivity.push({
                             buyeraddress: item.bookkeeper.toBase58(), 
                             bookkeeper: item.bookkeeper.toBase58(), 
