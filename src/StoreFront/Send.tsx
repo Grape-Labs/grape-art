@@ -43,8 +43,8 @@ import ArrowCircleRightOutlinedIcon from '@mui/icons-material/ArrowCircleRightOu
 
 function trimAddress(addr: string) {
     if (!addr) return addr;
-    let start = addr.substring(0, 8);
-    let end = addr.substring(addr.length - 4);
+    const start = addr.substring(0, 8);
+    const end = addr.substring(addr.length - 4);
     return `${start}...${end}`;
 }
 
@@ -105,7 +105,7 @@ export default function SendToken(props: any) {
         balance = Number(props.balance.replace(/[^0-9.-]+/g,""))
     } catch(e){
         balance = +props.balance;
-    };
+    }
     const conversionrate = props.conversionrate;
     const sendtype = props.sendType || 0; // 0 regular
     const [memotype, setMemoType] = React.useState(0);
@@ -182,7 +182,7 @@ export default function SendToken(props: any) {
                 enqueueSnackbar(`Preparing to send ${amountToSend} ${name} to ${toaddress}`,{ variant: 'info' });
                 const signature = await sendTransaction(transaction, freeconnection, {
                     skipPreflight: true,
-                    preflightCommitment: "confirmed"
+                    preflightCommitment: "confirmed",
                 });
                 const snackprogress = (key:any) => (
                     <CircularProgress sx={{padding:'10px'}} />
@@ -404,7 +404,7 @@ export default function SendToken(props: any) {
                                     variant="standard"
                                     value={userTokenBalanceInput || 0}
                                     onChange={(e: any) => {
-                                        let val = e.target.value.replace(/^0+/, '');
+                                        const val = e.target.value.replace(/^0+/, '');
                                         setTokensToSend(val)
                                         setTokenBalanceInput(val)
                                         }

@@ -72,6 +72,7 @@ import {
 import { MakeLinkableAddress, ValidateCurve, trimAddress, timeAgo } from '../utils/grapeTools/WalletAddress'; // global key handling
 
 import { useTranslation } from 'react-i18next';
+import { PriceChange } from '@mui/icons-material';
 
 function convertSolVal(sol: any){
     sol = parseFloat(new TokenAmount(sol, 9).format());
@@ -110,6 +111,7 @@ export default function ActivityView(props: any){
     const tokenPrice = props.tokenPrice;
     const tokenToSymbol = props?.tokenToSymbol || 'USDC';
     const meStats = props.meStats;
+    const [ahStats, setAhStats] = React.useState(0);
     const MD_PUBKEY = METAPLEX_PROGRAM_ID;
     const [open, setOpenDialog] = React.useState(false);
     const { t, i18n } = useTranslation();
@@ -145,15 +147,16 @@ export default function ActivityView(props: any){
 
                         // if we have a secondary auction house?
                         if (collectionAuthority?.otherAuctionHouses){
-                            for (var x of collectionAuthority.otherAuctionHouses){
+                            for (let x of collectionAuthority.otherAuctionHouses){
                                 //const results = await getReceiptsFromAuctionHouse(x, null, null, null, null, false, null);
                                 console.log("other: "+x);
                             }
                         }
 
                         const activityResults = new Array();
+                        let totalSales = 0;
 
-                        for (var item of results){
+                        for (let item of results){
 
                             const mintitem = await getMintFromVerifiedMetadata(item.metadata.toBase58(), collectionMintList);
                             //console.log("> item: "+JSON.stringify(item));
@@ -177,8 +180,14 @@ export default function ActivityView(props: any){
                                     seller: item?.seller, 
                                     buyer: item?.buyer});
                             }
+                        
+                            if (item?.receipt_type === "purchase_receipt"){
+                                totalSales += +item.price;
+                            }
                         }
 
+                        setAhStats(totalSales);
+                        
                         // sort by date
                         activityResults.sort((a:any,b:any) => (a.blockTime < b.blockTime) ? 1 : -1);
                         const dupRemovedResults = activityResults.filter( activity => !activity.purchaseReceipt)
@@ -192,7 +201,7 @@ export default function ActivityView(props: any){
 
                         const activityResults = new Array();
 
-                        for (var item of results){
+                        for (let item of results){
 
                             const mintitem = await getMintFromVerifiedMetadata(item.metadata.toBase58(), collectionMintList);
                             //console.log("> item: "+JSON.stringify(item));
@@ -231,7 +240,7 @@ export default function ActivityView(props: any){
 
                     const activityResults = new Array();
 
-                    for (var item of results){
+                    for (let item of results){
                         const mintitem = await getMintFromVerifiedMetadata(item.metadata.toBase58(), collectionMintList);
                         //console.log("> item: "+JSON.stringify(item));
                         //console.log("mintitem: "+JSON.stringify(mintitem));
@@ -287,7 +296,7 @@ export default function ActivityView(props: any){
             console.log("With recent activity");
             // transpose auctionHouseListings
             const activityResults = new Array();
-            for (var item of auctionHouseListings){
+            for (let item of auctionHouseListings){
                 if (item?.mint){
                     activityResults.push({
                         buyeraddress: item.buyeraddress, 
@@ -497,7 +506,11 @@ export default function ActivityView(props: any){
                     :   
                     <>
                         {mode === 0 ?
-                            <Tooltip title={meStats ? <strong>{((meStats.volumeAll/1000000000000)*tokenPrice).toFixed(2)}K {tokenToSymbol}</strong> : `Volume`}>
+                            <Tooltip title={meStats ? 
+                                <>
+                                    <strong>{((meStats.volumeAll/1000000000000)*tokenPrice).toFixed(2)}K {tokenToSymbol}</strong>
+                                    <><br/>{ahStats} SOL from Auction House</>
+                                </> : `Volume`}>
                                 <Button 
                                     variant="text"
                                     onClick={handleClickOpenDialog}
