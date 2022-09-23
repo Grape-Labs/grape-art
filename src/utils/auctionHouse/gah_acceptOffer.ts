@@ -45,10 +45,10 @@ const {
 
 export async function gah_acceptOffer(offerAmount: number, mint: string, sellerPublicKey: PublicKey, buyerPublicKey: any, updateAuthority: string, collectionAuctionHouse: string, listingTradeState: PublicKey, listed: boolean): Promise<InstructionsAndSignersSet> {
   //START CANCEL
-  let tokenSize = 1;
+  const tokenSize = 1;
   const auctionHouseKey = new web3.PublicKey(collectionAuctionHouse || AUCTION_HOUSE_ADDRESS);
   const mintKey = new web3.PublicKey(mint);
-  let anchorProgram = await loadAuctionHouseProgram(null, ENV_AH, GRAPE_RPC_ENDPOINT);
+  const anchorProgram = await loadAuctionHouseProgram(null, ENV_AH, GRAPE_RPC_ENDPOINT);
   const auctionHouseObj = await anchorProgram.account.auctionHouse.fetch(auctionHouseKey,);
   const buyerAddress = new web3.PublicKey(buyerPublicKey);
   const sellerAddress = new web3.PublicKey(sellerPublicKey);
@@ -92,7 +92,7 @@ export async function gah_acceptOffer(offerAmount: number, mint: string, sellerP
         treasuryMint,
         tokenMint,
         buyerPrice,//offer.price.toNumber(),
-        1
+        tokenSize
       )
 
     
@@ -105,7 +105,7 @@ export async function gah_acceptOffer(offerAmount: number, mint: string, sellerP
         treasuryMint,
         tokenMint,
         buyerPrice,//offer.price.toNumber(),
-        1
+        tokenSize
       )
     
       //console.log("buyerTradeState: "+JSON.stringify(buyerTradeState))
@@ -142,7 +142,7 @@ export async function gah_acceptOffer(offerAmount: number, mint: string, sellerP
         treasuryMint,
         tokenMint,
         0,
-        1
+        tokenSize
       )
 
     //console.log("freeTradeState: "+JSON.stringify(freeTradeState))
@@ -174,7 +174,7 @@ export async function gah_acceptOffer(offerAmount: number, mint: string, sellerP
       freeTradeStateBump: freeTradeStateBump,
       programAsSignerBump: programAsSignerBump,
       buyerPrice: buyerPrice,//offer.price,
-      tokenSize: 1,
+      tokenSize: tokenSize,
     }
 
     const printListingReceiptInstructionAccounts = {
@@ -211,7 +211,7 @@ export async function gah_acceptOffer(offerAmount: number, mint: string, sellerP
       freeTradeStateBump,
       programAsSignerBump,
       buyerPrice: buyerPrice,
-      tokenSize: 1,
+      tokenSize: tokenSize,
       partialOrderSize:null,
       partialOrderPrice:null
     }

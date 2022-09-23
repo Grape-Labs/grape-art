@@ -49,11 +49,11 @@ function convertSolVal(sol: any){
 export async function gah_makeOffer(offerAmount: number, mint: string, walletPublicKey: string, mintOwner: any, updateAuthority: string, collectionAuctionHouse: string): Promise<InstructionsAndSignersSet> {
     //const { publicKey, signTransaction } = useWallet();
     console.log("collectionAuctionHouse " + JSON.stringify(collectionAuctionHouse));
-    let tokenSize = 1;
+    const tokenSize = 1;
     const auctionHouseKey = new web3.PublicKey(collectionAuctionHouse || AUCTION_HOUSE_ADDRESS);
     const mintKey = new web3.PublicKey(mint);
     const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
-    let anchorProgram = await loadAuctionHouseProgram(null, ENV_AH, GRAPE_RPC_ENDPOINT);
+    const anchorProgram = await loadAuctionHouseProgram(null, ENV_AH, GRAPE_RPC_ENDPOINT);
     const auctionHouseObj = await anchorProgram.account.auctionHouse.fetch(auctionHouseKey,);    
     const buyerWalletKey = new web3.PublicKey(walletPublicKey);
     //check if escrow amount already exists to determine if we need to deposit amount to grapevine 
@@ -92,7 +92,7 @@ export async function gah_makeOffer(offerAmount: number, mint: string, walletPub
         treasuryMint,
         tokenMint,
         buyerPrice,
-        1
+        tokenSize
       )
     
       const metadata = await getMetadata(tokenMint);
@@ -139,7 +139,7 @@ export async function gah_makeOffer(offerAmount: number, mint: string, walletPub
         tradeStateBump,
         escrowPaymentBump,
         buyerPrice,
-        tokenSize: 1,
+        tokenSize: tokenSize,
       }
     )
 
