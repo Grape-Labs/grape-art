@@ -530,7 +530,7 @@ export default function ActivityView(props: any){
                                 : 
                                 <>
                                     {ahStats ?
-                                        <>{ahStats > 0 && <><br/>{ahStats.toFixed(2)} SOL / {(ahStats*tokenPrice).toFixed(2)} {tokenToSymbol} from Auction House</>}</>
+                                        <>{ahStats > 0 && <>{ahStats.toFixed(2)} SOL / {(ahStats*tokenPrice).toFixed(2)} {tokenToSymbol} from Auction House</>}</>
                                     :
                                         `Volume`}
                                 </>
