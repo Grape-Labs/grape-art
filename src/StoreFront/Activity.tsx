@@ -524,7 +524,7 @@ export default function ActivityView(props: any){
                         {mode === 0 ?
                             <Tooltip title={meStats ? 
                                 <>
-                                    <strong>{((meStats.volumeAll/1000000000000)*tokenPrice).toFixed(2)}K {tokenToSymbol}</strong>
+                                    <strong>{(meStats.volumeAll/1000000000000).toFixed(1)}k SOL / {((meStats.volumeAll/1000000000000)*tokenPrice).toFixed(2)}K {tokenToSymbol} - Average Price 24h: {(meStats.avgPrice24hr/1000000000).toFixed(1)} SOL</strong>
                                     <>{ahStats > 0 && <><br/>{ahStats.toFixed(2)} SOL / {(ahStats*tokenPrice).toFixed(2)} {tokenToSymbol} from Auction House</>}</>
                                 </> : `Volume`}>
                                 <Button 
