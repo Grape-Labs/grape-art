@@ -1,7 +1,7 @@
 {
     "name": "@grape-labs/grape-art",
-    "version": "1.1.356",
-    "author": "Grape devDAO",
+    "version": "1.1.357",
+    "author": "Grape Dev subDAO",
     "repository": "https://github.com/grape-labs/grape-art",
     "license": "Apache-2.0",
     "publishConfig": {
