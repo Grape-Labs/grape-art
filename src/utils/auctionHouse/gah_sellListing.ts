@@ -35,10 +35,10 @@ createPrintPurchaseReceiptInstruction,
 } = AuctionHouseProgram.instructions
 
 export async function gah_sellListing(offerAmount: number, mint: string, buyerPublicKey: string, mintOwner: any, weightedScore: any, daoPublicKey: string, updateAuthority: string, collectionAuctionHouse: string): Promise<InstructionsAndSignersSet> {
-  let tokenSize = 1;
+  const tokenSize = 1;
   const auctionHouseKey = new web3.PublicKey(collectionAuctionHouse || AUCTION_HOUSE_ADDRESS);
   const mintKey = new web3.PublicKey(mint);
-  let anchorProgram = await loadAuctionHouseProgram(null, ENV_AH, GRAPE_RPC_ENDPOINT);
+  const anchorProgram = await loadAuctionHouseProgram(null, ENV_AH, GRAPE_RPC_ENDPOINT);
   const auctionHouseObj = await anchorProgram.account.auctionHouse.fetch(auctionHouseKey,);  
   const buyerAddress = new web3.PublicKey(buyerPublicKey);
   const sellerAddress = new web3.PublicKey(mintOwner);
@@ -75,7 +75,7 @@ export async function gah_sellListing(offerAmount: number, mint: string, buyerPu
       treasuryMint,
       tokenMint,
       buyerPrice,
-      1
+      tokenSize
   )
   const [sellerTradeState, sellerTradeStateBump] =
     await AuctionHouseProgram.findTradeStateAddress(
@@ -85,7 +85,7 @@ export async function gah_sellListing(offerAmount: number, mint: string, buyerPu
       treasuryMint,
       tokenMint,
       buyerPrice,//offer.price.toNumber(),
-      1
+      tokenSize
     )
 
   const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
@@ -104,7 +104,7 @@ export async function gah_sellListing(offerAmount: number, mint: string, buyerPu
       treasuryMint,
       tokenMint,
       0,
-      1
+      tokenSize
     )
 
   const buyerPubkey = new PublicKey(buyerAddress)
@@ -149,7 +149,7 @@ export async function gah_sellListing(offerAmount: number, mint: string, buyerPu
     tradeStateBump,
     escrowPaymentBump,
     buyerPrice,
-    tokenSize: 1,
+    tokenSize: tokenSize,
   }
 
   const [buyerReceiptTokenAccount] =
@@ -207,7 +207,7 @@ export async function gah_sellListing(offerAmount: number, mint: string, buyerPu
     freeTradeStateBump,
     programAsSignerBump,
     buyerPrice: buyerPrice,
-    tokenSize: 1,
+    tokenSize: tokenSize,
     partialOrderSize:null,
     partialOrderPrice:null
   }

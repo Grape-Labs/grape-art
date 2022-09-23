@@ -28,10 +28,10 @@ const { createSellInstruction, createPrintListingReceiptInstruction } =
 import { ConstructionOutlined } from '@mui/icons-material';
   export async function gah_makeListing(offerAmount: number, mint: string, walletPublicKey: string, mintOwner: any, weightedScore: any, daoPublicKey: string, updateAuthority: string, collectionAuctionHouse: string): Promise<InstructionsAndSignersSet> {
 
-    let tokenSize = 1;
+    const tokenSize = 1;
     const auctionHouseKey = new web3.PublicKey(collectionAuctionHouse || AUCTION_HOUSE_ADDRESS);
     const mintKey = new web3.PublicKey(mint);
-    let anchorProgram = await loadAuctionHouseProgram(null, ENV_AH, GRAPE_RPC_ENDPOINT);
+    const anchorProgram = await loadAuctionHouseProgram(null, ENV_AH, GRAPE_RPC_ENDPOINT);
     const auctionHouseObj = await anchorProgram.account.auctionHouse.fetch(auctionHouseKey,);    
     const buyerWalletKey = new web3.PublicKey(walletPublicKey);
     //check if escrow amount already exists to determine if we need to deposit amount to grapevine 
@@ -66,7 +66,7 @@ import { ConstructionOutlined } from '@mui/icons-material';
         treasuryMint,
         tokenMint,
         buyerPrice,//offer.price.toNumber(),
-        1
+        tokenSize
       )
 
     const metadata = await getMetadata(tokenMint)
@@ -82,7 +82,7 @@ import { ConstructionOutlined } from '@mui/icons-material';
         treasuryMint,
         tokenMint,
         0,
-        1
+        tokenSize
       )
 
     const txt = new Transaction()
@@ -92,7 +92,7 @@ import { ConstructionOutlined } from '@mui/icons-material';
       freeTradeStateBump: freeTradeBump,
       programAsSignerBump: programAsSignerBump,
       buyerPrice,
-      tokenSize: 1,
+      tokenSize: tokenSize,
     }
 
     const sellInstructionAccounts = {

@@ -33,10 +33,10 @@ const {
 import { ConstructionOutlined } from '@mui/icons-material';
   export async function gah_cancelListing(price: number, mint: string, walletPublicKey: string, mintOwner: any, weightedScore: any, daoPublicKey: string, updateAuthority: string, collectionAuctionHouse: string): Promise<InstructionsAndSignersSet> {
     console.log("collectionAuctionHouse " + JSON.stringify(collectionAuctionHouse));
-    let tokenSize = 1;
+    const tokenSize = 1;
     const auctionHouseKey = new web3.PublicKey(collectionAuctionHouse || AUCTION_HOUSE_ADDRESS);
     const mintKey = new web3.PublicKey(mint);
-    let anchorProgram = await loadAuctionHouseProgram(null, ENV_AH, GRAPE_RPC_ENDPOINT);
+    const anchorProgram = await loadAuctionHouseProgram(null, ENV_AH, GRAPE_RPC_ENDPOINT);
     const auctionHouseObj = await anchorProgram.account.auctionHouse.fetch(auctionHouseKey,);    
     //check if escrow amount already exists to determine if we need to deposit amount to grapevine 
     
@@ -84,7 +84,7 @@ import { ConstructionOutlined } from '@mui/icons-material';
           treasuryMint,
           tokenMint,
           buyerPrice,
-          1
+          tokenSize
         )
       
       const cancelInstructionAccounts = {
@@ -98,7 +98,7 @@ import { ConstructionOutlined } from '@mui/icons-material';
       }
       const cancelListingInstructionArgs = {
         buyerPrice,
-        tokenSize: 1,
+        tokenSize: tokenSize,
       }
 
       const [receipt, receiptBump] =

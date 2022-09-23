@@ -26,8 +26,8 @@ import {
 import { AuctionHouseProgram } from '@metaplex-foundation/mpl-auction-house'
 
 function convertSolVal(sol: any){
-let sol_precision = 6;
-return +sol/1000000000;
+  const sol_precision = 6;
+  return +sol/1000000000;
 }
 
 const {
@@ -38,10 +38,10 @@ const {
 
 export async function gah_cancelOffer(offerAmount: number, mint: string, buyerWalletKey: PublicKey, mintOwner: any, updateAuthority: string, collectionAuctionHouse: string): Promise<InstructionsAndSignersSet> {
   //START CANCEL
-  let tokenSize = 1;
+  const tokenSize = 1;
   const auctionHouseKey = new web3.PublicKey(collectionAuctionHouse || AUCTION_HOUSE_ADDRESS);
   const mintKey = new web3.PublicKey(mint);
-  let anchorProgram = await loadAuctionHouseProgram(null, ENV_AH, GRAPE_RPC_ENDPOINT);
+  const anchorProgram = await loadAuctionHouseProgram(null, ENV_AH, GRAPE_RPC_ENDPOINT);
   const auctionHouseObj = await anchorProgram.account.auctionHouse.fetch(auctionHouseKey,);
   const sellerWalletKey = new web3.PublicKey(mintOwner);
 
@@ -93,7 +93,7 @@ export async function gah_cancelOffer(offerAmount: number, mint: string, buyerWa
         auctionHouseObj.treasuryMint,
         tokenMint,
         buyerPrice,
-        1
+        tokenSize
       )
 
     //const receipt = buyerWalletKey //new PublicKey(offer.address)
@@ -128,7 +128,7 @@ export async function gah_cancelOffer(offerAmount: number, mint: string, buyerWa
 
     const cancelInstructionArgs = {
       buyerPrice,
-      tokenSize: 1,
+      tokenSize: tokenSize,
     }
 
     const cancelBidReceiptInstructionAccounts = {
