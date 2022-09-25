@@ -1441,7 +1441,7 @@ export function IdentityView(props: any){
                                                                 <Grid item xs={12} alignContent={'right'} textAlign={'right'}>
                                                                     <Grid item alignContent={'center'} textAlign={'center'}>
                                                                         <>
-                                                                            <Typography variant="caption" color='error'>* IMPORTANT: Prior to closing any accounts; verify that you have removed any deposited positions in SPL Governance, Staking, Farming, Streaming services; visit those services and withdraw/transfer positions and deposits from those accounts first, i.e. SPL Governance Council Tokens should be withdrawn from the respective Realms first to avoid any permanent loss of those positions, Streaming services support tarnsfering of streams to a new account</Typography>
+                                                                            <Typography variant="caption" color='error'>* IMPORTANT: Prior to closing any accounts; verify that you have removed any deposited positions in SPL Governance, Staking, Farming, Streaming services; visit those services and withdraw/transfer positions and deposits from those accounts first, i.e. SPL Governance Council Tokens should be withdrawn from the respective Realms first to avoid any permanent loss of those positions, Streaming services support transfering of streams to a new account</Typography>
                                                                         </>
                                                                         
                                                                     </Grid>
