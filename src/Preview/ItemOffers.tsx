@@ -273,6 +273,7 @@ function SellNowVotePrompt(props:any){
     const [open_dialog, setOpenSPDialog] = React.useState(false);
     const [sell_now_amount, setSellNowAmount] = React.useState('');
     const mint = props.mint;  
+    const mintName = props.mintName;
     const updateAuthority = props.updateAuthority;  
     const mintOwner = props.mintOwner;
     const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
@@ -285,6 +286,7 @@ function SellNowVotePrompt(props:any){
     const setSalePriceEscrow = props.setSalePriceEscrow;
     const weightedScore = props.grapeWeightedScore || 0;
     const collectionAuctionHouse = props.collectionAuctionHouse || null; 
+    const setRefreshOffers = props.setRefreshOffers;
     //const salePrice = React.useState(props.salePrice);
     //const provider = new anchor.Provider(connection, wallet, anchor.Provider.defaultOptions)
 
@@ -332,7 +334,7 @@ function SellNowVotePrompt(props:any){
         };
 
         const Timeout = (time:number) => {
-            let controller = new AbortController();
+            const controller = new AbortController();
             setTimeout(() => controller.abort(), time * 1000);
             return controller;
         };
@@ -382,6 +384,7 @@ function SellNowVotePrompt(props:any){
                         );
                         enqueueSnackbar(`Purchased NFT for ${sell_now_amount} SOL`,{ variant: 'success', action:snackaction });  
                         
+                        unicastGrapeSolflareMessage(`NFT SOLD`, `${mintName} was sold for ${meListing[0].price} SOL on grape.art`, null, meListing[0].seller, `https://grape.art${GRAPE_PREVIEW}${mint}`, signedTransaction, collectionAuctionHouse);
                         //unicastGrapeSolflareMessage(`NFT SOLD`, `${mintName} was sold for ${meListing[0].price} SOL on grape.art`, image, meListing[0].seller, `https://grape.art${GRAPE_PREVIEW}${mint}`, signedTransaction, collectionAuctionHouse);
 
                         const eskey = enqueueSnackbar(`${t('Metadata will be refreshed in a few seconds')}`, {
@@ -393,7 +396,7 @@ function SellNowVotePrompt(props:any){
                         });
                         setTimeout(function() {
                             closeSnackbar(eskey);
-                            props.setRefreshOffers(true);
+                            setRefreshOffers(true);
                         }, GRAPE_RPC_REFRESH); 
                     } else{
                         closeSnackbar();
@@ -435,7 +438,7 @@ function SellNowVotePrompt(props:any){
             //const apiUrl = PROXY+"https://api-mainnet.magiceden.dev/v2/instructions/buy_now";
             const apiUrl = PROXY+"https://hyper.solana.fm/v3/instructions/buy_now";
             
-            var response = await axios.get(
+            const response = await axios.get(
                 apiUrl, {
                 params: {
                     network:'mainnet',
@@ -2561,7 +2564,7 @@ export default function ItemOffers(props: any) {
                                                                         <>
                                                                         {!ValidateCurve(mintOwner) && salePrice <= 0 &&
                                                                             <Grid item>
-                                                                                <SellNowVotePrompt setSalePriceEscrow={setSalePriceEscrow} mint={mint} updateAuthority={updateAuthority} mintOwner={mintOwner} salePrice={salePrice} grapeWeightedScore={grape_weighted_score} setRefreshOffers={setRefreshOffers} collectionAuctionHouse={collectionAuctionHouse} />
+                                                                                <SellNowVotePrompt mintName={mintName} setSalePriceEscrow={setSalePriceEscrow} mint={mint} updateAuthority={updateAuthority} mintOwner={mintOwner} salePrice={salePrice} grapeWeightedScore={grape_weighted_score} setRefreshOffers={setRefreshOffers} collectionAuctionHouse={collectionAuctionHouse} />
                                                                             </Grid>
                                                                         }
                                                                         
