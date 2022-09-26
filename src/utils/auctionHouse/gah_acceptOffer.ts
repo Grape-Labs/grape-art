@@ -27,7 +27,7 @@ import {
 import { AuctionHouseProgram } from '@metaplex-foundation/mpl-auction-house'
 
 function convertSolVal(sol: any){
-let sol_precision = 6;
+const sol_precision = 6;
 return +sol/1000000000;
 }
 

@@ -7,6 +7,7 @@ import { PublicKey, TokenAmount, Connection } from '@solana/web3.js';
 import { ENV, TokenListProvider, TokenInfo } from '@solana/spl-token-registry';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import axios from "axios";
+import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 
 import { 
     tryGetName,
@@ -186,6 +187,56 @@ function RenderHoldersTable(props:any) {
     const tokenDecimals = token?.decimals || 6;
     const { navigation, open } = useDialectUiId<ChatNavigationHelpers>(GRAPE_BOTTOM_CHAT_ID);
     const [openPreviewDialog, setOpenPreviewDialog] = React.useState(false);
+    
+    /*
+    const holdercolumns: GridColDef[] = [
+        { field: 'holder', headerName: 'Holder', width: 70, hide: false,
+            renderCell: (params) => {
+                return(
+                    <>
+                        .
+                    </>
+                )
+            }
+        },
+        { field: 'image', headerName: 'Image', width: 70, hide: false,
+            renderCell: (params) => {
+                return(
+                    <>
+                        .
+                    </>
+                )
+            }
+        },
+        { field: 'name', headerName: 'Name', width: 70, hide: false,
+            renderCell: (params) => {
+                return(
+                    <>
+                        .
+                    </>
+                )
+            }
+        },
+        { field: 'mint', headerName: 'Mint Address', width: 70, hide: false,
+            renderCell: (params) => {
+                return(
+                    <>
+                        .
+                    </>
+                )
+            }
+        },
+        { field: 'preview', headerName: '', width: 70, hide: false,
+            renderCell: (params) => {
+                return(
+                    <>
+                        .
+                    </>
+                )
+            }
+        }  
+    ]
+    */
 
     const handleClickOpenPreviewDialog = () => {
         setOpenPreviewDialog(true);
@@ -560,8 +611,8 @@ export function HoldersView(props: any) {
         if (nfts){
             if (nfts.length > 0){
                 if (!holderExport){
-                    let harray = new Array();
-                    for(var item of nfts){
+                    const harray = new Array();
+                    for(const item of nfts){
                         try{
                             harray.push({
                                 mint:item.mintAddress,
@@ -574,12 +625,12 @@ export function HoldersView(props: any) {
                     // get unique holders
                     const count = {};
                     
-                    let display = new Array();
-                    let unique = new Array();
-                    for(var item of nfts){
-                        var found = false
-                        var x = 0;
-                        for (var inner of unique){
+                    const display = new Array();
+                    const unique = new Array();
+                    for(const item of nfts){
+                        let found = false
+                        let x = 0;
+                        for (const inner of unique){
                             if (inner.owner === item.owner.address){
                                 found = true;
                                 inner.mint+=','+item.mintAddress

@@ -1489,6 +1489,7 @@ export default function ItemOffers(props: any) {
                 );
                 enqueueSnackbar(`${t('Listing Cancelled')} `,{ variant: 'success', action:snackaction });
                 //END CANCEL LISTING
+                //console.log("sending unicast message")
                 unicastGrapeSolflareMessage(`Listing Cancelled`, `Your listing for ${mintName} has been cancelled on grape.art`, image, publicKey.toString(), `https://grape.art${GRAPE_PREVIEW}${mint}`, signedTransaction, collectionAuctionHouse);
 
                 const eskey = enqueueSnackbar(`${t('Metadata will be refreshed in a few seconds')}`, {

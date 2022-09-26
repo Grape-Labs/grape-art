@@ -166,7 +166,7 @@ export async function gah_makeOffer(offerAmount: number, mint: string, walletPub
     
     txt.feePayer = new PublicKey(walletPublicKey)
 
-    let signature: string | undefined = undefined
+    const signature: string | undefined = undefined
     const transferAuthority = web3.Keypair.generate();
     const signers = true ? [] : [transferAuthority];
     const instructions = txt.instructions;

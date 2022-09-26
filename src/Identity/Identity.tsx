@@ -393,11 +393,11 @@ export function IdentityView(props: any){
         setLoadingPosition(' last (100) Transactions');
         const response = await ggoconnection.getSignaturesForAddress(new PublicKey(pubkey));
 
-        let memos: any[] = [];
-        let signatures: any[] = [];
+        const memos: any[] = [];
+        const signatures: any[] = [];
         let counter = 0;
         // get last 100
-        for (var value of response){
+        for (const value of response){
             if (counter<100){
                 signatures.push(value.signature);
                 memos.push(value.memo);
@@ -407,14 +407,14 @@ export function IdentityView(props: any){
         const getTransactionAccountInputs2 = await ggoconnection.getParsedTransactions(signatures, 'confirmed');
 
         let cnt=0;
-        let tx: any[] = [];
-        for (var tvalue of getTransactionAccountInputs2){
+        const tx: any[] = [];
+        for (const tvalue of getTransactionAccountInputs2){
             //if (cnt===0)
             //    console.log(signatures[cnt]+': '+JSON.stringify(tvalue));
             
             let txtype = "";
             if (tvalue?.meta?.logMessages){
-                for (var logvalue of tvalue.meta.logMessages){
+                for (const logvalue of tvalue.meta.logMessages){
                     //console.log("txvalue: "+JSON.stringify(logvalue));
                     if (logvalue.includes("Program log: Instruction: ")){
                         if (txtype.length > 0)
@@ -514,8 +514,8 @@ export function IdentityView(props: any){
             }    
         `
         
-        let using = publicKeys;
-        let usequery = GET_REALMS;
+        const using = publicKeys;
+        const usequery = GET_REALMS;
         
         return await gql_client
             .query({
@@ -601,7 +601,7 @@ export function IdentityView(props: any){
         var cnt = 0;
 
         let cgArray = '';//new Array()
-        for (var item of resultValues){
+        for (const item of resultValues){
             //console.log("item: "+JSON.stringify(item))
             const tm = tokenMap.get(item.account.data.parsed.info.mint)
             if (tm && tm?.extensions?.coingeckoId){
@@ -621,7 +621,7 @@ export function IdentityView(props: any){
 
         //console.log("nftMeta: "+JSON.stringify(nftMeta))
 
-        for (var item of resultValues){
+        for (const item of resultValues){
             /*
             try{
                 const tknPrice = await getTokenPrice(item.account.data.parsed.info.mint, "USDC");
@@ -638,9 +638,9 @@ export function IdentityView(props: any){
             let metadata = null;
             let metadata_decoded = null;
 
-            var foundMetaName = false;
+            let foundMetaName = false;
 
-            for (var nft of nftMeta){
+            for (const nft of nftMeta){
                 //console.log('meta: '+JSON.stringify(nft));
                 if (nft.meta.mint === item.account.data.parsed.info.mint){
                     //console.log("nft: "+JSON.stringify(nft))
@@ -694,7 +694,7 @@ export function IdentityView(props: any){
 
         let closableholdingsrows = new Array();
         cnt = 0;
-        for (var item of closable){
+        for (const item of closable){
             /*
             try{
                 const tknPrice = await getTokenPrice(item.account.data.parsed.info.mint, "USDC");
@@ -709,8 +709,8 @@ export function IdentityView(props: any){
             let name = item.account.data.parsed.info.mint;
             let metadata = null;
             
-            var foundMetaName = false;
-            for (var nft of nftMeta){
+            let foundMetaName = false;
+            for (const nft of nftMeta){
                 //console.log('meta: '+JSON.stringify(nft));
                 if (nft.meta.mint === item.account.data.parsed.info.mint){
                     //console.log("nft: "+JSON.stringify(nft))
@@ -872,7 +872,7 @@ export function IdentityView(props: any){
             let collectionmeta: any[] = [];
 
             const sholdings = new Array();
-            for (var item of holdings){
+            for (const item of holdings){
                 if (item){
                     // comment to fetch social tokens which have metaplex metadata
                     //if (item.account.data.parsed.info.tokenAmount.decimals === 0)
@@ -902,7 +902,7 @@ export function IdentityView(props: any){
             }
             
             const final_collection_meta: any[] = [];
-            for (var i = 0; i < collectionmeta.length; i++) {
+            for (let i = 0; i < collectionmeta.length; i++) {
                 //console.log(i+": "+JSON.stringify(collectionmeta[i])+" --- with --- "+JSON.stringify(collectionmeta[i]));
                 if (collectionmeta[i]) {
                     collectionmeta[i]['wallet'] = sholdings[i];
@@ -916,7 +916,7 @@ export function IdentityView(props: any){
                             //console.log("checking: "+collectionmeta[i]['meta'].mint);
                             if (nftMap){
                                 //var index = Object.keys(nftMap).indexOf(collectionmeta[i]['meta'].mint);
-                                var found_from_map = false;
+                                let found_from_map = false;
                                 for (const [key, value] of Object.entries(nftMap)){
                                     if (key === collectionmeta[i]['meta'].mint){
                                         collectionmeta[i]['image'] = DRIVE_PROXY+value?.image;
@@ -968,7 +968,7 @@ export function IdentityView(props: any){
         let cnt = 0;
         //console.log("all uTable "+JSON.stringify(uTable))
 
-        for (var item of ownerRecordsbyOwner){
+        for (const item of ownerRecordsbyOwner){
             const realm = uTable[item.account.realm.toBase58()];
             //console.log("realm: "+JSON.stringify(realm))
             const name = realm.account.name;
