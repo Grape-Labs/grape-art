@@ -5,7 +5,7 @@ import { AUCTION_HOUSE_ADDRESS } from '../auctionHouse/helpers/constants';
 export async function unicastGrapeSolflareMessage (title:string,message:string,image:string,publicKey:string,actionUrl:string, signedTransaction: any, auctionHouse: string) {
     try{
         if (SOFLARE_NOTIFICATIONS_API_KEY){
-            console.log("SENDING UNICAST MESSAGE")
+            //console.log("SENDING UNICAST MESSAGE")
             const body = {
                 title: title,
                 body: message,
@@ -31,6 +31,7 @@ export async function unicastGrapeSolflareMessage (title:string,message:string,i
             return null;
         }
     }catch(e){
+        console.log("ERR: "+e);
         return null;
     }
 }
