@@ -611,7 +611,8 @@ export function StoreFrontView(this: any, props: any) {
             const response = await window.fetch(THEINDEX_RPC_ENDPOINT, {
                 method: "POST",
                 body: JSON.stringify(body),
-                headers: { "Content-Type": "application/json" },
+                headers: { "Content-Type": "application/json",
+                            "Cache-Control": "s-maxage=8640" }
             })
             const json = await response.json();
             const resultValues = json.result;
