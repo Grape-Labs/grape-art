@@ -8,6 +8,9 @@ import { PreviewView } from './Preview/Preview';
 import { FeaturedView } from './Featured/Featured';
 import { IdentityView } from './Identity/Identity';
 import { StorageView } from './Identity/plugins/Storage';
+
+
+import FeedView from './Profile/FeedView';
 /*
 const ProfileView = lazy(() => import('./Profile/Profile'));
 const PreviewView = lazy(() => import('./Preview/Preview'));
@@ -283,6 +286,7 @@ function DashboardContent() {
                                                             {/*<Route path="/splash" element={<SplashView />} />*/}
 
                                                             <Route path="/featured" element={<FeaturedView />} />
+                                                            <Route path="/feed" element={<FeedView />} />
 
                                                             {/*<Route path="/messages" element={<MessagesView />} />*/}
 
