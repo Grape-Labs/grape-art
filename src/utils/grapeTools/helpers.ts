@@ -118,7 +118,8 @@ export async function getCoinGeckoPrice(token:string) {
   const response = await fetch("https://api.coingecko.com/api/v3/simple/price?include_24hr_change=true&ids="+token+"&vs_currencies=usd",{
     method: "GET",
     //body: JSON.stringify(body),
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json",
+                "Cache-Control": "s-maxage=8640" }
   }).catch((error)=>{
     console.log("ERROR GETTING CG DATA!");
     return null;

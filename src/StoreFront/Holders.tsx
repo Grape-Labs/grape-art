@@ -422,6 +422,7 @@ function RenderHoldersTable(props:any) {
                             <TableCell><Typography variant="caption">Image</Typography></TableCell>
                             <TableCell><Typography variant="caption">Name</Typography></TableCell>
                             <TableCell><Typography variant="caption">Mint Address</Typography></TableCell>
+                            <TableCell><Typography variant="caption">Curve</Typography></TableCell>
                             <TableCell></TableCell>
                         </TableRow>
                     </TableHead>
@@ -466,6 +467,16 @@ function RenderHoldersTable(props:any) {
                                         <TableCell>
                                             <Typography variant="h6">
                                                 {item.mintAddress}
+                                            </Typography>
+                                        </TableCell>
+
+                                        <TableCell>
+                                            <Typography variant="h6">
+                                                {(ValidateCurve(item.owner?.address || item.owner)) ?
+                                                    <>true</>
+                                                    :
+                                                    <>false</>
+                                                }
                                             </Typography>
                                         </TableCell>
 
