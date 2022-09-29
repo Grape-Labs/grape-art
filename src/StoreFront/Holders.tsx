@@ -659,14 +659,16 @@ export function HoldersView(props: any) {
                                 mint:item.mintAddress,
                                 name:item.name,
                                 owner:item.owner.address,
-                                count:1.
+                                curve:ValidateCurve(item.owner?.address || item.owner),
+                                count:1
                             })
                             display.push({
                                 mint:item.mintAddress,
                                 name:item.name,
                                 owner:item.owner.address,
                                 image:item.image,
-                                count:1.
+                                curve:ValidateCurve(item.owner?.address || item.owner),
+                                count:1
                             })
                         }
                     }
@@ -691,8 +693,9 @@ export function HoldersView(props: any) {
                     const jsonUniqueString = `data:text/json;chatset=utf-8,${encodeURIComponent(
                         JSON.stringify(sortedResults)
                     )}`;
-                    
                     setUniqueFileGenerated(jsonUniqueString);
+
+                    
                 }
             }
         }

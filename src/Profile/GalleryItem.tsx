@@ -78,7 +78,8 @@ export default function GalleryItem(props: any){
                         const file_metadata_url = new URL(file_metadata);
 
                         const IPFS = 'https://ipfs.io';
-                        if (file_metadata.startsWith(IPFS)){
+                        const IPFS_2 = "https://nftstorage.link/ipfs";
+                        if (file_metadata.startsWith(IPFS) || file_metadata.startsWith(IPFS_2)){
                             file_metadata = CLOUDFLARE_IPFS_CDN+file_metadata_url.pathname;
                         }
 
