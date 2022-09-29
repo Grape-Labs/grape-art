@@ -360,7 +360,7 @@ export default function ListForCollectionView(props: any){
                     ></Avatar>
                 </Button>
                 <ActivityView collectionAuthority={collectionAuthority} collectionMintList={collectionMintList} logo={logo} mode={1} activity={auctionHouseListings} />
-                <ActivityView collectionAuthority={collectionAuthority} collectionMintList={collectionMintList} logo={logo} mode={2} />
+                <ActivityView collectionAuthority={collectionAuthority} collectionMintList={collectionMintList} logo={logo} mode={2} activity={auctionHouseListings} />
             </ButtonGroup>
             <BootstrapDialog 
                 fullWidth={true}

@@ -1860,17 +1860,19 @@ export function StoreFrontView(this: any, props: any) {
                                         <Box
                                             sx={{m:2}}
                                         >
-                                            <ListForCollectionView 
-                                                logo={GRAPE_COLLECTIONS_DATA+collectionAuthority.logo} 
-                                                entangleTo={collectionAuthority.entangleTo} 
-                                                entangleFrom={collectionAuthority.entangleFrom} 
-                                                entangled={collectionAuthority.entangled} 
-                                                enforceEntangle={collectionAuthority.entangleEnforce}
-                                                entangleUrl={collectionAuthority.entangleUrl}
-                                                updateAuthority={collectionAuthority.updateAuthority}
-                                                collectionAuthority={collectionAuthority}
-                                                collectionMintList={collectionMintList}
-                                                activity={auctionHouseListings} />
+                                            {!stateLoading &&
+                                                <ListForCollectionView 
+                                                    logo={GRAPE_COLLECTIONS_DATA+collectionAuthority.logo} 
+                                                    entangleTo={collectionAuthority.entangleTo} 
+                                                    entangleFrom={collectionAuthority.entangleFrom} 
+                                                    entangled={collectionAuthority.entangled} 
+                                                    enforceEntangle={collectionAuthority.entangleEnforce}
+                                                    entangleUrl={collectionAuthority.entangleUrl}
+                                                    updateAuthority={collectionAuthority.updateAuthority}
+                                                    collectionAuthority={collectionAuthority}
+                                                    collectionMintList={collectionMintList}
+                                                    activity={auctionHouseListings} />
+                                            }
                                         </Box>
                                         
                                         {collectionParentAuthority && 
