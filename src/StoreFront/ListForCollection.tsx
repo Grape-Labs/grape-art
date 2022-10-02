@@ -309,7 +309,7 @@ export default function ListForCollectionView(props: any){
         return(
             
             <Button
-                onClick={() => handleClickOpenPreviewDialog(item.decoded?.mint, floorPrice)}
+                onClick={() => handleClickOpenPreviewDialog(item.decoded?.mint)}
                 //component={Link} to={`${GRAPE_PREVIEW}${item.decoded?.mint}`}
                 size="large"
                 variant="outlined"
