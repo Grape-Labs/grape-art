@@ -969,10 +969,10 @@ function SellNowPrompt(props:any){
                     {t('Mint')}: <ExplorerView address={mint} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
                     Auction House: <ExplorerView address={collectionAuctionHouse || AUCTION_HOUSE_ADDRESS} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
                 </Box>
-                
+
                 {floorPrice &&
                     <Box sx={{width:'100%'}}>
-                        {t('Floor')}: {floorPrice} <SolCurrencyIcon />
+                        {t('Floor')}: {floorPrice} <SolCurrencyIcon sx={{fontSize:"12px"}} />
                     </Box>
                 }
 
