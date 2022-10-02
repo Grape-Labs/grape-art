@@ -1862,6 +1862,7 @@ export function StoreFrontView(this: any, props: any) {
                                         >
                                             {!stateLoading &&
                                                 <ListForCollectionView 
+                                                    floorPrice={floorPrice}
                                                     logo={GRAPE_COLLECTIONS_DATA+collectionAuthority.logo} 
                                                     entangleTo={collectionAuthority.entangleTo} 
                                                     entangleFrom={collectionAuthority.entangleFrom} 

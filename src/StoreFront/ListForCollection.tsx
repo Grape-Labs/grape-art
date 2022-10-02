@@ -52,6 +52,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 }));
 
 export default function ListForCollectionView(props: any){
+    const [floorPrice, setFloorPrice] = React.useState(props.floorPrice || null);
     const logo = props.logo;
     const collectionAuthority = props.collectionAuthority;
     const updateAuthority = props.updateAuthority;
@@ -376,7 +377,7 @@ export default function ListForCollectionView(props: any){
                 }}
             >
                 <DialogTitle>
-                    {t('List')}
+                    {t('List')} {floorPrice && <Typography variant='caption'>{floorPrice} SOL floor</Typography>}
                 </DialogTitle>
                 <DialogContent>
                     <List>

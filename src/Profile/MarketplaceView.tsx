@@ -83,30 +83,11 @@ export default function MarketplaceView(props: any) {
                                                     zIndex: 1,
                                                     borderRadius: '1rem',
                                                     boxShadow: `0 6px 16px 0 ${Color(color).fade(0.85)}`,
-                                                    '&:before': {
-                                                    content: '""',
-                                                    display: 'block',
-                                                    position: 'absolute',
-                                                    left: 0,
-                                                    top: 0,
-                                                    zIndex: 0,
-                                                    width: '100%',
-                                                    height: '100%',
-                                                    clipPath:
-                                                        'polygon(0% 100%, 0% 35%, 0.3% 33%, 1% 31%, 1.5% 30%, 2% 29%, 2.5% 28.4%, 3% 27.9%, 3.3% 27.6%, 5% 27%,95% 0%,100% 0%, 100% 100%)',
-                                                    borderRadius: '1rem',
-                                                    background: `linear-gradient(to top, ${'color'}, ${Color(color)
-                                                        .rotate(24)
-                                                        .lighten(0.12)})`,
-                                                    },
                                                 }}
                                                 />
                                                 
                                             <CardContent
-                                                sx={{
-                                                    background: 'none',
-                                                    
-                                                }}
+                                                
                                             >
                                                 <Typography 
                                                     gutterBottom variant="h5" 
