@@ -462,7 +462,7 @@ export default function ListForCollectionView(props: any){
                                     }}
                                 >
                                     <DialogContent>
-                                        <PreviewView handlekey={selectedMint} />
+                                        <PreviewView handlekey={selectedMint} floorPrice={floorPrice || null} />
                                     </DialogContent>
                                     <DialogActions>
                                         <Button variant="text" onClick={handleClosePreviewDialog}>{t('Close')}</Button>
