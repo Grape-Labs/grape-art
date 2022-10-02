@@ -399,7 +399,7 @@ export default function ListForCollectionView(props: any){
                             {collectionMetaFinal && collectionMetaFinal.map((item: any) => (
                                 <ListItem 
                                     sx={{borderRadius:'17px'}}
-                                    >
+                                >
                                     <ListItemAvatar>
                                         <Avatar
                                             src={DRIVE_PROXY+item.decodeMetadata?.image}
@@ -414,7 +414,7 @@ export default function ListForCollectionView(props: any){
 
                                     <ListItemText>
                                         <Typography variant="h5">
-                                            {item.decodeMetadata?.name} 
+                                            {item.decodeMetadata?.name}
                                         </Typography>
                                         {(item.decoded.updateAuthority === entangleFrom) && (enforceEntangle) ?
                                             <Typography
@@ -435,11 +435,10 @@ export default function ListForCollectionView(props: any){
                                             </Typography>
                                         :
                                             <>
-                                            <Typography
-                                                variant='subtitle2'>
-                                                <SellNowButton item={item} />
-                                            </Typography>
-                                            
+                                                <Typography
+                                                    variant='subtitle2'>
+                                                    <SellNowButton item={item} />
+                                                </Typography>
                                             </>
                                         }
 
@@ -462,7 +461,7 @@ export default function ListForCollectionView(props: any){
                                     }}
                                 >
                                     <DialogContent>
-                                        <PreviewView handlekey={selectedMint} floorPrice={floorPrice} />
+                                        <PreviewView handlekey={selectedMint}  />
                                     </DialogContent>
                                     <DialogActions>
                                         <Button variant="text" onClick={handleClosePreviewDialog}>{t('Close')}</Button>
