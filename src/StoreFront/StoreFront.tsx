@@ -1191,7 +1191,7 @@ export function StoreFrontView(this: any, props: any) {
 
             // check all that do not have an image or name and group them
             const mintsToGet = new Array();
-            for (var mintListItem of tempCollectionMintList){
+            for (const mintListItem of tempCollectionMintList){
                 if (!mintListItem.name){
                     mintsToGet.push({address:mintListItem.address})
                 }
@@ -1201,8 +1201,8 @@ export function StoreFrontView(this: any, props: any) {
 
             const missing_meta = await getMissingCollectionData(0, mintsToGet);
             
-            for (var mintListItem of tempCollectionMintList){
-                for (var missed of missing_meta){
+            for (const mintListItem of tempCollectionMintList){
+                for (const missed of missing_meta){
                     if (mintListItem.address === missed.mint){
                         //console.log("pushing: "+JSON.stringify(missed));
                         mintListItem.name = missed.name,

@@ -52,7 +52,8 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 }));
 
 export default function ListForCollectionView(props: any){
-    const [floorPrice, setFloorPrice] = React.useState(props.floorPrice || null);
+    const floorPrice = props.floorPrice || null;
+    //const [floorPrice, setFloorPrice] = React.useState(props.floorPrice || null);
     const logo = props.logo;
     const collectionAuthority = props.collectionAuthority;
     const updateAuthority = props.updateAuthority;
@@ -290,7 +291,7 @@ export default function ListForCollectionView(props: any){
             if (item){
                 try{
                 //console.log("collectionMintList: "+JSON.stringify(collectionMintList))
-                    for (var mintItem of collectionMintList){
+                    for (const mintItem of collectionMintList){
                         if (mintItem.address === item.decoded?.mint){
                             if (mintItem?.listingPrice){
                                 setIsListed(true)
@@ -377,7 +378,7 @@ export default function ListForCollectionView(props: any){
                 }}
             >
                 <DialogTitle>
-                    {t('List')} {floorPrice && <Typography variant=''>{floorPrice} <SolCurrencyIcon sx={{ml:0.5,mr:0.5,fontSize:'12px'}} /> Floor</Typography>}
+                    {t('List')} {floorPrice && <Typography> - {floorPrice} <SolCurrencyIcon sx={{ml:0.5,mr:0.5,fontSize:'14px'}} /> Floor</Typography>}
                 </DialogTitle>
                 <DialogContent>
                     <List>
