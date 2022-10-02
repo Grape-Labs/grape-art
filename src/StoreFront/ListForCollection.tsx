@@ -75,7 +75,7 @@ export default function ListForCollectionView(props: any){
     const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
     const rpclimit = 100;
 
-    const handleClickOpenPreviewDialog = (mint:string, floorPrice: any) => {
+    const handleClickOpenPreviewDialog = (mint:string) => {
         setSelectedMint(null);
         if (mint){
             setSelectedMint(mint)
@@ -138,8 +138,8 @@ export default function ListForCollectionView(props: any){
         const json = await response.json();
         try{
                 const resultValues = json.result.value
-                const walletCollection = new Array();
-                const wallet = resultValues && resultValues?.map((collectionInfo: any) => {
+                let walletCollection = new Array();
+                let wallet = resultValues && resultValues?.map((collectionInfo: any) => {
                     (+collectionInfo.account.data.parsed.info.tokenAmount.amount >= 1) &&
                         (+collectionInfo.account.data.parsed.info.tokenAmount.decimals === 0) && 
                             walletCollection.push(collectionInfo);    
@@ -154,27 +154,27 @@ export default function ListForCollectionView(props: any){
     const getCollectionData = async (start:number, collection:any) => {
         const wallet_collection = new Array();
         
-        for (const item of collection){
+        for (var item of collection){
             wallet_collection.push(item.account.data.parsed.info.mint);
             //console.log("pushed: "+item.account.data.parsed.info.mint)
         }
 
         try {
-            const mintsPDAs = new Array();
+            let mintsPDAs = new Array();
             
             // we should loop entire collection user has
 
-            const mintarr = wallet_collection.slice(rpclimit*(start), rpclimit*(start+1)).map((value:any, index:number) => {
+            let mintarr = wallet_collection.slice(rpclimit*(start), rpclimit*(start+1)).map((value:any, index:number) => {
                 //console.log("mint: "+JSON.stringify(value.address));
                 //return value.account.data.parsed.info.mint;
                 return value;
             });
 
 
-            for (const value of mintarr){
+            for (var value of mintarr){
                 if (value){
-                    const mint_address = new PublicKey(value);
-                    const [pda, bump] = await PublicKey.findProgramAddress([
+                    let mint_address = new PublicKey(value);
+                    let [pda, bump] = await PublicKey.findProgramAddress([
                         Buffer.from("metadata"),
                         MD_PUBKEY.toBuffer(),
                         new PublicKey(mint_address).toBuffer(),
@@ -193,7 +193,7 @@ export default function ListForCollectionView(props: any){
             //console.log("returned: "+JSON.stringify(metadata));
             // LOOP ALL METADATA WE HAVE
             //for (var metavalue of metadata){
-            for (const x=0; x < metadata.length; x++){
+            for (var x=0; x < metadata.length; x++){
                 //console.log("Metaplex val: "+JSON.stringify(metavalue));
                 if (metadata[x]?.data){
                     try{
@@ -237,8 +237,8 @@ export default function ListForCollectionView(props: any){
             }
 
             const thisCollection = new Array();
-            for (const thisitem of metadata){
-                const final_primer = JSON.parse(JSON.stringify(thisitem)); 
+            for (var thisitem of metadata){
+                let final_primer = JSON.parse(JSON.stringify(thisitem)); 
                 if (final_primer?.decodeMetadata){
                     thisCollection.push(final_primer);
                 }
@@ -399,7 +399,7 @@ export default function ListForCollectionView(props: any){
                             {collectionMetaFinal && collectionMetaFinal.map((item: any) => (
                                 <ListItem 
                                     sx={{borderRadius:'17px'}}
-                                >
+                                    >
                                     <ListItemAvatar>
                                         <Avatar
                                             src={DRIVE_PROXY+item.decodeMetadata?.image}
@@ -414,7 +414,7 @@ export default function ListForCollectionView(props: any){
 
                                     <ListItemText>
                                         <Typography variant="h5">
-                                            {item.decodeMetadata?.name}
+                                            {item.decodeMetadata?.name} 
                                         </Typography>
                                         {(item.decoded.updateAuthority === entangleFrom) && (enforceEntangle) ?
                                             <Typography
@@ -435,10 +435,11 @@ export default function ListForCollectionView(props: any){
                                             </Typography>
                                         :
                                             <>
-                                                <Typography
-                                                    variant='subtitle2'>
-                                                    <SellNowButton item={item} />
-                                                </Typography>
+                                            <Typography
+                                                variant='subtitle2'>
+                                                <SellNowButton item={item} />
+                                            </Typography>
+                                            
                                             </>
                                         }
 
@@ -461,7 +462,7 @@ export default function ListForCollectionView(props: any){
                                     }}
                                 >
                                     <DialogContent>
-                                        <PreviewView handlekey={selectedMint}  />
+                                        <PreviewView handlekey={selectedMint} />
                                     </DialogContent>
                                     <DialogActions>
                                         <Button variant="text" onClick={handleClosePreviewDialog}>{t('Close')}</Button>
