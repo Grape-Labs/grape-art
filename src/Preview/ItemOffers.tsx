@@ -801,6 +801,7 @@ function SellNowVotePrompt(props:any){
 }
 
 function SellNowPrompt(props:any){
+    const floorPrice = props.floorPrice || null;
     const [open_dialog, setOpenSPDialog] = React.useState(false);
     const [sell_now_amount, setSellNowAmount] = React.useState('');
     const mint = props.mint;  
@@ -968,6 +969,12 @@ function SellNowPrompt(props:any){
                     {t('Mint')}: <ExplorerView address={mint} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
                     Auction House: <ExplorerView address={collectionAuctionHouse || AUCTION_HOUSE_ADDRESS} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
                 </Box>
+                
+                {floorPrice &&
+                    <Box sx={{width:'100%'}}>
+                        {t('Floor')}: {floorPrice} <SolCurrencyIcon />
+                    </Box>
+                }
 
                     <RegexTextField
                         regex={/[^0-9]+\.?[^0-9]/gi}
@@ -1381,6 +1388,7 @@ export function OfferPrompt(props: any) {
 }
 
 export default function ItemOffers(props: any) {
+    const floorPrice = props.floorPrice || null;
     const [mintAta, setMintAta] = React.useState(props.mintAta);
     const [offers, setOffers] = React.useState(null);
     const [loading, setLoading] = React.useState(false);
@@ -2612,7 +2620,7 @@ export default function ItemOffers(props: any) {
                                                             </>
                                                             : 
                                                             <>
-                                                                <SellNowPrompt royalties={royalties} mintName={mintName} image={image} mint={mint} updateAuthority={updateAuthority} verifiedCollection={verifiedCollection} mintOwner={mintOwner} salePrice={salePrice} grapeWeightedScore={grape_weighted_score} setRefreshOffers={setRefreshOffers} collectionAuctionHouse={collectionAuctionHouse} />
+                                                                <SellNowPrompt floorPrice={floorPrice} royalties={royalties} mintName={mintName} image={image} mint={mint} updateAuthority={updateAuthority} verifiedCollection={verifiedCollection} mintOwner={mintOwner} salePrice={salePrice} grapeWeightedScore={grape_weighted_score} setRefreshOffers={setRefreshOffers} collectionAuctionHouse={collectionAuctionHouse} />
                                                             </>
                                                         )}
                                                     </Grid>

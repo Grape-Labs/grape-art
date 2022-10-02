@@ -396,6 +396,7 @@ function GrapeVerified(props:any){
 }
 
 function GalleryItemMeta(props: any) {
+    const floorPrice = props.floorPrice || null;
     const viewMode = props.viewMode;
     const handlekey = props.handlekey || null;
     let mode_margin = 0;
@@ -1730,6 +1731,7 @@ function GalleryItemMeta(props: any) {
 
                                 {tokenOwners?.data.parsed.info.owner &&
                                     <ItemOffers
+                                        floorPrice={floorPrice}
                                         mintAta={mintAta} 
                                         collectionItemData={collectionrawdata}
                                         collectionAuctionHouse={collectionAuctionHouse}
@@ -1861,6 +1863,7 @@ type Props = {
 };
 
 export function PreviewView(this: any, props: any) {
+    const floorPrice = props.floorPrice || null;
     const [collection, setCollection] = React.useState(null);
     //const isConnected = session && session.isConnected;
     const [loading, setLoading] = React.useState(false);
@@ -2089,7 +2092,7 @@ export function PreviewView(this: any, props: any) {
             //if (image){
                 if (!loading){
                     return (
-                            <GalleryItemMeta verifiedAuctionHouses={verifiedAuctionHouses} viewMode={viewMode} verifiedCollection={verifiedCollection} collectionitem={collectionmeta} collectionrawdata={collectionrawdata} mint={mint} setRefresh={setRefresh} setMintPubkey={setMintPubkey} collectionAuctionHouse={collectionAuctionHouse} handlekey={handlekey} />
+                            <GalleryItemMeta floorPrice={floorPrice} verifiedAuctionHouses={verifiedAuctionHouses} viewMode={viewMode} verifiedCollection={verifiedCollection} collectionitem={collectionmeta} collectionrawdata={collectionrawdata} mint={mint} setRefresh={setRefresh} setMintPubkey={setMintPubkey} collectionAuctionHouse={collectionAuctionHouse} handlekey={handlekey} />
                     );
                 }
             }
