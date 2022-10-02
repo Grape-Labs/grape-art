@@ -3,6 +3,7 @@ import { styled, alpha, makeStyles } from '@mui/material/styles';
 import { Link, useLocation, NavLink } from 'react-router-dom';
 import Color from 'color';
 import { GRAPE_PROFILE, GRAPE_COLLECTION, GRAPE_COLLECTIONS_DATA, FEATURED_DAO_ARRAY } from '../utils/grapeTools/constants';
+//import { useFadedShadowStyles } from '@mui-treasury/styles/shadow/faded';
 
 import {
     Box,
@@ -26,6 +27,7 @@ import { CardActionArea } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 
 export default function MarketplaceView(props: any) {
+    //const styles = useFadedShadowStyles();
     const [verifiedCollectionArray, setVerifiedCollectionArray] = React.useState(null);
     const { t, i18n } = useTranslation();
 

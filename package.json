@@ -50,7 +50,6 @@
         "@metaplex-foundation/mpl-auction-house": "1.2.0",
         "@metaplex-foundation/mpl-core": "0.6.1",
         "@metaplex-foundation/mpl-token-metadata": "2.1.1",
-        "@mui-treasury/layout": "^5.0.0",
         "@mui/icons-material": "^5.10.6",
         "@mui/lab": "^5.0.0-alpha.100",
         "@mui/material": "^5.10.6",

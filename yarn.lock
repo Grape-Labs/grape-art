@@ -2638,11 +2638,6 @@
   resolved "https://registry.yarnpkg.com/@msgpackr-extract/msgpackr-extract-win32-x64/-/msgpackr-extract-win32-x64-2.1.2.tgz#f2d8b9ddd8d191205ed26ce54aba3dfc5ae3e7c9"
   integrity sha512-rIZVR48zA8hGkHIK7ED6+ZiXsjRCcAVBJbm8o89OKAMTmEAQ2QvoOxoiu3w2isAaWwzgtQIOFIqHwvZDyLKCvw==
 
-"@mui-treasury/layout@^5.0.0":
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/@mui-treasury/layout/-/layout-5.0.0.tgz#9658f87f174925db37aa15657275a33b1d1fae0a"
-  integrity sha512-MbGTKomwAG3cjuK36O1/W+/jiJ5v4BYBvhPA4hTAshZnFcraE3f490+1ayC4QTq6CkDDKpvKQYLeuAj9uSrI4w==
-
 "@mui/base@5.0.0-alpha.98":
   version "5.0.0-alpha.98"
   resolved "https://registry.yarnpkg.com/@mui/base/-/base-5.0.0-alpha.98.tgz#d1c89477d74cbfc64a7d1b336a6dbe83d4057ee8"
