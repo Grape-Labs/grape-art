@@ -378,7 +378,7 @@ export default function ListForCollectionView(props: any){
                 }}
             >
                 <DialogTitle>
-                    {t('List')} {floorPrice && <Typography> - {floorPrice} <SolCurrencyIcon sx={{ml:0.5,mr:0.5,fontSize:'14px'}} /> Floor</Typography>}
+                    {t('List')} {floorPrice && <> - {floorPrice} <SolCurrencyIcon sx={{ml:0.5,mr:0.5,fontSize:'14px'}} /> Floor</>}
                 </DialogTitle>
                 <DialogContent>
                     <List>
