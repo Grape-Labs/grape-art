@@ -4,6 +4,7 @@ import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { 
   GRAPE_RPC_ENDPOINT,
   THEINDEX_RPC_ENDPOINT,
+  PROXY,
 } from './constants';
 
 import {
@@ -115,7 +116,7 @@ export function getRemainingDays(targetDate?: string): number {
 
 //Get Prices RPC
 export async function getCoinGeckoPrice(token:string) {
-  const response = await fetch("https://api.coingecko.com/api/v3/simple/price?include_24hr_change=true&ids="+token+"&vs_currencies=usd",{
+  const response = await fetch(PROXY+"https://api.coingecko.com/api/v3/simple/price?include_24hr_change=true&ids="+token+"&vs_currencies=usd",{
     method: "GET",
     //body: JSON.stringify(body),
     headers: { "Content-Type": "application/json",
