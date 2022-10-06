@@ -13,6 +13,7 @@ import {
     Typography,
     Paper,
     Divider,
+    Tooltip,
 } from '@mui/material';
 
 import {
@@ -137,12 +138,14 @@ export default function ExplorerView(props:any){
                                         Grape Profile
                                 </MenuItem>
                         :
-                            <MenuItem >
-                                <ListItemIcon>
-                                    <WarningAmberIcon sx={{ color: 'yellow' }} fontSize="small" />
-                                </ListItemIcon>
-                                Off-Curve
-                            </MenuItem>
+                            <Tooltip title='The address is off-curve (this address does not lie on a Ed25519 curve - typically a valid curve is generated when creating a wallet from a wallet adapter), the address here is off-curve and can be a program derived address like an a multi-sig or escrow'>
+                                <MenuItem >
+                                    <ListItemIcon>
+                                        <WarningAmberIcon sx={{ color: 'yellow' }} fontSize="small" />
+                                    </ListItemIcon>
+                                    Off-Curve
+                                </MenuItem>
+                            </Tooltip>
                         }
                         </>
                     }
