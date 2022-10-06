@@ -138,7 +138,10 @@ export default function ExplorerView(props:any){
                                 </MenuItem>
                         :
                             <MenuItem >
-                                Off-Curve <WarningAmberIcon />
+                                <ListItemIcon>
+                                    <WarningAmberIcon fontSize="small" />
+                                </ListItemIcon>
+                                Off-Curve
                             </MenuItem>
                         }
                         </>
