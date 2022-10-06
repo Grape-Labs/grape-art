@@ -19,12 +19,15 @@ import {
     GRAPE_PROFILE
 } from '../grapeTools/constants';
 
+import { ValidateCurve } from '../grapeTools/WalletAddress';
+
 import ExploreOutlinedIcon from '@mui/icons-material/ExploreOutlined';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import ExploreIcon from '@mui/icons-material/Explore';
 import PersonIcon from '@mui/icons-material/Person';
 
 import { trimAddress } from "./WalletAddress";
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 
 const StyledMenu = styled(Menu)(({ theme }) => ({
     '& .MuiMenu-root': {
@@ -121,16 +124,24 @@ export default function ExplorerView(props:any){
                         </MenuItem>
                     </CopyToClipboard>
                     <Divider />
-                    {grapeArtProfile &&
-                        <MenuItem 
-                            component={Link}
-                            to={`${GRAPE_PROFILE}${address}`}
-                            onClick={handleClose}>
-                                <ListItemIcon>
-                                    <PersonIcon fontSize="small" />
-                                </ListItemIcon>
-                                Grape Profile
-                        </MenuItem>
+                    {grapeArtProfile && 
+                        <>
+                        {ValidateCurve(address) ?
+                                <MenuItem 
+                                    component={Link}
+                                    to={`${GRAPE_PROFILE}${address}`}
+                                    onClick={handleClose}>
+                                        <ListItemIcon>
+                                            <PersonIcon fontSize="small" />
+                                        </ListItemIcon>
+                                        Grape Profile
+                                </MenuItem>
+                        :
+                            <MenuItem >
+                                Off-Curve <WarningAmberIcon />
+                            </MenuItem>
+                        }
+                        </>
                     }
                     
                     <MenuItem 

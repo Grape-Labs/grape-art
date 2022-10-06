@@ -41,8 +41,8 @@ export default function GalleryGroupItem(props: any){
         if (symbol){
             // check if symbol has been shown before
             let count = 0;
-            let tmpcollection: any[] = [];
-            for (var child of groupCollection){
+            const tmpcollection: any[] = [];
+            for (const child of groupCollection){
                 
                 if (child.meta.data.symbol === symbol){ // check if previous symbol shown
                     //console.log("Checking: "+child.groupBySymbolIndex+" - "+child.meta.data.name);
