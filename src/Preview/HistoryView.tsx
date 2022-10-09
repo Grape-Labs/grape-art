@@ -50,6 +50,7 @@ import { MakeLinkableAddress, ValidateCurve, trimAddress, timeAgo, formatBlockTi
 import { gah_cancelListingReceipt } from '../utils/auctionHouse/gah_cancelListingReceipt';
 
 import { TokenAmount } from '../utils/grapeTools/safe-math';
+import { useTranslation } from 'react-i18next';
 
 import CancelIcon from '@mui/icons-material/Cancel';
 import Chat from '@mui/icons-material/Chat';
@@ -86,6 +87,7 @@ export default function HistoryView(props: any){
     const [receiptPurchase, setReceiptPurchase] = React.useState(null);
     const [receiptBid, setReceiptBid] = React.useState(null);
     const [receipts, setReceipts] = React.useState(null);
+    const { t, i18n } = useTranslation();
     const { publicKey, sendTransaction, signTransaction } = useWallet();
 
     const handleMEClick = () => {
