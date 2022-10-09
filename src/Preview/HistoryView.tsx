@@ -158,14 +158,14 @@ export default function HistoryView(props: any){
                 //START CANCEL LISTING
                 //const transactionInstr = await cancelListing(salePrice, mint, walletPublicKey.toString(), mintOwner, updateAuthority, collectionAuctionHouse);
                 const collectionAuctionHouse = salePriceAH;
-                const transactionInstr = await gah_cancelListingReceipt(salePrice, mint, publicKey.toString(), mintOwner, null, null, null, collectionAuctionHouse);
+                const transactionInstr = await gah_cancelListingReceipt(listedPrice, mint, publicKey.toString(), mintOwner, null, null, null, collectionAuctionHouse);
                 const instructionsArray = [transactionInstr.instructions].flat();        
                 const transaction = new Transaction()
                 .add(
                     ...instructionsArray
                 );
     
-                enqueueSnackbar(`${t('Canceling Listing Receipt for')} ${salePrice} SOL`,{ variant: 'info' });
+                enqueueSnackbar(`${t('Canceling Listing Receipt for')} ${listedPrice} SOL`,{ variant: 'info' });
                 const signedTransaction = await sendTransaction(transaction, connection);
                 
                 const snackprogress = (key:any) => (
