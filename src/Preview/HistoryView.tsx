@@ -147,8 +147,9 @@ export default function HistoryView(props: any){
         [enqueueSnackbar]
     );
 
-    const handleCancelListingReceipt = async () => {
-        const listed = salePrice && salePrice > 0 ? true : false;  
+    const handleCancelListingReceipt = async (listedPrice: number) => {
+        //const listed = salePrice && salePrice > 0 ? true : false;  
+        const listed = listedPrice && listedPrice > 0 ? true : false;  
         //const transactionInstr = await acceptOffer(offerAmount, mint, walletPublicKey, buyerAddress.toString(), updateAuthority, collectionAuctionHouse);
         if (listed){
             try {
@@ -566,11 +567,11 @@ export default function HistoryView(props: any){
 
                                                                     {key === 0 &&
                                                                         <> 
-                                                                            {item.bookkeeper !== mintOwner &&
+                                                                            {item.bookkeeper !== mintOwner && item.state === "listing_receipt" && !salePrice &&
                                                                                 <Button
-                                                                                onClick={() => {handleCancelListingReceipt}}
-                                                                                color='inherit'
-                                                                                    sx={{borderRadius:'17px'}}
+                                                                                    onClick={() => {handleCancelListingReceipt(item?.price)}}
+                                                                                    color='inherit'
+                                                                                        sx={{borderRadius:'17px'}}
                                                                                 >
                                                                                     <CancelIcon sx={{fontSize: 12, color:'red'}} />
                                                                                 </Button>
