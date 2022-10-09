@@ -572,7 +572,7 @@ export default function HistoryView(props: any){
                                                                             {item.bookkeeper === publicKey.toBase58() &&  item.bookkeeper !== mintOwner && item.state === "listing_receipt" && !salePrice &&
                                                                                 <Tooltip title='Cancel Listing Receipt'>
                                                                                     <Button
-                                                                                        onClick={() => {handleCancelListingReceipt(item?.price)}}
+                                                                                        onClick={() => {handleCancelListingReceipt(+item?.price)}}
                                                                                         color='inherit'
                                                                                             sx={{borderRadius:'17px'}}
                                                                                     >
