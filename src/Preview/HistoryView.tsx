@@ -171,7 +171,7 @@ export default function HistoryView(props: any){
                 const snackprogress = (key:any) => (
                     <CircularProgress sx={{padding:'10px'}} />
                 );
-                const cnfrmkey = enqueueSnackbar(`Confirming transaction`,{ variant: 'info', action:snackprogress, persist: true });
+                const cnfrmkey = enqueueSnackbar(`${t('Confirming transaction')}`,{ variant: 'info', action:snackprogress, persist: true });
                 const latestBlockHash = await connection.getLatestBlockhash();
                 await ggoconnection.confirmTransaction({
                     blockhash: latestBlockHash.blockhash,
@@ -185,7 +185,7 @@ export default function HistoryView(props: any){
                         {signedTransaction}
                     </Button>
                 );
-                enqueueSnackbar(`Listing Receipt Cancelled`,{ variant: 'success', action:snackaction });
+                enqueueSnackbar(`${t('Listing Receipt Cancelled')}`,{ variant: 'success', action:snackaction });
                 //END CANCEL LISTING
                 //console.log("sending unicast message")
                 
@@ -569,14 +569,16 @@ export default function HistoryView(props: any){
 
                                                                     {key === 0 &&
                                                                         <> 
-                                                                            {item.bookkeeper !== mintOwner && item.state === "listing_receipt" && !salePrice &&
-                                                                                <Button
-                                                                                    onClick={() => {handleCancelListingReceipt(item?.price)}}
-                                                                                    color='inherit'
-                                                                                        sx={{borderRadius:'17px'}}
-                                                                                >
-                                                                                    <CancelIcon sx={{fontSize: 12, color:'red'}} />
-                                                                                </Button>
+                                                                            {item.bookkeeper === publicKey.toBase58() &&  item.bookkeeper !== mintOwner && item.state === "listing_receipt" && !salePrice &&
+                                                                                <Tooltip title='Cancel Listing Receipt'>
+                                                                                    <Button
+                                                                                        onClick={() => {handleCancelListingReceipt(item?.price)}}
+                                                                                        color='inherit'
+                                                                                            sx={{borderRadius:'17px'}}
+                                                                                    >
+                                                                                        <CancelIcon sx={{fontSize: 12, color:'red'}} />
+                                                                                    </Button>
+                                                                                </Tooltip>
                                                                             }
                                                                         </>
                                                                     }
