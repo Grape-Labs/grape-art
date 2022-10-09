@@ -56,16 +56,17 @@ import { ConstructionOutlined } from '@mui/icons-material';
     const results = await anchorProgram.provider.connection.getTokenLargestAccounts(mintKey);    
     const tokenAccount: web3.PublicKey = results.value[0].address;
 
-      console.log("tokenAccount: "+JSON.stringify(tokenAccount));
-
-      // IMPORTANT THIS IS THE MAKE LISTING
-      // We need to cancel the listing
+    console.log("tokenAccount: "+JSON.stringify(tokenAccount));
+    // IMPORTANT THIS IS THE MAKE LISTING
+    // We need to cancel the listing
 
     let sellerWalletKey = new PublicKey(walletPublicKey);
     if (daoPublicKey){
       sellerWalletKey = new web3.PublicKey(daoPublicKey);
     }
     
+    console.log("sellerWalletKey" + walletPublicKey);
+
     const txt = new Transaction()
 
       const [tradeState, tradeStateBump] = 
