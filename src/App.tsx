@@ -9,7 +9,6 @@ import { FeaturedView } from './Featured/Featured';
 import { IdentityView } from './Identity/Identity';
 import { StorageView } from './Identity/plugins/Storage';
 
-
 //import FeedView from './Profile/FeedView';
 /*
 const ProfileView = lazy(() => import('./Profile/Profile'));

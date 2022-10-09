@@ -1,14 +1,16 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { Link } from "react-router-dom";
 
 import { Connection, PublicKey, Transaction, LAMPORTS_PER_SOL } from '@solana/web3.js'
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
+import { WalletError } from '@solana/wallet-adapter-base';
 import { BN, web3 } from '@project-serum/anchor';
 //import spok from 'spok';
 
 import { ChatNavigationHelpers, useDialectUiId } from '@dialectlabs/react-ui';
 import { GRAPE_BOTTOM_CHAT_ID } from '../utils/ui-contants';
 import moment from 'moment';
+import { useSnackbar } from 'notistack';
 
 import {
     Typography,
@@ -30,6 +32,7 @@ import {
     ListItemButton,
     ListItemIcon,
     ListItemText,
+    CircularProgress,
 } from '@mui/material';
 
 import { 
@@ -44,8 +47,11 @@ import {
 
 import { MakeLinkableAddress, ValidateCurve, trimAddress, timeAgo, formatBlockTime } from '../utils/grapeTools/WalletAddress'; // global key handling
 
+import { gah_cancelListingReceipt } from '../utils/auctionHouse/gah_cancelListingReceipt';
+
 import { TokenAmount } from '../utils/grapeTools/safe-math';
 
+import CancelIcon from '@mui/icons-material/Cancel';
 import Chat from '@mui/icons-material/Chat';
 import BarChartOutlinedIcon from '@mui/icons-material/BarChartOutlined';
 import SolCurrencyIcon from '../components/static/SolCurrencyIcon';
@@ -69,6 +75,9 @@ export default function HistoryView(props: any){
     const [openMEHistory, setMEOpenHistory] = React.useState(0);
     const [me_open_history_collapse, setMEOpenHistoryCollapse] = React.useState(false);
     const [mint, setMint] = React.useState(props.mint || null);
+    const [mintOwner, setMintOwner] = React.useState(props.mintOwner || null);
+    const [salePrice, setSalePrice] = React.useState(props.salePrice || null);
+    const [salePriceAH, setSalePriceAH] = React.useState(props.salePriceAH || null);
     const [symbol, setSymbol] = React.useState(props.symbol || null);
     const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
     const { connection } = useConnection();
@@ -77,6 +86,7 @@ export default function HistoryView(props: any){
     const [receiptPurchase, setReceiptPurchase] = React.useState(null);
     const [receiptBid, setReceiptBid] = React.useState(null);
     const [receipts, setReceipts] = React.useState(null);
+    const { publicKey, sendTransaction, signTransaction } = useWallet();
 
     const handleMEClick = () => {
         setMEOpenHistoryCollapse(!me_open_history_collapse);
@@ -91,7 +101,7 @@ export default function HistoryView(props: any){
 
         if (mint){
             try{
-                let response = null;
+                //let response = null;
 
                 const apiUrl = PROXY+"https://api-mainnet.magiceden.dev/v2/collections/"+symbol+"/stats";
                 
@@ -112,7 +122,7 @@ export default function HistoryView(props: any){
 
     const cancelMEListing = async (sellerPubKey:string,auctionHouseAddress:string,tokenAccount:string,price:any) => {
         try{
-            let response = null;
+            //let response = null;
 
             const apiUrl = PROXY+"https://api-devnet.magiceden.dev/v2/instructions/sell_cancel?seller="+sellerPubKey+"&auctionHouseAddress="+auctionHouseAddress+"&tokenMint="+mint+"&tokenAccount="+tokenAccount+"&price="+price+"&sellerReferral=&expiry=-1";
 
@@ -128,6 +138,84 @@ export default function HistoryView(props: any){
         } catch(e){console.log("ERR: "+e)}
     }
 
+    const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+    const onError = useCallback(
+        (error: WalletError) => {
+            enqueueSnackbar(error.message ? `${error.name}: ${error.message}` : error.name, { variant: 'error' });
+            console.error(error);
+        },
+        [enqueueSnackbar]
+    );
+
+    const handleCancelListingReceipt = async () => {
+        const listed = salePrice && salePrice > 0 ? true : false;  
+        //const transactionInstr = await acceptOffer(offerAmount, mint, walletPublicKey, buyerAddress.toString(), updateAuthority, collectionAuctionHouse);
+        if (listed){
+            try {
+                //START CANCEL LISTING
+                //const transactionInstr = await cancelListing(salePrice, mint, walletPublicKey.toString(), mintOwner, updateAuthority, collectionAuctionHouse);
+                const collectionAuctionHouse = salePriceAH;
+                const transactionInstr = await gah_cancelListingReceipt(salePrice, mint, publicKey.toString(), mintOwner, null, null, null, collectionAuctionHouse);
+                const instructionsArray = [transactionInstr.instructions].flat();        
+                const transaction = new Transaction()
+                .add(
+                    ...instructionsArray
+                );
+    
+                enqueueSnackbar(`${t('Canceling Listing Receipt for')} ${salePrice} SOL`,{ variant: 'info' });
+                const signedTransaction = await sendTransaction(transaction, connection);
+                
+                const snackprogress = (key:any) => (
+                    <CircularProgress sx={{padding:'10px'}} />
+                );
+                const cnfrmkey = enqueueSnackbar(`Confirming transaction`,{ variant: 'info', action:snackprogress, persist: true });
+                const latestBlockHash = await connection.getLatestBlockhash();
+                await ggoconnection.confirmTransaction({
+                    blockhash: latestBlockHash.blockhash,
+                    lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+                    signature: signedTransaction}, 
+                    'processed'
+                );
+                closeSnackbar(cnfrmkey);
+                const snackaction = (key:any) => (
+                    <Button href={`https://explorer.solana.com/tx/${signedTransaction}`} target='_blank'  sx={{color:'white'}}>
+                        {signedTransaction}
+                    </Button>
+                );
+                enqueueSnackbar(`Listing Receipt Cancelled`,{ variant: 'success', action:snackaction });
+                //END CANCEL LISTING
+                //console.log("sending unicast message")
+                
+                //unicastGrapeSolflareMessage(`Listing Cancelled`, `Your listing for ${mintName} has been cancelled on grape.art`, image, publicKey.toString(), `https://grape.art${GRAPE_PREVIEW}${mint}`, signedTransaction, collectionAuctionHouse);
+
+                /*
+                const eskey = enqueueSnackbar(`${t('Metadata will be refreshed in a few seconds')}`, {
+                    anchorOrigin: {
+                        vertical: 'top',
+                        horizontal: 'center',
+                    },
+                    persist: true,
+                });
+                */
+                
+                /*
+                setTimeout(function() {
+                    closeSnackbar(eskey);
+                    //setRefreshOffers(true);
+                }, GRAPE_RPC_REFRESH);
+                */
+                
+            }catch(e:any){
+                closeSnackbar();
+                enqueueSnackbar(e.message ? `${e.name}: ${e.message}` : e.name, { variant: 'error' });
+                //enqueueSnackbar(`Error: ${(e)}`,{ variant: 'error' });
+                console.log("Error: "+e);
+                //console.log("Error: "+JSON.stringify(e));
+            }  
+        }
+        
+    }
+
     const getHistory = async () => {
         if ((!loading) && (mint)){
             setLoading(true);
@@ -136,7 +224,7 @@ export default function HistoryView(props: any){
 
             const activityResults = new Array();
 
-            for (var item of results){
+            for (const item of results){
                 //const mintitem = await getMintFromVerifiedMetadata(item.metadata.toBase58(), collectionMintList);
                 //console.log("> history: "+JSON.stringify(item));
                 //console.log("mintitem: "+JSON.stringify(mintitem));
@@ -162,7 +250,7 @@ export default function HistoryView(props: any){
             }
 
             try{
-                let response = null;
+                //const response = null;
                 
                 const json = await fetchMEHistoryWithTimeout(mint,0);
                 //console.log("json: "+JSON.stringify(json));
@@ -170,7 +258,7 @@ export default function HistoryView(props: any){
                 try{
                     // here get the last sale and show it:
                     let found = false;
-                    for (var item of json){
+                    for (const item of json){
                         //console.log(item.type + ' ' + item.price + ' '+formatBlockTime(item.blockTime, true, true));
                         if (item.type === "buyNow"){
                             found = true;
@@ -179,17 +267,17 @@ export default function HistoryView(props: any){
                 }catch(e){console.log("ERR: "+e);return null;}
 
                 if (json){
-                    var founddm = false;
-                    for (var meitem of json){
-                        var bookkeeper = meitem.seller;
-                        var buyer = meitem.buyer;
-                        var seller = meitem.seller;
-                        var receiptType = '';
-                        var createdAt = meitem.blockTime;
-                        var cancelledAt = null;
+                    let founddm = false;
+                    for (const meitem of json){
+                        let bookkeeper = meitem.seller;
+                        const buyer = meitem.buyer;
+                        const seller = meitem.seller;
+                        let receiptType = '';
+                        const createdAt = meitem.blockTime;
+                        let cancelledAt = null;
                         
                         //console.log("ME: "+JSON.stringify(meitem));
-                        var purchaeReceipt = null;
+                        let purchaeReceipt = null;
                         if (buyer && seller){
                             bookkeeper = buyer;
                             purchaeReceipt = 'purchase_receipt';
@@ -207,13 +295,13 @@ export default function HistoryView(props: any){
                             purchaeReceipt = meitem.signature;
                         }
                         
-                        var source = meitem.source;
+                        let source = meitem.source;
                         if (source === "magiceden_v2")
                             source = "MagicEden v2"
                         if ((source === "auctionhouse")||(source === "solanart_ah")){
-
+                            console.log("ah or sa ah");
                         } else {
-                            var directmessage = null;
+                            let directmessage = null;
                             if ((activityResults.length === 0)||(!founddm)){
                                 if (receiptType === 'listing_receipt'){
                                     directmessage = true;
@@ -271,7 +359,7 @@ export default function HistoryView(props: any){
     }
 
     const Timeout = (time:number) => {
-        let controller = new AbortController();
+        const controller = new AbortController();
         setTimeout(() => controller.abort(), time * 1000);
         return controller;
     };
@@ -475,6 +563,21 @@ export default function HistoryView(props: any){
                                                                             {trimAddress(item.bookkeeper,4)}
                                                                         </Button>
                                                                     </Tooltip>
+
+                                                                    {key === 0 &&
+                                                                        <> 
+                                                                            {item.bookkeeper !== mintOwner &&
+                                                                                <Button
+                                                                                onClick={() => {handleCancelListingReceipt}}
+                                                                                color='inherit'
+                                                                                    sx={{borderRadius:'17px'}}
+                                                                                >
+                                                                                    <CancelIcon sx={{fontSize: 12, color:'red'}} />
+                                                                                </Button>
+                                                                            }
+                                                                        </>
+                                                                    }
+
                                                                 {item.directmessage &&
                                                                     <Tooltip title="Send a direct message">
                                                                         <Button

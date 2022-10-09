@@ -2913,7 +2913,7 @@ export default function ItemOffers(props: any) {
                 </Box>
                 {mint && 
                     <>
-                    <HistoryView mint={mint} salePrice={salePrice} setSalePrice={setSalePrice} setSalePriceAH={setSalePriceAH} setSaleDate={setSaleDate} setSaleTimeAgo={setSaleTimeAgo} />
+                    <HistoryView mint={mint} mintOwner={mintOwner} salePrice={salePrice} setSalePrice={setSalePrice} salePriceAH={salePriceAH} setSalePriceAH={setSalePriceAH} setSaleDate={setSaleDate} setSaleTimeAgo={setSaleTimeAgo} />
                     </>
                 }
             </>
