@@ -573,10 +573,10 @@ export default function HistoryView(props: any){
                                                                                 <Tooltip title='Cancel Listing Receipt'>
                                                                                     <Button
                                                                                         onClick={() => {handleCancelListingReceipt(+item?.price)}}
-                                                                                        color='inherit'
-                                                                                            sx={{borderRadius:'17px'}}
+                                                                                        color="error"
+                                                                                            sx={{borderRadius:'17px',ml:1}}
                                                                                     >
-                                                                                        <CancelIcon sx={{fontSize: 12, color:'red'}} />
+                                                                                        <CancelIcon sx={{fontSize: 12}} />
                                                                                     </Button>
                                                                                 </Tooltip>
                                                                             }

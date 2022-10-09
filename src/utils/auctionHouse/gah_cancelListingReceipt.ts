@@ -56,6 +56,8 @@ import { ConstructionOutlined } from '@mui/icons-material';
     const results = await anchorProgram.provider.connection.getTokenLargestAccounts(mintKey);    
     const tokenAccount: web3.PublicKey = results.value[0].address;
 
+      console.log("tokenAccount: "+JSON.stringify(tokenAccount));
+
       // IMPORTANT THIS IS THE MAKE LISTING
       // We need to cancel the listing
 
