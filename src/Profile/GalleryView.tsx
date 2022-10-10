@@ -329,27 +329,27 @@ export default function GalleryView(props: any){
                 }
 
                 // Get NFT Rarities
-                for (var at_item of thisAttributes){
+                for (const at_item of thisAttributes){
                     if (at_item && at_item.count)
                         at_item.rarity = at_item.count/collectionMintList.length*100;
                 }
 
                 // Get individual rarities
                 const collection_len = collectionMintList.length;
-                for (var nft_item of collectionMintList){
+                for (const nft_item of collectionMintList){
                     if (nft_item.attributes){
                         //calculate trait rarity, total num collection / divide by the number that specific trait  
                         nft_item.rarity = 0;
-                        var rarity_aggregate = 0;
-                        var attribute_count = 0;
-                        var rarity_weight_sum = 0;
-                        for (var at of nft_item.attributes){
+                        //let rarity_aggregate = 0;
+                        let attribute_count = 0;
+                        let rarity_weight_sum = 0;
+                        for (const at of nft_item.attributes){
                             // check with the rarities we have
-                            for (var at_item of thisAttributes){
+                            for (const at_item of thisAttributes){
                                 //(inner.count/collectionMintList.length*100)
                                 if (at_item.trait_type === at.trait_type && at_item.value === at.value){
                                     attribute_count++;
-                                    var rarity_weight = at_item.count/collection_len
+                                    const rarity_weight = at_item.count/collection_len
                                     rarity_weight_sum += rarity_weight;
                                     //if (nft_item.address === 'HdhVrid2C25H6hkesaqoeoSSRBuPrXcKgJQxnYiaApch'){
                                         //console.log("rarity: "+at_item.rarity)
@@ -359,9 +359,11 @@ export default function GalleryView(props: any){
                                 }
                             }
                         }
-                        nft_item.rarity = rarity_weight_sum/attribute_count;
-                        nft_item.rarity_score = 100-(nft_item.rarity*100);
-                        nft_item.collection_len = collection_len;
+                        if (attribute_count > 0){
+                            nft_item.rarity = rarity_weight_sum/attribute_count;
+                            nft_item.rarity_score = 100-(nft_item.rarity*100);
+                            nft_item.collection_len = collection_len;
+                        }
                     }
 
                 }
