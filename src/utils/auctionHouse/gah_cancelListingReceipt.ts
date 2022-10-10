@@ -26,7 +26,6 @@ import {
 import { getPriceWithMantissa } from './helpers/various';
 
 const { 
-  createCancelInstruction, 
   createCancelListingReceiptInstruction } =
   AuctionHouseProgram.instructions
 
