@@ -363,6 +363,8 @@ export default function GalleryView(props: any){
                             nft_item.rarity = rarity_weight_sum/attribute_count;
                             nft_item.rarity_score = 100-(nft_item.rarity*100);
                             nft_item.collection_len = collection_len;
+                        } else{
+                            nft_item.rarity = null;
                         }
                     }
 
