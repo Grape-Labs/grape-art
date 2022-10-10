@@ -88,6 +88,7 @@ const Search = styled('div')(({ theme }) => ({
   }));
 
 export default function GalleryView(props: any){
+    const floorPrice = props.floorPrice || null;
     const [page, setPage] = React.useState(1);
     const rowsperpage = 1500;
     const mode = props?.mode || 0;
@@ -540,7 +541,7 @@ export default function GalleryView(props: any){
                                                                         minWidth: '175px'
                                                                     }} 
                                                                 >
-                                                                    <GalleryItem collectionitem={collectionInfo} mode={mode} groupbysymbol={collectionInfo.groupBySymbol} tokenPrice={tokenPrice} isparent={false} listed={true} count={key} />
+                                                                    <GalleryItem floorPrice={floorPrice} collectionitem={collectionInfo} mode={mode} groupbysymbol={collectionInfo.groupBySymbol} tokenPrice={tokenPrice} isparent={false} listed={true} count={key} />
                                                                 </Box>
                                                             </Grid>
                                                         :
@@ -638,7 +639,7 @@ export default function GalleryView(props: any){
                                                             minWidth: '175px'
                                                         }} 
                                                     >
-                                                        <GalleryItem collectionitem={collectionInfo} mode={mode} groupbysymbol={collectionInfo.groupBySymbol} isparent={false} finalCollection={finalCollection} listed={true} count={key} />
+                                                        <GalleryItem floorPrice={floorPrice} collectionitem={collectionInfo} mode={mode} groupbysymbol={collectionInfo.groupBySymbol} isparent={false} finalCollection={finalCollection} listed={true} count={key} />
                                                     </Box>
                                                 </Grid>
                                             )}

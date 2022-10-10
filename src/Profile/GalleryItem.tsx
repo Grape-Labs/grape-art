@@ -40,6 +40,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 }));
 
 export default function GalleryItem(props: any){
+    const floorPrice = props.floorPrice || null;
     const MD_PUBKEY = METAPLEX_PROGRAM_ID;
     const collectionitem = props.collectionitem || [];
     const mode = props?.mode || 0;
@@ -421,7 +422,7 @@ export default function GalleryItem(props: any){
                                     }}
                                 >
                                     <DialogContent>
-                                        <PreviewView handlekey={collectionitem?.address} />
+                                        <PreviewView floorPrice={floorPrice} handlekey={collectionitem?.address} />
                                     </DialogContent>
                                     <DialogActions>
                                         <Button variant="text" onClick={handleCloseDialog}>Close</Button>

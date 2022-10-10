@@ -2086,7 +2086,7 @@ export function StoreFrontView(this: any, props: any) {
                     <TabPanel value={tabValue} index={NavPanel.Marketplace}>
                         <Box> 
                             {collectionMintList &&  
-                                <GalleryView mode={1} collectionMintList={collectionMintList} collectionAuthority={collectionAuthority} tokenPrice={tokenPrice} refreshGallery={refreshGallery}/>
+                                <GalleryView floorPrice={floorPrice} mode={1} collectionMintList={collectionMintList} collectionAuthority={collectionAuthority} tokenPrice={tokenPrice} refreshGallery={refreshGallery}/>
                             }
                         </Box>
                     </TabPanel>
