@@ -1311,26 +1311,24 @@ function GalleryItemMeta(props: any) {
                                                                 <TableCell>{collectionitem.symbol}</TableCell>
                                                             </TableRow>
                                                         : null }
-                                                        {collectionitem.seller_fee_basis_points > 0 ?
+                                                        {collectionrawdata.data.seller_fee_basis_points > 0 ?
                                                             <TableRow>
-                                                            {console.log("collectionrawdata: "+JSON.stringify(collectionrawdata))}
-                                                                {console.log("collectionrawprimer: "+JSON.stringify(collectionrawprimer))}
                                                                 <TableCell>{t('Royalty')}:</TableCell>
                                                                 <TableCell>
-                                                                {(+collectionitem.seller_fee_basis_points/100).toFixed(2)}%
+                                                                {(+collectionrawdata.data.seller_fee_basis_points/100).toFixed(2)}%
                                                                 <Tooltip title={t('This is the rate at which royalties are shared with creators if this asset is sold using the Metaplex Auction program')}><HelpOutlineIcon sx={{ fontSize:16, ml: 1  }}/></Tooltip>
                                                                 </TableCell>
                                                             </TableRow>
                                                         : null }
                                                         
-                                                        {collectionitem.properties?.creators ?
+                                                        {collectionrawdata.data?.creators &&
                                                             <>
                                                                 <TableRow
                                                                     onClick={() => setOpenCreatorCollapse(!open_creator_collapse)}
                                                                 >
                                                                     <TableCell>{t('Creators')}:</TableCell>
                                                                     <TableCell>
-                                                                        {collectionitem.properties?.creators?.length}
+                                                                        {collectionrawdata.data?.creators?.length}
                                                                         <IconButton
                                                                             aria-label="expand row"
                                                                             size="small"
@@ -1352,7 +1350,7 @@ function GalleryItemMeta(props: any) {
                                                                                             <TableCell align="right"><Typography variant="caption">% {t('Royalty')}</Typography></TableCell>
                                                                                         </TableRow>
                                                                                     </TableHead>
-                                                                                    {collectionitem.properties.creators.length > 0 && collectionitem.properties.creators.map((item: any) => (
+                                                                                    {collectionrawdata.data.creators.length > 0 && collectionrawdata.data.creators.map((item: any) => (
                                                                                         <TableRow>
                                                                                             <TableCell>
                                                                                                 
@@ -1367,55 +1365,6 @@ function GalleryItemMeta(props: any) {
                                                                         </Collapse>
                                                                     </TableCell>
                                                                 </TableRow>
-                                                            </>
-                                                        : 
-                                                            <>
-                                                            {collectionrawdata.data?.creators ?
-                                                                <>
-                                                                    <TableRow
-                                                                        onClick={() => setOpenCreatorCollapse(!open_creator_collapse)}
-                                                                    >
-                                                                        <TableCell>{t('Creators')}:</TableCell>
-                                                                        <TableCell>
-                                                                            {collectionrawdata?.creators?.length}
-                                                                            <IconButton
-                                                                                aria-label="expand row"
-                                                                                size="small"
-                                                                                sx={{ textAlign:"right" }}
-                                                                            >
-                                                                                {open_creator_collapse ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-                                                                            </IconButton>
-                                                                            
-                                                                        </TableCell>
-                                                                    </TableRow>
-                                                                    <TableRow>
-                                                                        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-                                                                            <Collapse in={open_creator_collapse} timeout="auto" unmountOnExit>
-                                                                                <Box sx={{ margin: 1 }}>
-                                                                                    <Table size="small" aria-label="purchases">
-                                                                                        <TableHead>
-                                                                                            <TableRow>
-                                                                                                <TableCell><Typography variant="caption">{t('Creator Address')}</Typography></TableCell>
-                                                                                                <TableCell align="right"><Typography variant="caption">% {t('Royalty')}</Typography></TableCell>
-                                                                                            </TableRow>
-                                                                                        </TableHead>
-                                                                                        {collectionrawdata.data.creators.length > 0 && collectionrawdata.data.creators.map((item: any) => (
-                                                                                            <TableRow>
-                                                                                                <TableCell>
-                                                                                                    
-                                                                                                    <ExplorerView grapeArtProfile={true} address={item.address} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
-                                                                                                
-                                                                                                </TableCell>
-                                                                                                <TableCell align="right">{item.share}%</TableCell>
-                                                                                            </TableRow>
-                                                                                        ))}
-                                                                                    </Table>
-                                                                                </Box>
-                                                                            </Collapse>
-                                                                        </TableCell>
-                                                                    </TableRow>
-                                                                </>
-                                                            : null}
                                                             </>
                                                         }
 
@@ -1740,7 +1689,7 @@ function GalleryItemMeta(props: any) {
                                         mintName={collectionitem.name}
                                         image={collectionitem.image}
                                         refreshOwner={refreshOwner}
-                                        royalties={collectionitem.seller_fee_basis_points}
+                                        royalties={collectionrawdata.data.seller_fee_basis_points}
                                         setRefreshOwner={setRefreshOwner} 
                                         setRefresh={props.setRefresh} 
                                         grape_member_balance={grape_member_balance}
