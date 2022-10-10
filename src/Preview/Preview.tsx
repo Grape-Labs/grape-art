@@ -1311,11 +1311,11 @@ function GalleryItemMeta(props: any) {
                                                                 <TableCell>{collectionitem.symbol}</TableCell>
                                                             </TableRow>
                                                         : null }
-                                                        {collectionrawdata.data.seller_fee_basis_points > 0 ?
+                                                        {collectionrawdata.data.sellerFeeBasisPoints > 0 ?
                                                             <TableRow>
                                                                 <TableCell>{t('Royalty')}:</TableCell>
                                                                 <TableCell>
-                                                                {(+collectionrawdata.data.seller_fee_basis_points/100).toFixed(2)}%
+                                                                {(+collectionrawdata.data.sellerFeeBasisPoints/100).toFixed(2)}%
                                                                 <Tooltip title={t('This is the rate at which royalties are shared with creators if this asset is sold using the Metaplex Auction program')}><HelpOutlineIcon sx={{ fontSize:16, ml: 1  }}/></Tooltip>
                                                                 </TableCell>
                                                             </TableRow>
@@ -1689,7 +1689,7 @@ function GalleryItemMeta(props: any) {
                                         mintName={collectionitem.name}
                                         image={collectionitem.image}
                                         refreshOwner={refreshOwner}
-                                        royalties={collectionrawdata.data.seller_fee_basis_points}
+                                        royalties={collectionrawdata.data.sellerFeeBasisPoints}
                                         setRefreshOwner={setRefreshOwner} 
                                         setRefresh={props.setRefresh} 
                                         grape_member_balance={grape_member_balance}
