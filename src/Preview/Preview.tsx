@@ -249,8 +249,8 @@ function GrapeVerified(props:any){
     
     const getCollectionData = async (collectionAddress:string) => {
         try {
-            let mint_address = new PublicKey(collectionAddress)
-            let [pda, bump] = await PublicKey.findProgramAddress([
+            const mint_address = new PublicKey(collectionAddress)
+            const [pda, bump] = await PublicKey.findProgramAddress([
                 Buffer.from("metadata"),
                 MD_PUBKEY.toBuffer(),
                 new PublicKey(mint_address).toBuffer(),
@@ -259,7 +259,7 @@ function GrapeVerified(props:any){
             
             const meta_response = await ticonnection.getAccountInfo(pda);
 
-            let meta_final = decodeMetadata(meta_response.data);
+            const meta_final = decodeMetadata(meta_response.data);
             
             let file_metadata = meta_final.data.uri;
             const file_metadata_url = new URL(file_metadata);
@@ -485,7 +485,7 @@ function GalleryItemMeta(props: any) {
     };
     const followWalletDisconnect = async (followAddress:string) => {
         // address:string, alias:string
-        let promise = await cyberConnect.disconnect(followAddress.toString())
+        const promise = await cyberConnect.disconnect(followAddress.toString())
         .catch(function (error) {
             console.log(error);
         });
@@ -517,11 +517,7 @@ function GalleryItemMeta(props: any) {
     const handleClickOpenDescription = () => {
         setOpenDescription(!open_description);
     };
-
-    const handleSendItem = () => {
-        
-    };
-
+    
     const openImageViewer = useCallback((index) => {
         setCurrentImage(index);
         setIsViewerOpen(true);
@@ -650,7 +646,7 @@ function GalleryItemMeta(props: any) {
 
     const fetchTokenAccountData = async () => {
         setLoadingMintAta(true);
-        let [flargestTokenAccounts] = await Promise.all([GetLargestTokenAccounts()]);
+        const [flargestTokenAccounts] = await Promise.all([GetLargestTokenAccounts()]);
         //console.log("settings setMintAta: "+JSON.stringify(flargestTokenAccounts));
 
         if (+flargestTokenAccounts[0].amount === 1){ // some NFTS are amount > 1
@@ -687,7 +683,7 @@ function GalleryItemMeta(props: any) {
             if (towner){
                 //if (tokenOwners.data.parsed.info.owner){
                     setLoadingFollowState(true);
-                    let socialconnection = await fetchSearchAddrInfo(publicKey.toBase58(), towner);
+                    const socialconnection = await fetchSearchAddrInfo(publicKey.toBase58(), towner);
                     if (socialconnection){
                         //if (socialconnection?.identity){
                         if (socialconnection?.connections[0]?.followStatus) {  
@@ -702,7 +698,7 @@ function GalleryItemMeta(props: any) {
 
     const getMintOwner = async () => {
         setLoadingOwner(true);
-        let [tokenowner] = await Promise.all([GetTokenOwner(mintAta)]);
+        const [tokenowner] = await Promise.all([GetTokenOwner(mintAta)]);
         setTokenOwners(tokenowner);
         fetchSolanaDomain(tokenowner?.data.parsed.info.owner);
         getFollowStatus(tokenowner?.data.parsed.info.owner);
@@ -739,8 +735,8 @@ function GalleryItemMeta(props: any) {
                     setGrapeMemberBalance(0);
                     let final_weighted_score = 0;
                     portfolio_rsp.map((token:any) => {
-                        let mint = token.account.data.parsed.info.mint;
-                        let balance = token.account.data.parsed.info.tokenAmount.uiAmount;
+                        const mint = token.account.data.parsed.info.mint;
+                        const balance = token.account.data.parsed.info.tokenAmount.uiAmount;
                         if (mint === '8upjSpvjcdpuzhfR1zriwg5NXkwDruejqNE9WNbPRtyA'){ // check if wallet has sol
                             if (governance_rsp?.account?.governingTokenDepositAmount){
                                 const total_grape = +balance + (+governance_rsp?.account?.governingTokenDepositAmount)/1000000
@@ -1317,6 +1313,8 @@ function GalleryItemMeta(props: any) {
                                                         : null }
                                                         {collectionitem.seller_fee_basis_points > 0 ?
                                                             <TableRow>
+                                                            {console.log("collectionrawdata: "+JSON.stringify(collectionrawdata))}
+                                                                {console.log("collectionrawprimer: "+JSON.stringify(collectionrawprimer))}
                                                                 <TableCell>{t('Royalty')}:</TableCell>
                                                                 <TableCell>
                                                                 {(+collectionitem.seller_fee_basis_points/100).toFixed(2)}%
