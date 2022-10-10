@@ -235,12 +235,12 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 }));
 
 function ValidateDAO(mintOwner: string){
-    for (var featured of FEATURED_DAO_ARRAY){
+    for (const featured of FEATURED_DAO_ARRAY){
         if (featured.address === mintOwner){
             return true;
         }
     } 
-    for (var verified of VERIFIED_DAO_ARRAY){
+    for (const verified of VERIFIED_DAO_ARRAY){
         //if (verified.address === mintOwner){
         if (verified.solTreasury === mintOwner){
             return true;
@@ -1080,6 +1080,7 @@ function SellNowPrompt(props:any){
 }
 
 export function OfferPrompt(props: any) {
+    const floorPrice = props.floorPrice || null;
     const [open_dialog, setOpenOPDialog] = React.useState(false);
     const [offerMade, setOfferMade] = React.useState(false);
     const [offer_amount, setOfferAmount] = React.useState('');
@@ -1301,6 +1302,13 @@ export function OfferPrompt(props: any) {
                 </DialogTitle>
                 <form onSubmit={HandleOfferSubmit}>
                 <DialogContent>
+                
+                    {floorPrice &&
+                        <Box sx={{width:'100%'}}>
+                            {t('Floor')}: {floorPrice} <SolCurrencyIcon sx={{fontSize:"12px"}} />
+                        </Box>
+                    }
+                    
                     <RegexTextField
                         regex={/[^0-9]+\.?[^0-9]/gi}
                         //regex={/[^0-9]+\.?[0-9]/gi}
@@ -2578,7 +2586,7 @@ export default function ItemOffers(props: any) {
                                                                         
                                                                         {(ValidateCurve(mintOwner) || (ValidateDAO(mintOwner))) && (
                                                                             <Grid item>
-                                                                                <OfferPrompt mintName={mintName} image={image} mint={mint} updateAuthority={updateAuthority} mintOwner={mintOwner} setRefreshOffers={setRefreshOffers} solBalance={sol_portfolio_balance} highestOffer={highestOffer} offers={offers} collectionAuctionHouse={collectionAuctionHouse} />
+                                                                                <OfferPrompt floorPrice={floorPrice} mintName={mintName} image={image} mint={mint} updateAuthority={updateAuthority} mintOwner={mintOwner} setRefreshOffers={setRefreshOffers} solBalance={sol_portfolio_balance} highestOffer={highestOffer} offers={offers} collectionAuctionHouse={collectionAuctionHouse} />
                                                                             </Grid>
                                                                         )}
                                                                         </>
