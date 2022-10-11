@@ -200,11 +200,31 @@ function RenderGovernanceTable(props:any) {
     };
 
     const votingresultcolumns: GridColDef[] = [
-        { field: 'pubkey', headerName: 'PublicKey', width: 70, hide: true},
-        { field: 'proposal', headerName: 'Proposal', width: 70, hide: true},
-        { field: 'governingTokenOwner', headerName: 'governingTokenOwner', width: 70},
-        { field: 'voteType', headerName: 'voteType', width: 70},
-        { field: 'voterWeight', headerName: 'voterWeight', width: 70},
+        { field: 'pubkey', headerName: 'PublicKey', width: 70, hide: true,
+            renderCell: (params) => {
+            return(params)
+            }
+        },
+        { field: 'proposal', headerName: 'Proposal', width: 70, hide: true,
+            renderCell: (params) => {
+                return(params)
+            }
+        },
+        { field: 'governingTokenOwner', headerName: 'governingTokenOwner', width: 70,
+            renderCell: (params) => {
+                return(params)
+            }
+        },
+        { field: 'voteType', headerName: 'voteType', width: 70,
+            renderCell: (params) => {
+                return(params)
+            }
+        },
+        { field: 'voterWeight', headerName: 'voterWeight', width: 70,
+            renderCell: (params) => {
+                return(params)
+            }
+        },
     ];
 
     function GetParticipants(props: any){
@@ -244,20 +264,18 @@ function RenderGovernanceTable(props:any) {
             if (voteResults?.value){
                 
                 for (const item of voteResults.value){
-
-
                     votingResults.push({
-                        pubkey:1,
-                        proposal:2,
-                        governingTokenOwner:3,
-                        voteType:4, // 0 yes - 1 no
-                        voterWeight:5,
+                        pubkey:item.pubkey.toBase58(),
+                        proposal:item.account.proposal.toBase58(),
+                        governingTokenOwner:item.account.governingTokenOwner.toBase58(),
+                        voteType:item.account.vote?.voteType, // 0 yes - 1 no
+                        voterWeight:item.account.vote.voterWeight,
                     })
                 }
             }
 
             setSolanaVotingResultRows(votingResults)
-            console.log("Vote Record: "+JSON.stringify(voteRecord));
+            console.log("Vote Record: "+JSON.stringify(votingResults));
 
             //setVotingParticipants(governance);
             //const starts = thisitem.account?.votingAt.toNumber();
@@ -308,11 +326,6 @@ function RenderGovernanceTable(props:any) {
                                                 columns={votingresultcolumns}
                                                 pageSize={25}
                                                 rowsPerPageOptions={[]}
-                                                initialState={{
-                                                    sorting: {
-                                                        sortModel: [{ field: 'voteType', sort: 'desc' }],
-                                                    },
-                                                }}
                                                 sx={{
                                                     borderRadius:'17px',
                                                     borderColor:'rgba(255,255,255,0.25)',
