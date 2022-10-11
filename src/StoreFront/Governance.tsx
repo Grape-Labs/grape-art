@@ -164,11 +164,11 @@ function RenderGovernanceTable(props:any) {
             
             //const governance = await getGovernance(connection, thisitem.account.governance);
 
-            console.log("Sending "+thisitem.account.governance + " with prop "+thisitem.pubkey);
+            console.log("Sending with Governance "+thisitem.owner + " with Proposal PK "+thisitem.pubkey);
 
             const voteRecord = getVoteRecords({
                 connection: connection,
-                programId: new PublicKey(GOVERNANCE_PROGRAM_ID),//new PublicKey(thisitem.account.governance),
+                programId: new PublicKey(thisitem.owner),//new PublicKey(thisitem.account.governance),
                 proposalPk: new PublicKey(thisitem.pubkey),
             });
             
