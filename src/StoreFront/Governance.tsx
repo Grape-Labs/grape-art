@@ -296,7 +296,8 @@ function RenderGovernanceTable(props:any) {
                 </Tooltip>
 
                 <BootstrapDialog 
-                    maxWidth={"lg"}
+                    maxWidth={"xl"}
+                    fullWidth={true}
                     open={open} onClose={handleClose}
                     PaperProps={{
                         style: {
