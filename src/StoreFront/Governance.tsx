@@ -244,11 +244,11 @@ function RenderGovernanceTable(props:any) {
             if (voteResults?.value){
                 for (const item of voteResults.value){
                     votingResults.push({
-                        pubkey:1,
-                        proposal:2,
-                        governingTokenOwner:3,
-                        voteType:4, // 0 yes - 1 no
-                        voterWeight:5,
+                        pubkey:item.pubkey.toBase58(),
+                        proposal:item.account.proposal.toBase58(),
+                        governingTokenOwner:item.account.governingTokenOwner.toBase58(),
+                        voteType:item.account.vote.voteType, // 0 yes - 1 no
+                        voterWeight:item.account.vote.voteType,
                     })
                 }
             }
