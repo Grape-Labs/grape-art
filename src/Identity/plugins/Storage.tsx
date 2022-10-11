@@ -775,9 +775,9 @@ const deserialized = deserializeUnchecked(dataSchema, AccoundData, metavalue?.da
 
             //console.log("response: "+JSON.stringify(response));
 
-            var file_items = new Array();
+            let file_items = new Array();
             if (response?.keys){
-                for (var item of response.keys){
+                for (const item of response.keys){
 
                     file_items.push({
                         id:item,

@@ -5,6 +5,7 @@ import { ENV, TokenListProvider, TokenInfo } from '@solana/spl-token-registry';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import * as React from 'react';
 import { styled, useTheme } from '@mui/material/styles';
+import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import {
   Typography,
   Button,
@@ -21,10 +22,14 @@ import {
   TablePagination,
   Tooltip,
   LinearProgress,
+  DialogTitle,
+  Dialog,
+  DialogContent,
 } from '@mui/material/';
 
 import moment from 'moment';
 
+import CloseIcon from '@mui/icons-material/Close';
 import FirstPageIcon from '@mui/icons-material/FirstPage';
 import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
@@ -48,6 +53,45 @@ const StyledTable = styled(Table)(({ theme }) => ({
         borderBottom: '1px solid rgba(255,255,255,0.05)'
     },
 }));
+
+export interface DialogTitleProps {
+    id: string;
+    children?: React.ReactNode;
+    onClose: () => void;
+}
+  
+const BootstrapDialogTitle = (props: DialogTitleProps) => {
+    const { children, onClose, ...other } = props;
+  
+    return (
+      <DialogTitle sx={{ m: 0, p: 2 }} {...other}>
+        {children}
+        {onClose ? (
+          <IconButton
+            aria-label="close"
+            onClick={onClose}
+            sx={{
+              position: 'absolute',
+              right: 8,
+              top: 8,
+              color: (theme) => theme.palette.grey[500],
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+        ) : null}
+      </DialogTitle>
+    );
+  };
+
+const BootstrapDialog = styled(Dialog)(({ theme }) => ({
+    '& .MuDialogContent-root': {
+      padding: theme.spacing(2),
+    },
+    '& .MuDialogActions-root': {
+      padding: theme.spacing(1),
+    },
+  }));
 
 const GOVERNANNCE_STATE = {
     0:'Draft',
@@ -131,7 +175,6 @@ function TablePaginationActions(props) {
   }
 
 function RenderGovernanceTable(props:any) {
-    const GOVERNANCE_PROGRAM_ID = 'GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw';
     const [loading, setLoading] = React.useState(false);
     //const [proposals, setProposals] = React.useState(props.proposals);
     const collectionAuthority = props.collectionAuthority;
@@ -156,9 +199,32 @@ function RenderGovernanceTable(props:any) {
         setPage(0);
     };
 
+    const filecolumns: GridColDef[] = [
+        { field: 'pubkey', headerName: 'PublicKey', width: 70, hide: true},
+        { field: 'proposal', headerName: 'Proposal', width: 70, hide: true},
+        { field: 'governingTokenOwner', headerName: 'governingTokenOwner', width: 70},
+        { field: 'voteType', headerName: 'voteType', width: 70},
+        { field: 'voterWeight', headerName: 'voterWeight', width: 70},
+    ];
+
     function GetParticipants(props: any){
         const thisitem = props.item;
+        const [solanaVotingResultRows,setSolanaVotingResultRows] = React.useState(null);
+        const [open, setOpen] = React.useState(false);
         //const [thisGovernance, setThisGovernance] = React.useState(null);
+
+        const handleCloseDialog = () => {
+            setOpen(false);
+        }
+    
+        const handleClickOpen = () => {
+            setOpen(true);
+            getVotingParticipants();
+        };
+    
+        const handleClose = () => {
+            setOpen(false);
+        };
 
         const getVotingParticipants = async () => {
             
@@ -171,7 +237,21 @@ function RenderGovernanceTable(props:any) {
                 programId: new PublicKey(thisitem.owner),
                 proposalPk: new PublicKey(thisitem.pubkey),
             });
+
+            const votingResults = [];
+            if (voteRecord?.value){
+                for (const item of voteRecord.value){
+                    votingResults.push({
+                        pubkey:item.pubkey.toBase58(),
+                        proposal:item.account.proposal.toBase58(),
+                        governingTokenOwner:item.account.governingTokenOwner.toBase58(),
+                        voteType:item.account.vote.voteType, // 0 yes - 1 no
+                        voterWeight:item.account.voterWeight,
+                    })
+                }
+            }
             
+            setSolanaVotingResultRows(votingResults)
             console.log("Vote Record: "+JSON.stringify(voteRecord));
 
             //setVotingParticipants(governance);
@@ -184,11 +264,58 @@ function RenderGovernanceTable(props:any) {
             <>
                 <Tooltip title='Get Voting Participants for this proposal'>
                     <Button 
-                        onClick={getVotingParticipants}
-                        sx={{color:'white',textTransform:'none'}}>
+                        onClick={handleClickOpen}
+                        sx={{color:'white',textTransform:'none',borderRadius:'17px'}}>
                         VR
                     </Button>
                 </Tooltip>
+
+                <BootstrapDialog 
+                    maxWidth={"lg"}
+                    open={open} onClose={handleClose}
+                    PaperProps={{
+                        style: {
+                            background: '#13151C',
+                            border: '1px solid rgba(255,255,255,0.05)',
+                            borderTop: '1px solid rgba(255,255,255,0.1)',
+                            borderRadius: '20px'
+                        }
+                        }}
+                    >
+                    <BootstrapDialogTitle id="create-storage-pool" onClose={handleCloseDialog}>
+                        {t('Voting Results')}
+                    </BootstrapDialogTitle>
+                        <DialogContent>
+                            
+                            <div style={{ height: 600, width: '100%' }}>
+                                <div style={{ display: 'flex', height: '100%' }}>
+                                    <div style={{ flexGrow: 1 }}>
+                                            
+                                            <DataGrid
+                                                rows={solanaVotingResultRows}
+                                                columns={votingresultcolumns}
+                                                pageSize={25}
+                                                rowsPerPageOptions={[]}
+                                                initialState={{
+                                                    sorting: {
+                                                        sortModel: [{ field: 'file', sort: 'desc' }],
+                                                    },
+                                                }}
+                                                sx={{
+                                                    borderRadius:'17px',
+                                                    borderColor:'rgba(255,255,255,0.25)',
+                                                    '& .MuiDataGrid-cell':{
+                                                        borderColor:'rgba(255,255,255,0.25)'
+                                                    }}}
+                                                sortingOrder={['asc', 'desc', null]}
+                                                disableSelectionOnClick
+                                            />
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </DialogContent> 
+                </BootstrapDialog>
             </>
         )
     }
