@@ -308,7 +308,7 @@ function RenderGovernanceTable(props:any) {
                                                 rowsPerPageOptions={[]}
                                                 initialState={{
                                                     sorting: {
-                                                        sortModel: [{ field: 'file', sort: 'desc' }],
+                                                        sortModel: [{ field: 'voteType', sort: 'desc' }],
                                                     },
                                                 }}
                                                 sx={{
