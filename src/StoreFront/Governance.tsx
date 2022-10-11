@@ -236,12 +236,13 @@ function RenderGovernanceTable(props:any) {
                 proposalPk: new PublicKey(thisitem.pubkey),
             });
 
-            const voteResults = JSON.parse(JSON.stringify(voteRecord));
+            const voteResults = voteRecord;//JSON.parse(JSON.stringify(voteRecord));
 
             
             const votingResults = [];
             
             if (voteResults?.value){
+                
                 for (const item of voteResults.value){
                     votingResults.push({
                         pubkey:item.pubkey.toBase58(),
