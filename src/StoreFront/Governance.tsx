@@ -163,6 +163,9 @@ function RenderGovernanceTable(props:any) {
         const getVotingParticipants = async () => {
             
             //const governance = await getGovernance(connection, thisitem.account.governance);
+
+            console.log("Sending "+thisitem.account.governance + " with prop "+thisitem.pubkey);
+
             const voteRecord = getVoteRecords({
                 connection: connection,
                 programId: new PublicKey(thisitem.account.governance),
