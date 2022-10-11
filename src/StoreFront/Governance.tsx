@@ -293,7 +293,7 @@ function RenderGovernanceTable(props:any) {
                         }}
                     >
                     <BootstrapDialogTitle id="create-storage-pool" onClose={handleCloseDialog}>
-                        {t('Voting Results')}
+                        Voting Results
                     </BootstrapDialogTitle>
                         <DialogContent>
                             
