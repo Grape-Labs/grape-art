@@ -521,9 +521,6 @@ function SellNowVotePrompt(props:any){
                                             <Grid container spacing={2}>
                                                     <Grid item>
                                                         
-                                                        <Alert severity="warning">
-                                                            <>Please verify the following is correct</>
-                                                        </Alert>
                                                         <Typography>
                                                             <List dense={true}>
                                                                 <ListItem>
@@ -552,6 +549,10 @@ function SellNowVotePrompt(props:any){
                                                                 </Typography>
                                                                 */}
                                                             </List>
+
+                                                            <Typography sx={{textAlign:'center'}}>
+                                                                {t('Make sure the above is correct')}<br/>{t('press BUY NOW to proceed')}
+                                                            </Typography>   
                                                         </Typography>
                                                         {/*
                                                         <Grid item>
