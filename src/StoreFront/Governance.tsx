@@ -203,27 +203,27 @@ function RenderGovernanceTable(props:any) {
         { field: 'id', headerName: 'ID', width: 70, hide: true},
         { field: 'pubkey', headerName: 'PublicKey', width: 70, hide: true,
             renderCell: (params) => {
-                return(params)
+                return(params.value)
             }
         },
         { field: 'proposal', headerName: 'Proposal', width: 70, hide: true,
             renderCell: (params) => {
-                return(params)
+                return(params.value)
             }
         },
         { field: 'governingTokenOwner', headerName: 'governingTokenOwner', width: 70,
             renderCell: (params) => {
-                return(params)
+                return(params.value)
             }
         },
         { field: 'voteType', headerName: 'voteType', width: 70,
             renderCell: (params) => {
-                return(params)
+                return(params.value)
             }
         },
         { field: 'voterWeight', headerName: 'voterWeight', width: 70,
             renderCell: (params) => {
-                return(params)
+                return(params.value)
             }
         },
     ];
@@ -267,10 +267,10 @@ function RenderGovernanceTable(props:any) {
                     counter++;
                     votingResults.push({
                         id:counter,
-                        pubkey:4,
-                        proposal:3,
-                        governingTokenOwner:2,
-                        voteType:1, // 0 yes - 1 no
+                        pubkey:item.pubkey.toBase58(),
+                        proposal:item.account.proposal.toBase58(),
+                        governingTokenOwner:item.account.governingTokenOwner.toBase58(),
+                        voteType:item.account.voteType, // 0 yes - 1 no
                         voterWeight:0,//item.account.vote.voterWeight,
                     })
                 }
