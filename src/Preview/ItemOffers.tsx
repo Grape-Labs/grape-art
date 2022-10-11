@@ -560,7 +560,7 @@ function SellNowVotePrompt(props:any){
                                         <Button 
                                             onClick={(e) => handleEscrowBuyNow(e)}
                                             autoFocus>
-                                        {t('Buy Now')}
+                                        {t('Buy with Wallet')}
                                         </Button>
                                     </DialogActions>
                                 </BootstrapDialog>
@@ -2784,7 +2784,7 @@ export default function ItemOffers(props: any) {
                                                                 }
                                                             </List>
                                                             <Typography sx={{textAlign:'center'}}>
-                                                                {t('Make sure the above is correct')}<br/>{t('press BUY WITH WALLET to proceed')}
+                                                                {t('Make sure the above is correct')}<br/>{t('press BUY WITH WALLEt to proceed')}
 
                                                                 {salePrice && salePrice > 0 && (
                                                                     <Typography variant="body2"><br/><br/>IMPORTANT: Your NFT is currently listed, you will need to accept <strong>two</strong> wallet transactions to cancel the listing and then accept the offer</Typography>    
@@ -2802,7 +2802,7 @@ export default function ItemOffers(props: any) {
                                                             //onClick={() => handleAcceptOffer(final_offeramount, final_offerfrom, tradeState)}
                                                             onClick={() => handleAcceptOfferAncCancelListing(final_offeramount, final_offerfrom, tradeState)}
                                                             autoFocus>
-                                                        {t('Accept')}
+                                                        {t('Buy with Wallet')}
                                                         </Button>
                                                     </DialogActions>
                                                 </BootstrapDialog>
