@@ -166,9 +166,9 @@ function RenderGovernanceTable(props:any) {
 
             console.log("Sending with Governance "+thisitem.owner + " with Proposal PK "+thisitem.pubkey);
 
-            const voteRecord = getVoteRecords({
+            const voteRecord = await getVoteRecords({
                 connection: connection,
-                programId: new PublicKey(thisitem.owner),//new PublicKey(thisitem.account.governance),
+                programId: new PublicKey(thisitem.owner),
                 proposalPk: new PublicKey(thisitem.pubkey),
             });
             
