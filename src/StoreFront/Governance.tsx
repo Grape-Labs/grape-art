@@ -240,7 +240,7 @@ function RenderGovernanceTable(props:any) {
 
             
             const votingResults = [];
-            /*
+            
             if (voteResults?.value){
                 for (const item of voteResults.value){
                     votingResults.push({
@@ -251,7 +251,7 @@ function RenderGovernanceTable(props:any) {
                         voterWeight:5,
                     })
                 }
-            }*/
+            }
 
             /*
                         pubkey:item.pubkey.toBase58(),
