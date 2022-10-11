@@ -262,14 +262,13 @@ function RenderGovernanceTable(props:any) {
             const votingResults = [];
             
             if (voteResults?.value){
-                
                 for (const item of voteResults.value){
                     votingResults.push({
                         pubkey:item.pubkey.toBase58(),
                         proposal:item.account.proposal.toBase58(),
                         governingTokenOwner:item.account.governingTokenOwner.toBase58(),
-                        voteType:item.account.vote?.voteType, // 0 yes - 1 no
-                        voterWeight:item.account.vote.voterWeight,
+                        voteType:item.account.voteType, // 0 yes - 1 no
+                        voterWeight:0,//item.account.vote.voterWeight,
                     })
                 }
             }
@@ -325,7 +324,7 @@ function RenderGovernanceTable(props:any) {
                                         </>
                                         }
 
-                                        {/*solanaVotingResultRows &&
+                                        {solanaVotingResultRows &&
                                             <DataGrid
                                                 rows={solanaVotingResultRows}
                                                 columns={votingresultcolumns}
@@ -340,7 +339,7 @@ function RenderGovernanceTable(props:any) {
                                                 sortingOrder={['asc', 'desc', null]}
                                                 disableSelectionOnClick
                                             />
-                                        */}
+                                        }
                                             
 
                                     </div>
