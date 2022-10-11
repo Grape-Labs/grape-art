@@ -200,9 +200,10 @@ function RenderGovernanceTable(props:any) {
     };
 
     const votingresultcolumns: GridColDef[] = [
+        { field: 'id', headerName: 'ID', width: 70, hide: true},
         { field: 'pubkey', headerName: 'PublicKey', width: 70, hide: true,
             renderCell: (params) => {
-            return(params)
+                return(params)
             }
         },
         { field: 'proposal', headerName: 'Proposal', width: 70, hide: true,
@@ -257,13 +258,15 @@ function RenderGovernanceTable(props:any) {
             });
 
             const voteResults = voteRecord;//JSON.parse(JSON.stringify(voteRecord));
-
             
             const votingResults = [];
             
             if (voteResults?.value){
+                let counter = 0;
                 for (const item of voteResults.value){
+                    counter++;
                     votingResults.push({
+                        id:counter,
                         pubkey:item.pubkey.toBase58(),
                         proposal:item.account.proposal.toBase58(),
                         governingTokenOwner:item.account.governingTokenOwner.toBase58(),
@@ -312,18 +315,6 @@ function RenderGovernanceTable(props:any) {
                             <div style={{ height: 600, width: '100%' }}>
                                 <div style={{ display: 'flex', height: '100%' }}>
                                     <div style={{ flexGrow: 1 }}>
-                                            
-                                        {solanaVotingResultRows &&
-                                        <>
-                                            {(solanaVotingResultRows).map((item:any, index:number) => (
-                                                <>
-                                                    {JSON.stringify(item)}
-                                                    <br/>
-                                                </>
-                                            ))}
-                                        </>
-                                        }
-
                                         {solanaVotingResultRows &&
                                             <DataGrid
                                                 rows={solanaVotingResultRows}
@@ -340,8 +331,6 @@ function RenderGovernanceTable(props:any) {
                                                 disableSelectionOnClick
                                             />
                                         }
-                                            
-
                                     </div>
                                 </div>
                             </div>
