@@ -168,7 +168,7 @@ function RenderGovernanceTable(props:any) {
 
             const voteRecord = getVoteRecords({
                 connection: connection,
-                programId: new PublicKey(thisitem.account.governance),
+                programId: new PublicKey(GOVERNANCE_PROGRAM_ID),//new PublicKey(thisitem.account.governance),
                 proposalPk: new PublicKey(thisitem.pubkey),
             });
             
