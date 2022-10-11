@@ -267,7 +267,7 @@ function RenderGovernanceTable(props:any) {
                     counter++;
                     votingResults.push({
                         id:counter,
-                        pubkey:item.pubkey.toBase58(),
+                        pubkey:4,
                         proposal:3,
                         governingTokenOwner:2,
                         voteType:1, // 0 yes - 1 no
