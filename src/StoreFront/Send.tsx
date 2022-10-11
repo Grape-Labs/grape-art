@@ -292,12 +292,12 @@ export default function SendToken(props: any) {
                     }
                 }catch(e:any){
                     closeSnackbar();
-                    console.log("1. "+JSON.stringify(e));
+                    //console.log("1. "+JSON.stringify(e));
                     enqueueSnackbar(e.message ? `${e.name}: ${e.message}` : e.name, { variant: 'error' });
                 } 
             } catch(err:any){
                 closeSnackbar();
-                console.log("2. "+JSON.stringify(err));
+                //console.log("2. "+JSON.stringify(err));
                 enqueueSnackbar(err.message ? `${err.name}: ${err.message}` : err.name, { variant: 'error' });
             }
             

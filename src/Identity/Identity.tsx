@@ -415,7 +415,7 @@ export function IdentityView(props: any){
             let txtype = "";
             if (tvalue?.meta?.logMessages){
                 for (const logvalue of tvalue.meta.logMessages){
-                    //console.log("txvalue: "+JSON.stringify(logvalue));
+                    console.log("txvalue: "+JSON.stringify(logvalue));
                     if (logvalue.includes("Program log: Instruction: ")){
                         if (txtype.length > 0)
                             txtype += ", ";
