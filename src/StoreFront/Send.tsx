@@ -252,10 +252,10 @@ export default function SendToken(props: any) {
                 const amount = (amountToSend * Math.pow(10, decimals));
                 transaction.add(
                     createTransferInstruction(
-                    fromTokenAccount,
-                    destTokenAccount,
-                    fromPublicKey,
-                    amount
+                        fromTokenAccount,
+                        destTokenAccount,
+                        fromPublicKey,
+                        amount
                     )
                 )
                 
@@ -292,10 +292,12 @@ export default function SendToken(props: any) {
                     }
                 }catch(e:any){
                     closeSnackbar();
+                    console.log("1. "+JSON.stringify(e));
                     enqueueSnackbar(e.message ? `${e.name}: ${e.message}` : e.name, { variant: 'error' });
                 } 
             } catch(err:any){
                 closeSnackbar();
+                console.log("2. "+JSON.stringify(err));
                 enqueueSnackbar(err.message ? `${err.name}: ${err.message}` : err.name, { variant: 'error' });
             }
             

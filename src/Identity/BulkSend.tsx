@@ -191,10 +191,10 @@ export default function BulkSend(props: any) {
 
             transaction.add(
                 createTransferInstruction(
-                fromTokenAccount,
-                destTokenAccount,
-                fromPublicKey,
-                amount
+                    fromTokenAccount,
+                    destTokenAccount,
+                    fromPublicKey,
+                    amount
                 )
             )
             
@@ -245,17 +245,17 @@ export default function BulkSend(props: any) {
     }
     
     async function transferTokens(toaddress:string) {
-        var maxLen = 7;
-        var maxLenTx = Math.ceil(holdingsSelected.length / maxLen);
-        for (var item = 0; item < maxLenTx; item++) {
+        const maxLen = 7;
+        const maxLenTx = Math.ceil(holdingsSelected.length / maxLen);
+        for (let item = 0; item < maxLenTx; item++) {
             const batchtx = new Transaction;
             enqueueSnackbar(`Processing transaction ${item+1} of ${maxLenTx}`,{ variant: 'info' });
-            for (var holding = 0; holding < maxLen; holding++) {
+            for (let holding = 0; holding < maxLen; holding++) {
                 if (holdingsSelected[item * maxLen + holding]) {
-                    let decimals = holdingsSelected[holding].send.tokenAmount.decimals;
-                    let balance = holdingsSelected[holding].balance * Math.pow(10, decimals); //holdingsSelected[holding].balance;
+                    const decimals = holdingsSelected[holding].send.tokenAmount.decimals;
+                    const balance = holdingsSelected[holding].balance * Math.pow(10, decimals); //holdingsSelected[holding].balance;
                     
-                    var tti = await transferTokenInstruction((holdingsSelected[item * maxLen + holding]).mint, toaddress, balance);
+                    const tti = await transferTokenInstruction((holdingsSelected[item * maxLen + holding]).mint, toaddress, balance);
                     if (tti)
                         batchtx.add(tti);
                     
