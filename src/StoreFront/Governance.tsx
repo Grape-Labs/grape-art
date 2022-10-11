@@ -201,17 +201,17 @@ function RenderGovernanceTable(props:any) {
 
     const votingresultcolumns: GridColDef[] = [
         { field: 'id', headerName: 'ID', width: 70, hide: true},
-        { field: 'pubkey', headerName: 'PublicKey', width: 70, hide: true,
+        { field: 'pubkey', headerName: 'PublicKey', width: 170, hide: true,
             renderCell: (params) => {
                 return(params.value)
             }
         },
-        { field: 'proposal', headerName: 'Proposal', width: 70, hide: true,
+        { field: 'proposal', headerName: 'Proposal', width: 170, hide: true,
             renderCell: (params) => {
                 return(params.value)
             }
         },
-        { field: 'governingTokenOwner', headerName: 'governingTokenOwner', width: 70,
+        { field: 'governingTokenOwner', headerName: 'governingTokenOwner', width: 170, flex: 1,
             renderCell: (params) => {
                 return(params.value)
             }
