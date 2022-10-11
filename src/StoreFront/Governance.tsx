@@ -242,14 +242,22 @@ function RenderGovernanceTable(props:any) {
             if (voteRecord?.value){
                 for (const item of voteRecord.value){
                     votingResults.push({
-                        pubkey:item.pubkey.toBase58(),
+                        pubkey:1,
+                        proposal:2,
+                        governingTokenOwner:3,
+                        voteType:4, // 0 yes - 1 no
+                        voterWeight:5,
+                    })
+                }
+            }
+
+            /*
+            pubkey:item.pubkey.toBase58(),
                         proposal:item.account.proposal.toBase58(),
                         governingTokenOwner:item.account.governingTokenOwner.toBase58(),
                         voteType:item.account.vote.voteType, // 0 yes - 1 no
                         voterWeight:item.account.voterWeight,
-                    })
-                }
-            }
+            */
             
             setSolanaVotingResultRows(votingResults)
             console.log("Vote Record: "+JSON.stringify(voteRecord));
@@ -291,7 +299,9 @@ function RenderGovernanceTable(props:any) {
                                 <div style={{ display: 'flex', height: '100%' }}>
                                     <div style={{ flexGrow: 1 }}>
                                             
-                                            {/*
+
+                                        {JSON.stringify(solanaVotingResultRows)}
+                                            
                                             <DataGrid
                                                 rows={solanaVotingResultRows}
                                                 columns={votingresultcolumns}
@@ -311,9 +321,8 @@ function RenderGovernanceTable(props:any) {
                                                 sortingOrder={['asc', 'desc', null]}
                                                 disableSelectionOnClick
                                             />
-                                                */}
+                                            
 
-                                                {JSON.stringify(solanaVotingResultRows)}
                                     </div>
                                 </div>
                             </div>
