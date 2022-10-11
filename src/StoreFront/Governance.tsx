@@ -238,9 +238,11 @@ function RenderGovernanceTable(props:any) {
                 proposalPk: new PublicKey(thisitem.pubkey),
             });
 
+            const voteResults = JSON.parse(JSON.stringify(voteRecord));
+
             const votingResults = [];
-            if (voteRecord?.value){
-                for (const item of voteRecord.value){
+            if (voteResults?.value){
+                for (const item of voteResults.value){
                     votingResults.push({
                         pubkey:1,
                         proposal:2,
@@ -252,7 +254,7 @@ function RenderGovernanceTable(props:any) {
             }
 
             /*
-            pubkey:item.pubkey.toBase58(),
+                        pubkey:item.pubkey.toBase58(),
                         proposal:item.account.proposal.toBase58(),
                         governingTokenOwner:item.account.governingTokenOwner.toBase58(),
                         voteType:item.account.vote.voteType, // 0 yes - 1 no
