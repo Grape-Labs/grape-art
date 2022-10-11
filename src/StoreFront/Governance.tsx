@@ -291,6 +291,7 @@ function RenderGovernanceTable(props:any) {
                                 <div style={{ display: 'flex', height: '100%' }}>
                                     <div style={{ flexGrow: 1 }}>
                                             
+                                            {/*
                                             <DataGrid
                                                 rows={solanaVotingResultRows}
                                                 columns={votingresultcolumns}
@@ -310,6 +311,9 @@ function RenderGovernanceTable(props:any) {
                                                 sortingOrder={['asc', 'desc', null]}
                                                 disableSelectionOnClick
                                             />
+                                                */}
+
+                                                {JSON.stringify(solanaVotingResultRows)}
                                     </div>
                                 </div>
                             </div>
