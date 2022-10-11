@@ -230,8 +230,6 @@ function RenderGovernanceTable(props:any) {
             
             //const governance = await getGovernance(connection, thisitem.account.governance);
 
-            console.log("Sending with Governance "+thisitem.owner + " with Proposal PK "+thisitem.pubkey);
-
             const voteRecord = await getVoteRecords({
                 connection: connection,
                 programId: new PublicKey(thisitem.owner),
@@ -240,7 +238,9 @@ function RenderGovernanceTable(props:any) {
 
             const voteResults = JSON.parse(JSON.stringify(voteRecord));
 
+            
             const votingResults = [];
+            /*
             if (voteResults?.value){
                 for (const item of voteResults.value){
                     votingResults.push({
@@ -251,7 +251,7 @@ function RenderGovernanceTable(props:any) {
                         voterWeight:5,
                     })
                 }
-            }
+            }*/
 
             /*
                         pubkey:item.pubkey.toBase58(),
