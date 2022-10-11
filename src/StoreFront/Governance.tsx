@@ -161,7 +161,7 @@ function RenderGovernanceTable(props:any) {
         const getVotingParticipants = async () => {
             
             //const governance = await getGovernance(connection, thisitem.account.governance);
-            const voteRecord = getVoteRecord(connection, thisitem.account.governance)
+            const voteRecord = getVoteRecord(connection, thisitem.pubkey)
 
             console.log("Vote Record: "+JSON.stringify(voteRecord));
 
