@@ -1,4 +1,4 @@
-import { getRealm, getAllProposals, getGovernance, getTokenOwnerRecordsByOwner, getTokenOwnerRecord, getRealmConfigAddress, getGovernanceAccount, getAccountTypes, GovernanceAccountType, tryGetRealmConfig  } from '@solana/spl-governance';
+import { getRealm, getAllProposals, getGovernance, getTokenOwnerRecordsByOwner, getTokenOwnerRecord, getVoteRecord, getRealmConfigAddress, getGovernanceAccount, getAccountTypes, GovernanceAccountType, tryGetRealmConfig  } from '@solana/spl-governance';
 import { PublicKey, TokenAmount, Connection } from '@solana/web3.js';
 import { ENV, TokenListProvider, TokenInfo } from '@solana/spl-token-registry';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
@@ -154,6 +154,46 @@ function RenderGovernanceTable(props:any) {
         setPage(0);
     };
 
+    function GetParticipants(props: any){
+        const thisitem = props.item;
+        //const [thisGovernance, setThisGovernance] = React.useState(null);
+
+        const getVotingParticipants = async () => {
+            
+            //const governance = await getGovernance(connection, thisitem.account.governance);
+            const voteRecord = getVoteRecord(connection, thisitem.account.governance)
+
+            console.log("Vote Record: "+JSON.stringify(voteRecord));
+
+            //setVotingParticipants(governance);
+            //const starts = thisitem.account?.votingAt.toNumber();
+            ///const ends = thisitem.account?.votingAt.toNumber()+governance?.account?.config?.maxVotingTime;
+            //console.log("ending at : " + moment.unix(thisitem.account?.votingAt.toNumber()+governance?.account?.config?.maxVotingTime).format("MMMM Da, YYYY, h:mm a"));
+        }
+
+        /*
+        React.useEffect(() => { 
+            if (thisitem.account?.state === 2){ // if voting state
+                getVotingParticipants()
+            }
+        }, [thisitem]);
+        */
+        // calculate time left
+        // /60/60/24 to get days
+        
+        return (
+            <>
+                <Tooltip title='Get Voting Participants for this proposal'>
+                    <Button 
+                        onClick={getVotingParticipants}
+                        sx={{color:'white',textTransform:'none'}}>
+                        Test
+                    </Button>
+                </Tooltip>
+            </>
+        )
+    }
+
     function GetProposalStatus(props: any){
         const thisitem = props.item;
         const [thisGovernance, setThisGovernance] = React.useState(null);
@@ -177,8 +217,6 @@ function RenderGovernanceTable(props:any) {
         // calculate time left
         // /60/60/24 to get days
         
-
-
         return (
             <>
                 <TableCell  align="center">
@@ -241,6 +279,7 @@ function RenderGovernanceTable(props:any) {
                                 <TableCell align="center"><Typography variant="caption">Ending</Typography></TableCell>
                                 */}
                                 <TableCell align="center"><Typography variant="caption">Vote</Typography></TableCell>
+                                <TableCell align="center"><Typography variant="caption">Participants</Typography></TableCell>
                                 
                             </TableRow>
                         </TableHead>
@@ -372,6 +411,9 @@ function RenderGovernanceTable(props:any) {
                                                         </>
                                                     )}
                                                 </Typography>
+                                            </TableCell>
+                                            <TableCell align="center">
+                                                <GetParticipants item={item} />
                                             </TableCell>
                                         </TableRow>
                                     }
@@ -537,9 +579,9 @@ export function GovernanceView(props: any) {
                 
                 const gprops = await getAllProposals(new Connection(THEINDEX_RPC_ENDPOINT), grealm.owner, realmPk);
                 
-                let allprops: any[] = [];
-                for (let props of gprops){
-                    for (let prop of props){
+                const allprops: any[] = [];
+                for (const props of gprops){
+                    for (const prop of props){
                         if (prop){
                             allprops.push(prop);
                         }
@@ -556,8 +598,6 @@ export function GovernanceView(props: any) {
                 setProposals(sortedResults);
 
             }catch(e){console.log("ERR: "+e)}
-        } else{
-
         }
         setLoading(false);
     }
