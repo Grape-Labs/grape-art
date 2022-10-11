@@ -319,6 +319,7 @@ function RenderGovernanceTable(props:any) {
                                             {(solanaVotingResultRows).map((item:any, index:number) => (
                                                 <>
                                                     {JSON.stringify(item)}
+                                                    <br/>
                                                 </>
                                             ))}
                                         </>
