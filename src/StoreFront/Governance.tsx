@@ -1,4 +1,5 @@
-import { getRealm, getAllProposals, getGovernance, getTokenOwnerRecordsByOwner, getTokenOwnerRecord, getVoteRecord, getRealmConfigAddress, getGovernanceAccount, getAccountTypes, GovernanceAccountType, tryGetRealmConfig  } from '@solana/spl-governance';
+import { getRealm, getAllProposals, getGovernance, getTokenOwnerRecordsByOwner, getVoteRecord, getRealmConfigAddress, getGovernanceAccount, getAccountTypes, GovernanceAccountType, tryGetRealmConfig  } from '@solana/spl-governance';
+import { getVoteRecords } from '../utils/governanceTools/getVoteRecords';
 import { PublicKey, TokenAmount, Connection } from '@solana/web3.js';
 import { ENV, TokenListProvider, TokenInfo } from '@solana/spl-token-registry';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
@@ -130,13 +131,14 @@ function TablePaginationActions(props) {
   }
 
 function RenderGovernanceTable(props:any) {
+    const GOVERNANCE_PROGRAM_ID = 'GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw';
     const [loading, setLoading] = React.useState(false);
     //const [proposals, setProposals] = React.useState(props.proposals);
     const collectionAuthority = props.collectionAuthority;
     const proposals = props.proposals;
     const nftBasedGovernance = props.nftBasedGovernance;
     const token = props.token;
-    const { connection } = useConnection();
+    const connection = new Connection(GRAPE_RPC_ENDPOINT);
     const { publicKey } = useWallet();
     const tokenDecimals = token?.decimals || 6;
 
@@ -161,8 +163,12 @@ function RenderGovernanceTable(props:any) {
         const getVotingParticipants = async () => {
             
             //const governance = await getGovernance(connection, thisitem.account.governance);
-            const voteRecord = getVoteRecord(connection, thisitem.pubkey)
-
+            const voteRecord = getVoteRecords({
+                connection: connection,
+                programId: new PublicKey(thisitem.account.governance),
+                proposalPk: new PublicKey(thisitem.pubkey),
+            });
+            
             console.log("Vote Record: "+JSON.stringify(voteRecord));
 
             //setVotingParticipants(governance);
@@ -170,16 +176,6 @@ function RenderGovernanceTable(props:any) {
             ///const ends = thisitem.account?.votingAt.toNumber()+governance?.account?.config?.maxVotingTime;
             //console.log("ending at : " + moment.unix(thisitem.account?.votingAt.toNumber()+governance?.account?.config?.maxVotingTime).format("MMMM Da, YYYY, h:mm a"));
         }
-
-        /*
-        React.useEffect(() => { 
-            if (thisitem.account?.state === 2){ // if voting state
-                getVotingParticipants()
-            }
-        }, [thisitem]);
-        */
-        // calculate time left
-        // /60/60/24 to get days
         
         return (
             <>
@@ -187,7 +183,7 @@ function RenderGovernanceTable(props:any) {
                     <Button 
                         onClick={getVotingParticipants}
                         sx={{color:'white',textTransform:'none'}}>
-                        Test
+                        VR
                     </Button>
                 </Tooltip>
             </>
@@ -479,7 +475,7 @@ export function GovernanceView(props: any) {
 
         React.useEffect(() => { 
             if (tArray){
-                for (var token of tArray){
+                for (const token of tArray){
                     if (token.address === participatingRealm?.account?.governingTokenMint.toBase58()){
                         setThisToken(token);
                     }
@@ -527,9 +523,9 @@ export function GovernanceView(props: any) {
 
                 const ownerRecordsbyOwner = await getTokenOwnerRecordsByOwner(connection, programId, publicKey);
                 // check if part of this realm
-                var pcp = false;
-                var partOf = null;
-                for (var realm of ownerRecordsbyOwner){
+                let pcp = false;
+                let partOf = null;
+                for (const realm of ownerRecordsbyOwner){
                     //console.log("owner record realm: "+JSON.stringify(realm))
                     if (realm.account.realm.toBase58() === collectionAuthority.governance){
                         pcp = true;
