@@ -199,7 +199,7 @@ function RenderGovernanceTable(props:any) {
         setPage(0);
     };
 
-    const filecolumns: GridColDef[] = [
+    const votingresultcolumns: GridColDef[] = [
         { field: 'pubkey', headerName: 'PublicKey', width: 70, hide: true},
         { field: 'proposal', headerName: 'Proposal', width: 70, hide: true},
         { field: 'governingTokenOwner', headerName: 'governingTokenOwner', width: 70},
