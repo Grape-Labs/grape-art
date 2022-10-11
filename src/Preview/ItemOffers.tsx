@@ -517,57 +517,42 @@ function SellNowVotePrompt(props:any){
                                         </Typography>
                                     </DialogTitle>
                                     <DialogContent>
-                                        <FormControl>
-                                            <Grid container spacing={2}>
-                                                    <Grid item>
-                                                        
-                                                        <Typography>
-                                                            <List dense={true}>
-                                                                <ListItem>
-                                                                    {t('Amount')}:&nbsp;<strong>{meListing[0].price}<SolCurrencyIcon sx={{ml:1,fontSize:"10px"}} /></strong>
-                                                                </ListItem>
-                                                                <ListItem>
-                                                                    {t('Mint')}:&nbsp;<ExplorerView address={mint} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
-                                                                </ListItem>
-                                                                <ListItem>
-                                                                    {t('Owner')}:&nbsp;<ExplorerView address={meListing[0].seller} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
-                                                                </ListItem>
-                                                                <ListItem>
-                                                                    {t('Escrow')}:&nbsp;<ExplorerView address={mintOwner} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
-                                                                </ListItem>
-                                                                <ListItem>
-                                                                    {t('Market Address')}:&nbsp;<ExplorerView address={meListing[0]?.auctionHouse} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
-                                                                </ListItem>
-                                                                <ListItem>
-                                                                    <>Marketplace:&nbsp;<strong>Magic Eden</strong><br/></>
-                                                                </ListItem>
-                                                                {/*royalties &&
-                                                                <Typography variant='body2' sx={{mt:1}}>
-                                                                Royalties: {(+royalties/100).toFixed(2)}%
-                                                                <Typography component='div' variant='caption'>*These are the original creator royalties of this NFT, if this NFT is sold again the seller pays for these royalties</Typography>
-                                                                <br/>
-                                                                </Typography>
-                                                                */}
-                                                            </List>
+                                            <DialogContentText id="alert-dialog-description">
+                                            <br />
+                                            <>
+                                                <List dense={true}>
+                                                    <ListItem>
+                                                        {t('Amount')}:&nbsp;<strong>{meListing[0].price}<SolCurrencyIcon sx={{ml:1,fontSize:"10px"}} /></strong>
+                                                    </ListItem>
+                                                    <ListItem>
+                                                        {t('Mint')}:&nbsp;<ExplorerView address={mint} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
+                                                    </ListItem>
+                                                    <ListItem>
+                                                        {t('Owner')}:&nbsp;<ExplorerView address={meListing[0].seller} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
+                                                    </ListItem>
+                                                    <ListItem>
+                                                        {t('Escrow')}:&nbsp;<ExplorerView address={mintOwner} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
+                                                    </ListItem>
+                                                    <ListItem>
+                                                        {t('Market Address')}:&nbsp;<ExplorerView address={meListing[0]?.auctionHouse} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
+                                                    </ListItem>
+                                                    <ListItem>
+                                                        <>Marketplace:&nbsp;<strong>Magic Eden</strong><br/></>
+                                                    </ListItem>
+                                                </List>
+                                                <Typography sx={{textAlign:'center'}}>
+                                                    {t('Make sure the above is correct')}<br/>{t('press BUY WITH WALLET to proceed')}
 
-                                                            <Typography sx={{textAlign:'center'}}>
-                                                                {t('Make sure the above is correct')}<br/>{t('press BUY NOW to proceed')}
-                                                            </Typography>   
-                                                        </Typography>
-                                                        {/*
-                                                        <Grid item>
-                                                            <FormControlLabel
-                                                                control={
-                                                                <Checkbox checked={donateAccept} onChange={handleDonateAccept} name="" />
-                                                                }
-                                                                label={`Would you like to donate X to the XYZ DAO during this purchase?`}
-                                                            />
-                                                        </Grid>
-                                                        */}
-
-                                                </Grid>
-                                            </Grid>
-                                        </FormControl>
+                                                    {salePrice && salePrice > 0 && (
+                                                        <Typography variant="body2"><br/><br/>IMPORTANT: Your NFT is currently listed, you will need to accept <strong>two</strong> wallet transactions to cancel the listing and then accept the offer</Typography>    
+                                                        )
+                                                    }
+                                                
+                                                </Typography><br/>
+                                            </>
+                                            
+                                            </DialogContentText>
+                                        
                                 
                                     </DialogContent>
                                     <DialogActions>
@@ -2788,6 +2773,15 @@ export default function ItemOffers(props: any) {
                                                                 <ListItem>
                                                                 {t('Auction House')}:&nbsp;<MakeLinkableAddress addr={collectionAuctionHouse || AUCTION_HOUSE_ADDRESS} trim={9} hasextlink={true} hascopy={false} fontsize={16} />
                                                                 </ListItem>
+
+                                                                {royalties &&
+                                                                    <ListItem>
+                                                                        <Typography variant='body2' sx={{mt:1}}>
+                                                                            Royalties:&nbsp;{(+royalties/100).toFixed(2)}%
+                                                                                <Typography component='div' variant='caption'>*These are the original creator royalties of this NFT, if this NFT is sold again the seller pays for these royalties</Typography>
+                                                                        </Typography>
+                                                                    </ListItem>
+                                                                }
                                                             </List>
                                                             <Typography sx={{textAlign:'center'}}>
                                                                 {t('Make sure the above is correct')}<br/>{t('press BUY WITH WALLET to proceed')}
