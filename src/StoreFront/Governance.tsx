@@ -373,7 +373,7 @@ function RenderGovernanceTable(props:any) {
                             </Tooltip>
                         */}
 
-                        {jsonGenerated &&
+                        {/*jsonGenerated &&
                             <Tooltip title="Download Verification CSV file">
                                 <Button
                                     download={`${thisitem.pubkey.toBase58()}.csv`}
@@ -382,14 +382,14 @@ function RenderGovernanceTable(props:any) {
                                     <DownloadIcon /> JSON
                                 </Button>
                             </Tooltip>
-                        }
+                    */}
                     </BootstrapDialogTitle>
                         <DialogContent>
                             
-                            <Box sx={{ alignItems: 'center', textAlign: 'center'}}>
+                            <Box sx={{ alignItems: 'center', textAlign: 'center',p:2}}>
                                 <Typography variant='h5'>Coming soon...</Typography>
                             </Box>
-
+                            {/*
                             <div style={{ height: 600, width: '100%' }}>
                                 <div style={{ display: 'flex', height: '100%' }}>
                                     <div style={{ flexGrow: 1 }}>
@@ -412,6 +412,7 @@ function RenderGovernanceTable(props:any) {
                                     </div>
                                 </div>
                             </div>
+                        */}
                             
                         </DialogContent> 
                 </BootstrapDialog>
