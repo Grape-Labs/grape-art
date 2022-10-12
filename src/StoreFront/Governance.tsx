@@ -271,7 +271,7 @@ function RenderGovernanceTable(props:any) {
                         proposal:item.account.proposal.toBase58(),
                         governingTokenOwner:item.account.governingTokenOwner.toBase58(),
                         voteType:item.account.voteType, // 0 yes - 1 no
-                        voterWeight:item.account.vote.voterWeight,
+                        voterWeight:item.account.vote.voterWeight.toNumber(),
                     })
                 }
             }
