@@ -367,7 +367,9 @@ function RenderGovernanceTable(props:any) {
                     </BootstrapDialogTitle>
                         <DialogContent>
                             
-                            <Typography variant='h5'>Coming soon...</Typography>
+                            <Box sx={{ alignItems: 'center', textAlign: 'center'}}>
+                                <Typography variant='h5'>Coming soon...</Typography>
+                            </Box>
 
                             <div style={{ height: 600, width: '100%' }}>
                                 <div style={{ display: 'flex', height: '100%' }}>
