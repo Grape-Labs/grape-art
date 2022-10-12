@@ -359,8 +359,8 @@ function RenderGovernanceTable(props:any) {
                         {csvGenerated &&
                             <Tooltip title="Download Verification CSV file">
                                 <Button
-                                    download={`test.csv`}
-                                    href={csvGenerated}
+                                    download={`${thisitem.pubkey.toBase58()}.csv`}
+                                    href={null}
                                 >
                                     <DownloadIcon /> CSV
                                 </Button>
