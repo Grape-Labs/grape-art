@@ -219,7 +219,7 @@ function RenderGovernanceTable(props:any) {
         { field: 'governingTokenOwner', headerName: 'Token Owner', width: 170, flex: 1,
             renderCell: (params) => {
                 return(
-                    <ExplorerView grapeArtProfile={true} address={params.value} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
+                    <ExplorerView grapeArtProfile={true} address={params.value} type='address' shorten={8} hideTitle={false} style='text' color='white' fontSize='14px' />
                 )
             }
         },
@@ -240,9 +240,10 @@ function RenderGovernanceTable(props:any) {
                                 <ThumbDownIcon sx={{color:'red'}} />
                             }
                             label={`${getFormattedNumberToLocale(formatAmount(parseInt(params.value.voterWeight)/Math.pow(10, +thisToken?.decimals)))} votes`}
-                        >
+                        />
+                        <Paper sx={{display:'none'}}>
                             {params.value.voterWeight}
-                        </Chip>
+                        </Paper>
                     </>
                 );
             }
