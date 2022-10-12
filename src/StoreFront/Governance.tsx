@@ -227,6 +227,9 @@ function RenderGovernanceTable(props:any) {
             renderCell: (params) => {
                 return(
                     <>
+                        <Paper sx={{display:'none'}}>
+                            {params.value.voterWeight}
+                        </Paper>
                         <Chip
                             variant="outlined"
                             color={params.value.vote.voteType === 0 ?
@@ -241,9 +244,7 @@ function RenderGovernanceTable(props:any) {
                             }
                             label={`${getFormattedNumberToLocale(formatAmount(parseInt(params.value.voterWeight)/Math.pow(10, +thisToken?.decimals)))} votes`}
                         />
-                        <Paper sx={{display:'none'}}>
-                            {params.value.voterWeight}
-                        </Paper>
+                        
                     </>
                 );
             }
