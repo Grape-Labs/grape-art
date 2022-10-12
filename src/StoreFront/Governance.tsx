@@ -31,6 +31,7 @@ import {
 import ExplorerView from '../utils/grapeTools/Explorer';
 import moment from 'moment';
 
+import DownloadIcon from '@mui/icons-material/Download';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import CloseIcon from '@mui/icons-material/Close';
@@ -189,7 +190,7 @@ function RenderGovernanceTable(props:any) {
     const connection = new Connection(GRAPE_RPC_ENDPOINT);
     const { publicKey } = useWallet();
     const tokenDecimals = token?.decimals || 6;
-
+    const [csvGenerated, setCSVGenerated] = React.useState(null); 
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
     // Avoid a layout jump when reaching the last page with empty rows.
@@ -262,7 +263,7 @@ function RenderGovernanceTable(props:any) {
         const [solanaVotingResultRows,setSolanaVotingResultRows] = React.useState(null);
         const [open, setOpen] = React.useState(false);
         //const [thisGovernance, setThisGovernance] = React.useState(null);
-
+        
         const handleCloseDialog = () => {
             setOpen(false);
         }
@@ -287,7 +288,8 @@ function RenderGovernanceTable(props:any) {
             const voteResults = voteRecord;//JSON.parse(JSON.stringify(voteRecord));
             
             const votingResults = [];
-            
+            let csvExport = '';
+
             if (voteResults?.value){
                 let counter = 0;
                 for (const item of voteResults.value){
@@ -302,6 +304,18 @@ function RenderGovernanceTable(props:any) {
                             voterWeight:item.account.voterWeight.toNumber(),
                         }
                     })
+                    csvExport += item.pubkey.toBase58()+','+item.account.voterWeight.toNumber()+','+item.account.vote.voteType
+
+                    const jsonString = `data:text/json;chatset=utf-8,${encodeURIComponent(
+                        JSON.stringify(votingResults)
+                    )}`;
+                    
+                    //setStringGenerated(JSON.stringify(finalList));
+                    //setFileGenerated(jsonString);
+        
+                    const jsonCSVString = `data:text/csv;chatset=utf-8,${csvExport}`;
+                    
+                    setCSVGenerated(jsonCSVString); 
                 }
             }
 
@@ -335,6 +349,15 @@ function RenderGovernanceTable(props:any) {
                     >
                     <BootstrapDialogTitle id="create-storage-pool" onClose={handleCloseDialog}>
                         Voting Results
+
+                        <Tooltip title="Download Verification CSV file">
+                            <Button
+                                download={`${thisitem.pubkey}.csv`}
+                                href={csvGenerated}
+                            >
+                                <DownloadIcon /> CSV
+                            </Button>
+                        </Tooltip>
                     </BootstrapDialogTitle>
                         <DialogContent>
                             
