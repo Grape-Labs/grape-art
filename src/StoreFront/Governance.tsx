@@ -28,6 +28,7 @@ import {
   Chip,
 } from '@mui/material/';
 
+import ExplorerView from '../utils/grapeTools/Explorer';
 import moment from 'moment';
 
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
@@ -217,7 +218,9 @@ function RenderGovernanceTable(props:any) {
         },
         { field: 'governingTokenOwner', headerName: 'Token Owner', width: 170, flex: 1,
             renderCell: (params) => {
-                return(params.value)
+                return(
+                    <ExplorerView grapeArtProfile={true} address={params.value} type='address' hideTitle={false} style='text' color='white' fontSize='14px' />
+                )
             }
         },
         { field: 'vote', headerName: 'Voting', width: 250,
