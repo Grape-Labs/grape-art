@@ -242,7 +242,12 @@ function RenderGovernanceTable(props:any) {
                             label={parseInt(params.value.voterWeight) > 0 && +thisToken?.decimals > 0 ?
                                     `${getFormattedNumberToLocale(formatAmount(parseInt(params.value.voterWeight)/Math.pow(10, +thisToken?.decimals)))} votes`
                                 :
-                                `1 vote`    
+                                    <>{parseInt(params.value.voterWeight) > 0 ?
+                                        `${getFormattedNumberToLocale(formatAmount(parseInt(params.value.voterWeight)/Math.pow(10, 6)))} votes`
+                                        :
+                                        `1 vote`   
+                                    }
+                                    </> 
                             }
                         />
                         
