@@ -350,14 +350,16 @@ function RenderGovernanceTable(props:any) {
                     <BootstrapDialogTitle id="create-storage-pool" onClose={handleCloseDialog}>
                         Voting Results
 
-                        <Tooltip title="Download Verification CSV file">
-                            <Button
-                                download={`${thisitem.pubkey}.csv`}
-                                href={csvGenerated}
-                            >
-                                <DownloadIcon /> CSV
-                            </Button>
-                        </Tooltip>
+                        {csvGenerated &&
+                            <Tooltip title="Download Verification CSV file">
+                                <Button
+                                    download={`${thisitem.pubkey}.csv`}
+                                    href={csvGenerated}
+                                >
+                                    <DownloadIcon /> CSV
+                                </Button>
+                            </Tooltip>
+                        }
                     </BootstrapDialogTitle>
                         <DialogContent>
                             
@@ -401,7 +403,7 @@ function RenderGovernanceTable(props:any) {
             ///const ends = thisitem.account?.votingAt.toNumber()+governance?.account?.config?.maxVotingTime;
             //console.log("ending at : " + moment.unix(thisitem.account?.votingAt.toNumber()+governance?.account?.config?.maxVotingTime).format("MMMM Da, YYYY, h:mm a"));
 
-            console.log("Single governance: "+JSON.stringify(governance));
+            //console.log("Single governance: "+JSON.stringify(governance));
         }
 
         React.useEffect(() => { 
@@ -732,14 +734,14 @@ export function GovernanceView(props: any) {
                         pcp = true;
                         partOf = realm;
                         setParticipatingRealm(realm);
-                        console.log("realm: "+JSON.stringify(realm))
+                        //console.log("realm: "+JSON.stringify(realm))
                     }
                 }
                 setParticipating(pcp);
 
                 const grealm = await getRealm(new Connection(THEINDEX_RPC_ENDPOINT), new PublicKey(collectionAuthority.governance))
                 setRealm(grealm);
-                console.log("B realm: "+JSON.stringify(grealm));
+                //console.log("B realm: "+JSON.stringify(grealm));
 
                 const realmPk = grealm.pubkey;
 
@@ -755,7 +757,7 @@ export function GovernanceView(props: any) {
                             realmPk,//realmConfigPk,//realmPk
                         )
                         
-                        console.log("config: "+JSON.stringify(realmConfig));
+                        //console.log("config: "+JSON.stringify(realmConfig));
                         //setRealmConfig(realmConfigPK)
 
                         if (realmConfig && realmConfig?.account && realmConfig?.account?.communityTokenConfig.maxVoterWeightAddin){
@@ -790,7 +792,7 @@ export function GovernanceView(props: any) {
                 
                 //const sortedResults = allprops.sort((a,b) => (a.account?.votingAt.toNumber() < b.account?.votingAt.toNumber()) ? 1 : -1);
                 
-                console.log("allprops: "+JSON.stringify(allprops));
+                //console.log("allprops: "+JSON.stringify(allprops));
 
                 setProposals(sortedResults);
 
