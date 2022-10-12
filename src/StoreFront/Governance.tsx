@@ -227,9 +227,6 @@ function RenderGovernanceTable(props:any) {
             renderCell: (params) => {
                 return(
                     <>
-                        <div sx={{display:'none'}}>
-                            {params.value.voterWeight}
-                        </div>
                         <Chip
                             variant="outlined"
                             color={params.value.vote.voteType === 0 ?
