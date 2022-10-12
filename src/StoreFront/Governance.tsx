@@ -177,6 +177,7 @@ function TablePaginationActions(props) {
   }
 
 function RenderGovernanceTable(props:any) {
+    const thisToken = props.thisToken;
     const [loading, setLoading] = React.useState(false);
     //const [proposals, setProposals] = React.useState(props.proposals);
     const collectionAuthority = props.collectionAuthority;
@@ -233,7 +234,12 @@ function RenderGovernanceTable(props:any) {
         },
         { field: 'voterWeight', headerName: 'voterWeight', width: 250,
             renderCell: (params) => {
-                return(params.value)
+                return(
+                    <>
+                        {getFormattedNumberToLocale(formatAmount(parseInt(params.value)/Math.pow(10, +thisToken?.decimals)))} votes 
+                    </>   
+                    
+                )
             }
         },
     ];
@@ -627,13 +633,14 @@ export function GovernanceView(props: any) {
     const [participating, setParticipating] = React.useState(false)
     const [participatingRealm, setParticipatingRealm] = React.useState(null)
     const [nftBasedGovernance, setNftBasedGovernance] = React.useState(false);
+    const [thisToken, setThisToken] = React.useState(null);
 
     const GOVERNANCE_PROGRAM_ID = 'GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw';
 
     function VotingPower(props: any){
         const tArray = props.tokenArray;
         const pRealm = props.participatingRealm;
-        const [thisToken, setThisToken] = React.useState(null);
+        //const [thisToken, setThisToken] = React.useState(null);
 
         React.useEffect(() => { 
             if (tArray){
@@ -831,7 +838,7 @@ export function GovernanceView(props: any) {
                             </>
                         }
 
-                        <RenderGovernanceTable proposals={proposals} nftBasedGovernance={nftBasedGovernance} collectionAuthority={collectionAuthority} />
+                        <RenderGovernanceTable thisToken={thisToken} proposals={proposals} nftBasedGovernance={nftBasedGovernance} collectionAuthority={collectionAuthority} />
                     </Box>
                                 
                 );
