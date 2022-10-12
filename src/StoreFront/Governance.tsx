@@ -288,7 +288,7 @@ function RenderGovernanceTable(props:any) {
             const voteResults = voteRecord;//JSON.parse(JSON.stringify(voteRecord));
             
             const votingResults = [];
-            let csvExport = '';
+            let csvFile = '';
 
             if (voteResults?.value){
                 let counter = 0;
@@ -305,19 +305,21 @@ function RenderGovernanceTable(props:any) {
                         }
                     })
                     if (counter > 1)
-                        csvExport += ',';
-                    csvExport += item.pubkey.toBase58()+','+item.account.voterWeight.toNumber()+','+item.account.vote.voteType;
+                        csvFile += ',';
+                    else
+                        csvFile += 'tokenOwner,voterWeight,tokenDecimals,voteType';
+                    
+                    csvFile += item.pubkey.toBase58()+','+item.account.voterWeight.toNumber()+','+thisToken.decimals+','+item.account.vote.voteType;
                     
                     /*
-                    
                     const jsonString = `data:text/json;chatset=utf-8,${encodeURIComponent(
                         JSON.stringify(votingResults)
                     )}`;
-                    
-                    const jsonCSVString = `data:text/csv;chatset=utf-8,${csvExport}`;
+                    */
+                    const jsonCSVString = `data:text/csv;chatset=utf-8,${csvFile}`;
                     
                     setCSVGenerated(jsonCSVString); 
-                    */
+                    
                 }
             }
 
