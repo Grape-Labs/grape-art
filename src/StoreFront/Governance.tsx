@@ -219,7 +219,7 @@ function RenderGovernanceTable(props:any) {
         { field: 'governingTokenOwner', headerName: 'Token Owner', width: 170, flex: 1,
             renderCell: (params) => {
                 return(
-                    <ExplorerView grapeArtProfile={true} address={params.value} type='address' hideTitle={false} style='text' color='white' fontSize='14px' />
+                    <ExplorerView grapeArtProfile={true} address={params.value} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
                 )
             }
         },
@@ -228,6 +228,7 @@ function RenderGovernanceTable(props:any) {
                 return(
                     <>
                         <Chip
+                            variant="outlined"
                             color={params.value.vote.voteType === 0 ?
                                 'success'
                                 :
