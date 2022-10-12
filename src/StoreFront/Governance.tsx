@@ -356,16 +356,16 @@ function RenderGovernanceTable(props:any) {
                     <BootstrapDialogTitle id="create-storage-pool" onClose={handleCloseDialog}>
                         Voting Results
 
-                        {csvGenerated &&
+                        {/*csvGenerated &&
                             <Tooltip title="Download Verification CSV file">
                                 <Button
                                     download={`${thisitem.pubkey.toBase58()}.csv`}
-                                    href={null}
+                                    href={csvGenerated}
                                 >
                                     <DownloadIcon /> CSV
                                 </Button>
                             </Tooltip>
-                        }
+                    */}
                     </BootstrapDialogTitle>
                         <DialogContent>
                             
