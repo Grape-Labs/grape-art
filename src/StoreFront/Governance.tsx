@@ -317,13 +317,14 @@ function RenderGovernanceTable(props:any) {
                         JSON.stringify(votingResults)
                     )}`;
                     */
-                    const jsonCSVString = encodeURI(`data:text/csv;chatset=utf-8,${csvFile}`);
-                    console.log("jsonCSVString: "+JSON.stringify(jsonCSVString));
-
-                    //setCSVGenerated(jsonCSVString); 
+                    
                     
                 }
             }
+            const jsonCSVString = encodeURI(`data:text/csv;chatset=utf-8,${csvFile}`);
+            console.log("jsonCSVString: "+JSON.stringify(jsonCSVString));
+
+            setCSVGenerated(jsonCSVString); 
 
             setSolanaVotingResultRows(votingResults)
             //console.log("Vote Record: "+JSON.stringify(votingResults));
