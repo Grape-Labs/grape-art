@@ -240,7 +240,9 @@ function RenderGovernanceTable(props:any) {
                                 <ThumbDownIcon sx={{color:'red'}} />
                             }
                             label={`${getFormattedNumberToLocale(formatAmount(parseInt(params.value.voterWeight)/Math.pow(10, +thisToken?.decimals)))} votes`}
-                        />
+                        >
+                            {params.value.voterWeight}
+                        </Chip>
                     </>
                 );
             }
