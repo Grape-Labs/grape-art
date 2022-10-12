@@ -29,6 +29,8 @@ import {
 
 import moment from 'moment';
 
+import ThumbUpIcon from '@mui/icons-material/ThumbUp';
+import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import CloseIcon from '@mui/icons-material/Close';
 import FirstPageIcon from '@mui/icons-material/FirstPage';
 import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
@@ -218,10 +220,18 @@ function RenderGovernanceTable(props:any) {
         },
         { field: 'voteType', headerName: 'voteType', width: 70,
             renderCell: (params) => {
-                return(params.value)
+                return(
+                    <>
+                    {params.value === 0 ?
+                        <ThumbUpIcon color='success' />
+                        :
+                        <ThumbDownIcon sx={{color:'red'}} />
+                    }
+                    </>
+                );
             }
         },
-        { field: 'voterWeight', headerName: 'voterWeight', width: 70,
+        { field: 'voterWeight', headerName: 'voterWeight', width: 250,
             renderCell: (params) => {
                 return(params.value)
             }
