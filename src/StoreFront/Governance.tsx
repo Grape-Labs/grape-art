@@ -270,8 +270,8 @@ function RenderGovernanceTable(props:any) {
                         pubkey:item.pubkey.toBase58(),
                         proposal:item.account.proposal.toBase58(),
                         governingTokenOwner:item.account.governingTokenOwner.toBase58(),
-                        voteType:item.account.voteType, // 0 yes - 1 no
-                        voterWeight:item.account.vote.voterWeight.toNumber(),
+                        voteType:item.account.vote.voteType, // 0 yes - 1 no
+                        voterWeight:item.account.voterWeight.toNumber(),
                     })
                 }
             }
