@@ -239,7 +239,7 @@ function RenderGovernanceTable(props:any) {
                                 :
                                 <ThumbDownIcon sx={{color:'red'}} />
                             }
-                            label={parseInt(params.value.voterWeight) > 0 ?
+                            label={parseInt(params.value.voterWeight) > 0 && +thisToken?.decimals > 0 ?
                                     `${getFormattedNumberToLocale(formatAmount(parseInt(params.value.voterWeight)/Math.pow(10, +thisToken?.decimals)))} votes`
                                 :
                                 `1 vote`    
@@ -273,8 +273,6 @@ function RenderGovernanceTable(props:any) {
 
         const getVotingParticipants = async () => {
             
-            //const governance = await getGovernance(connection, thisitem.account.governance);
-
             const voteRecord = await getVoteRecords({
                 connection: connection,
                 programId: new PublicKey(thisitem.owner),
@@ -303,12 +301,8 @@ function RenderGovernanceTable(props:any) {
             }
 
             setSolanaVotingResultRows(votingResults)
-            console.log("Vote Record: "+JSON.stringify(votingResults));
+            //console.log("Vote Record: "+JSON.stringify(votingResults));
 
-            //setVotingParticipants(governance);
-            //const starts = thisitem.account?.votingAt.toNumber();
-            ///const ends = thisitem.account?.votingAt.toNumber()+governance?.account?.config?.maxVotingTime;
-            //console.log("ending at : " + moment.unix(thisitem.account?.votingAt.toNumber()+governance?.account?.config?.maxVotingTime).format("MMMM Da, YYYY, h:mm a"));
         }
         
         return (
