@@ -320,7 +320,7 @@ function RenderGovernanceTable(props:any) {
                     const jsonCSVString = encodeURI(`data:text/csv;chatset=utf-8,${csvFile}`);
                     console.log("jsonCSVString: "+JSON.stringify(jsonCSVString));
 
-                    setCSVGenerated(jsonCSVString); 
+                    //setCSVGenerated(jsonCSVString); 
                     
                 }
             }
@@ -356,7 +356,7 @@ function RenderGovernanceTable(props:any) {
                     <BootstrapDialogTitle id="create-storage-pool" onClose={handleCloseDialog}>
                         Voting Results
 
-                        {/*csvGenerated &&
+                        {csvGenerated &&
                             <Tooltip title="Download Verification CSV file">
                                 <Button
                                     download={`${thisitem.pubkey.toBase58()}.csv`}
@@ -365,7 +365,7 @@ function RenderGovernanceTable(props:any) {
                                     <DownloadIcon /> CSV
                                 </Button>
                             </Tooltip>
-                    */}
+                        }
                     </BootstrapDialogTitle>
                         <DialogContent>
                             
