@@ -306,10 +306,11 @@ function RenderGovernanceTable(props:any) {
                     })
                     if (counter > 1)
                         csvFile += ',';
-                    else
-                        csvFile += '[tokenOwner,voterWeight,tokenDecimals,voteType],';
+                    //else
+                        //csvFile += '[tokenOwner,voterWeight,tokenDecimals,voteType],';
                     
-                    csvFile += '['+item.pubkey.toBase58()+','+item.account.voterWeight.toNumber()+','+thisToken?.decimals+','+item.account.vote.voteType+']';
+                    //    csvFile += '['+item.pubkey.toBase58()+','+item.account.voterWeight.toNumber()+','+thisToken?.decimals+','+item.account.vote.voteType+']';
+                        csvFile += item.pubkey.toBase58();
                     
                     /*
                     const jsonString = `data:text/json;chatset=utf-8,${encodeURIComponent(
