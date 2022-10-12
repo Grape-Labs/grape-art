@@ -242,7 +242,11 @@ function RenderGovernanceTable(props:any) {
                                 :
                                 <ThumbDownIcon sx={{color:'red'}} />
                             }
-                            label={`${getFormattedNumberToLocale(formatAmount(parseInt(params.value.voterWeight)/Math.pow(10, +thisToken?.decimals)))} votes`}
+                            label={parseInt(params.value.voterWeight) > 0 ?
+                                    `${getFormattedNumberToLocale(formatAmount(parseInt(params.value.voterWeight)/Math.pow(10, +thisToken?.decimals)))} votes`
+                                :
+                                `1 vote`    
+                            }
                         />
                         
                     </>
