@@ -319,7 +319,7 @@ function RenderGovernanceTable(props:any) {
                     const jsonCSVString = `data:text/csv;chatset=utf-8,${'['+csvFile+']'}`;
                     console.log("jsonCSVString: "+JSON.stringify(jsonCSVString));
 
-                    setCSVGenerated(jsonCSVString); 
+                    //setCSVGenerated(jsonCSVString); 
                     
                 }
             }
@@ -358,8 +358,8 @@ function RenderGovernanceTable(props:any) {
                         {csvGenerated &&
                             <Tooltip title="Download Verification CSV file">
                                 <Button
-                                    //download={`${thisitem.pubkey.toBase58()}.csv`}
-                                    //href={csvGenerated}
+                                    download={`${thisitem.pubkey.toBase58()}.csv`}
+                                    href={csvGenerated}
                                 >
                                     <DownloadIcon /> CSV
                                 </Button>
