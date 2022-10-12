@@ -306,8 +306,9 @@ function RenderGovernanceTable(props:any) {
                     })
                     if (counter > 1)
                         csvExport += ',';
-                    csvExport += item.pubkey.toBase58()+','+item.account.voterWeight.toNumber()+','+item.account.vote.voteType
+                    csvExport += item.pubkey.toBase58()+','+item.account.voterWeight.toNumber()+','+item.account.vote.voteType;
                     
+                    /*
                     
                     const jsonString = `data:text/json;chatset=utf-8,${encodeURIComponent(
                         JSON.stringify(votingResults)
@@ -316,6 +317,7 @@ function RenderGovernanceTable(props:any) {
                     const jsonCSVString = `data:text/csv;chatset=utf-8,${csvExport}`;
                     
                     setCSVGenerated(jsonCSVString); 
+                    */
                 }
             }
 
