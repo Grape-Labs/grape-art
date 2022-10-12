@@ -304,12 +304,12 @@ function RenderGovernanceTable(props:any) {
                             voterWeight:item.account.voterWeight.toNumber(),
                         }
                     })
-                    //if (counter > 1)
-                    //    csvFile += ',';
-                    //else
-                    //    csvFile += 'tokenOwner,voterWeight,tokenDecimals,voteType,';
+                    if (counter > 1)
+                        csvFile += ',';
+                    else
+                        csvFile += 'tokenOwner,voterWeight,tokenDecimals,voteType,';
                     
-                    //csvFile += item.pubkey.toBase58()+','+item.account.voterWeight.toNumber()+','+thisToken?.decimals+','+item.account.vote.voteType;
+                    csvFile += item.pubkey.toBase58()+','+item.account.voterWeight.toNumber()+','+thisToken?.decimals+','+item.account.vote.voteType;
                     
                     /*
                     const jsonString = `data:text/json;chatset=utf-8,${encodeURIComponent(
