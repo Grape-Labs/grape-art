@@ -25,6 +25,7 @@ import {
   DialogTitle,
   Dialog,
   DialogContent,
+  Chip,
 } from '@mui/material/';
 
 import moment from 'moment';
@@ -214,32 +215,25 @@ function RenderGovernanceTable(props:any) {
                 return(params.value)
             }
         },
-        { field: 'governingTokenOwner', headerName: 'governingTokenOwner', width: 170, flex: 1,
+        { field: 'governingTokenOwner', headerName: 'Token Owner', width: 170, flex: 1,
             renderCell: (params) => {
                 return(params.value)
             }
         },
-        { field: 'voteType', headerName: 'voteType', width: 70,
+        { field: 'vote', headerName: 'Voting', width: 250,
             renderCell: (params) => {
                 return(
                     <>
-                    {params.value === 0 ?
-                        <ThumbUpIcon color='success' />
-                        :
-                        <ThumbDownIcon sx={{color:'red'}} />
-                    }
+                        <Chip
+                            icon={params.value.vote.voteType === 0 ?
+                                <ThumbUpIcon color='success' />
+                                :
+                                <ThumbDownIcon sx={{color:'red'}} />
+                            }
+                            label={`${getFormattedNumberToLocale(formatAmount(parseInt(params.value.voterWeight)/Math.pow(10, +thisToken?.decimals)))} votes`}
+                        />
                     </>
                 );
-            }
-        },
-        { field: 'voterWeight', headerName: 'voterWeight', width: 250,
-            renderCell: (params) => {
-                return(
-                    <>
-                        {getFormattedNumberToLocale(formatAmount(parseInt(params.value)/Math.pow(10, +thisToken?.decimals)))} votes 
-                    </>   
-                    
-                )
             }
         },
     ];
@@ -286,8 +280,10 @@ function RenderGovernanceTable(props:any) {
                         pubkey:item.pubkey.toBase58(),
                         proposal:item.account.proposal.toBase58(),
                         governingTokenOwner:item.account.governingTokenOwner.toBase58(),
-                        voteType:item.account.vote.voteType, // 0 yes - 1 no
-                        voterWeight:item.account.voterWeight.toNumber(),
+                        vote:{
+                            vote:item.account.vote,
+                            voterWeight:item.account.voterWeight.toNumber(),
+                        }
                     })
                 }
             }
