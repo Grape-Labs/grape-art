@@ -191,6 +191,7 @@ function RenderGovernanceTable(props:any) {
     const { publicKey } = useWallet();
     const tokenDecimals = token?.decimals || 6;
     const [csvGenerated, setCSVGenerated] = React.useState(null); 
+    const [jsonGenerated, setJSONGenerated] = React.useState(null); 
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
     // Avoid a layout jump when reaching the last page with empty rows.
@@ -312,15 +313,19 @@ function RenderGovernanceTable(props:any) {
                         csvFile += item.pubkey.toBase58()+','+item.account.voterWeight.toNumber()+','+thisToken?.decimals+','+item.account.vote.voteType+'';
                     //    csvFile += item.pubkey.toBase58();
                     
-                    /*
-                    const jsonString = `data:text/json;chatset=utf-8,${encodeURIComponent(
-                        JSON.stringify(votingResults)
-                    )}`;
-                    */
+                    
+                    
                     
                     
                 }
             }
+
+            const jsonString = `data:text/json;chatset=utf-8,${encodeURIComponent(
+                JSON.stringify(votingResults)
+            )}`;
+
+            setJSONGenerated(jsonString);
+            
             const jsonCSVString = encodeURI(`data:text/csv;chatset=utf-8,${csvFile}`);
             console.log("jsonCSVString: "+JSON.stringify(jsonCSVString));
 
@@ -357,13 +362,24 @@ function RenderGovernanceTable(props:any) {
                     <BootstrapDialogTitle id="create-storage-pool" onClose={handleCloseDialog}>
                         Voting Results
 
-                        {csvGenerated &&
+                        {/*csvGenerated &&
                             <Tooltip title="Download Verification CSV file">
                                 <Button
                                     download={`${thisitem.pubkey.toBase58()}.csv`}
                                     href={csvGenerated}
                                 >
                                     <DownloadIcon /> CSV
+                                </Button>
+                            </Tooltip>
+                        */}
+
+                        {jsonGenerated &&
+                            <Tooltip title="Download Verification CSV file">
+                                <Button
+                                    download={`${thisitem.pubkey.toBase58()}.csv`}
+                                    href={jsonGenerated}
+                                >
+                                    <DownloadIcon /> JSON
                                 </Button>
                             </Tooltip>
                         }
