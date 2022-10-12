@@ -225,6 +225,11 @@ function RenderGovernanceTable(props:any) {
                 return(
                     <>
                         <Chip
+                            color={params.value.vote.voteType === 0 ?
+                                'success'
+                                :
+                                'error'
+                            }
                             icon={params.value.vote.voteType === 0 ?
                                 <ThumbUpIcon color='success' />
                                 :
