@@ -304,15 +304,15 @@ function RenderGovernanceTable(props:any) {
                             voterWeight:item.account.voterWeight.toNumber(),
                         }
                     })
+                    if (counter > 1)
+                        csvExport += ',';
                     csvExport += item.pubkey.toBase58()+','+item.account.voterWeight.toNumber()+','+item.account.vote.voteType
-
+                    
+                    
                     const jsonString = `data:text/json;chatset=utf-8,${encodeURIComponent(
                         JSON.stringify(votingResults)
                     )}`;
                     
-                    //setStringGenerated(JSON.stringify(finalList));
-                    //setFileGenerated(jsonString);
-        
                     const jsonCSVString = `data:text/csv;chatset=utf-8,${csvExport}`;
                     
                     setCSVGenerated(jsonCSVString); 
@@ -363,6 +363,8 @@ function RenderGovernanceTable(props:any) {
                     </BootstrapDialogTitle>
                         <DialogContent>
                             
+                            <Typography variant='h5'>Coming soon...</Typography>
+
                             <div style={{ height: 600, width: '100%' }}>
                                 <div style={{ display: 'flex', height: '100%' }}>
                                     <div style={{ flexGrow: 1 }}>
