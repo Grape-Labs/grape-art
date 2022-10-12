@@ -305,19 +305,19 @@ function RenderGovernanceTable(props:any) {
                         }
                     })
                     if (counter > 1)
-                        csvFile += ',';
-                    //else
-                        //csvFile += '[tokenOwner,voterWeight,tokenDecimals,voteType],';
+                        csvFile += '\r\n';
+                    else
+                        csvFile += 'tokenOwner,voterWeight,tokenDecimals,voteType\r\n';
                     
-                    //    csvFile += '['+item.pubkey.toBase58()+','+item.account.voterWeight.toNumber()+','+thisToken?.decimals+','+item.account.vote.voteType+']';
-                        csvFile += item.pubkey.toBase58();
+                        csvFile += item.pubkey.toBase58()+','+item.account.voterWeight.toNumber()+','+thisToken?.decimals+','+item.account.vote.voteType+'';
+                    //    csvFile += item.pubkey.toBase58();
                     
                     /*
                     const jsonString = `data:text/json;chatset=utf-8,${encodeURIComponent(
                         JSON.stringify(votingResults)
                     )}`;
                     */
-                    const jsonCSVString = `data:text/csv;chatset=utf-8,${encodeURIComponent('['+csvFile+']')}`;
+                    const jsonCSVString = encodeURI(`data:text/csv;chatset=utf-8,${csvFile}`);
                     console.log("jsonCSVString: "+JSON.stringify(jsonCSVString));
 
                     setCSVGenerated(jsonCSVString); 
