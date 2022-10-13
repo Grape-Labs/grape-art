@@ -541,7 +541,7 @@ function RenderGovernanceTable(props:any) {
                                                     </Tooltip>
                                                 }
 
-                                                    {realm.account.config.councilMint.toBase58() === item.account.governingTokenMint.toBase58() ?
+                                                    {realm.account.config?.councilMint?.toBase58() === item.account?.governingTokenMint?.toBase58() ?
                                                         <Tooltip title='Council Vote'><Button color='inherit' sx={{ml:1,borderRadius:'17px'}}><AssuredWorkloadIcon sx={{ fontSize:16 }} /></Button></Tooltip>
                                                         :
                                                         <>
@@ -563,7 +563,7 @@ function RenderGovernanceTable(props:any) {
                                                         {console.log("vote: "+JSON.stringify(item.account))}
                                                         {console.log("voteWeight: "+JSON.stringify(item.account.options[0].voteWeight.toNumber()))}
 
-                                                        <Tooltip title={realm.account.config.councilMint.toBase58() === item.account.governingTokenMint.toBase58() ?
+                                                        <Tooltip title={realm.account.config?.councilMint?.toBase58() === item.account?.governingTokenMint?.toBase58() ?
                                                                 <>{item.account?.options[0].voteWeight.toNumber()}</>
                                                             :
                                                             <>
