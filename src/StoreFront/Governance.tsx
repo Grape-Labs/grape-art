@@ -552,7 +552,7 @@ function RenderGovernanceTable(props:any) {
                                                         
                                                         {console.log("governingTokenMint: "+item.account.governingTokenMint.toBase58())}
                                                         {console.log("vote: "+JSON.stringify(item.account))}
-                                                        {console.log("voteWeight: "+JSON.stringify(item.account.options.voteWeight.toNumber()))}
+                                                        {console.log("voteWeight: "+JSON.stringify(item.account.options.voteWeight[0].toNumber()))}
 
                                                         <Tooltip title={tokenMap.get(item.account.governingTokenMint.toBase58()) ?
                                                                 <>{(item.account?.options[0].voteWeight.toNumber()/Math.pow(10, tokenDecimals)).toFixed(0)}</>
