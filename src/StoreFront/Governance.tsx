@@ -545,7 +545,6 @@ function RenderGovernanceTable(props:any) {
                                                         {console.log("vote: "+JSON.stringify(item.account))}
                                                         {console.log("Map:" + tokenMap.get(item.account.governingTokenMint))}
                                                         {console.log("voteWeight: "+item.account?.options[0].voteWeight.toNumber())}
-                                                        {console.log("tokenAddress: "+JSON.stringify(thisToken))}
                                                         
                                                         {/*item.account?.governingTokenMint.toBase58() === thisToken.address.toBase58() 
                                                         */}
