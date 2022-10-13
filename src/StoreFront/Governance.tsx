@@ -32,6 +32,7 @@ import {
 import ExplorerView from '../utils/grapeTools/Explorer';
 import moment from 'moment';
 
+import PeopleIcon from '@mui/icons-material/People';
 import DownloadIcon from '@mui/icons-material/Download';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
@@ -341,7 +342,7 @@ function RenderGovernanceTable(props:any) {
                     <Button 
                         onClick={handleClickOpen}
                         sx={{color:'white',textTransform:'none',borderRadius:'17px'}}>
-                        VR
+                        <PeopleIcon />
                     </Button>
                 </Tooltip>
 
@@ -362,10 +363,11 @@ function RenderGovernanceTable(props:any) {
                         Voting Results
 
                         {/*
-                        <ButtonGroup>
+                        <ButtonGroup size="small" sx={{ml:1}}>
                             {jsonGenerated &&
                                 <Tooltip title="Download Verification CSV file">
                                     <Button
+                                        sx={{borderRadiusTopLeft:'17px',borderRadiusBottomLeft:'17px'}}
                                         download={`${thisitem.pubkey.toBase58()}.csv`}
                                         href={jsonGenerated}
                                     >
@@ -377,6 +379,7 @@ function RenderGovernanceTable(props:any) {
                             {csvGenerated &&
                                 <Tooltip title="Download Verification CSV file">
                                     <Button
+                                        sx={{borderRadiusTopRight:'17px',borderRadiusBottomRight:'17px'}}
                                         download={`${thisitem.pubkey.toBase58()}.csv`}
                                         href={csvGenerated}
                                     >
