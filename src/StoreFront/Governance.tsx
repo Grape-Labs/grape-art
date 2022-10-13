@@ -32,6 +32,7 @@ import {
 import ExplorerView from '../utils/grapeTools/Explorer';
 import moment from 'moment';
 
+import AssuredWorkloadIcon from '@mui/icons-material/AssuredWorkload';
 import PeopleIcon from '@mui/icons-material/People';
 import DownloadIcon from '@mui/icons-material/Download';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
@@ -537,27 +538,24 @@ function RenderGovernanceTable(props:any) {
                                                         <Button sx={{ml:1,borderRadius:'17px'}}><HelpOutlineIcon sx={{ fontSize:16, color:'white' }}/></Button>
                                                     </Tooltip>
                                                 }
+
+                                                    {tokenMap.get(item.account.governingTokenMint.toBase58()) ?
+                                                        <></>
+                                                    :
+                                                        <Tooltip title='Council or NFT Vote'><Button color='inherit' sx={{ml:1,borderRadius:'17px'}}><AssuredWorkloadIcon sx={{ fontSize:16 }} /></Button></Tooltip>
+                                                    }
                                                 </Typography>
                                             </TableCell>
                                             <TableCell>
                                                 {item.account?.options && item.account?.options[0]?.voteWeight && 
                                                     <Typography variant="h6">
-                                                        {console.log("vote: "+JSON.stringify(item.account))}
-                                                        {console.log("Map:" + tokenMap.get(item.account.governingTokenMint))}
-                                                        {console.log("voteWeight: "+item.account?.options[0].voteWeight.toNumber())}
                                                         
-                                                        {item.account?.governingTokenMint.toBase58() === thisToken.address.toBase58() && 
-                                                            <>T</>
-                                                        }
+                                                        {console.log("governingTokenMint: "+item.account.governingTokenMint.toBase58())}
 
-                                                        <Tooltip title={item.account?.options[0].voteWeight.toNumber() <= 1 ?
-                                                            <>
-                                                                {item.account?.options[0].voteWeight.toNumber()}
-                                                            </>
+                                                        <Tooltip title={tokenMap.get(item.account.governingTokenMint.toBase58()) ?
+                                                                <>{(item.account?.options[0].voteWeight.toNumber()/Math.pow(10, tokenDecimals)).toFixed(0)}</>
                                                             :
-                                                            <>
-                                                                {(item.account?.options[0].voteWeight.toNumber()/Math.pow(10, tokenDecimals)).toFixed(0)}
-                                                            </>
+                                                            <>{item.account?.options[0].voteWeight.toNumber()}</>
                                                             }
                                                         >
                                                             <Button sx={{color:'white'}}>
@@ -575,13 +573,13 @@ function RenderGovernanceTable(props:any) {
                                                 {item.account?.options && item.account?.options[0]?.voterWeight && 
                                                     <Typography variant="h6">
                                                         {/*console.log("vote: "+JSON.stringify(item.account))*/}
-                                                        <Tooltip title={item.account?.options[0].voterWeight.toNumber() <= 1 ?
+                                                        <Tooltip title={tokenMap.get(item.account.governingTokenMint.toBase58()) ?
                                                             <>
-                                                                {item.account?.options[0].voterWeight.toNumber()}
+                                                               {(item.account?.options[0].voterWeight.toNumber()/Math.pow(10, tokenDecimals)).toFixed(0)}
                                                             </>
                                                             :
                                                             <>
-                                                                {(item.account?.options[0].voterWeight.toNumber()/Math.pow(10, tokenDecimals)).toFixed(0)}
+                                                                {item.account?.options[0].voterWeight.toNumber()}
                                                             </>
                                                             }
                                                         >
