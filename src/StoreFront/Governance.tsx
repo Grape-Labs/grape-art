@@ -542,11 +542,11 @@ function RenderGovernanceTable(props:any) {
                                                 {item.account?.options && item.account?.options[0]?.voteWeight && 
                                                     <Typography variant="h6">
                                                         {console.log("vote: "+JSON.stringify(item.account))}
-                                                        {console.log("tokenAddress: "+thisToken.address.toBase58())}
+                                                        {console.log("tokenAddress: "+JSON.stringify(thisToken))}
                                                         
                                                         {/*item.account?.governingTokenMint.toBase58() === thisToken.address.toBase58() 
                                                         */}
-                                                        
+
                                                         <Tooltip title={item.account?.options[0].voteWeight.toNumber() <= 1 ?
                                                             <>
                                                                 {item.account?.options[0].voteWeight.toNumber()}
