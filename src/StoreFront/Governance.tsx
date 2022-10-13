@@ -541,7 +541,7 @@ function RenderGovernanceTable(props:any) {
                                             <TableCell>
                                                 {item.account?.options && item.account?.options[0]?.voteWeight && 
                                                     <Typography variant="h6">
-                                                        {/*console.log("vote: "+JSON.stringify(item.account))*/}
+                                                        {console.log("vote: "+JSON.stringify(item.account))}
                                                         <Tooltip title={item.account?.options[0].voteWeight.toNumber() <= 1 ?
                                                             <>
                                                                 {item.account?.options[0].voteWeight.toNumber()}
