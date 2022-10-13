@@ -335,7 +335,7 @@ function RenderGovernanceTable(props:any) {
             
             setSolanaVotingResultRows(votingResults)
             //console.log("Vote Record: "+JSON.stringify(votingResults));
-
+            //console.log("This vote: "+JSON.stringify(thisitem));
         }
         
         return (
@@ -551,6 +551,7 @@ function RenderGovernanceTable(props:any) {
                                                     <Typography variant="h6">
                                                         
                                                         {console.log("governingTokenMint: "+item.account.governingTokenMint.toBase58())}
+                                                        {console.log("governingTokenMint: "+JSON.stringify(item.account))}
 
                                                         <Tooltip title={tokenMap.get(item.account.governingTokenMint.toBase58()) ?
                                                                 <>{(item.account?.options[0].voteWeight.toNumber()/Math.pow(10, tokenDecimals)).toFixed(0)}</>
@@ -798,7 +799,7 @@ export function GovernanceView(props: any) {
                             realmPk,//realmConfigPk,//realmPk
                         )
                         
-                        //console.log("config: "+JSON.stringify(realmConfig));
+                        console.log("config: "+JSON.stringify(realmConfig));
                         //setRealmConfig(realmConfigPK)
 
                         if (realmConfig && realmConfig?.account && realmConfig?.account?.communityTokenConfig.maxVoterWeightAddin){
