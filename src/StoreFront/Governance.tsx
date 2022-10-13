@@ -324,7 +324,7 @@ function RenderGovernanceTable(props:any) {
                 JSON.stringify(votingResults)
             )}`;
 
-            setJSONGenerated(jsonString);
+            //setJSONGenerated(jsonString);
             
             const jsonCSVString = encodeURI(`data:text/csv;chatset=utf-8,${csvFile}`);
             console.log("jsonCSVString: "+JSON.stringify(jsonCSVString));
