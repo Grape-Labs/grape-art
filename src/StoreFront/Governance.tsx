@@ -183,6 +183,7 @@ function TablePaginationActions(props) {
 
 function RenderGovernanceTable(props:any) {
     const thisToken = props.thisToken;
+    const tokenMap = props.tokenMap;
     const [loading, setLoading] = React.useState(false);
     //const [proposals, setProposals] = React.useState(props.proposals);
     const collectionAuthority = props.collectionAuthority;
@@ -542,8 +543,10 @@ function RenderGovernanceTable(props:any) {
                                                 {item.account?.options && item.account?.options[0]?.voteWeight && 
                                                     <Typography variant="h6">
                                                         {console.log("vote: "+JSON.stringify(item.account))}
+                                                        {console.log("Map:" + tokenMap.get(item.account.governingTokenMint))}
+                                                        
                                                         {console.log("voteWeight: "+item.account?.options[0].voteWeight.toNumber())}
-                                                        {console.log("tokenAddress: "+JSON.stringify(token))}
+                                                        {console.log("tokenAddress: "+JSON.stringify(thisToken))}
                                                         
                                                         {/*item.account?.governingTokenMint.toBase58() === thisToken.address.toBase58() 
                                                         */}
@@ -913,7 +916,7 @@ export function GovernanceView(props: any) {
                             </>
                         }
 
-                        <RenderGovernanceTable thisToken={thisToken} proposals={proposals} nftBasedGovernance={nftBasedGovernance} collectionAuthority={collectionAuthority} />
+                        <RenderGovernanceTable tokenMap={tokenMap} thisToken={thisToken} proposals={proposals} nftBasedGovernance={nftBasedGovernance} collectionAuthority={collectionAuthority} />
                     </Box>
                                 
                 );
