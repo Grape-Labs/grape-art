@@ -26,6 +26,7 @@ import {
   Dialog,
   DialogContent,
   Chip,
+  ButtonGroup,
 } from '@mui/material/';
 
 import ExplorerView from '../utils/grapeTools/Explorer';
@@ -327,7 +328,7 @@ function RenderGovernanceTable(props:any) {
             const jsonCSVString = encodeURI(`data:text/csv;chatset=utf-8,${csvFile}`);
             console.log("jsonCSVString: "+JSON.stringify(jsonCSVString));
             
-            //setCSVGenerated(jsonCSVString); 
+            setCSVGenerated(jsonCSVString); 
             
             setSolanaVotingResultRows(votingResults)
             //console.log("Vote Record: "+JSON.stringify(votingResults));
@@ -360,27 +361,30 @@ function RenderGovernanceTable(props:any) {
                     <BootstrapDialogTitle id="create-storage-pool" onClose={handleCloseDialog}>
                         Voting Results
 
-                        {/*csvGenerated &&
-                            <Tooltip title="Download Verification CSV file">
-                                <Button
-                                    download={`${thisitem.pubkey.toBase58()}.csv`}
-                                    href={csvGenerated}
-                                >
-                                    <DownloadIcon /> CSV
-                                </Button>
-                            </Tooltip>
-                        */}
+                        <ButtonGroup>
+                            {jsonGenerated &&
+                                <Tooltip title="Download Verification CSV file">
+                                    <Button
+                                        download={`${thisitem.pubkey.toBase58()}.csv`}
+                                        href={jsonGenerated}
+                                    >
+                                        <DownloadIcon /> JSON
+                                    </Button>
+                                </Tooltip>
+                            }
 
-                        {jsonGenerated &&
-                            <Tooltip title="Download Verification CSV file">
-                                <Button
-                                    download={`${thisitem.pubkey.toBase58()}.csv`}
-                                    href={jsonGenerated}
-                                >
-                                    <DownloadIcon /> JSON
-                                </Button>
-                            </Tooltip>
-                    }
+                            {csvGenerated &&
+                                <Tooltip title="Download Verification CSV file">
+                                    <Button
+                                        download={`${thisitem.pubkey.toBase58()}.csv`}
+                                        href={csvGenerated}
+                                    >
+                                        <DownloadIcon /> CSV
+                                    </Button>
+                                </Tooltip>
+                            }
+                        </ButtonGroup>
+
                     </BootstrapDialogTitle>
                         <DialogContent>
                             
