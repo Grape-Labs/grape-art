@@ -190,8 +190,6 @@ function RenderGovernanceTable(props:any) {
     const connection = new Connection(GRAPE_RPC_ENDPOINT);
     const { publicKey } = useWallet();
     const tokenDecimals = token?.decimals || 6;
-    const [csvGenerated, setCSVGenerated] = React.useState(null); 
-    const [jsonGenerated, setJSONGenerated] = React.useState(null); 
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
     // Avoid a layout jump when reaching the last page with empty rows.
@@ -261,6 +259,8 @@ function RenderGovernanceTable(props:any) {
 
     function GetParticipants(props: any){
         const thisitem = props.item;
+        const [csvGenerated, setCSVGenerated] = React.useState(null); 
+        const [jsonGenerated, setJSONGenerated] = React.useState(null);
         const [solanaVotingResultRows,setSolanaVotingResultRows] = React.useState(null);
         const [open, setOpen] = React.useState(false);
         //const [thisGovernance, setThisGovernance] = React.useState(null);
@@ -313,10 +313,6 @@ function RenderGovernanceTable(props:any) {
                         csvFile += item.pubkey.toBase58()+','+item.account.voterWeight.toNumber()+','+thisToken?.decimals+','+item.account.vote.voteType+'';
                     //    csvFile += item.pubkey.toBase58();
                     
-                    
-                    
-                    
-                    
                 }
             }
 
@@ -325,8 +321,8 @@ function RenderGovernanceTable(props:any) {
             )}`;
 
             console.log("jsonString: "+JSON.stringify(jsonString));
-            
-            //setJSONGenerated(jsonString);
+
+            setJSONGenerated(jsonString);
             
             const jsonCSVString = encodeURI(`data:text/csv;chatset=utf-8,${csvFile}`);
             console.log("jsonCSVString: "+JSON.stringify(jsonCSVString));
