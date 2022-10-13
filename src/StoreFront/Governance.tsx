@@ -324,12 +324,12 @@ function RenderGovernanceTable(props:any) {
                 JSON.stringify(votingResults)
             )}`;
 
-            console.log("jsonString: "+JSON.stringify(jsonString));
+            //console.log("jsonString: "+JSON.stringify(jsonString));
 
             setJSONGenerated(jsonString);
             
             const jsonCSVString = encodeURI(`data:text/csv;chatset=utf-8,${csvFile}`);
-            console.log("jsonCSVString: "+JSON.stringify(jsonCSVString));
+            //console.log("jsonCSVString: "+JSON.stringify(jsonCSVString));
             
             setCSVGenerated(jsonCSVString); 
             
@@ -551,7 +551,8 @@ function RenderGovernanceTable(props:any) {
                                                     <Typography variant="h6">
                                                         
                                                         {console.log("governingTokenMint: "+item.account.governingTokenMint.toBase58())}
-                                                        {console.log("governingTokenMint: "+JSON.stringify(item.account))}
+                                                        {console.log("vote: "+JSON.stringify(item.account))}
+                                                        {console.log("voteWeight: "+JSON.stringify(item.account.options.voteWeight.toNumber()))}
 
                                                         <Tooltip title={tokenMap.get(item.account.governingTokenMint.toBase58()) ?
                                                                 <>{(item.account?.options[0].voteWeight.toNumber()/Math.pow(10, tokenDecimals)).toFixed(0)}</>
