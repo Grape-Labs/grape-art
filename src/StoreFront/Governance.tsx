@@ -371,7 +371,7 @@ function RenderGovernanceTable(props:any) {
                             </Tooltip>
                         */}
 
-                        {/*jsonGenerated &&
+                        {jsonGenerated &&
                             <Tooltip title="Download Verification CSV file">
                                 <Button
                                     download={`${thisitem.pubkey.toBase58()}.csv`}
@@ -380,7 +380,7 @@ function RenderGovernanceTable(props:any) {
                                     <DownloadIcon /> JSON
                                 </Button>
                             </Tooltip>
-                    */}
+                    }
                     </BootstrapDialogTitle>
                         <DialogContent>
                             
