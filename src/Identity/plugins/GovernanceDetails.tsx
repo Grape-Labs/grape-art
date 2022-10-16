@@ -106,7 +106,6 @@ export default function GovernanceDetailsView(props: any) {
                     color="success" 
                     title={`Details`}
                     onClick={handleClickOpen}
-                    size="large"
                     fullWidth
                     sx={{borderRadius:'17px'}}
                     >
@@ -115,6 +114,7 @@ export default function GovernanceDetailsView(props: any) {
             </Grid>
         </Grid>
         <BootstrapDialog
+            maxWidth={"lg"}
             onClose={handleClose}
             aria-labelledby="customized-dialog-title"
             open={open}

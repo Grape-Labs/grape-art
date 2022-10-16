@@ -202,8 +202,6 @@ export default function ListForCollectionView(props: any){
                         let meta_final = decodeMetadata(buf);
                         metadata[x]["decoded"] = meta_final;
                         
-                        
-
                         if ((meta_final.updateAuthority === updateAuthority)||
                             (enforceEntangle && (meta_final.updateAuthority === entangleFrom || meta_final.updateAuthority === entangleTo))){
                             
@@ -224,10 +222,7 @@ export default function ListForCollectionView(props: any){
                                             //console.log("ERR: "+JSON.stringify(meta_final));
                                             // return null;
                                         }
-                                    }
-                            
-                        } else {
-                            
+                                    } 
                         }
 
                     }catch(etfm){console.log("ERR: "+etfm + " for "+ JSON.stringify(metadata[x]));}
