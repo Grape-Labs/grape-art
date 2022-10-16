@@ -189,7 +189,7 @@ function RenderGovernanceTable(props:any) {
     const tokenMap = props.tokenMap;
     const [loading, setLoading] = React.useState(false);
     //const [proposals, setProposals] = React.useState(props.proposals);
-    const collectionAuthority = props.collectionAuthority;
+    const governanceToken = props.governanceToken;
     const proposals = props.proposals;
     const nftBasedGovernance = props.nftBasedGovernance;
     const token = props.token;
@@ -245,15 +245,10 @@ function RenderGovernanceTable(props:any) {
                                 :
                                 <ThumbDownIcon sx={{color:'red'}} />
                             }
-                            label={parseInt(params.value.voterWeight) > 0 && +thisToken?.decimals > 0 ?
-                                    `${getFormattedNumberToLocale(formatAmount(parseInt(params.value.voterWeight)/Math.pow(10, +thisToken?.decimals)))} votes`
+                            label={params.value.voterWeight > 1 ?
+                                `${getFormattedNumberToLocale(formatAmount(parseInt(params.value.voterWeight)/Math.pow(10, params.value.decimals)))} votes` 
                                 :
-                                    <>{parseInt(params.value.voterWeight) > 0 ?
-                                        `${getFormattedNumberToLocale(formatAmount(parseInt(params.value.voterWeight)/Math.pow(10, 6)))} votes`
-                                        :
-                                        `1 vote`   
-                                    }
-                                    </> 
+                                `${getFormattedNumberToLocale(formatAmount(parseInt(params.value.voterWeight)/Math.pow(10, params.value.decimals)))} vote` 
                             }
                         />
                         
@@ -309,6 +304,9 @@ function RenderGovernanceTable(props:any) {
                         vote:{
                             vote:item.account.vote,
                             voterWeight:item.account.voterWeight.toNumber(),
+                            decimals:(realm.account.config?.councilMint?.toBase58() === thisitem.account.governingTokenMint?.toBase58() ? 0 : +thisToken?.decimals),
+                            councilMint:realm.account.config?.councilMint?.toBase58() ,
+                            governingTokenMint:thisitem.account.governingTokenMint?.toBase58() 
                         }
                     })
                     if (counter > 1)
@@ -366,12 +364,12 @@ function RenderGovernanceTable(props:any) {
                     <BootstrapDialogTitle id="create-storage-pool" onClose={handleCloseDialog}>
                         Voting Results
 
-                        {/*
-                        <ButtonGroup size="small" sx={{ml:1}}>
+                        {
+                        <ButtonGroup size="small" sx={{ml:1}} color='inherit'>
                             {jsonGenerated &&
-                                <Tooltip title="Download Verification CSV file">
+                                <Tooltip title="Download Voter Participation JSON file">
                                     <Button
-                                        sx={{borderRadiusTopLeft:'17px',borderRadiusBottomLeft:'17px'}}
+                                        sx={{borderBottomLeftRadius:'17px',borderTopLeftRadius:'17px'}}
                                         download={`${thisitem.pubkey.toBase58()}.csv`}
                                         href={jsonGenerated}
                                     >
@@ -381,9 +379,9 @@ function RenderGovernanceTable(props:any) {
                             }
 
                             {csvGenerated &&
-                                <Tooltip title="Download Verification CSV file">
+                                <Tooltip title="Download Voter Participation CSV file">
                                     <Button
-                                        sx={{borderRadiusTopRight:'17px',borderRadiusBottomRight:'17px'}}
+                                        sx={{borderBottomRightRadius:'17px',borderTopRightRadius:'17px'}}
                                         download={`${thisitem.pubkey.toBase58()}.csv`}
                                         href={csvGenerated}
                                     >
@@ -392,38 +390,46 @@ function RenderGovernanceTable(props:any) {
                                 </Tooltip>
                             }
                         </ButtonGroup>
-                        */}
+                        }
 
                     </BootstrapDialogTitle>
                         <DialogContent>
                             
-                            <Box sx={{ alignItems: 'center', textAlign: 'center',p:2}}>
-                                <Typography variant='h5'>Coming soon...</Typography>
+                            <Box sx={{ alignItems: 'center', textAlign: 'center',p:1}}>
+                                <Typography variant='h5'>{thisitem.account?.name}</Typography>
+                            
+                                {thisitem.account?.descriptionLink &&
+                                    <Box >
+                                        <Typography variant='body2'>{thisitem.account?.descriptionLink}</Typography>
+                                    </Box>
+                                }
                             </Box>
-                            {/*
-                            <div style={{ height: 600, width: '100%' }}>
-                                <div style={{ display: 'flex', height: '100%' }}>
-                                    <div style={{ flexGrow: 1 }}>
-                                        {solanaVotingResultRows &&
-                                            <DataGrid
-                                                rows={solanaVotingResultRows}
-                                                columns={votingresultcolumns}
-                                                pageSize={25}
-                                                rowsPerPageOptions={[]}
-                                                sx={{
-                                                    borderRadius:'17px',
-                                                    borderColor:'rgba(255,255,255,0.25)',
-                                                    '& .MuiDataGrid-cell':{
-                                                        borderColor:'rgba(255,255,255,0.25)'
-                                                    }}}
-                                                sortingOrder={['asc', 'desc', null]}
-                                                disableSelectionOnClick
-                                            />
-                                        }
+
+                            {solanaVotingResultRows ?
+                                <div style={{ height: 600, width: '100%' }}>
+                                    <div style={{ display: 'flex', height: '100%' }}>
+                                        <div style={{ flexGrow: 1 }}>
+                                            
+                                                <DataGrid
+                                                    rows={solanaVotingResultRows}
+                                                    columns={votingresultcolumns}
+                                                    pageSize={25}
+                                                    rowsPerPageOptions={[]}
+                                                    sx={{
+                                                        borderRadius:'17px',
+                                                        borderColor:'rgba(255,255,255,0.25)',
+                                                        '& .MuiDataGrid-cell':{
+                                                            borderColor:'rgba(255,255,255,0.25)'
+                                                        }}}
+                                                    sortingOrder={['asc', 'desc', null]}
+                                                    disableSelectionOnClick
+                                                />
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        */}
+                            :
+                                <LinearProgress />
+                            }
                             
                         </DialogContent> 
                 </BootstrapDialog>
@@ -648,7 +654,7 @@ function RenderGovernanceTable(props:any) {
                                                     (
                                                         <Typography variant="caption">
                                                             <Tooltip title={`Started: ${item.account?.votingAt && (moment.unix((item.account?.votingAt).toNumber()).format("MMMM Da, YYYY, h:mm a"))} - Ended: ${item.account?.votingAt && (moment.unix((item.account?.votingCompletedAt).toNumber()).format("MMMM Da, YYYY, h:mm a"))}`}>
-                                                                <Button sx={{color:'white',borderRadius:'17px'}} href={`https://realms.today/dao/${collectionAuthority.governanceVanityUrl || collectionAuthority.governance}/proposal/${item?.pubkey}`} target='_blank'>
+                                                                <Button sx={{color:'white',borderRadius:'17px'}} href={`https://realms.today/dao/${governanceToken?.governanceVanityUrl || governanceToken?.governance || governanceToken}/proposal/${item?.pubkey}`} target='_blank'>
                                                                     {item.account?.votingAt && (moment.unix((item.account?.votingCompletedAt).toNumber()).format("MMMM D, YYYY"))}
                                                                 </Button>
                                                             </Tooltip>
@@ -656,13 +662,13 @@ function RenderGovernanceTable(props:any) {
                                                     ): (<>
                                                         { item.account?.state === 2 ?
                                                             <Tooltip title={`Started: ${item.account?.votingAt && (moment.unix((item.account?.votingAt).toNumber()).format("MMMM Da, YYYY, h:mm a"))}`}>
-                                                                <Button sx={{color:'white',borderRadius:'17px'}} href={`https://realms.today/dao/${collectionAuthority.governanceVanityUrl || collectionAuthority.governance}/proposal/${item?.pubkey}`} target='_blank'>
+                                                                <Button sx={{color:'white',borderRadius:'17px'}} href={`https://realms.today/dao/${governanceToken?.governanceVanityUrl || governanceToken?.governance || governanceToken}/proposal/${item?.pubkey}`} target='_blank'>
                                                                     <TimerIcon sx={{ fontSize:"small"}} />
                                                                 </Button>
                                                             </Tooltip>
                                                         : 
                                                             <Tooltip title={`Started: ${item.account?.votingAt && (moment.unix((item.account?.votingAt).toNumber()).format("MMMM Da, YYYY, h:mm a"))}`}>
-                                                                <Button sx={{color:'white',borderRadius:'17px'}} href={`https://realms.today/dao/${collectionAuthority.governanceVanityUrl || collectionAuthority.governance}/proposal/${item?.pubkey}`} target='_blank'>
+                                                                <Button sx={{color:'white',borderRadius:'17px'}} href={`https://realms.today/dao/${governanceToken?.governanceVanityUrl || governanceToken?.governance || governanceToken}/proposal/${item?.pubkey}`} target='_blank'>
                                                                     <CancelOutlinedIcon sx={{ fontSize:"small", color:"red"}} />
                                                                 </Button>
                                                             </Tooltip>
@@ -717,7 +723,7 @@ function RenderGovernanceTable(props:any) {
 }
 
 export function GovernanceView(props: any) {
-    const collectionAuthority = props.collectionAuthority;
+    const governanceToken = props.governanceToken;
     const [loading, setLoading] = React.useState(false);
     const [tokenMap, setTokenMap] = React.useState(null);
     const [realm, setRealm] = React.useState(null);
@@ -782,7 +788,7 @@ export function GovernanceView(props: any) {
                 if (!tokenArray)
                     await getTokens();
                     
-                console.log("with governance: "+collectionAuthority.governance);
+                console.log("with governance: "+governanceToken?.governance || governanceToken);
                 const programId = new PublicKey(GOVERNANCE_PROGRAM_ID);
 
                 const ownerRecordsbyOwner = await getTokenOwnerRecordsByOwner(connection, programId, publicKey);
@@ -791,7 +797,7 @@ export function GovernanceView(props: any) {
                 let partOf = null;
                 for (const realm of ownerRecordsbyOwner){
                     //console.log("owner record realm: "+JSON.stringify(realm))
-                    if (realm.account.realm.toBase58() === collectionAuthority.governance){
+                    if (realm.account.realm.toBase58() === governanceToken?.governance || governanceToken){
                         pcp = true;
                         partOf = realm;
                         setParticipatingRealm(realm);
@@ -800,7 +806,7 @@ export function GovernanceView(props: any) {
                 }
                 setParticipating(pcp);
 
-                const grealm = await getRealm(new Connection(THEINDEX_RPC_ENDPOINT), new PublicKey(collectionAuthority.governance))
+                const grealm = await getRealm(new Connection(THEINDEX_RPC_ENDPOINT), new PublicKey(governanceToken?.governance || governanceToken))
                 setRealm(grealm);
                 //console.log("B realm: "+JSON.stringify(grealm));
 
@@ -901,7 +907,7 @@ export function GovernanceView(props: any) {
                                         <Button
                                             size='small'
                                             sx={{ml:1, color:'white', borderRadius:'17px'}}
-                                            href={'https://realms.today/dao/'+(collectionAuthority.governanceVanityUrl || collectionAuthority.governance)}
+                                            href={'https://realms.today/dao/'+(governanceToken.governanceVanityUrl || governanceToken.governance || governanceToken)}
                                             target='blank'
                                         >
                                             <OpenInNewIcon/>
@@ -933,7 +939,7 @@ export function GovernanceView(props: any) {
                             </>
                         }
 
-                        <RenderGovernanceTable tokenMap={tokenMap} realm={realm} thisToken={thisToken} proposals={proposals} nftBasedGovernance={nftBasedGovernance} collectionAuthority={collectionAuthority} />
+                        <RenderGovernanceTable tokenMap={tokenMap} realm={realm} thisToken={thisToken} proposals={proposals} nftBasedGovernance={nftBasedGovernance} governanceToken={governanceToken} />
                     </Box>
                                 
                 );

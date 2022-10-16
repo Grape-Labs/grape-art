@@ -2102,7 +2102,7 @@ export function StoreFrontView(this: any, props: any) {
                     <TabPanel value={tabValue} index={NavPanel.Governance}>
                         <Box> 
                             {collectionAuthority &&  
-                                <GovernanceView collectionAuthority={collectionAuthority} />
+                                <GovernanceView governanceToken={collectionAuthority} />
                             }
                         </Box>
                     </TabPanel>

@@ -26,6 +26,7 @@ import { getRealm,
 import { gql } from '@apollo/client'
 import gql_client from '../gql_client'
 
+import GovernanceDetailsView from './plugins/GovernanceDetails';
 import { SquadsView } from './plugins/Squads';
 import { StorageView } from './plugins/Storage';
 import { StreamingPaymentsView } from './plugins/StreamingPayments';
@@ -355,10 +356,10 @@ export function IdentityView(props: any){
         { field: 'governingTokenDepositAmount', headerName: 'Votes', width: 130, align: 'center'},
         { field: 'unrelinquishedVotesCount', headerName: 'Unreliquinshed', width: 130, align: 'center'},
         { field: 'totalVotesCount', headerName: 'Total Votes', width: 130, align: 'center' },
-        { field: 'relinquish', headerName: '', width: 150,  align: 'center',
+        { field: 'details', headerName: '', width: 150,  align: 'center',
             renderCell: (params) => {
                 return (
-                    <>Withdraw coming soon</>
+                    <><GovernanceDetailsView governanceToken={params.value}/></>
                 )
             }
         },
@@ -464,8 +465,8 @@ export function IdentityView(props: any){
                 }
                 `
             
-            let using = publicKeys;
-            let usequery = GET_NFTS;
+            const using = publicKeys;
+            const usequery = GET_NFTS;
             
             return await gql_client
                 .query({
@@ -581,10 +582,10 @@ export function IdentityView(props: any){
         const resultValues = json.result.value
         //return resultValues;
 
-        let holdings: any[] = [];
-        let allholdings: any[] = [];
-        let closable = new Array();
-        for (var item of resultValues){
+        const holdings: any[] = [];
+        const allholdings: any[] = [];
+        const closable: any[] = [];
+        for (const item of resultValues){
             //let buf = Buffer.from(item.account, 'base64');
             //console.log("item: "+JSON.stringify(item));
             if (item.account.data.parsed.info.tokenAmount.amount > 0)
@@ -594,11 +595,11 @@ export function IdentityView(props: any){
             // consider using https://raw.githubusercontent.com/solana-labs/token-list/main/src/tokens/solana.tokenlist.json to view more details on the tokens held
         }
 
-        let sortedholdings = JSON.parse(JSON.stringify(holdings));
+        const sortedholdings = JSON.parse(JSON.stringify(holdings));
         sortedholdings.sort((a:any,b:any) => (b.account.data.parsed.info.tokenAmount.amount - a.account.data.parsed.info.tokenAmount.amount));
 
-        var solholdingrows = new Array()
-        var cnt = 0;
+        const solholdingrows: any[] = [];
+        let cnt = 0;
 
         let cgArray = '';//new Array()
         for (const item of resultValues){
@@ -780,7 +781,7 @@ export function IdentityView(props: any){
                 
                 let cnt = 0;
                 const domains = new Array();
-                for (var item of domain){
+                for (const item of domain){
                     domains.push({
                         id:cnt,
                         domain:item,
@@ -871,7 +872,7 @@ export function IdentityView(props: any){
             const loops = Math.ceil(walletlength / rpclimit);
             let collectionmeta: any[] = [];
 
-            const sholdings = new Array();
+            const sholdings: any[] = [];
             for (const item of holdings){
                 if (item){
                     // comment to fetch social tokens which have metaplex metadata
@@ -963,7 +964,7 @@ export function IdentityView(props: any){
         const ownerRecordsbyOwner = await getTokenOwnerRecordsByOwner(ticonnection, programId, new PublicKey(pubkey));
 
         console.log("ownerRecordsbyOwner "+JSON.stringify(ownerRecordsbyOwner))
-        const governance = new Array();
+        const governance: any[] = [];
         
         let cnt = 0;
         //console.log("all uTable "+JSON.stringify(uTable))
@@ -990,7 +991,7 @@ export function IdentityView(props: any){
                 governingTokenDepositAmount:votes,
                 unrelinquishedVotesCount:item.account.unrelinquishedVotesCount,
                 totalVotesCount:item.account.totalVotesCount,
-                relinquish:item.pubkey,
+                details:item.account.realm.toBase58(),
                 link:item.account.realm
             });
             cnt++;

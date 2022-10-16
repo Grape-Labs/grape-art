@@ -263,12 +263,17 @@ export async function gah_acceptOffer(offerAmount: number, mint: string, sellerP
           data: executeSaleInstruction.data,
           keys: concat(
             executeSaleInstruction.keys,
+            
+            updateAuthority === '6iCbBFDSoRS1cUXymsBSRf4a5L6WyXhSuzdJwC47TVvN' ?
+              []
+            :
             nft?.creators ? nft.creators.map((creator: any) => ({
-              pubkey: new PublicKey(creator.address),
-              isSigner: false,
-              isWritable: true,
-            }))
-            :[]
+                pubkey: new PublicKey(creator.address),
+                isSigner: false,
+                isWritable: true,
+              }))
+              :[]
+            
           ),
         })
       )
