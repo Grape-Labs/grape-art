@@ -269,7 +269,7 @@ export async function gah_acceptOffer(offerAmount: number, mint: string, sellerP
                 pubkey: new PublicKey(buyerPublicKey),
                 isSigner: false,
                 isWritable: true,
-              }))
+              })) : []
             :
             nft?.creators ? nft.creators.map((creator: any) => ({
                 pubkey: new PublicKey(creator.address),
