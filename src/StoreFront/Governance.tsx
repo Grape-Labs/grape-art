@@ -509,8 +509,9 @@ function RenderGovernanceTable(props:any) {
 
     
         return (
-            <Table>
-                <TableContainer component={Paper} sx={{background:'none'}}>
+            
+            <TableContainer component={Paper} sx={{background:'none'}}>
+                <Table sx={{ minWidth: 650 }}>
                     <StyledTable sx={{ minWidth: 500 }} size="small" aria-label="Portfolio Table">
                         <TableHead>
                             <TableRow>
@@ -717,8 +718,8 @@ function RenderGovernanceTable(props:any) {
                         
                         
                     </StyledTable>
-                </TableContainer>
-            </Table>
+                </Table>
+            </TableContainer>
         )
 }
 
