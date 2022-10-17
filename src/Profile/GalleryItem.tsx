@@ -173,6 +173,7 @@ export default function GalleryItem(props: any){
                     
                     if ((img_url_string?.toLocaleUpperCase().indexOf('?EXT=PNG') > -1) ||
                         (img_url_string?.toLocaleUpperCase().indexOf('?EXT=JPEG') > -1) ||
+                        (img_url_string?.toLocaleUpperCase().indexOf('?EXT=GIF') > -1) ||
                         (img_url_string?.toLocaleUpperCase().indexOf('.JPEG') > -1) ||
                         (img_url_string?.toLocaleUpperCase().indexOf('.PNG') > -1) ||
                         (img_url_string?.startsWith(IPFS))){
