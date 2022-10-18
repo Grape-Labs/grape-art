@@ -1869,7 +1869,7 @@ export function StoreFrontView(this: any, props: any) {
                                                     entangled={collectionAuthority.entangled} 
                                                     enforceEntangle={collectionAuthority.entangleEnforce}
                                                     entangleUrl={collectionAuthority.entangleUrl}
-                                                    creatorAddress={collectionAuthority?.creatorAddress}
+                                                    //creatorAddress={collectionAuthority?.creatorAddress}
                                                     updateAuthority={collectionAuthority.updateAuthority}
                                                     collectionAuthority={collectionAuthority}
                                                     collectionMintList={collectionMintList}
