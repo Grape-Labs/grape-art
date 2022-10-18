@@ -408,55 +408,63 @@ export default function ListForCollectionView(props: any){
                     : 
                         <>
                             {collectionMetaFinal && collectionMetaFinal.map((item: any) => (
-                                <ListItem 
-                                    sx={{borderRadius:'17px'}}
-                                    key={0}
-                                >
-                                <ListItemAvatar>
-                                    <Avatar
-                                        src={DRIVE_PROXY+item.decodeMetadata?.image}
-                                        sx={{
-                                            backgroundColor:'#222',
-                                            width: 75, 
-                                            height: 75,
-                                            mr:1
-                                        }}
-                                    ></Avatar>
-                                </ListItemAvatar>
-
-                                <ListItemText>
-                                    <Typography variant="h5">
-                                        {item.decodeMetadata?.name} 
-                                    </Typography>
-                                    {(item.decoded.updateAuthority === entangleFrom) && (enforceEntangle) ?
-                                        <Typography
-                                            variant='subtitle2'>
-                                            Entangle/Reload this NFT first and then you can list
-                                            <Button
-                                                component="a" href={entangleUrl} target="_blank"
-                                                size="large" 
-                                                variant="outlined"
+                                <>
+                                    {item?.decodeMetadata ?
+                                    <ListItem 
+                                        sx={{borderRadius:'17px'}}
+                                        key={0}
+                                    >
+                                        <ListItemAvatar>
+                                            <Avatar
+                                                src={DRIVE_PROXY+item?.decodeMetadata?.image}
                                                 sx={{
-                                                    ml:1,
-                                                    borderRadius: '17px',
-                                                    color:'white'
+                                                    backgroundColor:'#222',
+                                                    width: 75, 
+                                                    height: 75,
+                                                    mr:1
                                                 }}
-                                            >
-                                                <SwapHorizIcon sx={{mr:1}}/> Reload
-                                            </Button>
-                                        </Typography>
-                                    :
-                                        <>
-                                        <Typography
-                                            variant='subtitle2'>
-                                            <SellNowButton item={item} />
-                                        </Typography>
-                                        
-                                        </>
-                                    }
+                                            ></Avatar>
+                                        </ListItemAvatar>
 
-                                </ListItemText>
-                            </ListItem>
+                                        <ListItemText>
+                                            <Typography variant="h5">
+                                                {item?.decodeMetadata?.name} 
+                                            </Typography>
+                                            {(item.decoded.updateAuthority === entangleFrom) && (enforceEntangle) ?
+                                                <Typography
+                                                    variant='subtitle2'>
+                                                    Entangle/Reload this NFT first and then you can list
+                                                    <Button
+                                                        component="a" href={entangleUrl} target="_blank"
+                                                        size="large" 
+                                                        variant="outlined"
+                                                        sx={{
+                                                            ml:1,
+                                                            borderRadius: '17px',
+                                                            color:'white'
+                                                        }}
+                                                    >
+                                                        <SwapHorizIcon sx={{mr:1}}/> Reload
+                                                    </Button>
+                                                </Typography>
+                                            :
+                                                <>
+                                                <Typography
+                                                    variant='subtitle2'>
+                                                    <SellNowButton item={item} />
+                                                </Typography>
+                                                
+                                                </>
+                                            }
+
+                                        </ListItemText>
+                                    </ListItem>
+                                    :
+                                            <>
+                                            {console.log("item.decodeMetadata "+JSON.stringify(item))}
+                                            </>
+                                    }
+                                </>
                             ))}
 
                             {selectedMint &&
