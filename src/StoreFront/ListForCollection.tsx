@@ -55,7 +55,7 @@ export default function ListForCollectionView(props: any){
     const floorPrice = props.floorPrice || null;
     //const [floorPrice, setFloorPrice] = React.useState(props.floorPrice || null);
     const logo = props.logo;
-    const creatorAddress = props.creatorAddress;
+    const creatorAddress = props?.creatorAddress || null;
     const collectionAuthority = props.collectionAuthority;
     const updateAuthority = props.updateAuthority;
     const collectionMintList = props.collectionMintList;
