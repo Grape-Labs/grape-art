@@ -203,7 +203,7 @@ export default function ListForCollectionView(props: any){
                         const meta_final = decodeMetadata(buf);
                         metadata[x]["decoded"] = meta_final;
                         
-                        if (updateAuthority){
+                        //if (updateAuthority){
                             if ((meta_final.updateAuthority === updateAuthority)||
                                 (enforceEntangle && (meta_final.updateAuthority === entangleFrom || meta_final.updateAuthority === entangleTo))){
                                 
@@ -226,7 +226,8 @@ export default function ListForCollectionView(props: any){
                                     }
                                 } 
                             }
-                        }/* else if (creatorAddress){
+                        //}
+                        /* else if (creatorAddress){
                             if (meta_final.data?.creators[0]?.address === creatorAddress){
                                     try{
                                         const metadataFetch = await window.fetch(meta_final.data.uri)
@@ -284,7 +285,7 @@ export default function ListForCollectionView(props: any){
 
         //const [collectionMeta] = await Promise.all([getCollectionData(0, collection)]);
         
-        console.log("collectionMeta: "+JSON.stringify(collectionmeta));
+        //console.log("collectionMeta: "+JSON.stringify(collectionmeta));
         setCollectionMetaFinal(collectionmeta);
         setLoading(false);
     }
