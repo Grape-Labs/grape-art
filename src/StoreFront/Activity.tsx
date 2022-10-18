@@ -568,6 +568,7 @@ export default function ActivityView(props: any){
                             </Tooltip>
                         :
                             <Button 
+                                color='inherit'
                                 onClick={handleClickOpenDialog}
                                 sx={{
                                     color:'white',
