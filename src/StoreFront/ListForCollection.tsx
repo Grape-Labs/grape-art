@@ -194,7 +194,7 @@ export default function ListForCollectionView(props: any){
             //console.log("returned: "+JSON.stringify(metadata));
             // LOOP ALL METADATA WE HAVE
             //for (var metavalue of metadata){
-            for (const x=0; x < metadata.length; x++){
+            for (let x=0; x < metadata.length; x++){
                 //console.log("Metaplex val: "+JSON.stringify(metavalue));
                 if (metadata[x]?.data){
                     try{
