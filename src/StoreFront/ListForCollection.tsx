@@ -55,6 +55,7 @@ export default function ListForCollectionView(props: any){
     const floorPrice = props.floorPrice || null;
     //const [floorPrice, setFloorPrice] = React.useState(props.floorPrice || null);
     const logo = props.logo;
+    const creatorAddress = props.creatorAddress;
     const collectionAuthority = props.collectionAuthority;
     const updateAuthority = props.updateAuthority;
     const collectionMintList = props.collectionMintList;
@@ -138,8 +139,8 @@ export default function ListForCollectionView(props: any){
         const json = await response.json();
         try{
                 const resultValues = json.result.value
-                let walletCollection = new Array();
-                let wallet = resultValues && resultValues?.map((collectionInfo: any) => {
+                const walletCollection = new Array();
+                const wallet = resultValues && resultValues?.map((collectionInfo: any) => {
                     (+collectionInfo.account.data.parsed.info.tokenAmount.amount >= 1) &&
                         (+collectionInfo.account.data.parsed.info.tokenAmount.decimals === 0) && 
                             walletCollection.push(collectionInfo);    
@@ -154,7 +155,7 @@ export default function ListForCollectionView(props: any){
     const getCollectionData = async (start:number, collection:any) => {
         const wallet_collection = new Array();
         
-        for (var item of collection){
+        for (const item of collection){
             wallet_collection.push(item.account.data.parsed.info.mint);
             //console.log("pushed: "+item.account.data.parsed.info.mint)
         }
@@ -171,10 +172,10 @@ export default function ListForCollectionView(props: any){
             });
 
 
-            for (var value of mintarr){
+            for (const value of mintarr){
                 if (value){
-                    let mint_address = new PublicKey(value);
-                    let [pda, bump] = await PublicKey.findProgramAddress([
+                    const mint_address = new PublicKey(value);
+                    const [pda, bump] = await PublicKey.findProgramAddress([
                         Buffer.from("metadata"),
                         MD_PUBKEY.toBuffer(),
                         new PublicKey(mint_address).toBuffer(),
@@ -193,38 +194,53 @@ export default function ListForCollectionView(props: any){
             //console.log("returned: "+JSON.stringify(metadata));
             // LOOP ALL METADATA WE HAVE
             //for (var metavalue of metadata){
-            for (var x=0; x < metadata.length; x++){
+            for (const x=0; x < metadata.length; x++){
                 //console.log("Metaplex val: "+JSON.stringify(metavalue));
                 if (metadata[x]?.data){
                     try{
-                        let meta_primer = JSON.parse(JSON.stringify(metadata[x]));
-                        let buf = Buffer.from(meta_primer.data.data);
-                        let meta_final = decodeMetadata(buf);
+                        const meta_primer = JSON.parse(JSON.stringify(metadata[x]));
+                        const buf = Buffer.from(meta_primer.data.data);
+                        const meta_final = decodeMetadata(buf);
                         metadata[x]["decoded"] = meta_final;
                         
-                        if ((meta_final.updateAuthority === updateAuthority)||
-                            (enforceEntangle && (meta_final.updateAuthority === entangleFrom || meta_final.updateAuthority === entangleTo))){
-                            
-                                    if ((meta_final?.collection?.key === collectionAuthority.collection)||
-                                        (collectionAuthority.collection === updateAuthority)||
-                                        (collectionAuthority.address === updateAuthority)){
-                                        //console.log("meta_final "+JSON.stringify(meta_final))
-                                        //console.log("collectionAuthority: "+JSON.stringify(collectionAuthority.collection))
+                        if (updateAuthority){
+                            if ((meta_final.updateAuthority === updateAuthority)||
+                                (enforceEntangle && (meta_final.updateAuthority === entangleFrom || meta_final.updateAuthority === entangleTo))){
+                                
+                                if ((meta_final?.collection?.key === collectionAuthority.collection)||
+                                    (collectionAuthority.collection === updateAuthority)||
+                                    (collectionAuthority.address === updateAuthority)){
+                                    //console.log("meta_final "+JSON.stringify(meta_final))
+                                    //console.log("collectionAuthority: "+JSON.stringify(collectionAuthority.collection))
 
-                                        try{
-                                            const metadataFetch = await window.fetch(meta_final.data.uri)
-                                            .then(
-                                                (res: any) => res.json()
-                                            );
-                                            metadata[x]["decodeMetadata"] = metadataFetch;
-                                        }catch(ie){
-                                            // not on Arweave:
-                                            //console.log("ERR: "+JSON.stringify(meta_final));
-                                            // return null;
-                                        }
+                                    try{
+                                        const metadataFetch = await window.fetch(meta_final.data.uri)
+                                        .then(
+                                            (res: any) => res.json()
+                                        );
+                                        metadata[x]["decodeMetadata"] = metadataFetch;
+                                    }catch(ie){
+                                        // not on Arweave:
+                                        //console.log("ERR: "+JSON.stringify(meta_final));
+                                        // return null;
+                                    }
+                                } 
+                            }
+                        } else if (creatorAddress){
+                            if (meta_final.data?.creators[0]?.address === creatorAddress){
+                                    try{
+                                        const metadataFetch = await window.fetch(meta_final.data.uri)
+                                        .then(
+                                            (res: any) => res.json()
+                                        );
+                                        metadata[x]["decodeMetadata"] = metadataFetch;
+                                    }catch(ie){
+                                        // not on Arweave:
+                                        //console.log("ERR: "+JSON.stringify(meta_final));
+                                        // return null;
                                     } 
+                            }
                         }
-
                     }catch(etfm){console.log("ERR: "+etfm + " for "+ JSON.stringify(metadata[x]));}
                 } else{
                     console.log("Something not right...");
