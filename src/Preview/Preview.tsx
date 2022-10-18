@@ -302,7 +302,7 @@ function GrapeVerified(props:any){
                 // first stage verification
                 
                 if (collectionRawData?.data?.creators){
-                    for (var item of collectionRawData.data.creators){
+                    for (const item of collectionRawData.data.creators){
                         if (item.address === collectionRawData.updateAuthority)
                             if (item.verified === 1){
                                 // now validate verify_collection in the collection results
@@ -329,8 +329,11 @@ function GrapeVerified(props:any){
                 // third stage verification
                 // grape_verified = UPDATE_AUTHORITIES.indexOf(collectionRawData);
                 // grape_verified = 1;
+                
                 if (verifiedCollection){
-                    if (verifiedCollection.address === collectionRawData.updateAuthority){
+                    if (verifiedCollection.address === collectionRawData.updateAuthority) {
+                        setGrapeVerified(true);
+                    } else if (verifiedCollection?.creatorAddress === collectionRawData?.data?.creators[0]?.address) {
                         setGrapeVerified(true);
                     }
                 }
@@ -1240,8 +1243,8 @@ function GalleryItemMeta(props: any) {
                                                                                             </TableRow>
                                                                                         </TableHead>
                                                                                         }
-                                                                                        {collectionitem.attributes.length > 0 ? collectionitem.attributes?.map((item: any) => (
-                                                                                            <TableRow>
+                                                                                        {collectionitem.attributes.length > 0 ? collectionitem.attributes?.map((item: any, key:any) => (
+                                                                                            <TableRow key={key}>
                                                                                                 <TableCell>{item?.trait_type}</TableCell>
                                                                                                 <TableCell>{item?.value}</TableCell>
                                                                                             </TableRow>
@@ -1991,6 +1994,12 @@ export function PreviewView(this: any, props: any) {
                 if (vcFinal){
                     setVerifiedCollection(vcFinal);
                     setCollectionAuctionHouse(vcFinal?.auctionHouse);
+                } else{ // if we could not find from UA check Creator Address
+                    vcFinal = await fetchVerifiedCollection(collectionrawdata?.meta_final?.data.creators[0].address);
+                    if (vcFinal){
+                        setVerifiedCollection(vcFinal);
+                        setCollectionAuctionHouse(vcFinal?.auctionHouse);
+                    }
                 }
                 setVcLoading(false);
             }
@@ -2029,7 +2038,7 @@ export function PreviewView(this: any, props: any) {
                 </Card>
             )
         } else{  
-            let image = collectionmeta.collectionmeta?.image || null;
+            const image = collectionmeta.collectionmeta?.image || null;
             if (!image){
                 console.log("ERR: " + JSON.stringify(collectionmeta));
                 return null;
