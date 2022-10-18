@@ -226,7 +226,7 @@ export default function ListForCollectionView(props: any){
                                     }
                                 } 
                             }
-                        } else if (creatorAddress){
+                        }/* else if (creatorAddress){
                             if (meta_final.data?.creators[0]?.address === creatorAddress){
                                     try{
                                         const metadataFetch = await window.fetch(meta_final.data.uri)
@@ -240,7 +240,7 @@ export default function ListForCollectionView(props: any){
                                         // return null;
                                     } 
                             }
-                        }
+                        }*/
                     }catch(etfm){console.log("ERR: "+etfm + " for "+ JSON.stringify(metadata[x]));}
                 } else{
                     console.log("Something not right...");
