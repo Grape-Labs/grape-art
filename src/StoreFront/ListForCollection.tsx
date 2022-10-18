@@ -69,7 +69,7 @@ export default function ListForCollectionView(props: any){
     const { t, i18n } = useTranslation();
     const { publicKey } = useWallet();
     const [walletCollection, setWalletCollection] = React.useState(null);
-    const [collectionMetaFinal,setCollectionMetaFinal] = React.useState(null);
+    const [collectionMetaFinal, setCollectionMetaFinal] = React.useState(null);
     const [loading, setLoading] = React.useState(false);
     const [selectedMint, setSelectedMint] = React.useState(null);
     const [openPreviewDialog, setOpenPreviewDialog] = React.useState(false);
@@ -284,7 +284,7 @@ export default function ListForCollectionView(props: any){
 
         //const [collectionMeta] = await Promise.all([getCollectionData(0, collection)]);
         
-        //console.log("collectionMeta: "+JSON.stringify(collectionMeta));
+        console.log("collectionMeta: "+JSON.stringify(collectionmeta));
         setCollectionMetaFinal(collectionmeta);
         setLoading(false);
     }
