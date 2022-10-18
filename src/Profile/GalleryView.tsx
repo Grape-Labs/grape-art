@@ -438,6 +438,7 @@ export default function GalleryView(props: any){
                                             <option value={4}>Highest Offers</option>
                                             <option value={5}>Alphabetical</option>
                                             <option value={6}>Rarity</option>
+                                            <option value={7} disabled>Listed on Grape.art</option>
                                         </NativeSelect>
                                     </FormControl>
                                 </Grid>    
