@@ -203,7 +203,7 @@ export default function ListForCollectionView(props: any){
                         const meta_final = decodeMetadata(buf);
                         metadata[x]["decoded"] = meta_final;
                         
-                        //if (updateAuthority){
+                        if (updateAuthority){
                             if ((meta_final.updateAuthority === updateAuthority)||
                                 (enforceEntangle && (meta_final.updateAuthority === entangleFrom || meta_final.updateAuthority === entangleTo))){
                                 
@@ -226,8 +226,7 @@ export default function ListForCollectionView(props: any){
                                     }
                                 } 
                             }
-                        //}
-                        /* else if (creatorAddress){
+                        } else if (creatorAddress){
                             if (meta_final.data?.creators[0]?.address === creatorAddress){
                                     try{
                                         const metadataFetch = await window.fetch(meta_final.data.uri)
@@ -241,7 +240,7 @@ export default function ListForCollectionView(props: any){
                                         // return null;
                                     } 
                             }
-                        }*/
+                        }
                     }catch(etfm){console.log("ERR: "+etfm + " for "+ JSON.stringify(metadata[x]));}
                 } else{
                     console.log("Something not right...");
@@ -348,6 +347,7 @@ export default function ListForCollectionView(props: any){
         <>
             <ButtonGroup variant="outlined" aria-label="outlined primary button group">
                 <Button 
+                    color='inherit'
                     onClick={handleClickOpenDialog}
                     sx={{
                         color:'white',

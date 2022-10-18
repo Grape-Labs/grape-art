@@ -1350,8 +1350,8 @@ function GalleryItemMeta(props: any) {
                                                                                             <TableCell align="right"><Typography variant="caption">% {t('Royalty')}</Typography></TableCell>
                                                                                         </TableRow>
                                                                                     </TableHead>
-                                                                                    {collectionrawdata.data.creators.length > 0 && collectionrawdata.data.creators.map((item: any) => (
-                                                                                        <TableRow>
+                                                                                    {collectionrawdata.data.creators.length > 0 && collectionrawdata.data.creators.map((item: any, key:any) => (
+                                                                                        <TableRow key={key}>
                                                                                             <TableCell>
                                                                                                 
                                                                                                 <ExplorerView grapeArtProfile={true} address={item.address} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
