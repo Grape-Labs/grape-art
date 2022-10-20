@@ -206,63 +206,62 @@ export default function BuyDomainView(props: any) {
                 <DialogContent dividers>
                     <FormControl>
                         <Grid container spacing={2}>
-                                <>
-                                    <Grid item xs={12} textAlign={'center'} sx={{mt:1}}>
-                                        <Typography variant="body2">
-                                            Enter the domain you would like to acquire
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        <TextField 
-                                            id="solana-desired-domain" 
-                                            fullWidth 
-                                            placeholder="Enter a Solana address" 
-                                            label="Domain" 
-                                            variant="standard"
-                                            autoComplete="off"
-                                            onChange={(e) => {setSNSDomain(e.target.value)}}
-                                            InputProps={{
-                                                inputProps: {
-                                                    style: {
-                                                        textAlign:'center'
-                                                    }
+                            <>
+                                <Grid item xs={12} textAlign={'center'} sx={{mt:1}}>
+                                    <Typography variant="body2">
+                                        Enter the domain you would like to acquire
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <TextField 
+                                        id="solana-desired-domain" 
+                                        fullWidth 
+                                        placeholder="Enter a Solana address" 
+                                        label="Domain" 
+                                        variant="standard"
+                                        autoComplete="off"
+                                        onChange={(e) => {setSNSDomain(e.target.value)}}
+                                        InputProps={{
+                                            inputProps: {
+                                                style: {
+                                                    textAlign:'center'
                                                 }
-                                            }}
-                                        />
-                                    </Grid>
-                                </>
+                                            }
+                                        }}
+                                    />
+                                </Grid>
+                            </>
                           
                         </Grid>
                     </FormControl>
                     <FormControl>
                         <Grid container spacing={2}>
-                                <>
-                                    <Grid item xs={12} textAlign={'center'} sx={{mt:1}}>
-                                        <Typography variant="body2">
-                                            Space Allocation
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        <TextField 
-                                            id="size-allocation" 
-                                            fullWidth 
-                                            placeholder="Space Allocation" 
-                                            label="Allocation" 
-                                            variant="standard"
-                                            autoComplete="off"
-                                            type="number"
-                                            onChange={(e) => {setSpaceAllocated(e.target.value)}}
-                                            InputProps={{
-                                                inputProps: {
-                                                    style: {
-                                                        textAlign:'center'
-                                                    }
+                            <>
+                                <Grid item xs={12} textAlign={'center'} sx={{mt:1}}>
+                                    <Typography variant="body2">
+                                        Space Allocation
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <TextField 
+                                        id="size-allocation" 
+                                        fullWidth 
+                                        placeholder="Space Allocation (1kb-10kb)" 
+                                        label="Allocation" 
+                                        variant="standard"
+                                        autoComplete="off"
+                                        //type="number"
+                                        onChange={(e) => {setSpaceAllocated(e.target.value)}}
+                                        InputProps={{
+                                            inputProps: {
+                                                style: {
+                                                    textAlign:'center'
                                                 }
-                                            }}
-                                        />
-                                    </Grid>
-                                </>
-                          
+                                            }
+                                        }}
+                                    />
+                                </Grid>
+                            </>
                         </Grid>
                     </FormControl>
                 </DialogContent>
