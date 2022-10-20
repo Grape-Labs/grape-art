@@ -1519,9 +1519,9 @@ export function IdentityView(props: any){
                                                     </TabPanel>
                                                     
                                                     <TabPanel value="5">
-                                                        {/*
+                                                        
                                                         <BuyDomainView pubkey={pubkey} />
-                                                        */}
+                                                        
                                                         {solanaDomain &&
                                                             <div style={{ height: 600, width: '100%' }}>
                                                                 <div style={{ display: 'flex', height: '100%' }}>
