@@ -1,6 +1,6 @@
 {
     "name": "@grape-labs/grape-art",
-    "version": "1.1.363",
+    "version": "1.1.364",
     "author": "Grape Dev subDAO",
     "repository": "https://github.com/grape-labs/grape-art",
     "license": "Apache-2.0",
@@ -59,7 +59,7 @@
         "@project-serum/common": "^0.0.1-beta.3",
         "@react-native-async-storage/async-storage": "^1.15.17",
         "@shadow-drive/sdk": "^3.0.8",
-        "@solana/spl-governance": "^0.3.15",
+        "@solana/spl-governance": "^0.3.16",
         "@solana/spl-token": "^0.3.5",
         "@solana/spl-token-registry": "^0.2.4432",
         "@solana/spl-token-v2": "npm:@solana/spl-token@0.2.0",

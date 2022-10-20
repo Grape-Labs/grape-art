@@ -791,7 +791,7 @@ export function GovernanceView(props: any) {
                     
                 console.log("with governance: "+governanceToken?.governance || governanceToken);
                 const programId = new PublicKey(GOVERNANCE_PROGRAM_ID);
-                
+
                 const ownerRecordsbyOwner = await getTokenOwnerRecordsByOwner(connection, programId, publicKey);
                 // check if part of this realm
                 let pcp = false;
