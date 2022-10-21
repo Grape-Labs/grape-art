@@ -323,7 +323,7 @@ function RenderGovernanceTable(props:any) {
                     else
                         csvFile += 'tokenOwner,voterWeight,tokenDecimals,voteType\r\n';
                     
-                        csvFile += item.pubkey.toBase58()+','+item.account.voterWeight.toNumber()+','+thisToken?.decimals+','+item.account.vote.voteType+'';
+                        csvFile += item.pubkey.toBase58()+','+item.account.voterWeight.toNumber()+','+tokenDecimals+','+item.account.vote.voteType+'';
                     //    csvFile += item.pubkey.toBase58();
                     
                 }
