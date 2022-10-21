@@ -233,7 +233,7 @@ function RenderGovernanceTable(props:any) {
             renderCell: (params) => {
                 return(
                     <>
-                        {console.log("weight: "+params.value.voterWeight.toNumber() + ' decimals: '+params.value.decimals)}
+                        {console.log("weight: "+params.value.voterWeight + ' decimals: '+params.value.decimals)}
                         <Chip
                             variant="outlined"
                             color={params.value.vote.voteType === 0 ?
@@ -247,9 +247,9 @@ function RenderGovernanceTable(props:any) {
                                 <ThumbDownIcon sx={{color:'red'}} />
                             }
                             label={params.value.voterWeight > 1 ?
-                                `${getFormattedNumberToLocale(formatAmount((params.value.voterWeight.toNumber())/Math.pow(10, params.value.decimals)))} votes` 
+                                `${getFormattedNumberToLocale(formatAmount((params.value.voterWeight)/Math.pow(10, params.value.decimals)))} votes` 
                                 :
-                                `${getFormattedNumberToLocale(formatAmount((params.value.voterWeight.toNumber())/Math.pow(10, params.value.decimals)))} vote` 
+                                `${getFormattedNumberToLocale(formatAmount((params.value.voterWeight)/Math.pow(10, params.value.decimals)))} vote` 
                             }
                         />
                         
