@@ -891,6 +891,7 @@ export function GovernanceView(props: any) {
             )
         } else{
             if (proposals && tokenArray){
+                {console.log('Token Array: '+JSON.stringify(tokenArray))}
                 return (
                     <Box
                         sx={{
