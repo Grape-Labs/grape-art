@@ -195,7 +195,7 @@ function RenderGovernanceTable(props:any) {
     const token = props.token;
     const connection = new Connection(GRAPE_RPC_ENDPOINT);
     const { publicKey } = useWallet();
-    //const tokenDecimals = token?.decimals || 6;
+    const tokenDecimals = token?.decimals || 6;
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
     // Avoid a layout jump when reaching the last page with empty rows.
@@ -292,10 +292,7 @@ function RenderGovernanceTable(props:any) {
             
             const votingResults = [];
             let csvFile = '';
-            console.log("governintTokenMint: "+thisitem.account.governingTokenMint?.toBase58());
-            //console.log("decimals: "+tokenMap.get(thisitem.account.governingTokenMint?.toBase58()).decimals);
-            console.log("TEST");
-            
+
             if (voteResults?.value){
                 let counter = 0;
                 for (const item of voteResults.value){
@@ -308,10 +305,7 @@ function RenderGovernanceTable(props:any) {
                         vote:{
                             vote:item.account.vote,
                             voterWeight:item.account.voterWeight.toNumber(),
-                            decimals:(realm.account.config?.councilMint?.toBase58() === thisitem.account.governingTokenMint?.toBase58() ? 
-                                    0 
-                                :
-                                    thisToken?.decimals),
+                            decimals:(realm.account.config?.councilMint?.toBase58() === thisitem.account.governingTokenMint?.toBase58() ? 0 : +thisToken?.decimals),
                             councilMint:realm.account.config?.councilMint?.toBase58() ,
                             governingTokenMint:thisitem.account.governingTokenMint?.toBase58() 
                         }
@@ -760,7 +754,7 @@ export function GovernanceView(props: any) {
                 }
             }
         }, [pRealm]);
-        
+
         return (
             <>
             {thisToken && 
