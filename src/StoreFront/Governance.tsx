@@ -247,9 +247,9 @@ function RenderGovernanceTable(props:any) {
                                 <ThumbDownIcon sx={{color:'red'}} />
                             }
                             label={params.value.voterWeight > 1 ?
-                                `${getFormattedNumberToLocale(formatAmount((params.value.voterWeight)/Math.pow(10, params.value.decimals)))} votes` 
+                                `${getFormattedNumberToLocale(formatAmount(parseInt(params.value.voterWeight)/Math.pow(10, params.value.decimals)))} votes` 
                                 :
-                                `${getFormattedNumberToLocale(formatAmount((params.value.voterWeight)/Math.pow(10, params.value.decimals)))} vote` 
+                                `${getFormattedNumberToLocale(formatAmount(parseInt(params.value.voterWeight)/Math.pow(10, params.value.decimals)))} vote` 
                             }
                         />
                         
@@ -729,7 +729,7 @@ export function GovernanceView(props: any) {
     const [loading, setLoading] = React.useState(false);
     const [tokenMap, setTokenMap] = React.useState(null);
     const [realm, setRealm] = React.useState(null);
-    const [tokenArray, setTokenArray] = React.useState(props.tokenArray || null);
+    const [tokenArray, setTokenArray] = React.useState(null);
     const { connection } = useConnection();
     const { publicKey } = useWallet();
     const [proposals, setProposals] = React.useState(null);
@@ -890,7 +890,6 @@ export function GovernanceView(props: any) {
             )
         } else{
             if (proposals && tokenArray){
-                {console.log('Token Array: '+JSON.stringify(tokenArray))}
                 return (
                     <Box
                         sx={{
