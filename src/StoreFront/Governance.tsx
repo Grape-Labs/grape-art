@@ -269,8 +269,11 @@ function RenderGovernanceTable(props:any) {
         
         
         console.log("governingTokenMint: "+thisitem.account.governingTokenMint?.toBase58());
-        console.log("tokenMap: "+tokenMap.get(thisitem.account.governingTokenMint?.toBase58()).decimals);
-
+        try{
+            console.log("tokenMap: "+tokenMap.get(thisitem.account.governingTokenMint?.toBase58()).decimals);
+        }catch(e){
+            console.log("ERR: "+e);
+        }
         const handleCloseDialog = () => {
             setOpen(false);
         }
