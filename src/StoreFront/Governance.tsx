@@ -267,6 +267,10 @@ function RenderGovernanceTable(props:any) {
         const [open, setOpen] = React.useState(false);
         //const [thisGovernance, setThisGovernance] = React.useState(null);
         
+        
+        console.log("governingTokenMint: "+thisitem.account.governingTokenMint?.toBase58());
+        console.log("tokenMap: "+tokenMap.get(thisitem.account.governingTokenMint?.toBase58()).decimals);
+
         const handleCloseDialog = () => {
             setOpen(false);
         }
@@ -889,7 +893,7 @@ export function GovernanceView(props: any) {
                 </Box>
             )
         } else{
-            if (proposals && tokenArray){
+            if (proposals && tokenMap){
                 return (
                     <Box
                         sx={{
