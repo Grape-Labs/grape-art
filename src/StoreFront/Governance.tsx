@@ -309,9 +309,8 @@ function RenderGovernanceTable(props:any) {
                             voterWeight:item.account.voterWeight.toNumber(),
                             decimals:(realm.account.config?.councilMint?.toBase58() === thisitem.account.governingTokenMint?.toBase58() ? 
                                     0 
-                                : 
-                                    tokenMap.get(thisitem.account.governingTokenMint?.toBase58()).decimals
-                                    || 6),
+                                :
+                                    thisToken?.decimals),
                             councilMint:realm.account.config?.councilMint?.toBase58() ,
                             governingTokenMint:thisitem.account.governingTokenMint?.toBase58() 
                         }
