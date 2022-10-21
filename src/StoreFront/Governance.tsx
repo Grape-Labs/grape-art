@@ -186,7 +186,6 @@ function TablePaginationActions(props) {
 function RenderGovernanceTable(props:any) {
     const realm = props.realm;
     const thisToken = props.thisToken;
-    const tokenArray = props.tokenArray;
     const tokenMap = props.tokenMap;
     const [loading, setLoading] = React.useState(false);
     //const [proposals, setProposals] = React.useState(props.proposals);
@@ -196,6 +195,7 @@ function RenderGovernanceTable(props:any) {
     const token = props.token;
     const connection = new Connection(GRAPE_RPC_ENDPOINT);
     const { publicKey } = useWallet();
+    //const tokenDecimals = token?.decimals || 6;
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
     // Avoid a layout jump when reaching the last page with empty rows.
@@ -297,19 +297,6 @@ function RenderGovernanceTable(props:any) {
                 let counter = 0;
                 for (const item of voteResults.value){
                     counter++;
-
-                    let tDecimals = 0;
-                    
-                    if (realm.account.config?.councilMint?.toBase58() === thisitem.account.governingTokenMint?.toBase58()) {
-                        tDecimals = 0;
-                    } else {
-                        for (const token of tokenArray){
-                            if (token.address === thisitem.account.governingTokenMint?.toBase58()){
-                                tDecimals = token.decimals;
-                            }
-                        }
-                    }
-
                     votingResults.push({
                         id:counter,
                         pubkey:item.pubkey.toBase58(),
@@ -318,7 +305,10 @@ function RenderGovernanceTable(props:any) {
                         vote:{
                             vote:item.account.vote,
                             voterWeight:item.account.voterWeight.toNumber(),
-                            decimals:tDecimals,
+                            decimals:(realm.account.config?.councilMint?.toBase58() === thisitem.account.governingTokenMint?.toBase58() ? 
+                                    0 
+                                : 
+                                    tokenMap.get(thisitem.account.governingTokenMint?.toBase58()).decimals || 0),
                             councilMint:realm.account.config?.councilMint?.toBase58() ,
                             governingTokenMint:thisitem.account.governingTokenMint?.toBase58() 
                         }
@@ -767,7 +757,7 @@ export function GovernanceView(props: any) {
                 }
             }
         }, [pRealm]);
-
+        
         return (
             <>
             {thisToken && 
@@ -955,7 +945,7 @@ export function GovernanceView(props: any) {
                             </>
                         }
 
-                        <RenderGovernanceTable tokenMap={tokenMap} tokenArray={tokenArray} realm={realm} thisToken={thisToken} proposals={proposals} nftBasedGovernance={nftBasedGovernance} governanceToken={governanceToken} />
+                        <RenderGovernanceTable tokenMap={tokenMap} realm={realm} thisToken={thisToken} proposals={proposals} nftBasedGovernance={nftBasedGovernance} governanceToken={governanceToken} />
                     </Box>
                                 
                 );
