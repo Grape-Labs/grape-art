@@ -195,7 +195,6 @@ function RenderGovernanceTable(props:any) {
     const token = props.token;
     const connection = new Connection(GRAPE_RPC_ENDPOINT);
     const { publicKey } = useWallet();
-    const tokenDecimals = token?.decimals || 6;
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
     // Avoid a layout jump when reaching the last page with empty rows.
@@ -297,6 +296,18 @@ function RenderGovernanceTable(props:any) {
                 let counter = 0;
                 for (const item of voteResults.value){
                     counter++;
+
+                    let tDecimals = 0;
+                    if (realm.account.config?.councilMint?.toBase58() === thisitem.account.governingTokenMint?.toBase58()) {
+                        tDecimals = 0;
+                    } else {
+                        for (const token of tokenMap){
+                            if (token.address === thisitem.account.governingTokenMint?.toBase58()){
+                                tDecimals = token.decimals;
+                            }
+                        }
+                    }
+
                     votingResults.push({
                         id:counter,
                         pubkey:item.pubkey.toBase58(),
@@ -305,7 +316,7 @@ function RenderGovernanceTable(props:any) {
                         vote:{
                             vote:item.account.vote,
                             voterWeight:item.account.voterWeight.toNumber(),
-                            decimals:(realm.account.config?.councilMint?.toBase58() === thisitem.account.governingTokenMint?.toBase58() ? 0 : +thisToken?.decimals),
+                            decimals:tDecimals,
                             councilMint:realm.account.config?.councilMint?.toBase58() ,
                             governingTokenMint:thisitem.account.governingTokenMint?.toBase58() 
                         }
@@ -777,7 +788,6 @@ export function GovernanceView(props: any) {
                     map.set(item.address, item);
                     return map;
                 },new Map()));
-                console.log("tokenArray: "+JSON.stringify(tarray));
                 setTokenArray(tarray);
             });
         } catch(e){console.log("ERR: "+e)}
