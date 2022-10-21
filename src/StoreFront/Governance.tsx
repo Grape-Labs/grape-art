@@ -293,6 +293,7 @@ function RenderGovernanceTable(props:any) {
             const votingResults = [];
             let csvFile = '';
             console.log("governintTokenMint: "+thisitem.account.governingTokenMint?.toBase58());
+            console.log("decimals: "+tokenMap.get(thisitem.account.governingTokenMint?.toBase58()).decimals);
 
             if (voteResults?.value){
                 let counter = 0;
@@ -309,7 +310,8 @@ function RenderGovernanceTable(props:any) {
                             decimals:(realm.account.config?.councilMint?.toBase58() === thisitem.account.governingTokenMint?.toBase58() ? 
                                     0 
                                 : 
-                                    6),
+                                    tokenMap.get(thisitem.account.governingTokenMint?.toBase58()).decimals
+                                    || 6),
                             councilMint:realm.account.config?.councilMint?.toBase58() ,
                             governingTokenMint:thisitem.account.governingTokenMint?.toBase58() 
                         }
