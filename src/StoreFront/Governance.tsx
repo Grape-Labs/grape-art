@@ -729,7 +729,7 @@ export function GovernanceView(props: any) {
     const [loading, setLoading] = React.useState(false);
     const [tokenMap, setTokenMap] = React.useState(null);
     const [realm, setRealm] = React.useState(null);
-    const [tokenArray, setTokenArray] = React.useState(null);
+    const [tokenArray, setTokenArray] = React.useState(props.tokenArray || null);
     const { connection } = useConnection();
     const { publicKey } = useWallet();
     const [proposals, setProposals] = React.useState(null);
@@ -777,6 +777,7 @@ export function GovernanceView(props: any) {
                     map.set(item.address, item);
                     return map;
                 },new Map()));
+                console.log("tokenArray: "+JSON.stringify(tarray));
                 setTokenArray(tarray);
             });
         } catch(e){console.log("ERR: "+e)}
