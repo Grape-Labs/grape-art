@@ -186,6 +186,7 @@ function TablePaginationActions(props) {
 function RenderGovernanceTable(props:any) {
     const realm = props.realm;
     const thisToken = props.thisToken;
+    const tokenArray = props.tokenArray;
     const tokenMap = props.tokenMap;
     const [loading, setLoading] = React.useState(false);
     //const [proposals, setProposals] = React.useState(props.proposals);
@@ -298,10 +299,11 @@ function RenderGovernanceTable(props:any) {
                     counter++;
 
                     let tDecimals = 0;
+                    
                     if (realm.account.config?.councilMint?.toBase58() === thisitem.account.governingTokenMint?.toBase58()) {
                         tDecimals = 0;
                     } else {
-                        for (const token of tokenMap){
+                        for (const token of tokenArray){
                             if (token.address === thisitem.account.governingTokenMint?.toBase58()){
                                 tDecimals = token.decimals;
                             }
@@ -953,7 +955,7 @@ export function GovernanceView(props: any) {
                             </>
                         }
 
-                        <RenderGovernanceTable tokenMap={tokenMap} realm={realm} thisToken={thisToken} proposals={proposals} nftBasedGovernance={nftBasedGovernance} governanceToken={governanceToken} />
+                        <RenderGovernanceTable tokenMap={tokenMap} tokenArray={tokenArray} realm={realm} thisToken={thisToken} proposals={proposals} nftBasedGovernance={nftBasedGovernance} governanceToken={governanceToken} />
                     </Box>
                                 
                 );
