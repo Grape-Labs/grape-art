@@ -267,9 +267,10 @@ function RenderGovernanceTable(props:any) {
         const [open, setOpen] = React.useState(false);
         //const [thisGovernance, setThisGovernance] = React.useState(null);
         
-        
         console.log("governingTokenMint: "+thisitem.account.governingTokenMint?.toBase58());
+        let tokenDecimals = 0;
         try{
+            tokenDecimals = tokenMap.get(thisitem.account.governingTokenMint?.toBase58()).decimals;
             console.log("tokenMap: "+tokenMap.get(thisitem.account.governingTokenMint?.toBase58()).decimals);
         }catch(e){
             console.log("ERR: "+e);
@@ -312,7 +313,7 @@ function RenderGovernanceTable(props:any) {
                         vote:{
                             vote:item.account.vote,
                             voterWeight:item.account.voterWeight.toNumber(),
-                            decimals:(realm.account.config?.councilMint?.toBase58() === thisitem.account.governingTokenMint?.toBase58() ? 0 : +thisToken?.decimals),
+                            decimals:(realm.account.config?.councilMint?.toBase58() === thisitem.account.governingTokenMint?.toBase58() ? 0 : tokenDecimals),
                             councilMint:realm.account.config?.councilMint?.toBase58() ,
                             governingTokenMint:thisitem.account.governingTokenMint?.toBase58() 
                         }
