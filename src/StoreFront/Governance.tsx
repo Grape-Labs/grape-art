@@ -293,8 +293,9 @@ function RenderGovernanceTable(props:any) {
             const votingResults = [];
             let csvFile = '';
             console.log("governintTokenMint: "+thisitem.account.governingTokenMint?.toBase58());
-            console.log("decimals: "+tokenMap.get(thisitem.account.governingTokenMint?.toBase58()).decimals);
-
+            //console.log("decimals: "+tokenMap.get(thisitem.account.governingTokenMint?.toBase58()).decimals);
+            console.log("TEST");
+            
             if (voteResults?.value){
                 let counter = 0;
                 for (const item of voteResults.value){
