@@ -405,7 +405,7 @@ function RenderGovernanceTable(props:any) {
                         {propVoteType &&
                             <Box sx={{ alignItems: 'center', textAlign: 'center',p:1}}>
                                 <Grid container spacing={0}>
-                                    <Grid item xs={12} sm={6} md={4} key={1}>
+                                    <Grid item xs={12} sm={6} md={3} key={1}>
                                         <Box
                                             className='grape-store-stat-item'
                                             sx={{borderRadius:'24px',m:2,p:1}}
@@ -421,7 +421,20 @@ function RenderGovernanceTable(props:any) {
                                             </Typography>
                                         </Box>
                                     </Grid>
-                                    <Grid item xs={12} sm={6} md={4} key={1}>
+                                    <Grid item xs={12} sm={6} md={3} key={1}>
+                                        <Box
+                                            className='grape-store-stat-item'
+                                            sx={{borderRadius:'24px',m:2,p:1}}
+                                        >
+                                            <Typography variant="body2" sx={{color:'yellow'}}>
+                                                <>Participants</>
+                                            </Typography>
+                                            <Typography variant="subtitle2">
+                                                {solanaVotingResultRows && solanaVotingResultRows.length}
+                                            </Typography>
+                                        </Box>
+                                    </Grid>
+                                    <Grid item xs={12} sm={6} md={3} key={1}>
                                         <Box
                                             className='grape-store-stat-item'
                                             sx={{borderRadius:'24px',m:2,p:1}}
@@ -434,7 +447,7 @@ function RenderGovernanceTable(props:any) {
                                             </Typography>
                                         </Box>
                                     </Grid>
-                                    <Grid item xs={12} sm={6} md={4} key={1}>
+                                    <Grid item xs={12} sm={6} md={3} key={1}>
                                         <Box
                                             className='grape-store-stat-item'
                                             sx={{borderRadius:'24px',m:2,p:1}}
