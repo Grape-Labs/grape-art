@@ -437,7 +437,7 @@ function RenderGovernanceTable(props:any) {
                                                 <>0%</>
                                                 }                  
                                             </Typography>
-                                            <Typography variant="subtitle2">
+                                            <Typography variant="caption">
                                                 {getFormattedNumberToLocale(formatAmount(thisitem.account.options[0].voteWeight.toNumber()/Math.pow(10, tokenDecimals)))}
                                             </Typography>
                                         </Box>
@@ -459,7 +459,7 @@ function RenderGovernanceTable(props:any) {
                                                 <>0%</>
                                                 }
                                             </Typography>
-                                            <Typography variant="subtitle2">
+                                            <Typography variant="caption">
                                                 {getFormattedNumberToLocale(formatAmount(thisitem.account.denyVoteWeight.toNumber()/Math.pow(10, tokenDecimals)))}
                                             </Typography>
                                         </Box>
@@ -603,7 +603,7 @@ function RenderGovernanceTable(props:any) {
                                                     <>Status</>
                                                 </Typography>
                                                 <Typography variant="subtitle2">
-                                                    coming soon...
+                                                    {GOVERNANNCE_STATE[thisitem.account?.state]}
                                                 </Typography>
                                             </Box>
                                         </Grid> 
