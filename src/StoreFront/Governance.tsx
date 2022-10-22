@@ -428,10 +428,12 @@ function RenderGovernanceTable(props:any) {
                                                 <>For</>
                                             </Typography>
                                             <Typography variant="h3">
-                                                {tokenDecimals && thisitem?.account?.denyVoteWeight && thisitem.account?.options[0].voteWeight.toNumber() > 0 &&
+                                                {tokenDecimals && thisitem?.account?.denyVoteWeight && thisitem.account?.options[0].voteWeight.toNumber() > 0 ?
                                                 <>
                                                 {`${(((thisitem.account?.denyVoteWeight.toNumber()/Math.pow(10, tokenDecimals))/((thisitem.account?.denyVoteWeight.toNumber()/Math.pow(10, tokenDecimals))+(thisitem.account?.options[0].voteWeight.toNumber()/Math.pow(10, tokenDecimals))))*100).toFixed(2)}%`}
                                                 </>
+                                                :
+                                                <>0%</>
                                                 }                  
                                             </Typography>
                                         </Box>
@@ -445,10 +447,12 @@ function RenderGovernanceTable(props:any) {
                                                 <>Against</>
                                             </Typography>
                                             <Typography variant="h3">
-                                                {tokenDecimals && thisitem?.account?.denyVoteWeight && thisitem.account?.options[0].voteWeight.toNumber() > 0 &&
+                                                {tokenDecimals && thisitem?.account?.denyVoteWeight && thisitem.account?.options[0].voteWeight.toNumber() > 0 ?
                                                 <>
                                                 {`${(((thisitem.account?.options[0].voterWeight.toNumber())/((thisitem.account?.denyVoteWeight.toNumber())+(thisitem.account?.options[0].voterWeight.toNumber())))*100).toFixed(2)}%`}
                                                 </>
+                                                :
+                                                <>0%</>
                                                 }
                                             </Typography>
                                         </Box>
