@@ -414,7 +414,10 @@ function RenderGovernanceTable(props:any) {
                                                 <>Type</>
                                             </Typography>
                                             <Typography variant="subtitle2">
-                                                {propVoteType}
+                                                <Chip
+                                                    variant="outlined"
+                                                    label={propVoteType}
+                                                />
                                             </Typography>
                                         </Box>
                                     </Grid>
