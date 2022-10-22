@@ -397,72 +397,7 @@ function RenderGovernanceTable(props:any) {
 
                         {voteType &&
                             <Box sx={{ alignItems: 'center', textAlign: 'center',p:1}}>
-                                <Grid container spacing={0}>
-                                    <Grid item xs={12} sm={6} md={4} key={1}>
-                                        <Box
-                                            className='grape-store-stat-item'
-                                            sx={{borderRadius:'24px',m:2,p:1}}
-                                        >
-                                            <Typography variant="body2" sx={{color:'yellow'}}>
-                                                <>Type</>
-                                            </Typography>
-                                            <Typography variant="subtitle2">
-                                                {voteType}
-                                            </Typography>
-                                        </Box>
-                                    </Grid>
-                                    <Grid item xs={12} sm={6} md={4} key={1}>
-                                        <Box
-                                            className='grape-store-stat-item'
-                                            sx={{borderRadius:'24px',m:2,p:1}}
-                                        >
-                                            <Typography variant="body2" sx={{color:'yellow'}}>
-                                                <>Sentiment</>
-                                            </Typography>
-                                            <Typography variant="subtitle2">
-                                                coming soon...
-                                            </Typography>
-                                        </Box>
-                                    </Grid>
-                                    <Grid item xs={12} sm={6} md={4} key={1}>
-                                        <Box
-                                            className='grape-store-stat-item'
-                                            sx={{borderRadius:'24px',m:2,p:1}}
-                                        >
-                                            <Typography variant="body2" sx={{color:'yellow'}}>
-                                                Export
-                                            </Typography>
-                                            <Typography variant="subtitle2">
-                                            <ButtonGroup size="small" color='inherit'>
-                                                {jsonGenerated &&
-                                                    <Tooltip title="Download Voter Participation JSON file">
-                                                        <Button
-                                                            sx={{borderBottomLeftRadius:'17px',borderTopLeftRadius:'17px'}}
-                                                            download={`${thisitem.pubkey.toBase58()}.csv`}
-                                                            href={jsonGenerated}
-                                                        >
-                                                            <DownloadIcon /> JSON
-                                                        </Button>
-                                                    </Tooltip>
-                                                }
-
-                                                {csvGenerated &&
-                                                    <Tooltip title="Download Voter Participation CSV file">
-                                                        <Button
-                                                            sx={{borderBottomRightRadius:'17px',borderTopRightRadius:'17px'}}
-                                                            download={`${thisitem.pubkey.toBase58()}.csv`}
-                                                            href={csvGenerated}
-                                                        >
-                                                            <DownloadIcon /> CSV
-                                                        </Button>
-                                                    </Tooltip>
-                                                }
-                                            </ButtonGroup>
-                                            
-                                            </Typography>
-                                        </Box>
-                                    </Grid>
-                                </Grid>
+                                TEST
 
                             </Box>
                         }
