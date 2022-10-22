@@ -418,6 +418,35 @@ function RenderGovernanceTable(props:any) {
                         {propVoteType &&
                             <Box sx={{ alignItems: 'center', textAlign: 'center',p:1}}>
                                 <Grid container spacing={0}>
+                                    
+                                    <Grid item xs={12} sm={6} md={6} key={1}>
+                                        <Box
+                                            className='grape-store-stat-item'
+                                            sx={{borderRadius:'24px',m:2,p:1}}
+                                        >
+                                            <Typography variant="body2" sx={{color:'yellow'}}>
+                                                <>For</>
+                                            </Typography>
+                                            <Typography variant="h3">
+                                                {`${(((thisitem.account?.denyVoteWeight.toNumber()/Math.pow(10, tokenDecimals))/((thisitem.account?.denyVoteWeight.toNumber()/Math.pow(10, tokenDecimals))+(thisitem.account?.options[0].voteWeight.toNumber()/Math.pow(10, tokenDecimals))))*100).toFixed(2)}%`}%                   
+                                            </Typography>
+                                        </Box>
+                                    </Grid>
+                                    <Grid item xs={12} sm={6} md={6} key={1}>
+                                        <Box
+                                            className='grape-store-stat-item'
+                                            sx={{borderRadius:'24px',m:2,p:1}}
+                                        >
+                                            <Typography variant="body2" sx={{color:'yellow'}}>
+                                                <>Against</>
+                                            </Typography>
+                                            <Typography variant="h3">
+                                                {`${(((thisitem.account?.options[0].voterWeight.toNumber())/((thisitem.account?.denyVoteWeight.toNumber())+(thisitem.account?.options[0].voterWeight.toNumber())))*100).toFixed(2)}%`}%
+                                            </Typography>
+                                        </Box>
+                                    </Grid>
+
+
                                     <Grid item xs={12} sm={6} md={3} key={1}>
                                         <Box
                                             className='grape-store-stat-item'
@@ -453,7 +482,7 @@ function RenderGovernanceTable(props:any) {
                                             sx={{borderRadius:'24px',m:2,p:1}}
                                         >
                                             <Typography variant="body2" sx={{color:'yellow'}}>
-                                                <>Sentiment</>
+                                                <>General Sentiment</>
                                             </Typography>
                                             <Typography variant="subtitle2">
                                                 {uniqueYes}/{uniqueNo} (unique voters)
