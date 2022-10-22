@@ -328,7 +328,7 @@ function RenderGovernanceTable(props:any) {
 
                 for (const item of voteResults.value){
                     counter++;
-                    if (item.account.vote === 0)
+                    if (item.account.vote.voteType === 0)
                         uYes++;
                     else
                         uNo++;
