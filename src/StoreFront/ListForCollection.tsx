@@ -30,6 +30,7 @@ import ActivityView from './Activity';
 import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import { WalletConnectButton } from "@solana/wallet-adapter-material-ui";
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
+import { WalletDialogProvider, WalletMultiButton } from "@solana/wallet-adapter-material-ui";
 import { Connection, PublicKey } from '@solana/web3.js';
 
 import {
@@ -402,7 +403,11 @@ export default function ListForCollectionView(props: any){
                             </>
                             :
                             <>
-                                <WalletConnectButton />
+                                <WalletDialogProvider className="grape-wallet-provider">
+                                    <WalletMultiButton className="grape-wallet-button">
+                                        Connect to list
+                                    </WalletMultiButton>
+                                </WalletDialogProvider>
                             </>
                             }
                         </>
