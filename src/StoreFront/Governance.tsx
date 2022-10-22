@@ -431,7 +431,7 @@ function RenderGovernanceTable(props:any) {
                                             <Typography variant="h3">
                                                 {thisitem.account?.options && thisitem.account?.options[0]?.voteWeight && thisitem?.account?.denyVoteWeight && thisitem.account?.options[0].voteWeight.toNumber() > 0 ?
                                                 <>
-                                                {`${(((thisitem.account?.denyVoteWeight.toNumber()/Math.pow(10, tokenDecimals))/((thisitem.account?.denyVoteWeight.toNumber()/Math.pow(10, tokenDecimals))+(thisitem.account?.options[0].voteWeight.toNumber()/Math.pow(10, tokenDecimals))))*100).toFixed(2)}%`}
+                                                {`${(((thisitem.account?.options[0].voteWeight.toNumber())/((thisitem.account?.denyVoteWeight.toNumber())+(thisitem.account?.options[0].voteWeight.toNumber())))*100).toFixed(2)}%`}
                                                 </>
                                                 :
                                                 <>0%</>
@@ -450,8 +450,7 @@ function RenderGovernanceTable(props:any) {
                                             <Typography variant="h3">
                                                 {thisitem.account?.options && thisitem.account?.options[0]?.voteWeight && thisitem?.account?.denyVoteWeight && thisitem.account?.options[0].voteWeight.toNumber() > 0 ?
                                                 <>
-                                                coming soon...
-                                                {/*`${(((thisitem.account?.options[0].voterWeight.toNumber())/((thisitem.account?.denyVoteWeight.toNumber())+(thisitem.account?.options[0].voterWeight.toNumber())))*100).toFixed(2)}%`*/}
+                                                {`${(((thisitem.account?.denyVoteWeight.toNumber()/Math.pow(10, tokenDecimals))/((thisitem.account?.denyVoteWeight.toNumber()/Math.pow(10, tokenDecimals))+(thisitem.account?.options[0].voteWeight.toNumber()/Math.pow(10, tokenDecimals))))*100).toFixed(2)}%`}
                                                 </>
                                                 :
                                                 <>0%</>
