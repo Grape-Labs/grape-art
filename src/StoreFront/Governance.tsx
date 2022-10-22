@@ -3,6 +3,7 @@ import { getVoteRecords } from '../utils/governanceTools/getVoteRecords';
 import { PublicKey, TokenAmount, Connection } from '@solana/web3.js';
 import { ENV, TokenListProvider, TokenInfo } from '@solana/spl-token-registry';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
+import { WalletDialogProvider, WalletMultiButton } from "@solana/wallet-adapter-material-ui";
 import * as React from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
@@ -428,7 +429,7 @@ function RenderGovernanceTable(props:any) {
                                                 <>For</>
                                             </Typography>
                                             <Typography variant="h3">
-                                                {thisitem?.account?.denyVoteWeight && thisitem.account?.options[0].voteWeight.toNumber() > 0 ?
+                                                {thisitem.account?.options && thisitem.account?.options[0]?.voteWeight && thisitem?.account?.denyVoteWeight && thisitem.account?.options[0].voteWeight.toNumber() > 0 ?
                                                 <>
                                                 coming soon...
                                                 {/*`${(((thisitem.account?.denyVoteWeight.toNumber()/Math.pow(10, tokenDecimals))/((thisitem.account?.denyVoteWeight.toNumber()/Math.pow(10, tokenDecimals))+(thisitem.account?.options[0].voteWeight.toNumber()/Math.pow(10, tokenDecimals))))*100).toFixed(2)}%`*/}
@@ -448,7 +449,7 @@ function RenderGovernanceTable(props:any) {
                                                 <>Against</>
                                             </Typography>
                                             <Typography variant="h3">
-                                                {thisitem?.account?.denyVoteWeight && thisitem.account?.options[0].voteWeight.toNumber() > 0 ?
+                                                {thisitem.account?.options && thisitem.account?.options[0]?.voteWeight && thisitem?.account?.denyVoteWeight && thisitem.account?.options[0].voteWeight.toNumber() > 0 ?
                                                 <>
                                                 coming soon...
                                                 {/*`${(((thisitem.account?.options[0].voterWeight.toNumber())/((thisitem.account?.denyVoteWeight.toNumber())+(thisitem.account?.options[0].voterWeight.toNumber())))*100).toFixed(2)}%`*/}
@@ -1163,7 +1164,11 @@ export function GovernanceView(props: any) {
                     p:4
                 }} 
             > 
-                Connect your wallet
+                    <WalletDialogProvider className="grape-wallet-provider">
+                        <WalletMultiButton className="grape-wallet-button">
+                            Connect your wallet
+                        </WalletMultiButton>
+                    </WalletDialogProvider> 
             </Box>
         )
     }
