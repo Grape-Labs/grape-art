@@ -268,7 +268,7 @@ function RenderGovernanceTable(props:any) {
         const [propVoteType, setPropVoteType] = React.useState(null); // 0 council, 1 token, 2 nft
         //const [thisGovernance, setThisGovernance] = React.useState(null);
         
-        console.log("governingTokenMint: "+thisitem.account.governingTokenMint?.toBase58());
+        //console.log("governingTokenMint: "+thisitem.account.governingTokenMint?.toBase58());
         
         let tokenDecimals = 6; // this is the default for NFT mints
         let vType = null;
@@ -291,8 +291,9 @@ function RenderGovernanceTable(props:any) {
                 setPropVoteType(vType);
         }, [vType]);
 
-        //setDecimals(tokenDecimals);
-        
+        // loop through all votes to get metrics and sentiment
+
+
         const handleCloseDialog = () => {
             setOpen(false);
         }
@@ -488,6 +489,76 @@ function RenderGovernanceTable(props:any) {
                                             </Typography>
                                         </Box>
                                     </Grid>
+
+                                    <Grid item xs={12} sm={6} md={3} key={1}>
+                                        <Box
+                                            className='grape-store-stat-item'
+                                            sx={{borderRadius:'24px',m:2,p:1}}
+                                        >
+                                            <Typography variant="body2" sx={{color:'yellow'}}>
+                                                <>Started At</>
+                                            </Typography>
+                                            <Typography variant="subtitle2">
+                                                <Chip
+                                                    variant="outlined"
+                                                    label={moment.unix(thisitem.account?.votingAt.toNumber()).format("MMMM Da, YYYY, h:mm a")}
+                                                />
+                                            </Typography>
+                                        </Box>
+                                    </Grid>
+
+                                    <Grid item xs={12} sm={6} md={3} key={1}>
+                                        <Box
+                                            className='grape-store-stat-item'
+                                            sx={{borderRadius:'24px',m:2,p:1}}
+                                        >
+                                            <Typography variant="body2" sx={{color:'yellow'}}>
+                                                <>Ends At</>
+                                            </Typography>
+                                            <Typography variant="subtitle2">
+                                                <Chip
+                                                    variant="outlined"
+                                                    label='coming soon...'
+                                                />
+                                            </Typography>
+                                        </Box>
+                                    </Grid>
+
+                                    <Grid item xs={12} sm={6} md={3} key={1}>
+                                        <Box
+                                            className='grape-store-stat-item'
+                                            sx={{borderRadius:'24px',m:2,p:1}}
+                                        >
+                                            <Typography variant="body2" sx={{color:'yellow'}}>
+                                                <>Voting Weight</>
+                                            </Typography>
+                                            <Typography variant="subtitle2">
+                                                <Chip
+                                                    variant="outlined"
+                                                    label={thisitem.options[0].voteWeight.toNumber() + ' ' + thisitem.options[0].label}
+                                                />
+                                            </Typography>
+                                        </Box>
+                                    </Grid>
+
+                                    <Grid item xs={12} sm={6} md={3} key={1}>
+                                        <Box
+                                            className='grape-store-stat-item'
+                                            sx={{borderRadius:'24px',m:2,p:1}}
+                                        >
+                                            <Typography variant="body2" sx={{color:'yellow'}}>
+                                                <>Deny Vote Weight</>
+                                            </Typography>
+                                            <Typography variant="subtitle2">
+                                                <Chip
+                                                    variant="outlined"
+                                                    label={thisitem.denyVoteWeight.toNumber()}
+                                                />
+                                            </Typography>
+                                        </Box>
+                                    </Grid>
+
+
                                 </Grid>
 
                             </Box>
