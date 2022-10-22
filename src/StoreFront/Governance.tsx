@@ -437,6 +437,9 @@ function RenderGovernanceTable(props:any) {
                                                 <>0%</>
                                                 }                  
                                             </Typography>
+                                            <Typography variant="subtitle2">
+                                                {getFormattedNumberToLocale(formatAmount(thisitem.account.options[0].voteWeight.toNumber()/Math.pow(10, tokenDecimals)))}
+                                            </Typography>
                                         </Box>
                                     </Grid>
                                     <Grid item xs={12} sm={6} md={6} key={1}>
@@ -455,6 +458,9 @@ function RenderGovernanceTable(props:any) {
                                                 :
                                                 <>0%</>
                                                 }
+                                            </Typography>
+                                            <Typography variant="subtitle2">
+                                                {getFormattedNumberToLocale(formatAmount(thisitem.account.denyVoteWeight.toNumber()/Math.pow(10, tokenDecimals)))}
                                             </Typography>
                                         </Box>
                                     </Grid>
