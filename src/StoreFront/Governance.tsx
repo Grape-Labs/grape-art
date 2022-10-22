@@ -325,7 +325,6 @@ function RenderGovernanceTable(props:any) {
                     
                         csvFile += item.pubkey.toBase58()+','+item.account.voterWeight.toNumber()+','+tokenDecimals+','+item.account.vote.voteType+'';
                     //    csvFile += item.pubkey.toBase58();
-                    
                 }
             }
 
@@ -412,6 +411,10 @@ function RenderGovernanceTable(props:any) {
                                         <Typography variant='body2'>{thisitem.account?.descriptionLink}</Typography>
                                     </Box>
                                 }
+                            </Box>
+
+                            <Box sx={{ alignItems: 'center', textAlign: 'center',p:1}}>
+                                
                             </Box>
 
                             {solanaVotingResultRows ?

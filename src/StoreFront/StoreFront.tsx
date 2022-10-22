@@ -1887,6 +1887,7 @@ export function StoreFrontView(this: any, props: any) {
                                             >
                                                 <Button 
                                                     //component={a} 
+                                                    color='inherit'
                                                     href={`${GRAPE_COLLECTION}${collectionParentAuthority.vanityUrl}`}
                                                     variant="outlined"
                                                     sx={{
