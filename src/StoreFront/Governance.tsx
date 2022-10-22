@@ -524,10 +524,10 @@ function RenderGovernanceTable(props:any) {
                                                 sx={{borderRadius:'24px',m:2,p:1}}
                                             >
                                                 <Typography variant="body2" sx={{color:'yellow'}}>
-                                                    <>Voting Weight</>
+                                                    <>For</>
                                                 </Typography>
                                                 <Typography variant="subtitle2">
-                                                    {(thisitem.account.options[0].voteWeight.toNumber()/Math.pow(10, tokenDecimals)) + ' ' + thisitem.account.options[0].label}
+                                                    {(thisitem.account.options[0].voteWeight.toNumber()/Math.pow(10, tokenDecimals))}
                                                 </Typography>
                                             </Box>
                                         </Grid>
@@ -540,10 +540,10 @@ function RenderGovernanceTable(props:any) {
                                                 sx={{borderRadius:'24px',m:2,p:1}}
                                             >
                                                 <Typography variant="body2" sx={{color:'yellow'}}>
-                                                    <>Deny Vote Weight</>
+                                                    <>Against</>
                                                 </Typography>
                                                 <Typography variant="subtitle2">
-                                                    {thisitem.account.denyVoteWeight.toNumber()}
+                                                    {(thisitem.account.denyVoteWeight.toNumber()/Math.pow(10, tokenDecimals))}
                                                 </Typography>
                                             </Box>
                                         </Grid> 
