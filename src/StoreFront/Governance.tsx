@@ -279,12 +279,12 @@ function RenderGovernanceTable(props:any) {
         }catch(e){
             //console.log("ERR: "+e);
         }
-        /*
+        
         if (realm.account.config?.councilMint?.toBase58() === thisitem?.account?.governingTokenMint?.toBase58()){
             vType = 'Council';
         }
-        */
-        setVoteType(vType);
+        
+        //setVoteType(vType);
         //setDecimals(tokenDecimals);
         
         const handleCloseDialog = () => {
