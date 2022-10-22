@@ -430,7 +430,10 @@ function RenderGovernanceTable(props:any) {
                                                 <>Participants</>
                                             </Typography>
                                             <Typography variant="subtitle2">
-                                                {solanaVotingResultRows && solanaVotingResultRows.length}
+                                                <Chip
+                                                    variant="outlined"
+                                                    label={solanaVotingResultRows && solanaVotingResultRows.length}
+                                                />
                                             </Typography>
                                         </Box>
                                     </Grid>
