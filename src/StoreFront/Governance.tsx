@@ -276,6 +276,18 @@ function RenderGovernanceTable(props:any) {
             const governance = await getGovernance(connection, thisitem.account.governance);
             setThisGovernance(governance);
             console.log("Single governance: "+JSON.stringify(governance));
+
+            try{
+                const communityMintPromise = connection.getParsedAccountInfo(
+                    new PublicKey(governance.account.governingTokenMint)
+                );
+                //const councilMintPromise = connection.getParsedAccountInfo(
+                //    new PublicKey(governance.account.governingTokenMint)
+                //  );
+                console.log("communityMintPromise "+JSON.stringify(communityMintPromise))
+            }catch(e){
+                console.log('ERR: '+e)
+            }
         }
 
         React.useEffect(() => { 
@@ -801,9 +813,8 @@ function RenderGovernanceTable(props:any) {
                                                     <Typography variant="h6">
                                                         
                                                         {console.log("governingTokenMint: "+item.account.governingTokenMint.toBase58())}
-                                                        {console.log("vote: "+JSON.stringify(item.account))}
-                                                        {console.log("voteWeight: "+JSON.stringify(item.account.options[0].voteWeight.toNumber()))}
-
+                                                        {/*console.log("vote: "+JSON.stringify(item.account))*/}
+                                                        
                                                         <Tooltip title={realm.account.config?.councilMint?.toBase58() === item.account?.governingTokenMint?.toBase58() ?
                                                                 <>{item.account?.options[0].voteWeight.toNumber()}</>
                                                             :
@@ -1052,7 +1063,7 @@ export function GovernanceView(props: any) {
                         programId,
                         realmPk
                     )
-                    try{
+                    try{ 
                         const realmConfig = await tryGetRealmConfig(
                             connection,
                             programId,
