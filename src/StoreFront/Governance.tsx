@@ -539,7 +539,7 @@ function RenderGovernanceTable(props:any) {
                                                     <>For</>
                                                 </Typography>
                                                 <Typography variant="subtitle2">
-                                                    {(thisitem.account.options[0].voteWeight.toNumber()/Math.pow(10, tokenDecimals))}
+                                                    {getFormattedNumberToLocale(formatAmount(thisitem.account.options[0].voteWeight.toNumber()/Math.pow(10, tokenDecimals)))}
                                                 </Typography>
                                             </Box>
                                         </Grid>
@@ -555,7 +555,7 @@ function RenderGovernanceTable(props:any) {
                                                     <>Against</>
                                                 </Typography>
                                                 <Typography variant="subtitle2">
-                                                    {(thisitem.account.denyVoteWeight.toNumber()/Math.pow(10, tokenDecimals))}
+                                                    {getFormattedNumberToLocale(formatAmount(thisitem.account.denyVoteWeight.toNumber()/Math.pow(10, tokenDecimals)))}
                                                 </Typography>
                                             </Box>
                                         </Grid> 
