@@ -584,10 +584,10 @@ function RenderGovernanceTable(props:any) {
                                                 sx={{borderRadius:'24px',m:2,p:1}}
                                             >
                                                 <Typography variant="body2" sx={{color:'yellow'}}>
-                                                    <>For</>
+                                                    <>Time Left</>
                                                 </Typography>
                                                 <Typography variant="subtitle2">
-                                                    {getFormattedNumberToLocale(formatAmount(thisitem.account.options[0].voteWeight.toNumber()/Math.pow(10, tokenDecimals)))}
+                                                    coming soon...
                                                 </Typography>
                                             </Box>
                                         </Grid>
@@ -600,10 +600,10 @@ function RenderGovernanceTable(props:any) {
                                                 sx={{borderRadius:'24px',m:2,p:1}}
                                             >
                                                 <Typography variant="body2" sx={{color:'yellow'}}>
-                                                    <>Against</>
+                                                    <>Status</>
                                                 </Typography>
                                                 <Typography variant="subtitle2">
-                                                    {getFormattedNumberToLocale(formatAmount(thisitem.account.denyVoteWeight.toNumber()/Math.pow(10, tokenDecimals)))}
+                                                    coming soon...
                                                 </Typography>
                                             </Box>
                                         </Grid> 
