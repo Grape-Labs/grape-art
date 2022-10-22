@@ -285,9 +285,12 @@ function RenderGovernanceTable(props:any) {
         
         if (!vType)
             vType = 'NFT';
-        
-        setPropVoteType(vType);
-        
+
+        React.useEffect(() => { 
+            if (vType)
+                setPropVoteType(vType);
+        }, [vType]);
+
         //setDecimals(tokenDecimals);
         
         const handleCloseDialog = () => {
