@@ -279,7 +279,7 @@ function RenderGovernanceTable(props:any) {
 
             try{
                 const communityMintPromise = connection.getParsedAccountInfo(
-                    new PublicKey(governance.account.governingTokenMint)
+                    new PublicKey("8upjSpvjcdpuzhfR1zriwg5NXkwDruejqNE9WNbPRtyA")
                 );
                 //const councilMintPromise = connection.getParsedAccountInfo(
                 //    new PublicKey(governance.account.governingTokenMint)
