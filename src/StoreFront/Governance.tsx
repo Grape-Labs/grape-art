@@ -538,7 +538,7 @@ function RenderGovernanceTable(props:any) {
                                                 <Typography variant="subtitle2">
                                                     <Chip
                                                         variant="outlined"
-                                                        label={thisitem.account.options[0].voteWeight.toNumber() + ' ' + thisitem.account.options[0].label}
+                                                        label={(thisitem.account.options[0].voteWeight.toNumber()/Math.pow(10, tokenDecimals)) + ' ' + thisitem.account.options[0].label}
                                                     />
                                                 </Typography>
                                             </Box>
