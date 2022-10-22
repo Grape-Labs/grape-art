@@ -508,7 +508,7 @@ function RenderGovernanceTable(props:any) {
                                         </Box>
                                     </Grid>
                                     
-                                    {/*
+                                    
                                     <Grid item xs={12} sm={6} md={3} key={1}>
                                         <Box
                                             className='grape-store-stat-item'
@@ -537,7 +537,7 @@ function RenderGovernanceTable(props:any) {
                                             <Typography variant="subtitle2">
                                                 <Chip
                                                     variant="outlined"
-                                                    label={thisitem.options[0].voteWeight.toNumber() + ' ' + thisitem.options[0].label}
+                                                    label={thisitem.account.options[0].voteWeight.toNumber() + ' ' + thisitem.options[0].label}
                                                 />
                                             </Typography>
                                         </Box>
@@ -554,12 +554,12 @@ function RenderGovernanceTable(props:any) {
                                             <Typography variant="subtitle2">
                                                 <Chip
                                                     variant="outlined"
-                                                    label={thisitem.denyVoteWeight.toNumber()}
+                                                    label={thisitem.account.denyVoteWeight.toNumber()}
                                                 />
                                             </Typography>
                                         </Box>
                                     </Grid>
-                                    */}
+                                    
 
 
                                 </Grid>
