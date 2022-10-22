@@ -490,6 +490,8 @@ function RenderGovernanceTable(props:any) {
                                         </Box>
                                     </Grid>
 
+                                    {console.log("thisitem: "+JSON.stringify(thisitem))}
+                                    {/*
                                     <Grid item xs={12} sm={6} md={3} key={1}>
                                         <Box
                                             className='grape-store-stat-item'
@@ -507,7 +509,7 @@ function RenderGovernanceTable(props:any) {
                                         </Box>
                                     </Grid>
                                     
-                                    {/*
+                                    
                                     <Grid item xs={12} sm={6} md={3} key={1}>
                                         <Box
                                             className='grape-store-stat-item'
