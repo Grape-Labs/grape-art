@@ -266,6 +266,8 @@ function RenderGovernanceTable(props:any) {
         const [open, setOpen] = React.useState(false);
         //const [decimals, setDecimals] = React.useState(null);
         const [propVoteType, setPropVoteType] = React.useState(null); // 0 council, 1 token, 2 nft
+        const [uniqueYes, setUniqueYes] = React.useState(0);
+        const [uniqueNo, setUniqueNo] = React.useState(0);
         //const [thisGovernance, setThisGovernance] = React.useState(null);
         
         //console.log("governingTokenMint: "+thisitem.account.governingTokenMint?.toBase58());
@@ -319,11 +321,18 @@ function RenderGovernanceTable(props:any) {
             
             const votingResults = [];
             let csvFile = '';
-
+            let uYes = 0;
+            let uNo = 0;
             if (voteResults?.value){
                 let counter = 0;
+
                 for (const item of voteResults.value){
                     counter++;
+                    if (item.account.vote === 0)
+                        uYes++;
+                    else
+                        uNo++;
+
                     votingResults.push({
                         id:counter,
                         pubkey:item.pubkey.toBase58(),
@@ -346,6 +355,9 @@ function RenderGovernanceTable(props:any) {
                     //    csvFile += item.pubkey.toBase58();
                 }
             }
+
+            setUniqueYes(uYes);
+            setUniqueNo(uNo);
 
             const jsonString = `data:text/json;chatset=utf-8,${encodeURIComponent(
                 JSON.stringify(votingResults)
@@ -444,7 +456,7 @@ function RenderGovernanceTable(props:any) {
                                                 <>Sentiment</>
                                             </Typography>
                                             <Typography variant="subtitle2">
-                                                coming soon...
+                                                {uniqueYes}/{uniqueNo} (unique voters)
                                             </Typography>
                                         </Box>
                                     </Grid>
