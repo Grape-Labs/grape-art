@@ -501,12 +501,12 @@ function RenderGovernanceTable(props:any) {
                                             <Typography variant="subtitle2">
                                                 <Chip
                                                     variant="outlined"
-                                                    label={moment.unix(thisitem.account?.votingAt.toNumber()).format("MMMM Da, YYYY, h:mm a")}
+                                                    label={moment.unix(thisitem?.votingAt.toNumber()).format("MMMM Da, YYYY, h:mm a")}
                                                 />
                                             </Typography>
                                         </Box>
                                     </Grid>
-
+                                    
                                     <Grid item xs={12} sm={6} md={3} key={1}>
                                         <Box
                                             className='grape-store-stat-item'
