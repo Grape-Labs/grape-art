@@ -233,7 +233,6 @@ function RenderGovernanceTable(props:any) {
             renderCell: (params) => {
                 return(
                     <>
-                        {console.log("weight: "+params.value.voterWeight + ' decimals: '+params.value.decimals)}
                         <Chip
                             variant="outlined"
                             color={params.value.vote.voteType === 0 ?
@@ -276,17 +275,17 @@ function RenderGovernanceTable(props:any) {
         try{
             tokenDecimals = tokenMap.get(thisitem.account.governingTokenMint?.toBase58()).decimals;
             vType = 'Token';
-            console.log("tokenMap: "+tokenMap.get(thisitem.account.governingTokenMint?.toBase58()).decimals);
+            //console.log("tokenMap: "+tokenMap.get(thisitem.account.governingTokenMint?.toBase58()).decimals);
         }catch(e){
-            console.log("ERR: "+e);
+            //console.log("ERR: "+e);
         }
-        /*
+        
         if (realm.account.config?.councilMint?.toBase58() === thisitem?.account?.governingTokenMint?.toBase58()){
             vType = 'Council';
         }
         setVoteType(vType);
         //setDecimals(tokenDecimals);
-        */
+        
         const handleCloseDialog = () => {
             setOpen(false);
         }
