@@ -490,24 +490,24 @@ function RenderGovernanceTable(props:any) {
                                         </Box>
                                     </Grid>
 
-                                    
-                                    <Grid item xs={12} sm={6} md={3} key={1}>
-                                        <Box
-                                            className='grape-store-stat-item'
-                                            sx={{borderRadius:'24px',m:2,p:1}}
-                                        >
-                                            <Typography variant="body2" sx={{color:'yellow'}}>
-                                                <>Started At</>
-                                            </Typography>
-                                            <Typography variant="subtitle2">
-                                                <Chip
-                                                    variant="outlined"
-                                                    label={moment.unix(thisitem.account?.votingAt.toNumber()).format("MMMM Da, YYYY, h:mm a")}
-                                                />
-                                            </Typography>
-                                        </Box>
-                                    </Grid>
-                                    
+                                    {thisitem.account?.votingAt &&
+                                        <Grid item xs={12} sm={6} md={3} key={1}>
+                                            <Box
+                                                className='grape-store-stat-item'
+                                                sx={{borderRadius:'24px',m:2,p:1}}
+                                            >
+                                                <Typography variant="body2" sx={{color:'yellow'}}>
+                                                    <>Started At</>
+                                                </Typography>
+                                                <Typography variant="subtitle2">
+                                                    <Chip
+                                                        variant="outlined"
+                                                        label={moment.unix(thisitem.account?.votingAt.toNumber()).format("MMMM Da, YYYY, h:mm a")}
+                                                    />
+                                                </Typography>
+                                            </Box>
+                                        </Grid>
+                                    }
                                     
                                     <Grid item xs={12} sm={6} md={3} key={1}>
                                         <Box
@@ -526,42 +526,44 @@ function RenderGovernanceTable(props:any) {
                                         </Box>
                                     </Grid>
 
-                                    <Grid item xs={12} sm={6} md={3} key={1}>
-                                        <Box
-                                            className='grape-store-stat-item'
-                                            sx={{borderRadius:'24px',m:2,p:1}}
-                                        >
-                                            <Typography variant="body2" sx={{color:'yellow'}}>
-                                                <>Voting Weight</>
-                                            </Typography>
-                                            <Typography variant="subtitle2">
-                                                <Chip
-                                                    variant="outlined"
-                                                    label={thisitem.account.options[0].voteWeight.toNumber() + ' ' + thisitem.options[0].label}
-                                                />
-                                            </Typography>
-                                        </Box>
-                                    </Grid>
+                                    {thisitem?.account?.options[0]?.voteWeight &&
+                                        <Grid item xs={12} sm={6} md={3} key={1}>
+                                            <Box
+                                                className='grape-store-stat-item'
+                                                sx={{borderRadius:'24px',m:2,p:1}}
+                                            >
+                                                <Typography variant="body2" sx={{color:'yellow'}}>
+                                                    <>Voting Weight</>
+                                                </Typography>
+                                                <Typography variant="subtitle2">
+                                                    <Chip
+                                                        variant="outlined"
+                                                        label={thisitem.account.options[0].voteWeight.toNumber() + ' ' + thisitem.options[0].label}
+                                                    />
+                                                </Typography>
+                                            </Box>
+                                        </Grid>
+                                    }
 
-                                    <Grid item xs={12} sm={6} md={3} key={1}>
-                                        <Box
-                                            className='grape-store-stat-item'
-                                            sx={{borderRadius:'24px',m:2,p:1}}
-                                        >
-                                            <Typography variant="body2" sx={{color:'yellow'}}>
-                                                <>Deny Vote Weight</>
-                                            </Typography>
-                                            <Typography variant="subtitle2">
-                                                <Chip
-                                                    variant="outlined"
-                                                    label={thisitem.account.denyVoteWeight.toNumber()}
-                                                />
-                                            </Typography>
-                                        </Box>
-                                    </Grid>
+                                    {thisitem?.account?.denyVoteWeight &&
+                                        <Grid item xs={12} sm={6} md={3} key={1}>
+                                            <Box
+                                                className='grape-store-stat-item'
+                                                sx={{borderRadius:'24px',m:2,p:1}}
+                                            >
+                                                <Typography variant="body2" sx={{color:'yellow'}}>
+                                                    <>Deny Vote Weight</>
+                                                </Typography>
+                                                <Typography variant="subtitle2">
+                                                    <Chip
+                                                        variant="outlined"
+                                                        label={thisitem.account.denyVoteWeight.toNumber()}
+                                                    />
+                                                </Typography>
+                                            </Box>
+                                        </Grid> 
+                                    }
                                     
-
-
                                 </Grid>
 
                             </Box>
