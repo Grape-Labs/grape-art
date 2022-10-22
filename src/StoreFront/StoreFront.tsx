@@ -1916,9 +1916,11 @@ export function StoreFrontView(this: any, props: any) {
                                                 sx={{m:2}}
                                             >
                                                 <ButtonGroup>
-                                                    {collectionChildren.map((child:any) => (
+                                                    {collectionChildren.map((child:any, key:any) => (
                                                         <Button 
+                                                            key={key}
                                                             //component={a} 
+                                                            color='inherit'
                                                             href={`${GRAPE_COLLECTION}${child.vanityUrl}`}
                                                             variant="outlined"
                                                             sx={{

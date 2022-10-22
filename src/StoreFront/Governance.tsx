@@ -268,7 +268,7 @@ function RenderGovernanceTable(props:any) {
         //const [thisGovernance, setThisGovernance] = React.useState(null);
         
         console.log("governingTokenMint: "+thisitem.account.governingTokenMint?.toBase58());
-        let tokenDecimals = 0;
+        let tokenDecimals = 6;
         try{
             tokenDecimals = tokenMap.get(thisitem.account.governingTokenMint?.toBase58()).decimals;
             console.log("tokenMap: "+tokenMap.get(thisitem.account.governingTokenMint?.toBase58()).decimals);
