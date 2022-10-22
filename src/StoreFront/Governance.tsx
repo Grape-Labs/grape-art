@@ -431,10 +431,7 @@ function RenderGovernanceTable(props:any) {
                                                 <>Participants</>
                                             </Typography>
                                             <Typography variant="subtitle2">
-                                                <Chip
-                                                    variant="outlined"
-                                                    label={solanaVotingResultRows && solanaVotingResultRows.length}
-                                                />
+                                                {solanaVotingResultRows && solanaVotingResultRows.length}
                                             </Typography>
                                         </Box>
                                     </Grid>
@@ -500,10 +497,7 @@ function RenderGovernanceTable(props:any) {
                                                     <>Started At</>
                                                 </Typography>
                                                 <Typography variant="subtitle2">
-                                                    <Chip
-                                                        variant="outlined"
-                                                        label={moment.unix(thisitem.account?.votingAt.toNumber()).format("MMMM Da, YYYY, h:mm a")}
-                                                    />
+                                                    {moment.unix(thisitem.account?.votingAt.toNumber()).format("MMMM Da, YYYY, h:mm a")}
                                                 </Typography>
                                             </Box>
                                         </Grid>
@@ -518,10 +512,7 @@ function RenderGovernanceTable(props:any) {
                                                 <>Ends At</>
                                             </Typography>
                                             <Typography variant="subtitle2">
-                                                <Chip
-                                                    variant="outlined"
-                                                    label='coming soon...'
-                                                />
+                                                coming soon...
                                             </Typography>
                                         </Box>
                                     </Grid>
@@ -536,10 +527,7 @@ function RenderGovernanceTable(props:any) {
                                                     <>Voting Weight</>
                                                 </Typography>
                                                 <Typography variant="subtitle2">
-                                                    <Chip
-                                                        variant="outlined"
-                                                        label={(thisitem.account.options[0].voteWeight.toNumber()/Math.pow(10, tokenDecimals)) + ' ' + thisitem.account.options[0].label}
-                                                    />
+                                                    {(thisitem.account.options[0].voteWeight.toNumber()/Math.pow(10, tokenDecimals)) + ' ' + thisitem.account.options[0].label}
                                                 </Typography>
                                             </Box>
                                         </Grid>
@@ -555,10 +543,7 @@ function RenderGovernanceTable(props:any) {
                                                     <>Deny Vote Weight</>
                                                 </Typography>
                                                 <Typography variant="subtitle2">
-                                                    <Chip
-                                                        variant="outlined"
-                                                        label={thisitem.account.denyVoteWeight.toNumber()}
-                                                    />
+                                                    {thisitem.account.denyVoteWeight.toNumber()}
                                                 </Typography>
                                             </Box>
                                         </Grid> 
