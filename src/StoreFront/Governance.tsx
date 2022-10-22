@@ -270,7 +270,7 @@ function RenderGovernanceTable(props:any) {
         //const [thisGovernance, setThisGovernance] = React.useState(null);
         
         console.log("governingTokenMint: "+thisitem.account.governingTokenMint?.toBase58());
-        /*
+        
         let tokenDecimals = 6; // this is the default for NFT mints
         let vType = 'NFT';
         try{
@@ -280,7 +280,7 @@ function RenderGovernanceTable(props:any) {
         }catch(e){
             console.log("ERR: "+e);
         }
-
+        /*
         if (realm.account.config?.councilMint?.toBase58() === thisitem?.account?.governingTokenMint?.toBase58()){
             vType = 'Council';
         }
@@ -398,8 +398,6 @@ function RenderGovernanceTable(props:any) {
 
                         {voteType &&
                             <Box sx={{ alignItems: 'center', textAlign: 'center',p:1}}>
-                                
-
                                 <Grid container spacing={0}>
                                     <Grid item xs={12} sm={6} md={4} key={1}>
                                         <Box
