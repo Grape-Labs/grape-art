@@ -275,7 +275,7 @@ function RenderGovernanceTable(props:any) {
         const getGovernanceProps = async () => {
             const governance = await getGovernance(connection, thisitem.account.governance);
             setThisGovernance(governance);
-            //console.log("Single governance: "+JSON.stringify(governance));
+            console.log("Single governance: "+JSON.stringify(governance));
         }
 
         React.useEffect(() => { 
@@ -588,7 +588,11 @@ function RenderGovernanceTable(props:any) {
                                                 <>Ends At</>
                                             </Typography>
                                             <Typography variant="subtitle2">
-                                                coming soon...
+                                                    {thisGovernance && thisGovernance?.account?.config?.maxVotingTime ?
+                                                        `${moment.unix(thisitem.account?.votingAt.toNumber()+thisGovernance?.account?.config?.maxVotingTime).format("MMMM Da, YYYY, h:mm a")}`
+                                                    :
+                                                        `Ended`
+                                                    }
                                             </Typography>
                                         </Box>
                                     </Grid>
