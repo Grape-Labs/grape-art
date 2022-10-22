@@ -241,9 +241,9 @@ function RenderGovernanceTable(props:any) {
                                 'error'
                             }
                             icon={params.value.vote.voteType === 0 ?
-                                <ThumbUpIcon color='success' />
+                                <ThumbUpIcon color='success' sx={{ml:1}} />
                                 :
-                                <ThumbDownIcon sx={{color:'red'}} />
+                                <ThumbDownIcon sx={{color:'red',ml:1}}/>
                             }
                             label={params.value.voterWeight > 1 ?
                                 `${getFormattedNumberToLocale(formatAmount(parseInt(params.value.voterWeight)/Math.pow(10, params.value.decimals)))} votes` 
