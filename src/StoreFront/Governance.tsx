@@ -265,7 +265,7 @@ function RenderGovernanceTable(props:any) {
         const [jsonGenerated, setJSONGenerated] = React.useState(null);
         const [solanaVotingResultRows,setSolanaVotingResultRows] = React.useState(null);
         const [open, setOpen] = React.useState(false);
-        const [decimals, setDecimals] = React.useState(null);
+        //const [decimals, setDecimals] = React.useState(null);
         const [voteType, setVoteType] = React.useState(null); // 0 council, 1 token, 2 nft
         //const [thisGovernance, setThisGovernance] = React.useState(null);
         
@@ -280,11 +280,11 @@ function RenderGovernanceTable(props:any) {
             console.log("ERR: "+e);
         }
 
-        if (realm.account.config?.councilMint?.toBase58() === thisitem.account.governingTokenMint?.toBase58()){
+        if (realm.account.config?.councilMint?.toBase58() === thisitem?.account?.governingTokenMint?.toBase58()){
             vType = 'Council';
         }
         setVoteType(vType);
-        setDecimals(tokenDecimals);
+        //setDecimals(tokenDecimals);
 
         const handleCloseDialog = () => {
             setOpen(false);
