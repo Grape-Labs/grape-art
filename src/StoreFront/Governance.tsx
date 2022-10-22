@@ -269,6 +269,22 @@ function RenderGovernanceTable(props:any) {
         const [propVoteType, setPropVoteType] = React.useState(null); // 0 council, 1 token, 2 nft
         const [uniqueYes, setUniqueYes] = React.useState(0);
         const [uniqueNo, setUniqueNo] = React.useState(0);
+        
+        const [thisGovernance, setThisGovernance] = React.useState(null);
+
+        const getGovernanceProps = async () => {
+            const governance = await getGovernance(connection, thisitem.account.governance);
+            setThisGovernance(governance);
+            //console.log("Single governance: "+JSON.stringify(governance));
+        }
+
+        React.useEffect(() => { 
+            if (thisitem.account?.state === 2){ // if voting state
+                getGovernanceProps()
+            }
+        }, [thisitem]);
+
+        
         //const [thisGovernance, setThisGovernance] = React.useState(null);
         
         //console.log("governingTokenMint: "+thisitem.account.governingTokenMint?.toBase58());
@@ -587,7 +603,12 @@ function RenderGovernanceTable(props:any) {
                                                     <>Time Left</>
                                                 </Typography>
                                                 <Typography variant="subtitle2">
-                                                    coming soon...
+                                                    {thisGovernance && thisGovernance?.account?.config?.maxVotingTime ?
+                                                        `Ending ${moment.unix(thisitem.account?.votingAt.toNumber()+thisGovernance?.account?.config?.maxVotingTime).fromNow()}`
+                                                    :
+                                                        `Ended`
+                                                    }
+                            
                                                 </Typography>
                                             </Box>
                                         </Grid>
