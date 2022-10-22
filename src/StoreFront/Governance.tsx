@@ -431,8 +431,7 @@ function RenderGovernanceTable(props:any) {
                                             <Typography variant="h3">
                                                 {thisitem.account?.options && thisitem.account?.options[0]?.voteWeight && thisitem?.account?.denyVoteWeight && thisitem.account?.options[0].voteWeight.toNumber() > 0 ?
                                                 <>
-                                                coming soon...
-                                                {/*`${(((thisitem.account?.denyVoteWeight.toNumber()/Math.pow(10, tokenDecimals))/((thisitem.account?.denyVoteWeight.toNumber()/Math.pow(10, tokenDecimals))+(thisitem.account?.options[0].voteWeight.toNumber()/Math.pow(10, tokenDecimals))))*100).toFixed(2)}%`*/}
+                                                {`${(((thisitem.account?.denyVoteWeight.toNumber()/Math.pow(10, tokenDecimals))/((thisitem.account?.denyVoteWeight.toNumber()/Math.pow(10, tokenDecimals))+(thisitem.account?.options[0].voteWeight.toNumber()/Math.pow(10, tokenDecimals))))*100).toFixed(2)}%`}
                                                 </>
                                                 :
                                                 <>0%</>
