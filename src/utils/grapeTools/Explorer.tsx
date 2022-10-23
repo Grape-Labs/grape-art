@@ -3,8 +3,23 @@ import {CopyToClipboard} from 'react-copy-to-clipboard';
 import { styled } from '@mui/material/styles';
 import { useSnackbar } from 'notistack';
 import { Link } from "react-router-dom";
+import { PublicKey, TokenAmount, Connection } from '@solana/web3.js';
+import axios from "axios";
 
 import { 
+    tryGetName,
+} from '@cardinal/namespaces';
+import { getProfilePicture } from '@solflare-wallet/pfp';
+import { findDisplayName } from '../name-service';
+import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
+
+import { 
+    GRAPE_RPC_ENDPOINT, 
+    THEINDEX_RPC_ENDPOINT,
+    TWITTER_PROXY } from './constants';
+
+import { 
+    Avatar,
     Button,
     Menu,
     MenuItem,
@@ -51,6 +66,11 @@ export default function ExplorerView(props:any){
     const shorten = props?.shorten || 0;
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
+    const showSolanaProfile = props.showSolanaProfile || null;
+    const connection = new Connection(GRAPE_RPC_ENDPOINT);
+    const [solanaDomain, setSolanaDomain] = React.useState(null);
+    const [profilePictureUrl, setProfilePictureUrl] = React.useState(null);
+    const [hasProfilePicture, setHasProfilePicture] = React.useState(null);
 
     const handleClick = (event:any) => {
         setAnchorEl(event.currentTarget);
@@ -67,6 +87,70 @@ export default function ExplorerView(props:any){
         handleClose();
     };
 
+    const fetchProfilePicture = async () => {
+        //setLoadingPicture(true);  
+            try{
+                const { isAvailable, url } = await getProfilePicture(connection, new PublicKey(address));
+                
+                let img_url = url;
+                if (url)
+                    img_url = url.replace(/width=100/g, 'width=256');
+                setProfilePictureUrl(img_url);
+                setHasProfilePicture(isAvailable);
+                //countRef.current++;
+            }catch(e){
+                console.log("ERR: "+e)
+            }
+        //setLoadingPicture(false);
+    }
+
+    const fetchSolanaDomain = async () => {
+        console.log("fetching tryGetName: "+address);
+        let found_cardinal = false;
+        //const cardinalResolver = new CardinalTwitterIdentityResolver(ggoconnection);
+        try{
+            //const cardinal_registration = await cardinalResolver.resolve(new PublicKey(address));
+            //const identity = await cardinalResolver.resolveReverse(address);
+            //console.log("identity "+JSON.stringify(cardinal_registration))
+            const cardinal_registration = await tryGetName(
+                connection, 
+                new PublicKey(address)
+            );
+
+            if (cardinal_registration){
+                found_cardinal = true;
+                console.log("cardinal_registration: "+JSON.stringify(cardinal_registration));
+
+                setSolanaDomain(cardinal_registration[0]);
+                const url = `${TWITTER_PROXY}https://api.twitter.com/2/users/by&usernames=${cardinal_registration[0].slice(1)}&user.fields=profile_image_url,public_metrics`;
+                const response = await axios.get(url);
+                //const twitterImage = response?.data?.data[0]?.profile_image_url;
+                if (response?.data?.data[0]?.profile_image_url){
+                    setProfilePictureUrl(response?.data?.data[0]?.profile_image_url);
+                    setHasProfilePicture(true);
+                }
+            }
+        }catch(e){
+            console.log("ERR: "+e);
+        }
+
+        if (!found_cardinal){
+            const domain = await findDisplayName(connection, address);
+            if (domain) {
+                if (domain[0] !== address) {
+                    setSolanaDomain(domain[0]);
+                }
+            }
+        }
+    };
+
+    React.useEffect(() => {   
+        if (showSolanaProfile){
+            fetchProfilePicture();
+            fetchSolanaDomain();
+        }
+    }, [showSolanaProfile]);
+
     return (
         <>
             <Button
@@ -78,7 +162,15 @@ export default function ExplorerView(props:any){
                 color='inherit'
                 sx={{m:0,borderRadius:'17px',color:`${buttonColor}` }}
                 startIcon={
-                    <ExploreIcon sx={{color:`${buttonColor}`,fontSize:`${fontSize}`}} />
+                    <>
+                        {profilePictureUrl ?
+                            <Avatar alt={address} src={profilePictureUrl} sx={{ width: 30, height: 30, bgcolor: 'rgb(0, 0, 0)' }}>
+                                {address.substr(0,2)}
+                            </Avatar>
+                        :
+                            <ExploreIcon sx={{color:`${buttonColor}`,fontSize:`${fontSize}`}} />
+                        }
+                    </>
                 }
             >
                 <Typography sx={{color:`${buttonColor}`,fontSize:`${fontSize}`}}>
@@ -88,9 +180,15 @@ export default function ExplorerView(props:any){
                         <>
                             {!hideTitle &&
                                 <>
+                                    {solanaDomain ?
+                                        <>{solanaDomain}</>
+                                    :
+                                    <>
                                     {(shorten && shorten > 0) ? 
                                         trimAddress(address,shorten) : address
                                     } 
+                                    </>
+                                    }
                                 </>
                             }
                         </>
