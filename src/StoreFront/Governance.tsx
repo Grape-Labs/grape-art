@@ -7,6 +7,7 @@ import { WalletDialogProvider, WalletMultiButton } from "@solana/wallet-adapter-
 import * as React from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
+import Gist from 'react-gist';
 import {
   Typography,
   Button,
@@ -33,6 +34,7 @@ import {
 import ExplorerView from '../utils/grapeTools/Explorer';
 import moment from 'moment';
 
+import GitHubIcon from '@mui/icons-material/GitHub';
 import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
 import AssuredWorkloadIcon from '@mui/icons-material/AssuredWorkload';
 import PeopleIcon from '@mui/icons-material/People';
@@ -269,7 +271,7 @@ function RenderGovernanceTable(props:any) {
         const [propVoteType, setPropVoteType] = React.useState(null); // 0 council, 1 token, 2 nft
         const [uniqueYes, setUniqueYes] = React.useState(0);
         const [uniqueNo, setUniqueNo] = React.useState(0);
-        
+        const [gist, setGist] = React.useState(null);
         const [thisGovernance, setThisGovernance] = React.useState(null);
 
         const getGovernanceProps = async () => {
@@ -278,13 +280,13 @@ function RenderGovernanceTable(props:any) {
             console.log("Single governance: "+JSON.stringify(governance));
 
             try{
-                const communityMintPromise = connection.getParsedAccountInfo(
-                    new PublicKey("8upjSpvjcdpuzhfR1zriwg5NXkwDruejqNE9WNbPRtyA")
-                );
+                //const communityMintPromise = connection.getParsedAccountInfo(
+                //    new PublicKey("8upjSpvjcdpuzhfR1zriwg5NXkwDruejqNE9WNbPRtyA")
+                //);
                 //const councilMintPromise = connection.getParsedAccountInfo(
                 //    new PublicKey(governance.account.governingTokenMint)
                 //  );
-                console.log("communityMintPromise "+JSON.stringify(communityMintPromise))
+                //console.log("communityMintPromise "+JSON.stringify(communityMintPromise))
             }catch(e){
                 console.log('ERR: '+e)
             }
@@ -385,6 +387,22 @@ function RenderGovernanceTable(props:any) {
                 }
             }
 
+            if (thisitem.account?.descriptionLink){
+                try{
+                    const url = new URL(thisitem.account?.descriptionLink);
+                    const pathname = url.pathname;
+                    const parts = pathname.split('/');
+                    console.log("pathname: "+pathname)
+                    let tGist = null;
+                    if (parts.length > 1)
+                        tGist = parts[2];
+                    
+                    setGist(tGist);
+                } catch(e){
+                    console.log("ERR: "+e)
+                }
+            }
+
             setUniqueYes(uYes);
             setUniqueNo(uNo);
 
@@ -405,6 +423,8 @@ function RenderGovernanceTable(props:any) {
             //console.log("Vote Record: "+JSON.stringify(votingResults));
             //console.log("This vote: "+JSON.stringify(thisitem));
         }
+
+
         
         return (
             <>
@@ -437,10 +457,26 @@ function RenderGovernanceTable(props:any) {
                         <Box sx={{ alignItems: 'center', textAlign: 'center',p:1}}>
                             <Typography variant='h5'>{thisitem.account?.name}</Typography>
                         
-                            {thisitem.account?.descriptionLink &&
-                                <Box >
-                                    <Typography variant='body2'>{thisitem.account?.descriptionLink}</Typography>
-                                </Box>
+                            
+
+                            {gist ?
+                                <>
+                                    <Gist id={gist} />
+                                    <Button
+                                        color='inherit'
+                                        href={thisitem.account?.descriptionLink}
+                                    >
+                                        <GitHubIcon sx={{mr:1}} /> GIST
+                                    </Button>
+                                </>
+                                :
+                                <>
+                                    {thisitem.account?.descriptionLink &&
+                                        <Box >
+                                            <Typography variant='caption'>{thisitem.account?.descriptionLink}</Typography>
+                                        </Box>
+                                    }
+                                </>
                             }
                         </Box>
 
@@ -974,7 +1010,7 @@ export function GovernanceView(props: any) {
     const [tokenMap, setTokenMap] = React.useState(null);
     const [realm, setRealm] = React.useState(null);
     const [tokenArray, setTokenArray] = React.useState(null);
-    const { connection } = useConnection();
+    const connection = new Connection(GRAPE_RPC_ENDPOINT);
     const { publicKey } = useWallet();
     const [proposals, setProposals] = React.useState(null);
     const [participating, setParticipating] = React.useState(false)

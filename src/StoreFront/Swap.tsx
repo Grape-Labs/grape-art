@@ -110,12 +110,13 @@ interface JupiterProps {
 
 export default function JupiterSwap(props: any ){
 //export const JupiterSwap = (props: any) => {
-    const connection = useConnection();
+    //const connection = useConnection();
+    const connection = new Connection(GRAPE_RPC_ENDPOINT);
     const {connected, wallet, publicKey} = useWallet();
 
     return(
         <JupiterProvider
-            connection={connection.connection}
+            connection={connection}
             cluster={WalletAdapterNetwork.Mainnet}
             userPublicKey={connected ? publicKey : undefined}>
                 <JupiterForm {...props}/>
