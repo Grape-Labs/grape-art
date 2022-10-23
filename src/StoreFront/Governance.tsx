@@ -486,7 +486,7 @@ function RenderGovernanceTable(props:any) {
                         </Box>
                         
                         {proposalAuthor &&
-                            <Box sx={{ alignItems: 'right', textAlign: 'right'}}>
+                            <Box sx={{ alignItems: 'center', textAlign: 'center'}}>
                                 <Typography variant='caption'>Author: <ExplorerView showSolanaProfile={true} grapeArtProfile={true} address={proposalAuthor} type='address' shorten={8} hideTitle={false} style='text' color='white' fontSize='12px'/></Typography>
                             </Box>
                         }
