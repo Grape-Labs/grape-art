@@ -39,6 +39,7 @@ import {
 import ExplorerView from '../utils/grapeTools/Explorer';
 import moment from 'moment';
 
+import FileOpenIcon from '@mui/icons-material/FileOpen';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
 import AssuredWorkloadIcon from '@mui/icons-material/AssuredWorkload';
@@ -437,11 +438,11 @@ function RenderGovernanceTable(props:any) {
         
         return (
             <>
-                <Tooltip title='Get Voting Participants for this proposal'>
+                <Tooltip title='Get Voting Details for this Proposal'>
                     <Button 
                         onClick={handleClickOpen}
                         sx={{color:'white',textTransform:'none',borderRadius:'17px'}}>
-                        <PeopleIcon />
+                        <FileOpenIcon />
                     </Button>
                 </Tooltip>
 
@@ -481,6 +482,7 @@ function RenderGovernanceTable(props:any) {
                                         <Button
                                             color='inherit'
                                             href={thisitem.account?.descriptionLink}
+                                            sx={{borderRadius:'17px'}}
                                         >
                                             <GitHubIcon sx={{mr:1}} /> GIST
                                         </Button>
@@ -823,7 +825,7 @@ function RenderGovernanceTable(props:any) {
                                 <TableCell align="center"><Typography variant="caption">Ending</Typography></TableCell>
                                 */}
                                 <TableCell align="center"><Typography variant="caption">Vote</Typography></TableCell>
-                                <TableCell align="center"><Typography variant="caption">Participants</Typography></TableCell>
+                                <TableCell align="center"><Typography variant="caption">Details</Typography></TableCell>
                                 
                             </TableRow>
                         </TableHead>
