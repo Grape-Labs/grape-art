@@ -681,13 +681,23 @@ function RenderGovernanceTable(props:any) {
                                             sx={{borderRadius:'24px',m:2,p:1}}
                                         >
                                             <Typography variant="body2" sx={{color:'yellow'}}>
-                                                <>Ends At</>
+                                                {thisitem.account?.votingCompletedAt ?
+                                                    <>Ended At</>
+                                                :
+                                                    <>Ends At</>
+                                                }
                                             </Typography>
                                             <Typography variant="subtitle2">
                                                     {thisGovernance && thisGovernance?.account?.config?.maxVotingTime ?
                                                         `${moment.unix(thisitem.account?.votingAt.toNumber()+thisGovernance?.account?.config?.maxVotingTime).format("MMMM Da, YYYY, h:mm a")}`
                                                     :
-                                                        `Ended`
+                                                        <>
+                                                        {thisitem.account?.votingCompletedAt ?
+                                                            `${moment.unix(thisitem.account?.votingCompletedAt).format("MMMM Da, YYYY, h:mm a")}`
+                                                        :
+                                                            `Ended`
+                                                        }
+                                                        </>
                                                     }
                                             </Typography>
                                         </Box>
