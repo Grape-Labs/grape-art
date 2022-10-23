@@ -696,8 +696,8 @@ function RenderGovernanceTable(props:any) {
                                                     <>Status</>
                                                 </Typography>
                                                 <Typography variant="subtitle2">
-                                                    <Button sx={{color:'white',borderRadius:'17px'}} href={`https://realms.today/dao/${governanceToken?.governanceVanityUrl || governanceToken?.governance || governanceToken}/proposal/${thisitem?.pubkey}`} target='_blank'>
-                                                        {GOVERNANNCE_STATE[thisitem.account?.state]} <OpenInNewIcon sx={{ml:1}}/>
+                                                    <Button color='inherit' sx={{color:'white',borderRadius:'17px'}} href={`https://realms.today/dao/${governanceToken?.governanceVanityUrl || governanceToken?.governance || governanceToken}/proposal/${thisitem?.pubkey}`} target='_blank'>
+                                                        {GOVERNANNCE_STATE[thisitem.account?.state]} <OpenInNewIcon sx={{ml:1}} fontSize='small'/>
                                                     </Button>
                                                 </Typography>
                                             </Box>
