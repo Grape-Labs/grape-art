@@ -8,6 +8,11 @@ import * as React from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import Gist from 'react-gist';
+import { gistApi, resolveProposalDescription } from '../utils/grapeTools/github';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+
+
 import {
   Typography,
   Button,
@@ -272,6 +277,7 @@ function RenderGovernanceTable(props:any) {
         const [uniqueYes, setUniqueYes] = React.useState(0);
         const [uniqueNo, setUniqueNo] = React.useState(0);
         const [gist, setGist] = React.useState(null);
+        const [proposalDescription, setProposalDescription] = React.useState(null);
         const [thisGovernance, setThisGovernance] = React.useState(null);
 
         const getGovernanceProps = async () => {
@@ -398,6 +404,9 @@ function RenderGovernanceTable(props:any) {
                         tGist = parts[2];
                     
                     setGist(tGist);
+
+                    const rpd = await resolveProposalDescription(thisitem.account?.descriptionLink);
+                    setProposalDescription(rpd);
                 } catch(e){
                     console.log("ERR: "+e)
                 }
@@ -456,18 +465,26 @@ function RenderGovernanceTable(props:any) {
                         
                         <Box sx={{ alignItems: 'center', textAlign: 'center',p:1}}>
                             <Typography variant='h5'>{thisitem.account?.name}</Typography>
+                        </Box>
                         
-                            
-
+                        <Box sx={{ alignItems: 'left', textAlign: 'left',p:1}}>
                             {gist ?
                                 <>
-                                    <Gist id={gist} />
-                                    <Button
-                                        color='inherit'
-                                        href={thisitem.account?.descriptionLink}
-                                    >
-                                        <GitHubIcon sx={{mr:1}} /> GIST
-                                    </Button>
+                                    <ReactMarkdown remarkPlugins={[[remarkGfm, {singleTilde: false}]]}>
+                                        {proposalDescription}
+                                    </ReactMarkdown>
+                                    
+                                    <Box sx={{ alignItems: 'right', textAlign: 'right',p:1}}>
+                                        {/*
+                                        <Gist id={gist} />
+                                        */}
+                                        <Button
+                                            color='inherit'
+                                            href={thisitem.account?.descriptionLink}
+                                        >
+                                            <GitHubIcon sx={{mr:1}} /> GIST
+                                        </Button>
+                                    </Box>
                                 </>
                                 :
                                 <>
@@ -478,7 +495,8 @@ function RenderGovernanceTable(props:any) {
                                     }
                                 </>
                             }
-                        </Box>
+                            </Box>
+                        
 
                         {propVoteType &&
                             <Box sx={{ alignItems: 'center', textAlign: 'center',p:1}}>
