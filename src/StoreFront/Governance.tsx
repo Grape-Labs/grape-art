@@ -471,7 +471,7 @@ function RenderGovernanceTable(props:any) {
                         <Box sx={{ alignItems: 'center', textAlign: 'center'}}>
                             {gist ?
                                 <Box sx={{ alignItems: 'left', textAlign: 'left',p:1}}>
-                                    <Typography variant='caption'>
+                                    <Typography variant='body2'>
                                         <ReactMarkdown remarkPlugins={[[remarkGfm, {singleTilde: false}]]}>
                                             {proposalDescription}
                                         </ReactMarkdown>
