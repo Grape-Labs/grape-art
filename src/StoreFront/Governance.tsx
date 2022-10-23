@@ -1,4 +1,4 @@
-import { getRealm, getAllProposals, getGovernance, getTokenOwnerRecordsByOwner, getVoteRecord, getRealmConfigAddress, getGovernanceAccount, getAccountTypes, GovernanceAccountType, tryGetRealmConfig  } from '@solana/spl-governance';
+import { getRealm, getAllProposals, getGovernance, getTokenOwnerRecordsByOwner, getAllTokenOwnerRecords, getRealmConfigAddress, getGovernanceAccount, getAccountTypes, GovernanceAccountType, tryGetRealmConfig  } from '@solana/spl-governance';
 import { getVoteRecords } from '../utils/governanceTools/getVoteRecords';
 import { PublicKey, TokenAmount, Connection } from '@solana/web3.js';
 import { ENV, TokenListProvider, TokenInfo } from '@solana/spl-token-registry';
@@ -194,6 +194,7 @@ function TablePaginationActions(props) {
 
 function RenderGovernanceTable(props:any) {
     const realm = props.realm;
+    const memberMap = props.memberMap;
     const thisToken = props.thisToken;
     const tokenMap = props.tokenMap;
     const [loading, setLoading] = React.useState(false);
@@ -280,11 +281,18 @@ function RenderGovernanceTable(props:any) {
         const [gist, setGist] = React.useState(null);
         const [proposalDescription, setProposalDescription] = React.useState(null);
         const [thisGovernance, setThisGovernance] = React.useState(null);
+        const [proposalAuthor, setProposalAuthor] = React.useState(null);
 
         const getGovernanceProps = async () => {
             const governance = await getGovernance(connection, thisitem.account.governance);
             setThisGovernance(governance);
             console.log("Single governance: "+JSON.stringify(governance));
+
+            console.log("thisitem "+JSON.stringify(thisitem))
+
+            //const gp = await getProposalTransactionAddress(connection, thisitem.pubkey)
+
+            //console.log("gp: "+JSON.stringify(gp))
 
             try{
                 //const communityMintPromise = connection.getParsedAccountInfo(
@@ -327,8 +335,17 @@ function RenderGovernanceTable(props:any) {
             vType = 'NFT';
 
         React.useEffect(() => { 
-            if (vType)
+            if (vType){
                 setPropVoteType(vType);
+
+                //thisitem.account.tokenOwnerRecord;
+                for (let item of memberMap){
+                    if (item.pubkey.toBase58() === thisitem.account.tokenOwnerRecord.toBase58()){
+                        setProposalAuthor(item.account.governingTokenOwner.toBase58())
+                        console.log("member:" + JSON.stringify(item));
+                    }
+                }
+            }
         }, [vType]);
 
         // loop through all votes to get metrics and sentiment
@@ -399,7 +416,7 @@ function RenderGovernanceTable(props:any) {
                     const url = new URL(thisitem.account?.descriptionLink);
                     const pathname = url.pathname;
                     const parts = pathname.split('/');
-                    console.log("pathname: "+pathname)
+                    //console.log("pathname: "+pathname)
                     let tGist = null;
                     if (parts.length > 1)
                         tGist = parts[2];
@@ -430,8 +447,8 @@ function RenderGovernanceTable(props:any) {
             setCSVGenerated(jsonCSVString); 
             
             setSolanaVotingResultRows(votingResults)
-            console.log("Vote Record: "+JSON.stringify(voteRecord));
-            console.log("This vote: "+JSON.stringify(thisitem));
+            //console.log("Vote Record: "+JSON.stringify(voteRecord));
+            //console.log("This vote: "+JSON.stringify(thisitem));
         }
 
 
@@ -468,6 +485,12 @@ function RenderGovernanceTable(props:any) {
                             <Typography variant='h5'>{thisitem.account?.name}</Typography>
                         </Box>
                         
+                        {proposalAuthor &&
+                            <Box sx={{ alignItems: 'right', textAlign: 'right'}}>
+                                <Typography variant='caption'>Author: <ExplorerView grapeArtProfile={true} address={proposalAuthor} type='address' shorten={8} hideTitle={false} style='text' color='white' fontSize='10px'/></Typography>
+                            </Box>
+                        }
+
                         <Box sx={{ alignItems: 'center', textAlign: 'center'}}>
                             {gist ?
                                 <Box sx={{ alignItems: 'left', textAlign: 'left',p:1}}>
@@ -1032,6 +1055,7 @@ export function GovernanceView(props: any) {
     const governanceToken = props.governanceToken;
     const [loading, setLoading] = React.useState(false);
     const [tokenMap, setTokenMap] = React.useState(null);
+    const [memberMap, setMemberMap] = React.useState(null);
     const [realm, setRealm] = React.useState(null);
     const [tokenArray, setTokenArray] = React.useState(null);
     const connection = new Connection(GRAPE_RPC_ENDPOINT);
@@ -1144,6 +1168,10 @@ export function GovernanceView(props: any) {
                     }
                 }
 
+                const gator = await getAllTokenOwnerRecords(new Connection(THEINDEX_RPC_ENDPOINT), programId, realmPk)
+
+                setMemberMap(gator);
+
                 //const programId = new PublicKey(GOVERNANCE_PROGRAM_ID);
 
                 //const gpbgprops = await getProposalsByGovernance(new Connection(THEINDEX_RPC_ENDPOINT), programId, new PublicKey(collectionAuthority.governancePublicKey || collectionAuthority.governance));
@@ -1246,7 +1274,7 @@ export function GovernanceView(props: any) {
                             </>
                         }
 
-                        <RenderGovernanceTable tokenMap={tokenMap} realm={realm} thisToken={thisToken} proposals={proposals} nftBasedGovernance={nftBasedGovernance} governanceToken={governanceToken} />
+                        <RenderGovernanceTable memberMap={memberMap} tokenMap={tokenMap} realm={realm} thisToken={thisToken} proposals={proposals} nftBasedGovernance={nftBasedGovernance} governanceToken={governanceToken} />
                     </Box>
                                 
                 );

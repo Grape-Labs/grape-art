@@ -149,7 +149,7 @@ function RenderGovernanceMembersTable(props:any) {
     //const [proposals, setProposals] = React.useState(props.proposals);
     const participating = props.participating;
     const members = props.members;
-    const { connection } = useConnection();
+    const connection = new Connection(GRAPE_RPC_ENDPOINT);//useConnection();
     const { publicKey } = useWallet();
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
@@ -477,7 +477,7 @@ export function MembersView(props: any) {
     const collectionAuthority = props.collectionAuthority;
     const [loading, setLoading] = React.useState(false);
     const [members, setMembers] = React.useState(null);
-    const { connection } = useConnection();
+    const connection = new Connection(GRAPE_RPC_ENDPOINT)//useConnection();
     const { publicKey } = useWallet();
     const [realm, setRealm] = React.useState(null);
     const [participating, setParticipating] = React.useState(false)
