@@ -430,8 +430,8 @@ function RenderGovernanceTable(props:any) {
             setCSVGenerated(jsonCSVString); 
             
             setSolanaVotingResultRows(votingResults)
-            //console.log("Vote Record: "+JSON.stringify(votingResults));
-            //console.log("This vote: "+JSON.stringify(thisitem));
+            console.log("Vote Record: "+JSON.stringify(voteRecord));
+            console.log("This vote: "+JSON.stringify(thisitem));
         }
 
 
@@ -468,12 +468,14 @@ function RenderGovernanceTable(props:any) {
                             <Typography variant='h5'>{thisitem.account?.name}</Typography>
                         </Box>
                         
-                        <Box sx={{ alignItems: 'left', textAlign: 'left',p:1}}>
+                        <Box sx={{ alignItems: 'center', textAlign: 'center'}}>
                             {gist ?
-                                <>
-                                    <ReactMarkdown remarkPlugins={[[remarkGfm, {singleTilde: false}]]}>
-                                        {proposalDescription}
-                                    </ReactMarkdown>
+                                <Box sx={{ alignItems: 'left', textAlign: 'left',p:1}}>
+                                    <Typography variant='caption'>
+                                        <ReactMarkdown remarkPlugins={[[remarkGfm, {singleTilde: false}]]}>
+                                            {proposalDescription}
+                                        </ReactMarkdown>
+                                    </Typography>
                                     
                                     <Box sx={{ alignItems: 'right', textAlign: 'right',p:1}}>
                                         {/*
@@ -487,13 +489,13 @@ function RenderGovernanceTable(props:any) {
                                             <GitHubIcon sx={{mr:1}} /> GIST
                                         </Button>
                                     </Box>
-                                </>
+                                </Box>
                                 :
                                 <>
                                     {thisitem.account?.descriptionLink &&
-                                        <Box >
+                                        <>
                                             <Typography variant='caption'>{thisitem.account?.descriptionLink}</Typography>
-                                        </Box>
+                                        </>
                                     }
                                 </>
                             }
@@ -1096,6 +1098,7 @@ export function GovernanceView(props: any) {
                 const programId = new PublicKey(GOVERNANCE_PROGRAM_ID);
 
                 const ownerRecordsbyOwner = await getTokenOwnerRecordsByOwner(connection, programId, publicKey);
+                //console.log("ownerRecordsbyOwner: "+JSON.stringify(ownerRecordsbyOwner))
                 // check if part of this realm
                 let pcp = false;
                 let partOf = null;
@@ -1112,7 +1115,7 @@ export function GovernanceView(props: any) {
 
                 const grealm = await getRealm(new Connection(THEINDEX_RPC_ENDPOINT), new PublicKey(governanceToken?.governance || governanceToken))
                 setRealm(grealm);
-                console.log("B realm: "+JSON.stringify(grealm));
+                //console.log("B realm: "+JSON.stringify(grealm));
 
                 const realmPk = grealm.pubkey;
 
