@@ -39,6 +39,7 @@ import {
 import ExplorerView from '../utils/grapeTools/Explorer';
 import moment from 'moment';
 
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import FileOpenIcon from '@mui/icons-material/FileOpen';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
@@ -807,17 +808,38 @@ function RenderGovernanceTable(props:any) {
                 <TableCell  align="center">
                     <Typography variant="h6">
                         <Tooltip title={
-                            
                             <>
                             {thisGovernance?.account?.config?.maxVotingTime ?
                                 `Ending ${moment.unix(thisitem.account?.votingAt.toNumber()+thisGovernance?.account?.config?.maxVotingTime).fromNow()}`
                             :
-                                `Status`
-                            }    
+                                <>
+                                {thisitem.account?.votingCompletedAt ?
+                                    <>{`Started: ${thisitem.account?.votingAt && (moment.unix((thisitem.account?.votingAt).toNumber()).format("MMMM Da, YYYY, h:mm a"))} - Ended: ${thisitem.account?.votingAt && (moment.unix((thisitem.account?.votingCompletedAt).toNumber()).format("MMMM Da, YYYY, h:mm a"))}`}</>
+                                :
+                                    `Created: ${thisitem.account?.votingAt && (moment.unix((thisitem.account?.votingAt).toNumber()).format("MMMM D, YYYY, h:mm a"))}`
+                                }
+                                </>
+                            } 
+
                             </>
                             }>
-                            <Button sx={{color:'white',textTransform:'none'}}>
+                            
+                            <Button sx={{borderRadius:'17px',color:'white',textTransform:'none'}}>
                                 {GOVERNANNCE_STATE[thisitem.account?.state]}
+                                    <>
+                                    {thisitem.account?.votingCompletedAt ?
+                                        <><CheckCircleOutlineIcon sx={{ fontSize:"small", color:"green",ml:1}} /></>
+                                    :
+                                        <>
+                                        { thisitem.account?.state === 2 ?
+                                            <TimerIcon sx={{ fontSize:"small",ml:1}} />
+                                        
+                                        : 
+                                            <CancelOutlinedIcon sx={{ fontSize:"small", color:"red",ml:1}} />
+                                        }
+                                        </>
+                                    }
+                                    </>
                             </Button>
                         </Tooltip>
                     </Typography>
@@ -861,10 +883,6 @@ function RenderGovernanceTable(props:any) {
                                 <TableCell align="center" sx={{width:"1%"}}><Typography variant="caption">Yes</Typography></TableCell>
                                 <TableCell align="center" sx={{width:"1%"}}><Typography variant="caption">No</Typography></TableCell>
                                 <TableCell align="center" sx={{width:"1%"}}><Typography variant="caption">Status</Typography></TableCell>
-                                {/*
-                                <TableCell align="center"><Typography variant="caption">Ending</Typography></TableCell>
-                                */}
-                                <TableCell align="center"><Typography variant="caption">Vote</Typography></TableCell>
                                 <TableCell align="center"><Typography variant="caption">Details</Typography></TableCell>
                                 
                             </TableRow>
@@ -986,35 +1004,6 @@ function RenderGovernanceTable(props:any) {
                                                 }
                                             </TableCell>
                                             <GetProposalStatus item={item}/>
-                                            <TableCell align="center">
-                                                <Typography variant="caption">
-                                                    {item.account?.votingCompletedAt ?
-                                                    (
-                                                        <Typography variant="caption">
-                                                            <Tooltip title={`Started: ${item.account?.votingAt && (moment.unix((item.account?.votingAt).toNumber()).format("MMMM Da, YYYY, h:mm a"))} - Ended: ${item.account?.votingAt && (moment.unix((item.account?.votingCompletedAt).toNumber()).format("MMMM Da, YYYY, h:mm a"))}`}>
-                                                                <Button sx={{color:'white',borderRadius:'17px'}} href={`https://realms.today/dao/${governanceToken?.governanceVanityUrl || governanceToken?.governance || governanceToken}/proposal/${item?.pubkey}`} target='_blank'>
-                                                                    {item.account?.votingAt && (moment.unix((item.account?.votingCompletedAt).toNumber()).format("MMMM D, YYYY"))}
-                                                                </Button>
-                                                            </Tooltip>
-                                                        </Typography>
-                                                    ): (<>
-                                                        { item.account?.state === 2 ?
-                                                            <Tooltip title={`Started: ${item.account?.votingAt && (moment.unix((item.account?.votingAt).toNumber()).format("MMMM Da, YYYY, h:mm a"))}`}>
-                                                                <Button sx={{color:'white',borderRadius:'17px'}} href={`https://realms.today/dao/${governanceToken?.governanceVanityUrl || governanceToken?.governance || governanceToken}/proposal/${item?.pubkey}`} target='_blank'>
-                                                                    <TimerIcon sx={{ fontSize:"small"}} />
-                                                                </Button>
-                                                            </Tooltip>
-                                                        : 
-                                                            <Tooltip title={`Started: ${item.account?.votingAt && (moment.unix((item.account?.votingAt).toNumber()).format("MMMM Da, YYYY, h:mm a"))}`}>
-                                                                <Button sx={{color:'white',borderRadius:'17px'}} href={`https://realms.today/dao/${governanceToken?.governanceVanityUrl || governanceToken?.governance || governanceToken}/proposal/${item?.pubkey}`} target='_blank'>
-                                                                    <CancelOutlinedIcon sx={{ fontSize:"small", color:"red"}} />
-                                                                </Button>
-                                                            </Tooltip>
-                                                        }
-                                                        </>
-                                                    )}
-                                                </Typography>
-                                            </TableCell>
                                             <TableCell align="center">
                                                 <GetParticipants item={item} />
                                             </TableCell>
