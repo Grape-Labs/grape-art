@@ -149,7 +149,7 @@ export default function ExplorerView(props:any){
             fetchProfilePicture();
             fetchSolanaDomain();
         }
-    }, [showSolanaProfile]);
+    }, [showSolanaProfile, address]);
 
     return (
         <>
