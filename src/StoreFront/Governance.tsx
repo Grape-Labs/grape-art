@@ -824,7 +824,7 @@ function RenderGovernanceTable(props:any) {
                             </>
                             }>
                             
-                            <Button sx={{borderRadius:'17px',color:'white',textTransform:'none'}}>
+                            <Button sx={{borderRadius:'17px',color:'inherit',textTransform:'none'}}>
                                 {GOVERNANNCE_STATE[thisitem.account?.state]}
                                     <>
                                     {thisitem.account?.votingCompletedAt ?

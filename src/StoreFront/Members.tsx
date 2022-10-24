@@ -33,6 +33,8 @@ import {
   CircularProgress,
   LinearProgress,
 } from '@mui/material/';
+
+import ExplorerView from '../utils/grapeTools/Explorer';
 import { getProfilePicture } from '@solflare-wallet/pfp';
 import { findDisplayName } from '../utils/name-service';
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
@@ -190,153 +192,6 @@ function RenderGovernanceMembersTable(props:any) {
         )
     }
     
-    const ProfilePicture = (props:any) => {
-        const participating = props.participating;
-        const [address, setAddress] = React.useState(props.address);
-        const [loadingpicture, setLoadingPicture] = React.useState(false);
-        const [solanaDomain, setSolanaDomain] = React.useState(null);
-        const [profilePictureUrl, setProfilePictureUrl] = React.useState(null);
-        const [hasProfilePicture, setHasProfilePicture] = React.useState(false);
-        const countRef = React.useRef(0);
-        const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
-        
-        const fetchProfilePicture = async () => {
-            setLoadingPicture(true);  
-                try{
-                    const { isAvailable, url } = await getProfilePicture(ggoconnection, new PublicKey(address));
-                    
-                    let img_url = url;
-                    if (url)
-                        img_url = url.replace(/width=100/g, 'width=256');
-                    setProfilePictureUrl(img_url);
-                    setHasProfilePicture(isAvailable);
-                    countRef.current++;
-                }catch(e){}
-            setLoadingPicture(false);
-        }
-
-        const fetchSolanaDomain = async () => {
-            
-            console.log("fetching tryGetName: "+address);
-            let found_cardinal = false;
-            //const cardinalResolver = new CardinalTwitterIdentityResolver(ggoconnection);
-            try{
-                //const cardinal_registration = await cardinalResolver.resolve(new PublicKey(address));
-                //const identity = await cardinalResolver.resolveReverse(address);
-                //console.log("identity "+JSON.stringify(cardinal_registration))
-                const cardinal_registration = await tryGetName(
-                    ggoconnection, 
-                    new PublicKey(address)
-                );
-
-                if (cardinal_registration){
-                    found_cardinal = true;
-                    console.log("cardinal_registration: "+JSON.stringify(cardinal_registration));
-
-                    setSolanaDomain(cardinal_registration[0]);
-                    const url = `${TWITTER_PROXY}https://api.twitter.com/2/users/by&usernames=${cardinal_registration[0].slice(1)}&user.fields=profile_image_url,public_metrics`;
-                    const response = await axios.get(url);
-                    //const twitterImage = response?.data?.data[0]?.profile_image_url;
-                    if (response?.data?.data[0]?.profile_image_url){
-                        setProfilePictureUrl(response?.data?.data[0]?.profile_image_url);
-                        setHasProfilePicture(true);
-                    }
-                }
-            }catch(e){
-                console.log("ERR: "+e);
-            }
-
-            if (!found_cardinal){
-                const domain = await findDisplayName(ggoconnection, address);
-                if (domain) {
-                    if (domain[0] !== address) {
-                        setSolanaDomain(domain[0]);
-                    }
-                }
-            }
-        };
-
-        
-        React.useEffect(() => {    
-            
-            if (!loadingpicture){
-                //const interval = setTimeout(() => {
-                    if (address){
-                        fetchProfilePicture();
-                        //if (participating)
-                            fetchSolanaDomain();
-                        //else
-                        //    setSolanaDomain(trimAddress(address, 6))
-                    }
-                //}, 500);
-            }
-        }, []);
-        
-        if (loadingpicture){
-            return (
-                <Grid container direction="row">
-                    <Grid item>
-                        <Avatar alt={address} sx={{ width: 30, height: 30, bgcolor: 'rgb(0, 0, 0)' }}>
-                            <CircularProgress size="1rem" />
-                        </Avatar>
-                    </Grid>
-                    <Grid item sx={{ml:1}}>
-                        {trimAddress(address,6)}
-                    </Grid>
-                </Grid>
-            )
-        }else{
-            
-            if (hasProfilePicture){
-                return (  
-                    <Grid container direction="row">
-                        <Grid item>
-                            <Avatar alt={address} src={profilePictureUrl} sx={{ width: 30, height: 30, bgcolor: 'rgb(0, 0, 0)' }}>
-                                {address.substr(0,2)}
-                            </Avatar>
-                        </Grid>
-                        <Grid item sx={{ml:1}}>
-                        {solanaDomain || trimAddress(address,6)}
-                        </Grid>
-                    </Grid>
-                );
-            
-            } else{
-                return (
-                    <>
-                    {jsNumberForAddress(address) ?
-                        <Grid container direction="row">
-                            <Grid item alignItems="center">
-                                <Jazzicon diameter={30} seed={jsNumberForAddress(address)} />
-                                {/*
-                                <DisplayAddress address={new PublicKey(address)} connection={ggoconnection} />
-                                */}
-                            </Grid>
-                            <Grid item  alignItems="center" sx={{ml:1}}>
-                                {solanaDomain || trimAddress(address,6)}
-                            </Grid>
-                        </Grid>
-                    :
-                        <Grid container direction="row">
-                            <Grid item alignItems="center">
-                                <Jazzicon diameter={30} seed={Math.round(Math.random() * 10000000)} />
-                                {/*
-                                <DisplayAddress address={new PublicKey(address)} connection={ggoconnection} />
-                                */}
-                            </Grid>
-                            <Grid item  alignItems="center" sx={{ml:1}}>
-                                {solanaDomain || trimAddress(address,6)}
-                            </Grid>
-                        </Grid>
-                    }
-                    </>
-                    
-                );
-            }
-        }
-    }
-
-    
     return (
         <Table>
             <TableContainer component={Paper} sx={{background:'none'}}>
@@ -366,7 +221,7 @@ function RenderGovernanceMembersTable(props:any) {
                                     <TableRow key={index} sx={{borderBottom:"none"}}>
                                         <TableCell>
                                             <Typography variant="h6">
-                                                <ProfilePicture address={item.account.governingTokenOwner.toBase58()} participating={participating} />
+                                                <ExplorerView showSolanaProfile={true} grapeArtProfile={true} address={item.account.governingTokenOwner.toBase58()} type='address' shorten={8} hideTitle={false} style='text' color='white' fontSize='16px' />
                                             </Typography>
                                         </TableCell>
                                         {/*
