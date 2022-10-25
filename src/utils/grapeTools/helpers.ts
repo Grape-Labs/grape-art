@@ -1,3 +1,4 @@
+import React from "react";
 import { BN, web3 } from '@project-serum/anchor';
 import { Connection, PublicKey, Transaction, LAMPORTS_PER_SOL } from '@solana/web3.js'
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
@@ -5,6 +6,7 @@ import {
   GRAPE_RPC_ENDPOINT,
   THEINDEX_RPC_ENDPOINT,
   PROXY,
+  GRAPE_COLLECTIONS_DATA
 } from './constants';
 
 import {

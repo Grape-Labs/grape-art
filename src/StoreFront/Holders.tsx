@@ -116,7 +116,7 @@ TablePaginationActions.propTypes = {
     rowsPerPage: PropTypes.number.isRequired,
 };
 
-function TablePaginationActions(props) {
+function TablePaginationActions(props:any) {
     const theme = useTheme();
     const { count, page, rowsPerPage, onPageChange } = props;
   
@@ -360,14 +360,19 @@ function RenderHoldersTable(props:any) {
                                         <TableCell>
                                             <Typography variant="h6">
                                                 {(ValidateCurve(item.owner?.address || item.owner)) ?
-                                                    <Chip
-                                                        label="True"
-                                                        color="success" variant="outlined"
-                                                        icon={<CheckCircleOutlineIcon />}/>
+                                                    <Tooltip title='This is a valid wallet address (on a Ed25519 curve)'>
+                                                        <Chip
+                                                            label="True"
+                                                            color="success" 
+                                                            variant="outlined"
+                                                            icon={<CheckCircleOutlineIcon />}/>
+                                                    </Tooltip>
                                                 :
-                                                    <Tooltip title='This address can be a Marketplace or a Staking program holding this NFT'>
+                                                    <Tooltip title='This address can be an Escrow of a Marketplace or Staking program holding this NFT'>
                                                         <Chip
                                                             label="False"
+                                                            color="error"
+                                                            variant="outlined" 
                                                             icon={<ErrorOutlineIcon />}/>
                                                     </Tooltip>
                                                 }

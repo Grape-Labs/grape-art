@@ -32,7 +32,8 @@ import {
 } from '@mui/material';
 
 import {
-    GRAPE_PROFILE
+    GRAPE_PROFILE,
+    GRAPE_COLLECTIONS_DATA
 } from '../grapeTools/constants';
 
 import { ValidateCurve } from '../grapeTools/WalletAddress';
@@ -144,6 +145,47 @@ export default function ExplorerView(props:any){
         }
     };
 
+    function GetEscrowName(props:any){
+        const thisAddress = props.address;
+        const [escrowName, setEscrowName] = React.useState(null);
+      
+        const fetchVerifiedAuctionHouses = async() => {
+            try{
+                const url = GRAPE_COLLECTIONS_DATA+'verified_auctionHouses.json';
+                const response = await window.fetch(url, {
+                    method: 'GET',
+                    headers: {
+                    }
+                  });
+                  const string = await response.text();
+                  const json = string === "" ? {} : JSON.parse(string);
+
+                  for (let itemAuctionHouse of json){
+                    //console.log("itemAuctionHouse: " + itemAuctionHouse.address + " vs " + thisAddress)
+                    if (itemAuctionHouse.address === thisAddress){
+                      setEscrowName(itemAuctionHouse.name);
+                    }
+                  }
+                
+                return json;
+            } catch(e){
+                console.log("ERR: "+e)
+                return null;
+            }
+        }
+      
+        React.useEffect(() => {   
+            if (thisAddress)
+                fetchVerifiedAuctionHouses();
+        }, [thisAddress]);
+          
+        return (
+            <>
+                {escrowName && ` (${escrowName})`}
+            </>
+        );
+    }
+
     React.useEffect(() => {   
         if (showSolanaProfile){
 
@@ -201,6 +243,12 @@ export default function ExplorerView(props:any){
                                     }
                                 </>
                             }
+                        </>
+                    }
+
+                    {!ValidateCurve(address) &&
+                        <>
+                            <GetEscrowName address={address} />
                         </>
                     }
                     

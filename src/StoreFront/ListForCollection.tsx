@@ -324,6 +324,7 @@ export default function ListForCollectionView(props: any){
                 onClick={() => handleClickOpenPreviewDialog(item.decoded?.mint)}
                 //component={Link} to={`${GRAPE_PREVIEW}${item.decoded?.mint}`}
                 size="large"
+                color='inherit'
                 variant="outlined"
                 sx={{
                     borderRadius: '17px',
