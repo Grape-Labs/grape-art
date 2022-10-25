@@ -181,7 +181,7 @@ export default function ExplorerView(props:any){
           
         return (
             <>
-                {escrowName && ` (${escrowName})`}
+                {escrowName && <Typography variant='caption'>({escrowName})</Typography>}
             </>
         );
     }
