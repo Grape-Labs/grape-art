@@ -900,7 +900,7 @@ function RenderGovernanceTable(props:any) {
                                     {item?.pubkey && item?.account &&
                                         <TableRow key={index} sx={{borderBottom:"none"}}>
                                             <TableCell>
-                                                <Typography variant="h6">
+                                                <Typography variant="h6" color={(item.account?.state === 2) ? `white` : `gray`}>
                                                 {item.account?.name}
                                                 {item.account?.descriptionLink && 
                                                     <Tooltip title={item.account?.descriptionLink}>
@@ -1052,9 +1052,9 @@ function RenderGovernanceTable(props:any) {
 export function GovernanceView(props: any) {
     const governanceToken = props.governanceToken;
     const [loading, setLoading] = React.useState(false);
-    const [tokenMap, setTokenMap] = React.useState(null);
     const [memberMap, setMemberMap] = React.useState(null);
     const [realm, setRealm] = React.useState(null);
+    const [tokenMap, setTokenMap] = React.useState(null);
     const [tokenArray, setTokenArray] = React.useState(null);
     const connection = new Connection(GRAPE_RPC_ENDPOINT);
     const { publicKey } = useWallet();

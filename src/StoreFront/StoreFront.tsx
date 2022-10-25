@@ -2053,7 +2053,7 @@ export function StoreFrontView(this: any, props: any) {
                     */}
                     
                     
-                    <Tabs variant="scrollable" scrollButtons="auto" value={tabValue} onChange={handleTabChange} aria-label="grape community tabs" sx={{pl:2,color:'white'}} className="grape-community-tab">
+                    <Tabs color='inherit' variant="scrollable" scrollButtons="auto" value={tabValue} onChange={handleTabChange} aria-label="grape community tabs" sx={{pl:2,color:'white'}} className="grape-community-tab">
                         {collectionAuthority?.tokenType && collectionAuthority?.tokenType === 'SPL' &&
                             <Tab icon={<SolCurrencyIcon />} aria-label="Token" value={NavPanel.Token} sx={{color:'white'}} title="Tokenized Community" />
                         }

@@ -34,6 +34,7 @@ import {
   LinearProgress,
 } from '@mui/material/';
 
+import { formatAmount, getFormattedNumberToLocale } from '../utils/grapeTools/helpers'
 import ExplorerView from '../utils/grapeTools/Explorer';
 import { getProfilePicture } from '@solflare-wallet/pfp';
 import { findDisplayName } from '../utils/name-service';
@@ -147,6 +148,7 @@ function TablePaginationActions(props) {
   }
 
 function RenderGovernanceMembersTable(props:any) {
+    const tokenMap = props.tokenMap;
     const [loading, setLoading] = React.useState(false);
     //const [proposals, setProposals] = React.useState(props.proposals);
     const participating = props.participating;
@@ -199,11 +201,9 @@ function RenderGovernanceMembersTable(props:any) {
                     <TableHead>
                         <TableRow>
                             <TableCell><Typography variant="caption">Member</Typography></TableCell>
-                            {/*
                             <TableCell><Typography variant="caption">Votes</Typography></TableCell>
-                            */}
                             <TableCell><Typography variant="caption">Votes Cast</Typography></TableCell>
-                            <TableCell><Typography variant="caption">Proposals</Typography></TableCell>
+                            {/*<TableCell><Typography variant="caption">Outstanding Proposals</Typography></TableCell>*/}
                             <TableCell><Typography variant="caption"></Typography></TableCell>
                             
                         </TableRow>
@@ -224,24 +224,23 @@ function RenderGovernanceMembersTable(props:any) {
                                                 <ExplorerView showSolanaProfile={true} grapeArtProfile={true} address={item.account.governingTokenOwner.toBase58()} type='address' shorten={8} hideTitle={false} style='text' color='white' fontSize='16px' />
                                             </Typography>
                                         </TableCell>
-                                        {/*
                                         <TableCell align="center" >
                                             <Typography variant="h6">
-                                                {getFormattedNumberToLocale(formatAmount(parseInt(item.account.governingTokenDepositAmount.toNumber())/Math.pow(10, +tokenDecimals)))}
+                                               {getFormattedNumberToLocale(formatAmount(parseInt(item.account.governingTokenDepositAmount.toNumber())/Math.pow(10, tokenMap.get(item.account.governingTokenMint?.toBase58())?.decimals || 0)))}
                                             </Typography>
                                         </TableCell>
-                                        */}
                                         <TableCell align="center" >
                                             <Typography variant="h6">
                                                 {item.account.totalVotesCount}
                                             </Typography>
                                         </TableCell>
+                                        {/*
                                         <TableCell align="center" >
                                             <Typography variant="h6">
                                                 {item.account.outstandingProposalCount}
                                             </Typography>
                                         </TableCell>
-
+                                        */}
                                         <TableCell>
                                             <Typography variant="h6">
                                                
@@ -338,11 +337,32 @@ export function MembersView(props: any) {
     const [participating, setParticipating] = React.useState(false)
     const [participatingRealm, setParticipatingRealm] = React.useState(null)
     const GOVERNANCE_PROGRAM_ID = 'GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw';
+    const [tokenMap, setTokenMap] = React.useState(null);
+    const [tokenArray, setTokenArray] = React.useState(null);
+    
+    const getTokens = async () => {
+        const tarray:any[] = [];
+        try{
+            const tlp = await new TokenListProvider().resolve().then(tokens => {
+                const tokenList = tokens.filterByChainId(ENV.MainnetBeta).getList();
+                setTokenMap(tokenList.reduce((map, item) => {
+                    tarray.push({address:item.address, decimals:item.decimals})
+                    map.set(item.address, item);
+                    return map;
+                },new Map()));
+                setTokenArray(tarray);
+            });
+        } catch(e){console.log("ERR: "+e)}
+    }
 
     const getGovernanceMembers = async () => {
         if (!loading){
             setLoading(true);
             try{
+                
+                if (!tokenArray)
+                    await getTokens();
+                
                 const programId = new PublicKey(GOVERNANCE_PROGRAM_ID);
                 
                 console.log("with governance: "+collectionAuthority.governance);
@@ -366,9 +386,11 @@ export function MembersView(props: any) {
 
                 //console.log("realm: "+JSON.stringify(realm));
                 const trecords = await getAllTokenOwnerRecords(new Connection(THEINDEX_RPC_ENDPOINT), grealm.owner, realmPk)
+                //console.log("trecords: "+JSON.stringify(trecords));
 
                 //let sortedResults = trecords.sort((a,b) => (a.account?.outstandingProposalCount < b.account?.outstandingProposalCount) ? 1 : -1);
-                const sortedResults = trecords.sort((a,b) => (a.account?.totalVotesCount < b.account?.totalVotesCount) ? 1 : -1);
+                //const sortedResults = trecords.sort((a,b) => (a.account?.totalVotesCount < b.account?.totalVotesCount) ? 1 : -1);
+                const sortedResults = trecords.sort((a,b) => (a.account?.governingTokenDepositAmount.toNumber() < b.account?.governingTokenDepositAmount.toNumber()) ? 1 : -1);
                 
                 var memberArray = new Array();
                 for (var member of sortedResults){
@@ -444,7 +466,7 @@ export function MembersView(props: any) {
                                 </Typography>
                             </>
                         }
-                        <RenderGovernanceMembersTable members={members} participating={participating} />
+                        <RenderGovernanceMembersTable members={members} participating={participating} tokenMap={tokenMap} />
                     </Box>
                                 
                 );
