@@ -59,7 +59,7 @@ import TwitterIcon from '@mui/icons-material/Twitter';
 import TelegramIcon from '@mui/icons-material/Telegram';
 import InstagramIcon from '@mui/icons-material/Instagram';
 
-
+import CollectionsBookmarkIcon from '@mui/icons-material/CollectionsBookmark';
 import ForumIcon from '@mui/icons-material/Forum';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import StorefrontIcon from '@mui/icons-material/Storefront';
@@ -449,6 +449,7 @@ const MainMenu = (props:any) => {
 enum NavPanel {
     Token,
     Marketplace,
+    Collectors,
     Holders,
     Governance,
     Members,
@@ -2061,6 +2062,9 @@ export function StoreFrontView(this: any, props: any) {
                             <Tab icon={<StorefrontIcon />} aria-label="Marketplace" value={NavPanel.Marketplace} sx={{color:'white'}} title="Marketplace" />
                         }
                         {collectionAuthority?.tokenType && collectionAuthority?.tokenType === 'NFT' &&
+                            <Tab icon={<CollectionsBookmarkIcon />} aria-label="Collectors" value={NavPanel.Collectors} sx={{color:'white'}} title="Collectors" />
+                        }
+                        {collectionAuthority?.tokenType && collectionAuthority?.tokenType === 'NFT' &&
                             <Tab icon={<PeopleIcon />} aria-label="Holders" value={NavPanel.Holders} sx={{color:'white'}} title="Holders" />
                         }
                         {collectionAuthority?.governance &&
@@ -2070,14 +2074,16 @@ export function StoreFrontView(this: any, props: any) {
                             <Tab icon={<HowToRegIcon />} aria-label="Members" value={NavPanel.Members} sx={{color:'white'}} title="Members" />
                         }
 
+
                         <Tab icon={<RateReviewIcon />} aria-label="Topics" disabled={true} value={NavPanel.Topics} sx={{color:'white'}} />
+                        {/*
                         <Tab icon={<ForumIcon />} aria-label="Chat" disabled={true} value={NavPanel.Chat} sx={{color:'white'}} />
                         <Tab icon={<WorkIcon />} aria-label="Work" disabled={true} value={NavPanel.Work} sx={{color:'white'}} />
-
+                        */}
                         
 
                         {collectionAuthority?.links?.twitter &&
-                            <Tab icon={<TwitterIcon />} aria-label="Holders" value={NavPanel.SocialFeed} sx={{color:'white'}} title="Twitter Feed" />
+                            <Tab icon={<TwitterIcon />} aria-label="Twitter" value={NavPanel.SocialFeed} sx={{color:'white'}} title="Twitter Feed" />
                         }
                         
                     </Tabs>
@@ -2098,10 +2104,19 @@ export function StoreFrontView(this: any, props: any) {
                         </Box>
                     </TabPanel>
 
+                    
+                    <TabPanel value={tabValue} index={NavPanel.Collectors}>
+                        <Box> 
+                            {collectionAuthority &&  
+                                <HoldersView collectionAuthority={collectionAuthority} mode={1} />
+                            }
+                        </Box>
+                    </TabPanel>
+
                     <TabPanel value={tabValue} index={NavPanel.Holders}>
                         <Box> 
                             {collectionAuthority &&  
-                                <HoldersView collectionAuthority={collectionAuthority} />
+                                <HoldersView collectionAuthority={collectionAuthority} mode={0} />
                             }
                         </Box>
                     </TabPanel>

@@ -146,6 +146,16 @@ export default function ExplorerView(props:any){
 
     React.useEffect(() => {   
         if (showSolanaProfile){
+
+            {(shorten && shorten > 0) ? 
+                setSolanaDomain(trimAddress(address,shorten))
+            : 
+                setSolanaDomain(address)
+            } 
+
+            setHasProfilePicture(null);
+            setProfilePictureUrl(null);
+
             fetchProfilePicture();
             fetchSolanaDomain();
         }

@@ -39,6 +39,7 @@ import {
   CircularProgress,
   LinearProgress,
   Dialog,
+  Chip,
   DialogActions,
   DialogContent,
   ButtonGroup
@@ -46,9 +47,12 @@ import {
 
 import ExplorerView from '../utils/grapeTools/Explorer';
 import { PreviewView } from "../Preview/Preview";
+import PreviewDialogView from "./PreviewDialog";
 import { getProfilePicture } from '@solflare-wallet/pfp';
 import { findDisplayName } from '../utils/name-service';
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 
 import moment from 'moment';
 
@@ -175,6 +179,7 @@ function TablePaginationActions(props) {
   }
 
 function RenderHoldersTable(props:any) {
+    const mode = props.mode || 0;
     const [loading, setLoading] = React.useState(false);
     //const [proposals, setProposals] = React.useState(props.proposals);
     const nfts = props.nfts;
@@ -189,6 +194,9 @@ function RenderHoldersTable(props:any) {
     const { navigation, open } = useDialectUiId<ChatNavigationHelpers>(GRAPE_BOTTOM_CHAT_ID);
     const [openPreviewDialog, setOpenPreviewDialog] = React.useState(false);
     
+    console.log("fetching mode: "+mode);
+    console.log("with: "+JSON.stringify(nfts));
+
     /*
     const holdercolumns: GridColDef[] = [
         { field: 'holder', headerName: 'Holder', width: 70, hide: false,
@@ -272,11 +280,23 @@ function RenderHoldersTable(props:any) {
                         <TableRow>
                             <TableCell><Typography variant="caption">Holder</Typography></TableCell>
                             {/*<TableCell><Typography variant="caption">Holding</Typography></TableCell>*/}
-                            <TableCell><Typography variant="caption">Image</Typography></TableCell>
-                            <TableCell><Typography variant="caption">Name</Typography></TableCell>
-                            <TableCell><Typography variant="caption">Mint Address</Typography></TableCell>
+                            
+                            {mode === 0 ?
+                                <>
+                                <TableCell><Typography variant="caption">Image</Typography></TableCell>
+                                <TableCell><Typography variant="caption">Name</Typography></TableCell>
+                                <TableCell><Typography variant="caption">Mint Address</Typography></TableCell>
+                                </>
+                            :
+                                <>
+                                <TableCell>Holding</TableCell>
+                                <TableCell>Collectible</TableCell>
+                                </>
+                            }
                             <TableCell><Typography variant="caption">Curve</Typography></TableCell>
-                            <TableCell></TableCell>
+                            {mode === 0 &&
+                                <TableCell></TableCell>
+                            }
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -287,87 +307,91 @@ function RenderHoldersTable(props:any) {
                                 : nfts
                             ).map((item:any, index:number) => (
                             <>
-                                {item?.owner?.address &&
+                                {(item?.owner?.address || item?.owner) &&
                                     <TableRow key={index} sx={{borderBottom:"none"}}>
                                         <TableCell>
                                             <Typography variant="h6">
-                                                <ExplorerView showSolanaProfile={true} grapeArtProfile={true} address={item.owner?.address || item.owner} type='address' shorten={8} hideTitle={false} style='text' color='white' fontSize='16px' />
+                                                {(ValidateCurve(item.owner?.address || item?.owner)) ?
+                                                    <ExplorerView showSolanaProfile={true} grapeArtProfile={true} address={item.owner?.address || item?.owner} type='address' shorten={8} hideTitle={false} style='text' color='white' fontSize='16px' />
+                                                :
+                                                    <ExplorerView address={item.owner?.address || item?.owner} type='address' shorten={8} hideTitle={false} style='text' color='white' fontSize='16px' />
+                                                }
                                             </Typography>
                                         </TableCell>
                                         
-                                        <TableCell align="center" >
-                                            <Typography variant="h6">
-                                                <Avatar
-                                                    sx={{backgroundColor:'#222'}}
-                                                    src={item.image}
-                                                    alt={item.name}
-                                                />
-                                            </Typography>
-                                        </TableCell>
-                                        {/*
-                                        <TableCell align="center" >
-                                            <Typography variant="h6">
-                                                {item?.count}
-                                            </Typography>
-                                        </TableCell>
-                                        */}
-                                        <TableCell align="center" >
-                                            <Typography variant="h6">
-                                                {item.name}
-                                            </Typography>
-                                        </TableCell>
+                                        {mode === 0 ?
+                                            <>
+                                                <TableCell align="center" >
+                                                    <Typography variant="h6">
+                                                        <Avatar
+                                                            sx={{backgroundColor:'#222'}}
+                                                            src={item.image}
+                                                            alt={item.name}
+                                                        />
+                                                    </Typography>
+                                                </TableCell>
+                                                <TableCell align="center" >
+                                                    <Typography variant="h6">
+                                                        {item.name}
+                                                    </Typography>
+                                                </TableCell>
 
-                                        <TableCell>
-                                            <Typography variant="h6">
-                                                {item.mintAddress}
-                                            </Typography>
-                                        </TableCell>
+                                                <TableCell>
+                                                    <Typography variant="h6">
+                                                        <ExplorerView address={item.mintAddress || item.mint} type='address' shorten={0} hideTitle={false} style='text' color='white' fontSize='16px' />
+                                                    </Typography>
+                                                </TableCell>
+                                            </>
+                                        :
+                                            <>
+                                            <TableCell align="center" >
+                                                <Typography variant="h6">
+                                                    {item?.count}
+                                                </Typography>
+                                            </TableCell>
+                                            <TableCell align="center" >
+                                                <Typography variant="h6">
+                                                    Coming soon...
+                                                </Typography>
+                                            </TableCell>
+                                            </>
+                                        }
 
                                         <TableCell>
                                             <Typography variant="h6">
                                                 {(ValidateCurve(item.owner?.address || item.owner)) ?
-                                                    <>true</>
-                                                    :
-                                                    <>false</>
+                                                    <Chip
+                                                        label="True"
+                                                        color="success" variant="outlined"
+                                                        icon={<CheckCircleOutlineIcon />}/>
+                                                :
+                                                    <Tooltip title='This address can be a Marketplace or a Staking program holding this NFT'>
+                                                        <Chip
+                                                            label="False"
+                                                            icon={<ErrorOutlineIcon />}/>
+                                                    </Tooltip>
                                                 }
+                                                
                                             </Typography>
                                         </TableCell>
 
-                                        <TableCell align="center"> 
-                                            <Tooltip title='View Mint'>
-                                                <Button 
-                                                    component={Link} to={`${GRAPE_PREVIEW}${item.mintAddress}`}
-                                                    sx={{
-                                                        borderRadius: '24px',color:'white'
-                                                    }}
-                                                >
-                                                    view
-                                                </Button>
-                                            </Tooltip>
-                                        </TableCell>
-
-                                        {/*
-                                        <BootstrapDialog 
-                                            fullWidth={true}
-                                            maxWidth={"lg"}
-                                            open={openPreviewDialog} onClose={handleClosePreviewDialog}
-                                            PaperProps={{
-                                                style: {
-                                                    background: '#13151C',
-                                                    border: '1px solid rgba(255,255,255,0.05)',
-                                                    borderTop: '1px solid rgba(255,255,255,0.1)',
-                                                    borderRadius: '20px'
-                                                }
-                                            }}
-                                        >
-                                            <DialogContent>
-                                                <PreviewView handlekey={item.mintAddress} />
-                                            </DialogContent>
-                                            <DialogActions>
-                                                <Button variant="text" onClick={handleClosePreviewDialog}>Close</Button>
-                                            </DialogActions>
-                                        </BootstrapDialog>
-                                        */}
+                                        {mode === 0 &&
+                                            <TableCell align="center"> 
+                                                <PreviewDialogView mint={item.mintAddress} />
+                                                {/*
+                                                <Tooltip title='View Mint'>
+                                                    <Button 
+                                                        component={Link} to={`${GRAPE_PREVIEW}${item.mintAddress}`}
+                                                        sx={{
+                                                            borderRadius: '24px',color:'white'
+                                                        }}
+                                                    >
+                                                        view
+                                                    </Button>
+                                                </Tooltip>
+                                                */}
+                                            </TableCell>
+                                        }
                                     </TableRow>
                                 }
                             </>
@@ -406,6 +430,7 @@ function RenderHoldersTable(props:any) {
 }
 
 export function HoldersView(props: any) {
+    const mode = props.mode || 0;
     const collectionAuthority = props.collectionAuthority;
     const [loading, setLoading] = React.useState(false);
     const { connection } = useConnection();
@@ -574,7 +599,7 @@ export function HoldersView(props: any) {
                 </Box>
             )
         } else{
-            if (nfts){
+            if (nfts && uniqueHolders){
                 return (
                     <Box
                         sx={{
@@ -589,7 +614,7 @@ export function HoldersView(props: any) {
                             <Grid container>
                                 <Grid item>
                                     <Typography variant="h4">
-                                        {uniqueHolders ? <Badge badgeContent={uniqueHolders.length} max={99999} color="primary">HOLDERS</Badge>:<>HOLDERS</>}
+                                        {uniqueHolders ? <Badge badgeContent={uniqueHolders.length} max={99999} color="primary">{mode === 0 ? `HOLDERS` : `COLLECTORS`}</Badge>:<>{mode === 0 ? `HOLDERS` : `COLLECTORS`}</>}
                                     </Typography>
                                 </Grid>
                                 <Grid item xs textAlign={'right'}>
@@ -628,7 +653,11 @@ export function HoldersView(props: any) {
                                 </Grid>
                             </Grid>
                         </>
-                        <RenderHoldersTable nfts={nfts} />
+                        {mode === 0 ?
+                            <RenderHoldersTable nfts={nfts} mode={mode} />
+                        :
+                            <RenderHoldersTable nfts={uniqueHolders} mode={mode} />
+                        }
                     </Box>
                                 
                 );
