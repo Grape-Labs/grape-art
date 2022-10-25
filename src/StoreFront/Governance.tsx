@@ -904,7 +904,7 @@ function RenderGovernanceTable(props:any) {
                                                 {item.account?.name}
                                                 {item.account?.descriptionLink && 
                                                     <Tooltip title={item.account?.descriptionLink}>
-                                                        <Button sx={{ml:1,borderRadius:'17px'}}><HelpOutlineIcon sx={{ fontSize:16, color:'white' }}/></Button>
+                                                        <Button sx={{ml:1,borderRadius:'17px'}} color='inherit' ><HelpOutlineIcon sx={{ fontSize:16 }}/></Button>
                                                     </Tooltip>
                                                 }
 
