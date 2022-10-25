@@ -366,7 +366,7 @@ export default function GalleryItem(props: any){
                                                         }> 
                                                             <Button sx={{color:collectionitem?.marketplaceListing ? `white` : `gray`,borderRadius:'17px'}}>  
                                                                 <Typography variant="h6">
-                                                                {+collectionitem.listingPrice.toFixed(3)}  <SolCurrencyIcon sx={{fontSize:"16px"}} />
+                                                                    {+collectionitem.listingPrice.toFixed(2)}  <SolCurrencyIcon sx={{fontSize:"16px"}} />
                                                                 </Typography>
                                                             </Button>
                                                         
