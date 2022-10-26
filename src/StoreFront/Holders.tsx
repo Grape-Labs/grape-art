@@ -695,7 +695,7 @@ export function HoldersView(props: any) {
                                         </Button>
                                         {uniqueFileGenerated &&
                                             <>
-                                                <Tooltip title='Export unique holders'>
+                                                <Tooltip title='Export Unique Holder Snapshot'>
                                                     {/*}
                                                     <Button
                                                         variant='outlined'
@@ -739,7 +739,7 @@ export function HoldersView(props: any) {
                                         {fileGenerated &&
                                             
 <>
-                                            <Tooltip title='Export all holders'>
+                                            <Tooltip title='Export Holders Snapshot'>
                                                 {/*}
                                                 <Button
                                                     variant='outlined'
@@ -784,7 +784,7 @@ export function HoldersView(props: any) {
                                         }
 
                                         {mintListGenerated &&
-                                            <Tooltip title='Export Mint List'>
+                                            <Tooltip title='Export Mint Snapshot'>
                                                 <Button
                                                     variant='outlined'
                                                     download={`${collectionAuthority.collection || collectionAuthority.updateAuthority}_mint_list.csv`}
