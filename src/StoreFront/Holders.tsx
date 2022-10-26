@@ -669,7 +669,7 @@ export function HoldersView(props: any) {
                             <Grid container>
                                 <Grid item>
                                     <Typography variant="h4">
-                                        {uniqueHolders ? <Badge badgeContent={uniqueHolders.length} max={99999} color="primary">{mode === 0 ? `HOLDERS` : `COLLECTORS`}</Badge>:<>{mode === 0 ? `HOLDERS` : `COLLECTORS`}</>}
+                                        {uniqueHolders ? <Badge badgeContent={uniqueHolders.length} max={99999} color="success">{mode === 0 ? `HOLDERS` : `COLLECTORS`}</Badge>:<>{mode === 0 ? `HOLDERS` : `COLLECTORS`}</>}
                                     </Typography>
                                 </Grid>
                                 <Grid item xs textAlign={'right'}>
