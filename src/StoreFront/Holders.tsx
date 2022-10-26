@@ -856,7 +856,7 @@ export function HoldersView(props: any) {
                                         </Grid>
                                         
                                     </Grid>
-                                    <LinearProgress color='success' variant="determinate" value={(totalMintsOnCurve)/totalMints*100} />
+                                    <LinearProgress color={((totalMintsOnCurve)/totalMints*100) < 50 ?'error' : 'success'} variant="determinate" value={(totalMintsOnCurve)/totalMints*100} />
                                         <Typography variant='caption'>
                                             {((totalMintsOnCurve)/totalMints*100).toFixed(0)}% held on a valid wallet address (address on a Ed25519 curve)
                                         </Typography>
