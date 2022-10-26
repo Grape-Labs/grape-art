@@ -461,9 +461,10 @@ export function HoldersView(props: any) {
     const [mintListGenerated, setMintListGenerated] = React.useState(null);
     const [mintOwnerListGenerated, setMintOwnerListGenerated] = React.useState(null);
     const [uniqueFileGenerated, setUniqueFileGenerated] = React.useState(null);
-    
     const [uniqueHolders, setUniqueHolders] = React.useState(null);
     const [displayHolders, setDisplayHolders] = React.useState(null);
+    const [totalMints, setTotalMints] = React.useState(null);
+    const [totalMintsOnCurve, setTotalMintsOnCurve] = React.useState(null);
 
     const [anchorElUh, setAnchorElUh] = React.useState<null | HTMLElement>(null);
     const openUh = Boolean(anchorElUh);
@@ -560,10 +561,17 @@ export function HoldersView(props: any) {
                     let csvFile = '';
                     let csvFileUnique = '';
                     let csvFileAll = '';
+                    let totalOnCurve = 0;
+                    
                     for(const item of nfts){
                         let found = false
                         let x = 0;
                         
+                        const onCurve = ValidateCurve(item.owner?.address || item.owner);
+
+                        if (onCurve)
+                            totalOnCurve++;
+
                         if (cntr > 0){
                             csvFile += '\r\n';
                             csvFileUnique += '\r\n';
@@ -574,7 +582,7 @@ export function HoldersView(props: any) {
                             csvFileAll = 'mint,owner,curve\r\n';//,name\r\n';
                         }
                         csvFile += item.mintAddress; //+','+item.name;
-                        csvFileAll += item.mintAddress+','+item.owner.address+','+ValidateCurve(item.owner?.address || item.owner);
+                        csvFileAll += item.mintAddress+','+item.owner.address+','+onCurve;
                         
                         for (const inner of unique){
                             if (inner.owner === item.owner.address){
@@ -597,7 +605,7 @@ export function HoldersView(props: any) {
                                 name:item.name,
                                 owner:item.owner.address,
                                 image:item.image,
-                                curve:ValidateCurve(item.owner?.address || item.owner),
+                                curve:onCurve,
                                 count:1
                             })
                             display.push({
@@ -605,12 +613,17 @@ export function HoldersView(props: any) {
                                 name:item.name,
                                 owner:item.owner.address,
                                 image:item.image,
-                                curve:ValidateCurve(item.owner?.address || item.owner),
+                                curve:onCurve,
                                 count:1
                             })
                         }
+
+
                         cntr++;
                     }
+
+                    setTotalMints(cntr);
+                    setTotalMintsOnCurve(totalOnCurve);
 
                     //console.log("at item: "+csvFile);
                     const jsonCSVString = (`data:text/csv;chatset=utf-8,${csvFile}`);
@@ -798,6 +811,58 @@ export function HoldersView(props: any) {
                                     </ButtonGroup>
                                 </Grid>
                             </Grid>
+
+                            {totalMints && totalMintsOnCurve &&
+                                <Box sx={{ alignItems: 'center', textAlign: 'center',p:1}}>
+                                    <Grid container spacing={0}>
+                                        <Grid item xs={12} sm={4} md={4} key={1}>
+                                            <Box
+                                                className='grape-store-stat-item'
+                                                sx={{borderRadius:'24px',m:2,p:1}}
+                                            >
+                                                <Typography variant="body2" sx={{color:'yellow'}}>
+                                                    <>Mints</>
+                                                </Typography>
+                                                <Typography variant="h3">
+                                                    {totalMints}
+                                                </Typography>
+                                            </Box>
+                                        </Grid>
+                                        <Grid item xs={12} sm={4} md={4} key={1}>
+                                            <Box
+                                                className='grape-store-stat-item'
+                                                sx={{borderRadius:'24px',m:2,p:1}}
+                                            >
+                                                <Typography variant="body2" sx={{color:'yellow'}}>
+                                                    <>On Curve</>
+                                                </Typography>
+                                                <Typography variant="h3">
+                                                    {totalMintsOnCurve}
+                                                </Typography>
+                                            </Box>
+                                        </Grid>
+                                        <Grid item xs={12} sm={4} md={4} key={1}>
+                                            <Box
+                                                className='grape-store-stat-item'
+                                                sx={{borderRadius:'24px',m:2,p:1}}
+                                            >
+                                                <Typography variant="body2" sx={{color:'yellow'}}>
+                                                    <>Off Curve</>
+                                                </Typography>
+                                                <Typography variant="h3">
+                                                    {totalMints - totalMintsOnCurve}
+                                                </Typography>
+                                            </Box>
+                                        </Grid>
+                                        
+                                    </Grid>
+                                    <LinearProgress color='success' variant="determinate" value={(totalMintsOnCurve)/totalMints*100} />
+                                        <Typography variant='caption'>
+                                            {((totalMintsOnCurve)/totalMints*100).toFixed(0)}% held on a valid wallet address (address on a Ed25519 curve)
+                                        </Typography>
+                                </Box>
+                            }
+
                         </>
                         {mode === 0 ?
                             <RenderHoldersTable nfts={nfts} mode={mode} />
