@@ -200,8 +200,8 @@ function RenderHoldersTable(props:any) {
     const { navigation, open } = useDialectUiId<ChatNavigationHelpers>(GRAPE_BOTTOM_CHAT_ID);
     const [openPreviewDialog, setOpenPreviewDialog] = React.useState(false);
     
-    console.log("fetching mode: "+mode);
-    console.log("with: "+JSON.stringify(nfts));
+    //console.log("fetching mode: "+mode);
+    //console.log("with: "+JSON.stringify(nfts));
 
     /*
     const holdercolumns: GridColDef[] = [
@@ -459,7 +459,9 @@ export function HoldersView(props: any) {
     const [holderExport, setHolderExport] = React.useState(null);
     const [fileGenerated, setFileGenerated] = React.useState(null);
     const [mintListGenerated, setMintListGenerated] = React.useState(null);
+    const [mintOwnerListGenerated, setMintOwnerListGenerated] = React.useState(null);
     const [uniqueFileGenerated, setUniqueFileGenerated] = React.useState(null);
+    
     const [uniqueHolders, setUniqueHolders] = React.useState(null);
     const [displayHolders, setDisplayHolders] = React.useState(null);
 
@@ -556,15 +558,23 @@ export function HoldersView(props: any) {
                     const display = new Array();
                     const unique = new Array();
                     let csvFile = '';
+                    let csvFileUnique = '';
+                    let csvFileAll = '';
                     for(const item of nfts){
                         let found = false
                         let x = 0;
                         
-                        if (cntr > 0)
+                        if (cntr > 0){
                             csvFile += '\r\n';
-                        else
+                            csvFileUnique += '\r\n';
+                            csvFileAll += '\r\n';
+                        }else{
                             csvFile = 'mint\r\n';//,name\r\n';
+                            csvFileUnique = 'mint,owner,count\r\n';//,name\r\n';
+                            csvFileAll = 'mint,owner\r\n';//,name\r\n';
+                        }
                         csvFile += item.mintAddress; //+','+item.name;
+                        csvFileAll += item.mintAddress+','+item.owner.address;
                         
                         for (const inner of unique){
                             if (inner.owner === item.owner.address){
@@ -605,6 +615,9 @@ export function HoldersView(props: any) {
                     //console.log("at item: "+csvFile);
                     const jsonCSVString = (`data:text/csv;chatset=utf-8,${csvFile}`);
                     setMintListGenerated(jsonCSVString);
+
+                    const jsonCSVStringAll = (`data:text/csv;chatset=utf-8,${csvFileAll}`);
+                    setMintOwnerListGenerated(jsonCSVStringAll);
                     
                     const sortedDisplayResults = display.sort((a:any, b:any) => b.count - a.count)
 
@@ -715,10 +728,9 @@ export function HoldersView(props: any) {
                                                     }}
                                                     sx={{borderRadius:'17px'}}
                                                 >
-                                                    <MenuItem 
+                                                    <MenuItem><Button variant='text' 
                                                         download={`${collectionAuthority.collection || collectionAuthority.updateAuthority}_uniqueholders_grape.json`}
-                                                        href={uniqueFileGenerated}
-                                                        onClick={handleCloseMenuUh}><DownloadIcon />  JSON</MenuItem>
+                                                        href={uniqueFileGenerated}><DownloadIcon />  JSON</Button></MenuItem>
                                                     <MenuItem onClick={handleCloseMenuUh} disabled><DownloadIcon /> CSV</MenuItem>
                                                 </Menu>
                                             </>
@@ -760,11 +772,13 @@ export function HoldersView(props: any) {
                                                 }}
                                                 sx={{borderRadius:'17px'}}
                                             >
-                                                <MenuItem 
+                                                <MenuItem><Button variant='text'
                                                     download={`${collectionAuthority.collection || collectionAuthority.updateAuthority}_holders_grape.json`}
-                                                    href={fileGenerated}
-                                                    onClick={handleCloseMenuAll}><DownloadIcon />  JSON</MenuItem>
-                                                <MenuItem onClick={handleCloseMenuAll} disabled><DownloadIcon /> CSV</MenuItem>
+                                                    href={fileGenerated}><DownloadIcon />  JSON</Button></MenuItem>
+                                                <MenuItem><Button variant='text'
+                                                    download={`${collectionAuthority.collection || collectionAuthority.updateAuthority}_holders_grape.csv`}
+                                                    href={mintOwnerListGenerated}
+                                                ><DownloadIcon /> CSV</Button></MenuItem>
                                             </Menu>
                                             </>
                                         }
