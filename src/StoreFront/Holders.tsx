@@ -571,10 +571,10 @@ export function HoldersView(props: any) {
                         }else{
                             csvFile = 'mint\r\n';//,name\r\n';
                             csvFileUnique = 'mint,owner,count\r\n';//,name\r\n';
-                            csvFileAll = 'mint,owner\r\n';//,name\r\n';
+                            csvFileAll = 'mint,owner,curve\r\n';//,name\r\n';
                         }
                         csvFile += item.mintAddress; //+','+item.name;
-                        csvFileAll += item.mintAddress+','+item.owner.address;
+                        csvFileAll += item.mintAddress+','+item.owner.address+','+ValidateCurve(item.owner?.address || item.owner);
                         
                         for (const inner of unique){
                             if (inner.owner === item.owner.address){
