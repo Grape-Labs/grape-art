@@ -25,6 +25,7 @@ import {
   Box,
   Paper,
   Avatar,
+  AvatarGroup,
   Badge,
   Table,
   TableContainer,
@@ -80,7 +81,9 @@ import {
     GRAPE_PREVIEW,
     GRAPE_RPC_ENDPOINT, 
     THEINDEX_RPC_ENDPOINT,
-    TWITTER_PROXY } from '../utils/grapeTools/constants';
+    TWITTER_PROXY,
+    DRIVE_PROXY,
+} from '../utils/grapeTools/constants';
 
 import { formatAmount, getFormattedNumberToLocale } from '../utils/grapeTools/helpers'
 import { MakeLinkableAddress, ValidateAddress, ValidateCurve, trimAddress, timeAgo } from '../utils/grapeTools/WalletAddress'; // global key handling
@@ -325,7 +328,7 @@ function RenderHoldersTable(props:any) {
                                                     <Typography variant="h6">
                                                         <Avatar
                                                             sx={{backgroundColor:'#222'}}
-                                                            src={item.image}
+                                                            src={DRIVE_PROXY+item.image}
                                                             alt={item.name}
                                                         />
                                                     </Typography>
@@ -351,7 +354,16 @@ function RenderHoldersTable(props:any) {
                                             </TableCell>
                                             <TableCell align="center" >
                                                 <Typography variant="h6">
-                                                    Coming soon...
+                                                    <AvatarGroup>
+                                                    {item.image && item?.image.split(',').map((image:any,key:any)=> 
+                                                        <Avatar
+                                                            sx={{backgroundColor:'#222'}}
+                                                            src={DRIVE_PROXY+image}
+                                                            alt='Preview'
+                                                            key={key}
+                                                        />
+                                                    )}
+                                                    </AvatarGroup>
                                                 </Typography>
                                             </TableCell>
                                             </>
@@ -527,7 +539,9 @@ export function HoldersView(props: any) {
                         for (const inner of unique){
                             if (inner.owner === item.owner.address){
                                 found = true;
-                                inner.mint+=','+item.mintAddress
+                                inner.mint+=','+item.mintAddress;
+                                inner.name+=','+item.name;
+                                inner.image+=','+item.image;
                                 inner.count++;
                                 display[x].mint+=','+item.mintAddress;
                                 display[x].name+=','+item.name;
@@ -542,6 +556,7 @@ export function HoldersView(props: any) {
                                 mint:item.mintAddress,
                                 name:item.name,
                                 owner:item.owner.address,
+                                image:item.image,
                                 curve:ValidateCurve(item.owner?.address || item.owner),
                                 count:1
                             })
