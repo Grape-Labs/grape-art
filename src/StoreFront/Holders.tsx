@@ -369,7 +369,7 @@ function RenderHoldersTable(props:any) {
                                             </>
                                         }
 
-                                        <TableCell>
+                                        <TableCell align="center">
                                             <Typography variant="h6">
                                                 {(ValidateCurve(item.owner?.address || item.owner)) ?
                                                     <Tooltip title='This is a valid wallet address (on a Ed25519 curve)'>
