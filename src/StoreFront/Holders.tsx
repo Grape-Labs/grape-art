@@ -286,17 +286,17 @@ function RenderHoldersTable(props:any) {
                             
                             {mode === 0 ?
                                 <>
-                                <TableCell><Typography variant="caption">Image</Typography></TableCell>
-                                <TableCell><Typography variant="caption">Name</Typography></TableCell>
+                                <TableCell align="center"><Typography variant="caption">Image</Typography></TableCell>
+                                <TableCell align="center"><Typography variant="caption">Name</Typography></TableCell>
                                 <TableCell><Typography variant="caption">Mint Address</Typography></TableCell>
                                 </>
                             :
                                 <>
-                                <TableCell>Holding</TableCell>
-                                <TableCell>Collectible</TableCell>
+                                <TableCell align="center">Holding</TableCell>
+                                <TableCell align="center">Collectible</TableCell>
                                 </>
                             }
-                            <TableCell><Typography variant="caption">Curve</Typography></TableCell>
+                            <TableCell align="center"><Typography variant="caption">Curve</Typography></TableCell>
                             {mode === 0 &&
                                 <TableCell></TableCell>
                             }
