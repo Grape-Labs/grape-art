@@ -43,7 +43,9 @@ import {
   Chip,
   DialogActions,
   DialogContent,
-  ButtonGroup
+  ButtonGroup,
+  Menu,
+  MenuItem,
 } from '@mui/material/';
 
 import ExplorerView from '../utils/grapeTools/Explorer';
@@ -57,6 +59,7 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 
 import moment from 'moment';
 
+import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import ParaglidingIcon from '@mui/icons-material/Paragliding';
 import DownloadIcon from '@mui/icons-material/Download';
 import Chat from '@mui/icons-material/Chat';
@@ -455,9 +458,28 @@ export function HoldersView(props: any) {
     const [nfts, setNfts] = React.useState<Nft[]>([])
     const [holderExport, setHolderExport] = React.useState(null);
     const [fileGenerated, setFileGenerated] = React.useState(null);
+    const [mintListGenerated, setMintListGenerated] = React.useState(null);
     const [uniqueFileGenerated, setUniqueFileGenerated] = React.useState(null);
     const [uniqueHolders, setUniqueHolders] = React.useState(null);
     const [displayHolders, setDisplayHolders] = React.useState(null);
+
+    const [anchorElUh, setAnchorElUh] = React.useState<null | HTMLElement>(null);
+    const openUh = Boolean(anchorElUh);
+    const handleClickUh = (event: React.MouseEvent<HTMLButtonElement>) => {
+        setAnchorElUh(event.currentTarget);
+    };
+    const handleCloseMenuUh = () => {
+        setAnchorElUh(null);
+    };
+
+    const [anchorElAll, setAnchorElAll] = React.useState<null | HTMLElement>(null);
+    const openAll = Boolean(anchorElAll);
+    const handleClickAll = (event: React.MouseEvent<HTMLButtonElement>) => {
+        setAnchorElAll(event.currentTarget);
+    };
+    const handleCloseMenuAll = () => {
+        setAnchorElAll(null);
+    };
 
     const GET_NFTS_BY_COLLECTION = gql`
         query GetNfts($uac: [PublicKey!], $limit: Int!, $offset: Int!) {
@@ -530,12 +552,20 @@ export function HoldersView(props: any) {
 
                     // get unique holders
                     const count = {};
-                    
+                    let cntr = 0;
                     const display = new Array();
                     const unique = new Array();
+                    let csvFile = '';
                     for(const item of nfts){
                         let found = false
                         let x = 0;
+                        
+                        if (cntr > 0)
+                            csvFile += '\r\n';
+                        else
+                            csvFile = 'mint\r\n';//,name\r\n';
+                        csvFile += item.mintAddress; //+','+item.name;
+                        
                         for (const inner of unique){
                             if (inner.owner === item.owner.address){
                                 found = true;
@@ -569,11 +599,16 @@ export function HoldersView(props: any) {
                                 count:1
                             })
                         }
+                        cntr++;
                     }
+
+                    //console.log("at item: "+csvFile);
+                    const jsonCSVString = (`data:text/csv;chatset=utf-8,${csvFile}`);
+                    setMintListGenerated(jsonCSVString);
                     
                     const sortedDisplayResults = display.sort((a:any, b:any) => b.count - a.count)
 
-                    console.log("sortedDisplayResults: "+JSON.stringify(sortedDisplayResults))
+                    //console.log("sortedDisplayResults: "+JSON.stringify(sortedDisplayResults))
 
                     setDisplayHolders(sortedDisplayResults);
 
@@ -638,7 +673,7 @@ export function HoldersView(props: any) {
                                     </Typography>
                                 </Grid>
                                 <Grid item xs textAlign={'right'}>
-                                    <ButtonGroup variant='outlined' sx={{borderRadius:'17px'}}>
+                                    <ButtonGroup color='inherit' variant='outlined' sx={{borderRadius:'17px'}}>
                                         <Button
                                             disabled={true}
                                             sx={{borderRadius:'17px', color:'white'}}
@@ -646,19 +681,54 @@ export function HoldersView(props: any) {
                                             <ParaglidingIcon /> Airdrop
                                         </Button>
                                         {uniqueFileGenerated &&
-                                            <Tooltip title='Export unique holders'>
-                                                <Button
-                                                    variant='outlined'
-                                                    download={`${collectionAuthority.collection || collectionAuthority.updateAuthority}_uniqueholders_grape.json`}
-                                                    href={uniqueFileGenerated}
-                                                    sx={{borderRadius:'17px', ml:1 ,color:'white'}}
+                                            <>
+                                                <Tooltip title='Export unique holders'>
+                                                    {/*}
+                                                    <Button
+                                                        variant='outlined'
+                                                        download={`${collectionAuthority.collection || collectionAuthority.updateAuthority}_uniqueholders_grape.json`}
+                                                        href={uniqueFileGenerated}
+                                                        sx={{borderRadius:'17px', ml:1 ,color:'white'}}
+                                                    >
+                                                        <DownloadIcon /> Unique Holders
+                                                    </Button>
+                                                    */}
+                                                    <Button
+                                                        id="basic-button"
+                                                        aria-controls={openUh ? 'basic-menu' : undefined}
+                                                        aria-haspopup="true"
+                                                        aria-expanded={openUh ? 'true' : undefined}
+                                                        onClick={handleClickUh}
+                                                        color='inherit'
+                                                        sx={{borderRadius:'17px', ml:1 ,color:'white'}}
+                                                    >
+                                                        <CloudDownloadIcon sx={{mr:1}} /> Unique Holders
+                                                    </Button>
+                                                </Tooltip>
+                                                <Menu
+                                                    id="basic-menu"
+                                                    anchorEl={anchorElUh}
+                                                    open={openUh}
+                                                    onClose={handleCloseMenuUh}
+                                                    MenuListProps={{
+                                                    'aria-labelledby': 'basic-button',
+                                                    }}
+                                                    sx={{borderRadius:'17px'}}
                                                 >
-                                                    <DownloadIcon /> Unique Holders
-                                                </Button>
-                                            </Tooltip>
+                                                    <MenuItem 
+                                                        download={`${collectionAuthority.collection || collectionAuthority.updateAuthority}_uniqueholders_grape.json`}
+                                                        href={uniqueFileGenerated}
+                                                        onClick={handleCloseMenuUh}><DownloadIcon />  JSON</MenuItem>
+                                                    <MenuItem onClick={handleCloseMenuUh} disabled><DownloadIcon /> CSV</MenuItem>
+                                                </Menu>
+                                            </>
+                                            
                                         }
                                         {fileGenerated &&
-                                            <Tooltip title="Export all holders">
+                                            
+<>
+                                            <Tooltip title='Export all holders'>
+                                                {/*}
                                                 <Button
                                                     variant='outlined'
                                                     download={`${collectionAuthority.collection || collectionAuthority.updateAuthority}_holders_grape.json`}
@@ -666,6 +736,48 @@ export function HoldersView(props: any) {
                                                     sx={{borderRadius:'17px', ml:1 ,color:'white'}}
                                                 >
                                                     <DownloadIcon /> All
+                                                </Button>
+                                                */}
+                                                <Button
+                                                    id="basic-button"
+                                                    aria-controls={openAll ? 'basic-menu' : undefined}
+                                                    aria-haspopup="true"
+                                                    aria-expanded={openAll ? 'true' : undefined}
+                                                    onClick={handleClickAll}
+                                                    color='inherit'
+                                                    sx={{borderRadius:'17px', ml:1 ,color:'white'}}
+                                                >
+                                                    <CloudDownloadIcon sx={{mr:1}} /> All
+                                                </Button>
+                                            </Tooltip>
+                                            <Menu
+                                                id="basic-menu"
+                                                anchorEl={anchorElAll}
+                                                open={openAll}
+                                                onClose={handleCloseMenuAll}
+                                                MenuListProps={{
+                                                'aria-labelledby': 'basic-button',
+                                                }}
+                                                sx={{borderRadius:'17px'}}
+                                            >
+                                                <MenuItem 
+                                                    download={`${collectionAuthority.collection || collectionAuthority.updateAuthority}_holders_grape.json`}
+                                                    href={fileGenerated}
+                                                    onClick={handleCloseMenuAll}><DownloadIcon />  JSON</MenuItem>
+                                                <MenuItem onClick={handleCloseMenuAll} disabled><DownloadIcon /> CSV</MenuItem>
+                                            </Menu>
+                                            </>
+                                        }
+
+                                        {mintListGenerated &&
+                                            <Tooltip title='Export Mint List'>
+                                                <Button
+                                                    variant='outlined'
+                                                    download={`${collectionAuthority.collection || collectionAuthority.updateAuthority}_mint_list.csv`}
+                                                    href={mintListGenerated}
+                                                    sx={{borderRadius:'17px', ml:1 ,color:'white'}}
+                                                >
+                                                    <DownloadIcon /> Mints
                                                 </Button>
                                             </Tooltip>
                                         }

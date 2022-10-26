@@ -408,9 +408,9 @@ function RenderGovernanceTable(props:any) {
                     if (counter > 1)
                         csvFile += '\r\n';
                     else
-                        csvFile += 'tokenOwner,voterWeight,tokenDecimals,voteType\r\n';
+                        csvFile = 'tokenOwner,voterWeight,tokenDecimals,voteType\r\n';
                     
-                        csvFile += item.pubkey.toBase58()+','+item.account.voterWeight.toNumber()+','+tokenDecimals+','+item.account.vote.voteType+'';
+                    csvFile += item.pubkey.toBase58()+','+item.account.voterWeight.toNumber()+','+tokenDecimals+','+item.account.vote.voteType+'';
                     //    csvFile += item.pubkey.toBase58();
                 }
             }
