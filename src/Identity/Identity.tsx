@@ -56,6 +56,7 @@ import {
     Box,
     Container,
     Avatar,
+    Divider,
     List,
     ListItem,
     ListItemAvatar,
@@ -398,63 +399,96 @@ export function IdentityView(props: any){
     const fetchSolanaTransactions = async () => {
         setLoadingTransactions(true);
         setLoadingPosition(' last (100) Transactions');
-        const response = await ggoconnection.getSignaturesForAddress(new PublicKey(pubkey));
-
-        const memos: any[] = [];
-        const signatures: any[] = [];
-        let counter = 0;
-        // get last 100
-        for (const value of response){
-            if (counter<100){
-                signatures.push(value.signature);
-                memos.push(value.memo);
-            }
-            counter++;
-        }
-        const getTransactionAccountInputs2 = await ggoconnection.getParsedTransactions(signatures, 'confirmed');
+        
+        let helius_results = null;
 
         if (HELIUS_API){
+            const tx: any[] = [];
             const url = "https://api.helius.xyz/v0/addresses/"+pubkey+"/transactions?api-key="+HELIUS_API
             const parseTransactions = async () => {
                 const { data } = await axios.get(url)
                 console.log("parsed transactions: ", data)
-            }
-        }
 
-        let cnt=0;
-        const tx: any[] = [];
-        for (const tvalue of getTransactionAccountInputs2){
-            //if (cnt===0)
-            //    console.log(signatures[cnt]+': '+JSON.stringify(tvalue));
+                helius_results = data;
+                /*
+                for (const item of data){
+                    tx.push({
+                        signature:item.signature,
+                        blockTime:item.timestamp,
+                        //amount:tx_cost,
+                        //owner:owner,
+                        memo:'',
+                        source:null,
+                        type:item.description + ' | ' + item.type,
+                    });
+                }*/
+
+            }
+            await parseTransactions();
+
+            //setSolanaTransactions(tx);
+        } 
+        
+        {
+            const response = await ggoconnection.getSignaturesForAddress(new PublicKey(pubkey));
+
+            const memos: any[] = [];
+            const signatures: any[] = [];
+            let counter = 0;
+            // get last 100
+            for (const value of response){
+                if (counter<100){
+                    signatures.push(value.signature);
+                    memos.push(value.memo);
+                }
+                counter++;
+            }
+            const getTransactionAccountInputs2 = await ggoconnection.getParsedTransactions(signatures, 'confirmed');
+
             
-            let txtype = "";
-            if (tvalue?.meta?.logMessages){
-                for (const logvalue of tvalue.meta.logMessages){
-                    //console.log("txvalue: "+JSON.stringify(logvalue));
-                    if (logvalue.includes("Program log: Instruction: ")){
-                        if (txtype.length > 0)
-                            txtype += ", ";
-                        txtype += logvalue.substring(26,logvalue.length);
-                        
+
+            let cnt=0;
+            const tx: any[] = [];
+            for (const tvalue of getTransactionAccountInputs2){
+                //if (cnt===0)
+                //    console.log(signatures[cnt]+': '+JSON.stringify(tvalue));
+                
+                let txtype = "";
+                if (tvalue?.meta?.logMessages){
+                    for (const logvalue of tvalue.meta.logMessages){
+                        //console.log("txvalue: "+JSON.stringify(logvalue));
+                        if (logvalue.includes("Program log: Instruction: ")){
+                            if (txtype.length > 0)
+                                txtype += ", ";
+                            txtype += logvalue.substring(26,logvalue.length);
+                            
+                        }
                     }
                 }
+
+                let description = null;
+                for (const item of helius_results){
+                    if ((signatures[cnt] === item.signature) && (item.type !== 'UNKNOWN')){
+                        description = item.description + " ("+ item.type+ ")";
+                    }
+                }
+                
+                tx.push({
+                    signature:signatures[cnt],
+                    blockTime:tvalue?.blockTime,
+                    //amount:tx_cost,
+                    //owner:owner,
+                    memo:memos[cnt],
+                    source:null,
+                    description:description,
+                    type:txtype,
+                });
+                
+                cnt++;
             }
-
-            tx.push({
-                signature:signatures[cnt],
-                blockTime:tvalue?.blockTime,
-                //amount:tx_cost,
-                //owner:owner,
-                memo:memos[cnt],
-                source:null,
-                type:txtype,
-            });
-            
-            cnt++;
+            setSolanaTransactions(tx);
         }
-
-        //setSolanaTransactions(response);
-        setSolanaTransactions(tx);
+        
         setLoadingTransactions(false);
     }
 
@@ -1371,28 +1405,41 @@ export function IdentityView(props: any){
                                                     <TabPanel value="2">
                                                     {solanaTransactions ?
                                                         <List dense={true}>
-                                                            {solanaTransactions.length > 0 ? solanaTransactions.map((item: any) => (
-                                                                <ListItem>
-                                                                    <>
-                                                                        <ListItemText
-                                                                            primary={
-                                                                                <>
-                                                                                    <Tooltip title={formatBlockTime(item.blockTime,true,true)}>
-                                                                                        <Button>
-                                                                                        {timeAgo(item.blockTime)}
-                                                                                        </Button>
-                                                                                    </Tooltip> - {item.type}<br/> 
-                                                                                    
-                                                                                    <ExplorerView address={item.signature} type='tx' title={item.signature}/>
-                                                                                </>}
-                                                                            secondary={
-                                                                                <>
-                                                                                    {item?.memo && <Typography variant="caption">{item?.memo}</Typography>}
-                                                                                </>
-                                                                            }
-                                                                        />
-                                                                    </>
-                                                                </ListItem>
+                                                            {solanaTransactions.length > 0 ? solanaTransactions.map((item: any,key:any) => (
+                                                                <>
+                                                                    {key > 0 &&
+                                                                        <Divider variant="fullWidth" component="li" />
+                                                                    }
+                                                                    <ListItem key={key}>
+                                                                        <>
+                                                                            <ListItemText
+                                                                                primary={
+                                                                                    <>
+                                                                                        <ExplorerView address={item.signature} type='tx' title={item.signature}/>
+                                                                                        {item.description &&
+                                                                                            <Typography variant='subtitle1' sx={{mt:1}}>
+                                                                                                {item.description}
+                                                                                            </Typography>
+                                                                                        }
+                                                                                        <Typography variant='body2'>
+                                                                                            <Tooltip title={formatBlockTime(item.blockTime,true,true)}>
+                                                                                                <Button sx={{borderRadius:'17px'}}>
+                                                                                                {timeAgo(item.blockTime)}
+                                                                                                </Button>
+                                                                                            </Tooltip> - {item.type}
+                                                                                        </Typography>
+                                                                                        
+                                                                                        
+                                                                                    </>}
+                                                                                secondary={
+                                                                                    <>
+                                                                                        {item?.memo && <Typography variant="caption">{item?.memo}</Typography>}
+                                                                                    </>
+                                                                                }
+                                                                            />
+                                                                        </>
+                                                                    </ListItem>
+                                                                </>
                                                             ))
                                                             :
                                                             <></>}
