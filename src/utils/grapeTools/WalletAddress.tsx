@@ -111,8 +111,12 @@ export function trimAddress(addr: string, trim:any) {
 }
 
 export function ValidateCurve(address:string){
+    console.log("On Curve: "+address);
     //console.log("On Curve: "+PublicKey.isOnCurve(new PublicKey(address).toBuffer()));
-    return PublicKey.isOnCurve(new PublicKey(address).toBuffer());
+    if (address)
+        return PublicKey.isOnCurve(new PublicKey(address).toBuffer());
+    else
+        return false;
 }
 
 export function ValidateAddress(address:any){

@@ -245,8 +245,8 @@ export default function ExplorerView(props:any){
                             }
                         </>
                     }
-
-                    {!ValidateCurve(address) &&
+                    
+                    {address && type === 'address' && !ValidateCurve(address) &&
                         <>
                             <GetEscrowName address={address} />
                         </>

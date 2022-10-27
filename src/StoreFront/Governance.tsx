@@ -296,8 +296,9 @@ function RenderGovernanceTable(props:any) {
             //console.log("gp: "+JSON.stringify(gp))
 
             try{
+
                 //const communityMintPromise = connection.getParsedAccountInfo(
-                //    new PublicKey("8upjSpvjcdpuzhfR1zriwg5NXkwDruejqNE9WNbPRtyA")
+                //    new PublicKey(governance.account.config.communityMint?.toBase58())
                 //);
                 //const councilMintPromise = connection.getParsedAccountInfo(
                 //    new PublicKey(governance.account.governingTokenMint)

@@ -7,6 +7,7 @@ import { decodeMetadata } from '../utils/grapeTools/utils';
 // @ts-ignore
 import { PublicKey, Connection, Commitment } from '@solana/web3.js';
 import {ENV, TokenInfo, TokenListProvider} from '@solana/spl-token-registry';
+import axios from "axios";
 
 import { getRealm, 
     getRealms, 
@@ -94,7 +95,12 @@ import SolIcon from '../components/static/SolIcon';
 import SolCurrencyIcon from '../components/static/SolCurrencyIcon';
 
 import { ValidateAddress, ValidateCurve, trimAddress, timeAgo, formatBlockTime } from '../utils/grapeTools/WalletAddress'; // global key handling
-import { GRAPE_RPC_ENDPOINT, THEINDEX_RPC_ENDPOINT, GRAPE_PROFILE, GRAPE_PREVIEW, DRIVE_PROXY } from '../utils/grapeTools/constants';
+import { GRAPE_RPC_ENDPOINT, 
+    THEINDEX_RPC_ENDPOINT, 
+    GRAPE_PROFILE, 
+    GRAPE_PREVIEW, 
+    DRIVE_PROXY,
+    HELIUS_API } from '../utils/grapeTools/constants';
 import { ConstructionOutlined, DoNotDisturb, JavascriptRounded, LogoDevOutlined } from "@mui/icons-material";
 
 import { useTranslation } from 'react-i18next';
@@ -406,6 +412,14 @@ export function IdentityView(props: any){
             counter++;
         }
         const getTransactionAccountInputs2 = await ggoconnection.getParsedTransactions(signatures, 'confirmed');
+
+        if (HELIUS_API){
+            const url = "https://api.helius.xyz/v0/addresses/"+pubkey+"/transactions?api-key="+HELIUS_API
+            const parseTransactions = async () => {
+                const { data } = await axios.get(url)
+                console.log("parsed transactions: ", data)
+            }
+        }
 
         let cnt=0;
         const tx: any[] = [];
