@@ -36,7 +36,7 @@ import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import {useAnchorWallet, useConnection, useWallet} from '@solana/wallet-adapter-react';
 import { WalletDialogProvider, WalletMultiButton } from '@solana/wallet-adapter-material-ui';
 import {CollectionBoardingInfo, useAdmin, useListingQuery, useListingRequest} from "grape-art-listing-request";
-import {Provider} from "@project-serum/anchor";
+import {AnchorProvider} from "@project-serum/anchor";
 import {BOARDING_PROGRAM_CONFIG} from "../../utils/grapeTools/constants";
 import {PublicKey} from "@solana/web3.js";
 import {ApprovedTable} from "./ApprovedTable";
@@ -131,7 +131,7 @@ export function AddCollectionView () {
 
   const { requestListingRefund, requestListing } = useListingRequest(
     anchorWallet ?
-        new Provider(connection, anchorWallet, Provider.defaultOptions())
+        new AnchorProvider(connection, anchorWallet, AnchorProvider.defaultOptions())
         : null, new PublicKey(BOARDING_PROGRAM_CONFIG))
 
   const [collectionBoardingInfo, setCollectionBoardingInfo ] = React.useState<CollectionBoardingInfo>({
@@ -265,14 +265,14 @@ export function MyCollectionsView (this: any, props: any) {
   console.log(anchorWallet)
   const { requestListingRefund } = useListingRequest(
       anchorWallet ?
-          new Provider(connection, anchorWallet, Provider.defaultOptions())
+          new AnchorProvider(connection, anchorWallet, AnchorProvider.defaultOptions())
           : null, new PublicKey(BOARDING_PROGRAM_CONFIG));
   const { getAllPendingListings, getAllApprovedListings } = useListingQuery( anchorWallet ?
-          new Provider(connection, anchorWallet, Provider.defaultOptions())
+          new AnchorProvider(connection, anchorWallet, AnchorProvider.defaultOptions())
           : null, new PublicKey(BOARDING_PROGRAM_CONFIG));
 
   const { isAdmin, setEnableListing, approveListing, denyListing } = useAdmin(anchorWallet ?
-    new Provider(connection, anchorWallet, Provider.defaultOptions())
+    new AnchorProvider(connection, anchorWallet, AnchorProvider.defaultOptions())
     : null, new PublicKey(BOARDING_PROGRAM_CONFIG))
 
   const [pendingListings, setPendingListings] = useState<CollectionBoardingInfo[]>(undefined);

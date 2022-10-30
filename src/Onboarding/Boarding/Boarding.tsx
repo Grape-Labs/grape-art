@@ -14,7 +14,7 @@ import { CollectionCaptureView } from './CollectionCapture';
 import { useConnection, useWallet, useAnchorWallet } from '@solana/wallet-adapter-react';
 import { WalletDialogProvider, WalletMultiButton } from '@solana/wallet-adapter-material-ui';
 import {CollectionBoardingInfo, useListingRequest} from "grape-art-listing-request";
-import { Provider } from "@project-serum/anchor";
+import {AnchorProvider} from "@project-serum/anchor";
 import {PublicKey} from "@solana/web3.js";
 import {BOARDING_PROGRAM_CONFIG} from "../../utils/grapeTools/constants";
 
@@ -32,7 +32,7 @@ export function BoardingView (this: any, props: any) {
 
   const { requestListingRefund, requestListing } = useListingRequest(
       anchorWallet ?
-          new Provider(connection, anchorWallet, Provider.defaultOptions())
+          new AnchorProvider(connection, anchorWallet, AnchorProvider.defaultOptions())
           : null, new PublicKey(BOARDING_PROGRAM_CONFIG))
   console.log("I don't make it here")
   console.log("here they are", requestListingRefund, requestListing)
