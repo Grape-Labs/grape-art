@@ -56,7 +56,7 @@ const StyledMenu = styled(Menu)(({ theme }) => ({
 }));
 
 export default function ExplorerView(props:any){
-    const address = props.address;
+    const [address, setAddress] = React.useState(props.address);
     const title = props.title || null;
     const type = props.type || 'address';
     const buttonStyle = props?.style || 'outlined';
