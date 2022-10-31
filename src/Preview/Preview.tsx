@@ -1995,10 +1995,12 @@ export function PreviewView(this: any, props: any) {
                     setVerifiedCollection(vcFinal);
                     setCollectionAuctionHouse(vcFinal?.auctionHouse);
                 } else{ // if we could not find from UA check Creator Address
-                    vcFinal = await fetchVerifiedCollection(collectionrawdata?.meta_final?.data.creators[0].address);
-                    if (vcFinal){
-                        setVerifiedCollection(vcFinal);
-                        setCollectionAuctionHouse(vcFinal?.auctionHouse);
+                    if (collectionrawdata?.meta_final?.data?.creators && collectionrawdata?.meta_final?.data?.creators.length > 0){
+                        vcFinal = await fetchVerifiedCollection(collectionrawdata?.meta_final?.data?.creators[0]?.address);
+                        if (vcFinal){
+                            setVerifiedCollection(vcFinal);
+                            setCollectionAuctionHouse(vcFinal?.auctionHouse);
+                        }
                     }
                 }
                 setVcLoading(false);

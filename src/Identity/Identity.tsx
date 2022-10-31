@@ -27,6 +27,8 @@ import { getRealm,
 import { gql } from '@apollo/client'
 import gql_client from '../gql_client'
 
+import { programs, tryGetAccount, withSend, findAta } from '@cardinal/token-manager';
+
 import GovernanceDetailsView from './plugins/GovernanceDetails';
 import { SquadsView } from './plugins/Squads';
 import { StorageView } from './plugins/Storage';
@@ -120,6 +122,30 @@ function formatBytes(bytes: any, decimals = 2) {
 
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 }
+
+export const isCardinalWrappedToken = async (
+    connection: Connection,
+    tokenAddress: string
+  ) => {
+    const [tokenManagerId] = await programs.tokenManager.pda.findTokenManagerAddress(
+      new PublicKey(tokenAddress)
+    );
+    const tokenManagerData = await tryGetAccount(() =>
+      programs.tokenManager.accounts.getTokenManager(connection, tokenManagerId)
+    );
+    if (tokenManagerData?.parsed && tokenManagerData?.parsed.transferAuthority) {
+      try {
+        programs.transferAuthority.accounts.getTransferAuthority(
+          connection,
+          tokenManagerData?.parsed.transferAuthority
+        );
+        return true;
+      } catch (error) {
+        console.log("Invalid transfer authority");
+      }
+    }
+    return false;
+};
 
 function calculateStorageUsed(available: any, allocated: any){
     if (available && +available > 0){

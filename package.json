@@ -38,6 +38,7 @@
         "@apollo/client": "^3.6.9",
         "@bonfida/spl-name-service": "0.1.50",
         "@cardinal/namespaces": "^4.1.56",
+        "@cardinal/token-manager": "^1.7.9",
         "@cyberlab/cyberconnect": "^4.4.2",
         "@dialectlabs/identity-cardinal": "^0.0.2",
         "@dialectlabs/identity-dialect-dapps": "^0.0.1",

@@ -3,6 +3,7 @@ import { styled, ThemeProvider } from '@mui/material/styles';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 //import { LogView } from "./Log/Log";
 
+//import { OnBoardingView } from './Onboarding/Onboarding';
 import { ProfileView } from './Profile/Profile';
 import { PreviewView } from './Preview/Preview';
 import { FeaturedView } from './Featured/Featured';
