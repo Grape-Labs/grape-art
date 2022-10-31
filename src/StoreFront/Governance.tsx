@@ -12,7 +12,6 @@ import { gistApi, resolveProposalDescription } from '../utils/grapeTools/github'
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
-
 import {
   Typography,
   Button,
@@ -76,7 +75,7 @@ const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
       backgroundColor: theme.palette.grey[theme.palette.mode === 'light' ? 200 : 800],
     },
     [`& .${linearProgressClasses.bar}`]: {
-      borderRadius: '17px',
+      borderRadius: '0px',
       backgroundColor: theme.palette.mode === 'light' ? '#1a90ff' : '#ffffff',
     },
   }));
@@ -229,9 +228,10 @@ function GetParticipants(props: any){
     const [thisGovernance, setThisGovernance] = React.useState(null);
     const [proposalAuthor, setProposalAuthor] = React.useState(null);
     const [governingMintInfo, setGoverningMintInfo] = React.useState(null);
-    const [quorum, setQuorum] = React.useState(null);
+    const [totalQuorum, setTotalQuorum] = React.useState(null);
     const [quorumTargetPercentage, setQuorumTargetPercentage] = React.useState(null);
     const [quorumTarget, setQuorumTarget] = React.useState(null);
+    const [totalSupply, setTotalSupply] = React.useState(null);
 
     const votingresultcolumns: GridColDef[] = [
         { field: 'id', headerName: 'ID', width: 70, hide: true},
@@ -322,6 +322,11 @@ function GetParticipants(props: any){
                 ? councilVoteThreshold.value
                 : communityVoteThreshold.value
             
+            
+            const tSupply = Number(governingMintPromise.value.data.parsed.info.supply/Math.pow(10, governingMintPromise.value.data.parsed.info.decimals)) 
+            
+            setTotalSupply(tSupply);
+
             const totalVotes =
                 Number(governingMintPromise.value.data.parsed.info.supply/Math.pow(10, governingMintPromise.value.data.parsed.info.decimals))  *
                 //Number(communityWeight/Math.pow(10, governingMintPromise.value.data.parsed.info.decimals))  *
@@ -331,8 +336,9 @@ function GetParticipants(props: any){
             //console.log("totalVotes: "+totalVotes)
             //console.log("voteThresholdPercentage: "+(voteThresholdPercentage * 0.01))
             //console.log("supplyFractionPercentage: "+(Number(supplyFractionPercentage) / 100))
-
-            setQuorum(totalVotes);
+            
+            if (totalVotes && totalVotes > 0)
+                setTotalQuorum(totalVotes);
             
             const qt = totalVotes-thisitem.account.options[0].voteWeight.toNumber()/Math.pow(10, governingMintPromise.value.data.parsed.info.decimals);
             const yesVotes = thisitem.account.options[0].voteWeight.toNumber()/Math.pow(10, governingMintPromise.value.data.parsed.info.decimals);
@@ -615,10 +621,9 @@ function GetParticipants(props: any){
                                 
                                 { 
                                     <Grid item xs={12}>
-                                        {quorum &&
+                                        {totalQuorum && totalQuorum > 0 &&
                                         <Box sx={{ width: '100%' }}>
                                             <BorderLinearProgress variant="determinate" 
-                                                sx={{color:'white'}}
                                                 value={quorumTargetPercentage < 100 ? 100-quorumTargetPercentage : 100} />
                                             {quorumTarget ? 
                                                 <Typography variant='caption'>{getFormattedNumberToLocale(formatAmount(quorumTarget))} more votes remaining to reach quorum</Typography>
@@ -643,12 +648,18 @@ function GetParticipants(props: any){
                                                 <>{governingMintInfo &&
                                                     <>
                                                     {`Mint: ${thisitem.account.governingTokenMint}`}
-                                                    <br />
-                                                    {`Supply: ${getFormattedNumberToLocale(formatAmount(+(governingMintInfo.value.data.parsed.info.supply/Math.pow(10, governingMintInfo.value.data.parsed.info.decimals)).toFixed(0)))}`}
-                                                    {quorum &&
+                                                    {totalSupply &&
+                                                        <>
+                                                        <br />
+                                                        {`Supply: 
+                                                            ${getFormattedNumberToLocale(totalSupply)}`
+                                                        }
+                                                        </>
+                                                    }
+                                                    {totalQuorum &&
                                                         <>
                                                             <br />
-                                                            {`Quorum: ${getFormattedNumberToLocale(formatAmount(+(quorum).toFixed(0)))}`}
+                                                            {`Quorum: ${getFormattedNumberToLocale(+(totalQuorum).toFixed(0))}`}
                                                         </>
                                                     }
                                                     </>
