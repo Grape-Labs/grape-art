@@ -420,7 +420,7 @@ function GetParticipants(props: any){
         if (voteResults?.value){
             let counter = 0;
 
-            for (const item of voteResults.value){
+            for (let item of voteResults.value){
                 counter++;
                 if (item.account.vote.voteType === 0)
                     uYes++;
