@@ -136,6 +136,7 @@ export function AddCollectionView() {
         meta_data_url: '',
         vanity_url: '',
         token_type: '',
+        request_type: 0,
         listing_requester: PublicKey.default,
     });
 
@@ -218,6 +219,7 @@ export function AddCollectionView() {
                             setVerifiedCollectionAddress={getSetter('verified_collection_address')}
                             setAuctionHouse={getSetter('auction_house')}
                             setTokenType={getSetter('token_type')}
+                            setRequestType={getSetter('request_type')}
                             setUpdateAuthority={getSetter('collection_update_authority')}
                             setCreatorAddress={getSetter('creator_address')}
                         />

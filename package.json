@@ -89,7 +89,7 @@
         "file_size_url": "^1.0.4",
         "formidable": "v3",
         "fp-ts": "^2.12.3",
-        "grape-art-listing-request": "^0.0.21",
+        "grape-art-listing-request": "0.0.26",
         "graphql": "^16.6.0",
         "graphql-request": "^4.3.0",
         "i18next": "^21.8.2",

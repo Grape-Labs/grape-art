@@ -24,8 +24,6 @@ export function BoardingView(this: any, props: any) {
         anchorWallet ? new AnchorProvider(connection, anchorWallet, AnchorProvider.defaultOptions()) : null,
         new PublicKey(BOARDING_PROGRAM_CONFIG)
     );
-    console.log("I don't make it here");
-    console.log('here they are', requestListingRefund, requestListing);
     const [collectionBoardingInfo, setCollectionBoardingInfo] = React.useState<CollectionBoardingInfo>({
         name: '',
         enabled: true,
@@ -35,6 +33,7 @@ export function BoardingView(this: any, props: any) {
         vanity_url: '',
         token_type: '',
         listing_requester: PublicKey.default,
+        request_type: 0
     });
     const isStepOptional = (step: number) => {
         return step === 1 || step === 2 || step === 3;
@@ -148,6 +147,7 @@ export function BoardingView(this: any, props: any) {
                                     setTokenType={getSetter('token_type')}
                                     setUpdateAuthority={getSetter('collection_update_authority')}
                                     setCreatorAddress={getSetter('creator_address')}
+                                    setRequestType={getSetter('request_type')}
                                 />
                             )}
                             {activeStep === 1 && <></>}

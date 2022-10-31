@@ -16,6 +16,7 @@ export function CollectionCaptureView(
         setAuctionHouse: (address: PublicKey) => void;
         setCreatorAddress: (address: PublicKey) => void;
         setTokenType: (type: string) => void;
+        setRequestType: (type: number) => void;
     }
 ) {
     return (
@@ -44,6 +45,7 @@ export function CollectionCaptureView(
             <TextField fullWidth label="Meta-data URL" onChange={(e) => props.setMetaDataUrl(e.target.value)} />
             <TextField fullWidth label="Vanity URL" onChange={(e) => props.setVanityUrl(e.target.value)} />
             <TextField fullWidth label="Token Type" onChange={(e) => props.setTokenType(e.target.value)} />
+            <TextField fullWidth label="Request Type" onChange={(e) => props.setRequestType(parseInt(e.target.value))} />
             <TextField
                 fullWidth
                 label="Governance Address"
