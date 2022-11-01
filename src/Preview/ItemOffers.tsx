@@ -2812,16 +2812,7 @@ export default function ItemOffers(props: any) {
                                                     {(item.state === 'bid_receipt') ? (
                                                         <TableRow>
                                                             <TableCell><Typography variant="body2">
-                                                                <Tooltip title={t('View Profile')}>
-                                                                    <Button size="small" variant="text" component={Link} to={`${GRAPE_PROFILE}${item.buyeraddress}`} target="_blank" sx={{ml:1,color:'white',borderRadius:'24px'}}>
-                                                                        {trimAddress(item.buyeraddress,4)}
-                                                                    </Button>
-                                                                </Tooltip>
-                                                                <Tooltip title={t('Visit Explorer')}>
-                                                                    <Button size="small" variant="text" component="a" href={`https://explorer.solana.com/address/${item.buyeraddress}`} target="_blank" sx={{ml:1,color:'white',borderRadius:'24px'}}>
-                                                                        <OpenInNewIcon sx={{fontSize:'14px'}} />
-                                                                    </Button>
-                                                                </Tooltip>
+                                                                <ExplorerView showSolanaProfile={true} grapeArtProfile={true} address={item.buyeraddress} type='address' shorten={8} hideTitle={false} style='text' color='white' fontSize='14px' />
                                                             </Typography></TableCell>
                                                             <TableCell  align="right">
                                                                 <Typography variant="body2">

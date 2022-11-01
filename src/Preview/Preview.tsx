@@ -1567,13 +1567,13 @@ function GalleryItemMeta(props: any) {
                                                                 <>
                                                                     {t('Owned by')} &nbsp;
                                                                     
-                                                                    <ExplorerView grapeArtProfile={true} title={solanaDomain} address={tokenOwners?.data.parsed.info.owner} type='address' hideTitle={false} style='text' color='white' fontSize={'12px'} />
+                                                                    <ExplorerView showSolanaProfile={true} grapeArtProfile={true} title={solanaDomain} address={tokenOwners?.data.parsed.info.owner} type='address' hideTitle={false} style='text' color='white' fontSize={'12px'} />
                                                                     
                                                                 </>
                                                                 :
                                                                 <>
                                                                     {t('Owned by')} &nbsp;
-                                                                    <ExplorerView grapeArtProfile={true} shorten={4} address={tokenOwners?.data.parsed.info.owner} type='address' hideTitle={false} style='text' color='white' fontSize={'12px'} />
+                                                                    <ExplorerView showSolanaProfile={true} grapeArtProfile={true} shorten={4} address={tokenOwners?.data.parsed.info.owner} type='address' hideTitle={false} style='text' color='white' fontSize={'12px'} />
                                                                 </>
                                                                 }
                                                                 

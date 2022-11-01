@@ -38,6 +38,7 @@ import {
 
 import { ValidateCurve } from '../grapeTools/WalletAddress';
 
+import TwitterIcon from '@mui/icons-material/Twitter';
 import ExploreOutlinedIcon from '@mui/icons-material/ExploreOutlined';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import ExploreIcon from '@mui/icons-material/Explore';
@@ -72,6 +73,7 @@ export default function ExplorerView(props:any){
     const connection = new Connection(GRAPE_RPC_ENDPOINT);
     const [solanaDomain, setSolanaDomain] = React.useState(null);
     const [profilePictureUrl, setProfilePictureUrl] = React.useState(null);
+    const [twitterRegistration, setTwitterRegistration] = React.useState(null);
     const [hasProfilePicture, setHasProfilePicture] = React.useState(null);
 
     const handleClick = (event:any) => {
@@ -108,6 +110,7 @@ export default function ExplorerView(props:any){
 
     const fetchSolanaDomain = async () => {
         console.log("fetching tryGetName: "+address);
+        setTwitterRegistration(null);
         let found_cardinal = false;
         //const cardinalResolver = new CardinalTwitterIdentityResolver(ggoconnection);
         try{
@@ -118,12 +121,13 @@ export default function ExplorerView(props:any){
                 connection, 
                 new PublicKey(address)
             );
-
+            
             if (cardinal_registration){
                 found_cardinal = true;
                 console.log("cardinal_registration: "+JSON.stringify(cardinal_registration));
 
                 setSolanaDomain(cardinal_registration[0]);
+                setTwitterRegistration(cardinal_registration[0]);
                 const url = `${TWITTER_PROXY}https://api.twitter.com/2/users/by&usernames=${cardinal_registration[0].slice(1)}&user.fields=profile_image_url,public_metrics`;
                 const response = await axios.get(url);
                 //const twitterImage = response?.data?.data[0]?.profile_image_url;
@@ -283,6 +287,7 @@ export default function ExplorerView(props:any){
                         </MenuItem>
                     </CopyToClipboard>
                     <Divider />
+
                     {grapeArtProfile && 
                         <>
                         {ValidateCurve(address) ?
@@ -339,6 +344,25 @@ export default function ExplorerView(props:any){
                         </ListItemIcon>
                         Explorer
                     </MenuItem>
+
+                   
+
+                    {twitterRegistration &&
+                        <>
+                            <Divider />
+                            <MenuItem 
+                                component='a'
+                                href={`https://twitter.com/${twitterRegistration}`}
+                                target='_blank'
+                                onClick={handleClose}>
+                                    <ListItemIcon>
+                                        <TwitterIcon fontSize="small" />
+                                    </ListItemIcon>
+                                    Twitter
+                            </MenuItem>
+                        </>
+                    }
+
                 </StyledMenu>
             </Paper>
         </>

@@ -46,6 +46,7 @@ import {
     } from '../utils/grapeTools/helpers';
 
 import { MakeLinkableAddress, ValidateCurve, trimAddress, timeAgo, formatBlockTime } from '../utils/grapeTools/WalletAddress'; // global key handling
+import ExplorerView from '../utils/grapeTools/Explorer';
 
 import { gah_cancelListingReceipt } from '../utils/auctionHouse/gah_cancelListingReceipt';
 
@@ -312,25 +313,29 @@ export default function HistoryView(props: any){
                                 }
                             }
                                 
+                            if (bookkeeper && bookkeeper.length > 0){
+                                activityResults.push({
+                                    buyeraddress: bookkeeper, 
+                                    bookkeeper: bookkeeper, 
+                                    amount: meitem.price, 
+                                    price: meitem.price, 
+                                    isowner: false, 
+                                    createdAt: createdAt, 
+                                    cancelledAt: cancelledAt, 
+                                    timestamp: timeAgo(createdAt), 
+                                    blockTime: createdAt, 
+                                    state: receiptType, 
+                                    tradeState: null, 
+                                    purchaseReceipt: null, 
+                                    auctionHouse: null,
+                                    seller: seller, 
+                                    buyer: buyer, 
+                                    source: source,
+                                    directmessage:directmessage});
+                            } else{
+                                console.log("Found instance with no bookkeeper - "+createdAt+" - "+source+" - "+meitem.price)
+                            }
 
-                            activityResults.push({
-                                buyeraddress: bookkeeper, 
-                                bookkeeper: bookkeeper, 
-                                amount: meitem.price, 
-                                price: meitem.price, 
-                                isowner: false, 
-                                createdAt: createdAt, 
-                                cancelledAt: cancelledAt, 
-                                timestamp: timeAgo(createdAt), 
-                                blockTime: createdAt, 
-                                state: receiptType, 
-                                tradeState: null, 
-                                purchaseReceipt: null, 
-                                auctionHouse: null,
-                                seller: seller, 
-                                buyer: buyer, 
-                                source: source,
-                                directmessage:directmessage});
                         }
 
                         
@@ -557,15 +562,13 @@ export default function HistoryView(props: any){
 
                                                 <TableBody>
                                                     {history && history.map((item: any, key: number) => (
+                                                        
                                                         <TableRow key={key}>
                                                             
                                                             <TableCell>
                                                                 <ButtonGroup>
-                                                                    <Tooltip title={'View Bookkeeper Profile'}>
-                                                                        <Button size="small" variant="text" component={Link} to={`${GRAPE_PROFILE}${item.bookkeeper}`} target="_blank" sx={{ml:1,color:'white',borderRadius:'24px'}}>
-                                                                            {trimAddress(item.bookkeeper,4)}
-                                                                        </Button>
-                                                                    </Tooltip>
+
+                                                                    <ExplorerView address={item.bookkeeper} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
 
                                                                     {key === 0 &&
                                                                         <> 
@@ -586,6 +589,8 @@ export default function HistoryView(props: any){
                                                                 {item.directmessage &&
                                                                     <Tooltip title="Send a direct message">
                                                                         <Button
+                                                                            variant='text'
+                                                                            color='inherit'
                                                                             onClick={() => {
                                                                                 open();
                                                                                 navigation?.showCreateThread(item.bookkeeper);
