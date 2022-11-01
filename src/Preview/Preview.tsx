@@ -703,7 +703,7 @@ function GalleryItemMeta(props: any) {
         setLoadingOwner(true);
         const [tokenowner] = await Promise.all([GetTokenOwner(mintAta)]);
         setTokenOwners(tokenowner);
-        fetchSolanaDomain(tokenowner?.data.parsed.info.owner);
+        //fetchSolanaDomain(tokenowner?.data.parsed.info.owner);
         getFollowStatus(tokenowner?.data.parsed.info.owner);
         setLoadingOwner(false);
     }
