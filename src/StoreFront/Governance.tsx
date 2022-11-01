@@ -1,4 +1,4 @@
-import { getRealm, getAllProposals, getGovernance, getTokenOwnerRecordsByOwner, getAllTokenOwnerRecords, getRealmConfigAddress, getGovernanceAccount, getAccountTypes, GovernanceAccountType, tryGetRealmConfig, getRealmConfig  } from '@solana/spl-governance';
+import { getRealm, getAllProposals, getGovernance, getGovernanceAccounts, getGovernanceChatMessages, getTokenOwnerRecordsByOwner, getAllTokenOwnerRecords, getRealmConfigAddress, getGovernanceAccount, getAccountTypes, GovernanceAccountType, tryGetRealmConfig, getRealmConfig  } from '@solana/spl-governance';
 import { getVoteRecords } from '../utils/governanceTools/getVoteRecords';
 import { PublicKey, TokenAmount, Connection } from '@solana/web3.js';
 import { ENV, TokenListProvider, TokenInfo } from '@solana/spl-token-registry';
@@ -252,6 +252,21 @@ function GetParticipants(props: any){
                 )
             }
         },
+        { field: 'quorumWeight', headerName: 'Quorum Weight', headerAlign: 'center', width: 250, align: 'right', hide: totalQuorum ? false : true,
+            renderCell: (params) => {
+                return(
+                    <>
+                        {totalQuorum && 
+                            <>
+                            {(((parseInt(params.value.voterWeight)/Math.pow(10, params.value.decimals))/totalQuorum)*100).toFixed(2)} % 
+                            </>
+                        }
+                        
+                        
+                    </>
+                );
+            }
+        },
         { field: 'vote', headerName: 'Voting', headerAlign: 'center', width: 250, align: 'right',
             renderCell: (params) => {
                 return(
@@ -438,6 +453,13 @@ function GetParticipants(props: any){
                     pubkey:item.pubkey.toBase58(),
                     proposal:item.account.proposal.toBase58(),
                     governingTokenOwner:item.account.governingTokenOwner.toBase58(),
+                    quorumWeight:{
+                        vote:item.account.vote,
+                        voterWeight:item.account.voterWeight.toNumber(),
+                        decimals:(realm.account.config?.councilMint?.toBase58() === thisitem.account.governingTokenMint?.toBase58() ? 0 : td),
+                        councilMint:realm.account.config?.councilMint?.toBase58() ,
+                        governingTokenMint:thisitem.account.governingTokenMint?.toBase58() 
+                    },
                     vote:{
                         vote:item.account.vote,
                         voterWeight:item.account.voterWeight.toNumber(),
@@ -455,6 +477,8 @@ function GetParticipants(props: any){
                 //    csvFile += item.pubkey.toBase58();
             }
         }
+
+        votingResults.sort((a:any, b:any) => a?.vote.voterWeight < b?.vote.voterWeight ? 1 : -1); 
 
         if (thisitem.account?.descriptionLink){
             try{
