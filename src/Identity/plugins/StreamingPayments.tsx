@@ -73,6 +73,7 @@ import {
     getNumberFromBN,
 } from "@streamflow/stream";
 
+import ExplorerView from '../../utils/grapeTools/Explorer';
 import { GRAPE_RPC_ENDPOINT, THEINDEX_RPC_ENDPOINT, GRAPE_PROFILE, GRAPE_PREVIEW, DRIVE_PROXY } from '../../utils/grapeTools/constants';
 import { load } from "../../browser";
 import { PanoramaVerticalSelect } from "@mui/icons-material";
@@ -316,20 +317,20 @@ export function StreamingPaymentsView(props: any){
             }
         },
         { field: 'name', headerName: 'Name', minWidth: 200, flex: 1, align: 'left' },
-        { field: 'sender', headerName: 'Sender', width: 100, align: 'center',
+        { field: 'sender', headerName: 'Sender', width: 150, align: 'center',
             renderCell: (params) => {
                 return(
                     <>
-                        {trimAddress(params.value,4)}
+                        <ExplorerView showSolanaProfile={true} grapeArtProfile={true} address={params.value} type='address' shorten={4} hideTitle={false} style='text' color='white' fontSize='14px' />
                     </>
                 );
             }
         },
-        { field: 'recipient', headerName: 'Recipient', width: 100, align: 'center',
+        { field: 'recipient', headerName: 'Recipient', width: 150, align: 'center',
             renderCell: (params) => {
                 return(
                     <>
-                        {trimAddress(params.value,4)}
+                        <ExplorerView showSolanaProfile={true} grapeArtProfile={true} address={params.value} type='address' shorten={4} hideTitle={false} style='text' color='white' fontSize='14px' />
                     </>
                 );
             }
