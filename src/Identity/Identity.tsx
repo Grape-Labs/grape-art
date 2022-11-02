@@ -1117,7 +1117,7 @@ export function IdentityView(props: any){
     const fetchWalletPositions = async () => {
         setLoadingWallet(true);
         const tmap = await fetchTokens();
-        await fetchProfilePicture();
+        //await fetchProfilePicture();
         await fetchSolanaDomain();
         await fetchSolanaBalance();
         //await fetchStorage();
@@ -1181,35 +1181,8 @@ export function IdentityView(props: any){
                                         <List dense={true}>
                                             <ListItem>
                                                 <Grid container>
-                                                    <Grid item md>
-                                                        <Tooltip title={t('Wallet Address')}>
-                                                            <ListItemButton 
-                                                                sx={{borderRadius:'24px'}}
-                                                            >
-                                                                <ListItemAvatar>
-                                                                    {profilePictureUrl ?
-                                                                        <Avatar
-                                                                            sx={{backgroundColor:'#222'}}
-                                                                            src={profilePictureUrl}
-                                                                            alt='Solana Profile Picture'
-                                                                        />
-                                                                    :
-                                                                        <Avatar
-                                                                            sx={{backgroundColor:'#222'}}
-                                                                        >
-                                                                            <AccountBalanceWalletIcon sx={{color:'white'}} />
-                                                                        </Avatar>
-                                                                    }
-                                                                </ListItemAvatar>
-                                                                <ListItemText
-                                                                    primary={pubkey}
-                                                                    secondary={t('Solana Address')}
-                                                                />
-                                                            </ListItemButton>
-                                                        </Tooltip>
-                                                    </Grid>
                                                     <Grid item>
-                                                        <ExplorerView address={pubkey} type='address' title={'Explore'}/>
+                                                        <ExplorerView showSolanaProfile={true} showAddress={true} grapeArtProfile={true} address={pubkey} type='address' shorten={8} hideTitle={false} style='text' color='white' fontSize='14px' />
                                                     </Grid>
                                                 </Grid>
                                             </ListItem>

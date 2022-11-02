@@ -60,6 +60,7 @@ export default function ExplorerView(props:any){
     const address = props.address;
     //const [address, setAddress] = React.useState(props.address);
     const title = props.title || null;
+    const showAddress = props.showAddress || false;
     const type = props.type || 'address';
     const buttonStyle = props?.style || 'outlined';
     const buttonColor = props?.color || 'white';
@@ -72,6 +73,7 @@ export default function ExplorerView(props:any){
     const showSolanaProfile = props.showSolanaProfile || null;
     const connection = new Connection(GRAPE_RPC_ENDPOINT);
     const [solanaDomain, setSolanaDomain] = React.useState(null);
+    const [hasSolanaDomain, setHasSolanaDomain] = React.useState(false);
     const [profilePictureUrl, setProfilePictureUrl] = React.useState(null);
     const [twitterRegistration, setTwitterRegistration] = React.useState(null);
     const [hasProfilePicture, setHasProfilePicture] = React.useState(null);
@@ -111,6 +113,7 @@ export default function ExplorerView(props:any){
     const fetchSolanaDomain = async () => {
         console.log("fetching tryGetName: "+address);
         setTwitterRegistration(null);
+        setHasSolanaDomain(false);
         let found_cardinal = false;
         //const cardinalResolver = new CardinalTwitterIdentityResolver(ggoconnection);
         try{
@@ -125,7 +128,7 @@ export default function ExplorerView(props:any){
             if (cardinal_registration){
                 found_cardinal = true;
                 console.log("cardinal_registration: "+JSON.stringify(cardinal_registration));
-
+                setHasSolanaDomain(true);
                 setSolanaDomain(cardinal_registration[0]);
                 setTwitterRegistration(cardinal_registration[0]);
                 const url = `${TWITTER_PROXY}https://api.twitter.com/2/users/by&usernames=${cardinal_registration[0].slice(1)}&user.fields=profile_image_url,public_metrics`;
@@ -144,6 +147,7 @@ export default function ExplorerView(props:any){
             const domain = await findDisplayName(connection, address);
             if (domain) {
                 if (domain[0] !== address) {
+                    setHasSolanaDomain(true);
                     setSolanaDomain(domain[0]);
                 }
             }
@@ -230,7 +234,7 @@ export default function ExplorerView(props:any){
                     </>
                 }
             >
-                <Typography sx={{color:`${buttonColor}`,fontSize:`${fontSize}`}}>
+                <Typography sx={{color:`${buttonColor}`,fontSize:`${fontSize}`,textAlign:'left'}}>
                     {title ?
                         <>{title}</>
                     :
@@ -238,7 +242,11 @@ export default function ExplorerView(props:any){
                             {!hideTitle &&
                                 <>
                                     {solanaDomain ?
-                                        <>{solanaDomain}</>
+                                        <>
+                                            {solanaDomain}
+                                            {showAddress && hasSolanaDomain &&
+                                            <><br/><Typography variant='caption' sx={{textTransform:'none'}}>{(shorten && shorten > 0) ? trimAddress(address,shorten) : address}</Typography></>}
+                                        </>
                                     :
                                     <>
                                     {(shorten && shorten > 0) ? 
