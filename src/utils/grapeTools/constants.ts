@@ -153,3 +153,7 @@ export const OTHER_MARKETPLACES = new Array(
         url: 'https://market.solanamonkey.business/'
     }
 );
+
+export const BOARDING_PROGRAM_CONFIG = 'GjBP4p7p8GNbekJgWLzhowUNXRuAHb2TSiCP8d4G7dvY';
+export const GRAPE_WHITELIST = process.env.REACT_APP_API_WHITELIST || null;
+
