@@ -7,7 +7,6 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { ProfileView } from './Profile/Profile';
 import { PreviewView } from './Preview/Preview';
 import { FeaturedView } from './Featured/Featured';
-import { BoardingView } from './Onboarding/Boarding/Boarding';
 import { IdentityView } from './Identity/Identity';
 import { StorageView } from './Identity/plugins/Storage';
 
@@ -102,8 +101,6 @@ import { CardinalTwitterIdentityResolver } from '@dialectlabs/identity-cardinal'
 
 import { getDialectVariables, GRAPE_BOTTOM_CHAT_ID } from './utils/ui-contants';
 import { ClassNames } from '@emotion/react';
-import {MyCollectionsView} from "./Onboarding/MyCollections/MyCollections";
-import {AdminView} from "./Onboarding/Admin/Admin";
 
 const walletToDialectWallet = (wallet: WalletContextState): DialectWalletAdapter => ({
     publicKey: wallet.publicKey!,
@@ -289,12 +286,6 @@ function DashboardContent() {
                                                             {/*<Route path="/splash" element={<SplashView />} />*/}
 
                                                             <Route path="/featured" element={<FeaturedView />} />
-
-                                                            <Route path="/boarding" element={<BoardingView />} />
-
-                                                            <Route path="/mycollections" element={<MyCollectionsView />} />
-
-                                                            <Route path="/admin" element={<AdminView />} />
 
                                                             {/*<Route path="/feed" element={<FeedView />} />*/}
 

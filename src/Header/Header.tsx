@@ -43,12 +43,11 @@ import { createFilterOptions } from '@mui/material/Autocomplete';
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
 import SearchIcon from '@mui/icons-material/Search';
 import Mail from '@mui/icons-material/Mail';
-import Add from '@mui/icons-material/AddPhotoAlternate';
 
-import {
-    GRAPE_RPC_ENDPOINT,
+import { 
+    GRAPE_RPC_ENDPOINT, 
     GRAPE_PREVIEW,
-    GRAPE_PROFILE,
+    GRAPE_PROFILE, 
     GRAPE_COLLECTION,
     GRAPE_COLLECTIONS_DATA
 } from '../utils/grapeTools/constants';
@@ -223,13 +222,13 @@ export function Header(props: any) {
                     vCA.push(item);
               }
 
-              setVerifiedCollectionArray(vCA);
+              setVerifiedCollectionArray(vCA); 
               //return json;
-
+            
         } catch(e){console.log("ERR: "+e)}
     }
 
-    React.useEffect(() => {
+    React.useEffect(() => { 
         if (!verifiedCollectionArray)
             fetchVerifiedCollection(null)
     }, []);
@@ -285,16 +284,16 @@ export function Header(props: any) {
                 <Container component="form" onSubmit={handlePublicKeySubmit} sx={{ background: 'none' }}>
                     <Tooltip title={<><>Search by Address or by mint by entering: <strong>mint:</strong>address</></>}>
                         <Search sx={{ height: '40px' }}>
-
+                            
                             <SearchIconWrapper>
                                 <SearchIcon />
                             </SearchIconWrapper>
-
+                            
                             {verifiedCollectionArray ?
-
+                                
                                 <Autocomplete
                                     id="auto-complete-header-search"
-
+                                    
                                     freeSolo
                                     selectOnFocus
                                     clearOnBlur
@@ -310,16 +309,16 @@ export function Header(props: any) {
                                         } else if (newValue && newValue.inputValue) {
                                             console.log(">>> inputValue")
                                         } else {
-                                            {newValue?.vanityUrl &&
+                                            {newValue?.vanityUrl && 
                                                 window.location.replace(`${GRAPE_COLLECTION}${newValue.vanityUrl}`);
                                                 //navigate(`${GRAPE_COLLECTION}${newValue.vanityUrl}`)
                                             }
-
+                                            
                                             //console.log(">>> none "+JSON.stringify(newValue.vanityUrl))
                                         //  setValue(newValue);
                                         }
                                     }}
-                                    renderOption={(props, option, {inputValue}) =>
+                                    renderOption={(props, option, {inputValue}) => 
                                         //const matches = match(option.name, inputValue);
                                         //const parts = parse(option.name, matches);
                                         <li {...props}>
@@ -332,7 +331,7 @@ export function Header(props: any) {
                                                         sx={{
                                                             ml:1,
                                                             mr:1,
-                                                            width: 24,
+                                                            width: 24, 
                                                             height: 24
                                                         }}
                                                     ></Avatar>
@@ -354,7 +353,7 @@ export function Header(props: any) {
                                         />
                                     )}
                                     /*
-                                    renderInput={(params) =>
+                                    renderInput={(params) => 
                                         <TextField
                                             {...params}
                                             InputProps={{
@@ -382,16 +381,6 @@ export function Header(props: any) {
                 </Container>
             </Box>
             {wallet.connected && (
-								<>
-								<Tooltip title="Add Collection">
-								<Button
-                      component={Link}
-											to={'boarding'}
-											sx={{ color: 'white', borderRadius: '24px', m: 0 }}
-								>
-									<Add/>
-								</Button>
-								</Tooltip>
                 <Tooltip title="Inbox">
                     <Button
                         component={Link}
@@ -401,7 +390,6 @@ export function Header(props: any) {
                         <Mail />
                     </Button>
                 </Tooltip>
-								</>
             )}
             {location.pathname && location.pathname.includes('collection') && (
                 <Tooltip title="Profile">
