@@ -40,6 +40,7 @@ import { linearProgressClasses } from '@mui/material/LinearProgress';
 import ExplorerView from '../utils/grapeTools/Explorer';
 import moment from 'moment';
 
+import CheckIcon from '@mui/icons-material/Check';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import FileOpenIcon from '@mui/icons-material/FileOpen';
 import GitHubIcon from '@mui/icons-material/GitHub';
@@ -232,6 +233,8 @@ function GetParticipants(props: any){
     const [quorumTargetPercentage, setQuorumTargetPercentage] = React.useState(null);
     const [quorumTarget, setQuorumTarget] = React.useState(null);
     const [totalSupply, setTotalSupply] = React.useState(null);
+    const [exceededQuorum, setExceededQuorum] = React.useState(null);
+    const [exceededQuorumPercentage, setExceededQuorumPercentage] = React.useState(null);
 
     const votingresultcolumns: GridColDef[] = [
         { field: 'id', headerName: 'ID', width: 70, hide: true},
@@ -358,6 +361,13 @@ function GetParticipants(props: any){
             const qt = totalVotes-thisitem.account.options[0].voteWeight.toNumber()/Math.pow(10, governingMintPromise.value.data.parsed.info.decimals);
             const yesVotes = thisitem.account.options[0].voteWeight.toNumber()/Math.pow(10, governingMintPromise.value.data.parsed.info.decimals);
             
+            const excess = yesVotes - totalVotes;
+            
+            if (excess > 0){
+                setExceededQuorum(excess);
+                setExceededQuorumPercentage(excess/totalVotes*100);
+            }
+
             //console.log("yesVotes: "+yesVotes);
             const totalVotesNeeded = Math.ceil(totalVotes - yesVotes);
 
@@ -652,7 +662,7 @@ function GetParticipants(props: any){
                                             {quorumTarget ? 
                                                 <Typography variant='caption'>{getFormattedNumberToLocale(formatAmount(quorumTarget))} more votes remaining to reach quorum</Typography>
                                             :
-                                                <Typography variant='caption'>Quorum Reached!</Typography>
+                                                <Typography variant='caption'>Quorum Reached <CheckIcon sx={{fontSize:'10px'}} />  {exceededQuorumPercentage && `${exceededQuorumPercentage.toFixed(1)}% votes exceeded quorum`}</Typography>
                                             }
                                         </Box>
                                         }
