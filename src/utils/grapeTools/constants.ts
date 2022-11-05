@@ -41,6 +41,8 @@ export const TOKEN_REALM_PROGRAM_ID = 'GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPC
 //export const GRAPE_COLLECTIONS_DATA = 'https://shdw-drive.genesysgo.net/6r4vHWSxg1Fq7jRDFSLPCSPAbRohUk9jhMSuzNyiw6KL/';
 export const GRAPE_COLLECTIONS_DATA = 'https://shdw-drive.genesysgo.net/5pKmUSyh4VEpVhCCYon1kFf6fn5REtmk1rz4sGXyMrAZ/';
 
+export const BOARDING_PROGRAM_CONFIG = 'AynrW8J4Tgh1hBvizCBuQ9m6KXvuLjGPzJk52o6bVop8'
+
 export const VERIFIED_DAO_ARRAY = [
     {
         address:'JAbgQLj9MoJ2Kvie8t8Y6z6as3Epf7rDp87Po3wFwrNK',

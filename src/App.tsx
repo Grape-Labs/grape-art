@@ -1,9 +1,10 @@
+import ReactXnft, { AnchorDom, View, Text } from "react-xnft";
 import React, { FC, ReactNode, useCallback, useMemo, Suspense, lazy, Component } from 'react';
 import { styled, ThemeProvider } from '@mui/material/styles';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 //import { LogView } from "./Log/Log";
 
-//import { OnBoardingView } from './Onboarding/Onboarding';
+import { MyCollectionsView } from "./MyCollections/MyCollections";
 import { ProfileView } from './Profile/Profile';
 import { PreviewView } from './Preview/Preview';
 import { FeaturedView } from './Featured/Featured';
@@ -103,7 +104,7 @@ import { getDialectVariables, GRAPE_BOTTOM_CHAT_ID } from './utils/ui-contants';
 import { ClassNames } from '@emotion/react';
 
 const walletToDialectWallet = (wallet: WalletContextState): DialectWalletAdapter => ({
-    publicKey: wallet.publicKey!,
+    publicKey: wallet.publicKey,
     connected: wallet.connected && !wallet.connecting && !wallet.disconnecting && Boolean(wallet.publicKey),
     signMessage: wallet.signMessage,
     signTransaction: wallet.signTransaction,
@@ -293,6 +294,10 @@ function DashboardContent() {
 
                                                             {/*<Route path="/solflaretest" element={<NotificationsView/>} />*/}
 
+                                                            <Route path="boarding" element={<MyCollectionsView />} >
+                                                                <Route path=":handlekey" element={<MyCollectionsView />} />
+                                                            </Route>
+                                                            
                                                             <Route path="/" element={<ProfileView />}>
                                                                 <Route path=":handlekey" element={<ProfileView />} />
                                                             </Route>
@@ -373,3 +378,12 @@ export const NotFound = () => {
 export default function Dashboard() {
     return <DashboardContent />;
 }
+/*
+const App = () => {
+    return (
+      <View>
+        <DashboardContent />
+      </View>
+    );
+};
+*/

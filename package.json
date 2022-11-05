@@ -1,9 +1,9 @@
 {
     "name": "@grape-labs/grape-art",
-    "version": "1.1.373",
+    "version": "1.1.374",
     "author": "Grape Dev subDAO",
-    "repository": "https://github.com/grape-labs/grape-art",
     "license": "Apache-2.0",
+    "repository": "https://github.com/grape-labs/grape-art",
     "publishConfig": {
         "access": "public",
         "registry": "https://github.com/grape-labs/grape-art"
@@ -29,13 +29,17 @@
         "fmt": "prettier --write '{*,**/*}.{js,ts,jsx,tsx,json}'",
         "lint": "eslint . && prettier --check '{*,**/*}.{js,ts,jsx,tsx,json}'",
         "lint:fix": "eslint --fix . && yarn fmt",
-        "nuke": "shx rm -rf node_modules yarn.lock"
+        "nuke": "shx rm -rf node_modules yarn.lock",
+        "xnft-build": "xnft build",
+        "xnft-start": "xnft watch",
+        "xnft-dev": "xnft dev"
     },
     "peerDependencies": {
         "react": "^17.0.0 || ^18.0.0"
     },
     "dependencies": {
         "@apollo/client": "^3.6.9",
+        "@blockworks-foundation/voter-stake-registry-client": "^0.2.3",
         "@bonfida/spl-name-service": "0.1.50",
         "@cardinal/namespaces": "^4.1.56",
         "@cardinal/token-manager": "^1.7.9",
@@ -88,6 +92,7 @@
         "file_size_url": "^1.0.4",
         "formidable": "v3",
         "fp-ts": "^2.12.3",
+        "grape-art-listing-request": "^0.0.26",
         "graphql": "^16.6.0",
         "graphql-request": "^4.3.0",
         "i18next": "^21.8.2",
@@ -120,6 +125,7 @@
         "react-scripts": "^5.0.1",
         "react-share": "^4.4.0",
         "react-simple-image-viewer": "^1.1.1",
+        "react-xnft": "^0.2.0-latest.418",
         "remark-gfm": "^3.0.1",
         "rimraf": "^3.0.2",
         "tweetnacl": "^1.0.3",
@@ -130,6 +136,7 @@
         "zustand": "^3.6.8"
     },
     "devDependencies": {
+        "@coral-xyz/xnft-cli": "latest",
         "@parcel/compressor-brotli": "^2.7.0",
         "@parcel/compressor-gzip": "^2.7.0",
         "@parcel/packager-raw-url": "2.7.0",

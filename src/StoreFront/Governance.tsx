@@ -4,7 +4,8 @@ import { PublicKey, TokenAmount, Connection } from '@solana/web3.js';
 import { ENV, TokenListProvider, TokenInfo } from '@solana/spl-token-registry';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { WalletDialogProvider, WalletMultiButton } from "@solana/wallet-adapter-material-ui";
-import * as React from 'react';
+import { WalletError, WalletNotConnectedError } from '@solana/wallet-adapter-base';
+import React, { useCallback } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import Gist from 'react-gist';
@@ -33,10 +34,13 @@ import {
   DialogContent,
   Chip,
   ButtonGroup,
+  CircularProgress,
 } from '@mui/material/';
 
 import { linearProgressClasses } from '@mui/material/LinearProgress';
+import { useSnackbar } from 'notistack';
 
+import { createCastVoteTransaction } from '../utils/governanceTools/components/instructions/createVote';
 import ExplorerView from '../utils/grapeTools/Explorer';
 import moment from 'moment';
 
@@ -65,7 +69,7 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import HowToVoteIcon from '@mui/icons-material/HowToVote';
 
 import PropTypes from 'prop-types';
-import { GRAPE_RPC_ENDPOINT, THEINDEX_RPC_ENDPOINT } from '../utils/grapeTools/constants';
+import { GRAPE_RPC_ENDPOINT, THEINDEX_RPC_ENDPOINT, TX_RPC_ENDPOINT } from '../utils/grapeTools/constants';
 import { formatAmount, getFormattedNumberToLocale } from '../utils/grapeTools/helpers'
 //import { RevokeCollectionAuthority } from '@metaplex-foundation/mpl-token-metadata';
 
@@ -235,6 +239,18 @@ function GetParticipants(props: any){
     const [totalSupply, setTotalSupply] = React.useState(null);
     const [exceededQuorum, setExceededQuorum] = React.useState(null);
     const [exceededQuorumPercentage, setExceededQuorumPercentage] = React.useState(null);
+    const [selectedDelegate, setSelectedDelegate] = React.useState("");
+    const { publicKey, wallet, sendTransaction, signTransaction } = useWallet();
+    const freeconnection = new Connection(TX_RPC_ENDPOINT);
+
+    const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+    const onError = useCallback(
+        (error: WalletError) => {
+            enqueueSnackbar(error.message ? `${error.name}: ${error.message}` : error.name, { variant: 'error' });
+            console.error(error);
+        },
+        [enqueueSnackbar]
+    );
 
     const votingresultcolumns: GridColDef[] = [
         { field: 'id', headerName: 'ID', width: 70, hide: true},
@@ -322,7 +338,7 @@ function GetParticipants(props: any){
             
             const communityWeight = governingMintPromise.value.data.parsed.info.supply - realm.account.config.minCommunityTokensToCreateGovernance.toNumber();
             //console.log("communityWeight: "+communityWeight);
-
+            
             const communityMintMaxVoteWeightSource = realm.account.config.communityMintMaxVoteWeightSource
             const supplyFractionPercentage = communityMintMaxVoteWeightSource.fmtSupplyFractionPercentage();
             const communityVoteThreshold = governance.account.config.communityVoteThreshold
@@ -530,6 +546,91 @@ function GetParticipants(props: any){
         //console.log("This vote: "+JSON.stringify(thisitem));
     }
 
+    function VoteForProposal(props:any){
+        const type = props.type || 0;
+
+        const isCommunityVote = propVoteType !== 'Council'; //realm.account.config?.councilMint?.toBase58() !== thisitem?.account.governingTokenMint;// realm?.communityMint === thisitem?.account.governingTokenMint;
+        //console.log("isCommunityVote: "+JSON.stringify(isCommunityVote));
+        
+        const handleVoteYes = async () => {
+            const proposal = {
+                governanceId: thisitem.account.governance,
+                proposalId: thisitem.pubkey,
+                tokenOwnerRecord: thisitem.account.tokenOwnerRecord,
+                governingTokenMint: thisitem.account.governingTokenMint
+            }
+            const transactionData = {proposal:proposal,action:0}
+            console.log("realm: "+JSON.stringify(realm));
+            console.log("thisitem/proposal: "+JSON.stringify(thisitem));
+            console.log("thisGovernance: "+JSON.stringify(thisGovernance));
+            
+            const realmData = {
+                pubKey:thisGovernance.pubkey,
+                realmId:thisitem.pubkey,
+                governanceId:thisitem.account.governance,
+                communityMint: thisitem.account.governingTokenMint
+            }
+
+            const vvvt = await createCastVoteTransaction(
+                realmData,
+                publicKey.toBase58(),
+                transactionData,
+                memberMap,
+                null,
+                isCommunityVote
+            );
+
+            try{
+                enqueueSnackbar(`Preparing to cast vote`,{ variant: 'info' });
+                const signature = await sendTransaction(vvvt, freeconnection, {
+                    skipPreflight: true,
+                    preflightCommitment: "confirmed",
+                });
+                const snackprogress = (key:any) => (
+                    <CircularProgress sx={{padding:'10px'}} />
+                );
+                const cnfrmkey = enqueueSnackbar(`Confirming transaction`,{ variant: 'info', action:snackprogress, persist: true });
+                //await connection.confirmTransaction(signature, 'processed');
+                const latestBlockHash = await connection.getLatestBlockhash();
+                await connection.confirmTransaction({
+                    blockhash: latestBlockHash.blockhash,
+                    lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+                    signature: signature}, 
+                    'processed'
+                );
+                closeSnackbar(cnfrmkey);
+                const action = (key:any) => (
+                        <Button href={`https://explorer.solana.com/tx/${signature}`} target='_blank'  sx={{color:'white'}}>
+                            Signature: {signature}
+                        </Button>
+                );
+                
+                enqueueSnackbar(`Congratulations, you have participated in voting for this Proposal`,{ variant: 'success', action });
+            }catch(e:any){
+                enqueueSnackbar(e.message ? `${e.name}: ${e.message}` : e.name, { variant: 'error' });
+            } 
+            
+
+        }
+
+        return (
+        <>
+            {/*thisitem.account?.state === 2 && 
+                <>{type === 0 ?
+                        <Button
+                            onClick={handleVoteYes}
+                            sx={{borderRadius:'17px',textTransform:'none'}}
+                        >Vote YES</Button>
+                    :
+                        <Button
+                            sx={{borderRadius:'17px',textTransform:'none'}}
+                        >Vote NO</Button>
+                    }
+                </>
+            */}
+        </>);
+    }
+
 
     
     return (
@@ -628,6 +729,7 @@ function GetParticipants(props: any){
                                         <Typography variant="caption">
                                             {getFormattedNumberToLocale(formatAmount(+(thisitem.account.options[0].voteWeight.toNumber()/Math.pow(10, tokenDecimals)).toFixed(0)))}
                                         </Typography>
+                                        <VoteForProposal type={0} />
                                     </Box>
                                 </Grid>
                                 <Grid item xs={12} sm={6} md={6} key={1}>
@@ -650,6 +752,7 @@ function GetParticipants(props: any){
                                         <Typography variant="caption">
                                             {getFormattedNumberToLocale(formatAmount(+(thisitem.account.denyVoteWeight.toNumber()/Math.pow(10, tokenDecimals)).toFixed(0)))}
                                         </Typography>
+                                        <VoteForProposal type={1} />
                                     </Box>
                                 </Grid>
                                 
@@ -1318,9 +1421,100 @@ export function GovernanceView(props: any) {
                     }
                 }
 
-                const gator = await getAllTokenOwnerRecords(new Connection(THEINDEX_RPC_ENDPOINT), programId, realmPk)
+                const rawTokenOwnerRecords = await getAllTokenOwnerRecords(new Connection(THEINDEX_RPC_ENDPOINT), grealm.owner, realmPk)
+                
+                /*
+                rawTokenOwnerRecords?.map((member) => {
+                    // if member does not exist, add member to member map
+                    // if member does exist, check which token record this is and add correct attributes to object
+            
+                    const governingTokenMint = member.account.governingTokenMint.toBase58();
+                    const depositAmount =
+                      member.account.governingTokenDepositAmount.toString();
+            
+                    let memberData = {
+                      publicKey: member.pubkey.toBase58(),
+                      owner: member.owner.toBase58(), // RealmId
+                      totalVotesCount: member.account.totalVotesCount, // How many votes they have
+                      outstandingProposalCount: member.account.outstandingProposalCount,
+                      walletId: member.account.governingTokenOwner.toBase58(), // Wallet address of owner of dao token
+                    };
+                    tokenRecordToWalletMap[member.pubkey.toBase58()] =
+                      member.account.governingTokenOwner.toBase58();
+            
+                    if (governingTokenMint === councilMint) {
+                      const delegateWalletId =
+                        member?.account?.governanceDelegate?.toBase58();
+                      // @ts-ignore
+                      memberData["councilPublicKey"] = member.pubkey.toBase58();
+                      // @ts-ignore
+                      memberData["councilDelegate"] = delegateWalletId;
+                      // @ts-ignore
+                      memberData["totalVotesCouncil"] = member.account.totalVotesCount;
+                      // @ts-ignore
+                      memberData["councilTokenMint"] = governingTokenMint;
+                      // @ts-ignore
+                      memberData["councilDepositAmount"] = depositAmount;
+                      // @ts-ignore
+                      memberData["councilDepositUiAmount"] = formatVoteWeight(
+                        depositAmount,
+                        councilMintDecimals
+                      );
+            
+                      if (delegateWalletId) {
+                        if (delegateMap[delegateWalletId]) {
+                          const oldCouncilRecords =
+                            delegateMap[delegateWalletId]?.councilMembers || [];
+            
+                          delegateMap[delegateWalletId] = {
+                            ...delegateMap[delegateWalletId],
+                            councilMembers: [...oldCouncilRecords, memberData],
+                          };
+                        } else {
+                          delegateMap[delegateWalletId] = {
+                            councilMembers: [memberData],
+                          };
+                        }
+                      }
+                    } else {
+                      const delegateWalletId =
+                        member?.account?.governanceDelegate?.toBase58();
+            
+                      //@ts-ignore
+                      memberData["communityPublicKey"] = member.pubkey.toBase58();
+                      // @ts-ignore
+                      memberData["communityDelegate"] = delegateWalletId;
+                      // @ts-ignore
+                      memberData["totalVotesCommunity"] = member.account.totalVotesCount;
+                      // @ts-ignore
+                      memberData["communityTokenMint"] = governingTokenMint;
+                      // @ts-ignore
+                      memberData["communityDepositAmount"] = depositAmount;
+                      //@ts-ignore
+                      memberData["communityDepositUiAmount"] = formatVoteWeight(
+                        depositAmount,
+                        communityMintDecimals
+                      );
+            
+                      if (delegateWalletId) {
+                        if (delegateMap[delegateWalletId]) {
+                          const oldCommunityRecords =
+                            delegateMap[delegateWalletId]?.communityMembers || [];
+            
+                          delegateMap[delegateWalletId] = {
+                            ...delegateMap[delegateWalletId],
+                            communityMembers: [...oldCommunityRecords, memberData],
+                          };
+                        } else {
+                          delegateMap[delegateWalletId] = {
+                            communityMembers: [memberData],
+                          };
+                        }
+                      }
+                    }
+            */
 
-                setMemberMap(gator);
+                setMemberMap(rawTokenOwnerRecords);
 
                 //const programId = new PublicKey(GOVERNANCE_PROGRAM_ID);
 

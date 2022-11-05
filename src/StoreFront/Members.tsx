@@ -392,11 +392,10 @@ export function MembersView(props: any) {
                 //const sortedResults = trecords.sort((a,b) => (a.account?.totalVotesCount < b.account?.totalVotesCount) ? 1 : -1);
                 const sortedResults = trecords.sort((a,b) => (a.account?.governingTokenDepositAmount.toNumber() < b.account?.governingTokenDepositAmount.toNumber()) ? 1 : -1);
                 
+                /*
                 var memberArray = new Array();
                 for (var member of sortedResults){
                     var found = false;
-                    if (member.account.governingTokenOwner.toBase58() === 'B98e2BdhvvkxtBTwsu97HCmot93kjg9kEKSVYL6YnjjK')
-                        console.log("member: "+JSON.stringify(ma))
                     for (var ma of memberArray){
                         if (ma.account.governingTokenOwner.toBase58() === member.account.governingTokenOwner.toBase58()){
                             found = true;
@@ -408,14 +407,12 @@ export function MembersView(props: any) {
                 }
 
                 console.log("ma len: "+memberArray.length);
-
+                */
 
                 //console.log("trecords: "+JSON.stringify(trecords));
                 setMembers(sortedResults);
             
             }catch(e){console.log("ERR: "+e)}
-        } else{
-
         }
         setLoading(false);
     }
