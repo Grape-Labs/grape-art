@@ -26,7 +26,7 @@ import {
 import JupiterSwap from "./Swap";
 import SendToken from "./Send";
 
-//import {formatAmount, getFormattedNumberToLocale} from '../Meanfi/helpers/ui';
+import { formatAmount, getFormattedNumberToLocale } from '../utils/grapeTools/helpers'
 //import { PretifyCommaNumber } from '../../components/Tools/PretifyCommaNumber';
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
 
@@ -72,6 +72,7 @@ export function TokenView(props: any) {
     const [coinGeckoPrice,setCoinGeckoPrice] = React.useState(null);
     const [myToken, setMyToken] = React.useState(null);
     const [portfolioPositions, setPortfolioPositions] = React.useState(null);
+    const [tokenSupply, setTokenSupply] = React.useState(null);
 
     const fetchTokens = async () => {
         const tokens = await new TokenListProvider().resolve();
@@ -124,6 +125,12 @@ export function TokenView(props: any) {
         if (!loading){
             setLoading(true);
             try{
+
+                const tknSupply = await connection.getTokenSupply(new PublicKey(collectionAuthority.address));
+
+                setTokenSupply(tknSupply);
+                console.log("tknSupply: "+JSON.stringify(tknSupply));
+
                 const tknMap = await fetchTokens();
 
                 const tkn = tknMap.get(collectionAuthority.address);
@@ -143,8 +150,6 @@ export function TokenView(props: any) {
                 //console.log("trecords: "+JSON.stringify(trecords));
             
             }catch(e){console.log("ERR: "+e)}
-        } else{
-
         }
         setLoading(false);
     }
@@ -199,6 +204,11 @@ export function TokenView(props: any) {
                         <Typography variant="caption" component='div'>
                             Symbol: {token.symbol}
                         </Typography>
+                        {tokenSupply &&
+                            <Typography variant="caption" component='div'>
+                                Supply: {getFormattedNumberToLocale(formatAmount(+((tokenSupply.value.amount)/Math.pow(10, tokenSupply.value.decimals)).toFixed(0)))}
+                            </Typography>
+                        }
                     </>
                     
 
@@ -268,7 +278,7 @@ export function TokenView(props: any) {
                                 <Card sx={{borderRadius:'17px'}}>
                                     <CardContent>
                                         <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                                        Balance
+                                        Token Supply
                                         </Typography>
                                         <Typography variant="h5" component="div">
                                         
