@@ -28,28 +28,9 @@ import SendToken from "./Send";
 
 import { formatAmount, getFormattedNumberToLocale } from '../utils/grapeTools/helpers'
 //import { PretifyCommaNumber } from '../../components/Tools/PretifyCommaNumber';
-import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
 
-import moment from 'moment';
+import ExplorerView from '../utils/grapeTools/Explorer';
 
-import Chat from '@mui/icons-material/Chat';
-import FirstPageIcon from '@mui/icons-material/FirstPage';
-import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
-import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
-import LastPageIcon from '@mui/icons-material/LastPage';
-import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
-import TimerIcon from '@mui/icons-material/Timer';
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
-import IconButton from '@mui/material/IconButton';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import HowToVoteIcon from '@mui/icons-material/HowToVote';
-
-import { ChatNavigationHelpers, useDialectUiId } from '@dialectlabs/react-ui';
-import { GRAPE_BOTTOM_CHAT_ID } from '../utils/ui-contants';
-
-import PropTypes from 'prop-types';
 import { GRAPE_RPC_ENDPOINT, THEINDEX_RPC_ENDPOINT } from '../utils/grapeTools/constants';
 import { MakeLinkableAddress, ValidateAddress, ValidateCurve, trimAddress, timeAgo } from '../utils/grapeTools/WalletAddress'; // global key handling
 //import { RevokeCollectionAuthority } from '@metaplex-foundation/mpl-token-metadata';
@@ -199,7 +180,8 @@ export function TokenView(props: any) {
                             </Grid>
                         </Typography>
                         <Typography variant="caption" component='div'>
-                            Address: {token.address}
+                            Address: 
+                                <ExplorerView address={token.address} type='address' shorten={0} hideTitle={false} style='text' color='white' fontSize='12px' />
                         </Typography>
                         <Typography variant="caption" component='div'>
                             Symbol: {token.symbol}
@@ -291,7 +273,8 @@ export function TokenView(props: any) {
                                             {myToken.account.data.parsed.info.tokenAmount.uiAmount * tokenPrice.data.price} SOL
                                         </Typography>
                                         <Typography sx={{ mb: 1.5 }} color="text.secondary" variant="caption">
-                                        Source: {publicKey.toBase58()}
+                                        Source: 
+                                        <ExplorerView showSolanaProfile={true} grapeArtProfile={true} showAddress={true} address={publicKey.toBase58()} type='address' shorten={0} hideTitle={false} style='text' color='white' fontSize='11px' />
                                         </Typography>
                                     </CardContent>
                                     <CardActions
