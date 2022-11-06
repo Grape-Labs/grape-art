@@ -83,9 +83,9 @@ export function GovernanceView(props: any){
         const programId = new PublicKey(GOVERNANCE_PROGRAM_ID);
         
         try{
-            console.log("fetching tor ");
+            //console.log("fetching tor ");
             const tor = await getTokenOwnerRecord(txonnection, new PublicKey(pubkey));
-            console.log("tor "+JSON.stringify(tor));
+            //console.log("tor "+JSON.stringify(tor));
         }catch(e){
             console.log("ERR: "+e);
         }
