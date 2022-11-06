@@ -278,7 +278,7 @@ export function TokenView(props: any) {
                                 <Card sx={{borderRadius:'17px'}}>
                                     <CardContent>
                                         <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                                        Token Supply
+                                        Wallet Balance
                                         </Typography>
                                         <Typography variant="h5" component="div">
                                         
