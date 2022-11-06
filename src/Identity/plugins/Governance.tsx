@@ -16,6 +16,7 @@ import { useWallet } from '@solana/wallet-adapter-react';
 
 import {
     Button,
+    LinearProgress
 } from '@mui/material';
 
 import { GRAPE_RPC_ENDPOINT, 
@@ -149,32 +150,38 @@ export function GovernanceView(props: any){
 
     return(
         <>
-        {governanceRecord && governanceRecordRows && 
-            <div style={{ height: 600, width: '100%' }}>
-                <div style={{ display: 'flex', height: '100%' }}>
-                    <div style={{ flexGrow: 1 }}>
-                        
-                        <DataGrid
-                            rows={governanceRecordRows}
-                            columns={governancecolumns}
-                            initialState={{
-                                sorting: {
-                                    sortModel: [{ field: 'value', sort: 'desc' }],
-                                },
-                            }}
-                            sx={{
-                                borderRadius:'17px',
-                                borderColor:'rgba(255,255,255,0.25)',
-                                '& .MuiDataGrid-cell':{
-                                    borderColor:'rgba(255,255,255,0.25)'
-                                }}}
-                            pageSize={25}
-                            rowsPerPageOptions={[]}
-                        />
-                        
+        {loadingGovernance ?
+            <LinearProgress />
+        :
+            <>
+            {governanceRecord && governanceRecordRows && 
+                <div style={{ height: 600, width: '100%' }}>
+                    <div style={{ display: 'flex', height: '100%' }}>
+                        <div style={{ flexGrow: 1 }}>
+                            
+                            <DataGrid
+                                rows={governanceRecordRows}
+                                columns={governancecolumns}
+                                initialState={{
+                                    sorting: {
+                                        sortModel: [{ field: 'value', sort: 'desc' }],
+                                    },
+                                }}
+                                sx={{
+                                    borderRadius:'17px',
+                                    borderColor:'rgba(255,255,255,0.25)',
+                                    '& .MuiDataGrid-cell':{
+                                        borderColor:'rgba(255,255,255,0.25)'
+                                    }}}
+                                pageSize={25}
+                                rowsPerPageOptions={[]}
+                            />
+                            
+                        </div>
                     </div>
-                </div>
-            </div>    
+                </div>    
+            }
+            </>
         }
         </>
     );
