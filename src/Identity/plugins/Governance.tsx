@@ -9,6 +9,7 @@ import {
     getTokenOwnerRecord
 } from '@solana/spl-governance';
 
+import ExplorerView from '../../utils/grapeTools/Explorer';
 
 import GovernanceDetailsView from './GovernanceDetails';
 import { TokenAmount } from '../../utils/grapeTools/safe-math';
@@ -29,7 +30,13 @@ const governancecolumns: GridColDef[] = [
     { field: 'id', headerName: 'ID', width: 70, hide: true },
     { field: 'pubkey', headerName: 'PublicKey', width: 70, hide: true },
     { field: 'realm', headerName: 'Realm', minWidth: 130, flex: 1, align: 'left' },
-    { field: 'governingTokenMint', headerName: 'Governing Mint', width: 150, align: 'center'},
+    { field: 'governingTokenMint', headerName: 'Governing Mint', width: 150, align: 'center',
+        renderCell: (params) => {
+            return (
+                <ExplorerView address={params.value} type='address' shorten={4} hideTitle={false} style='text' color='white' fontSize='14px' />
+            )
+        }
+    },
     { field: 'governingTokenDepositAmount', headerName: 'Votes', width: 130, align: 'center'},
     { field: 'unrelinquishedVotesCount', headerName: 'Unreliquinshed', width: 130, align: 'center'},
     { field: 'totalVotesCount', headerName: 'Total Votes', width: 130, align: 'center' },
@@ -121,7 +128,7 @@ export function GovernanceView(props: any){
                     id:cnt,
                     pubkey:item.pubkey,
                     realm:name,
-                    governingTokenMint:item.account.governingTokenMint,
+                    governingTokenMint:item.account.governingTokenMint.toBase58(),
                     governingTokenDepositAmount:votes,
                     unrelinquishedVotesCount:item.account.unrelinquishedVotesCount,
                     totalVotesCount:item.account.totalVotesCount,
