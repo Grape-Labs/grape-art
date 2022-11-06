@@ -1565,6 +1565,7 @@ export function GovernanceView(props: any) {
                         p:4
                     }} 
                 > 
+                    Loading Governance...
                     <LinearProgress />
                 </Box>
             )
