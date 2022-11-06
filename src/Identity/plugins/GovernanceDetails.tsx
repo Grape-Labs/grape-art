@@ -109,7 +109,7 @@ export default function GovernanceDetailsView(props: any) {
                     fullWidth
                     sx={{borderRadius:'17px'}}
                     >
-                    Details
+                    View
                 </Button>
             </Grid>
         </Grid>

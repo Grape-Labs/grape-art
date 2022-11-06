@@ -47,7 +47,7 @@ const governancecolumns: GridColDef[] = [
             )
         }
     },
-    { field: 'link', headerName: '', width: 150,  align: 'center',
+    { field: 'link', headerName: '', width: 150,  align: 'center', hide: true
         renderCell: (params) => {
             return (
                 <Button
