@@ -1380,7 +1380,7 @@ export function GovernanceView(props: any) {
                 }
                 setParticipating(pcp);
 
-                const grealm = await getRealm(new Connection(THEINDEX_RPC_ENDPOINT), new PublicKey(governanceToken?.governance || governanceToken))
+                const grealm = await getRealm(new Connection(GRAPE_RPC_ENDPOINT), new PublicKey(governanceToken?.governance || governanceToken))
                 setRealm(grealm);
                 //console.log("B realm: "+JSON.stringify(grealm));
 
@@ -1421,7 +1421,7 @@ export function GovernanceView(props: any) {
                     }
                 }
 
-                const rawTokenOwnerRecords = await getAllTokenOwnerRecords(new Connection(THEINDEX_RPC_ENDPOINT), grealm.owner, realmPk)
+                const rawTokenOwnerRecords = await getAllTokenOwnerRecords(new Connection(GRAPE_RPC_ENDPOINT), grealm.owner, realmPk)
                 
                 /*
                 rawTokenOwnerRecords?.map((member) => {
@@ -1522,7 +1522,7 @@ export function GovernanceView(props: any) {
                 //console.log("gpbgprops: "+JSON.stringify(gpbgprops));
                 
                 
-                const gprops = await getAllProposals(new Connection(THEINDEX_RPC_ENDPOINT), grealm.owner, realmPk);
+                const gprops = await getAllProposals(new Connection(GRAPE_RPC_ENDPOINT), grealm.owner, realmPk);
                 
                 const allprops: any[] = [];
                 for (const props of gprops){
