@@ -1,4 +1,4 @@
-import { getRealm, getAllProposals, getGovernance, getGovernanceAccounts, getGovernanceChatMessages, getTokenOwnerRecordsByOwner, getAllTokenOwnerRecords, getRealmConfigAddress, getGovernanceAccount, getAccountTypes, GovernanceAccountType, tryGetRealmConfig, getRealmConfig  } from '@solana/spl-governance';
+import { getRealm, getAllProposals, getGovernance, getGovernanceAccounts, getGovernanceChatMessages, getTokenOwnerRecord, getTokenOwnerRecordsByOwner, getAllTokenOwnerRecords, getRealmConfigAddress, getGovernanceAccount, getAccountTypes, GovernanceAccountType, tryGetRealmConfig, getRealmConfig  } from '@solana/spl-governance';
 import { getVoteRecords } from '../utils/governanceTools/getVoteRecords';
 import { PublicKey, TokenAmount, Connection } from '@solana/web3.js';
 import { ENV, TokenListProvider, TokenInfo } from '@solana/spl-token-registry';
@@ -322,6 +322,9 @@ function GetParticipants(props: any){
         //console.log("realm"+JSON.stringify(realm));
         //console.log("Single governance: "+JSON.stringify(governance));
         //console.log("thisitem "+JSON.stringify(thisitem))
+
+        //const tor = await getTokenOwnerRecord(connection, new PublicKey(publicKey));
+        //console.log("tor: "+JSON.stringify(tor));
 
         try{
             //console.log(">>>> "+JSON.stringify(thisitem.account))

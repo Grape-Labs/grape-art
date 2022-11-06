@@ -61,6 +61,7 @@ export function GovernanceView(props: any){
     const tokenMap = props.tokenMap;
     const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
     const ticonnection = new Connection(THEINDEX_RPC_ENDPOINT);
+    const txonnection = new Connection(TX_RPC_ENDPOINT);
     const [realms, setRealms] = React.useState(null);
     const [governanceRecord, setGovernanceRecord] = React.useState(null);
     const [governanceRecordRows, setGovernanceRecordRows] = React.useState(null);
@@ -72,54 +73,66 @@ export function GovernanceView(props: any){
         setLoadingPosition('Governance');
         const GOVERNANCE_PROGRAM_ID = 'GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw';
         const programId = new PublicKey(GOVERNANCE_PROGRAM_ID);
-        console.log("fetching getTokenOwnerRecord");
-
-        const tor = await getTokenOwnerRecord(ggoconnection, new PublicKey(pubkey));
-        console.log("tor "+JSON.stringify(tor));
         
-        const rlms = await getRealms(ggoconnection, programId);
-        //console.log("rlms "+JSON.stringify(rlms));
-        const uTable = rlms.reduce((acc, it) => (acc[it.pubkey.toBase58()] = it, acc), {})
-        setRealms(uTable);
-        
-        const ownerRecordsbyOwner = await getTokenOwnerRecordsByOwner(ggoconnection, programId, new PublicKey(pubkey));
-    
-        console.log("ownerRecordsbyOwner "+JSON.stringify(ownerRecordsbyOwner))
-        const governance: any[] = [];
-        
-        let cnt = 0;
-        //console.log("all uTable "+JSON.stringify(uTable))
-    
-        for (const item of ownerRecordsbyOwner){
-            const realm = uTable[item.account.realm.toBase58()];
-            //console.log("realm: "+JSON.stringify(realm))
-            const name = realm.account.name;
-            let votes = item.account.governingTokenDepositAmount.toString();
-            
-            const thisToken = tokenMap.get(item.account.governingTokenMint.toBase58());
-            
-            if (thisToken){
-                votes = (new TokenAmount(+item.account.governingTokenDepositAmount, thisToken.decimals).format())
-            } else{
-                votes = 'NFT/Council';
-            }
-    
-            governance.push({
-                id:cnt,
-                pubkey:item.pubkey,
-                realm:name,
-                governingTokenMint:item.account.governingTokenMint,
-                governingTokenDepositAmount:votes,
-                unrelinquishedVotesCount:item.account.unrelinquishedVotesCount,
-                totalVotesCount:item.account.totalVotesCount,
-                details:item.account.realm.toBase58(),
-                link:item.account.realm
-            });
-            cnt++;
+        try{
+            console.log("fetching tor ");
+            const tor = await getTokenOwnerRecord(txonnection, new PublicKey(pubkey));
+            console.log("tor "+JSON.stringify(tor));
+        }catch(e){
+            console.log("ERR: "+e);
         }
-    
-        setGovernanceRecord(ownerRecordsbyOwner);
-        setGovernanceRecordRows(governance);
+
+        try{
+            //console.log("fetching realms ");
+            const rlms = await getRealms(ticonnection, [programId]);
+            //console.log("rlms "+JSON.stringify(rlms));
+
+            const uTable = rlms.reduce((acc, it) => (acc[it.pubkey.toBase58()] = it, acc), {})
+            setRealms(uTable);
+            
+            const ownerRecordsbyOwner = await getTokenOwnerRecordsByOwner(ggoconnection, programId, new PublicKey(pubkey));
+        
+            //console.log("ownerRecordsbyOwner "+JSON.stringify(ownerRecordsbyOwner))
+            const governance: any[] = [];
+            
+            let cnt = 0;
+            //console.log("all uTable "+JSON.stringify(uTable))
+        
+            for (const item of ownerRecordsbyOwner){
+                const realm = uTable[item.account.realm.toBase58()];
+                //console.log("realm: "+JSON.stringify(realm))
+                const name = realm.account.name;
+                let votes = item.account.governingTokenDepositAmount.toString();
+                
+                const thisToken = tokenMap.get(item.account.governingTokenMint.toBase58());
+                
+                if (thisToken){
+                    votes = (new TokenAmount(+item.account.governingTokenDepositAmount, thisToken.decimals).format())
+                } else{
+                    votes = 'NFT/Council';
+                }
+        
+                governance.push({
+                    id:cnt,
+                    pubkey:item.pubkey,
+                    realm:name,
+                    governingTokenMint:item.account.governingTokenMint,
+                    governingTokenDepositAmount:votes,
+                    unrelinquishedVotesCount:item.account.unrelinquishedVotesCount,
+                    totalVotesCount:item.account.totalVotesCount,
+                    details:item.account.realm.toBase58(),
+                    link:item.account.realm
+                });
+                cnt++;
+            }
+        
+            setGovernanceRecord(ownerRecordsbyOwner);
+            setGovernanceRecordRows(governance);
+
+        }catch(e){
+            console.log("ERR: "+e);
+        }
+        
     }
 
     const fetchGovernancePositions = async () => {
@@ -136,7 +149,7 @@ export function GovernanceView(props: any){
 
     return(
         <>
-        {governanceRecord && 
+        {governanceRecord && governanceRecordRows && 
             <div style={{ height: 600, width: '100%' }}>
                 <div style={{ display: 'flex', height: '100%' }}>
                     <div style={{ flexGrow: 1 }}>
