@@ -103,15 +103,19 @@ export function GovernanceView(props: any){
                 const realm = uTable[item.account.realm.toBase58()];
                 //console.log("realm: "+JSON.stringify(realm))
                 const name = realm.account.name;
-                let votes = item.account.governingTokenDepositAmount.toString();
+                let votes = item.account.governingTokenDepositAmount.toNumber().toString();
                 
-                const thisToken = tokenMap.get(item.account.governingTokenMint.toBase58());
-                
-                if (thisToken){
-                    votes = (new TokenAmount(+item.account.governingTokenDepositAmount, thisToken.decimals).format())
-                } else{
-                    votes = 'NFT/Council';
-                }
+                if (realm.account.config?.councilMint?.toBase58() === item?.account?.governingTokenMint?.toBase58()){
+                    votes = item.account.governingTokenDepositAmount.toNumber() + ' Council';
+                }else{
+                    const thisToken = tokenMap.get(item.account.governingTokenMint.toBase58());
+                    if (thisToken){
+                        votes = (new TokenAmount(+item.account.governingTokenDepositAmount, thisToken.decimals).format())
+                    } else{
+                        votes = 'NFT';
+                    }
+                } 
+
         
                 governance.push({
                     id:cnt,
