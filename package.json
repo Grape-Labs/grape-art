@@ -1,7 +1,7 @@
 {
     "name": "@grape-labs/grape-art",
-    "version": "1.1.375",
-    "author": "Grape Dev subDAO",
+    "version": "1.1.376",
+    "author": "Grape Developer subDAO",
     "license": "Apache-2.0",
     "repository": "https://github.com/grape-labs/grape-art",
     "publishConfig": {
@@ -43,6 +43,7 @@
         "@bonfida/spl-name-service": "0.1.50",
         "@cardinal/namespaces": "^4.1.56",
         "@cardinal/token-manager": "^1.7.12",
+        "@crossmint/connect": "^0.0.5-alpha-2",
         "@cyberlab/cyberconnect": "^4.4.2",
         "@dialectlabs/identity-cardinal": "^0.0.2",
         "@dialectlabs/identity-dialect-dapps": "^0.0.1",

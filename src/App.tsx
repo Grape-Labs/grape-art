@@ -79,6 +79,7 @@ import {
     NightlyWalletAdapter,
     SpotWalletAdapter,
 } from '@solana/wallet-adapter-wallets';
+import { CrossmintSolanaWalletAdapter, networkToCrossmintEnvironment } from "@crossmint/connect"
 
 //import { mainListItems, secondaryListItems } from './components/SidebarList/SidebarList';
 import grapeTheme from './utils/config/theme';
@@ -209,7 +210,6 @@ function DashboardContent() {
             new GlowWalletAdapter(),
             new LedgerWalletAdapter(),
             new BackpackWalletAdapter(),
-            new ExodusWalletAdapter(),
             new WalletConnectWalletAdapter({
                 network,
                 options: {
@@ -224,6 +224,11 @@ function DashboardContent() {
                     },
                 },
             }),
+            new CrossmintSolanaWalletAdapter({
+                apiKey: "grape-verification",
+                environment: networkToCrossmintEnvironment(network),
+            }),
+            new ExodusWalletAdapter(),
             new SolletWalletAdapter({ network }),
             new SolletExtensionWalletAdapter({ network }),
             new BraveWalletAdapter(),
