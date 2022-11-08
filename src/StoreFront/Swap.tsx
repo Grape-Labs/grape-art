@@ -371,6 +371,7 @@ function JupiterForm(props: any) {
     return (<div>
         <Button
             variant="outlined"
+            color='inherit'
             title={`Swap ${tokenMap?.get(swapfrom)?.symbol} > ${tokenMap?.get(swapto)?.symbol}`}
             onClick={handleClickOpen}
             size="small"
@@ -650,6 +651,7 @@ function JupiterForm(props: any) {
             <DialogActions>
                 <Button
                     fullWidth
+                    color='inherit'
                     type="submit"
                     variant="outlined"
                     title="Swap"

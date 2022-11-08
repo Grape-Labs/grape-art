@@ -924,6 +924,7 @@ function SellNowPrompt(props:any){
             >
                 <Button 
                     size="large" 
+                    color='inherit'
                     variant="outlined" 
                     sx={{
                         borderRadius: '10px',
@@ -1242,13 +1243,12 @@ export function OfferPrompt(props: any) {
         <React.Fragment>
             <Button 
                 size="large" 
+                color='inherit'
                 variant="outlined" 
                 value="Make Offer" 
                 disabled={hasOffer}
                 onClick={handleClickOpenDialog}
                 sx={{
-                    color: '#fff',
-                    borderColor: '#fff',
                     borderRadius: '10px',
                 }}
             >
@@ -1333,7 +1333,7 @@ export function OfferPrompt(props: any) {
                                 <ButtonGroup variant="text" size="small" aria-label="outlined primary button group" sx={{ml:1}}>
                                     <Button 
                                         onClick={() => {
-                                            setOfferAmount((String)(sol_balance))}}
+                                            setOfferAmount((String)(sol_balance-0.002))}}
                                     > 
                                         {t('Max')}
                                     </Button>

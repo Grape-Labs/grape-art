@@ -169,7 +169,7 @@ export default function SendToken(props: any) {
         
         const transaction = new Transaction();
 
-        if (tokenMintAddress == "So11111111111111111111111111111111111111112"){ // Check if SOL
+        if (tokenMintAddress === "So11111111111111111111111111111111111111112"){ // Check if SOL
             const decimals = 9;
             const adjustedAmountToSend = amountToSend * Math.pow(10, decimals);
             
@@ -491,8 +491,14 @@ export default function SendToken(props: any) {
                                     <ButtonGroup variant="text" size="small" aria-label="outlined primary button group" sx={{ml:1}}>
                                         <Button 
                                             onClick={() => {
-                                                setTokensToSend(balance)
-                                                setTokenBalanceInput(+balance) }}
+                                                if (mint === "So11111111111111111111111111111111111111112"){
+                                                    setTokensToSend(balance-0.002)
+                                                    setTokenBalanceInput(+balance-0.002)
+                                                } else{
+                                                    setTokensToSend(balance)
+                                                    setTokenBalanceInput(+balance)
+                                                }
+                                            }}
                                         > 
                                             Max 
                                         </Button>

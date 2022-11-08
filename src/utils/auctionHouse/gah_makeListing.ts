@@ -5,6 +5,7 @@ import {
   } from './helpers/constants';
 import { 
   Transaction,
+  Connection,
   PublicKey, 
   LAMPORTS_PER_SOL,
   SystemProgram, 
@@ -15,6 +16,9 @@ import { GRAPE_RPC_ENDPOINT, OTHER_MARKETPLACES } from '../../utils/grapeTools/c
 import { InstructionsAndSignersSet } from "./helpers/types";
 
 import { AuctionHouseProgram } from '@metaplex-foundation/mpl-auction-house'
+
+import { programs, tryGetAccount, withInitTransferAuthority } from "@cardinal/token-manager";
+import { isCardinalWrappedToken, assertOwnerInstruction } from "../../utils/cardinal/helpers";
 
 import {
     loadAuctionHouseProgram,
@@ -51,7 +55,6 @@ import { ConstructionOutlined } from '@mui/icons-material';
     //const tokenAccount = new PublicKey(mintOwner)
     const results = await anchorProgram.provider.connection.getTokenLargestAccounts(mintKey);    
     const tokenAccount: web3.PublicKey = results.value[0].address;
-
 
     let sellerWalletKey = new PublicKey(walletPublicKey);
     if (daoPublicKey){
@@ -131,10 +134,22 @@ import { ConstructionOutlined } from '@mui/icons-material';
     //txt.recentBlockhash = (await connection.getRecentBlockhash()).blockhash
     txt.feePayer = sellerWalletKey;
 
+    /*
+    const icwt = await isCardinalWrappedToken(new Connection(GRAPE_RPC_ENDPOINT), mint);
+    //console.log("mint: "+ tokenMintAddress);
+    console.log("cardinal wrapped: "+JSON.stringify(icwt));
+
+
+    if (icwt){
+      await withInitTransferAuthority(
+        
+      );
+    }*/
 
     const transferAuthority = web3.Keypair.generate();
     const signers = true ? [] : [transferAuthority];
     const instructions = txt.instructions;
+    
     /*
     let derivedMintPDA = await web3.PublicKey.findProgramAddress([Buffer.from((mintKey).toBuffer())], auctionHouseKey);
     let derivedBuyerPDA = await web3.PublicKey.findProgramAddress([Buffer.from((sellerWalletKey).toBuffer())], auctionHouseKey);
