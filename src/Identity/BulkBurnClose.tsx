@@ -69,8 +69,8 @@ import { hostname } from 'os';
 
 function trimAddress(addr: string) {
     if (!addr) return addr;
-    let start = addr.substring(0, 8);
-    let end = addr.substring(addr.length - 4);
+    const start = addr.substring(0, 8);
+    const end = addr.substring(addr.length - 4);
     return `${start}...${end}`;
 }
 

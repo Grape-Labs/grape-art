@@ -10,6 +10,7 @@ import { RegexTextField } from '../utils/grapeTools/RegexTextField';
 import { TokenAmount } from '../utils/grapeTools/safe-math';
 import BN from "bn.js";
 
+
 import { styled } from '@mui/material/styles';
 
 import {
@@ -41,7 +42,10 @@ import {
 } from '@mui/material';
 
 import { SelectChangeEvent } from '@mui/material/Select';
-import { MakeLinkableAddress, ValidateAddress } from '../utils/grapeTools/WalletAddress'; // global key handling
+
+import { programs, tryGetAccount, withSend } from "@cardinal/token-manager";
+import { isCardinalWrappedToken, assertOwnerInstruction } from "../utils/cardinal/helpers";
+
 import { useSnackbar } from 'notistack';
 
 import QrCode2Icon from '@mui/icons-material/QrCode2';
@@ -55,8 +59,8 @@ import { hostname } from 'os';
 
 function trimAddress(addr: string) {
     if (!addr) return addr;
-    let start = addr.substring(0, 8);
-    let end = addr.substring(addr.length - 4);
+    const start = addr.substring(0, 8);
+    const end = addr.substring(addr.length - 4);
     return `${start}...${end}`;
 }
 
@@ -155,50 +159,136 @@ export default function BulkSend(props: any) {
             
             return transaction;
         } else{
-            const accountInfo = await connection.getParsedAccountInfo(tokenAccount);
-            const accountParsed = JSON.parse(JSON.stringify(accountInfo.value.data));
-            //const decimals = accountParsed.parsed.info.decimals;
 
+            // check if cardinal wrapped..
+            const type = 0;
+            const icwt = await isCardinalWrappedToken(connection, tokenMintAddress);
+            console.log("mint: "+ tokenMintAddress);
+            console.log("cardinal wrapped: "+JSON.stringify(icwt));
 
-            const fromTokenAccount = await getAssociatedTokenAddress(
-                mintPubkey,
-                publicKey
-            )
+            if (icwt){
+                const fromPublicKey = publicKey
+                const destPublicKey = new PublicKey(to)
 
-            const fromPublicKey = publicKey
-            const destPublicKey = new PublicKey(to)
-            const destTokenAccount = await getAssociatedTokenAddress(
-                mintPubkey,
-                destPublicKey
-            )
-            const receiverAccount = await connection.getAccountInfo(
-                destTokenAccount
-            )
+                //const { walletPublicKey, tokenClient, commitment } = ctx;
+                //const { mint, destination } = req;
 
-            const transaction = new Transaction()
-            if (receiverAccount === null) {
-                transaction.add(
-                  createAssociatedTokenAccountInstruction(
-                    fromPublicKey,
-                    destTokenAccount,
-                    destPublicKey,
+                const destinationAta = await getAssociatedTokenAddress(mintPubkey, destPublicKey);
+                const sourceAta = await getAssociatedTokenAddress(mintPubkey, fromPublicKey);
+
+                const [destinationAccount, destinationAtaAccount] = await connection.getMultipleAccountsInfo([destPublicKey, destinationAta])
+                
+                //
+                // Require the account to either be a system program account or a brand new
+                // account.
+                //
+                /*        
+                if (
+                    destinationAccount &&
+                    !destinationAccount.account.owner.equals(SystemProgram.programId)
+                    ) {
+                throw new Error("invalid account");
+                }
+                */
+                // Instructions to execute prior to the transfer.
+                const transaction: Transaction = new Transaction();
+                if (!destinationAtaAccount) {
+                    transaction.add(
+                        assertOwnerInstruction({
+                            account: destPublicKey,
+                            owner: SystemProgram.programId,
+                        })
+                    );
+                    transaction.add(
+                        createAssociatedTokenAccountInstruction(
+                            fromPublicKey,
+                            destinationAta,
+                            destPublicKey,
+                            mintPubkey
+                        )
+                    );
+                }
+
+                //const tx = transaction;
+                const tx = await withSend(
+                    transaction,
+                    connection,
+                    // @ts-ignore
+                    {publicKey:publicKey},
                     mintPubkey,
-                    TOKEN_PROGRAM_ID,
-                    ASSOCIATED_TOKEN_PROGRAM_ID
-                  )
+                    sourceAta,
+                    destPublicKey
                 )
-              }
+                
+                //tx.feePayer = fromPublicKey;
 
-            transaction.add(
-                createTransferInstruction(
-                    fromTokenAccount,
-                    destTokenAccount,
-                    fromPublicKey,
-                    amount
-                )
-            )
+                //const signedTx = await signTransaction(ctx, tx);
+                /*
+                tx.recentBlockhash = (
+                    await tokenClient.provider.connection.getLatestBlockhash(commitment)
+                    ).blockhash;
+                
+                    const signedTx = await SolanaProvider.signTransaction(ctx, tx);
+                    const rawTx = signedTx.serialize();
+                */
+                /*
+                transaction.add(
+                    createTransferInstruction(
+                        fromTokenAccount,
+                        destTokenAccount,
+                        fromPublicKey,
+                        amount
+                    )
+                )*/
+
+                return tx;
             
-            return transaction;
+            } else{
+                const accountInfo = await connection.getParsedAccountInfo(tokenAccount);
+                const accountParsed = JSON.parse(JSON.stringify(accountInfo.value.data));
+                //const decimals = accountParsed.parsed.info.decimals;
+
+
+                const fromTokenAccount = await getAssociatedTokenAddress(
+                    mintPubkey,
+                    publicKey
+                )
+
+                const fromPublicKey = publicKey
+                const destPublicKey = new PublicKey(to)
+                const destTokenAccount = await getAssociatedTokenAddress(
+                    mintPubkey,
+                    destPublicKey
+                )
+                const receiverAccount = await connection.getAccountInfo(
+                    destTokenAccount
+                )
+
+                const transaction = new Transaction()
+                if (receiverAccount === null) {
+                    transaction.add(
+                    createAssociatedTokenAccountInstruction(
+                        fromPublicKey,
+                        destTokenAccount,
+                        destPublicKey,
+                        mintPubkey,
+                        TOKEN_PROGRAM_ID,
+                        ASSOCIATED_TOKEN_PROGRAM_ID
+                    )
+                    )
+                }
+
+                transaction.add(
+                    createTransferInstruction(
+                        fromTokenAccount,
+                        destTokenAccount,
+                        fromPublicKey,
+                        amount
+                    )
+                )
+                //console.log("transaction: "+JSON.stringify(transaction))
+                return transaction;
+            }
         }
     }
 
@@ -345,8 +435,8 @@ export default function BulkSend(props: any) {
                                 <Grid item>
                                     <Typography>
                                         <List dense={true}>
-                                            {holdingsSelected.length > 0 && holdingsSelected.map((item: any) => (
-                                                <ListItem>
+                                            {holdingsSelected.length > 0 && holdingsSelected.map((item: any, key: number) => (
+                                                <ListItem key={key}>
                                                         <Tooltip title='Token selected'>
                                                             <ListItemButton
                                                                 href={`https://explorer.solana.com/address/${item.mint}`}
