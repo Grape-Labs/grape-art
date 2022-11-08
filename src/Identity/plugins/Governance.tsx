@@ -122,8 +122,7 @@ export function GovernanceView(props: any){
                         votes = 'NFT';
                     }
                 } 
-
-        
+                
                 governance.push({
                     id:cnt,
                     pubkey:item.pubkey,
@@ -137,7 +136,7 @@ export function GovernanceView(props: any){
                 });
                 cnt++;
             }
-        
+            
             setGovernanceRecord(ownerRecordsbyOwner);
             setGovernanceRecordRows(governance);
 
