@@ -38,6 +38,7 @@ import { useSnackbar } from 'notistack';
 import { programs, tryGetAccount, withSend } from "@cardinal/token-manager";
 import { isCardinalWrappedToken, assertOwnerInstruction } from "../utils/cardinal/helpers";
 
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import CircularProgress from '@mui/material/CircularProgress';
 import HelpIcon from '@mui/icons-material/Help';
 import CloseIcon from '@mui/icons-material/Close';
@@ -655,7 +656,7 @@ export default function SendToken(props: any) {
                             borderRadius:'17px',
                             color:'white',
                         }}>
-                        Send
+                        Send <ArrowUpwardIcon fontSize={'small'} sx={{ml:1}} />
                     </Button>
                 </DialogActions>
             </form>
