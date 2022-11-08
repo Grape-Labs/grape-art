@@ -162,6 +162,7 @@ export function IdentityView(props: any){
     const [solanaClosableHoldings, setSolanaClosableHoldings] = React.useState(null);
     const [solanaClosableHoldingsRows, setSolanaClosableHoldingsRows] = React.useState(null);
     const [solanaBalance, setSolanaBalance] = React.useState(null);
+    const [solanaUSDC, setSolanaUSDC] = React.useState(null);
     const [solanaTransactions, setSolanaTransactions] = React.useState(null);
     const [loadingWallet, setLoadingWallet] = React.useState(false);
     const [loadingTokens, setLoadingTokens] = React.useState(false);
@@ -380,6 +381,8 @@ export function IdentityView(props: any){
     const fetchSolanaBalance = async () => {
         setLoadingPosition('SOL Balance');
         const response = await ggoconnection.getBalance(new PublicKey(pubkey));
+        const converted = await getTokenPrice('SOL','USDC');
+        setSolanaUSDC(converted.data.price);
         setSolanaBalance(response);
     }
 
@@ -1115,8 +1118,21 @@ export function IdentityView(props: any){
                                                         <ListItemText
                                                             primary={
                                                                 <Typography variant='h4'>
-                                                                    {solanaBalance  && solanaBalance/(10 ** 9)}
+                                                                    {solanaBalance  && 
+                                                                        <>
+                                                                        {solanaBalance/(10 ** 9)}
+                                                                        </>
+                                                                    }
                                                                 </Typography>}
+                                                            secondary={
+                                                                <>
+                                                                {solanaUSDC &&
+                                                                    <Typography variant='caption'>
+                                                                        {((solanaBalance/(10 ** 9)) * solanaUSDC).toFixed(2)}USDC <i>(1 SOL = {solanaUSDC.toFixed(2)} USDC)</i>
+                                                                    </Typography>
+                                                                }
+                                                                </>
+                                                            }
                                                         />
                                                     </Grid>
 
