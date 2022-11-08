@@ -502,7 +502,7 @@ function GetParticipants(props: any){
                 else
                     csvFile = 'tokenOwner,voterWeight,tokenDecimals,voteType,proposal\r\n';
                 
-                csvFile += item.account.governingTokenOwner.toBase58()+','+item.account.voterWeight.toNumber()+','+tokenDecimals+','+item.account.vote.voteType+','+item.account.proposal.toBase58()+'';
+                csvFile += item.account.governingTokenOwner.toBase58()+','+item.account.voterWeight.toNumber()+','+(realm.account.config?.councilMint?.toBase58() === thisitem.account.governingTokenMint?.toBase58() ? 0 : td)+','+item.account.vote.voteType+','+item.account.proposal.toBase58()+'';
                 //    csvFile += item.pubkey.toBase58();
             }
         }
