@@ -253,7 +253,7 @@ export default function SendToken(props: any) {
                     destPublicKey
                 )
                 transaction.add(txi);
-                
+                /*
                 if (memoText && memoText.length > 0){
                     transaction.add(
                         new TransactionInstruction({
@@ -262,7 +262,7 @@ export default function SendToken(props: any) {
                             programId: new PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr"),
                         })
                     );
-                }
+                }*/
             } else{ 
 
                 const accountInfo = await connection.getParsedAccountInfo(tokenAccount);
