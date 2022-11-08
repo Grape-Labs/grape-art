@@ -171,7 +171,7 @@ export default function SendToken(props: any) {
 
         if (tokenMintAddress === "So11111111111111111111111111111111111111112"){ // Check if SOL
             const decimals = 9;
-            const adjustedAmountToSend = amountToSend * Math.pow(10, decimals);
+            const adjustedAmountToSend = +(amountToSend * Math.pow(10, decimals)).toFixed(0);
             
             transaction.add(
                 SystemProgram.transfer({
@@ -492,7 +492,7 @@ export default function SendToken(props: any) {
                                         <Button 
                                             onClick={() => {
                                                 if (mint === "So11111111111111111111111111111111111111112"){
-                                                    setTokensToSend(balance-0.002)
+                                                    setTokensToSend(+balance-0.002)
                                                     setTokenBalanceInput(+balance-0.002)
                                                 } else{
                                                     setTokensToSend(balance)
