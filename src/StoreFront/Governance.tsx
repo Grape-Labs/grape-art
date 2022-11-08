@@ -476,7 +476,7 @@ function GetParticipants(props: any){
                     uYes++;
                 else
                     uNo++;
-
+                
                 votingResults.push({
                     id:counter,
                     pubkey:item.pubkey.toBase58(),
