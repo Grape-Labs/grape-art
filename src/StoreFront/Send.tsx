@@ -203,22 +203,29 @@ export default function SendToken(props: any) {
                 const sourceAta = await getAssociatedTokenAddress(mintPubkey, fromPublicKey);
 
                 const [destinationAccount, destinationAtaAccount] = await connection.getMultipleAccountsInfo([destPublicKey, destinationAta])
-                
+                console.log("destination: "+JSON.stringify(destinationAccount))
+                console.log("destinationAtaAccount: "+JSON.stringify(destinationAtaAccount))
+                console.log("SystemProgram.programId: "+JSON.stringify(SystemProgram.programId));
                 //
                 // Require the account to either be a system program account or a brand new
                 // account.
                 //
-                /*        
+                 
+                /*
                 if (
                     destinationAccount &&
-                    !destinationAccount.account.owner.equals(SystemProgram.programId)
+                    !destinationAccount.owner.equals(SystemProgram.programId)
                     ) {
-                throw new Error("invalid account");
-                }
-                */
+                    throw new Error("invalid account");
+                }*/
+                const receiverAccount = await connection.getAccountInfo(
+                    destinationAta
+                )
+                
                 // Instructions to execute prior to the transfer.
                 const tx: Transaction = new Transaction();
-                if (!destinationAtaAccount) {
+                //if (!destinationAtaAccount) {
+                if (!receiverAccount){   
                     tx.add(
                         assertOwnerInstruction({
                             account: destPublicKey,
@@ -245,8 +252,7 @@ export default function SendToken(props: any) {
                     sourceAta,
                     destPublicKey
                 )
-                transaction.add(txi);
-                
+                transaction.add(tx);
             } else{ 
 
                 const accountInfo = await connection.getParsedAccountInfo(tokenAccount);

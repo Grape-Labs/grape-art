@@ -170,29 +170,32 @@ export default function BulkSend(props: any) {
                 const fromPublicKey = publicKey
                 const destPublicKey = new PublicKey(to)
 
-                //const { walletPublicKey, tokenClient, commitment } = ctx;
-                //const { mint, destination } = req;
-
                 const destinationAta = await getAssociatedTokenAddress(mintPubkey, destPublicKey);
                 const sourceAta = await getAssociatedTokenAddress(mintPubkey, fromPublicKey);
 
-                const [destinationAccount, destinationAtaAccount] = await connection.getMultipleAccountsInfo([destPublicKey, destinationAta])
+                //const [destinationAccount, destinationAtaAccount] = await connection.getMultipleAccountsInfo([destPublicKey, destinationAta])
                 
                 //
                 // Require the account to either be a system program account or a brand new
                 // account.
                 //
-                /*        
+                const receiverAccount = await connection.getAccountInfo(
+                    destinationAta
+                )
+
+                /*
                 if (
                     destinationAccount &&
-                    !destinationAccount.account.owner.equals(SystemProgram.programId)
+                    !destinationAccount.owner.equals(SystemProgram.programId)
                     ) {
-                throw new Error("invalid account");
+                        console.log("Invalid account!");
+                        throw new Error("invalid account");
                 }
                 */
+
                 // Instructions to execute prior to the transfer.
                 const transaction: Transaction = new Transaction();
-                if (!destinationAtaAccount) {
+                if (!receiverAccount) {
                     transaction.add(
                         assertOwnerInstruction({
                             account: destPublicKey,
@@ -204,9 +207,11 @@ export default function BulkSend(props: any) {
                             fromPublicKey,
                             destinationAta,
                             destPublicKey,
-                            mintPubkey
+                            mintPubkey,
                         )
                     );
+                    //return transaction;
+
                 }
 
                 //const tx = transaction;
@@ -220,25 +225,7 @@ export default function BulkSend(props: any) {
                     destPublicKey
                 )
                 
-                //tx.feePayer = fromPublicKey;
-                //const signedTx = await signTransaction(ctx, tx);
-                /*
-                tx.recentBlockhash = (
-                    await connection.getLatestBlockhash('confirmed')
-                    ).blockhash;
-                
-                console.log("signing");
-                const signedTx = await signTransaction(tx);
-                console.log("serializing");
-                const rawTx = signedTx.serialize();
-                
-                await connection.sendRawTransaction(rawTx, {
-                    skipPreflight: false,
-                    preflightCommitment: 'confirmed',
-                  });
-                */
                 return tx;
-            
             } else{
                 const accountInfo = await connection.getParsedAccountInfo(tokenAccount);
                 const accountParsed = JSON.parse(JSON.stringify(accountInfo.value.data));
