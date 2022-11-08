@@ -253,6 +253,7 @@ export default function SendToken(props: any) {
                     destPublicKey
                 )
                 transaction.add(txi);
+                
                 if (memoText && memoText.length > 0){
                     transaction.add(
                         new TransactionInstruction({
