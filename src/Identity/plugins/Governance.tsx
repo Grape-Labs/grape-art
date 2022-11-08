@@ -38,7 +38,7 @@ const governancecolumns: GridColDef[] = [
         }
     },
     { field: 'governingTokenDepositAmount', headerName: 'Votes', width: 130, align: 'center'},
-    { field: 'unrelinquishedVotesCount', headerName: 'Unreliquinshed', width: 130, align: 'center'},
+    { field: 'unrelinquishedVotesCount', headerName: 'Unreliquinshed', width: 130, align: 'center', hide: true},
     { field: 'totalVotesCount', headerName: 'Total Votes', width: 130, align: 'center' },
     { field: 'details', headerName: '', width: 150,  align: 'center',
         renderCell: (params) => {
