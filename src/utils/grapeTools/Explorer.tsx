@@ -318,7 +318,7 @@ export default function ExplorerView(props:any){
                                         Grape Profile
                                 </MenuItem>
                         :
-                            <Tooltip title='The address is off-curve (this address does not lie on a Ed25519 curve - typically a valid curve is generated when creating a wallet from a wallet adapter), the address here is off-curve and can be a program derived address like an a multi-sig or escrow'>
+                            <Tooltip title='The address is off-curve (this address does not lie on a Ed25519 curve - typically a valid curve is generated when creating a new wallet), the address here is off-curve and can be a program derived address (PDA) like a multi-sig or escrow'>
                                 <MenuItem >
                                     <ListItemIcon>
                                         <WarningAmberIcon sx={{ color: 'yellow' }} fontSize="small" />
