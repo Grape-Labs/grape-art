@@ -408,9 +408,6 @@ export default function SendToken(props: any) {
     
     return (
         <div>
-
-            
-
             {showTokenName ? 
                 <Button
                     variant="outlined" 
@@ -456,11 +453,10 @@ export default function SendToken(props: any) {
                 <DialogContent dividers>
                     <FormControl>
                         <Grid container spacing={2}>
-                            <Grid item xs={5}>
-                                
-                            <Grid container direction="row" alignItems="center">
-                                <ExplorerView buttonStyle={'text'} useLogo={logoURI} address={mint} type='address' title={name || (mint && trimAddress(mint)) || 'Explore'}/>
-                            </Grid>
+                            <Grid item xs={5}> 
+                                <Grid container direction="row" alignItems="center">
+                                    <ExplorerView buttonStyle={'text'} useLogo={logoURI} address={mint} type='address' title={name || (mint && trimAddress(mint)) || 'Explore'}/>
+                                </Grid>
                             </Grid>
                             <Grid item xs={7}>
                                 <RegexTextField
