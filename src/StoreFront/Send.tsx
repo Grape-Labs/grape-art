@@ -31,6 +31,8 @@ import {
   Typography
 } from '@mui/material';
 
+import ExplorerView from '../utils/grapeTools/Explorer';
+
 import { SelectChangeEvent } from '@mui/material/Select';
 import { MakeLinkableAddress, ValidateAddress } from '../utils/grapeTools/WalletAddress'; // global key handling
 import { useSnackbar } from 'notistack';
@@ -454,24 +456,13 @@ export default function SendToken(props: any) {
                 <DialogContent dividers>
                     <FormControl>
                         <Grid container spacing={2}>
-                            <Grid item xs={4}>
+                            <Grid item xs={5}>
                                 
                             <Grid container direction="row" alignItems="center">
-                                <Grid item>
-                                    {logoURI ? 
-                                        <Avatar component={Paper} 
-                                            elevation={4}
-                                            alt="Token" 
-                                            src={logoURI}
-                                            sx={{ width: 28, height: 28, bgcolor: "#222" }}
-                                        /> : <HelpIcon />}
-                                </Grid>
-                                <Grid item sx={{ ml: 1 }}>
-                                    {name || (mint && trimAddress(mint)) || ''}
-                                </Grid>
+                                <ExplorerView buttonStyle={'text'} useLogo={logoURI} address={mint} type='address' title={name || (mint && trimAddress(mint)) || 'Explore'}/>
                             </Grid>
                             </Grid>
-                            <Grid item xs={8}>
+                            <Grid item xs={7}>
                                 <RegexTextField
                                     regex={/[^0-9]+\.?[^0-9]/gi}
                                     autoFocus

@@ -66,6 +66,7 @@ export default function ExplorerView(props:any){
     const buttonColor = props?.color || 'white';
     const hideTitle = props?.hideTitle || false;
     const fontSize = props?.fontSize || '14px';
+    const useLogo = props?.useLogo || null;
     const grapeArtProfile = props?.grapeArtProfile || false;
     const shorten = props?.shorten || 0;
     const [anchorEl, setAnchorEl] = React.useState(null);
@@ -229,7 +230,15 @@ export default function ExplorerView(props:any){
                                 {address.substr(0,2)}
                             </Avatar>
                         :
-                            <ExploreIcon sx={{color:`${buttonColor}`,fontSize:`${fontSize}`}} />
+                            <>
+                            {useLogo ?
+                                <Avatar alt={address} src={useLogo} sx={{ width: 30, height: 30, bgcolor: 'rgb(0, 0, 0)' }}>
+                                    {address.substr(0,2)}
+                                </Avatar>
+                            :
+                                <ExploreIcon sx={{color:`${buttonColor}`,fontSize:`${fontSize}`}} />
+                            }
+                            </>
                         }
                     </>
                 }
