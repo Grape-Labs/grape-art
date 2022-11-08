@@ -221,26 +221,22 @@ export default function BulkSend(props: any) {
                 )
                 
                 //tx.feePayer = fromPublicKey;
-
                 //const signedTx = await signTransaction(ctx, tx);
                 /*
                 tx.recentBlockhash = (
-                    await tokenClient.provider.connection.getLatestBlockhash(commitment)
+                    await connection.getLatestBlockhash('confirmed')
                     ).blockhash;
                 
-                    const signedTx = await SolanaProvider.signTransaction(ctx, tx);
-                    const rawTx = signedTx.serialize();
+                console.log("signing");
+                const signedTx = await signTransaction(tx);
+                console.log("serializing");
+                const rawTx = signedTx.serialize();
+                
+                await connection.sendRawTransaction(rawTx, {
+                    skipPreflight: false,
+                    preflightCommitment: 'confirmed',
+                  });
                 */
-                /*
-                transaction.add(
-                    createTransferInstruction(
-                        fromTokenAccount,
-                        destTokenAccount,
-                        fromPublicKey,
-                        amount
-                    )
-                )*/
-
                 return tx;
             
             } else{
@@ -394,9 +390,6 @@ export default function BulkSend(props: any) {
 
     return (
         <div>
-
-            
-
             {tokensSelected ? 
                 <Button
                     variant="contained"

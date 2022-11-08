@@ -217,15 +217,15 @@ export default function SendToken(props: any) {
                 }
                 */
                 // Instructions to execute prior to the transfer.
-                //const tx: Transaction = new Transaction();
+                const tx: Transaction = new Transaction();
                 if (!destinationAtaAccount) {
-                    transaction.add(
+                    tx.add(
                         assertOwnerInstruction({
                             account: destPublicKey,
                             owner: SystemProgram.programId,
                         })
                     );
-                    transaction.add(
+                    tx.add(
                         createAssociatedTokenAccountInstruction(
                             fromPublicKey,
                             destinationAta,
@@ -236,8 +236,8 @@ export default function SendToken(props: any) {
                 }
 
                 //const tx = transaction;
-                const tx = await withSend(
-                    transaction,
+                const txi = await withSend(
+                    tx,
                     connection,
                     // @ts-ignore
                     {publicKey:publicKey},
@@ -245,7 +245,7 @@ export default function SendToken(props: any) {
                     sourceAta,
                     destPublicKey
                 )
-                transaction.add(tx);
+                transaction.add(txi);
                 
             } else{ 
 
