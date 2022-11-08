@@ -244,8 +244,9 @@ export function IdentityView(props: any){
                                 mint={params.value.info.mint} 
                                 name={params.value.name} 
                                 logoURI={
-                                    params.value.info.logo ||
-                                    tokenMap.get(params.value.info.mint)?.logoURI
+                                    params.value.logo ||
+                                    tokenMap.get(params.value.mint)?.logoURI || 
+                                    params.value.mint
                                 } 
                                 balance={(new TokenAmount(params.value.info.tokenAmount.amount, params.value.info.tokenAmount.decimals).format())} 
                                 conversionrate={0} 
@@ -717,7 +718,9 @@ export function IdentityView(props: any){
                 send:{
                     name:name,
                     logo:logo,
+                    mint: item.account.data.parsed.info.mint,
                     info:item.account.data.parsed.info,
+                    metadata: metadata,
                     tokenAmount:item.account.data.parsed.info.tokenAmount,
                     decimals:item.account.data.parsed.info.decimals,
                 },
