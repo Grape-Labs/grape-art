@@ -239,7 +239,16 @@ export default function SendToken(props: any) {
                             destPublicKey,
                             mintPubkey
                         )
-                    );
+                    )
+                    if (memoText && memoText.length > 0){
+                        tx.add(
+                            new TransactionInstruction({
+                                keys: [{ pubkey: fromWallet, isSigner: true, isWritable: true }],
+                                data: Buffer.from(JSON.stringify(memoText || ''), 'utf-8'),
+                                programId: new PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr"),
+                            })
+                        );
+                    }
                 }
 
                 //const tx = transaction;
@@ -305,6 +314,16 @@ export default function SendToken(props: any) {
                             amount
                         )
                     )
+                    
+                    if (memoText && memoText.length > 0){
+                        transaction.add(
+                            new TransactionInstruction({
+                                keys: [{ pubkey: fromWallet, isSigner: true, isWritable: true }],
+                                data: Buffer.from(JSON.stringify(memoText || ''), 'utf-8'),
+                                programId: new PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr"),
+                            })
+                        );
+                    }
                     
                 } catch(err:any){
                     closeSnackbar();
