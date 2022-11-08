@@ -500,9 +500,9 @@ function GetParticipants(props: any){
                 if (counter > 1)
                     csvFile += '\r\n';
                 else
-                    csvFile = 'tokenOwner,voterWeight,tokenDecimals,voteType,proposal\r\n';
+                    csvFile = 'tokenOwner,uiVotes,voterWeight,tokenDecimals,voteType,proposal\r\n';
                 
-                csvFile += item.account.governingTokenOwner.toBase58()+','+item.account.voterWeight.toNumber()+','+(realm.account.config?.councilMint?.toBase58() === thisitem.account.governingTokenMint?.toBase58() ? 0 : td)+','+item.account.vote.voteType+','+item.account.proposal.toBase58()+'';
+                csvFile += item.account.governingTokenOwner.toBase58()+','+(+(parseInt(item.account.voterWeight.toNumber())/Math.pow(10, (realm.account.config?.councilMint?.toBase58() === thisitem.account.governingTokenMint?.toBase58() ? 0 : td))).toFixed(0))+','+item.account.voterWeight.toNumber()+','+(realm.account.config?.councilMint?.toBase58() === thisitem.account.governingTokenMint?.toBase58() ? 0 : td)+','+item.account.vote.voteType+','+item.account.proposal.toBase58()+'';
                 //    csvFile += item.pubkey.toBase58();
             }
         }
