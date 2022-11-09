@@ -22,6 +22,7 @@ import {
     Hidden,
 } from '@mui/material';
 
+import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 
 import ExplorerView from '../utils/grapeTools/Explorer';
 import { PreviewView } from "../Preview/Preview";
@@ -125,6 +126,64 @@ export default function ActivityView(props: any){
     const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
     const rpclimit = 100;
 
+    const [activityRows, setActivityRows] = React.useState(null);
+
+    const activitycols = [
+        { field: 'id', headerName: 'ID', hide:true },
+        { field: 'bookkeeper', headerName: 'Bookkeeper', width: 170, flex: 1, 
+            renderCell: (params) => {
+                <ExplorerView grapeArtProfile={true} shorten={4} address={params.value} type='address' hideTitle={false} style='text' color='white' fontSize={'12px'} />
+            }
+        },
+        { field: 'type', headerName: 'Type', width: 170,
+            renderCell: (params) => {
+                return(
+                    <>
+                        {params.value?.purchaseReceipt ?
+                            <>Sale <Typography variant="caption">({trimAddress(params.value.purchaseReceipt.toBase58(),3)})</Typography></>
+                        :
+                            <>
+                            {params.value.state === "bid_receipt" && 
+                                <>Offer
+                                {params.value?.cancelledAt &&
+                                    <> Cancelled</>
+                                }</>
+                            }
+                            {params.value.state === "listing_receipt" && 
+                                <>Listing
+                                {params.value?.cancelledAt &&
+                                    <> Cancelled</>
+                                }
+                                </>}
+                            {params.value.state === "cancel_listing_receipt" && 
+                                <>Listing Cancelled</>
+                            }
+
+                            {params.value.state === "purchase_receipt" && 
+                                <>Sale</>
+                            }
+                            </>
+                        } 
+                    </>
+                )
+            }
+        },
+        { field: 'amount', headerName: 'Amount', width: 170,
+            renderCell: (params) => {
+                <Typography variant="h6">
+                    {(params.value)} <SolCurrencyIcon sx={{fontSize:"10.5px"}} />
+                </Typography>
+            }
+        },
+        { field: 'mint', headerName: 'Mint', width: 170,
+            renderCell: (params) => {
+                <>...</>
+            }
+        },
+        { field: 'date', headerName: 'Date', width: 170},
+        { field: 'view', headerName: '', width: 170}
+    ];
+    
     const handleClickOpenDialog = async () => {
         await getAllActivity();
         //if (activityLoaded)
@@ -154,8 +213,9 @@ export default function ActivityView(props: any){
                         }
 
                         const activityResults = new Array();
+                        const activityArray = new Array();
                         let totalSales = 0;
-
+                        let counter = 0;
                         for (let item of results){
 
                             const mintitem = await getMintFromVerifiedMetadata(item.metadata.toBase58(), collectionMintList);
@@ -184,9 +244,26 @@ export default function ActivityView(props: any){
                                     //console.log("pushing: "+item.price);
                                     totalSales += +item.price;
                                 }
+
+                                activityArray.push({
+                                    id:counter,
+                                    bookkeeper: item.bookkeeper.toBase58(),
+                                    type: {
+                                        state:item?.receipt_type,
+                                        purchaseReceipt:item?.purchaseReceipt,
+                                        cancelledAt: item.canceledAt, 
+                                    },
+                                    amount: item.price,
+                                    mint: {
+                                        mintitem:mintitem,
+                                    },
+                                    view: mintitem?.address,
+                                });
                             }
+                            counter++;
                         }
 
+                        setActivityRows(activityArray);
                         setAhStats(totalSales);
                         
                         // sort by date
@@ -201,7 +278,9 @@ export default function ActivityView(props: any){
                         const results = await getReceiptsFromAuctionHouse(collectionAuthority.auctionHouse || AUCTION_HOUSE_ADDRESS, null, null, null, null, false, null);
 
                         const activityResults = new Array();
+                        const activityArray = new Array();
                         let totalSales = 0;
+                        let counter = 0;
 
                         for (let item of results){
 
@@ -230,9 +309,26 @@ export default function ActivityView(props: any){
                                 if (item?.receipt_type === "purchase_receipt"){
                                     totalSales += +item.price;
                                 }
-                            }                            
+
+                                activityArray.push({
+                                    id:counter,
+                                    bookkeeper: item.bookkeeper.toBase58(),
+                                    type: {
+                                        state:item?.receipt_type,
+                                        purchaseReceipt:item?.purchaseReceipt,
+                                        cancelledAt: item.canceledAt, 
+                                    },
+                                    amount: item.price,
+                                    mint: {
+                                        mintitem:mintitem,
+                                    },
+                                    view: mintitem?.address,
+                                });
+                            }   
+                            counter++;                         
                         }
 
+                        setActivityRows(activityArray);
                         //setAhStats(totalSales);
 
                         // sort by date
@@ -247,6 +343,8 @@ export default function ActivityView(props: any){
                     const results = await getReceiptsFromAuctionHouse(collectionAuthority.auctionHouse || AUCTION_HOUSE_ADDRESS, null, publicKey.toBase58(), null, null, false, null);
 
                     const activityResults = new Array();
+                    const activityArray = new Array();
+                    let counter = 0;
 
                     for (let item of results){
                         const mintitem = await getMintFromVerifiedMetadata(item.metadata.toBase58(), collectionMintList);
@@ -270,11 +368,29 @@ export default function ActivityView(props: any){
                                 seller: item?.seller, 
                                 buyer: item?.buyer
                             });
+
+                            activityArray.push({
+                                id:counter,
+                                bookkeeper: item.bookkeeper.toBase58(),
+                                type: {
+                                    state:item?.receipt_type,
+                                    purchaseReceipt:item?.purchaseReceipt,
+                                    cancelledAt: item.canceledAt, 
+                                },
+                                amount: item.price,
+                                mint: {
+                                    mintitem:mintitem,
+                                },
+                                view: mintitem?.address,
+                            });
                         }
+                        counter++;
                     }
 
                     // sort by date
                     activityResults.sort((a:any,b:any) => (a.blockTime < b.blockTime) ? 1 : -1);
+                    setActivityRows(activityArray);
+
                     const dupRemovedResults = activityResults.filter( activity => !activity.purchaseReceipt)
                     //activityResults.push({buyeraddress: feePayer.toBase58(), amount: memo_json?.amount || memo_json?.offer, mint: memo_json?.mint, isowner: false, timestamp: forSaleDate, blockTime: value.blockTime, state: memo_json?.state || memo_json?.status});
                     return dupRemovedResults;
@@ -304,7 +420,10 @@ export default function ActivityView(props: any){
             console.log("With recent activity");
             // transpose auctionHouseListings
             const activityResults = new Array();
+            const activityArray = new Array();
             let totalSales = 0;
+            let counter = 0;
+
             for (let item of auctionHouseListings){
                 if (item?.mint){
                     activityResults.push({
@@ -322,14 +441,30 @@ export default function ActivityView(props: any){
                         //console.log("pushing: "+item.price);
                         totalSales += +item.price;
                     }
+
+                    activityArray.push({
+                        id:counter,
+                        bookkeeper: item.buyeraddress,
+                        type: {
+                            state:item?.receipt_type,
+                            purchaseReceipt:item?.purchaseReceipt,
+                            cancelledAt: item.canceledAt, 
+                        },
+                        amount: item.price,
+                        mint: {
+                            mintitem:item.mint,
+                        },
+                        view: item.mint,
+                    });
                 }
-                
+                counter++;
             }
 
             setAhStats(totalSales);
             
             setRecentActivity(auctionHouseListings);
-            
+            setActivityRows(activityArray);
+
             //console.log("auctionHouseListings "+JSON.stringify(auctionHouseListings))
         }
 
@@ -472,12 +607,40 @@ export default function ActivityView(props: any){
         const recentActivity = props.recentActivity;
 
         return (
-            <Table size="small" aria-label="offers">
-                {recentActivity && recentActivity.map((item: any, key:number) => (
-                    <RecentActivityRow item={item} key={key} />
-                ))}
-            </Table>
-
+            <>
+                {/*activityRows ?
+                    <div style={{ height: 600, width: '100%' }}>
+                        <div style={{ display: 'flex', height: '100%' }}>
+                            <div style={{ flexGrow: 1 }}>
+                                
+                                    <DataGrid
+                                        rows={activityRows}
+                                        columns={activitycols}
+                                        pageSize={25}
+                                        rowsPerPageOptions={[]}
+                                        sx={{
+                                            borderRadius:'17px',
+                                            borderColor:'rgba(255,255,255,0.25)',
+                                            '& .MuiDataGrid-cell':{
+                                                borderColor:'rgba(255,255,255,0.25)'
+                                            }}}
+                                        sortingOrder={['asc', 'desc', null]}
+                                        disableSelectionOnClick
+                                    />
+                            </div>
+                        </div>
+                    </div>
+                :
+                    <LinearProgress />
+                */}
+            
+                <Table size="small" aria-label="offers">
+                    {recentActivity && recentActivity.map((item: any, key:number) => (
+                        <RecentActivityRow item={item} key={key} />
+                    ))}
+                </Table>
+            
+            </>
         )
     }
 

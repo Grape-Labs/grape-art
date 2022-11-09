@@ -1386,7 +1386,7 @@ export function GovernanceView(props: any) {
                 const grealm = await getRealm(new Connection(GRAPE_RPC_ENDPOINT), new PublicKey(governanceToken?.governance || governanceToken))
                 setRealm(grealm);
                 //console.log("B realm: "+JSON.stringify(grealm));
-
+                
                 const realmPk = grealm.pubkey;
 
                 //console.log("communityMintMaxVoteWeightSource: " + grealm.account.config.communityMintMaxVoteWeightSource.value.toNumber());

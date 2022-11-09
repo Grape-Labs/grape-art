@@ -40,6 +40,7 @@ import { getProfilePicture } from '@solflare-wallet/pfp';
 import { findDisplayName } from '../utils/name-service';
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
 
+import AssuredWorkloadIcon from '@mui/icons-material/AssuredWorkload';
 import Chat from '@mui/icons-material/Chat';
 import FirstPageIcon from '@mui/icons-material/FirstPage';
 import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
@@ -202,7 +203,8 @@ function RenderGovernanceMembersTable(props:any) {
                         <TableRow>
                             <TableCell><Typography variant="caption">Member</Typography></TableCell>
                             <TableCell><Typography variant="caption">Votes</Typography></TableCell>
-                            <TableCell><Typography variant="caption">Votes Cast</Typography></TableCell>
+                            <TableCell><Typography variant="caption">Votes Casted</Typography></TableCell>
+                            <TableCell><Typography variant="caption">Council Votes Casted</Typography></TableCell>
                             {/*<TableCell><Typography variant="caption">Outstanding Proposals</Typography></TableCell>*/}
                             <TableCell><Typography variant="caption"></Typography></TableCell>
                             
@@ -217,21 +219,35 @@ function RenderGovernanceMembersTable(props:any) {
                                 : members
                             ).map((item:any, index:number) => (
                             <>
-                                {item?.pubkey && item?.account &&
+                                {item &&
                                     <TableRow key={index} sx={{borderBottom:"none"}}>
                                         <TableCell>
+                                            <Grid container>
+                                                <Grid item>
+                                                    <Typography variant="h6">
+                                                        <ExplorerView showSolanaProfile={true} grapeArtProfile={true} address={item.governingTokenOwner.toBase58()} type='address' shorten={8} hideTitle={false} style='text' color='white' fontSize='16px' />
+                                                    </Typography>
+                                                </Grid>
+                                                    {item.governingCouncilDepositAmount.toNumber() > 0 &&
+                                                        <Grid item>
+                                                            <Tooltip title={`Council Member - Votes: ${item.governingCouncilDepositAmount.toNumber()}`}><Button color='inherit' sx={{ml:1,borderRadius:'17px'}}><AssuredWorkloadIcon /></Button></Tooltip>
+                                                        </Grid>
+                                                    }
+                                            </Grid>
+                                        </TableCell>
+                                        <TableCell align="center" >
                                             <Typography variant="h6">
-                                                <ExplorerView showSolanaProfile={true} grapeArtProfile={true} address={item.account.governingTokenOwner.toBase58()} type='address' shorten={8} hideTitle={false} style='text' color='white' fontSize='16px' />
+                                               {getFormattedNumberToLocale(+((item.governingTokenDepositAmount.toNumber())/Math.pow(10, tokenMap.get(item.governingTokenMint?.toBase58())?.decimals || 0)).toFixed(0))}
                                             </Typography>
                                         </TableCell>
                                         <TableCell align="center" >
                                             <Typography variant="h6">
-                                               {getFormattedNumberToLocale(formatAmount(parseInt(item.account.governingTokenDepositAmount.toNumber())/Math.pow(10, tokenMap.get(item.account.governingTokenMint?.toBase58())?.decimals || 0)))}
+                                                {item.totalVotesCount}
                                             </Typography>
                                         </TableCell>
                                         <TableCell align="center" >
                                             <Typography variant="h6">
-                                                {item.account.totalVotesCount}
+                                                {item.councilVotesCount}
                                             </Typography>
                                         </TableCell>
                                         {/*
@@ -244,14 +260,14 @@ function RenderGovernanceMembersTable(props:any) {
                                         <TableCell>
                                             <Typography variant="h6">
                                                
-                                                {ValidateAddress(item.account.governingTokenOwner.toBase58()) &&
+                                                {ValidateAddress(item.governingTokenOwner.toBase58()) &&
                                                     <Box sx={{ display: 'flex', justifyContent: 'center' }}>
                                                         {participating ?
                                                             <Tooltip title="Send a direct message">
                                                                 <Button
                                                                     onClick={() => {
                                                                         open();
-                                                                        navigation?.showCreateThread(item.account.governingTokenOwner.toBase58());
+                                                                        navigation?.showCreateThread(item.governingTokenOwner.toBase58());
                                                                     }}
                                                                     sx={{
                                                                         textTransform: 'none',
@@ -339,7 +355,12 @@ export function MembersView(props: any) {
     const GOVERNANCE_PROGRAM_ID = 'GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw';
     const [tokenMap, setTokenMap] = React.useState(null);
     const [tokenArray, setTokenArray] = React.useState(null);
-    
+    const [totalDepositedVotes, setTotalDepositedVotes] = React.useState(null);
+    const [totalCouncilVotes, setTotalCouncilVotes] = React.useState(null);
+    const [totalParticipants, setTotalParticipants] = React.useState(null);
+    const [totalVotesCasted, setTotalVotesCasted] = React.useState(null);
+    const [totalDepositedCouncilVotes, setDepositedTotalCouncilVotes] = React.useState(null);
+
     const getTokens = async () => {
         const tarray:any[] = [];
         try{
@@ -369,10 +390,10 @@ export function MembersView(props: any) {
                 
                 const ownerRecordsbyOwner = await getTokenOwnerRecordsByOwner(connection, programId, publicKey);
                 // check if part of this realm
-                var pcp = false;
-                for (var realm of ownerRecordsbyOwner){
-                    console.log("realm: "+JSON.stringify(realm))
-                    if (realm.account.realm.toBase58() === collectionAuthority.governance){
+                let pcp = false;
+                for (let ownerRecord of ownerRecordsbyOwner){
+                    
+                    if (ownerRecord.account.realm.toBase58() === collectionAuthority.governance){
                         pcp = true;
                         setParticipatingRealm(realm);
                     }
@@ -381,17 +402,79 @@ export function MembersView(props: any) {
 
                 const grealm = await getRealm(new Connection(THEINDEX_RPC_ENDPOINT), new PublicKey(collectionAuthority.governance))
                 setRealm(grealm);
+                //console.log("realm: "+JSON.stringify(grealm))
 
                 const realmPk = grealm.pubkey;
 
-                //console.log("realm: "+JSON.stringify(realm));
                 const trecords = await getAllTokenOwnerRecords(new Connection(THEINDEX_RPC_ENDPOINT), grealm.owner, realmPk)
                 //console.log("trecords: "+JSON.stringify(trecords));
 
                 //let sortedResults = trecords.sort((a,b) => (a.account?.outstandingProposalCount < b.account?.outstandingProposalCount) ? 1 : -1);
                 //const sortedResults = trecords.sort((a,b) => (a.account?.totalVotesCount < b.account?.totalVotesCount) ? 1 : -1);
-                const sortedResults = trecords.sort((a,b) => (a.account?.governingTokenDepositAmount.toNumber() < b.account?.governingTokenDepositAmount.toNumber()) ? 1 : -1);
                 
+                //const sortedResults = trecords.sort((a,b) => (a.account?.governingTokenDepositAmount.toNumber() < b.account?.governingTokenDepositAmount.toNumber()) ? 1 : -1);
+                
+
+                // generate a super array with merged information
+                let participantArray = new Array();
+                let tVotes = 0;
+                let tCouncilVotes = 0;
+                let tVotesCasted = 0;
+                let tDepositedCouncilVotesCasted = 0;
+                let tParticipants = 0;
+
+                for (let record of trecords){
+                    console.log("record: "+JSON.stringify(record));
+                    let foundParticipant = false;
+                    for (let participant of participantArray){
+                        if (participant.governingTokenOwner.toBase58() === record.account.governingTokenOwner.toBase58()){
+                            foundParticipant = true;
+                            participant.governingTokenMint = (record.account.governingTokenMint.toBase58() !== grealm.account.config.councilMint.toBase58()) ? record.account.governingTokenMint : participant.governingTokenMint;
+                            participant.totalVotesCount = (record.account.governingTokenMint.toBase58() !== grealm.account.config.councilMint.toBase58()) ? record.account.totalVotesCount : participant.totalVotesCount;
+                            participant.councilVotesCount = (record.account.governingTokenMint.toBase58() === grealm.account.config.councilMint.toBase58()) ? record.account.totalVotesCount : participant.councilVotesCount;
+                            participant.governingTokenDepositAmount = (record.account.governingTokenMint.toBase58() !== grealm.account.config.councilMint.toBase58()) ? record.account.governingTokenDepositAmount : participant.governingTokenDepositAmount;
+                            participant.governingCouncilDepositAmount = (record.account.governingTokenMint.toBase58() === grealm.account.config.councilMint.toBase58()) ? record.account.governingTokenDepositAmount : participant.governingCouncilDepositAmount;
+                            
+                            if (record.account.governingTokenMint.toBase58() !== grealm.account.config.councilMint.toBase58()){
+                                tVotes += record.account.governingTokenDepositAmount.toNumber();//record.account.totalVotesCount;
+                                tVotesCasted += record.account.totalVotesCount;//record.account.governingTokenDepositAmount.toNumber();
+                            } else{
+                                tCouncilVotes += record.account.totalVotesCount;
+                                tDepositedCouncilVotesCasted += record.account.governingTokenDepositAmount.toNumber();
+                            }
+                        }
+                    }
+                    if (!foundParticipant){
+                            participantArray.push({
+                                governingTokenMint:(record.account.governingTokenMint.toBase58() !== grealm.account.config.councilMint.toBase58()) ? record.account.governingTokenMint : null,
+                                governingTokenOwner:record.account.governingTokenOwner,
+                                totalVotesCount:(record.account.governingTokenMint.toBase58() !== grealm.account.config.councilMint.toBase58()) ? record.account.totalVotesCount : 0,
+                                councilVotesCount:(record.account.governingTokenMint.toBase58() === grealm.account.config.councilMint.toBase58()) ? record.account.totalVotesCount : 0,
+                                governingTokenDepositAmount:(record.account.governingTokenMint.toBase58() !== grealm.account.config.councilMint.toBase58()) ? record.account.governingTokenDepositAmount : new BN(0),
+                                governingCouncilDepositAmount:(record.account.governingTokenMint.toBase58() === grealm.account.config.councilMint.toBase58()) ? record.account.governingTokenDepositAmount : new BN(0),
+                            });
+                            if (record.account.governingTokenMint.toBase58() !== grealm.account.config.councilMint.toBase58()){
+                                tVotes += record.account.governingTokenDepositAmount.toNumber();//record.account.totalVotesCount;
+                                tVotesCasted += record.account.totalVotesCount;//record.account.governingTokenDepositAmount.toNumber();
+                            } else{
+                                tCouncilVotes += record.account.totalVotesCount;
+                                tDepositedCouncilVotesCasted += record.account.governingTokenDepositAmount.toNumber();
+                            }
+
+                            tParticipants++;
+                        
+                    }
+                }
+
+                setTotalDepositedVotes(tVotes);
+                setTotalVotesCasted(tVotesCasted);
+                setTotalCouncilVotes(tCouncilVotes);
+                setDepositedTotalCouncilVotes(tDepositedCouncilVotesCasted);
+                setTotalParticipants(tParticipants);
+
+                //console.log("participantArray: "+JSON.stringify(participantArray));
+                const sortedResults = participantArray.sort((a,b) => (a.governingTokenDepositAmount.toNumber() < b.governingTokenDepositAmount.toNumber()) ? 1 : -1);
+
                 /*
                 var memberArray = new Array();
                 for (var member of sortedResults){
@@ -463,6 +546,61 @@ export function MembersView(props: any) {
                                 </Typography>
                             </>
                         }
+
+                            {totalDepositedVotes &&
+                                <Box sx={{ alignItems: 'center', textAlign: 'center',p:1}}>
+                                    <Grid container spacing={0}>
+                                        <Grid item xs={12} sm={4} md={4} key={1}>
+                                            <Box
+                                                className='grape-store-stat-item'
+                                                sx={{borderRadius:'24px',m:2,p:1}}
+                                            >
+                                                <Typography variant="body2" sx={{color:'yellow'}}>
+                                                    <>Total Participants</>
+                                                </Typography>
+                                                <Typography variant="h3">
+                                                    {totalParticipants}
+                                                </Typography>
+                                            </Box>
+                                        </Grid>
+                                        <Grid item xs={12} sm={4} md={4} key={1}>
+                                            <Box
+                                                className='grape-store-stat-item'
+                                                sx={{borderRadius:'24px',m:2,p:1}}
+                                            >
+                                                <Typography variant="body2" sx={{color:'yellow'}}>
+                                                    <>Total Votes</>
+                                                </Typography>
+                                                <Typography variant="h3">
+                                                    {totalVotesCasted}/{totalCouncilVotes}
+                                                </Typography>
+                                            </Box>
+                                        </Grid>
+                                        
+                                        <Grid item xs={12} sm={4} md={4} key={1}>
+                                            <Box
+                                                className='grape-store-stat-item'
+                                                sx={{borderRadius:'24px',m:2,p:1}}
+                                            >
+                                                <Typography variant="body2" sx={{color:'yellow'}}>
+                                                    <>Total Votes Deposited</>
+                                                </Typography>
+                                                <Typography variant="h3">
+                                                    {getFormattedNumberToLocale(+(totalDepositedVotes/Math.pow(10, tokenMap.get(realm.account.communityMint?.toBase58())?.decimals || 0)).toFixed(0))}/{totalDepositedCouncilVotes}
+                                                </Typography>
+                                            </Box>
+                                        </Grid>
+                                        
+                                    </Grid>
+                                    {/*
+                                    <LinearProgress color={((totalMintsOnCurve)/totalMints*100) < 50 ?'error' : 'success'} variant="determinate" value={(totalMintsOnCurve)/totalMints*100} />
+                                        <Typography variant='caption'>
+                                            {((totalMintsOnCurve)/totalMints*100).toFixed(0)}% held on a valid wallet address (address on a Ed25519 curve)
+                                        </Typography>
+                                    */}
+                                </Box>
+                            }
+
                         <RenderGovernanceMembersTable members={members} participating={participating} tokenMap={tokenMap} />
                     </Box>
                                 

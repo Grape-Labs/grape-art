@@ -110,7 +110,7 @@ export function TokenView(props: any) {
                 const tknSupply = await connection.getTokenSupply(new PublicKey(collectionAuthority.address));
 
                 setTokenSupply(tknSupply);
-                console.log("tknSupply: "+JSON.stringify(tknSupply));
+                //console.log("tknSupply: "+JSON.stringify(tknSupply));
 
                 const tknMap = await fetchTokens();
 
