@@ -402,7 +402,7 @@ export function MembersView(props: any) {
 
                 const grealm = await getRealm(new Connection(THEINDEX_RPC_ENDPOINT), new PublicKey(collectionAuthority.governance))
                 setRealm(grealm);
-                //console.log("realm: "+JSON.stringify(grealm))
+                console.log("realm: "+JSON.stringify(grealm))
 
                 const realmPk = grealm.pubkey;
 
@@ -424,16 +424,16 @@ export function MembersView(props: any) {
                 let tParticipants = 0;
 
                 for (let record of trecords){
-                    console.log("record: "+JSON.stringify(record));
+                    //console.log("record: "+JSON.stringify(record));
                     let foundParticipant = false;
                     for (let participant of participantArray){
                         if (participant.governingTokenOwner.toBase58() === record.account.governingTokenOwner.toBase58()){
                             foundParticipant = true;
-                            participant.governingTokenMint = (record.account.governingTokenMint.toBase58() !== grealm.account.config.councilMint.toBase58()) ? record.account.governingTokenMint : participant.governingTokenMint;
-                            participant.totalVotesCount = (record.account.governingTokenMint.toBase58() !== grealm.account.config.councilMint.toBase58()) ? record.account.totalVotesCount : participant.totalVotesCount;
-                            participant.councilVotesCount = (record.account.governingTokenMint.toBase58() === grealm.account.config.councilMint.toBase58()) ? record.account.totalVotesCount : participant.councilVotesCount;
-                            participant.governingTokenDepositAmount = (record.account.governingTokenMint.toBase58() !== grealm.account.config.councilMint.toBase58()) ? record.account.governingTokenDepositAmount : participant.governingTokenDepositAmount;
-                            participant.governingCouncilDepositAmount = (record.account.governingTokenMint.toBase58() === grealm.account.config.councilMint.toBase58()) ? record.account.governingTokenDepositAmount : participant.governingCouncilDepositAmount;
+                            participant.governingTokenMint = (record.account.governingTokenMint.toBase58() !== grealm.account.config?.councilMint.toBase58()) ? record.account.governingTokenMint : participant.governingTokenMint;
+                            participant.totalVotesCount = (record.account.governingTokenMint.toBase58() !== grealm.account.config?.councilMint.toBase58()) ? record.account.totalVotesCount : participant.totalVotesCount;
+                            participant.councilVotesCount = (record.account.governingTokenMint.toBase58() === grealm.account.config?.councilMint.toBase58()) ? record.account.totalVotesCount : participant.councilVotesCount;
+                            participant.governingTokenDepositAmount = (record.account.governingTokenMint.toBase58() !== grealm.account.config?.councilMint.toBase58()) ? record.account.governingTokenDepositAmount : participant.governingTokenDepositAmount;
+                            participant.governingCouncilDepositAmount = (record.account.governingTokenMint.toBase58() === grealm.account.config?.councilMint.toBase58()) ? record.account.governingTokenDepositAmount : participant.governingCouncilDepositAmount;
                             
                             if (record.account.governingTokenMint.toBase58() !== grealm.account.config.councilMint.toBase58()){
                                 tVotes += record.account.governingTokenDepositAmount.toNumber();//record.account.totalVotesCount;
@@ -445,20 +445,36 @@ export function MembersView(props: any) {
                         }
                     }
                     if (!foundParticipant){
-                            participantArray.push({
-                                governingTokenMint:(record.account.governingTokenMint.toBase58() !== grealm.account.config.councilMint.toBase58()) ? record.account.governingTokenMint : null,
-                                governingTokenOwner:record.account.governingTokenOwner,
-                                totalVotesCount:(record.account.governingTokenMint.toBase58() !== grealm.account.config.councilMint.toBase58()) ? record.account.totalVotesCount : 0,
-                                councilVotesCount:(record.account.governingTokenMint.toBase58() === grealm.account.config.councilMint.toBase58()) ? record.account.totalVotesCount : 0,
-                                governingTokenDepositAmount:(record.account.governingTokenMint.toBase58() !== grealm.account.config.councilMint.toBase58()) ? record.account.governingTokenDepositAmount : new BN(0),
-                                governingCouncilDepositAmount:(record.account.governingTokenMint.toBase58() === grealm.account.config.councilMint.toBase58()) ? record.account.governingTokenDepositAmount : new BN(0),
-                            });
-                            if (record.account.governingTokenMint.toBase58() !== grealm.account.config.councilMint.toBase58()){
-                                tVotes += record.account.governingTokenDepositAmount.toNumber();//record.account.totalVotesCount;
-                                tVotesCasted += record.account.totalVotesCount;//record.account.governingTokenDepositAmount.toNumber();
+                            //console.log("record: "+JSON.stringify(record));
+                            
+                            if (grealm.account.config?.councilMint) {
+                                participantArray.push({
+                                    governingTokenMint:(record.account.governingTokenMint.toBase58() !== grealm.account.config?.councilMint.toBase58()) ? record.account.governingTokenMint : null,
+                                    governingTokenOwner:record.account.governingTokenOwner,
+                                    totalVotesCount:(record.account.governingTokenMint.toBase58() !== grealm.account.config?.councilMint.toBase58()) ? record.account.totalVotesCount : 0,
+                                    councilVotesCount:(record.account.governingTokenMint.toBase58() === grealm.account.config?.councilMint.toBase58()) ? record.account.totalVotesCount : 0,
+                                    governingTokenDepositAmount:(record.account.governingTokenMint.toBase58() !== grealm.account?.config.councilMint.toBase58()) ? record.account.governingTokenDepositAmount : new BN(0),
+                                    governingCouncilDepositAmount:(record.account.governingTokenMint.toBase58() === grealm.account?.config.councilMint.toBase58()) ? record.account.governingTokenDepositAmount : new BN(0),
+                                });
+
+                                if (record.account.governingTokenMint.toBase58() !== grealm.account?.config.councilMint.toBase58()){
+                                    tVotes += record.account.governingTokenDepositAmount.toNumber();
+                                    tVotesCasted += record.account.totalVotesCount;
+                                } else{
+                                    tCouncilVotes += record.account.totalVotesCount;
+                                    tDepositedCouncilVotesCasted += record.account.governingTokenDepositAmount.toNumber();
+                                }
                             } else{
-                                tCouncilVotes += record.account.totalVotesCount;
-                                tDepositedCouncilVotesCasted += record.account.governingTokenDepositAmount.toNumber();
+                                participantArray.push({
+                                    governingTokenMint:record.account.governingTokenMint,
+                                    governingTokenOwner:record.account.governingTokenOwner,
+                                    totalVotesCount:record.account.totalVotesCount,
+                                    councilVotesCount:0,
+                                    governingTokenDepositAmount:record.account.governingTokenDepositAmount,
+                                    governingCouncilDepositAmount:new BN(0),
+                                });
+                                tVotes += record.account.governingTokenDepositAmount.toNumber();
+                                tVotesCasted += record.account.totalVotesCount;
                             }
 
                             tParticipants++;
@@ -572,7 +588,10 @@ export function MembersView(props: any) {
                                                     <>Total Votes</>
                                                 </Typography>
                                                 <Typography variant="h3">
-                                                    {totalVotesCasted}/{totalCouncilVotes}
+                                                    {totalVotesCasted}
+                                                    {totalCouncilVotes &&
+                                                        <>/{totalCouncilVotes}
+                                                        </>}
                                                 </Typography>
                                             </Box>
                                         </Grid>
@@ -586,7 +605,11 @@ export function MembersView(props: any) {
                                                     <>Total Votes Deposited</>
                                                 </Typography>
                                                 <Typography variant="h3">
-                                                    {getFormattedNumberToLocale(+(totalDepositedVotes/Math.pow(10, tokenMap.get(realm.account.communityMint?.toBase58())?.decimals || 0)).toFixed(0))}/{totalDepositedCouncilVotes}
+                                                    {getFormattedNumberToLocale(+(totalDepositedVotes/Math.pow(10, tokenMap.get(realm.account.communityMint?.toBase58())?.decimals || 0)).toFixed(0))}
+                                                    {totalDepositedCouncilVotes &&
+                                                        <>
+                                                        /{totalDepositedCouncilVotes}
+                                                        </>}
                                                 </Typography>
                                             </Box>
                                         </Grid>
