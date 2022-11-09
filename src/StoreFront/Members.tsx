@@ -482,9 +482,9 @@ export function MembersView(props: any) {
                     }
                 }
 
-                setTotalDepositedVotes(tVotes);
+                setTotalDepositedVotes(tVotes > 0 ? tVotes : null);
                 setTotalVotesCasted(tVotesCasted);
-                setTotalCouncilVotes(tCouncilVotes);
+                setTotalCouncilVotes(tCouncilVotes > 0 ? tCouncilVotes : null);
                 setDepositedTotalCouncilVotes(tDepositedCouncilVotesCasted);
                 setTotalParticipants(tParticipants);
 
@@ -563,7 +563,7 @@ export function MembersView(props: any) {
                             </>
                         }
 
-                            {totalDepositedVotes &&
+                            {(totalDepositedVotes || totalCouncilVotes) &&
                                 <Box sx={{ alignItems: 'center', textAlign: 'center',p:1}}>
                                     <Grid container spacing={0}>
                                         <Grid item xs={12} sm={4} md={4} key={1}>
