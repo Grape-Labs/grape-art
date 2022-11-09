@@ -483,10 +483,10 @@ export function MembersView(props: any) {
                 }
 
                 setTotalDepositedVotes(tVotes > 0 ? tVotes : null);
-                setTotalVotesCasted(tVotesCasted);
+                setTotalVotesCasted(tVotesCasted > 0 ? tVotesCasted : null);
                 setTotalCouncilVotes(tCouncilVotes > 0 ? tCouncilVotes : null);
-                setDepositedTotalCouncilVotes(tDepositedCouncilVotesCasted);
-                setTotalParticipants(tParticipants);
+                setDepositedTotalCouncilVotes(tDepositedCouncilVotesCasted > 0 ? tDepositedCouncilVotesCasted : null);
+                setTotalParticipants(tParticipants > 0 ? tParticipants : null);
 
                 //console.log("participantArray: "+JSON.stringify(participantArray));
                 const sortedResults = participantArray.sort((a,b) => (a.governingTokenDepositAmount.toNumber() < b.governingTokenDepositAmount.toNumber()) ? 1 : -1);
@@ -588,10 +588,11 @@ export function MembersView(props: any) {
                                                     <>Total Votes</>
                                                 </Typography>
                                                 <Typography variant="h3">
-                                                    {totalVotesCasted}
-                                                    {totalCouncilVotes &&
-                                                        <>/{totalCouncilVotes}
-                                                        </>}
+                                                    {totalVotesCasted && <>{totalVotesCasted}</>}
+                                                    {(totalVotesCasted && totalDepositedCouncilVotes) &&
+                                                        <>/</>
+                                                    }
+                                                    {totalCouncilVotes && <>{totalCouncilVotes}</>}
                                                 </Typography>
                                             </Box>
                                         </Grid>
@@ -605,11 +606,15 @@ export function MembersView(props: any) {
                                                     <>Total Votes Deposited</>
                                                 </Typography>
                                                 <Typography variant="h3">
-                                                    {getFormattedNumberToLocale(+(totalDepositedVotes/Math.pow(10, tokenMap.get(realm.account.communityMint?.toBase58())?.decimals || 0)).toFixed(0))}
-                                                    {totalDepositedCouncilVotes &&
+                                                    {totalDepositedVotes &&
                                                         <>
-                                                        /{totalDepositedCouncilVotes}
-                                                        </>}
+                                                            {getFormattedNumberToLocale(+(totalDepositedVotes/Math.pow(10, tokenMap.get(realm.account.communityMint?.toBase58())?.decimals || 0)).toFixed(0))}
+                                                        </>
+                                                    }
+                                                    {(totalDepositedVotes && totalDepositedCouncilVotes) &&
+                                                        <>/</>
+                                                    }
+                                                    {totalDepositedCouncilVotes && <>{totalDepositedCouncilVotes}</>}
                                                 </Typography>
                                             </Box>
                                         </Grid>
