@@ -275,9 +275,17 @@ function GetParticipants(props: any){
             renderCell: (params) => {
                 return(
                     <>
-                        {totalQuorum && 
+                        {totalQuorum && params.value.voterWeight ?
                             <>
                             {(((parseInt(params.value.voterWeight)/Math.pow(10, params.value.decimals))/totalQuorum)*100).toFixed(2)} % 
+                            </>
+                        :
+                            <>
+                            {(params.value.legacyYes && params.value.legacyYes > 0) ?
+                                `${(((parseInt(params.value.legacyYes)/Math.pow(10, params.value.decimals))/totalQuorum)*100).toFixed(2)} %`
+                            :
+                                `${(((parseInt(params.value.legacyNo)/Math.pow(10, params.value.decimals))/totalQuorum)*100).toFixed(2)} %`
+                            }
                             </>
                         }
                         
@@ -290,25 +298,59 @@ function GetParticipants(props: any){
             renderCell: (params) => {
                 return(
                     <>
-                        <Chip
-                            variant="outlined"
-                            color={params.value.vote.voteType === 0 ?
-                                'success'
-                                :
-                                'error'
-                            }
-                            icon={params.value.vote.voteType === 0 ?
-                                <ThumbUpIcon color='success' sx={{ml:1}} />
-                                :
-                                <ThumbDownIcon sx={{color:'red',ml:1}}/>
-                            }
-                            label={params.value.voterWeight > 1 ?
-                                `${getFormattedNumberToLocale(formatAmount(+(parseInt(params.value.voterWeight)/Math.pow(10, params.value.decimals)).toFixed(0)))} votes` 
-                                :
-                                `${getFormattedNumberToLocale(formatAmount(+(parseInt(params.value.voterWeight)/Math.pow(10, params.value.decimals)).toFixed(0)))} vote` 
-                            }
+                        {params.value.vote ?
+                            <Chip
+                                variant="outlined"
+                                color={params.value?.vote?.voteType === 0 ?
+                                    'success'
+                                    :
+                                    'error'
+                                }
+                                icon={params?.value?.vote?.voteType === 0 ?
+                                    <ThumbUpIcon color='success' sx={{ml:1}} />
+                                    :
+                                    <ThumbDownIcon sx={{color:'red',ml:1}}/>
+                                }
+                                label={params.value?.voterWeight > 1 ?
+                                    `${getFormattedNumberToLocale(formatAmount(+(parseInt(params.value.voterWeight)/Math.pow(10, params.value.decimals)).toFixed(0)))} votes` 
+                                    :
+                                    `${getFormattedNumberToLocale(formatAmount(+(parseInt(params.value.voterWeight)/Math.pow(10, params.value.decimals)).toFixed(0)))} vote` 
+                                }
+                            />
+                        :
+                            <Chip
+                                variant="outlined"
+                                color={params.value?.legacyYes > 0 ?
+                                    'success'
+                                    :
+                                    'error'
+                                }
+                                icon={params.value?.legacyYes > 0 ?
+                                    <ThumbUpIcon color='success' sx={{ml:1}} />
+                                    :
+                                    <ThumbDownIcon sx={{color:'red',ml:1}}/>
+                                }
+                                label={params.value?.legacyYes > 0 ? 
+                                        <>
+                                        {params.value?.legacyYes > 1 ?
+                                            `${getFormattedNumberToLocale(formatAmount(+(parseInt(params.value?.legacyYes)/Math.pow(10, params.value.decimals)).toFixed(0)))} votes` 
+                                        :
+                                            `${getFormattedNumberToLocale(formatAmount(+(parseInt(params.value?.legacyYes)/Math.pow(10, params.value.decimals)).toFixed(0)))} vote` 
+                                        }
+                                        </>
+                                    :
+                                        <>
+
+                                        {params.value?.legacyNo > 1 ?
+                                            `${getFormattedNumberToLocale(formatAmount(+(parseInt(params.value?.legacyNo)/Math.pow(10, params.value.decimals)).toFixed(0)))} votes` 
+                                        :
+                                            `${getFormattedNumberToLocale(formatAmount(+(parseInt(params.value?.legacyNo)/Math.pow(10, params.value.decimals)).toFixed(0)))} vote` 
+                                        }
+                                        </>
+                                    }
                         />
                         
+                        }
                     </>
                 );
             }
@@ -472,11 +514,21 @@ function GetParticipants(props: any){
 
             for (let item of voteResults.value){
                 counter++;
-                if (item.account.vote.voteType === 0)
-                    uYes++;
-                else
-                    uNo++;
-                
+                //console.log("item: "+JSON.stringify(item))
+                if (item.account?.vote){
+                    if (item.account?.vote?.voteType === 0){
+                        uYes++;
+                    }else{
+                        uNo++;
+                    }
+                } else{
+                    if (item.account.voteWeight.yes && item.account.voteWeight.yes > 0){
+                        uYes++;
+                    } else{
+                        uNo++;
+                    }
+                }
+
                 votingResults.push({
                     id:counter,
                     pubkey:item.pubkey.toBase58(),
@@ -484,14 +536,18 @@ function GetParticipants(props: any){
                     governingTokenOwner:item.account.governingTokenOwner.toBase58(),
                     quorumWeight:{
                         vote:item.account.vote,
-                        voterWeight:item.account.voterWeight.toNumber(),
+                        voterWeight:(item.account?.voterWeight ?  item.account?.voterWeight.toNumber() : null),
+                        legacyYes:(item.account?.voteWeight?.yes ?  item.account?.voteWeight?.yes.toNumber() : null),
+                        legacyNo:(item.account?.voteWeight?.no ?  item.account?.voteWeight?.no.toNumber() : null),
                         decimals:(realm.account.config?.councilMint?.toBase58() === thisitem.account.governingTokenMint?.toBase58() ? 0 : td),
                         councilMint:realm.account.config?.councilMint?.toBase58() ,
                         governingTokenMint:thisitem.account.governingTokenMint?.toBase58() 
                     },
                     vote:{
                         vote:item.account.vote,
-                        voterWeight:item.account.voterWeight.toNumber(),
+                        voterWeight:(item.account?.voterWeight ?  item.account?.voterWeight.toNumber() : null),
+                        legacyYes:(item.account?.voteWeight?.yes ?  item.account?.voteWeight?.yes.toNumber() : null),
+                        legacyNo:(item.account?.voteWeight?.no ?  item.account?.voteWeight?.no.toNumber() : null),
                         decimals:(realm.account.config?.councilMint?.toBase58() === thisitem.account.governingTokenMint?.toBase58() ? 0 : td),
                         councilMint:realm.account.config?.councilMint?.toBase58() ,
                         governingTokenMint:thisitem.account.governingTokenMint?.toBase58() 
@@ -502,7 +558,7 @@ function GetParticipants(props: any){
                 else
                     csvFile = 'tokenOwner,uiVotes,voterWeight,tokenDecimals,voteType,proposal\r\n';
                 
-                csvFile += item.account.governingTokenOwner.toBase58()+','+(+(parseInt(item.account.voterWeight.toNumber())/Math.pow(10, (realm.account.config?.councilMint?.toBase58() === thisitem.account.governingTokenMint?.toBase58() ? 0 : td))).toFixed(0))+','+item.account.voterWeight.toNumber()+','+(realm.account.config?.councilMint?.toBase58() === thisitem.account.governingTokenMint?.toBase58() ? 0 : td)+','+item.account.vote.voteType+','+item.account.proposal.toBase58()+'';
+                csvFile += item.account.governingTokenOwner.toBase58()+','+(+(parseInt((item.account?.voterWeight ?  item.account?.voterWeight.toNumber() : item.account?.voteWeight?.yes))/Math.pow(10, (realm.account.config?.councilMint?.toBase58() === thisitem.account.governingTokenMint?.toBase58() ? 0 : td))).toFixed(0))+','+(item.account?.voterWeight ?  item.account?.voterWeight.toNumber() : item.account?.voteWeight?.yes)+','+(realm.account.config?.councilMint?.toBase58() === thisitem.account.governingTokenMint?.toBase58() ? 0 : td)+','+item.account?.vote?.voteType+','+item.account.proposal.toBase58()+'';
                 //    csvFile += item.pubkey.toBase58();
             }
         }
@@ -722,16 +778,33 @@ function GetParticipants(props: any){
                                         </Typography>
                                         <Typography variant="h3">
                                             {thisitem.account?.options && thisitem.account?.options[0]?.voteWeight && thisitem?.account?.denyVoteWeight && thisitem.account?.options[0].voteWeight.toNumber() > 0 ?
-                                            <>
-                                            {`${(((thisitem.account?.options[0].voteWeight.toNumber())/((thisitem.account?.denyVoteWeight.toNumber())+(thisitem.account?.options[0].voteWeight.toNumber())))*100).toFixed(2)}%`}
-                                            </>
+                                                <>
+                                                {`${(((thisitem.account?.options[0].voteWeight.toNumber())/((thisitem.account?.denyVoteWeight.toNumber())+(thisitem.account?.options[0].voteWeight.toNumber())))*100).toFixed(2)}%`}
+                                                </>
                                             :
-                                            <>0%</>
+                                                <>
+                                                    {thisitem.account.yesVotesCount ?
+                                                        <>{(thisitem.account.yesVotesCount.toNumber()/(thisitem.account.noVotesCount.toNumber()+thisitem.account.yesVotesCount.toNumber())*100).toFixed(2)}%</>
+                                                    :
+                                                        <>0%</>
+                                                    }
+                                                </>
                                             }                  
                                         </Typography>
-                                        <Typography variant="caption">
-                                            {getFormattedNumberToLocale(formatAmount(+(thisitem.account.options[0].voteWeight.toNumber()/Math.pow(10, tokenDecimals)).toFixed(0)))}
-                                        </Typography>
+                                        {thisitem.account?.options && thisitem.account?.options.length >= 0 ? 
+                                            <Typography variant="caption">
+                                                {getFormattedNumberToLocale(formatAmount(+(thisitem.account.options[0].voteWeight.toNumber()/Math.pow(10, tokenDecimals)).toFixed(0)))}
+                                            </Typography>
+                                        :
+                                            <>
+                                                {thisitem.account?.yesVotesCount && 
+                                                    <Typography variant="caption">
+                                                        {getFormattedNumberToLocale(formatAmount(+(thisitem.account.yesVotesCount.toNumber()/Math.pow(10, tokenDecimals)).toFixed(0)))}
+                                                    </Typography>
+                                                }
+                                            </>
+                                        }
+
                                         <VoteForProposal type={0} />
                                     </Box>
                                 </Grid>
@@ -745,32 +818,63 @@ function GetParticipants(props: any){
                                         </Typography>
                                         <Typography variant="h3">
                                             {thisitem.account?.options && thisitem.account?.options[0]?.voteWeight && thisitem?.account?.denyVoteWeight && thisitem.account?.options[0].voteWeight.toNumber() > 0 ?
-                                            <>
-                                            {`${(((thisitem.account?.denyVoteWeight.toNumber()/Math.pow(10, tokenDecimals))/((thisitem.account?.denyVoteWeight.toNumber()/Math.pow(10, tokenDecimals))+(thisitem.account?.options[0].voteWeight.toNumber()/Math.pow(10, tokenDecimals))))*100).toFixed(2)}%`}
-                                            </>
+                                                <>
+                                                {`${(((thisitem.account?.denyVoteWeight.toNumber()/Math.pow(10, tokenDecimals))/((thisitem.account?.denyVoteWeight.toNumber()/Math.pow(10, tokenDecimals))+(thisitem.account?.options[0].voteWeight.toNumber()/Math.pow(10, tokenDecimals))))*100).toFixed(2)}%`}
+                                                </>
                                             :
-                                            <>0%</>
+                                                <>
+                                                    {thisitem.account.noVotesCount ?
+                                                        <>{(thisitem.account.noVotesCount.toNumber()/(thisitem.account.noVotesCount.toNumber()+thisitem.account.yesVotesCount.toNumber())*100).toFixed(2)}%</>
+                                                    :
+                                                        <>0%</>
+                                                    }
+                                                </>
                                             }
                                         </Typography>
-                                        <Typography variant="caption">
-                                            {getFormattedNumberToLocale(formatAmount(+(thisitem.account.denyVoteWeight.toNumber()/Math.pow(10, tokenDecimals)).toFixed(0)))}
-                                        </Typography>
+                                        {thisitem.account?.denyVoteWeight ?
+                                            <Typography variant="caption">
+                                                {getFormattedNumberToLocale(formatAmount(+(thisitem.account.denyVoteWeight.toNumber()/Math.pow(10, tokenDecimals)).toFixed(0)))}
+                                            </Typography>
+                                        :
+                                            <>
+                                                {thisitem.account?.noVotesCount && 
+                                                    <Typography variant="caption">
+                                                        {getFormattedNumberToLocale(formatAmount(+(thisitem.account.noVotesCount.toNumber()/Math.pow(10, tokenDecimals)).toFixed(0)))}
+                                                    </Typography>
+                                                }
+                                            </>
+                                        }
                                         <VoteForProposal type={1} />
                                     </Box>
                                 </Grid>
                                 
                                 { 
                                     <Grid item xs={12}>
-                                        {totalQuorum && totalQuorum > 0 &&
-                                        <Box sx={{ width: '100%' }}>
-                                            <BorderLinearProgress variant="determinate" 
-                                                value={quorumTargetPercentage < 100 ? 100-quorumTargetPercentage : 100} />
-                                            {quorumTarget ? 
-                                                <Typography variant='caption'>{getFormattedNumberToLocale(formatAmount(quorumTarget))} more votes remaining to reach quorum</Typography>
-                                            :
-                                                <Typography variant='caption'>Quorum Reached <CheckIcon sx={{fontSize:'10px'}} />  {exceededQuorumPercentage && `${exceededQuorumPercentage.toFixed(1)}% votes exceeded quorum`}</Typography>
-                                            }
-                                        </Box>
+                                        {thisitem.account?.state === 3 ?
+                                            <>
+                                                 <Box sx={{ width: '100%' }}>
+                                                    <BorderLinearProgress variant="determinate" value={100} />
+                                                    <Typography variant='caption'>Passed</Typography>
+                                                </Box>
+                                            </>
+                                        :
+                                            <>
+                                                {thisitem.account?.state !== 7 &&
+                                                    <>
+                                                        {totalQuorum && totalQuorum > 0 &&
+                                                            <Box sx={{ width: '100%' }}>
+                                                                <BorderLinearProgress variant="determinate" 
+                                                                    value={quorumTargetPercentage < 100 ? 100-quorumTargetPercentage : 100} />
+                                                                {quorumTarget ? 
+                                                                    <Typography variant='caption'>{getFormattedNumberToLocale(formatAmount(quorumTarget))} more votes remaining to reach quorum</Typography>
+                                                                :
+                                                                    <Typography variant='caption'>Quorum Reached <CheckIcon sx={{fontSize:'10px'}} />  {exceededQuorumPercentage && `${exceededQuorumPercentage.toFixed(1)}% votes exceeded quorum`}</Typography>
+                                                                }
+                                                            </Box>
+                                                        }
+                                                    </>
+                                                }
+                                            </>
                                         }
                                     </Grid>
                                 }
@@ -923,7 +1027,7 @@ function GetParticipants(props: any){
                                     </Box>
                                 </Grid>
 
-                                {thisitem?.account?.options[0]?.voteWeight &&
+                                {thisitem?.account?.options &&
                                     <Grid item xs={12} sm={6} md={3} key={1}>
                                         <Box
                                             className='grape-store-stat-item'
@@ -944,7 +1048,7 @@ function GetParticipants(props: any){
                                     </Grid>
                                 }
 
-                                {thisitem?.account?.denyVoteWeight &&
+                                {thisitem.account?.state &&
                                     <Grid item xs={12} sm={6} md={3} key={1}>
                                         <Box
                                             className='grape-store-stat-item'
@@ -1171,6 +1275,33 @@ function RenderGovernanceTable(props:any) {
                                                 </Typography>
                                             </TableCell>
                                             <TableCell>
+                                                {item.account.yesVotesCount &&
+                                                    <Typography variant="h6">
+                                                        
+                                                        <Tooltip title={realm.account.config?.councilMint?.toBase58() === item.account?.governingTokenMint?.toBase58() ?
+                                                                <>{item.account.yesVotesCount.toNumber()}</>
+                                                            :
+                                                            <>
+                                                                    <>
+                                                                    {(item.account.yesVotesCount.toNumber()/Math.pow(10, (tokenMap.get(item.account.governingTokenMint?.toBase58()) ? tokenMap.get(item.account.governingTokenMint?.toBase58()).decimals : 6) )).toFixed(0)}</>
+                                                                
+
+                                                            </>
+                                                            }
+                                                        >
+                                                            <Button sx={{color:'#eee'}}>
+                                                                {item.account.yesVotesCount.toNumber() > 0 ?
+                                                                <>
+                                                                {`${(((item.account.yesVotesCount.toNumber())/((item.account.noVotesCount.toNumber())+(item.account.yesVotesCount.toNumber())))*100).toFixed(2)}%`}
+                                                                </>
+                                                                :
+                                                                <>0%</>
+    }
+                                                            </Button>
+                                                        </Tooltip>
+                                                    </Typography>
+                                                }
+
                                                 {item.account?.options && item.account?.options[0]?.voteWeight && 
                                                     <Typography variant="h6">
                                                         
@@ -1227,6 +1358,34 @@ function RenderGovernanceTable(props:any) {
                                                 }
                                             </TableCell>
                                             <TableCell>
+
+                                                {item.account.noVotesCount &&
+                                                        <Typography variant="h6">
+                                                            
+                                                            <Tooltip title={realm.account.config?.councilMint?.toBase58() === item.account?.governingTokenMint?.toBase58() ?
+                                                                    <>{item.account.noVotesCount.toNumber()}</>
+                                                                :
+                                                                <>
+                                                                        <>
+                                                                        {(item.account.noVotesCount.toNumber()/Math.pow(10, (tokenMap.get(item.account.governingTokenMint?.toBase58()) ? tokenMap.get(item.account.governingTokenMint?.toBase58()).decimals : 6) )).toFixed(0)}</>
+                                                                    
+
+                                                                </>
+                                                                }
+                                                            >
+                                                                <Button sx={{color:'#eee'}}>
+                                                                    {item.account.noVotesCount.toNumber() > 0 ?
+                                                                    <>
+                                                                    {`${(((item.account.noVotesCount.toNumber())/((item.account.noVotesCount.toNumber())+(item.account.yesVotesCount.toNumber())))*100).toFixed(2)}%`}
+                                                                    </>
+                                                                    :
+                                                                    <>0%</>
+        }
+                                                                </Button>
+                                                            </Tooltip>
+                                                        </Typography>
+                                                }
+
                                                 {item.account?.denyVoteWeight && 
                                                     <Typography variant="h6">
                                                         <Tooltip title={item.account?.denyVoteWeight.toNumber() <= 1 ?
@@ -1311,6 +1470,10 @@ export function GovernanceView(props: any) {
     const [participatingRealm, setParticipatingRealm] = React.useState(null)
     const [nftBasedGovernance, setNftBasedGovernance] = React.useState(false);
     const [thisToken, setThisToken] = React.useState(null);
+    const [totalProposals, setTotalProposals] = React.useState(null);
+    const [totalPassed, setTotalPassed] = React.useState(null);
+    const [totalDefeated, setTotalDefeated] = React.useState(null);
+    const [totalVotesCasted, setTotalTotalVotesCasted] = React.useState(null);
 
     const GOVERNANCE_PROGRAM_ID = 'GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw';
 
@@ -1346,12 +1509,14 @@ export function GovernanceView(props: any) {
         try{
             const tlp = await new TokenListProvider().resolve().then(tokens => {
                 const tokenList = tokens.filterByChainId(ENV.MainnetBeta).getList();
-                setTokenMap(tokenList.reduce((map, item) => {
+                const tmap = tokenList.reduce((map, item) => {
                     tarray.push({address:item.address, decimals:item.decimals})
                     map.set(item.address, item);
                     return map;
-                },new Map()));
+                },new Map())
+                setTokenMap(tmap);
                 setTokenArray(tarray);
+                return 
             });
         } catch(e){console.log("ERR: "+e)}
     }
@@ -1360,9 +1525,10 @@ export function GovernanceView(props: any) {
         if (!loading){
             setLoading(true);
             try{
-
+                let tmap = null;
                 if (!tokenArray)
-                    await getTokens();
+                    tmap = await getTokens();
+
                     
                 console.log("with governance: "+governanceToken?.governance || governanceToken);
                 const programId = new PublicKey(GOVERNANCE_PROGRAM_ID);
@@ -1386,7 +1552,7 @@ export function GovernanceView(props: any) {
                 const grealm = await getRealm(new Connection(GRAPE_RPC_ENDPOINT), new PublicKey(governanceToken?.governance || governanceToken))
                 setRealm(grealm);
                 //console.log("B realm: "+JSON.stringify(grealm));
-                
+
                 const realmPk = grealm.pubkey;
 
                 //console.log("communityMintMaxVoteWeightSource: " + grealm.account.config.communityMintMaxVoteWeightSource.value.toNumber());
@@ -1528,10 +1694,27 @@ export function GovernanceView(props: any) {
                 const gprops = await getAllProposals(new Connection(GRAPE_RPC_ENDPOINT), grealm.owner, realmPk);
                 
                 const allprops: any[] = [];
+                let passed = 0;
+                let defeated = 0;
+                let ttvc = 0;
+                console.log("tmap "+JSON.stringify(tmap))
                 for (const props of gprops){
                     for (const prop of props){
                         if (prop){
                             allprops.push(prop);
+                            if (prop.account.state === 3 || prop.account.state === 5)
+                                passed++;
+                            else if (prop.account.state === 7)
+                                defeated++;
+
+                        
+                            if (prop.account?.yesVotesCount && prop.account?.noVotesCount){
+                                //ttvc += +(((prop.account?.yesVotesCount.toNumber() + prop.account?.noVotesCount.toNumber())/Math.pow(10, (tmap.get(prop.account.governingTokenMint?.toBase58()) ? tmap.get(prop.account.governingTokenMint?.toBase58()).decimals : 6) )).toFixed(0))
+                                
+                            } else if (prop.account?.options) {
+                                //console.log("item: "+JSON.stringify(prop))
+                                //ttvc += +(((prop.account?.options[0].voteWeight.toNumber() + prop.account?.denyVoteWeight.toNumber())/Math.pow(10, (tmap.get(prop.account.governingTokenMint?.toBase58()) ? tmap.get(prop.account.governingTokenMint?.toBase58()).decimals : 6) )).toFixed(0))
+                            }
                         }
                     }
                 }
@@ -1542,6 +1725,11 @@ export function GovernanceView(props: any) {
                 //const sortedResults = allprops.sort((a,b) => (a.account?.votingAt.toNumber() < b.account?.votingAt.toNumber()) ? 1 : -1);
                 
                 //console.log("allprops: "+JSON.stringify(allprops));
+
+                setTotalDefeated(defeated);
+                setTotalPassed(passed);
+                setTotalProposals(sortedResults.length);
+                setTotalTotalVotesCasted(ttvc);
 
                 setProposals(sortedResults);
 
@@ -1562,11 +1750,12 @@ export function GovernanceView(props: any) {
                     sx={{
                         background: 'rgba(0, 0, 0, 0.6)',
                         borderRadius: '17px',
-                        p:4
+                        p:4,
+                        alignItems: 'center', textAlign: 'center'
                     }} 
                 > 
-                    Loading Governance...
                     <LinearProgress />
+                    Loading Governance...
                 </Box>
             )
         } else{
@@ -1621,6 +1810,60 @@ export function GovernanceView(props: any) {
                             */}
                             </>
                         }
+
+
+                                <Box sx={{ alignItems: 'center', textAlign: 'center',p:1}}>
+                                    <Grid container spacing={0}>
+                                        <Grid item xs={12} sm={4} md={4} key={1}>
+                                            <Box
+                                                className='grape-store-stat-item'
+                                                sx={{borderRadius:'24px',m:2,p:1}}
+                                            >
+                                                <Typography variant="body2" sx={{color:'yellow'}}>
+                                                    <>Total Proposals</>
+                                                </Typography>
+                                                <Typography variant="h3">
+                                                    coming soon
+                                                </Typography>
+                                            </Box>
+                                        </Grid>
+                                        <Grid item xs={12} sm={4} md={4} key={1}>
+                                            <Box
+                                                className='grape-store-stat-item'
+                                                sx={{borderRadius:'24px',m:2,p:1}}
+                                            >
+                                                <Typography variant="body2" sx={{color:'yellow'}}>
+                                                    <>Total Casted Votes</>
+                                                </Typography>
+                                                <Typography variant="h3">
+                                                    {getFormattedNumberToLocale(totalVotesCasted)}
+                                                </Typography>
+                                            </Box>
+                                        </Grid>
+                                        
+                                        <Grid item xs={12} sm={4} md={4} key={1}>
+                                            <Box
+                                                className='grape-store-stat-item'
+                                                sx={{borderRadius:'24px',m:2,p:1}}
+                                            >
+                                                <Typography variant="body2" sx={{color:'yellow'}}>
+                                                    <>Passing</>
+                                                </Typography>
+                                                <Typography variant="h3">
+                                                    {totalPassed}/{totalDefeated}
+                                                </Typography>
+                                            </Box>
+                                        </Grid>
+                                        
+                                    </Grid>
+                                    {/*
+                                    <LinearProgress color={((totalMintsOnCurve)/totalMints*100) < 50 ?'error' : 'success'} variant="determinate" value={(totalMintsOnCurve)/totalMints*100} />
+                                        <Typography variant='caption'>
+                                            {((totalMintsOnCurve)/totalMints*100).toFixed(0)}% held on a valid wallet address (address on a Ed25519 curve)
+                                        </Typography>
+                                    */}
+                                </Box>
+                                    
 
                         <RenderGovernanceTable memberMap={memberMap} tokenMap={tokenMap} realm={realm} thisToken={thisToken} proposals={proposals} nftBasedGovernance={nftBasedGovernance} governanceToken={governanceToken} />
                     </Box>
