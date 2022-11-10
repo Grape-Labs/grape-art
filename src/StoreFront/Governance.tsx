@@ -1823,7 +1823,7 @@ export function GovernanceView(props: any) {
                                                     <>Total Proposals</>
                                                 </Typography>
                                                 <Typography variant="h3">
-                                                    coming soon
+                                                    {totalProposals}
                                                 </Typography>
                                             </Box>
                                         </Grid>
@@ -1836,7 +1836,8 @@ export function GovernanceView(props: any) {
                                                     <>Total Casted Votes</>
                                                 </Typography>
                                                 <Typography variant="h3">
-                                                    {getFormattedNumberToLocale(totalVotesCasted)}
+                                                    {/*getFormattedNumberToLocale(totalVotesCasted)*/}
+                                                    coming soon
                                                 </Typography>
                                             </Box>
                                         </Grid>
