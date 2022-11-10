@@ -42,6 +42,7 @@ export function BoardingView (this: any, props: any) {
     collection_update_authority: PublicKey.default,
     auction_house: PublicKey.default,
     meta_data_url: "",
+    request_type:0,
     vanity_url: "",
     token_type: "",
     listing_requester: PublicKey.default
