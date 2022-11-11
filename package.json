@@ -38,7 +38,7 @@
         "react": "^17.0.0 || ^18.0.0"
     },
     "dependencies": {
-        "@apollo/client": "^3.6.9",
+        "@apollo/client": "3.6.9",
         "@blockworks-foundation/voter-stake-registry-client": "^0.2.3",
         "@bonfida/spl-name-service": "0.1.50",
         "@cardinal/namespaces": "^4.1.56",
