@@ -496,8 +496,9 @@ export async function loadCandyProgram(
     //@ts-ignore
     customRpcUrl || web3.clusterApiUrl(env),
   );
+
   const walletWrapper = new anchor.Wallet(walletKeyPair);
-  const provider = new anchor.AnchorProvider(solConnection, walletWrapper, {
+  const provider = new anchor.Provider(solConnection, walletWrapper, {
     preflightCommitment: 'recent',
   });
   const idl = await anchor.Program.fetchIdl(CANDY_MACHINE_PROGRAM_ID, provider);
@@ -520,7 +521,7 @@ export async function loadFairLaunchProgram(
     customRpcUrl || web3.clusterApiUrl(env),
   );
   const walletWrapper = new anchor.Wallet(walletKeyPair);
-  const provider = new anchor.AnchorProvider(solConnection, walletWrapper, {
+  const provider = new anchor.Provider(solConnection, walletWrapper, {
     preflightCommitment: 'recent',
   });
   const idl = await anchor.Program.fetchIdl(FAIR_LAUNCH_PROGRAM_ID, provider);
@@ -540,7 +541,9 @@ export async function loadAuctionHouseProgram(
     //@ts-ignore
     customRpcUrl || web3.clusterApiUrl(env),
   );
-  const provider = new anchor.AnchorProvider(solConnection, null, {
+  
+  const walletWrapper = new anchor.Wallet(walletKeyPair);
+  const provider = new anchor.Provider(solConnection, walletWrapper!, {
     preflightCommitment: 'recent',
   });
   const idl = await anchor.Program.fetchIdl(AUCTION_HOUSE_PROGRAM_ID, provider);
@@ -562,7 +565,7 @@ export async function loadTokenEntanglementProgream(
     customRpcUrl || web3.clusterApiUrl(env),
   );
   const walletWrapper = new anchor.Wallet(walletKeyPair);
-  const provider = new anchor.AnchorProvider(solConnection, walletWrapper, {
+  const provider = new anchor.Provider(solConnection, walletWrapper, {
     preflightCommitment: 'recent',
   });
   const idl = await anchor.Program.fetchIdl(
