@@ -61,7 +61,7 @@
         "@mui/lab": "^5.0.0-alpha.107",
         "@mui/material": "^5.10.13",
         "@mui/x-data-grid": "^5.17.11",
-        "@project-serum/anchor": "0.18.2",
+        "@project-serum/anchor": "0.24.2",
         "@project-serum/common": "^0.0.1-beta.3",
         "@react-native-async-storage/async-storage": "^1.15.17",
         "@shadow-drive/sdk": "^3.0.8",
