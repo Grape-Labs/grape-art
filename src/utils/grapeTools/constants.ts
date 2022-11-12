@@ -42,7 +42,6 @@ export const TOKEN_REALM_PROGRAM_ID = 'GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPC
 export const GRAPE_COLLECTIONS_DATA = 'https://shdw-drive.genesysgo.net/5pKmUSyh4VEpVhCCYon1kFf6fn5REtmk1rz4sGXyMrAZ/';
 
 export const BOARDING_PROGRAM_CONFIG_DEVNET = '2ZaLmrM1WUTYBE2NdsJRVLS5egAvVZwYUSZNJkVeijYq';
-export const BOARDING_PROGRAM_CONFIG = 'AuVdD2xbXitcQd7Q82uoi1BpHrBzRu3ECDCusvNTkb1w';
 
 export const VERIFIED_DAO_ARRAY = [
     {
