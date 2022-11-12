@@ -119,8 +119,8 @@ function a11yProps(index: number) {
 export function AddCollectionView() {
     const [open, setOpen] = React.useState(false);
     //const { connection } = useConnection();
-    const connection = new Connection('https://api.devnet.solana.com');
-    //const connection = new Connection(GRAPE_RPC_ENDPOINT);
+    //const connection = new Connection('https://api.devnet.solana.com');
+    const connection = new Connection(GRAPE_RPC_ENDPOINT);
     const anchorWallet = useAnchorWallet();
 
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
