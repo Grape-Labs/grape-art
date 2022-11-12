@@ -14,7 +14,6 @@ import { GRAPE_RPC_ENDPOINT, THEINDEX_RPC_ENDPOINT } from '../../../../utils/gra
 
   import {
     withCastVote,
-    SYSTEM_PROGRAM_ID,
     Vote,
     getGovernanceProgramVersion,
     GOVERNANCE_CHAT_PROGRAM_ID,
@@ -147,7 +146,7 @@ import { GRAPE_RPC_ENDPOINT, THEINDEX_RPC_ENDPOINT } from '../../../../utils/gra
         registrar,
         voter,
         voterWeightRecord: voterWeightPk,
-        systemProgram: SYSTEM_PROGRAM_ID,
+        systemProgram: 'GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw',
       })
       .instruction();
   
