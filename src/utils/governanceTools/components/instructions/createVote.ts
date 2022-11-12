@@ -13,13 +13,14 @@ import {
 import { GRAPE_RPC_ENDPOINT, THEINDEX_RPC_ENDPOINT } from '../../../../utils/grapeTools/constants';  
 
   import {
+    Realm,
     withCastVote,
     Vote,
     getGovernanceProgramVersion,
     GOVERNANCE_CHAT_PROGRAM_ID,
   } from "@solana/spl-governance";
   // plugin stuff
-  import { Provider, Wallet } from "@project-serum/anchor";
+  import { Wallet } from "@project-serum/anchor";
   import { VsrClient } from "@blockworks-foundation/voter-stake-registry-client/index";
   import {
     getRegistrarPDA,
