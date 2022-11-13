@@ -242,6 +242,7 @@ function GetParticipants(props: any){
     const [selectedDelegate, setSelectedDelegate] = React.useState("");
     const { publicKey, wallet, sendTransaction, signTransaction } = useWallet();
     const freeconnection = new Connection(TX_RPC_ENDPOINT);
+    const [loadingParticipants, setLoadingParticipants] = React.useState(false);
 
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
     const onError = useCallback(
@@ -459,7 +460,8 @@ function GetParticipants(props: any){
     };
 
     const getVotingParticipants = async () => {
-        
+        setLoadingParticipants(true);
+
         let td = 6; // this is the default for NFT mints
         let vType = null;
         try{
@@ -618,6 +620,7 @@ function GetParticipants(props: any){
         setSolanaVotingResultRows(votingResults)
         //console.log("Vote Record: "+JSON.stringify(voteRecord));
         //console.log("This vote: "+JSON.stringify(thisitem));
+        setLoadingParticipants(false);
     }
 
     function VoteForProposal(props:any){
@@ -716,7 +719,7 @@ function GetParticipants(props: any){
                     <FileOpenIcon />
                 </Button>
             </Tooltip>
-            {propVoteType &&
+            {!loadingParticipants &&
             <BootstrapDialog 
                 maxWidth={"xl"}
                 fullWidth={true}
