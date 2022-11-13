@@ -1028,7 +1028,13 @@ function GetParticipants(props: any){
                                         </Typography>
                                         <Typography variant="subtitle2">
                                                 {thisGovernance && thisGovernance?.account?.config?.maxVotingTime ?
-                                                    `${moment.unix(thisitem.account?.votingAt.toNumber()+thisGovernance?.account?.config?.maxVotingTime).format("MMMM Da, YYYY, h:mm a")}`
+                                                    <>
+                                                        {thisitem.account?.votingAt &&
+                                                            <>
+                                                            `${moment.unix(thisitem.account?.votingAt.toNumber()+thisGovernance?.account?.config?.maxVotingTime).format("MMMM Da, YYYY, h:mm a")}`
+                                                            </>
+                                                        }
+                                                    </>
                                                 :
                                                     <>
                                                     {thisitem.account?.votingCompletedAt ?
@@ -1053,7 +1059,11 @@ function GetParticipants(props: any){
                                             </Typography>
                                             <Typography variant="subtitle2">
                                                 {thisGovernance && thisGovernance?.account?.config?.maxVotingTime ?
-                                                    `Ending ${moment.unix(thisitem.account?.votingAt.toNumber()+thisGovernance?.account?.config?.maxVotingTime).fromNow()}`
+                                                    <>
+                                                        {thisitem.account?.votingAt &&
+                                                            `Ending ${moment.unix(thisitem.account?.votingAt.toNumber()+thisGovernance?.account?.config?.maxVotingTime).fromNow()}`
+                                                        }
+                                                    </>
                                                 :
                                                     `Ended`
                                                 }
