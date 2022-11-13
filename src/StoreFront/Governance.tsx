@@ -560,7 +560,7 @@ function GetParticipants(props: any){
                 
                 let voteType = 0;
                 let voterWeight = 0;
-                if (item.account?.vote?.voteType){
+                if (item.account?.voterWeight){
                     voteType = item.account?.vote?.voteType;
                     voterWeight = item.account?.voterWeight.toNumber();
                 } else{

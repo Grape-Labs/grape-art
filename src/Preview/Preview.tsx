@@ -1039,7 +1039,7 @@ function GalleryItemMeta(props: any) {
                                                     ></Avatar>
                                                 </Grid>
                                                 <Grid item>        
-                                                    <ShareSocialURL fontSize={'24px'} url={`https://grape.art${GRAPE_PREVIEW}${mint}`} title={collectionitem.name} />
+                                                    <ShareSocialURL fontSize={'24px'} url={`https://grape.art${GRAPE_PREVIEW}${mint}`} title={`${collectionitem.name}`} />
                                                 </Grid>
 
                                         </ButtonGroup>
