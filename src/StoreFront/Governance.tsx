@@ -1732,14 +1732,13 @@ export function GovernanceView(props: any) {
 
                         
                             if (prop.account?.yesVotesCount && prop.account?.noVotesCount){
-                                
-                                console.log("tmap: "+JSON.stringify(tokenMap));
-                                console.log("item a: "+JSON.stringify(prop))
+                                //console.log("tmap: "+JSON.stringify(tokenMap));
+                                //console.log("item a: "+JSON.stringify(prop))
                                 if (tokenMap)
                                     ttvc += +(((prop.account?.yesVotesCount.toNumber() + prop.account?.noVotesCount.toNumber())/Math.pow(10, (tokenMap.get(prop.account.governingTokenMint?.toBase58()) ? tokenMap.get(prop.account.governingTokenMint?.toBase58()).decimals : 6) )).toFixed(0))
                                 
                             } else if (prop.account?.options) {
-                                console.log("item b: "+JSON.stringify(prop))
+                                //console.log("item b: "+JSON.stringify(prop))
                                 if (tokenMap)
                                     ttvc += +(((prop.account?.options[0].voteWeight.toNumber() + prop.account?.denyVoteWeight.toNumber())/Math.pow(10, (tokenMap.get(prop.account.governingTokenMint?.toBase58()) ? tokenMap.get(prop.account.governingTokenMint?.toBase58()).decimals : 6) )).toFixed(0))
                             }
