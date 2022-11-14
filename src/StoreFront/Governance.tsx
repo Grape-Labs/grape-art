@@ -1034,9 +1034,7 @@ function GetParticipants(props: any){
                                                 {thisGovernance && thisGovernance?.account?.config?.maxVotingTime ?
                                                     <>
                                                         {thisitem.account?.votingAt &&
-                                                            <>
                                                             `${moment.unix(thisitem.account?.votingAt.toNumber()+thisGovernance?.account?.config?.maxVotingTime).format("MMMM Da, YYYY, h:mm a")}`
-                                                            </>
                                                         }
                                                     </>
                                                 :
