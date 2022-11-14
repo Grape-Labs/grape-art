@@ -1,17 +1,7 @@
 
 import { gql } from '@apollo/client'
 import gql_client from '../gql_client'
-import { Link } from "react-router-dom";
-import { getRealm, getAllTokenOwnerRecords, getTokenOwnerRecordsByOwner } from '@solana/spl-governance';
-import { PublicKey, TokenAmount, Connection } from '@solana/web3.js';
-import { ENV, TokenListProvider, TokenInfo } from '@solana/spl-token-registry';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
-import axios from "axios";
-import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
-
-import { 
-    tryGetName,
-} from '@cardinal/namespaces';
 
 //import { CardinalTwitterIdentityResolver } from '@dialectlabs/identity-cardinal';
 
@@ -51,9 +41,6 @@ import {
 import ExplorerView from '../utils/grapeTools/Explorer';
 import { PreviewView } from "../Preview/Preview";
 import PreviewDialogView from "./PreviewDialog";
-import { getProfilePicture } from '@solflare-wallet/pfp';
-import { findDisplayName } from '../utils/name-service';
-import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 
@@ -653,8 +640,7 @@ export function HoldersView(props: any) {
                         JSON.stringify(sortedResults)
                     )}`;
                     setUniqueFileGenerated(jsonUniqueString);
-
-                    
+    
                 }
             }
         }
@@ -815,7 +801,22 @@ export function HoldersView(props: any) {
                             {totalMints && totalMintsOnCurve &&
                                 <Box sx={{ alignItems: 'center', textAlign: 'center',p:1}}>
                                     <Grid container spacing={0}>
-                                        <Grid item xs={12} sm={4} md={4} key={1}>
+                                        <Grid item xs={12} sm={3} md={3} key={1}>
+                                            <Box
+                                                className='grape-store-stat-item'
+                                                sx={{borderRadius:'24px',m:2,p:1}}
+                                            >
+                                                <Typography variant="body2" sx={{color:'yellow'}}>
+                                                    <>Holding</>
+                                                </Typography>
+                                                {uniqueHolders &&
+                                                    <Typography variant="h3">
+                                                        {((uniqueHolders.length/totalMints)*100).toFixed(1)}%
+                                                    </Typography>
+                                                }
+                                            </Box>
+                                        </Grid>
+                                        <Grid item xs={12} sm={3} md={3} key={1}>
                                             <Box
                                                 className='grape-store-stat-item'
                                                 sx={{borderRadius:'24px',m:2,p:1}}
@@ -828,7 +829,7 @@ export function HoldersView(props: any) {
                                                 </Typography>
                                             </Box>
                                         </Grid>
-                                        <Grid item xs={12} sm={4} md={4} key={1}>
+                                        <Grid item xs={12} sm={3} md={3} key={1}>
                                             <Box
                                                 className='grape-store-stat-item'
                                                 sx={{borderRadius:'24px',m:2,p:1}}
@@ -841,7 +842,7 @@ export function HoldersView(props: any) {
                                                 </Typography>
                                             </Box>
                                         </Grid>
-                                        <Grid item xs={12} sm={4} md={4} key={1}>
+                                        <Grid item xs={12} sm={3} md={3} key={1}>
                                             <Box
                                                 className='grape-store-stat-item'
                                                 sx={{borderRadius:'24px',m:2,p:1}}
