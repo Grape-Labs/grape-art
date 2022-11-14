@@ -481,7 +481,7 @@ export function MembersView(props: any) {
                         
                     }
                 }
-
+                
                 setTotalDepositedVotes(tVotes > 0 ? tVotes : null);
                 setTotalVotesCasted(tVotesCasted > 0 ? tVotesCasted : null);
                 setTotalCouncilVotes(tCouncilVotes > 0 ? tCouncilVotes : null);
@@ -489,7 +489,8 @@ export function MembersView(props: any) {
                 setTotalParticipants(tParticipants > 0 ? tParticipants : null);
 
                 //console.log("participantArray: "+JSON.stringify(participantArray));
-                const sortedResults = participantArray.sort((a,b) => (a.governingTokenDepositAmount.toNumber() < b.governingTokenDepositAmount.toNumber()) ? 1 : -1);
+                const presortedResults = participantArray.sort((a,b) => (a.totalVotesCount > b.totalVotesCount) ? 1 : -1);
+                const sortedResults = presortedResults.sort((a,b) => (a.governingTokenDepositAmount.toNumber() < b.governingTokenDepositAmount.toNumber()) ? 1 : -1);
 
                 /*
                 var memberArray = new Array();
