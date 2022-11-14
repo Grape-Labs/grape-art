@@ -33,6 +33,7 @@ import {
   Dialog,
   DialogContent,
   Chip,
+  Badge,
   ButtonGroup,
   CircularProgress,
 } from '@mui/material/';
@@ -1544,7 +1545,7 @@ export function GovernanceView(props: any) {
                 },new Map())
                 setTokenMap(tmap);
                 setTokenArray(tarray);
-                return 
+                return tmap;
             });
         } catch(e){console.log("ERR: "+e)}
     }
@@ -1553,10 +1554,6 @@ export function GovernanceView(props: any) {
         if (!loading){
             setLoading(true);
             try{
-                let tmap = null;
-                if (!tokenArray)
-                    tmap = await getTokens();
-
                     
                 console.log("with governance: "+governanceToken?.governance || governanceToken);
                 const programId = new PublicKey(GOVERNANCE_PROGRAM_ID);
@@ -1725,7 +1722,7 @@ export function GovernanceView(props: any) {
                 let passed = 0;
                 let defeated = 0;
                 let ttvc = 0;
-                console.log("tmap "+JSON.stringify(tmap))
+                console.log("tmap "+JSON.stringify(tokenMap))
                 for (const props of gprops){
                     for (const prop of props){
                         if (prop){
@@ -1737,11 +1734,16 @@ export function GovernanceView(props: any) {
 
                         
                             if (prop.account?.yesVotesCount && prop.account?.noVotesCount){
-                                //ttvc += +(((prop.account?.yesVotesCount.toNumber() + prop.account?.noVotesCount.toNumber())/Math.pow(10, (tmap.get(prop.account.governingTokenMint?.toBase58()) ? tmap.get(prop.account.governingTokenMint?.toBase58()).decimals : 6) )).toFixed(0))
+                                
+                                console.log("tmap: "+JSON.stringify(tokenMap));
+                                console.log("item a: "+JSON.stringify(prop))
+                                if (tokenMap)
+                                    ttvc += +(((prop.account?.yesVotesCount.toNumber() + prop.account?.noVotesCount.toNumber())/Math.pow(10, (tokenMap.get(prop.account.governingTokenMint?.toBase58()) ? tokenMap.get(prop.account.governingTokenMint?.toBase58()).decimals : 6) )).toFixed(0))
                                 
                             } else if (prop.account?.options) {
-                                //console.log("item: "+JSON.stringify(prop))
-                                //ttvc += +(((prop.account?.options[0].voteWeight.toNumber() + prop.account?.denyVoteWeight.toNumber())/Math.pow(10, (tmap.get(prop.account.governingTokenMint?.toBase58()) ? tmap.get(prop.account.governingTokenMint?.toBase58()).decimals : 6) )).toFixed(0))
+                                console.log("item b: "+JSON.stringify(prop))
+                                if (tokenMap)
+                                    ttvc += +(((prop.account?.options[0].voteWeight.toNumber() + prop.account?.denyVoteWeight.toNumber())/Math.pow(10, (tokenMap.get(prop.account.governingTokenMint?.toBase58()) ? tokenMap.get(prop.account.governingTokenMint?.toBase58()).decimals : 6) )).toFixed(0))
                             }
                         }
                     }
@@ -1766,9 +1768,17 @@ export function GovernanceView(props: any) {
         setLoading(false);
     }
 
-    React.useEffect(() => { 
-        if (publicKey && !loading)
+    React.useEffect(() => {
+        if (tokenMap)
             getGovernance();
+    }, [tokenMap]);
+
+    React.useEffect(() => { 
+        if (publicKey && !loading){
+            if (!tokenMap){
+                getTokens();
+            }
+        }
     }, [publicKey]);
     
     if (publicKey){
@@ -1864,8 +1874,7 @@ export function GovernanceView(props: any) {
                                                     <>Total Casted Votes</>
                                                 </Typography>
                                                 <Typography variant="h3">
-                                                    {/*getFormattedNumberToLocale(totalVotesCasted)*/}
-                                                    coming soon
+                                                    {getFormattedNumberToLocale(totalVotesCasted)}
                                                 </Typography>
                                             </Box>
                                         </Grid>
@@ -1876,10 +1885,11 @@ export function GovernanceView(props: any) {
                                                 sx={{borderRadius:'24px',m:2,p:1}}
                                             >
                                                 <Typography variant="body2" sx={{color:'yellow'}}>
-                                                    <>Passing</>
+                                                    <>Passing/Defeated</>
                                                 </Typography>
                                                 <Typography variant="h3">
-                                                    {totalPassed}/{totalDefeated}
+                                                    <Badge badgeContent={<ThumbUpIcon fontSize='small' />} variant="dot" color="success">{totalPassed}</Badge>/
+                                                    <Badge badgeContent={<ThumbDownIcon fontSize='small' />} variant="dot" color="error">{totalDefeated}</Badge>
                                                 </Typography>
                                             </Box>
                                         </Grid>

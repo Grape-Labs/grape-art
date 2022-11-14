@@ -400,13 +400,13 @@ export function MembersView(props: any) {
                 }
                 setParticipating(pcp);
 
-                const grealm = await getRealm(new Connection(THEINDEX_RPC_ENDPOINT), new PublicKey(collectionAuthority.governance))
+                const grealm = await getRealm(new Connection(GRAPE_RPC_ENDPOINT), new PublicKey(collectionAuthority.governance))
                 setRealm(grealm);
                 console.log("realm: "+JSON.stringify(grealm))
 
                 const realmPk = grealm.pubkey;
 
-                const trecords = await getAllTokenOwnerRecords(new Connection(THEINDEX_RPC_ENDPOINT), grealm.owner, realmPk)
+                const trecords = await getAllTokenOwnerRecords(new Connection(GRAPE_RPC_ENDPOINT), grealm.owner, realmPk)
                 //console.log("trecords: "+JSON.stringify(trecords));
 
                 //let sortedResults = trecords.sort((a,b) => (a.account?.outstandingProposalCount < b.account?.outstandingProposalCount) ? 1 : -1);
