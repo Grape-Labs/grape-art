@@ -128,11 +128,13 @@ export default function ActivityView(props: any){
 
     const [activityRows, setActivityRows] = React.useState(null);
 
-    const activitycols = [
+    const activitycols: GridColDef[] = [
         { field: 'id', headerName: 'ID', hide:true },
         { field: 'bookkeeper', headerName: 'Bookkeeper', width: 170, flex: 1, 
             renderCell: (params) => {
-                <ExplorerView grapeArtProfile={true} shorten={4} address={params.value} type='address' hideTitle={false} style='text' color='white' fontSize={'12px'} />
+                return (
+                    <ExplorerView grapeArtProfile={true} shorten={4} address={params.value} type='address' hideTitle={false} style='text' color='white' fontSize={'12px'} />
+                )
             }
         },
         { field: 'type', headerName: 'Type', width: 170,
@@ -140,7 +142,9 @@ export default function ActivityView(props: any){
                 return(
                     <>
                         {params.value?.purchaseReceipt ?
-                            <>Sale <Typography variant="caption">({trimAddress(params.value.purchaseReceipt.toBase58(),3)})</Typography></>
+                            <>Sale - 
+                                <ExplorerView shorten={4} address={params.value.purchaseReceipt.toBase58()} type='address' hideTitle={false} style='text' color='white' fontSize={'12px'} />
+                            </>
                         :
                             <>
                             {params.value.state === "bid_receipt" && 
@@ -168,20 +172,138 @@ export default function ActivityView(props: any){
                 )
             }
         },
-        { field: 'amount', headerName: 'Amount', width: 170,
+        { field: 'amount', headerName: 'Amount', width: 170, align: 'right',
             renderCell: (params) => {
-                <Typography variant="h6">
-                    {(params.value)} <SolCurrencyIcon sx={{fontSize:"10.5px"}} />
-                </Typography>
+                return (
+                    <Typography variant="h6">
+                        {(params.value)} <SolCurrencyIcon sx={{fontSize:"10.5px"}} />
+                    </Typography>
+                )
             }
         },
-        { field: 'mint', headerName: 'Mint', width: 170,
+        { field: 'mint', headerName: 'Mint', width: 250,
             renderCell: (params) => {
-                <>...</>
+                const [openPreviewDialog, setOpenPreviewDialog] = React.useState(false);
+
+                const handleClickOpenPreviewDialog = () => {
+                    setOpenPreviewDialog(true);
+                };
+                
+                const handleClosePreviewDialog = () => {
+                    setOpenPreviewDialog(false);
+                };
+                return (
+                    <>
+                        <Button
+                            variant="text"
+                            //component={Link} to={`${GRAPE_PREVIEW}${item.mint}`}
+                            onClick={handleClickOpenPreviewDialog}
+                            sx={{borderRadius:'24px'}}
+                        >
+                            <Avatar
+                                src={DRIVE_PROXY+params.value.metadataParsed?.image}
+                                sx={{
+                                    backgroundColor:'#222',
+                                    width: 40, 
+                                    height: 40,
+                                    mr:1
+                                }}
+                            ></Avatar>
+
+                            <Typography variant="caption">
+                                {params.value.metadataParsed?.name ?
+                                    <>{params.value.metadataParsed?.name}</>
+                                    :
+                                    <>{trimAddress(params.value.mint, 3)}</>
+                                }
+                                
+                            </Typography>
+                        </Button>
+                        <BootstrapDialog 
+                            fullWidth={true}
+                            maxWidth={"lg"}
+                            open={openPreviewDialog} onClose={handleClosePreviewDialog}
+                            PaperProps={{
+                                style: {
+                                    background: '#13151C',
+                                    border: '1px solid rgba(255,255,255,0.05)',
+                                    borderTop: '1px solid rgba(255,255,255,0.1)',
+                                    borderRadius: '20px'
+                                }
+                            }}
+                        >
+                            <DialogContent>
+                                <PreviewView handlekey={params.value.mint} />
+                            </DialogContent>
+                            <DialogActions>
+                                <Button variant="text" onClick={handleClosePreviewDialog}>{t('Close')}</Button>
+                            </DialogActions>
+                        </BootstrapDialog>
+                    </>
+                )
             }
         },
-        { field: 'date', headerName: 'Date', width: 170},
-        { field: 'view', headerName: '', width: 170}
+        { field: 'date', headerName: 'Date', width: 170, align: 'right',
+            renderCell: (params) => {
+                return (
+                    <Tooltip title={formatBlockTime(params.value, true, true)}>
+                        <Button variant="text" color='inherit' size='small' sx={{borderRadius:'24px'}}>
+                            {timeAgo(params.value)}
+                        </Button>
+                    </Tooltip>
+                )
+            }
+        },
+        { field: 'view', headerName: '', width: 170, align: 'center',
+            renderCell: (params) => {
+                const [openPreviewDialog, setOpenPreviewDialog] = React.useState(false);
+
+                const handleClickOpenPreviewDialog = () => {
+                    setOpenPreviewDialog(true);
+                };
+                
+                const handleClosePreviewDialog = () => {
+                    setOpenPreviewDialog(false);
+                };
+
+                return(
+                    <>
+                        <Tooltip title={t('View')}>
+                            <Button 
+                                color="error"
+                                variant="text"
+                                onClick={handleClickOpenPreviewDialog}
+                                sx={{
+                                    borderRadius: '24px',
+                                }}
+                            >
+                                <ArrowForwardIcon />
+                            </Button>
+                        </Tooltip>
+                        <BootstrapDialog 
+                            fullWidth={true}
+                            maxWidth={"lg"}
+                            open={openPreviewDialog} onClose={handleClosePreviewDialog}
+                            PaperProps={{
+                                style: {
+                                    background: '#13151C',
+                                    border: '1px solid rgba(255,255,255,0.05)',
+                                    borderTop: '1px solid rgba(255,255,255,0.1)',
+                                    borderRadius: '20px'
+                                }
+                            }}
+                        >
+                            <DialogContent>
+                                <PreviewView handlekey={params.value} />
+                            </DialogContent>
+                            <DialogActions>
+                                <Button variant="text" onClick={handleClosePreviewDialog}>{t('Close')}</Button>
+                            </DialogActions>
+                        </BootstrapDialog>
+                    </>
+                )
+            }
+        }
     ];
     
     const handleClickOpenDialog = async () => {
@@ -255,8 +377,10 @@ export default function ActivityView(props: any){
                                     },
                                     amount: item.price,
                                     mint: {
-                                        mintitem:mintitem,
+                                        mint:mintitem.address,
+                                        metadataParsed:mintitem
                                     },
+                                    date: item.createdAt,
                                     view: mintitem?.address,
                                 });
                             }
@@ -320,8 +444,10 @@ export default function ActivityView(props: any){
                                     },
                                     amount: item.price,
                                     mint: {
-                                        mintitem:mintitem,
+                                        mint:mintitem.address,
+                                        metadataParsed:mintitem
                                     },
+                                    date: item.createdAt,
                                     view: mintitem?.address,
                                 });
                             }   
@@ -379,8 +505,10 @@ export default function ActivityView(props: any){
                                 },
                                 amount: item.price,
                                 mint: {
-                                    mintitem:mintitem,
+                                    mint:mintitem.address,
+                                    metadataParsed:mintitem
                                 },
+                                date: item.createdAt,
                                 view: mintitem?.address,
                             });
                         }
@@ -426,6 +554,7 @@ export default function ActivityView(props: any){
 
             for (let item of auctionHouseListings){
                 if (item?.mint){
+                    //const mintitem = await getMintFromVerifiedMetadata(item?.metadata.toBase58(), collectionMintList);
                     activityResults.push({
                         buyeraddress: item.buyeraddress, 
                         amount: item.amount, 
@@ -446,14 +575,16 @@ export default function ActivityView(props: any){
                         id:counter,
                         bookkeeper: item.buyeraddress,
                         type: {
-                            state:item?.receipt_type,
+                            state:item?.state,
                             purchaseReceipt:item?.purchaseReceipt,
-                            cancelledAt: item.canceledAt, 
+                            cancelledAt: item.cancelledAt, 
                         },
                         amount: item.price,
                         mint: {
-                            mintitem:item.mint,
+                            mint:item.metadataParsed.address,
+                            metadataParsed:item.metadataParsed,
                         },
+                        date: item.createdAt,
                         view: item.mint,
                     });
                 }
@@ -608,7 +739,7 @@ export default function ActivityView(props: any){
 
         return (
             <>
-                {/*activityRows ?
+                {activityRows ?
                     <div style={{ height: 600, width: '100%' }}>
                         <div style={{ display: 'flex', height: '100%' }}>
                             <div style={{ flexGrow: 1 }}>
@@ -625,6 +756,11 @@ export default function ActivityView(props: any){
                                                 borderColor:'rgba(255,255,255,0.25)'
                                             }}}
                                         sortingOrder={['asc', 'desc', null]}
+                                        initialState={{
+                                            sorting: {
+                                                sortModel: [{ field: 'date', sort: 'desc' }],
+                                            },
+                                        }}
                                         disableSelectionOnClick
                                     />
                             </div>
@@ -632,14 +768,15 @@ export default function ActivityView(props: any){
                     </div>
                 :
                     <LinearProgress />
-                */}
-            
+                }
+
+                {/*
                 <Table size="small" aria-label="offers">
                     {recentActivity && recentActivity.map((item: any, key:number) => (
                         <RecentActivityRow item={item} key={key} />
                     ))}
                 </Table>
-            
+                */}
             </>
         )
     }
