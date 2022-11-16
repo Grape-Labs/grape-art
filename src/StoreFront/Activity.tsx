@@ -199,7 +199,7 @@ export default function ActivityView(props: any){
         try {
             setActivityLoaded(false);
             //if (!recentActivity){
-                if (mode === 0){
+                if (mode === 0){ // all activity
                     if (!recentActivity){
                         //console.log("with aH: "+ collectionAuthority.auctionHouse+" - "+JSON.stringify(collectionAuthority))
                         const results = await getReceiptsFromAuctionHouse(collectionAuthority.auctionHouse || AUCTION_HOUSE_ADDRESS, null, null, null, null, false, null);
@@ -272,7 +272,7 @@ export default function ActivityView(props: any){
                         //activityResults.push({buyeraddress: feePayer.toBase58(), amount: memo_json?.amount || memo_json?.offer, mint: memo_json?.mint, isowner: false, timestamp: forSaleDate, blockTime: value.blockTime, state: memo_json?.state || memo_json?.status});
                         return dupRemovedResults;
                     }
-                } else if (mode === 1){
+                } else if (mode === 1){ // all activity
                     if (!recentActivity){
                         //console.log("with aH: "+ collectionAuthority.auctionHouse+" - "+JSON.stringify(collectionAuthority))
                         const results = await getReceiptsFromAuctionHouse(collectionAuthority.auctionHouse || AUCTION_HOUSE_ADDRESS, null, null, null, null, false, null);
@@ -337,8 +337,8 @@ export default function ActivityView(props: any){
                         //activityResults.push({buyeraddress: feePayer.toBase58(), amount: memo_json?.amount || memo_json?.offer, mint: memo_json?.mint, isowner: false, timestamp: forSaleDate, blockTime: value.blockTime, state: memo_json?.state || memo_json?.status});
                         return dupRemovedResults;
                     }
-                } else if (mode === 2){
-
+                } else if (mode === 2){ // my activity
+                    console.log("my activity")
                     //console.log("with aH: "+ collectionAuthority.auctionHouse+" - "+JSON.stringify(collectionAuthority))
                     const results = await getReceiptsFromAuctionHouse(collectionAuthority.auctionHouse || AUCTION_HOUSE_ADDRESS, null, publicKey.toBase58(), null, null, false, null);
 
@@ -409,7 +409,7 @@ export default function ActivityView(props: any){
     const getAllActivity = async () => {
         setLoading(true);
         
-        if (!auctionHouseListings){
+        if (!auctionHouseListings || (mode === 2)){
             console.log("Fetching on chain recent activity");
             
             const [activityResults] = await Promise.all([fetchAllActivity()]);
