@@ -280,24 +280,26 @@ export default function GalleryView(props: any){
                 for(var item of collectionMintList){
                     //console.log("item: "+JSON.stringify(item))
                     if (item.attributes){
-                        for  (var x of item.attributes){
-                            let toPush = true;
-                            x.floor = 0;
-                            x.ceiling = 0;
-                            for (var y of thisAttributes){
-                                if ((y?.trait_type === x?.trait_type) && (y?.value === x?.value)){
-                                    //console.log("found: "+JSON.stringify(x))
-                                    toPush = false;
-                                    
-                                    //console.log("listingPricing: "+item.listingPrice)
-                                    // update this attribute
-                                    //break;
-                                } 
-                            }
-                            if (toPush){
-                                // fetch floor
-                                // check all items again to see if the floor for this item attributes
-                                thisAttributes.push(x)
+                        if (Array.isArray(item.attributes)){
+                            for  (var x of item.attributes){
+                                let toPush = true;
+                                x.floor = 0;
+                                x.ceiling = 0;
+                                for (var y of thisAttributes){
+                                    if ((y?.trait_type === x?.trait_type) && (y?.value === x?.value)){
+                                        //console.log("found: "+JSON.stringify(x))
+                                        toPush = false;
+                                        
+                                        //console.log("listingPricing: "+item.listingPrice)
+                                        // update this attribute
+                                        //break;
+                                    } 
+                                }
+                                if (toPush){
+                                    // fetch floor
+                                    // check all items again to see if the floor for this item attributes
+                                    thisAttributes.push(x)
+                                }
                             }
                         }
                     }
@@ -307,7 +309,7 @@ export default function GalleryView(props: any){
                 for (var at_item of thisAttributes){
                     var at_count = 0;
                     for (var cml_item of collectionMintList){
-                        if (cml_item.attributes){
+                        if (cml_item.attributes && Array.isArray(cml_item.attributes)){
                             for (var at of cml_item.attributes){
                                 if (at_item.trait_type === at.trait_type && at_item.value === at.value){
                                     at_count++;
@@ -344,19 +346,21 @@ export default function GalleryView(props: any){
                         //let rarity_aggregate = 0;
                         let attribute_count = 0;
                         let rarity_weight_sum = 0;
-                        for (const at of nft_item.attributes){
-                            // check with the rarities we have
-                            for (const at_item of thisAttributes){
-                                //(inner.count/collectionMintList.length*100)
-                                if (at_item.trait_type === at.trait_type && at_item.value === at.value){
-                                    attribute_count++;
-                                    const rarity_weight = at_item.count/collection_len
-                                    rarity_weight_sum += rarity_weight;
-                                    //if (nft_item.address === 'HdhVrid2C25H6hkesaqoeoSSRBuPrXcKgJQxnYiaApch'){
-                                        //console.log("rarity: "+at_item.rarity)
-                                        //console.log("count: "+at_item.count)
-                                        //console.log("rarity_weight: "+rarity_weight)
-                                    //}
+                        if (nft_item.attributes && Array.isArray(nft_item.attributes)){
+                            for (const at of nft_item.attributes){
+                                // check with the rarities we have
+                                for (const at_item of thisAttributes){
+                                    //(inner.count/collectionMintList.length*100)
+                                    if (at_item.trait_type === at.trait_type && at_item.value === at.value){
+                                        attribute_count++;
+                                        const rarity_weight = at_item.count/collection_len
+                                        rarity_weight_sum += rarity_weight;
+                                        //if (nft_item.address === 'HdhVrid2C25H6hkesaqoeoSSRBuPrXcKgJQxnYiaApch'){
+                                            //console.log("rarity: "+at_item.rarity)
+                                            //console.log("count: "+at_item.count)
+                                            //console.log("rarity_weight: "+rarity_weight)
+                                        //}
+                                    }
                                 }
                             }
                         }
