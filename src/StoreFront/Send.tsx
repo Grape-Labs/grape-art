@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { WalletError, WalletNotConnectedError } from '@solana/wallet-adapter-base';
+import { WalletError, WalletNotConnectedError, WalletSignMessageError } from '@solana/wallet-adapter-base';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { Signer, Connection, PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js';
 import { TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID, getAssociatedTokenAddress, createAssociatedTokenAccountInstruction, getOrCreateAssociatedTokenAccount, createAssociatedTokenAccount, createTransferInstruction } from "@solana/spl-token-v2";
@@ -120,7 +120,7 @@ export default function SendToken(props: any) {
     const [memoText, setMemoText] = React.useState(null); 
     const freeconnection = new Connection(TX_RPC_ENDPOINT);
     const connection = new Connection(GRAPE_RPC_ENDPOINT);//useConnection();
-    const { publicKey, wallet, sendTransaction, signTransaction } = useWallet();
+    const { publicKey, wallet, sendTransaction, signTransaction, signMessage } = useWallet();
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
     const onError = useCallback(
         (error: WalletError) => {
@@ -385,6 +385,17 @@ export default function SendToken(props: any) {
         event.preventDefault();
         if (amounttosend >= 0){
             if (toaddress){
+                // improve this check to do a reverse SNS lookup & cardinal check
+
+                if (toaddress.includes(".sol")){
+                    console.log("SNS: true");
+                } else if(toaddress.substring(0,1) === "@"){
+                    console.log("Twitter Handle");
+                } else {
+                    // publickey
+                    console.log("This is a pubkey");    
+                }
+
                 if ((toaddress.length >= 32) && 
                     (toaddress.length <= 44)){ // very basic check / remove and add twitter handle support (handles are not bs58)
                     transferTokens(mint, toaddress, amounttosend);

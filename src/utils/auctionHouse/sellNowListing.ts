@@ -5,7 +5,7 @@ import {
   } from './helpers/constants';
 import { PublicKey, SystemProgram, TransactionInstruction } from '@solana/web3.js'
 import { BN, web3 } from '@project-serum/anchor';
-import { GRAPE_RPC_ENDPOINT, OTHER_MARKETPLACES } from '../../utils/grapeTools/constants';
+import { GRAPE_RPC_ENDPOINT } from '../../utils/grapeTools/constants';
 import {InstructionsAndSignersSet} from "./helpers/types";
 
 import {

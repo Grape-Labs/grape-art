@@ -10,6 +10,9 @@ import {
     Typography,
     Grid,
     Box,
+    List,
+    ListItem,
+    ListItemText,
     Skeleton,
     ListItemButton,
     ImageListItemBar,
@@ -304,111 +307,165 @@ export default function GalleryItem(props: any){
                                 </>
                             :
                             <>
-                                <Grid 
-                                    container 
-                                    alignItems="center"
-                                    justifyContent="center">
-                                        <Grid item sx={{display:'flex',justifyContent:'center',alignItems:'center'}}>
-                                            <ListItemButton
-                                                //component={Link} to={`${GRAPE_PREVIEW}${collectionitem?.address}`}
-                                                onClick={handleClickOpenDialog}
-                                                sx={{
-                                                    width:'100%',
-                                                    borderRadius:'25px',
-                                                    p: '2px'
-                                                }}
-                                            >
-                                                <img
-                                                    src={`${image}`}
-                                                    srcSet={`${image}`}
-                                                    alt={collectionitem?.name}
-                                                    loading="lazy"
-                                                    height="auto"
-                                                    style={{
-                                                        width:'100%',
-                                                        borderRadius:'24px'
-                                                    }}
-                                                />
-                                            </ListItemButton>
-                                        </Grid>
-                                    
-                                    <Grid item sx={{display:'flex'}}>
-                                        <Box
-                                            sx={{p:1}}
-                                        >
-                                            <Grid container spacing={2} alignItems="center">
-                                                <Grid item xs={12}>
-                                                    <Typography variant="subtitle1" textAlign="center">
-                                                        {collectionitem.name.length > 15 ?
-                                                            <>{collectionitem?.name.substring(0,16)+'...'}</>
-                                                        :
-                                                            <>{collectionitem?.name}</>
-                                                        }
-                                                    </Typography> 
-                                                </Grid>
-                                                
-                                                <Grid item xs={7}>
+                                
+                                
+                                            <Grid 
+                                                className="flip-card"
+                                                container 
+                                                alignItems="center"
+                                                justifyContent="center">
+                                                    <div className="flip-card-inner">
+                                                        <div className="flip-card-front">
+                                                            <Grid item sx={{display:'flex',justifyContent:'center',alignItems:'center'}}>
+                                                                <ListItemButton
+                                                                    //component={Link} to={`${GRAPE_PREVIEW}${collectionitem?.address}`}
+                                                                    onClick={handleClickOpenDialog}
+                                                                    sx={{
+                                                                        width:'100%',
+                                                                        borderRadius:'25px',
+                                                                        p: '2px'
+                                                                    }}
+                                                                >
+                                                                    <img
+                                                                        src={`${image}`}
+                                                                        srcSet={`${image}`}
+                                                                        alt={collectionitem?.name}
+                                                                        loading="lazy"
+                                                                        height="auto"
+                                                                        style={{
+                                                                            width:'100%',
+                                                                            borderRadius:'24px'
+                                                                        }}
+                                                                    />
+                                                                </ListItemButton>
+                                                            </Grid>
                                                     
-                                                    {collectionitem?.listingPrice ?
-                                                        
-                                                        <Tooltip title={
-                                                            <>
-                                                            {tokenPrice &&
-                                                                <strong>{(collectionitem.listingPrice*tokenPrice).toFixed(2)} {tokenToSymbol}<br/></strong>
-                                                            }
+                                                            <Grid item sx={{display:'flex'}}>
+                                                                <Box
+                                                                    sx={{p:1}}
+                                                                >
+                                                                    <Grid container spacing={2} alignItems="center">
+                                                                        <Grid item xs={12}>
+                                                                            <Typography variant="subtitle1" textAlign="center">
+                                                                                {collectionitem.name.length > 15 ?
+                                                                                    <>{collectionitem?.name.substring(0,16)+'...'}</>
+                                                                                :
+                                                                                    <>{collectionitem?.name}</>
+                                                                                }
+                                                                            </Typography> 
+                                                                        </Grid>
+                                                                        
+                                                                        <Grid item xs={7}>
+                                                                            
+                                                                            {collectionitem?.listingPrice ?
+                                                                                
+                                                                                <Tooltip title={
+                                                                                    <>
+                                                                                    {tokenPrice &&
+                                                                                        <strong>{(collectionitem.listingPrice*tokenPrice).toFixed(2)} {tokenToSymbol}<br/></strong>
+                                                                                    }
 
-                                                            {collectionitem?.marketplaceListing ? 
-                                                                <> {collectionitem?.listedTimestamp}</>
-                                                            : 
-                                                                `Third party listing - see NFT history for details`
-                                                            }
-                                                            </>
-                                                        }> 
-                                                            <Button sx={{color:collectionitem?.marketplaceListing ? `white` : `gray`,borderRadius:'17px'}}>  
-                                                                <Typography variant="h6">
-                                                                    {+collectionitem.listingPrice.toFixed(2)}  <SolCurrencyIcon sx={{fontSize:"16px"}} />
-                                                                </Typography>
-                                                            </Button>
-                                                        
-                                                        </Tooltip>
-                                                    :
-                                                        <Typography variant="caption" sx={{color:'#666'}}>
-                                                            Not listed
-                                                        </Typography>
-                                                    }
-                                                </Grid>
-                                                <Grid item xs={5}>
-                                                    {collectionitem?.highestOffer > 0 &&
-                                                        <>
-                                                            <Typography variant="body2" textAlign="right">
-                                                                Offer for
-                                                            </Typography>
-                                                            <Typography variant="body1" textAlign="right" sx={{color:'yellow'}}>
-                                                                {+collectionitem.highestOffer.toFixed(3)} <SolCurrencyIcon sx={{fontSize:"11px"}} />
-                                                            </Typography>
-                                                        </>
-                                                    }
-                                                    
-                                                    {collectionitem.rarity && 
-                                                        <Tooltip title={
-                                                            <>
-                                                            <strong>Grape Rarity Score: {collectionitem.rarity_score.toFixed(0)}</strong><br/>
-                                                            <strong>Grape Rank: #{(collectionitem.rarity*collectionitem.collection_len).toFixed(0)}</strong><br/>
-                                                            Rarity is calculated on the collection attribute commonality, lower percentage = higher score.
-                                                            </>}
+                                                                                    {collectionitem?.marketplaceListing ? 
+                                                                                        <> {collectionitem?.listedTimestamp}</>
+                                                                                    : 
+                                                                                        `Third party listing - see NFT history for details`
+                                                                                    }
+                                                                                    </>
+                                                                                }> 
+                                                                                    <Button sx={{color:collectionitem?.marketplaceListing ? `white` : `gray`,borderRadius:'17px'}}>  
+                                                                                        <Typography variant="h6">
+                                                                                            {+collectionitem.listingPrice.toFixed(2)}  <SolCurrencyIcon sx={{fontSize:"16px"}} />
+                                                                                        </Typography>
+                                                                                    </Button>
+                                                                                
+                                                                                </Tooltip>
+                                                                            :
+                                                                                <Typography variant="caption" sx={{color:'#666'}}>
+                                                                                    Not listed
+                                                                                </Typography>
+                                                                            }
+                                                                        </Grid>
+                                                                        <Grid item xs={5}>
+                                                                            {collectionitem?.highestOffer > 0 &&
+                                                                                <>
+                                                                                    <Typography variant="body2" textAlign="right">
+                                                                                        Offer for
+                                                                                    </Typography>
+                                                                                    <Typography variant="body1" textAlign="right" sx={{color:'yellow'}}>
+                                                                                        {+collectionitem.highestOffer.toFixed(3)} <SolCurrencyIcon sx={{fontSize:"11px"}} />
+                                                                                    </Typography>
+                                                                                </>
+                                                                            }
+                                                                            
+                                                                            {collectionitem.rarity && 
+                                                                                <Tooltip title={
+                                                                                    <>
+                                                                                    <strong>Grape Rarity Score: {collectionitem.rarity_score.toFixed(0)}</strong><br/>
+                                                                                    <strong>Grape Rank: #{(collectionitem.rarity*collectionitem.collection_len).toFixed(0)}</strong><br/>
+                                                                                    Rarity is calculated on the collection attribute commonality, lower percentage = higher score.
+                                                                                    </>}
+                                                                                >
+                                                                                    <Button sx={{borderRadius:'17px'}}>  
+                                                                                        <Typography variant="caption" textAlign="right" sx={{color:'yellow'}}>
+                                                                                            {(collectionitem.rarity*100).toFixed(2)}%
+                                                                                        </Typography>
+                                                                                    </Button>
+                                                                                </Tooltip>
+                                                                            }  
+                                                                        </Grid>
+                                                                    </Grid>
+                                                                </Box>
+                                                            </Grid>
+                                                    </div>
+                                                    <div className="flip-card-back">
+                                                        <div
+                                                            onClick={handleClickOpenDialog}
                                                         >
-                                                            <Button sx={{borderRadius:'17px'}}>  
-                                                                <Typography variant="caption" textAlign="right" sx={{color:'yellow'}}>
-                                                                    {(collectionitem.rarity*100).toFixed(2)}%
-                                                                </Typography>
-                                                            </Button>
-                                                        </Tooltip>
-                                                    }  
-                                                </Grid>
+                                                            <List dense={true}>
+                                                                <ListItem>
+                                                                    <ListItemText
+                                                                        primary={collectionitem?.name}
+                                                                    />
+                                                                </ListItem>
+                                                                {collectionitem?.listingPrice &&
+                                                                    <ListItem>
+                                                                        <ListItemText>
+                                                                            Listed:
+                                                                            <Grid sx={{textAlign:'center'}}>
+                                                                                <Typography variant='h6'>{+collectionitem.listingPrice.toFixed(2)}  <SolCurrencyIcon sx={{fontSize:"16px"}} /></Typography>
+                                                                                <Typography variant='caption'>{tokenPrice ? `~${(collectionitem.listingPrice*tokenPrice).toFixed(2)} ${tokenToSymbol}` : null}</Typography>
+                                                                            </Grid>
+                                                                        </ListItemText>
+                                                                        
+                                                                    </ListItem>
+                                                                }
+                                                                {collectionitem?.highestOffer > 0 &&
+                                                                    <ListItem>
+                                                                        <ListItemText>
+                                                                            Highest offer:
+                                                                            <Grid sx={{textAlign:'center'}}>
+                                                                                <Typography variant="h6" sx={{color:'yellow'}}>
+                                                                                    {+collectionitem.highestOffer.toFixed(3)} <SolCurrencyIcon sx={{fontSize:"11px"}} />
+                                                                                </Typography>
+                                                                            </Grid>
+                                                                        </ListItemText>
+                                                                    </ListItem>
+                                                                }
+
+                                                                <ListItem>
+                                                                    <ListItemText
+                                                                        primary={`Grape Rarity:  ${(collectionitem.rarity*100).toFixed(2)}%`}
+                                                                        secondary={`Grape Rank: #${(collectionitem.rarity*collectionitem.collection_len).toFixed(0)}`}
+                                                                    />
+                                                                </ListItem>
+                                                            </List>
+                                                            
+                                                            <Button color='inherit' sx={{borderRadius:'17px'}}>View</Button>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </Grid>
-                                        </Box>
-                                    </Grid>
-                                </Grid>
+                                                
                                 <BootstrapDialog 
                                     fullWidth={true}
                                     maxWidth={"lg"}

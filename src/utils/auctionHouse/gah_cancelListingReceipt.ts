@@ -11,7 +11,7 @@ import {
   TransactionInstruction,
   SYSVAR_INSTRUCTIONS_PUBKEY } from '@solana/web3.js'
 import { web3 } from '@project-serum/anchor';
-import { GRAPE_RPC_ENDPOINT, OTHER_MARKETPLACES } from '../grapeTools/constants';
+import { GRAPE_RPC_ENDPOINT } from '../grapeTools/constants';
 import { InstructionsAndSignersSet } from "./helpers/types";
 
 import { AuctionHouseProgram } from '@metaplex-foundation/mpl-auction-house'

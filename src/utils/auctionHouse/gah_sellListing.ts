@@ -13,7 +13,7 @@ SYSVAR_INSTRUCTIONS_PUBKEY,
 SYSVAR_RENT_PUBKEY,
 Connection} from '@solana/web3.js'
 import { web3 } from '@project-serum/anchor';
-import { GRAPE_RPC_ENDPOINT, OTHER_MARKETPLACES } from '../grapeTools/constants';
+import { GRAPE_RPC_ENDPOINT } from '../grapeTools/constants';
 import { InstructionsAndSignersSet } from "./helpers/types";
 import { concat } from 'ramda';
 

@@ -78,6 +78,7 @@ import {
     ExodusWalletAdapter,
     NightlyWalletAdapter,
     SpotWalletAdapter,
+    UnsafeBurnerWalletAdapter,
 } from '@solana/wallet-adapter-wallets';
 import { CrossmintSolanaWalletAdapter, networkToCrossmintEnvironment } from "@crossmint/connect"
 
@@ -207,9 +208,7 @@ function DashboardContent() {
         () => [
             new SolflareWalletAdapter(),
             new PhantomWalletAdapter(),
-            new GlowWalletAdapter(),
             new LedgerWalletAdapter(),
-            new BackpackWalletAdapter(),
             new WalletConnectWalletAdapter({
                 network,
                 options: {
@@ -245,6 +244,7 @@ function DashboardContent() {
             new NightlyWalletAdapter(),
             //new MagicEdenWalletAdapter(),
             new SpotWalletAdapter(),
+            new UnsafeBurnerWalletAdapter(),
             new SlopeWalletAdapter(),
         ],
         [network]
