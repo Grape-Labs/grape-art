@@ -425,13 +425,13 @@ export default function GalleryItem(props: any){
                                                             
                                                             <img src={image} alt="" className="grape-art-profile-img" />
                                                                 <List dense={true}>
-                                                                    <ListItem>
+                                                                    <ListItem sx={{pt:0,pb:0}}>
                                                                         <ListItemText>
                                                                             <Typography variant='subtitle2'>{collectionitem?.name}</Typography>
                                                                         </ListItemText>
                                                                     </ListItem>
                                                                     {collectionitem?.listingPrice &&
-                                                                        <ListItem>
+                                                                        <ListItem sx={{pt:0,pb:0}}>
                                                                             <ListItemText>
                                                                                 <Typography variant='caption'>Listed:</Typography>
                                                                                 <Grid sx={{textAlign:'center'}}>
@@ -443,7 +443,7 @@ export default function GalleryItem(props: any){
                                                                         </ListItem>
                                                                     }
                                                                     {collectionitem?.highestOffer > 0 &&
-                                                                        <ListItem>
+                                                                        <ListItem sx={{pt:0,pb:0}}>
                                                                             <ListItemText>
                                                                                 Highest offer:
                                                                                 <Grid sx={{textAlign:'center'}}>
