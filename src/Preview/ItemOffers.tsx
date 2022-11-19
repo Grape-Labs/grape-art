@@ -931,8 +931,11 @@ function SellNowPrompt(props:any){
                     }}
                     value="Sell Now" onClick={handleClickOpenDialog}>
                     <AccountBalanceWalletIcon sx={{mr:1}}/> {t('Sell Now')}
-                </Button>     
+                </Button> 
+
+            
             </Tooltip>       
+            
             <BootstrapDialog 
                 fullWidth={true}
                 maxWidth={"sm"}

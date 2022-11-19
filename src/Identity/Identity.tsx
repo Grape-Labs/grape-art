@@ -235,7 +235,7 @@ export function IdentityView(props: any){
             }
         },
         { field: 'value', headerName: 'Value', width: 130, align: 'right'},
-        { field: 'send', headerName: '', width: 130,  align: 'center',
+        { field: 'send', headerName: '', width: 140,  align: 'center',
             renderCell: (params) => {
                 return (
                     <>
@@ -251,7 +251,7 @@ export function IdentityView(props: any){
                                 } 
                                 balance={(new TokenAmount(params.value.info.tokenAmount.amount, params.value.info.tokenAmount.decimals).format())} 
                                 conversionrate={0} 
-                                showTokenName={true} 
+                                showTokenName={false} 
                                 sendType={0} 
                                 fetchSolanaTokens={fetchSolanaTokens} />
                             </>          

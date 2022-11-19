@@ -14,6 +14,7 @@ import {
   Dialog,
   Button,
   ButtonGroup,
+  Tooltip,
   DialogTitle,
   DialogContent,
   DialogActions,
@@ -40,6 +41,7 @@ import { useSnackbar } from 'notistack';
 import { programs, tryGetAccount, withSend } from "@cardinal/token-manager";
 import { isCardinalWrappedToken, assertOwnerInstruction } from "../utils/cardinal/helpers";
 
+import SendIcon from '@mui/icons-material/Send';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import CircularProgress from '@mui/material/CircularProgress';
 import HelpIcon from '@mui/icons-material/Help';
@@ -105,6 +107,10 @@ export default function SendToken(props: any) {
     const mint = props.mint;
     const logoURI = props.logoURI;
     const name = props.name;
+    const buttonType = props.buttonType || 'outlined';
+    const useAvatar = props.useAvatar;
+    const avatarSize = props.avatarSize;
+    const buttonSize = props.buttonSize;
 
     let balance = 0;
     try{
@@ -419,33 +425,21 @@ export default function SendToken(props: any) {
     
     return (
         <div>
-            {showTokenName ? 
+            <Tooltip title={'Send this token'}>
                 <Button
-                    variant="outlined" 
+                    variant={buttonType}
                     //aria-controls={menuId}
                     color='inherit'
                     title={`Send ${name}`}
                     onClick={handleClickOpen}
-                    size="small"
+                    size={!buttonSize ? "small" : buttonSize}
                     //onClick={isConnected ? handleProfileMenuOpen : handleOpen}
                     sx={{borderRadius:'17px'}}
                     >
-                    Send
+                    {useAvatar ? <SendIcon sx={{fontSize:{avatarSize}}} /> : `Send ${showTokenName ? name : ``}`}
                 </Button>
-            :
-                <Button
-                    variant="outlined" 
-                    //aria-controls={menuId}
-                    color='inherit'
-                    title={`Send ${name}`}
-                    onClick={handleClickOpen}
-                    size="small"
-                    //onClick={isConnected ? handleProfileMenuOpen : handleOpen}
-                    sx={{borderRadius:'17px'}}
-                    >
-                    Send {name}
-                </Button>
-            }   
+            </Tooltip>
+        
         <BootstrapDialog
             onClose={handleClose}
             aria-labelledby="customized-dialog-title"

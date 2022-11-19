@@ -423,17 +423,17 @@ export default function GalleryItem(props: any){
                                                         >
                                                             <List dense={true}>
                                                                 <ListItem>
-                                                                    <ListItemText
-                                                                        primary={collectionitem?.name}
-                                                                    />
+                                                                    <ListItemText>
+                                                                        <Typography variant='subtitle2'>{collectionitem?.name}</Typography>
+                                                                    </ListItemText>
                                                                 </ListItem>
                                                                 {collectionitem?.listingPrice &&
                                                                     <ListItem>
                                                                         <ListItemText>
-                                                                            Listed:
+                                                                            <Typography variant='caption'>Listed:</Typography>
                                                                             <Grid sx={{textAlign:'center'}}>
                                                                                 <Typography variant='h6'>{+collectionitem.listingPrice.toFixed(2)}  <SolCurrencyIcon sx={{fontSize:"16px"}} /></Typography>
-                                                                                <Typography variant='caption'>{tokenPrice ? `~${(collectionitem.listingPrice*tokenPrice).toFixed(2)} ${tokenToSymbol}` : null}</Typography>
+                                                                                <Typography variant='body2'>{tokenPrice ? `~${(collectionitem.listingPrice*tokenPrice).toFixed(2)} ${tokenToSymbol}` : null}</Typography>
                                                                             </Grid>
                                                                         </ListItemText>
                                                                         
@@ -452,12 +452,21 @@ export default function GalleryItem(props: any){
                                                                     </ListItem>
                                                                 }
 
-                                                                <ListItem>
-                                                                    <ListItemText
-                                                                        primary={`Grape Rarity:  ${(collectionitem.rarity*100).toFixed(2)}%`}
-                                                                        secondary={`Grape Rank: #${(collectionitem.rarity*collectionitem.collection_len).toFixed(0)}`}
-                                                                    />
+                                                                <ListItem sx={{pt:0,pb:0}}>
+                                                                    <ListItemText>
+                                                                            <Typography variant="caption" sx={{color:'yellow'}}>
+                                                                                Grape Rarity: {(collectionitem.rarity*100).toFixed(2)}%
+                                                                            </Typography>
+                                                                    </ListItemText>
                                                                 </ListItem>
+                                                                <ListItem sx={{pt:0,pb:0,mt:-2}}>
+                                                                    <ListItemText>
+                                                                            <Typography variant="caption" sx={{color:'yellow'}}>
+                                                                                Grape Rank: #{(collectionitem.rarity*collectionitem.collection_len).toFixed(0)}
+                                                                            </Typography>
+                                                                    </ListItemText>
+                                                                </ListItem>
+                                                            
                                                             </List>
                                                             
                                                             <Button color='inherit' sx={{borderRadius:'17px'}}>View</Button>

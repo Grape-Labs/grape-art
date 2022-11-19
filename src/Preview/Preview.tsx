@@ -114,6 +114,7 @@ import {
     METAPLEX_PROGRAM_ID,
   } from '../utils/auctionHouse/helpers/constants';
 
+import SendToken from '../StoreFront/Send';
 import ItemOffers from './ItemOffers';
 import { SocialLikes, SocialFlags } from './Social';
 import ExplorerView from '../utils/grapeTools/Explorer';
@@ -1108,7 +1109,7 @@ function GalleryItemMeta(props: any) {
                                                                 sx={{color:'white',borderRadius:'24px'}}
                                                             >
                                                                 {t('Preview')} <OpenInFullIcon sx={{ fontSize:'16px', ml:1 }}/></Button>
-                                                            {previewBlur && previewBlur !== 0 ?
+                                                            {/*previewBlur && previewBlur !== 0 ?
                                                                 <Tooltip title="DeBlur / Clean this up">
                                                                     <Button
                                                                         size="small" variant="text" 
@@ -1128,7 +1129,7 @@ function GalleryItemMeta(props: any) {
                                                                         <BlurOnIcon />
                                                                     </Button>
                                                                 </Tooltip>
-                                                            }
+                                                            */}
                                                         </Grid>
                                                     </Grid>
                                                 
@@ -1666,6 +1667,26 @@ function GalleryItemMeta(props: any) {
 
                                                                 </Grid>
                                                                 
+                                                                {publicKey && publicKey.toBase58() === tokenOwners?.data.parsed.info.owner &&
+                                                                    <Grid item>
+                                                                        <SendToken 
+                                                                            mint={mint} 
+                                                                            name={collectionitem.name} 
+                                                                            logoURI={
+                                                                                collectionitem.image ||
+                                                                                mint
+                                                                            } 
+                                                                            balance={1} 
+                                                                            conversionrate={0} 
+                                                                            showTokenName={true} 
+                                                                            sendType={0}
+                                                                            buttonType={'text'}
+                                                                            useAvatar={true}
+                                                                            avatarSize={'10'}
+                                                                            buttonSize={'medium'}  />
+                                                                    </Grid>  
+                                                                }
+
                                                             </Grid>
                                                             :<>{t('Loading owner')}</>}
                                                             </>
