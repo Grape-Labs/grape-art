@@ -460,7 +460,7 @@ export default function GalleryItem(props: any){
                                                                             <ListItemText sx={{textAlign:'center'}}>
                                                                                     <Tooltip title={<>
                                                                                         {collectionitem.attributes.map((element:any, key:number) =>
-                                                                                            <>{key > 0 && <br/>}{element.trait_type}: {element.value}</>
+                                                                                            <>{key > 0 && <br/>}<strong>{element.trait_type}:</strong> {element.value}</>
                                                                                         )}</>
                                                                                     }>
                                                                                         <Button color='inherit' sx={{borderRadius:'17px',textTransform:'none'}}>
