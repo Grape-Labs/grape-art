@@ -40,7 +40,7 @@
     "dependencies": {
         "@apollo/client": "3.6.9",
         "@blockworks-foundation/voter-stake-registry-client": "^0.2.3",
-        "@bonfida/spl-name-service": "0.1.50",
+        "@bonfida/spl-name-service": "0.1.55",
         "@cardinal/namespaces": "^4.1.56",
         "@cardinal/token-manager": "^2.0.0",
         "@crossmint/connect": "^0.0.5-alpha-2",

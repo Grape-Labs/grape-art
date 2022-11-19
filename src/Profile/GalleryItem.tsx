@@ -27,6 +27,8 @@ import {
     METAPLEX_PROGRAM_ID,
 } from '../utils/auctionHouse/helpers/constants';
 
+import ShareSocialURL from '../utils/grapeTools/ShareUrl';
+
 import SolCurrencyIcon from '../components/static/SolCurrencyIcon';
 import { GRAPE_PREVIEW, DRIVE_PROXY, SHDW_PROXY, CLOUDFLARE_IPFS_CDN } from '../utils/grapeTools/constants';
 import { getImageOrFallback } from '../utils/grapeTools/WalletAddress';
@@ -471,6 +473,9 @@ export default function GalleryItem(props: any){
                                                                 </List>
                                                                 
                                                                 <Button color='inherit' sx={{borderRadius:'17px'}}>View</Button>
+                                                                {/*
+                                                                <ShareSocialURL fontSize={'20px'} url={`https://grape.art${GRAPE_PREVIEW}${mint}`} title={`${collectionitem.name}`} />
+                                                                */}
                                                             </div>
                                                         </div>
                                                 </div>
