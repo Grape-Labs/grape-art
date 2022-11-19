@@ -430,13 +430,21 @@ export default function GalleryItem(props: any){
                                                                             <Typography variant='subtitle2'>{collectionitem?.name}</Typography>
                                                                         </ListItemText>
                                                                     </ListItem>
-                                                                    {collectionitem?.listingPrice &&
+                                                                    {collectionitem?.listingPrice ?
                                                                         <ListItem sx={{pt:0,pb:0}}>
                                                                             <ListItemText>
-                                                                                <Typography variant='caption'>Listed:</Typography>
                                                                                 <Grid sx={{textAlign:'center'}}>
-                                                                                    <Typography variant='h6'>{+collectionitem.listingPrice.toFixed(2)}  <SolCurrencyIcon sx={{fontSize:"16px"}} /></Typography>
+                                                                                    <Typography variant='h4'>{+collectionitem.listingPrice.toFixed(2)}  <SolCurrencyIcon sx={{fontSize:"20px"}} /></Typography>
                                                                                     <Typography variant='body2'>{tokenPrice ? `~${(collectionitem.listingPrice*tokenPrice).toFixed(2)} ${tokenToSymbol}` : null}</Typography>
+                                                                                </Grid>
+                                                                            </ListItemText>
+                                                                            
+                                                                        </ListItem>
+                                                                    :
+                                                                        <ListItem sx={{pt:0,pb:0}}>
+                                                                            <ListItemText>
+                                                                                <Grid sx={{textAlign:'center'}}>
+                                                                                    <Typography variant='caption'>Not listed</Typography>
                                                                                 </Grid>
                                                                             </ListItemText>
                                                                             
