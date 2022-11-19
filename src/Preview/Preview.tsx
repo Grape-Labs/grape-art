@@ -352,7 +352,6 @@ function GrapeVerified(props:any){
                     href={grapeVerified ? `${GRAPE_COLLECTION}${verifiedCollection.vanityUrl}` : `${GRAPE_PREVIEW}${verifiedPK}`}
                     sx={{color:'white', borderRadius:'24px'}}>
                     {collectionName}
-                    {console.log("verifiedCollection: "+JSON.stringify(verifiedCollection))}
                     <Avatar 
                         component={Paper} 
                         elevation={4}
