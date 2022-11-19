@@ -455,6 +455,23 @@ export default function GalleryItem(props: any){
                                                                         </ListItem>
                                                                     }
 
+                                                                    {collectionitem?.attributes &&
+                                                                        <ListItem sx={{pt:0,pb:0}}>
+                                                                            <ListItemText sx={{textAlign:'center'}}>
+                                                                                    <Tooltip title={<>
+                                                                                        {collectionitem.attributes.map((element:any, key:number) =>
+                                                                                            <>{key > 0 && <br/>}{element.trait_type}: {element.value}</>
+                                                                                        )}</>
+                                                                                    }>
+                                                                                        <Button color='inherit' sx={{borderRadius:'17px',textTransform:'none'}}>
+                                                                                            <Typography variant="body2" sx={{color:'white'}}>
+                                                                                                <strong>{(collectionitem.attributes.length)}</strong> Attributes
+                                                                                            </Typography>
+                                                                                        </Button>
+                                                                                    </Tooltip>
+                                                                            </ListItemText>
+                                                                        </ListItem>
+                                                                    }
                                                                     <ListItem sx={{pt:0,pb:0}}>
                                                                         <ListItemText>
                                                                                 <Typography variant="caption" sx={{color:'yellow'}}>
