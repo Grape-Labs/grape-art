@@ -306,7 +306,17 @@ ul li .grape-wallet-button{
   top:0;
   background-color: black;/*dodgerblue*/;
   color: white;
+  height: 100%;
   border-radius:17px;
   transform: rotateY(180deg);
 }
 
+.grape-flip-background{
+  background: linear-gradient(to bottom, #36325d 0%, #251A3A 48.6%, #251A3A 90.62%, #251A3A 10%);
+  border-radius: 17px;
+  min-height: 225px;
+  min-width: 100px;
+  height: 100%;
+  overflow:hidden;
+  position:relative;
+}

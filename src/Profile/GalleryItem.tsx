@@ -417,61 +417,62 @@ export default function GalleryItem(props: any){
                                                                 </Box>
                                                             </Grid>
                                                     </div>
-                                                    <div className="flip-card-back">
-                                                        <div
-                                                            onClick={handleClickOpenDialog}
-                                                        >
-                                                            <List dense={true}>
-                                                                <ListItem>
-                                                                    <ListItemText>
-                                                                        <Typography variant='subtitle2'>{collectionitem?.name}</Typography>
-                                                                    </ListItemText>
-                                                                </ListItem>
-                                                                {collectionitem?.listingPrice &&
+                                                    <div className="flip-card-back" onClick={handleClickOpenDialog}>
+                                                        
+                                                        <div className="grape-flip-background">
+                                                            
+                                                            <img src={image} alt="" className="grape-art-profile-img" />
+                                                                <List dense={true}>
                                                                     <ListItem>
                                                                         <ListItemText>
-                                                                            <Typography variant='caption'>Listed:</Typography>
-                                                                            <Grid sx={{textAlign:'center'}}>
-                                                                                <Typography variant='h6'>{+collectionitem.listingPrice.toFixed(2)}  <SolCurrencyIcon sx={{fontSize:"16px"}} /></Typography>
-                                                                                <Typography variant='body2'>{tokenPrice ? `~${(collectionitem.listingPrice*tokenPrice).toFixed(2)} ${tokenToSymbol}` : null}</Typography>
-                                                                            </Grid>
-                                                                        </ListItemText>
-                                                                        
-                                                                    </ListItem>
-                                                                }
-                                                                {collectionitem?.highestOffer > 0 &&
-                                                                    <ListItem>
-                                                                        <ListItemText>
-                                                                            Highest offer:
-                                                                            <Grid sx={{textAlign:'center'}}>
-                                                                                <Typography variant="h6" sx={{color:'yellow'}}>
-                                                                                    {+collectionitem.highestOffer.toFixed(3)} <SolCurrencyIcon sx={{fontSize:"11px"}} />
-                                                                                </Typography>
-                                                                            </Grid>
+                                                                            <Typography variant='subtitle2'>{collectionitem?.name}</Typography>
                                                                         </ListItemText>
                                                                     </ListItem>
-                                                                }
+                                                                    {collectionitem?.listingPrice &&
+                                                                        <ListItem>
+                                                                            <ListItemText>
+                                                                                <Typography variant='caption'>Listed:</Typography>
+                                                                                <Grid sx={{textAlign:'center'}}>
+                                                                                    <Typography variant='h6'>{+collectionitem.listingPrice.toFixed(2)}  <SolCurrencyIcon sx={{fontSize:"16px"}} /></Typography>
+                                                                                    <Typography variant='body2'>{tokenPrice ? `~${(collectionitem.listingPrice*tokenPrice).toFixed(2)} ${tokenToSymbol}` : null}</Typography>
+                                                                                </Grid>
+                                                                            </ListItemText>
+                                                                            
+                                                                        </ListItem>
+                                                                    }
+                                                                    {collectionitem?.highestOffer > 0 &&
+                                                                        <ListItem>
+                                                                            <ListItemText>
+                                                                                Highest offer:
+                                                                                <Grid sx={{textAlign:'center'}}>
+                                                                                    <Typography variant="h6" sx={{color:'yellow'}}>
+                                                                                        {+collectionitem.highestOffer.toFixed(3)} <SolCurrencyIcon sx={{fontSize:"11px"}} />
+                                                                                    </Typography>
+                                                                                </Grid>
+                                                                            </ListItemText>
+                                                                        </ListItem>
+                                                                    }
 
-                                                                <ListItem sx={{pt:0,pb:0}}>
-                                                                    <ListItemText>
-                                                                            <Typography variant="caption" sx={{color:'yellow'}}>
-                                                                                Grape Rarity: {(collectionitem.rarity*100).toFixed(2)}%
-                                                                            </Typography>
-                                                                    </ListItemText>
-                                                                </ListItem>
-                                                                <ListItem sx={{pt:0,pb:0,mt:-2}}>
-                                                                    <ListItemText>
-                                                                            <Typography variant="caption" sx={{color:'yellow'}}>
-                                                                                Grape Rank: #{(collectionitem.rarity*collectionitem.collection_len).toFixed(0)}
-                                                                            </Typography>
-                                                                    </ListItemText>
-                                                                </ListItem>
-                                                            
-                                                            </List>
-                                                            
-                                                            <Button color='inherit' sx={{borderRadius:'17px'}}>View</Button>
+                                                                    <ListItem sx={{pt:0,pb:0}}>
+                                                                        <ListItemText>
+                                                                                <Typography variant="caption" sx={{color:'yellow'}}>
+                                                                                    Grape Rarity: {(collectionitem.rarity*100).toFixed(2)}%
+                                                                                </Typography>
+                                                                        </ListItemText>
+                                                                    </ListItem>
+                                                                    <ListItem sx={{pt:0,pb:0,mt:-2}}>
+                                                                        <ListItemText>
+                                                                                <Typography variant="caption" sx={{color:'yellow'}}>
+                                                                                    Grape Rank: #{(collectionitem.rarity*collectionitem.collection_len).toFixed(0)}
+                                                                                </Typography>
+                                                                        </ListItemText>
+                                                                    </ListItem>
+                                                                
+                                                                </List>
+                                                                
+                                                                <Button color='inherit' sx={{borderRadius:'17px'}}>View</Button>
+                                                            </div>
                                                         </div>
-                                                    </div>
                                                 </div>
                                             </Grid>
                                                 
