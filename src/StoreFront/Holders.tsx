@@ -807,7 +807,7 @@ export function HoldersView(props: any) {
                                                 sx={{borderRadius:'24px',m:2,p:1}}
                                             >
                                                 <Typography variant="body2" sx={{color:'yellow'}}>
-                                                    <>Holding</>
+                                                    <>Holding Concentration</>
                                                 </Typography>
                                                 {uniqueHolders &&
                                                     <Typography variant="h3">
