@@ -23,6 +23,13 @@ import {
     getTokenPrice,
     getCoinGeckoPrice } from '../utils/grapeTools/helpers';
 
+import { Provider, AnchorProvider } from "@project-serum/anchor";
+
+import { SplTokenBonding } from "@strata-foundation/spl-token-bonding";
+import { SplTokenCollective } from "@strata-foundation/spl-token-collective";
+import { getAssociatedAccountBalance, SplTokenMetadata, getMintInfo, getTokenAccount } from "@strata-foundation/spl-utils";
+
+import BackedTokenSwap from "./BackedTokenSwap";
 import JupiterSwap from "./Swap";
 import SendToken from "./Send";
 
@@ -33,6 +40,7 @@ import ExplorerView from '../utils/grapeTools/Explorer';
 
 import { GRAPE_RPC_ENDPOINT } from '../utils/grapeTools/constants';
 import { MakeLinkableAddress, ValidateAddress, ValidateCurve, trimAddress, timeAgo } from '../utils/grapeTools/WalletAddress'; // global key handling
+import { ConstructionOutlined } from '@mui/icons-material';
 //import { RevokeCollectionAuthority } from '@metaplex-foundation/mpl-token-metadata';
 
 const StyledTable = styled(Table)(({ theme }) => ({
@@ -41,7 +49,7 @@ const StyledTable = styled(Table)(({ theme }) => ({
     },
 }));
 
-export function TokenView(props: any) {
+export function BackedTokenView(props: any) {
     const collectionAuthority = props.collectionAuthority;
     const [loading, setLoading] = React.useState(false);
     const [token, setToken] = React.useState(null);
@@ -49,11 +57,44 @@ export function TokenView(props: any) {
     const { publicKey } = useWallet();
     const [realm, setRealm] = React.useState(null);
     const [tokenMap, setTokenMap] = React.useState<Map<string,TokenInfo>>(undefined);
+    const [backedTokenMap, setBackedTokenMap] = React.useState<Map<string,TokenInfo>>(undefined);
     const [tokenPrice, setTokenPrice] = React.useState(null);
     const [coinGeckoPrice,setCoinGeckoPrice] = React.useState(null);
     const [myToken, setMyToken] = React.useState(null);
     const [portfolioPositions, setPortfolioPositions] = React.useState(null);
     const [tokenSupply, setTokenSupply] = React.useState(null);
+    const [loadingStrata, setLoadingStrata] = React.useState(false);
+    const [loadingPosition, setLoadingPosition] = React.useState('');
+    const [strataTokenMetadata, setStrataTokenMedatada] = React.useState(null);
+    const wallet = useWallet();
+    const provider = new AnchorProvider(connection, wallet, {});
+
+    const fetchStrataMetadata = async () => {
+        setLoadingStrata(true);
+        const tokenMetadataSdk = await SplTokenMetadata.init(provider);
+        const tokenCollectiveSdk = await SplTokenCollective.init(provider);
+
+        console.log("getting minttoken refkey")
+        const mintTokenRef = (await SplTokenCollective.mintTokenRefKey(new PublicKey(collectionAuthority.address)))[0];
+        console.log("mintTokenRef: "+JSON.stringify(mintTokenRef));
+
+        const tokenRef = await tokenCollectiveSdk.getTokenRef(mintTokenRef);
+
+        console.log("tokenRef: "+JSON.stringify(tokenRef));
+
+        const meta = await tokenMetadataSdk.getTokenMetadata(tokenRef.tokenMetadata)
+
+        //var collectiveAcct = await tokenCollectiveSdk.getCollective(new PublicKey(GAN_TOKEN));
+
+        //var mint = await getMintInfo(provider, new PublicKey(GAN_TOKEN));
+        
+        console.log("meta: "+JSON.stringify(meta))
+        
+        setStrataTokenMedatada(meta);
+        setLoadingStrata(false);
+
+        return meta;
+    }
 
     const fetchTokens = async () => {
         const tokens = await new TokenListProvider().resolve();
@@ -106,25 +147,34 @@ export function TokenView(props: any) {
         if (!loading){
             setLoading(true);
             try{
+                if (collectionAuthority.tokenType === 'SPL'){
+                    const tknMap = await fetchTokens();
+                    const tkn = tknMap.get(collectionAuthority.address);
+                    setToken(tkn);
+                
+                } else if (collectionAuthority.tokenType === 'BSPL'){
+                    const tkn = await fetchStrataMetadata();
+                    
+                    setToken(tkn.data);
+                    console.log("tkn: "+JSON.stringify(tkn))
+                } 
+                
 
                 const tknSupply = await connection.getTokenSupply(new PublicKey(collectionAuthority.address));
-
+                console.log("tknSupply: "+JSON.stringify(tknSupply));
                 setTokenSupply(tknSupply);
-                //console.log("tknSupply: "+JSON.stringify(tknSupply));
-
-                const tknMap = await fetchTokens();
-
-                const tkn = tknMap.get(collectionAuthority.address);
-                setToken(tkn)
-
-                const tknPrice = await getTokenPrice(tkn.symbol, "SOL");
                 
-                setTokenPrice(tknPrice);
-                const cgPrice = await getCoinGeckoPrice(tkn.extensions.coingeckoId);
+                if (collectionAuthority.tokenType === 'SPL'){
+                    const tknPrice = await getTokenPrice(tkn.symbol, "SOL");
+                    
+                    setTokenPrice(tknPrice);
+                    const cgPrice = await getCoinGeckoPrice(tkn.extensions.coingeckoId);
 
-                setCoinGeckoPrice(cgPrice);
-
+                    setCoinGeckoPrice(cgPrice);
+                }
                 
+                
+
                 //src={tokenMap.get(item.account.data.parsed.info.mint)?.logoURI}
 
                 //const tkn = TokenInfo()
@@ -173,15 +223,15 @@ export function TokenView(props: any) {
                                     {token.name}
                                 </Grid>
                                 <Grid item sx={{ml:1}}>
-                                    <Avatar alt={token.address} src={token.logoURI} sx={{ width: 40, height: 40, bgcolor: 'rgb(0, 0, 0)' }}>
-                                        {token.address.substr(0,2)}
+                                    <Avatar alt={token?.address || collectionAuthority.address} src={token.logoURI} sx={{ width: 40, height: 40, bgcolor: 'rgb(0, 0, 0)' }}>
+                                        {token?.address ? token.address.substr(0,2) : collectionAuthority.address.substr(0,2)}
                                     </Avatar>
                                 </Grid>
                             </Grid>
                         </Typography>
                         <Typography variant="caption" component='div'>
                             Address: 
-                                <ExplorerView address={token.address} type='address' shorten={0} hideTitle={false} style='text' color='white' fontSize='12px' />
+                                <ExplorerView address={token?.address || collectionAuthority.address} type='address' shorten={0} hideTitle={false} style='text' color='white' fontSize='12px' />
                         </Typography>
                         <Typography variant="caption" component='div'>
                             Symbol: {token.symbol}
@@ -286,7 +336,7 @@ export function TokenView(props: any) {
                                             <JupiterSwap swapfrom={'So11111111111111111111111111111111111111112'} swapto={token.address} portfolioPositions={portfolioPositions} tokenMap={tokenMap}/>
                                         }
                                         {coinGeckoPrice &&
-                                            <SendToken mint={token.address} name={token.name} logoURI={token.logoURI} balance={myToken.account.data.parsed.info.tokenAmount.uiAmount} conversionrate={+coinGeckoPrice[token.extensions.coingeckoId]?.usd} showTokenName={false} sendType={0} />
+                                            <SendToken mint={token.address} name={token.name} logoURI={token.logoURI} balance={myToken.account.data.parsed.info.tokenAmount.uiAmount} conversionrate={coinGeckoPrice ? +coinGeckoPrice[token.extensions.coingeckoId]?.usd : null} showTokenName={false} sendType={0} />
                                         }
                                         {/*
                                         <Swap id={token.address} />

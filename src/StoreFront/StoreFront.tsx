@@ -123,6 +123,7 @@ import { GovernanceView } from './Governance';
 import { MembersView } from './Members';
 import { HoldersView } from './Holders';
 import { TokenView } from './Token';
+import { BackedTokenView } from './BackedToken';
 
 import { MakeLinkableAddress, ValidateAddress, trimAddress, timeAgo } from '../utils/grapeTools/WalletAddress'; // global key handling
 import { ConstructionOutlined, SettingsRemoteOutlined } from "@mui/icons-material";
@@ -448,6 +449,7 @@ const MainMenu = (props:any) => {
 }
 enum NavPanel {
     Token,
+    BackedToken,
     Marketplace,
     Collectors,
     Holders,
@@ -1520,6 +1522,10 @@ export function StoreFrontView(this: any, props: any) {
                     setTabValue(NavPanel.Token);
                     // fetch data for SPL token
                     //var tspl = fetchTokenData(verified.address);
+                } else if (verified?.tokenType === "BSPL"){
+                    setTabValue(NavPanel.BackedToken);
+                    // fetch data for SPL token
+                    //var tspl = fetchTokenData(verified.address);
                 }
             }
         }
@@ -1577,9 +1583,9 @@ export function StoreFrontView(this: any, props: any) {
     React.useEffect(() => { 
         if (urlParams){
             setWithPubKey(urlParams);
-        } else if (pubkey){
+        }/* else if (pubkey){
         } else if (publicKey){
-        }
+        }*/
     }, [urlParams]);
 
     
@@ -2058,6 +2064,9 @@ export function StoreFrontView(this: any, props: any) {
                         {collectionAuthority?.tokenType && collectionAuthority?.tokenType === 'SPL' &&
                             <Tab icon={<SolCurrencyIcon />} aria-label="Token" value={NavPanel.Token} sx={{color:'white'}} title="Tokenized Community" />
                         }
+                        {collectionAuthority?.tokenType && collectionAuthority?.tokenType === 'BSPL' &&
+                            <Tab icon={<SolCurrencyIcon />} aria-label="Backed Token" value={NavPanel.BackedToken} sx={{color:'white'}} title="Token Backed Community" />
+                        }
                         {collectionAuthority?.tokenType && collectionAuthority?.tokenType === 'NFT' &&
                             <Tab icon={<StorefrontIcon />} aria-label="Marketplace" value={NavPanel.Marketplace} sx={{color:'white'}} title="Marketplace" />
                         }
@@ -2092,6 +2101,14 @@ export function StoreFrontView(this: any, props: any) {
                         <Box> 
                             {collectionAuthority &&  
                                 <TokenView mode={1} collectionAuthority={collectionAuthority} tokenPrice={tokenPrice}/>
+                            }
+                        </Box>
+                    </TabPanel>
+
+                    <TabPanel value={tabValue} index={NavPanel.BackedToken}>
+                        <Box> 
+                            {collectionAuthority &&  
+                                <BackedTokenView mode={1} collectionAuthority={collectionAuthority} tokenPrice={tokenPrice}/>
                             }
                         </Box>
                     </TabPanel>
