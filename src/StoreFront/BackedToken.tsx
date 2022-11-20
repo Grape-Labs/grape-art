@@ -223,7 +223,7 @@ export function BackedTokenView(props: any) {
                                     {token.name}
                                 </Grid>
                                 <Grid item sx={{ml:1}}>
-                                    <Avatar alt={token?.address || collectionAuthority.address} src={token.logoURI} sx={{ width: 40, height: 40, bgcolor: 'rgb(0, 0, 0)' }}>
+                                    <Avatar alt={token?.address || collectionAuthority.address} src={token?.logoURI ? token?.logoURI : token.image} sx={{ width: 40, height: 40, bgcolor: 'rgb(0, 0, 0)' }}>
                                         {token?.address ? token.address.substr(0,2) : collectionAuthority.address.substr(0,2)}
                                     </Avatar>
                                 </Grid>
@@ -233,9 +233,11 @@ export function BackedTokenView(props: any) {
                             Address: 
                                 <ExplorerView address={token?.address || collectionAuthority.address} type='address' shorten={0} hideTitle={false} style='text' color='white' fontSize='12px' />
                         </Typography>
-                        <Typography variant="caption" component='div'>
-                            Symbol: {token.symbol}
-                        </Typography>
+                        {token.symbol &&
+                            <Typography variant="caption" component='div'>
+                                Symbol: {token.symbol}
+                            </Typography>
+                        }
                         {tokenSupply &&
                             <Typography variant="caption" component='div'>
                                 Supply: {getFormattedNumberToLocale(formatAmount(+((tokenSupply.value.amount)/Math.pow(10, tokenSupply.value.decimals)).toFixed(0)))}
