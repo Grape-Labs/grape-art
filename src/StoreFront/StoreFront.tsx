@@ -1652,7 +1652,7 @@ export function StoreFrontView(this: any, props: any) {
                         }
 
                         {collectionAuthority.theme && collectionAuthority.themeSize && 
-                            <style>{'html, body { background: '+collectionAuthority.theme+' fixed!important;height: 100%; background-size: '+collectionAuthority.themeSize+'; }'}</style>
+                            <style>{'html, body { background: '+collectionAuthority.theme+' fixed!important;height: 100%; background-size: '+collectionAuthority.themeSize+'!important; }'}</style>
                         }
 
                         {collectionAuthority.theme && collectionAuthority.themeImage &&
