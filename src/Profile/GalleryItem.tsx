@@ -30,7 +30,12 @@ import {
 import ShareSocialURL from '../utils/grapeTools/ShareUrl';
 
 import SolCurrencyIcon from '../components/static/SolCurrencyIcon';
-import { GRAPE_PREVIEW, DRIVE_PROXY, SHDW_PROXY, CLOUDFLARE_IPFS_CDN } from '../utils/grapeTools/constants';
+import { 
+    GRAPE_PREVIEW, 
+    DRIVE_PROXY, 
+    SHDW_PROXY, 
+    GRAPE_COLLECTIONS_DATA,
+    CLOUDFLARE_IPFS_CDN } from '../utils/grapeTools/constants';
 import { getImageOrFallback } from '../utils/grapeTools/WalletAddress';
 
 import { PreviewView } from "../Preview/Preview";
@@ -158,6 +163,7 @@ export default function GalleryItem(props: any){
         }
         {   
             let image = collectionmeta?.collectionmeta?.image || collectionitem?.image || null;
+            let back_image = image;
             try{
                 if (image){
                     
@@ -194,12 +200,18 @@ export default function GalleryItem(props: any){
                             }
                             
                             image = image_url;
+                                back_image = image;
+                            
                             //console.log("DRIVE_PROXY: "+image);
                             //image = setImageUrl(image_url, image);
                     }
                 }
             }catch(e){console.log("ERR: "+e)}
             
+            if (collectionitem?.collection === 'DAPE'){
+                back_image = GRAPE_COLLECTIONS_DATA+'DC2mkgwhy.back.png';
+            }
+
             if (!image){
                 //console.log("!image ERR: " + JSON.stringify(collectionmeta));
                 return null;
@@ -423,7 +435,8 @@ export default function GalleryItem(props: any){
                                                         
                                                         <div className="grape-flip-background">
                                                             
-                                                            <img src={image} alt="" className="grape-art-profile-img" />
+                                                            <img src={back_image} alt="" className="grape-art-profile-img" />
+                                                            
                                                                 <List dense={true}>
                                                                     <ListItem sx={{pt:0,pb:0}}>
                                                                         <ListItemText>

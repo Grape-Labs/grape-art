@@ -17,6 +17,8 @@ import {
   Avatar,
   Table,
   LinearProgress,
+  List,
+  ListItem,
 } from '@mui/material/';
 
 import {  
@@ -63,6 +65,9 @@ export function BackedTokenView(props: any) {
     const [myToken, setMyToken] = React.useState(null);
     const [portfolioPositions, setPortfolioPositions] = React.useState(null);
     const [tokenSupply, setTokenSupply] = React.useState(null);
+    const [tokenBonding, setTokenBonding] = React.useState(null);
+    const [tokenBondingPricing, setTokenBondingPricing] = React.useState(null);
+
     const [loadingStrata, setLoadingStrata] = React.useState(false);
     const [loadingPosition, setLoadingPosition] = React.useState('');
     const [strataTokenMetadata, setStrataTokenMedatada] = React.useState(null);
@@ -72,6 +77,7 @@ export function BackedTokenView(props: any) {
     const fetchStrataMetadata = async () => {
         setLoadingStrata(true);
         const tokenMetadataSdk = await SplTokenMetadata.init(provider);
+        const tokenBondingSdk = await SplTokenBonding.init(provider);
         const tokenCollectiveSdk = await SplTokenCollective.init(provider);
 
         console.log("getting minttoken refkey")
@@ -80,15 +86,22 @@ export function BackedTokenView(props: any) {
 
         const tokenRef = await tokenCollectiveSdk.getTokenRef(mintTokenRef);
 
-        console.log("tokenRef: "+JSON.stringify(tokenRef));
+        //console.log("tokenRef: "+JSON.stringify(tokenRef));
 
         const meta = await tokenMetadataSdk.getTokenMetadata(tokenRef.tokenMetadata)
 
-        //var collectiveAcct = await tokenCollectiveSdk.getCollective(new PublicKey(GAN_TOKEN));
+        const tokenBondingKey = (await SplTokenBonding.tokenBondingKey(new PublicKey(collectionAuthority.address)))[0];
+        //console.log("getting bonding")
+        const tbonding = await tokenBondingSdk.getTokenBonding(tokenBondingKey)
+        console.log("gbonding: "+JSON.stringify(tbonding));
+        setTokenBonding(tbonding);
 
-        //var mint = await getMintInfo(provider, new PublicKey(GAN_TOKEN));
-        
-        console.log("meta: "+JSON.stringify(meta))
+        const tbondingpricing = await tokenBondingSdk.getPricing(tokenBondingKey)
+        setTokenBondingPricing(tbondingpricing);
+
+        //const bonding = await tokenBondingSdk.getPricing(tokenBondingKey)
+        //console.log("bonding: "+JSON.stringify(bonding));
+        //console.log("meta: "+JSON.stringify(meta))
         
         setStrataTokenMedatada(meta);
         setLoadingStrata(false);
@@ -169,7 +182,6 @@ export function BackedTokenView(props: any) {
                     console.log("btkn: "+JSON.stringify(thisToken))
                 } 
                 
-
                 const tknSupply = await connection.getTokenSupply(new PublicKey(collectionAuthority.address));
                 console.log("tknSupply: "+JSON.stringify(tknSupply));
                 setTokenSupply(tknSupply);
@@ -361,6 +373,29 @@ export function BackedTokenView(props: any) {
                                 </Card>
                             </Grid>
                         }
+
+                        {tokenBondingPricing &&
+                            <Grid item xs={12}>
+                                <Card sx={{borderRadius:'17px'}}>
+                                    <CardContent>
+                                        <Typography variant="h5" component="div">
+                                            <List>
+                                                <ListItem>Base Mint: {tokenBondingPricing.hierarchy.tokenBonding.baseMint.toBase58()}</ListItem>
+                                                <ListItem>Royalty (Buy/Sell): {tokenBondingPricing.hierarchy.tokenBonding.buyBaseRoyaltyPercentage}/{tokenBondingPricing.hierarchy.tokenBonding.sellBaseRoyaltyPercentage}</ListItem>
+                                                <ListItem>Supply from Bonding: {tokenBondingPricing.hierarchy.tokenBonding.supplyFromBonding.toNumber()}</ListItem>
+                                                <ListItem>Base Amount: {tokenBondingPricing.hierarchy.pricingCurve.baseAmount}</ListItem>
+                                                <ListItem></ListItem>
+
+                                            </List>
+                                        </Typography>
+                                    </CardContent>
+                                    <CardActions sx={{}}>
+                                        ...
+                                    </CardActions>
+                                </Card>
+                            </Grid>
+                        }
+
                         {publicKey && !myToken &&
                             <Grid item xs={12}>
                                 <Card sx={{borderRadius:'17px'}}>
