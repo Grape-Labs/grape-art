@@ -40,7 +40,7 @@ import ExplorerView from '../utils/grapeTools/Explorer';
 
 import { GRAPE_RPC_ENDPOINT } from '../utils/grapeTools/constants';
 import { MakeLinkableAddress, ValidateAddress, ValidateCurve, trimAddress, timeAgo } from '../utils/grapeTools/WalletAddress'; // global key handling
-import { ConstructionOutlined } from '@mui/icons-material';
+import { BatteryUnknown, ConstructionOutlined } from '@mui/icons-material';
 //import { RevokeCollectionAuthority } from '@metaplex-foundation/mpl-token-metadata';
 
 const StyledTable = styled(Table)(({ theme }) => ({
@@ -147,16 +147,26 @@ export function BackedTokenView(props: any) {
         if (!loading){
             setLoading(true);
             try{
-                if (collectionAuthority.tokenType === 'SPL'){
-                    const tknMap = await fetchTokens();
-                    const tkn = tknMap.get(collectionAuthority.address);
+                const tknMap = await fetchTokens();
+
+                const tkn = tknMap.get(collectionAuthority.address);
+                if (tkn){
                     setToken(tkn);
-                
-                } else if (collectionAuthority.tokenType === 'BSPL'){
-                    const tkn = await fetchStrataMetadata();
+                }
+
+                if (!tkn && collectionAuthority.tokenType === 'BSPL'){
+                    const btkn = await fetchStrataMetadata();
                     
-                    setToken(tkn.data);
-                    console.log("tkn: "+JSON.stringify(tkn))
+                    const thisToken = {
+                        address: collectionAuthority.address,
+                        name: btkn.metadata.data.name,
+                        symbol: btkn.metadata.data.symbol,
+                        decimals: btkn.mint.decimals,
+                        logoURI: btkn.data.image
+                    }
+
+                    setToken(thisToken);
+                    console.log("btkn: "+JSON.stringify(thisToken))
                 } 
                 
 
