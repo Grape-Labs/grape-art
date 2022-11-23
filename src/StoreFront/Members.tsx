@@ -34,7 +34,8 @@ import {
   LinearProgress,
 } from '@mui/material/';
 
-import { formatAmount, getFormattedNumberToLocale } from '../utils/grapeTools/helpers'
+import { formatAmount, getFormattedNumberToLocale } from '../utils/grapeTools/helpers';
+import { getBackedTokenMetadata } from '../utils/grapeTools/strataHelpers';
 import ExplorerView from '../utils/grapeTools/Explorer';
 import { getProfilePicture } from '@solflare-wallet/pfp';
 import { findDisplayName } from '../utils/name-service';
@@ -161,7 +162,8 @@ function RenderGovernanceMembersTable(props:any) {
     // Avoid a layout jump when reaching the last page with empty rows.
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - members.length) : 0;
     const token = props.token;
-    const tokenDecimals = token?.decimals || 6;
+    const governingTokenMint = props?.governingTokenMint;
+    const governingTokenDecimals = props?.governingTokenDecimals || 0;
     const { navigation, open } = useDialectUiId<ChatNavigationHelpers>(GRAPE_BOTTOM_CHAT_ID);
 
     const handleChangePage = (event:any, newPage:number) => {
@@ -181,11 +183,6 @@ function RenderGovernanceMembersTable(props:any) {
         }
         setLoading(false);
     }*/
-
-    //React.useEffect(() => { 
-        //if (publicKey && !loading && realm)
-        //    getProposals(realm);
-    //}, [realm]);
 
     if(loading){
         return (
@@ -237,7 +234,12 @@ function RenderGovernanceMembersTable(props:any) {
                                         </TableCell>
                                         <TableCell align="center" >
                                             <Typography variant="h6">
-                                               {getFormattedNumberToLocale(+((item.governingTokenDepositAmount.toNumber())/Math.pow(10, tokenMap.get(item.governingTokenMint?.toBase58())?.decimals || 0)).toFixed(0))}
+                                                {governingTokenMint === item.governingTokenMint?.toBase58() ?
+                                                    `${getFormattedNumberToLocale(+((item.governingTokenDepositAmount.toNumber())/Math.pow(10, governingTokenDecimals || 0)).toFixed(0))}`
+                                                :
+                                                    `${getFormattedNumberToLocale(+((item.governingTokenDepositAmount.toNumber())/Math.pow(10, tokenMap.get(item.governingTokenMint?.toBase58())?.decimals || 0)).toFixed(0))}`
+                                                }
+                                               
                                             </Typography>
                                         </TableCell>
                                         <TableCell align="center" >
@@ -348,7 +350,7 @@ export function MembersView(props: any) {
     const [loading, setLoading] = React.useState(false);
     const [members, setMembers] = React.useState(null);
     const connection = new Connection(GRAPE_RPC_ENDPOINT)//useConnection();
-    const { publicKey } = useWallet();
+    const { publicKey, wallet } = useWallet();
     const [realm, setRealm] = React.useState(null);
     const [participating, setParticipating] = React.useState(false)
     const [participatingRealm, setParticipatingRealm] = React.useState(null)
@@ -360,29 +362,34 @@ export function MembersView(props: any) {
     const [totalParticipants, setTotalParticipants] = React.useState(null);
     const [totalVotesCasted, setTotalVotesCasted] = React.useState(null);
     const [totalDepositedCouncilVotes, setDepositedTotalCouncilVotes] = React.useState(null);
+    const [governingTokenMint, setGoverningTokenMint] = React.useState(null);
+    const [governingTokenDecimals, setGoverningTokenDecimals] = React.useState(null);
 
     const getTokens = async () => {
         const tarray:any[] = [];
         try{
+            let tmap  = null;
             const tlp = await new TokenListProvider().resolve().then(tokens => {
                 const tokenList = tokens.filterByChainId(ENV.MainnetBeta).getList();
-                setTokenMap(tokenList.reduce((map, item) => {
+                const tokenMp = tokenList.reduce((map, item) => {
                     tarray.push({address:item.address, decimals:item.decimals})
                     map.set(item.address, item);
                     return map;
-                },new Map()));
+                },new Map());
+                setTokenMap(tokenMp);
                 setTokenArray(tarray);
+                tmap = tokenMp;
             });
-        } catch(e){console.log("ERR: "+e)}
+            return tmap;
+        } catch(e){console.log("ERR: "+e); return null;}
     }
+
+    
 
     const getGovernanceMembers = async () => {
         if (!loading){
             setLoading(true);
             try{
-                
-                if (!tokenArray)
-                    await getTokens();
                 
                 const programId = new PublicKey(GOVERNANCE_PROGRAM_ID);
                 
@@ -402,11 +409,25 @@ export function MembersView(props: any) {
 
                 const grealm = await getRealm(new Connection(GRAPE_RPC_ENDPOINT), new PublicKey(collectionAuthority.governance))
                 setRealm(grealm);
-                console.log("realm: "+JSON.stringify(grealm))
+                //console.log("realm: "+JSON.stringify(grealm))
+
+                setGoverningTokenMint(grealm.account.communityMint.toBase58());
+                // with realm check if this is a backed token
+                if (tokenMap.get(grealm.account.communityMint.toBase58())){
+                    setGoverningTokenDecimals(tokenMap.get(grealm.account.communityMint.toBase58()).decimals);
+                } else{
+                   const btkn = await getBackedTokenMetadata(grealm.account.communityMint.toBase58(), wallet);
+                    if (btkn){
+                        setGoverningTokenDecimals(btkn.decimals)
+                    } else{
+                        setGoverningTokenDecimals(0);
+                    }
+                }
 
                 const realmPk = grealm.pubkey;
 
                 const trecords = await getAllTokenOwnerRecords(new Connection(GRAPE_RPC_ENDPOINT), grealm.owner, realmPk)
+                
                 //console.log("trecords: "+JSON.stringify(trecords));
 
                 //let sortedResults = trecords.sort((a,b) => (a.account?.outstandingProposalCount < b.account?.outstandingProposalCount) ? 1 : -1);
@@ -518,8 +539,14 @@ export function MembersView(props: any) {
     }
 
     React.useEffect(() => { 
-        if (publicKey && !loading){   
+        if (tokenMap){   
             getGovernanceMembers();
+        }
+    }, [tokenMap]);
+
+    React.useEffect(() => { 
+        if (publicKey && !loading){   
+            getTokens();
         }
     }, [publicKey]);
     
@@ -609,7 +636,7 @@ export function MembersView(props: any) {
                                                 <Typography variant="h3">
                                                     {totalDepositedVotes &&
                                                         <>
-                                                            {getFormattedNumberToLocale(+(totalDepositedVotes/Math.pow(10, tokenMap.get(realm.account.communityMint?.toBase58())?.decimals || 0)).toFixed(0))}
+                                                            {getFormattedNumberToLocale(+((totalDepositedVotes)/Math.pow(10, governingTokenDecimals || 0)).toFixed(0))}
                                                         </>
                                                     }
                                                     {(totalDepositedVotes && totalDepositedCouncilVotes) &&
@@ -630,7 +657,7 @@ export function MembersView(props: any) {
                                 </Box>
                             }
 
-                        <RenderGovernanceMembersTable members={members} participating={participating} tokenMap={tokenMap} />
+                        <RenderGovernanceMembersTable members={members} participating={participating} tokenMap={tokenMap} governingTokenMint={governingTokenMint} governingTokenDecimals={governingTokenDecimals} />
                     </Box>
                                 
                 );

@@ -2,7 +2,7 @@ import { getRealm, getAllProposals, getGovernance, getGovernanceAccounts, getGov
 import { getVoteRecords } from '../utils/governanceTools/getVoteRecords';
 import { PublicKey, TokenAmount, Connection } from '@solana/web3.js';
 import { ENV, TokenListProvider, TokenInfo } from '@solana/spl-token-registry';
-import { useConnection, useWallet } from '@solana/wallet-adapter-react';
+import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletDialogProvider, WalletMultiButton } from "@solana/wallet-adapter-material-ui";
 import { WalletError, WalletNotConnectedError } from '@solana/wallet-adapter-base';
 import React, { useCallback } from 'react';
@@ -10,6 +10,7 @@ import { styled, useTheme } from '@mui/material/styles';
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import Gist from 'react-gist';
 import { gistApi, resolveProposalDescription } from '../utils/grapeTools/github';
+import { getBackedTokenMetadata } from '../utils/grapeTools/strataHelpers';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
@@ -245,6 +246,7 @@ function GetParticipants(props: any){
     const freeconnection = new Connection(TX_RPC_ENDPOINT);
     const [loadingParticipants, setLoadingParticipants] = React.useState(false);
 
+    
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
     const onError = useCallback(
         (error: WalletError) => {
@@ -407,7 +409,7 @@ function GetParticipants(props: any){
             const tSupply = Number(governingMintPromise.value.data.parsed.info.supply/Math.pow(10, governingMintPromise.value.data.parsed.info.decimals)) 
             
             setTotalSupply(tSupply);
-
+            
             const totalVotes =
                 Number(governingMintPromise.value.data.parsed.info.supply/Math.pow(10, governingMintPromise.value.data.parsed.info.decimals))  *
                 //Number(communityWeight/Math.pow(10, governingMintPromise.value.data.parsed.info.decimals))  *
@@ -440,6 +442,20 @@ function GetParticipants(props: any){
                 setQuorumTargetPercentage((totalVotesNeeded / totalVotes) * 100);
                 setQuorumTarget(totalVotesNeeded);
             }
+
+            /*
+            if (tokenMap.get(grealm.account.communityMint.toBase58())){
+                setGoverningTokenDecimals(tokenMap.get(grealm.account.communityMint.toBase58()).decimals);
+            } else{
+               const btkn = await getBackedTokenMetadata(grealm.account.communityMint.toBase58(), wallet);
+                if (btkn){
+                    setGoverningTokenDecimals(btkn.decimals)
+                } else{
+                    setGoverningTokenDecimals(0);
+                }
+            }
+            */
+           alert(governingMintPromise.value.data.parsed.info.decimals)
 
         }catch(e){
             console.log('ERR: '+e)
@@ -479,7 +495,18 @@ function GetParticipants(props: any){
         }
         
         if (!vType){
-            vType = 'NFT';
+            // check if backed token
+            // important check if we have already fetched this data already
+            const btkn = await getBackedTokenMetadata(thisitem.account.governingTokenMint?.toBase58(), wallet);
+            if (btkn){
+                // get parent token name
+                const parentToken = tokenMap.get(btkn.parentToken);
+                vType = parentToken ? `${parentToken.name} Backed Token` : `Backed Token`;
+                td = btkn.decimals;
+            } else{
+                vType = 'NFT';
+                td = 6;
+            }
         }
         setTokenDecimals(td);
         setVoteType(vType)
@@ -1136,6 +1163,7 @@ function RenderGovernanceTable(props:any) {
     const memberMap = props.memberMap;
     const thisToken = props.thisToken;
     const tokenMap = props.tokenMap;
+    const governanceType = props.governanceType;
     const [loading, setLoading] = React.useState(false);
     //const [proposals, setProposals] = React.useState(props.proposals);
     const governanceToken = props.governanceToken;
@@ -1294,7 +1322,13 @@ function RenderGovernanceTable(props:any) {
                                                         {tokenMap.get(item.account.governingTokenMint.toBase58()) ?
                                                             <></>
                                                         :
-                                                            <Tooltip title='NFT Vote'><Button color='inherit' sx={{ml:1,borderRadius:'17px'}}><ImageOutlinedIcon sx={{ fontSize:16 }} /></Button></Tooltip>
+                                                            <>
+                                                                {governanceType === 1 ?
+                                                                    <></>
+                                                                :
+                                                                <Tooltip title='NFT Vote'><Button color='inherit' sx={{ml:1,borderRadius:'17px'}}><ImageOutlinedIcon sx={{ fontSize:16 }} /></Button></Tooltip>
+                                                                }
+                                                            </>
                                                         }
                                                         </>
                                                     }
@@ -1491,7 +1525,7 @@ export function GovernanceView(props: any) {
     const [tokenMap, setTokenMap] = React.useState(null);
     const [tokenArray, setTokenArray] = React.useState(null);
     const connection = new Connection(GRAPE_RPC_ENDPOINT);
-    const { publicKey } = useWallet();
+    const { publicKey, wallet } = useWallet();
     const [proposals, setProposals] = React.useState(null);
     const [participating, setParticipating] = React.useState(false)
     const [participatingRealm, setParticipatingRealm] = React.useState(null)
@@ -1501,6 +1535,9 @@ export function GovernanceView(props: any) {
     const [totalPassed, setTotalPassed] = React.useState(null);
     const [totalDefeated, setTotalDefeated] = React.useState(null);
     const [totalVotesCasted, setTotalTotalVotesCasted] = React.useState(null);
+    const [governingTokenMint, setGoverningTokenMint] = React.useState(null);
+    const [governingTokenDecimals, setGoverningTokenDecimals] = React.useState(null);
+    const [governanceType, setGovernanceType] = React.useState(0);
 
     const GOVERNANCE_PROGRAM_ID = 'GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw';
 
@@ -1579,6 +1616,24 @@ export function GovernanceView(props: any) {
                 const realmPk = grealm.pubkey;
 
                 //console.log("communityMintMaxVoteWeightSource: " + grealm.account.config.communityMintMaxVoteWeightSource.value.toNumber());
+                
+                let gTD = null;
+                if (tokenMap.get(grealm.account.communityMint.toBase58())){
+                    setGovernanceType(0);
+                    gTD = tokenMap.get(grealm.account.communityMint.toBase58()).decimals;
+                    setGoverningTokenDecimals(gTD);
+                } else{
+                   const btkn = await getBackedTokenMetadata(grealm.account.communityMint.toBase58(), wallet);
+                    if (btkn){
+                        setGovernanceType(1);
+                        gTD = btkn.decimals;
+                        setGoverningTokenDecimals(gTD)
+                    } else{
+                        setGovernanceType(2);
+                        gTD = 0;
+                        setGoverningTokenDecimals(gTD);
+                    }
+                }
 
                 if (grealm?.account?.config?.useCommunityVoterWeightAddin){
                 //{
@@ -1720,7 +1775,7 @@ export function GovernanceView(props: any) {
                 let passed = 0;
                 let defeated = 0;
                 let ttvc = 0;
-                console.log("tmap "+JSON.stringify(tokenMap))
+                
                 for (const props of gprops){
                     for (const prop of props){
                         if (prop){
@@ -1734,13 +1789,15 @@ export function GovernanceView(props: any) {
                             if (prop.account?.yesVotesCount && prop.account?.noVotesCount){
                                 //console.log("tmap: "+JSON.stringify(tokenMap));
                                 //console.log("item a: "+JSON.stringify(prop))
-                                if (tokenMap)
-                                    ttvc += +(((prop.account?.yesVotesCount.toNumber() + prop.account?.noVotesCount.toNumber())/Math.pow(10, (tokenMap.get(prop.account.governingTokenMint?.toBase58()) ? tokenMap.get(prop.account.governingTokenMint?.toBase58()).decimals : 6) )).toFixed(0))
+                                if (tokenMap){
+                                    ttvc += +(((prop.account?.yesVotesCount.toNumber() + prop.account?.noVotesCount.toNumber())/Math.pow(10, (gTD ? gTD : 6) )).toFixed(0))
+                                }
                                 
                             } else if (prop.account?.options) {
                                 //console.log("item b: "+JSON.stringify(prop))
-                                if (tokenMap)
-                                    ttvc += +(((prop.account?.options[0].voteWeight.toNumber() + prop.account?.denyVoteWeight.toNumber())/Math.pow(10, (tokenMap.get(prop.account.governingTokenMint?.toBase58()) ? tokenMap.get(prop.account.governingTokenMint?.toBase58()).decimals : 6) )).toFixed(0))
+                                if (tokenMap){
+                                    ttvc += +(((prop.account?.options[0].voteWeight.toNumber() + prop.account?.denyVoteWeight.toNumber())/Math.pow(10, (gTD ? gTD : 6) )).toFixed(0))
+                                }
                             }
                         }
                     }
@@ -1901,7 +1958,7 @@ export function GovernanceView(props: any) {
                                 </Box>
                                     
 
-                        <RenderGovernanceTable memberMap={memberMap} tokenMap={tokenMap} realm={realm} thisToken={thisToken} proposals={proposals} nftBasedGovernance={nftBasedGovernance} governanceToken={governanceToken} />
+                        <RenderGovernanceTable memberMap={memberMap} governanceType={governanceType} governingTokenDecimals={governingTokenDecimals} governingTokenMint={governingTokenMint} tokenMap={tokenMap} realm={realm} thisToken={thisToken} proposals={proposals} nftBasedGovernance={nftBasedGovernance} governanceToken={governanceToken} />
                     </Box>
                                 
                 );
