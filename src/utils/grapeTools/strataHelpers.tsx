@@ -9,6 +9,7 @@ import { getAssociatedAccountBalance, SplTokenMetadata, getMintInfo, getTokenAcc
 import { Provider, AnchorProvider } from "@project-serum/anchor";
 
 export async function getBackedTokenMetadata(tokenMint:string, wallet: any) {
+    //console.log("checking: "+tokenMint);
     const connection = new Connection(GRAPE_RPC_ENDPOINT);
     const provider = new AnchorProvider(connection, wallet, {});
 
@@ -18,31 +19,34 @@ export async function getBackedTokenMetadata(tokenMint:string, wallet: any) {
 
     //console.log("getting minttoken refkey")
     const mintTokenRef = (await SplTokenCollective.mintTokenRefKey(new PublicKey(tokenMint)))[0];
-    //console.log("mintTokenRef: "+JSON.stringify(mintTokenRef));
-
-    const tokenRef = await tokenCollectiveSdk.getTokenRef(mintTokenRef);
-
-    //console.log("tokenRef: "+JSON.stringify(tokenRef));
-
-    const meta = await tokenMetadataSdk.getTokenMetadata(tokenRef.tokenMetadata)
-
-    const tokenBondingKey = (await SplTokenBonding.tokenBondingKey(new PublicKey(tokenMint)))[0];
-    //console.log("getting bonding")
-    const tbonding = await tokenBondingSdk.getTokenBonding(tokenBondingKey)
-    //console.log("gbonding: "+JSON.stringify(tbonding));
     
-    if (meta){
-        const backedToken = {
-            address: tokenMint,
-            decimals: meta.mint.decimals,
-            name: meta.metadata.data.name,
-            symbol: meta.metadata.data.symbol,
-            logoURI: meta.data.image,
-            parentToken: tbonding.baseMint.toBase58()
+    if (mintTokenRef){
+        const tokenRef = await tokenCollectiveSdk.getTokenRef(mintTokenRef);
 
+        //console.log("tokenRef: "+JSON.stringify(tokenRef));
+        if (tokenRef && tokenRef?.tokenMetadata){
+            const meta = await tokenMetadataSdk.getTokenMetadata(tokenRef.tokenMetadata)
+
+            const tokenBondingKey = (await SplTokenBonding.tokenBondingKey(new PublicKey(tokenMint)))[0];
+            //console.log("getting bonding")
+            const tbonding = await tokenBondingSdk.getTokenBonding(tokenBondingKey)
+            //console.log("gbonding: "+JSON.stringify(tbonding));
+            
+            if (meta){
+                const backedToken = {
+                    address: tokenMint,
+                    decimals: meta.mint.decimals,
+                    name: meta.metadata.data.name,
+                    symbol: meta.metadata.data.symbol,
+                    logoURI: meta.data.image,
+                    parentToken: tbonding.baseMint.toBase58()
+
+                }
+                return backedToken;
+            }
         }
-        return backedToken;
-    } else{
-        return null;
     }
+    
+    return null;
+    
 }

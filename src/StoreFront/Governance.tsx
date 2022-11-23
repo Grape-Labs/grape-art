@@ -1600,11 +1600,14 @@ export function GovernanceView(props: any) {
                 let partOf = null;
                 for (const realm of ownerRecordsbyOwner){
                     //console.log("owner record realm: "+JSON.stringify(realm))
-                    if (realm.account.realm.toBase58() === governanceToken?.governance || governanceToken){
+                    
+                    //console.log(realm.account.realm.toBase58() + " vs " + governanceToken?.governance)
+                    if ((realm.account.realm.toBase58() === governanceToken?.governance) || 
+                        (realm.account.realm.toBase58() === governanceToken)){
                         pcp = true;
                         partOf = realm;
                         setParticipatingRealm(realm);
-                        //console.log("realm: "+JSON.stringify(realm))
+                        console.log("realm: "+JSON.stringify(realm))
                     }
                 }
                 setParticipating(pcp);
@@ -1618,12 +1621,12 @@ export function GovernanceView(props: any) {
                 //console.log("communityMintMaxVoteWeightSource: " + grealm.account.config.communityMintMaxVoteWeightSource.value.toNumber());
                 
                 let gTD = null;
-                if (tokenMap.get(grealm.account.communityMint.toBase58())){
+                if (tokenMap.get(grealm.account?.communityMint.toBase58())){
                     setGovernanceType(0);
-                    gTD = tokenMap.get(grealm.account.communityMint.toBase58()).decimals;
+                    gTD = tokenMap.get(grealm.account?.communityMint.toBase58()).decimals;
                     setGoverningTokenDecimals(gTD);
                 } else{
-                   const btkn = await getBackedTokenMetadata(grealm.account.communityMint.toBase58(), wallet);
+                    const btkn = await getBackedTokenMetadata(grealm.account?.communityMint.toBase58(), wallet);
                     if (btkn){
                         setGovernanceType(1);
                         gTD = btkn.decimals;
@@ -1667,6 +1670,7 @@ export function GovernanceView(props: any) {
                         console.log("ERR: "+errs)
                     }
                 }
+
 
                 const rawTokenOwnerRecords = await getAllTokenOwnerRecords(new Connection(GRAPE_RPC_ENDPOINT), grealm.owner, realmPk)
                 
@@ -1816,7 +1820,6 @@ export function GovernanceView(props: any) {
                 setTotalTotalVotesCasted(ttvc);
 
                 setProposals(sortedResults);
-
             }catch(e){console.log("ERR: "+e)}
         }
         setLoading(false);
