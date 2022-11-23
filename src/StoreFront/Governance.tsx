@@ -455,7 +455,6 @@ function GetParticipants(props: any){
                 }
             }
             */
-           alert(governingMintPromise.value.data.parsed.info.decimals)
 
         }catch(e){
             console.log('ERR: '+e)
