@@ -232,7 +232,8 @@ export default function GalleryItem(props: any){
                                         {!isparent ? (
                                             <Grid item sx={{display:'flex',justifyContent:'center',alignItems:'center'}}>
                                                 <ListItemButton
-                                                    component={Link} to={`${GRAPE_PREVIEW}${mint}`}
+                                                    //component={Link} to={`${GRAPE_PREVIEW}${mint}`}
+                                                    onClick={handleClickOpenDialog}
                                                     sx={{
                                                         width:'100%',
                                                         borderRadius:'25px',
@@ -519,6 +520,10 @@ export default function GalleryItem(props: any){
                                                 </div>
                                             </Grid>
                                                 
+                                
+                                    </>
+                                    }
+
                                 <BootstrapDialog 
                                     fullWidth={true}
                                     maxWidth={"lg"}
@@ -533,14 +538,12 @@ export default function GalleryItem(props: any){
                                     }}
                                 >
                                     <DialogContent>
-                                        <PreviewView floorPrice={floorPrice} handlekey={collectionitem?.address} />
+                                        <PreviewView floorPrice={floorPrice} handlekey={collectionitem?.address || mint} />
                                     </DialogContent>
                                     <DialogActions>
                                         <Button variant="text" onClick={handleCloseDialog}>Close</Button>
                                     </DialogActions>
                                 </BootstrapDialog>
-                            </>
-                            }
                         </>
                 );
             }
