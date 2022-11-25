@@ -10,6 +10,7 @@ import {
 } from '@solana/spl-governance';
 
 import ExplorerView from '../../utils/grapeTools/Explorer';
+import { getBackedTokenMetadata } from '../../utils/grapeTools/strataHelpers';
 
 import GovernanceDetailsView from './GovernanceDetails';
 import { TokenAmount } from '../../utils/grapeTools/safe-math';
@@ -37,7 +38,7 @@ const governancecolumns: GridColDef[] = [
             )
         }
     },
-    { field: 'governingTokenDepositAmount', headerName: 'Votes', width: 130, align: 'center'},
+    { field: 'governingTokenDepositAmount', headerName: 'Votes (deposited)', width: 130, flex: 1, align: 'right'},
     { field: 'unrelinquishedVotesCount', headerName: 'Unreliquinshed', width: 130, align: 'center', hide: true},
     { field: 'totalVotesCount', headerName: 'Total Votes', width: 130, align: 'center' },
     { field: 'details', headerName: '', width: 150,  align: 'center',
@@ -74,7 +75,7 @@ export function GovernanceView(props: any){
     const [governanceRecord, setGovernanceRecord] = React.useState(null);
     const [governanceRecordRows, setGovernanceRecordRows] = React.useState(null);
     const [loadingGovernance, setLoadingGovernance] = React.useState(false);
-    const { publicKey } = useWallet();
+    const { wallet } = useWallet();
     const [selectionGovernanceModel, setSelectionGovernanceModel] = React.useState(null);
     
     const fetchGovernance = async () => {
@@ -119,7 +120,15 @@ export function GovernanceView(props: any){
                     if (thisToken){
                         votes = (new TokenAmount(+item.account.governingTokenDepositAmount, thisToken.decimals).format())
                     } else{
-                        votes = 'NFT';
+
+                        
+                        const btkn = await getBackedTokenMetadata(realm.account?.communityMint.toBase58(), wallet);
+                        if (btkn){
+                            const parentToken = tokenMap.get(btkn.parentToken).name;
+                            votes = (new TokenAmount(+item.account.governingTokenDepositAmount, btkn.decimals).format()) + ' ' + parentToken + ' Backed Token'
+                        }else{
+                            votes = 'NFT';
+                        }
                     }
                 } 
                 
