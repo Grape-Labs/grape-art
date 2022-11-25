@@ -123,7 +123,12 @@ export function GovernanceView(props: any){
                         const btkn = await getBackedTokenMetadata(realm.account?.communityMint.toBase58(), wallet);
                         if (btkn){
                             const parentToken = tokenMap.get(btkn.parentToken).name;
-                            votes = (new TokenAmount(+item.account.governingTokenDepositAmount, btkn.decimals).format());// + ' ' + parentToken + ' Backed Token'
+                            const vote_count =  (new TokenAmount(+item.account.governingTokenDepositAmount, btkn.decimals).format());
+                            if (+vote_count > 0)
+                                votes = (new TokenAmount(+item.account.governingTokenDepositAmount, btkn.decimals).format());
+                            else
+                                votes = parentToken + ' Backed Token';
+
                         }else{
                             votes = 'NFT';
                         }
