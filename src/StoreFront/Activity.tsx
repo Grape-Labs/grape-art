@@ -855,7 +855,7 @@ export default function ActivityView(props: any){
                                             VOLUME/ACTIVITY
                                         </Typography>
                                         <Typography variant="subtitle2">
-                                            {meStats ?
+                                            {(meStats && +meStats.volumeAll) > 0 ?
                                                 <>{(meStats.volumeAll/1000000000000).toFixed(1)}k SOL</>
                                             :
                                                 <>
