@@ -1911,7 +1911,7 @@ export function PreviewView(this: any, props: any) {
                 if (meta_response){
                     let meta_final = decodeMetadata(meta_response.data);
                     
-                    console.log("final: "+JSON.stringify(meta_final))
+                    //console.log("final: "+JSON.stringify(meta_final))
 
                     let file_metadata = meta_final.data.uri;
                     let file_metadata_url = new URL(file_metadata);

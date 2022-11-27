@@ -3,6 +3,7 @@ import { styled } from '@mui/material/styles';
 
 import { Link, useLocation, NavLink } from 'react-router-dom';
 import { TokenAmount } from '../utils/grapeTools/safe-math';
+import axios from "axios";
 
 import {
     Box,
@@ -68,6 +69,7 @@ import {
     GRAPE_PREVIEW, 
     GRAPE_PROFILE,
     DRIVE_PROXY, 
+    HELIUS_API
 } from '../utils/grapeTools/constants';
 
 import { MakeLinkableAddress, ValidateCurve, trimAddress, timeAgo } from '../utils/grapeTools/WalletAddress'; // global key handling
@@ -307,6 +309,9 @@ export default function ActivityView(props: any){
     ];
     
     const handleClickOpenDialog = async () => {
+        
+        //await getNftEvents();
+
         await getAllActivity();
         //if (activityLoaded)
         setOpenDialog(true);
@@ -532,6 +537,42 @@ export default function ActivityView(props: any){
             console.log(e);
             return null;
         }
+    }
+
+    const getNftEvents = async () => {
+        let helius_results = null;
+
+        if (HELIUS_API && collectionAuthority){
+            const tx: any[] = [];
+            const apiURL = "https://api.helius.xyz/v0/addresses"
+            const address = collectionAuthority.address;
+            const resource = 'nft-events';
+            const options = `api-key=${HELIUS_API}&type=NFT_LISTING`
+            let mostRecentTxn = ""
+            const url = `${apiURL}/${address}/${resource}?${options}&until=${mostRecentTxn}`
+            const parseTransactions = async () => {
+                const { data } = await axios.get(url)
+                console.log("parsed transactions: ", data)
+
+                helius_results = data;
+                /*
+                for (const item of data){
+                    tx.push({
+                        signature:item.signature,
+                        blockTime:item.timestamp,
+                        //amount:tx_cost,
+                        //owner:owner,
+                        memo:'',
+                        source:null,
+                        type:item.description + ' | ' + item.type,
+                    });
+                }*/
+
+            }
+            await parseTransactions();
+
+            //setSolanaTransactions(tx);
+        } 
     }
 
     const getAllActivity = async () => {
