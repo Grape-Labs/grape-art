@@ -364,6 +364,7 @@ export function MembersView(props: any) {
     const [totalDepositedCouncilVotes, setDepositedTotalCouncilVotes] = React.useState(null);
     const [governingTokenMint, setGoverningTokenMint] = React.useState(null);
     const [governingTokenDecimals, setGoverningTokenDecimals] = React.useState(null);
+    const [circulatingSupply, setCirculatingSupply] = React.useState(null);
 
     const getTokens = async () => {
         const tarray:any[] = [];
@@ -424,6 +425,13 @@ export function MembersView(props: any) {
                     }
                 }
 
+                const tknSupply = await connection.getTokenSupply(grealm.account.communityMint);
+
+                //const governingMintPromise = await connection.getParsedAccountInfo(grealm.account.communityMint);
+                if (tknSupply)
+                    setCirculatingSupply(tknSupply);
+            
+            
                 const realmPk = grealm.pubkey;
 
                 const trecords = await getAllTokenOwnerRecords(new Connection(GRAPE_RPC_ENDPOINT), grealm.owner, realmPk)
@@ -594,7 +602,7 @@ export function MembersView(props: any) {
                             {(totalDepositedVotes || totalCouncilVotes) &&
                                 <Box sx={{ alignItems: 'center', textAlign: 'center',p:1}}>
                                     <Grid container spacing={0}>
-                                        <Grid item xs={12} sm={4} md={4} key={1}>
+                                        <Grid item xs={12} sm={6} md={3} key={1}>
                                             <Box
                                                 className='grape-store-stat-item'
                                                 sx={{borderRadius:'24px',m:2,p:1}}
@@ -607,7 +615,7 @@ export function MembersView(props: any) {
                                                 </Typography>
                                             </Box>
                                         </Grid>
-                                        <Grid item xs={12} sm={4} md={4} key={1}>
+                                        <Grid item xs={12} sm={6} md={3} key={2}>
                                             <Box
                                                 className='grape-store-stat-item'
                                                 sx={{borderRadius:'24px',m:2,p:1}}
@@ -625,7 +633,7 @@ export function MembersView(props: any) {
                                             </Box>
                                         </Grid>
                                         
-                                        <Grid item xs={12} sm={4} md={4} key={1}>
+                                        <Grid item xs={12} sm={6} md={3} key={3}>
                                             <Box
                                                 className='grape-store-stat-item'
                                                 sx={{borderRadius:'24px',m:2,p:1}}
@@ -643,6 +651,24 @@ export function MembersView(props: any) {
                                                         <>/</>
                                                     }
                                                     {totalDepositedCouncilVotes && <>{totalDepositedCouncilVotes}</>}
+                                                </Typography>
+                                            </Box>
+                                        </Grid>
+
+                                        <Grid item xs={12} sm={6} md={3} key={4}>
+                                            <Box
+                                                className='grape-store-stat-item'
+                                                sx={{borderRadius:'24px',m:2,p:1}}
+                                            >
+                                                <Typography variant="body2" sx={{color:'yellow'}}>
+                                                    <>% Circulating Supply</>
+                                                </Typography>
+                                                <Typography variant="h3">
+                                                    {circulatingSupply &&
+                                                        <>
+                                                            {((totalDepositedVotes/circulatingSupply.value.amount)*100).toFixed(1)}%
+                                                        </>
+                                                    }
                                                 </Typography>
                                             </Box>
                                         </Grid>
