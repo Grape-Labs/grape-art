@@ -654,24 +654,28 @@ export function MembersView(props: any) {
                                                 </Typography>
                                             </Box>
                                         </Grid>
-
-                                        <Grid item xs={12} sm={6} md={3} key={4}>
-                                            <Box
-                                                className='grape-store-stat-item'
-                                                sx={{borderRadius:'24px',m:2,p:1}}
-                                            >
-                                                <Typography variant="body2" sx={{color:'yellow'}}>
-                                                    <>% Circulating Supply</>
-                                                </Typography>
-                                                <Typography variant="h3">
-                                                    {circulatingSupply &&
-                                                        <>
-                                                            {((totalDepositedVotes/circulatingSupply.value.amount)*100).toFixed(1)}%
-                                                        </>
-                                                    }
-                                                </Typography>
-                                            </Box>
-                                        </Grid>
+                                        {circulatingSupply && 
+                                            <Grid item xs={12} sm={6} md={3} key={4}>
+                                                <Box
+                                                    className='grape-store-stat-item'
+                                                    sx={{borderRadius:'24px',m:2,p:1}}
+                                                >
+                                                    <Typography variant="body2" sx={{color:'yellow'}}>
+                                                        <>% Circulating Supply</>
+                                                    </Typography>
+                                                    <Typography variant="h3">
+                                                        
+                                                        {circulatingSupply.value.amount > 0 ?
+                                                            <>
+                                                                {((totalDepositedVotes/circulatingSupply.value.amount)*100).toFixed(1)}%
+                                                            </>
+                                                        :
+                                                            <>-</>
+                                                        }
+                                                    </Typography>
+                                                </Box>
+                                            </Grid>
+                                        }
                                         
                                     </Grid>
                                     {/*
