@@ -612,7 +612,7 @@ export function MembersView(props: any) {
                             {(totalDepositedVotes || totalCouncilVotes) &&
                                 <Box sx={{ alignItems: 'center', textAlign: 'center',p:1}}>
                                     <Grid container spacing={0}>
-                                        <Grid item xs={12} sm={6} md={3} key={1}>
+                                        <Grid item xs={12} md={6} lg={3} key={1}>
                                             <Box
                                                 className='grape-store-stat-item'
                                                 sx={{borderRadius:'24px',m:2,p:1}}
@@ -625,7 +625,7 @@ export function MembersView(props: any) {
                                                 </Typography>
                                             </Box>
                                         </Grid>
-                                        <Grid item xs={12} sm={6} md={3} key={2}>
+                                        <Grid item xs={12} md={6} lg={3} key={2}>
                                             <Box
                                                 className='grape-store-stat-item'
                                                 sx={{borderRadius:'24px',m:2,p:1}}
@@ -643,7 +643,7 @@ export function MembersView(props: any) {
                                             </Box>
                                         </Grid>
                                         
-                                        <Grid item xs={12} sm={6} md={3} key={3}>
+                                        <Grid item xs={12} md={6} lg={3} key={3}>
                                             <Box
                                                 className='grape-store-stat-item'
                                                 sx={{borderRadius:'24px',m:2,p:1}}
@@ -665,7 +665,7 @@ export function MembersView(props: any) {
                                             </Box>
                                         </Grid>
                                         {circulatingSupply && 
-                                            <Grid item xs={12} sm={6} md={3} key={4}>
+                                            <Grid item xs={12} md={6} lg={3} key={4}>
                                                 <Box
                                                     className='grape-store-stat-item'
                                                     sx={{borderRadius:'24px',m:2,p:1}}
