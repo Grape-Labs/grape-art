@@ -362,6 +362,7 @@ export function MembersView(props: any) {
     const [totalCouncilVotes, setTotalCouncilVotes] = React.useState(null);
     const [totalParticipants, setTotalParticipants] = React.useState(null);
     const [activeParticipants, setActiveParticipants] = React.useState(null);
+    const [votingParticipants, setVotingParticipants] = React.useState(null);
     const [totalVotesCasted, setTotalVotesCasted] = React.useState(null);
     const [totalDepositedCouncilVotes, setDepositedTotalCouncilVotes] = React.useState(null);
     const [governingTokenMint, setGoverningTokenMint] = React.useState(null);
@@ -454,6 +455,7 @@ export function MembersView(props: any) {
                 let tDepositedCouncilVotesCasted = 0;
                 let tParticipants = 0;
                 let aParticipants = 0;
+                let lParticipants = 0;
 
                 for (let record of trecords){
                     //console.log("record: "+JSON.stringify(record));
@@ -510,6 +512,8 @@ export function MembersView(props: any) {
                             }
                             if (record.account.totalVotesCount > 0)
                                 aParticipants++;
+                            if ((record.account.governingTokenDepositAmount.toNumber() > 0) || (record.account.governingTokenDepositAmount.toNumber() > 0))
+                                lParticipants++;
                             tParticipants++; // all time
                         
                     }
@@ -520,7 +524,8 @@ export function MembersView(props: any) {
                 setTotalCouncilVotes(tCouncilVotes > 0 ? tCouncilVotes : null);
                 setDepositedTotalCouncilVotes(tDepositedCouncilVotesCasted > 0 ? tDepositedCouncilVotesCasted : null);
                 setTotalParticipants(tParticipants > 0 ? tParticipants : null);
-                setActiveParticipants(aParticipants > 0 ? aParticipants : null);
+                setActiveParticipants(lParticipants > 0 ? lParticipants : null);
+                setVotingParticipants(aParticipants > 0 ? aParticipants : null);
 
                 //console.log("participantArray: "+JSON.stringify(participantArray));
                 const presortedResults = participantArray.sort((a,b) => (a.totalVotesCount > b.totalVotesCount) ? 1 : -1);
@@ -613,10 +618,10 @@ export function MembersView(props: any) {
                                                 sx={{borderRadius:'24px',m:2,p:1}}
                                             >
                                                 <Typography variant="body2" sx={{color:'yellow'}}>
-                                                    <>Active/Total Participants</>
+                                                    <>Active/Participating/All Participants</>
                                                 </Typography>
                                                 <Typography variant="h3">
-                                                    {activeParticipants}/{totalParticipants}
+                                                    {activeParticipants}/{votingParticipants}/{totalParticipants}
                                                 </Typography>
                                             </Box>
                                         </Grid>
