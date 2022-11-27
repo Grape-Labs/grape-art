@@ -1914,10 +1914,10 @@ export function GovernanceView(props: any) {
                                                 sx={{borderRadius:'24px',m:2,p:1}}
                                             >
                                                 <Typography variant="body2" sx={{color:'yellow'}}>
-                                                    <>Total Proposals</>
+                                                    <>Total Proposals/Success Rate</>
                                                 </Typography>
                                                 <Typography variant="h3">
-                                                    {totalProposals}
+                                                    {totalProposals}/{((totalPassed/totalProposals)*100).toFixed(1)}%
                                                 </Typography>
                                             </Box>
                                         </Grid>

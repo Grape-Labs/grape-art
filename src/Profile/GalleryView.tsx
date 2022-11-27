@@ -497,17 +497,16 @@ export default function GalleryView(props: any){
                                             }
                                             
                                             {collectionAttributes.map((element:any, key:number) => ((key<=0 || (key>0 && collectionAttributes[key-1].trait_type != collectionAttributes[key].trait_type)) &&
-                                                    <FormControl variant="standard" fullWidth sx={{mt:1.25}}>
+                                                    <FormControl variant="standard" fullWidth sx={{mt:1.25}} key={key}>
                                                         <InputLabel id="attribute_select_label">{element.trait_type}</InputLabel>
                                                         <Select
                                                             id={`attribute_select_${element.trait_type}`}
                                                             value={selected}
                                                             onChange={(e) => handleAttributeFilter(element.trait_type, e.target.value)}
-                                                            
                                                         >
                                                             <MenuItem selected value={''}></MenuItem>
                                                             {collectionAttributes.map((inner:any, innerkey:number) => (element?.trait_type.toLowerCase() === inner?.trait_type.toLowerCase()) &&
-                                                                <MenuItem value={inner.value}>{inner.value} {inner?.floor > 0 && <small>&nbsp;-&nbsp;{inner.floor}<SolCurrencyIcon sx={{fontSize:"10px"}} /></small>} {inner?.rarity > 0 && <Typography color='yellow'><small>&nbsp;:&nbsp;{inner.rarity.toFixed(2)}%</small></Typography>}</MenuItem>
+                                                                <MenuItem key={innerkey} value={inner.value}>{inner.value} {inner?.floor > 0 && <small>&nbsp;-&nbsp;{inner.floor}<SolCurrencyIcon sx={{fontSize:"10px"}} /></small>} {inner?.rarity > 0 && <Typography color='yellow'><small>&nbsp;:&nbsp;{inner.rarity.toFixed(2)}%</small></Typography>}</MenuItem>
                                                             )}
                                                         </Select>
                                                         
