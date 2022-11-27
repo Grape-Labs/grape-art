@@ -92,7 +92,6 @@ import SolCurrencyIcon from '../components/static/SolCurrencyIcon';
 
 import { ValidateAddress, ValidateCurve, trimAddress, timeAgo, formatBlockTime } from '../utils/grapeTools/WalletAddress'; // global key handling
 import { GRAPE_RPC_ENDPOINT, 
-    THEINDEX_RPC_ENDPOINT, 
     GRAPE_PROFILE, 
     GRAPE_PREVIEW, 
     DRIVE_PROXY,
