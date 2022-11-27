@@ -1916,9 +1916,21 @@ export function GovernanceView(props: any) {
                                                 <Typography variant="body2" sx={{color:'yellow'}}>
                                                     <>Total Proposals/Success Rate</>
                                                 </Typography>
-                                                <Typography variant="h3">
-                                                    {totalProposals}/{((totalPassed/totalProposals)*100).toFixed(1)}%
-                                                </Typography>
+                                                <Tooltip title={<>
+                                                            Total proposals created in this governance<br/>Success rate is calculated on successfully completed proposals
+                                                        </>
+                                                    }>
+                                                    <Button
+                                                        color='inherit'
+                                                        sx={{
+                                                            borderRadius:'17px'
+                                                        }}
+                                                    >
+                                                        <Typography variant="h3">
+                                                            {totalProposals}/{((totalPassed/totalProposals)*100).toFixed(1)}%
+                                                        </Typography>
+                                                    </Button>
+                                                </Tooltip>
                                             </Box>
                                         </Grid>
                                         <Grid item xs={12} sm={4} md={4} key={1}>
@@ -1929,9 +1941,21 @@ export function GovernanceView(props: any) {
                                                 <Typography variant="body2" sx={{color:'yellow'}}>
                                                     <>Total Casted Votes</>
                                                 </Typography>
-                                                <Typography variant="h3">
-                                                    {getFormattedNumberToLocale(totalVotesCasted)}
-                                                </Typography>
+                                                <Tooltip title={<>
+                                                            Total votes casted for this governnace
+                                                        </>
+                                                    }>
+                                                    <Button
+                                                        color='inherit'
+                                                        sx={{
+                                                            borderRadius:'17px'
+                                                        }}
+                                                    >
+                                                        <Typography variant="h3">
+                                                            {getFormattedNumberToLocale(totalVotesCasted)}
+                                                        </Typography>
+                                                    </Button>
+                                                </Tooltip>
                                             </Box>
                                         </Grid>
                                         
@@ -1943,10 +1967,22 @@ export function GovernanceView(props: any) {
                                                 <Typography variant="body2" sx={{color:'yellow'}}>
                                                     <>Passing/Defeated</>
                                                 </Typography>
-                                                <Typography variant="h3">
-                                                    <Badge badgeContent={<ThumbUpIcon fontSize='small' />} variant="dot" color="success">{totalPassed}</Badge>/
-                                                    <Badge badgeContent={<ThumbDownIcon fontSize='small' />} variant="dot" color="error">{totalDefeated}</Badge>
-                                                </Typography>
+                                                <Tooltip title={<>
+                                                            Total proposals passed / Total proposals defeated
+                                                        </>
+                                                    }>
+                                                    <Button
+                                                        color='inherit'
+                                                        sx={{
+                                                            borderRadius:'17px'
+                                                        }}
+                                                    >
+                                                        <Typography variant="h3">
+                                                            <Badge badgeContent={<ThumbUpIcon fontSize='small' />} variant="dot" color="success">{totalPassed}</Badge>/
+                                                            <Badge badgeContent={<ThumbDownIcon fontSize='small' />} variant="dot" color="error">{totalDefeated}</Badge>
+                                                        </Typography>
+                                                    </Button>
+                                                </Tooltip>
                                             </Box>
                                         </Grid>
                                         

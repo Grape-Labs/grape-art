@@ -620,9 +620,22 @@ export function MembersView(props: any) {
                                                 <Typography variant="body2" sx={{color:'yellow'}}>
                                                     <>Active/Participating/All Participants</>
                                                 </Typography>
-                                                <Typography variant="h3">
-                                                    {activeParticipants}/{votingParticipants}/{totalParticipants}
-                                                </Typography>
+                                                <Tooltip title={<>
+                                                        <strong>Active:</strong> Currently Active Deposited<br/>
+                                                        <strong>Participating:</strong> All time Participating votes<br/>
+                                                        <strong>All:</strong> Total Lifetime Deposited in Governance</>
+                                                    }>
+                                                    <Button
+                                                        color='inherit'
+                                                        sx={{
+                                                            borderRadius:'17px'
+                                                        }}
+                                                    >
+                                                        <Typography variant="h3">
+                                                            {activeParticipants}/{votingParticipants}/{totalParticipants}
+                                                        </Typography>
+                                                    </Button>
+                                                </Tooltip>
                                             </Box>
                                         </Grid>
                                         <Grid item xs={12} md={6} lg={3} key={2}>
@@ -633,13 +646,29 @@ export function MembersView(props: any) {
                                                 <Typography variant="body2" sx={{color:'yellow'}}>
                                                     <>Total Votes</>
                                                 </Typography>
-                                                <Typography variant="h3">
-                                                    {totalVotesCasted && <>{totalVotesCasted}</>}
-                                                    {(totalVotesCasted && totalDepositedCouncilVotes) &&
-                                                        <>/</>
-                                                    }
-                                                    {totalCouncilVotes && <>{totalCouncilVotes}</>}
-                                                </Typography>
+                                                <Tooltip title={<>
+                                                            {totalVotesCasted && <>Total Votes Casted</>}
+                                                            {(totalVotesCasted && totalDepositedCouncilVotes) &&
+                                                                <>/</>
+                                                            }
+                                                            {totalCouncilVotes && <>Total Council Votes Casted</>}
+                                                        </>
+                                                    }>
+                                                    <Button
+                                                        color='inherit'
+                                                        sx={{
+                                                            borderRadius:'17px'
+                                                        }}
+                                                    >
+                                                        <Typography variant="h3">
+                                                            {totalVotesCasted && <>{totalVotesCasted}</>}
+                                                            {(totalVotesCasted && totalDepositedCouncilVotes) &&
+                                                                <>/</>
+                                                            }
+                                                            {totalCouncilVotes && <>{totalCouncilVotes}</>}
+                                                        </Typography>
+                                                    </Button>
+                                                </Tooltip>
                                             </Box>
                                         </Grid>
                                         
@@ -651,17 +680,33 @@ export function MembersView(props: any) {
                                                 <Typography variant="body2" sx={{color:'yellow'}}>
                                                     <>Total Votes Deposited</>
                                                 </Typography>
-                                                <Typography variant="h3">
-                                                    {totalDepositedVotes &&
-                                                        <>
-                                                            {getFormattedNumberToLocale(+((totalDepositedVotes)/Math.pow(10, governingTokenDecimals || 0)).toFixed(0))}
+                                                <Tooltip title={<>
+                                                            {totalVotesCasted && <>Total Votes Deposited</>}
+                                                            {(totalVotesCasted && totalDepositedCouncilVotes) &&
+                                                                <>/</>
+                                                            }
+                                                            {totalCouncilVotes && <>Total Council Votes Deposited</>}
                                                         </>
-                                                    }
-                                                    {(totalDepositedVotes && totalDepositedCouncilVotes) &&
-                                                        <>/</>
-                                                    }
-                                                    {totalDepositedCouncilVotes && <>{totalDepositedCouncilVotes}</>}
-                                                </Typography>
+                                                    }>
+                                                    <Button
+                                                        color='inherit'
+                                                        sx={{
+                                                            borderRadius:'17px'
+                                                        }}
+                                                    >
+                                                        <Typography variant="h3">
+                                                            {totalDepositedVotes &&
+                                                                <>
+                                                                    {getFormattedNumberToLocale(+((totalDepositedVotes)/Math.pow(10, governingTokenDecimals || 0)).toFixed(0))}
+                                                                </>
+                                                            }
+                                                            {(totalDepositedVotes && totalDepositedCouncilVotes) &&
+                                                                <>/</>
+                                                            }
+                                                            {totalDepositedCouncilVotes && <>{totalDepositedCouncilVotes}</>}
+                                                        </Typography>
+                                                    </Button>
+                                                </Tooltip>
                                             </Box>
                                         </Grid>
                                         {circulatingSupply && 
@@ -673,16 +718,28 @@ export function MembersView(props: any) {
                                                     <Typography variant="body2" sx={{color:'yellow'}}>
                                                         <>% Circulating Supply</>
                                                     </Typography>
-                                                    <Typography variant="h3">
-                                                        
-                                                        {circulatingSupply.value.amount > 0 ?
-                                                            <>
-                                                                {((totalDepositedVotes/circulatingSupply.value.amount)*100).toFixed(1)}%
-                                                            </>
-                                                        :
-                                                            <>-</>
-                                                        }
-                                                    </Typography>
+                                                    <Tooltip title={<>
+                                                            Calculated from the total token circulating supply
+                                                        </>
+                                                    }>
+                                                        <Button
+                                                            color='inherit'
+                                                            sx={{
+                                                                borderRadius:'17px'
+                                                            }}
+                                                        >
+                                                            <Typography variant="h3">
+                                                                
+                                                                {circulatingSupply.value.amount > 0 ?
+                                                                    <>
+                                                                        {((totalDepositedVotes/circulatingSupply.value.amount)*100).toFixed(1)}%
+                                                                    </>
+                                                                :
+                                                                    <>-</>
+                                                                }
+                                                            </Typography>
+                                                        </Button>
+                                                    </Tooltip>
                                                 </Box>
                                             </Grid>
                                         }
