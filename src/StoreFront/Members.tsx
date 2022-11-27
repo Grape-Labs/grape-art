@@ -60,6 +60,7 @@ import {
     TWITTER_PROXY } from '../utils/grapeTools/constants';
 
 import { MakeLinkableAddress, ValidateAddress, ValidateCurve, trimAddress, timeAgo } from '../utils/grapeTools/WalletAddress'; // global key handling
+import { A } from '../utils/auctionHouse/helpers/constants';
 //import { RevokeCollectionAuthority } from '@metaplex-foundation/mpl-token-metadata';
 
 const StyledTable = styled(Table)(({ theme }) => ({
@@ -360,6 +361,7 @@ export function MembersView(props: any) {
     const [totalDepositedVotes, setTotalDepositedVotes] = React.useState(null);
     const [totalCouncilVotes, setTotalCouncilVotes] = React.useState(null);
     const [totalParticipants, setTotalParticipants] = React.useState(null);
+    const [activeParticipants, setActiveParticipants] = React.useState(null);
     const [totalVotesCasted, setTotalVotesCasted] = React.useState(null);
     const [totalDepositedCouncilVotes, setDepositedTotalCouncilVotes] = React.useState(null);
     const [governingTokenMint, setGoverningTokenMint] = React.useState(null);
@@ -451,6 +453,7 @@ export function MembersView(props: any) {
                 let tVotesCasted = 0;
                 let tDepositedCouncilVotesCasted = 0;
                 let tParticipants = 0;
+                let aParticipants = 0;
 
                 for (let record of trecords){
                     //console.log("record: "+JSON.stringify(record));
@@ -505,8 +508,9 @@ export function MembersView(props: any) {
                                 tVotes += record.account.governingTokenDepositAmount.toNumber();
                                 tVotesCasted += record.account.totalVotesCount;
                             }
-
-                            tParticipants++;
+                            if (record.account.totalVotesCount > 0)
+                                aParticipants++;
+                            tParticipants++; // all time
                         
                     }
                 }
@@ -516,6 +520,7 @@ export function MembersView(props: any) {
                 setTotalCouncilVotes(tCouncilVotes > 0 ? tCouncilVotes : null);
                 setDepositedTotalCouncilVotes(tDepositedCouncilVotesCasted > 0 ? tDepositedCouncilVotesCasted : null);
                 setTotalParticipants(tParticipants > 0 ? tParticipants : null);
+                setActiveParticipants(aParticipants > 0 ? aParticipants : null);
 
                 //console.log("participantArray: "+JSON.stringify(participantArray));
                 const presortedResults = participantArray.sort((a,b) => (a.totalVotesCount > b.totalVotesCount) ? 1 : -1);
@@ -608,10 +613,10 @@ export function MembersView(props: any) {
                                                 sx={{borderRadius:'24px',m:2,p:1}}
                                             >
                                                 <Typography variant="body2" sx={{color:'yellow'}}>
-                                                    <>Total Participants</>
+                                                    <>Active/Total Participants</>
                                                 </Typography>
                                                 <Typography variant="h3">
-                                                    {totalParticipants}
+                                                    {activeParticipants}/{totalParticipants}
                                                 </Typography>
                                             </Box>
                                         </Grid>
