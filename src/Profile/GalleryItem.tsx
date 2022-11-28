@@ -13,6 +13,7 @@ import {
     List,
     ListItem,
     ListItemText,
+    Divider,
     Skeleton,
     ListItemButton,
     ImageListItemBar,
@@ -485,9 +486,13 @@ export default function GalleryItem(props: any){
                                                                 {collectionitem?.attributes &&
                                                                     <ListItem sx={{pt:0,pb:0}}>
                                                                         <ListItemText sx={{textAlign:'center'}}>
-                                                                                <Tooltip title={<>
+                                                                                <Tooltip TransitionComponent={Zoom} title={<>
                                                                                     {collectionitem.attributes.map((element:any, key:number) =>
-                                                                                        <>{key > 0 && <br/>}<strong>{element.trait_type}:</strong> {element.value}</>
+                                                                                        <>{key > 0 && <><Divider/></>}
+                                                                                            <Typography variant="body2">
+                                                                                                <strong>{element.trait_type}:</strong> {element.value}
+                                                                                            </Typography>
+                                                                                        </>
                                                                                     )}</>
                                                                                 }>
                                                                                     <Button color='inherit' sx={{borderRadius:'17px',textTransform:'none'}}>
