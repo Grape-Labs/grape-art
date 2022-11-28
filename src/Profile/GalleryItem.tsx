@@ -21,7 +21,8 @@ import {
     Button,
     Dialog,
     DialogContent,
-    DialogActions
+    DialogActions,
+    Zoom
 } from '@mui/material';
 
 import {
