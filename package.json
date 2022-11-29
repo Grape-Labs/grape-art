@@ -86,6 +86,7 @@
         "@types/react-copy-to-clipboard": "^5.0.3",
         "@types/react-helmet": "^6.1.5",
         "@types/react-router-dom": "^5.1.6",
+        "@vercel/analytics": "^0.1.5",
         "axios": "^0.21.1",
         "bignumber.js": "^9.0.1",
         "bn.js": "^5.1.3",

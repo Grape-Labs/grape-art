@@ -4,6 +4,8 @@ import { styled, ThemeProvider } from '@mui/material/styles';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 //import { LogView } from "./Log/Log";
 
+import { inject } from '@vercel/analytics';
+
 import { MyCollectionsView } from "./MyCollections/MyCollections";
 import { ProfileView } from './Profile/Profile';
 import { PreviewView } from './Preview/Preview';
@@ -130,6 +132,7 @@ function DialectProviders({ children }: { children: ReactNode }): JSX.Element {
     );
 
     React.useEffect(() => {
+        inject();
         setDialectWalletAdapter(walletToDialectWallet(wallet));
     }, [wallet]);
 
