@@ -174,6 +174,8 @@ export default function GalleryItem(props: any){
                     let full_url = new URL(img_url_string);
                     const ARWEAVE = 'https://arweave.net';
                     const IPFS = 'https://ipfs.io';
+                    const IPFS_2 = "https://nftstorage.link/ipfs";
+                    const IPFS_3 = ".ipfs.nftstorage.link";
                     /*
                     if (SHDW_PROXY) {
                         if (img_url_string.startsWith(ARWEAVE)) {
@@ -198,10 +200,24 @@ export default function GalleryItem(props: any){
                             }
                             */
                             let image_url = DRIVE_PROXY+img_url_string;
+
                             if (img_url_string.startsWith(IPFS)){
                                 image_url = DRIVE_PROXY+CLOUDFLARE_IPFS_CDN+img_url_string.replace(IPFS,'');
+                            } else if (img_url_string.startsWith(IPFS_2)){
+                                image_url = DRIVE_PROXY+CLOUDFLARE_IPFS_CDN+img_url_string.replace(IPFS_2,'');
+                            } else if (img_url_string.contains(IPFS_3)){
+
+                                const path = full_url.pathname.split('.');
+                                const folders = full_url.pathname.split('/');
+                                
+                                image_url = DRIVE_PROXY+CLOUDFLARE_IPFS_CDN+'/'+path[0]+'/'+folders[folders.length-1];
+                                // we need to split this up to this format:
+                                //https://cloudflare-ipfs.com/ipfs/bafybeigl5fquoseobbanahhb2azvrq2leivmqwcbyrlkx2eeljcsc57wwi/1027.gif
+                                // from 
+                                // https://bafybeigl5fquoseobbanahhb2azvrq2leivmqwcbyrlkx2eeljcsc57wwi.ipfs.nftstorage.link/1759.gif
+                                //image_url = DRIVE_PROXY+CLOUDFLARE_IPFS_CDN+img_url_string.replace(IPFS_3,'');
                             }
-                            
+
                             image = image_url;
                                 back_image = image;
                             
