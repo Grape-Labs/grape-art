@@ -1923,10 +1923,14 @@ export function StoreFrontView(this: any, props: any) {
                             {collectionAuthority?.countdown &&
                                 <Box
                                     sx={{
-                                        p:3
+                                        background:'rgba(0,0,0,0.1)',
+                                        p:3,
+                                        borderRadius:'17px',
                                     }}
                                 >
-                                    <Typography variant='h6'>
+                                    <Typography variant='h6'
+                                        sx={{color:'yellow'}}
+                                    >
                                         {collectionAuthority?.countdownTitle}   
                                     </Typography>
                                     {(Math.floor((new Date(collectionAuthority?.countdown)).getTime() / 1000) - Math.floor(Date.now() / 1000)) > 0 ?
