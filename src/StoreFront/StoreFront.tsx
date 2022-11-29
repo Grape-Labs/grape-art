@@ -1922,7 +1922,9 @@ export function StoreFrontView(this: any, props: any) {
 
                             {collectionAuthority?.countdown &&
                                 <Box
-                                    sx={{m:2}}
+                                    sx={{
+                                        p:3
+                                    }}
                                 >
                                     <Typography variant='h6'>
                                         {collectionAuthority?.countdownTitle}   
