@@ -16438,6 +16438,11 @@ react-copy-to-clipboard@^5.0.4:
     copy-to-clipboard "^3.3.1"
     prop-types "^15.8.1"
 
+react-countdown-circle-timer@^3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/react-countdown-circle-timer/-/react-countdown-circle-timer-3.1.0.tgz#394737817a7bec9cb9162e4c3e80f8f18ef20820"
+  integrity sha512-vU3fQ+Te7abhSmvTT5N0+4aOJhXAg6wVWvpEd5snkB7lFrAlEBl5dqzLSGnPZDI4MWbp7ayMDkcLWALWE+flQQ==
+
 react-dev-utils@^12.0.1:
   version "12.0.1"
   resolved "https://registry.yarnpkg.com/react-dev-utils/-/react-dev-utils-12.0.1.tgz#ba92edb4a1f379bd46ccd6bcd4e7bc398df33e73"

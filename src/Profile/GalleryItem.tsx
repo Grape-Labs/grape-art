@@ -487,7 +487,10 @@ export default function GalleryItem(props: any){
                                                                 {collectionitem?.attributes &&
                                                                     <ListItem sx={{pt:0,pb:0}}>
                                                                         <ListItemText sx={{textAlign:'center'}}>
-                                                                                <Tooltip TransitionComponent={Zoom} title={<>
+                                                                                <Tooltip 
+                                                                                    
+                                                                                    sx={{backgroundColor:'green'}}
+                                                                                    TransitionComponent={Zoom} title={<>
                                                                                     {collectionitem.attributes.map((element:any, key:number) =>
                                                                                         <>{key > 0 && <><Divider/></>}
                                                                                             <Typography variant="body2">

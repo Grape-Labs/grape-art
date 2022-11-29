@@ -124,6 +124,7 @@ import { MembersView } from './Members';
 import { HoldersView } from './Holders';
 import { TokenView } from './Token';
 import { BackedTokenView } from './BackedToken';
+import { CountdownView } from './Countdown';
 
 import { MakeLinkableAddress, ValidateAddress, trimAddress, timeAgo } from '../utils/grapeTools/WalletAddress'; // global key handling
 import { ConstructionOutlined, SettingsRemoteOutlined } from "@mui/icons-material";
@@ -1684,6 +1685,7 @@ export function StoreFrontView(this: any, props: any) {
                                         mt:collectionAuthority?.splashOffset || -16,
                                     }}
                                 >
+
                                     {collectionAuthority.videoUrl ?
                                     <Box>
                                         <video 
@@ -1795,7 +1797,7 @@ export function StoreFrontView(this: any, props: any) {
                                     }}
                                 />
                             </Hidden>
-
+                            
                                 <Box
                                     sx={{m:0}}
                                 >
@@ -1917,6 +1919,28 @@ export function StoreFrontView(this: any, props: any) {
                                                 </Button>
                                             </Box>
                                         }
+
+                            {collectionAuthority?.countdown &&
+                                <Box
+                                    sx={{m:2}}
+                                >
+                                    <Typography variant='h6'>
+                                        {collectionAuthority?.countdownTitle}   
+                                    </Typography>
+                                    {(Math.floor((new Date(collectionAuthority?.countdown)).getTime() / 1000) - Math.floor(Date.now() / 1000)) > 0 ?
+                                            <CountdownView countdown={collectionAuthority?.countdown} />
+                                        :
+                                            <>
+                                                {(Math.floor((new Date(collectionAuthority?.countdown)).getTime() / 1000) - Math.floor(Date.now() / 1000)) < -243248 ?
+                                                    <></>
+                                                : 
+                                                    <Typography variant='body2'>Ended!</Typography>
+                                                }
+                                            </>
+                                    }
+                                        
+                                </Box>
+                            }
 
                                         {collectionChildren && 
                                             <Box       
