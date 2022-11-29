@@ -4,6 +4,7 @@ import { CountdownCircleTimer } from "react-countdown-circle-timer";
 import{
     Box,
     Typography,
+    Grid,
 } from '@mui/material';
 
 const minuteSeconds = 60;
@@ -49,69 +50,86 @@ export function CountdownView(props:any) {
         <Box
             sx={{
                 display: 'flex',
-                alignItems: 'center',
-                textAlign: 'center',
-                align:'center',
                 justifyContent: 'center',
             }}
         >
-            <CountdownCircleTimer
-            {...timerProps}
-            colors="#7E2E84"
-            duration={daysDuration}
-            initialRemainingTime={remainingTime}
+            <Grid 
+                container
             >
-            {({ elapsedTime, color }) => (
-                <span style={{ color }}>
-                {renderTime("days", getTimeDays(daysDuration - elapsedTime))}
-                </span>
-            )}
-            </CountdownCircleTimer>
-            <CountdownCircleTimer
-            {...timerProps}
-            colors="#D14081"
-            duration={daySeconds}
-            initialRemainingTime={remainingTime % daySeconds}
-            onComplete={(totalElapsedTime) => ({
-                shouldRepeat: remainingTime - totalElapsedTime > hourSeconds
-            })}
-            >
-            {({ elapsedTime, color }) => (
-                <span style={{ color }}>
-                {renderTime("hours", getTimeHours(daySeconds - elapsedTime))}
-                </span>
-            )}
-            </CountdownCircleTimer>
-            <CountdownCircleTimer
-            {...timerProps}
-            colors="#EF798A"
-            duration={hourSeconds}
-            initialRemainingTime={remainingTime % hourSeconds}
-            onComplete={(totalElapsedTime) => ({
-                shouldRepeat: remainingTime - totalElapsedTime > minuteSeconds
-            })}
-            >
-            {({ elapsedTime, color }) => (
-                <span style={{ color }}>
-                {renderTime("minutes", getTimeMinutes(hourSeconds - elapsedTime))}
-                </span>
-            )}
-            </CountdownCircleTimer>
-            <CountdownCircleTimer
-            {...timerProps}
-            colors="#218380"
-            duration={minuteSeconds}
-            initialRemainingTime={remainingTime % minuteSeconds}
-            onComplete={(totalElapsedTime) => ({
-                shouldRepeat: remainingTime - totalElapsedTime > 0
-            })}
-            >
-            {({ elapsedTime, color }) => (
-                <span style={{ color }}>
-                {renderTime("seconds", getTimeSeconds(elapsedTime))}
-                </span>
-            )}
-            </CountdownCircleTimer>
+                <Grid item xs={12} sm={6} md={3}>
+                    <Box display="flex" justifyContent="center">
+                        <CountdownCircleTimer
+                        {...timerProps}
+                        colors="#7E2E84"
+                        duration={daysDuration}
+                        initialRemainingTime={remainingTime}
+                        >
+                        {({ elapsedTime, color }) => (
+                            <span style={{ color }}>
+                            {renderTime("days", getTimeDays(daysDuration - elapsedTime))}
+                            </span>
+                        )}
+                        </CountdownCircleTimer>
+                    </Box>
+                </Grid>
+                <Grid item xs={12} sm={6} md={3}>
+                    <Box display="flex" justifyContent="center">
+                        <CountdownCircleTimer
+                        {...timerProps}
+                        colors="#D14081"
+                        duration={daySeconds}
+                        initialRemainingTime={remainingTime % daySeconds}
+                        onComplete={(totalElapsedTime) => ({
+                            shouldRepeat: remainingTime - totalElapsedTime > hourSeconds
+                        })}
+                        >
+                        {({ elapsedTime, color }) => (
+                            <span style={{ color }}>
+                            {renderTime("hours", getTimeHours(daySeconds - elapsedTime))}
+                            </span>
+                        )}
+                        </CountdownCircleTimer>
+                    </Box>
+                </Grid>
+                <Grid item xs={12} sm={6} md={3}>
+                    <Box display="flex" justifyContent="center">
+                        <CountdownCircleTimer
+                        {...timerProps}
+                        colors="#EF798A"
+                        duration={hourSeconds}
+                        initialRemainingTime={remainingTime % hourSeconds}
+                        onComplete={(totalElapsedTime) => ({
+                            shouldRepeat: remainingTime - totalElapsedTime > minuteSeconds
+                        })}
+                        >
+                        {({ elapsedTime, color }) => (
+                            <span style={{ color }}>
+                            {renderTime("minutes", getTimeMinutes(hourSeconds - elapsedTime))}
+                            </span>
+                        )}
+                        </CountdownCircleTimer>
+                    </Box>
+                </Grid>
+                <Grid xs={12} sm={6} md={3}>
+                    <Box display="flex" justifyContent="center">
+                        <CountdownCircleTimer
+                        {...timerProps}
+                        colors="#218380"
+                        duration={minuteSeconds}
+                        initialRemainingTime={remainingTime % minuteSeconds}
+                        onComplete={(totalElapsedTime) => ({
+                            shouldRepeat: remainingTime - totalElapsedTime > 0
+                        })}
+                        >
+                        {({ elapsedTime, color }) => (
+                            <span style={{ color }}>
+                            {renderTime("seconds", getTimeSeconds(elapsedTime))}
+                            </span>
+                        )}
+                        </CountdownCircleTimer>
+                    </Box>
+                </Grid>
+            </Grid>
         </Box>
     );
 }
