@@ -95,6 +95,7 @@ import {
     GRAPE_PROFILE,
     GRAPE_IDENTITY,
     FEATURED_DAO_ARRAY,
+    GRAPE_ART_TYPE,
 } from '../utils/grapeTools/constants';
 import ShareSocialURL from '../utils/grapeTools/ShareUrl';
 import MarketplaceView from './MarketplaceView';
