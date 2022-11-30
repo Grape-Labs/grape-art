@@ -209,8 +209,8 @@ export default function GalleryItem(props: any){
 
                                 const path = full_url.pathname.split('.');
                                 const folders = full_url.pathname.split('/');
-                                
-                                image_url = DRIVE_PROXY+CLOUDFLARE_IPFS_CDN+'/'+path[0]+'/'+folders[folders.length-1];
+
+                                image_url = DRIVE_PROXY+CLOUDFLARE_IPFS_CDN+'/ipfs/'+path[0]+'/'+folders[folders.length-1];
                                 // we need to split this up to this format:
                                 //https://cloudflare-ipfs.com/ipfs/bafybeigl5fquoseobbanahhb2azvrq2leivmqwcbyrlkx2eeljcsc57wwi/1027.gif
                                 // from 
