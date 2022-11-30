@@ -1,5 +1,4 @@
-//import STATIC_LOGO from '../../public/grape_white_logo.svg';
-
+export const GRAPE_ART_TYPE = null; // set to a specific collection here otherwise it is universal for all marketplaces
 export const TX_RPC_ENDPOINT = process.env.REACT_APP_API_TX_RPC_ENDPOINT || 'https://api.mainnet-beta.solana.com';
 export const GRAPE_RPC_ENDPOINT = process.env.REACT_APP_API_GRAPE_RPC_ENDPOINT || 'https://api.mainnet-beta.solana.com';
 export const GENSYSGO_RPC_ENDPOINT = process.env.REACT_APP_API_GENSYSGO_RPC_ENDPOINT || 'https://api.mainnet-beta.solana.com';

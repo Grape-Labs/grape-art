@@ -807,6 +807,22 @@ export function HoldersView(props: any) {
                                                 sx={{borderRadius:'24px',m:2,p:1}}
                                             >
                                                 <Typography variant="body2" sx={{color:'yellow'}}>
+                                                    <>Avg Mints p/Wallet</>
+                                                </Typography>
+                                                {uniqueHolders &&
+                                                    <Typography variant="h3">
+                                                        {((totalMints/uniqueHolders.length)).toFixed(1)}
+                                                        {/*((uniqueHolders[Math.floor(uniqueHolders.length/2)].count))*/}
+                                                    </Typography>
+                                                }
+                                            </Box>
+                                        </Grid>
+                                        <Grid item xs={12} sm={3} md={3} key={1}>
+                                            <Box
+                                                className='grape-store-stat-item'
+                                                sx={{borderRadius:'24px',m:2,p:1}}
+                                            >
+                                                <Typography variant="body2" sx={{color:'yellow'}}>
                                                     <>Holding Concentration</>
                                                 </Typography>
                                                 {uniqueHolders &&
@@ -835,22 +851,10 @@ export function HoldersView(props: any) {
                                                 sx={{borderRadius:'24px',m:2,p:1}}
                                             >
                                                 <Typography variant="body2" sx={{color:'yellow'}}>
-                                                    <>On Curve</>
+                                                    <>On/Off Curve</>
                                                 </Typography>
                                                 <Typography variant="h3">
-                                                    {totalMintsOnCurve}
-                                                </Typography>
-                                            </Box>
-                                        </Grid>
-                                        <Grid item xs={12} sm={3} md={3} key={1}>
-                                            <Box
-                                                className='grape-store-stat-item'
-                                                sx={{borderRadius:'24px',m:2,p:1}}
-                                            >
-                                                <Typography variant="body2" sx={{color:'yellow'}}>
-                                                    <>Off Curve</>
-                                                </Typography>
-                                                <Typography variant="h3">
+                                                    {totalMintsOnCurve}/
                                                     {totalMints - totalMintsOnCurve}
                                                 </Typography>
                                             </Box>

@@ -2,7 +2,11 @@ import * as React from 'react';
 import { styled, alpha, makeStyles } from '@mui/material/styles';
 import { Link, useLocation, NavLink } from 'react-router-dom';
 import Color from 'color';
-import { GRAPE_PROFILE, GRAPE_COLLECTION, GRAPE_COLLECTIONS_DATA, FEATURED_DAO_ARRAY } from '../utils/grapeTools/constants';
+import { GRAPE_PROFILE, 
+    GRAPE_COLLECTION, 
+    GRAPE_COLLECTIONS_DATA, 
+    FEATURED_DAO_ARRAY,
+    GRAPE_ART_TYPE } from '../utils/grapeTools/constants';
 //import { useFadedShadowStyles } from '@mui-treasury/styles/shadow/faded';
 
 import {
@@ -51,108 +55,44 @@ export default function MarketplaceView(props: any) {
         } catch(e){console.log("ERR: "+e)}
     }
 
-    React.useEffect(() => { 
-        fetchVerifiedCollection("");
-    }, []);
-
-    const color = '#fff';
-
-    return (
-        <Grid container spacing={2} sx={{mt:6}}>
-            {verifiedCollectionArray && verifiedCollectionArray.map((featured: any, key: number) => (
+    function MarketplaceComponentView(props: any){
+        const featured = props.featured;
+        const span = props.span;
+        
+        return (
+            <Grid item xs={12} sm={span}>
                 <>
-                    {featured?.enabled && featured?.discover &&
-                    <Grid item xs={12} sm={6}>
-                        <>
-                            <Card sx={{
-                                borderRadius:'26px',mb:2
-                                }}>
-                                <CardActionArea
-                                        component={Link} to={`${GRAPE_COLLECTION}${featured.vanityUrl}`}
-                                        sx={{
+                    <Card sx={{
+                        borderRadius:'26px',mb:2
+                        }}>
+                        <CardActionArea
+                                component={Link} to={`${GRAPE_COLLECTION}${featured.vanityUrl}`}
+                                sx={{
 
+                                }}
+                            >
+                            {featured.vanityUrl ?
+                                
+                                <> 
+                                    <CardMedia
+                                        component="img"
+                                        image={GRAPE_COLLECTIONS_DATA+featured.splash}
+                                        alt={featured.name}
+                                        sx={{
+                                            position: 'relative',
+                                            zIndex: 1,
+                                            borderRadius: '1rem',
+                                            boxShadow: `0 6px 16px 0 ${Color(color).fade(0.85)}`,
                                         }}
-                                    >
-                                    {featured.vanityUrl ?
+                                        />
                                         
-                                        <> 
-                                            <CardMedia
-                                                component="img"
-                                                image={GRAPE_COLLECTIONS_DATA+featured.splash}
-                                                alt={featured.name}
-                                                sx={{
-                                                    position: 'relative',
-                                                    zIndex: 1,
-                                                    borderRadius: '1rem',
-                                                    boxShadow: `0 6px 16px 0 ${Color(color).fade(0.85)}`,
-                                                }}
-                                                />
-                                                
-                                            <CardContent
-                                                
-                                            >
-                                                <Typography 
-                                                    gutterBottom variant="h5" 
-                                                    component="div"
-                                                >
-                                                    <Grid container>
-                                                        <Grid item>
-                                                            <Avatar
-                                                                variant="square"
-                                                                src={GRAPE_COLLECTIONS_DATA+featured.logo}
-                                                                sx={{
-                                                                    ml:1,
-                                                                    mr:1,
-                                                                    width: 24, 
-                                                                    height: 24
-                                                                }}
-                                                            ></Avatar>
-                                                        </Grid>
-                                                        <Grid item>
-                                                            {featured.name}
-                                                        </Grid>
-                                                    </Grid>
-                                                </Typography>
-                                                <Typography variant="body2" color="text.primary">
-                                                    {featured.description}
-                                                </Typography>
-                                                    {/*
-                                                    <img
-                                                        src={GRAPE_COLLECTIONS_DATA+featured.splash}
-                                                        srcSet={GRAPE_COLLECTIONS_DATA+featured.splash}
-                                                        alt=""
-                                                        style={{
-                                                            opacity: '0.025',
-                                                            position: 'absolute',
-                                                            marginTop:2,
-                                                            marginBottom:2,
-                                                            padding:1,
-                                                            top:'-20%',
-                                                            left:'-20%',
-                                                            width:'150%'
-                                                        }}
-                                                    />*/}
-                                            </CardContent>
-                                        </>
-                                    :
-                                        <>
-                                        <CardMedia
-                                            component="img"
-                                            image={GRAPE_COLLECTIONS_DATA+featured.splash}
-                                            alt={featured.name}
-                                                sx={{
-                                                    background: 'rgba(0, 0, 0, 1)',
-                                                    m:0,
-                                                    p:0,
-                                                }} 
-                                            />
-                                            
-                                        <CardContent
-                                            sx={{
-                                                background: 'none',
-                                            }}
+                                    <CardContent
+                                        
+                                    >
+                                        <Typography 
+                                            gutterBottom variant="h5" 
+                                            component="div"
                                         >
-                                        <Typography gutterBottom variant="h5" component="div">
                                             <Grid container>
                                                 <Grid item>
                                                     <Avatar
@@ -174,6 +114,7 @@ export default function MarketplaceView(props: any) {
                                         <Typography variant="body2" color="text.primary">
                                             {featured.description}
                                         </Typography>
+                                            {/*
                                             <img
                                                 src={GRAPE_COLLECTIONS_DATA+featured.splash}
                                                 srcSet={GRAPE_COLLECTIONS_DATA+featured.splash}
@@ -188,74 +129,152 @@ export default function MarketplaceView(props: any) {
                                                     left:'-20%',
                                                     width:'150%'
                                                 }}
-                                            />
-                                        </CardContent>
-                                        </>
-                                    }
-                                
-                                </CardActionArea>
-                                <CardActions
-                                    sx={{background:'none'}}
-                                >
-                                    <Grid 
-                                        container
-                                        direction="row"
-                                        justifyContent='flex-end'
-                                        alignContent='flex-end'
+                                            />*/}
+                                    </CardContent>
+                                </>
+                            :
+                                <>
+                                <CardMedia
+                                    component="img"
+                                    image={GRAPE_COLLECTIONS_DATA+featured.splash}
+                                    alt={featured.name}
                                         sx={{
-                                            p:1,pr:1.25,
-                                        }}
-                                    >
-                                        {featured?.vanityUrl ?
-                                            <>
-                                                {/*
-                                                <Button size="small" 
-                                                    component="a" href={`${featured.daourl}`} target="_blank"
-                                                    sx={{borderRadius:'24px', color:'white'}}>
-                                                    {t('View DAO')}</Button>
-                                                */}
-                                                {featured?.governance &&
-                                                    <Button size="small" disabled={true}>
-                                                        <AccountBalanceIcon />
-                                                    </Button>
-                                                }
-
-                                                {featured?.isGame &&
-                                                    <Button size="small" disabled={true}>
-                                                        <SportsEsportsIcon />
-                                                    </Button>
-                                                }
-
-                                                <Button size="small"    
-                                                    component={Link} to={`${GRAPE_COLLECTION}${featured.vanityUrl}`}
-                                                    sx={{borderRadius:'24px', color:'white'}}
-                                                >View 
-                                                {featured?.tokenType === 'SPL' ?
-                                                    <>&nbsp;{featured?.tokenType} Token</>
-                                                :
-                                                    <>
-                                                        {featured?.isGame ? 
-                                                            <>&nbsp;
-                                                            Gaming
-                                                            </>
-                                                        :
-                                                            <>&nbsp;
-                                                            {featured?.tokenType}
-                                                            </>
-                                                        }
-                                                    </>        
-                                                } Community</Button>
-                                                <ShareSocialURL url={'https://grape.art'+GRAPE_COLLECTION+featured.vanityUrl} title={`Community: ${featured.name}`} />
-                                            </>
-                                        :
-                                            <>Coming soon...</>
-                                        }
+                                            background: 'rgba(0, 0, 0, 1)',
+                                            m:0,
+                                            p:0,
+                                        }} 
+                                    />
+                                    
+                                <CardContent
+                                    sx={{
+                                        background: 'none',
+                                    }}
+                                >
+                                <Typography gutterBottom variant="h5" component="div">
+                                    <Grid container>
+                                        <Grid item>
+                                            <Avatar
+                                                variant="square"
+                                                src={GRAPE_COLLECTIONS_DATA+featured.logo}
+                                                sx={{
+                                                    ml:1,
+                                                    mr:1,
+                                                    width: 24, 
+                                                    height: 24
+                                                }}
+                                            ></Avatar>
+                                        </Grid>
+                                        <Grid item>
+                                            {featured.name}
+                                        </Grid>
                                     </Grid>
-                                </CardActions>
-                            </Card> 
+                                </Typography>
+                                <Typography variant="body2" color="text.primary">
+                                    {featured.description}
+                                </Typography>
+                                    <img
+                                        src={GRAPE_COLLECTIONS_DATA+featured.splash}
+                                        srcSet={GRAPE_COLLECTIONS_DATA+featured.splash}
+                                        alt=""
+                                        style={{
+                                            opacity: '0.025',
+                                            position: 'absolute',
+                                            marginTop:2,
+                                            marginBottom:2,
+                                            padding:1,
+                                            top:'-20%',
+                                            left:'-20%',
+                                            width:'150%'
+                                        }}
+                                    />
+                                </CardContent>
+                                </>
+                            }
+                        
+                        </CardActionArea>
+                        <CardActions
+                            sx={{background:'none'}}
+                        >
+                            <Grid 
+                                container
+                                direction="row"
+                                justifyContent='flex-end'
+                                alignContent='flex-end'
+                                sx={{
+                                    p:1,pr:1.25,
+                                }}
+                            >
+                                {featured?.vanityUrl ?
+                                    <>
+                                        {/*
+                                        <Button size="small" 
+                                            component="a" href={`${featured.daourl}`} target="_blank"
+                                            sx={{borderRadius:'24px', color:'white'}}>
+                                            {t('View DAO')}</Button>
+                                        */}
+                                        {featured?.governance &&
+                                            <Button size="small" disabled={true}>
+                                                <AccountBalanceIcon />
+                                            </Button>
+                                        }
+
+                                        {featured?.isGame &&
+                                            <Button size="small" disabled={true}>
+                                                <SportsEsportsIcon />
+                                            </Button>
+                                        }
+
+                                        <Button size="small"    
+                                            component={Link} to={`${GRAPE_COLLECTION}${featured.vanityUrl}`}
+                                            sx={{borderRadius:'24px', color:'white'}}
+                                        >View 
+                                        {featured?.tokenType === 'SPL' ?
+                                            <>&nbsp;{featured?.tokenType} Token</>
+                                        :
+                                            <>
+                                                {featured?.isGame ? 
+                                                    <>&nbsp;
+                                                    Gaming
+                                                    </>
+                                                :
+                                                    <>&nbsp;
+                                                    {featured?.tokenType}
+                                                    </>
+                                                }
+                                            </>        
+                                        } Community</Button>
+                                        <ShareSocialURL url={'https://grape.art'+GRAPE_COLLECTION+featured.vanityUrl} title={`Community: ${featured.name}`} />
+                                    </>
+                                :
+                                    <>Coming soon...</>
+                                }
+                            </Grid>
+                        </CardActions>
+                    </Card> 
+                </>
+            </Grid>
+        )
+    }
+    
+    React.useEffect(() => { 
+        fetchVerifiedCollection("");
+    }, []);
+
+    const color = '#fff';
+
+    return (
+        <Grid container spacing={2} sx={{mt:6}}>
+            {verifiedCollectionArray && verifiedCollectionArray.map((featured: any, key: number) => (
+                <>
+                    {(!GRAPE_ART_TYPE && (featured?.enabled && featured?.discover)) ?
+                        <MarketplaceComponentView featured={featured} span={6} />
+                        :
+                        <>
+                            {GRAPE_ART_TYPE === featured?.address &&
+                                <MarketplaceComponentView featured={featured} span={12} />
+                            }
                         </>
-                    </Grid>
-                }
+                    }
                 </>
             ))}
         </Grid>
