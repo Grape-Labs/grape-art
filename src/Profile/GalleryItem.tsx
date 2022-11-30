@@ -202,11 +202,10 @@ export default function GalleryItem(props: any){
                             let image_url = DRIVE_PROXY+img_url_string;
 
                             if (img_url_string.startsWith(IPFS)){
-                                image_url = DRIVE_PROXY+CLOUDFLARE_IPFS_CDN+img_url_string.replace(IPFS,'');
+                                image_url = DRIVE_PROXY+CLOUDFLARE_IPFS_CDN+'/ipfs/'+img_url_string.replace(IPFS,'');
                             } else if (img_url_string.startsWith(IPFS_2)){
-                                image_url = DRIVE_PROXY+CLOUDFLARE_IPFS_CDN+img_url_string.replace(IPFS_2,'');
+                                image_url = DRIVE_PROXY+CLOUDFLARE_IPFS_CDN+'/ipfs/'+img_url_string.replace(IPFS_2,'');
                             } else if (img_url_string.contains(IPFS_3)){
-
                                 const path = full_url.pathname.split('.');
                                 const folders = full_url.pathname.split('/');
 
