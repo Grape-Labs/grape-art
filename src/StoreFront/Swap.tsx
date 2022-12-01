@@ -168,15 +168,17 @@ function JupiterForm(props: any) {
 
     const getTokenList = async () => {
         const priceList = await getPrices();
-        const raydiumTokens = Object.keys(priceList);
-        const tokens = await new TokenListProvider().resolve();
-        const tokenList = tokens.filterByChainId(ENV.MainnetBeta).getList().filter(ti => ti.symbol === 'ORCA' || raydiumTokens.includes(ti.symbol) );
-        const tokenMapValue = tokenList.reduce((map, item) => {
-                map.set(item.address, item);
-                return map;
-            }, new Map())
-        setTokenMap(tokenMapValue);
-        setAllAutoCompleteOptions(Array.from<TokenInfo>(tokenMapValue.values()).sort((a,b)=> a.symbol.localeCompare(b.symbol)).filter(v => v.symbol != 'GRAPE' && v.symbol != 'SHILL'));
+        if (priceList){    
+            const raydiumTokens = Object.keys(priceList);
+            const tokens = await new TokenListProvider().resolve();
+            const tokenList = tokens.filterByChainId(ENV.MainnetBeta).getList().filter(ti => ti.symbol === 'ORCA' || raydiumTokens.includes(ti.symbol) );
+            const tokenMapValue = tokenList.reduce((map, item) => {
+                    map.set(item.address, item);
+                    return map;
+                }, new Map())
+            setTokenMap(tokenMapValue);
+            setAllAutoCompleteOptions(Array.from<TokenInfo>(tokenMapValue.values()).sort((a,b)=> a.symbol.localeCompare(b.symbol)).filter(v => v.symbol != 'GRAPE' && v.symbol != 'SHILL'));
+        }
     }
     useEffect(() => {
         getTokenList()
@@ -369,16 +371,18 @@ function JupiterForm(props: any) {
     },[swapfrom, tokenMap])
 
     return (<div>
-        <Button
-            variant="outlined"
-            color='inherit'
-            title={`Swap ${tokenMap?.get(swapfrom)?.symbol} > ${tokenMap?.get(swapto)?.symbol}`}
-            onClick={handleClickOpen}
-            size="small"
-            sx={{borderRadius:'17px'}}
-        >
-            {tokenMap?.get(swapfrom)?.symbol} <SwapHorizIcon sx={{mr:1,ml:1}} /> {tokenMap?.get(swapto)?.symbol}
-        </Button>
+        {tokenMap &&
+            <Button
+                variant="outlined"
+                color='inherit'
+                title={`Swap ${tokenMap?.get(swapfrom)?.symbol} > ${tokenMap?.get(swapto)?.symbol}`}
+                onClick={handleClickOpen}
+                size="small"
+                sx={{borderRadius:'17px'}}
+            >
+                {tokenMap?.get(swapfrom)?.symbol} <SwapHorizIcon sx={{mr:1,ml:1}} /> {tokenMap?.get(swapto)?.symbol}
+            </Button>
+        }
         <BootstrapDialog
             onClose={handleClose}
             aria-labelledby="customized-dialog-title"

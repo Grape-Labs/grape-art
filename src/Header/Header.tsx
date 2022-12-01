@@ -294,7 +294,6 @@ export function Header(props: any) {
                                 
                                 <Autocomplete
                                     id="auto-complete-header-search"
-                                    
                                     freeSolo
                                     selectOnFocus
                                     clearOnBlur
