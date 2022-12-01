@@ -206,6 +206,7 @@ export default function ListForCollectionView(props: any){
                         
                         if (updateAuthority){
                             if ((meta_final.updateAuthority === updateAuthority)||
+                                (meta_final?.collection?.key === collectionAuthority.collection)||
                                 (enforceEntangle && (meta_final.updateAuthority === entangleFrom || meta_final.updateAuthority === entangleTo))){
                                 
                                 if ((meta_final?.collection?.key === collectionAuthority.collection)||
