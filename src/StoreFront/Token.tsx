@@ -206,7 +206,7 @@ export function TokenView(props: any) {
                                         Token Price
                                         </Typography>
                                         <Typography variant="h5" component="div">
-                                            1 SOL = {1/tokenPrice.data.price} {token.name}
+                                            1 SOL = {(1/tokenPrice.data.price).toFixed(tokenPrice.data?.decimals || 6)} {token.name}
                                         </Typography>
                                         <Typography variant="body2" component="div">
                                             1 {token.name} = {tokenPrice.data.price} SOL
@@ -244,7 +244,7 @@ export function TokenView(props: any) {
                                                 </Grid>
                                             </Grid>
                                             <Typography variant="body2" component="div">
-                                                1 USD = {1/coinGeckoPrice[token.extensions.coingeckoId]?.usd} {token.name}
+                                                1 USD = {(1/coinGeckoPrice[token.extensions.coingeckoId]?.usd).toFixed(tokenPrice.data?.decimals || 6)} {token.name}
                                             </Typography>
                                         </Typography>
                                         <Typography sx={{ mb: 1.5 }} color="text.secondary" variant="caption">
@@ -267,10 +267,10 @@ export function TokenView(props: any) {
                                         {myToken.account.data.parsed.info.tokenAmount.uiAmount}
                                         </Typography>
                                         <Typography variant="body2" component="div">
-                                            {myToken.account.data.parsed.info.tokenAmount.uiAmount*coinGeckoPrice[token.extensions.coingeckoId]?.usd} USD
+                                            {(myToken.account.data.parsed.info.tokenAmount.uiAmount*coinGeckoPrice[token.extensions.coingeckoId]?.usd).toFixed(6)} USD
                                         </Typography>
                                         <Typography variant="body2" component="div">
-                                            {myToken.account.data.parsed.info.tokenAmount.uiAmount * tokenPrice.data.price} SOL
+                                            {(myToken.account.data.parsed.info.tokenAmount.uiAmount * tokenPrice.data.price).toFixed(6)} SOL
                                         </Typography>
                                         <Typography sx={{ mb: 1.5 }} color="text.secondary" variant="caption">
                                         Source: 
