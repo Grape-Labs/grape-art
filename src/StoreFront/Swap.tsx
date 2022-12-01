@@ -109,15 +109,17 @@ interface JupiterProps {
 }*/
 
 export default function JupiterSwap(props: any ){
-//export const JupiterSwap = (props: any) => {
+    //export const JupiterSwap = (props: any) => {
     //const connection = useConnection();
     const connection = new Connection(GRAPE_RPC_ENDPOINT);
     const {connected, wallet, publicKey} = useWallet();
+    const tokenMap = props?.tokenMap || null;
 
     return(
         <JupiterProvider
             connection={connection}
             cluster={WalletAdapterNetwork.Mainnet}
+            tokenMap={tokenMap}
             userPublicKey={connected ? publicKey : undefined}>
                 <JupiterForm {...props}/>
         </JupiterProvider>);
@@ -137,7 +139,7 @@ function JupiterForm(props: any) {
     const [swapfrom, setSwapFrom] = useState(props.swapfrom);
     const [swapto, setSwapTo] = useState(props.swapto);
     
-    const [tokenMap, setTokenMap] = useState<Map<string,TokenInfo>>(undefined);
+    const [tokenMap, setTokenMap] = useState<Map<string,TokenInfo>>(props.tokenMap || undefined);
     const [inputValue, setInputValue] = useState('')
     const [selectedValue, setSelectedValue] = useState<TokenInfo>()
     const [minimumReceived, setMinimumReceived] = useState(0);
@@ -169,15 +171,20 @@ function JupiterForm(props: any) {
     const getTokenList = async () => {
         const priceList = await getPrices();
         if (priceList){    
-            const raydiumTokens = Object.keys(priceList);
-            const tokens = await new TokenListProvider().resolve();
-            const tokenList = tokens.filterByChainId(ENV.MainnetBeta).getList().filter(ti => ti.symbol === 'ORCA' || raydiumTokens.includes(ti.symbol) );
-            const tokenMapValue = tokenList.reduce((map, item) => {
-                    map.set(item.address, item);
-                    return map;
-                }, new Map())
-            setTokenMap(tokenMapValue);
-            setAllAutoCompleteOptions(Array.from<TokenInfo>(tokenMapValue.values()).sort((a,b)=> a.symbol.localeCompare(b.symbol)).filter(v => v.symbol != 'GRAPE' && v.symbol != 'SHILL'));
+            if (!tokenMap){
+                const raydiumTokens = Object.keys(priceList);
+                const tokens = await new TokenListProvider().resolve();
+                const tokenList = tokens.filterByChainId(ENV.MainnetBeta).getList().filter(ti => ti.symbol === 'ORCA' || raydiumTokens.includes(ti.symbol) );
+                const tokenMapValue = tokenList.reduce((map, item) => {
+                        map.set(item.address, item);
+                        return map;
+                    }, new Map())
+                setTokenMap(tokenMapValue);
+                setAllAutoCompleteOptions(Array.from<TokenInfo>(tokenMapValue.values()).sort((a,b)=> a.symbol.localeCompare(b.symbol)).filter(v => v.symbol != 'GRAPE' && v.symbol != 'SHILL'));
+            } else{
+                setAllAutoCompleteOptions(Array.from<TokenInfo>(tokenMap.values()).sort((a,b)=> a.symbol.localeCompare(b.symbol)).filter(v => v.symbol != 'GRAPE' && v.symbol != 'SHILL'));
+            }
+            
         }
     }
     useEffect(() => {
