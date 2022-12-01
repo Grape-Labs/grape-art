@@ -170,8 +170,8 @@ export default function GalleryItem(props: any){
             try{
                 if (image){
                     
-                    let img_url_string = image;
-                    let full_url = new URL(img_url_string);
+                    const img_url_string = image;
+                    const full_url = new URL(img_url_string);
                     const ARWEAVE = 'https://arweave.net';
                     const IPFS = 'https://ipfs.io';
                     const IPFS_2 = "https://nftstorage.link/ipfs";
@@ -206,10 +206,20 @@ export default function GalleryItem(props: any){
                             } else if (img_url_string.startsWith(IPFS_2)){
                                 image_url = DRIVE_PROXY+CLOUDFLARE_IPFS_CDN+'/ipfs/'+img_url_string.replace(IPFS_2,'');
                             } else if (img_url_string.includes(IPFS_3)){
-                                const path = full_url.pathname.split('.');
+                                //https://solana-cdn.com/cdn-cgi/image/width=256/https://cloudflare-ipfs.com/ipfs///
+                                //https://bafybeigi6scodcqz7wc2higrkfdmwt4tkyteoq4xxiy5olxpfh3pm4n3ue.ipfs.nftstorage.link/?ext=png
+                                const host = full_url.hostname.split('.');
                                 const folders = full_url.pathname.split('/');
 
-                                image_url = DRIVE_PROXY+CLOUDFLARE_IPFS_CDN+'/ipfs/'+path[0]+'/'+folders[folders.length-1];
+                                //console.log("path: "+JSON.stringify(host));
+                                //console.log("folders: "+JSON.stringify(folders));
+                                //console.log("full_url.pathname: "+full_url.hostname);
+
+                                if (folders.length > 0)
+                                    image_url = DRIVE_PROXY+CLOUDFLARE_IPFS_CDN+'/ipfs/'+host[0]+'/'+folders[folders.length-1];
+                                else
+                                    image_url = DRIVE_PROXY+CLOUDFLARE_IPFS_CDN+'/ipfs/'+host[0]
+
                                 // we need to split this up to this format:
                                 //https://cloudflare-ipfs.com/ipfs/bafybeigl5fquoseobbanahhb2azvrq2leivmqwcbyrlkx2eeljcsc57wwi/1027.gif
                                 // from 
