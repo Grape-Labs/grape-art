@@ -250,7 +250,8 @@ export function Header(props: any) {
             setNewInputPKValue('');
         } else if (newinputpkvalue && newinputpkvalue.length > 0) {
             if (newinputpkvalue.toLocaleUpperCase().indexOf('MINT:') > -1) {
-                const mint = newinputpkvalue.slice(5, newinputpkvalue.length);
+                
+                const mint = newinputpkvalue.slice(5, newinputpkvalue.length).trim();
                 if (ValidateAddress(mint)) {
                     navigate(
                         {
