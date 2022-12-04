@@ -170,6 +170,7 @@ function JupiterForm(props: any) {
 
     const getTokenList = async () => {
         const priceList = await getPrices();
+        //console.log("priceList: "+JSON.stringify(priceList))
         if (priceList){    
             if (!tokenMap){
                 const raydiumTokens = Object.keys(priceList);
@@ -180,9 +181,10 @@ function JupiterForm(props: any) {
                         return map;
                     }, new Map())
                 setTokenMap(tokenMapValue);
-                setAllAutoCompleteOptions(Array.from<TokenInfo>(tokenMapValue.values()).sort((a,b)=> a.symbol.localeCompare(b.symbol)).filter(v => v.symbol != 'GRAPE' && v.symbol != 'SHILL'));
+                setAllAutoCompleteOptions(Array.from<TokenInfo>(tokenMapValue.values()).sort((a,b)=> a.symbol.localeCompare(b.symbol)));
             } else{
-                setAllAutoCompleteOptions(Array.from<TokenInfo>(tokenMap.values()).sort((a,b)=> a.symbol.localeCompare(b.symbol)).filter(v => v.symbol != 'GRAPE' && v.symbol != 'SHILL'));
+                
+                setAllAutoCompleteOptions(Array.from<TokenInfo>(tokenMap.values()).sort((a,b)=> a.symbol.localeCompare(b.symbol)));
             }
             
         }
@@ -511,6 +513,35 @@ function JupiterForm(props: any) {
                             <Grid item xs={6}>
                                 <FormControl>
                                     <InputLabel id="to-label">To</InputLabel>
+                                    
+                                    {/*
+                                    <Autocomplete
+                                        sx={{width:230}}
+                                        value={selectedValue}
+                                        onChange={(event, newValue) =>
+                                        {
+                                            setSelectedValue(newValue);
+                                        }}
+                                        filterOptions={(x, state) => x}
+                                        fullWidth
+                                        inputValue={inputValue}
+                                        onInputChange={(e, newValue) => {
+                                            setAutoCompleteOptions([]);
+                                            setInputValue(newValue);
+                                            }}
+                                        selectOnFocus
+                                        clearOnBlur
+                                        handleHomeEndKeys
+                                        id="to-select-dropdown"
+                                        getOptionLabel={(option) => option.symbol}
+                                        renderInput={(params) => <TextField {...params} label="From"/>}
+                                        renderOption={(params, option) => <li {...params}><img width={40} onError={handleImageError} src={option.logoURI} style={{float:"left"}}/>
+                                            <Stack spacing={0.1}>
+                                                <div>{option.symbol}</div>
+                                                <Typography variant="body2" sx={{color:"#aaaaaa"}}>{option.name}</Typography>
+                                            </Stack></li>}
+                                        options={autoCompleteOptions}/>
+                                    */}
                                     <Select
                                         labelId="to-label"
                                         id="to-select-dropdown"

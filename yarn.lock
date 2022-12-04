@@ -2110,10 +2110,10 @@
   resolved "https://registry.yarnpkg.com/@fractalwagmi/popup-connection/-/popup-connection-1.0.18.tgz#3a69045f8393989c0014f97e44967020135142ea"
   integrity sha512-QcHe8bfeaQAKnFEvnxLqIAD7RFL7Z7bzn0BnOyDJxuj55NFBRVFGmq69MCqn2o6kmmfmusfYSQHNLWiv5L8H5A==
 
-"@fractalwagmi/solana-wallet-adapter@0.0.9":
-  version "0.0.9"
-  resolved "https://registry.yarnpkg.com/@fractalwagmi/solana-wallet-adapter/-/solana-wallet-adapter-0.0.9.tgz#78841f2b987a8bfdb585d7a30e08d08b3686fd29"
-  integrity sha512-8ppPZCRUOzu1LTc/3dFlzo/1uLHzzOew0HeZbWnoTT9uSAGo8zyfFM2qsOhzz3+mALTImmfAIgHXVkAJK8aLxQ==
+"@fractalwagmi/solana-wallet-adapter@^0.1.1":
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/@fractalwagmi/solana-wallet-adapter/-/solana-wallet-adapter-0.1.1.tgz#13d97bca657007a62b2118ea60f5d9e73f654a37"
+  integrity sha512-oTZLEuD+zLKXyhZC5tDRMPKPj8iaxKLxXiCjqRfOo4xmSbS2izGRWLJbKMYYsJysn/OI3UJ3P6CWP8WUWi0dZg==
   dependencies:
     "@fractalwagmi/popup-connection" "^1.0.18"
     "@solana/wallet-adapter-base" "^0.9.17"
@@ -4663,12 +4663,12 @@
   dependencies:
     "@solana/wallet-adapter-base" "^0.9.19"
 
-"@solana/wallet-adapter-fractal@^0.1.3":
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/@solana/wallet-adapter-fractal/-/wallet-adapter-fractal-0.1.3.tgz#43f916fa42afe0b641889e6e72f83965ab724169"
-  integrity sha512-zxJ9aMWgoJKmW1+xXRnlbkQaDvHXuM9RMpyeAmPMx0InKEBsw6Lcar29iwQsKtZtd/NqavcXeqjOsdGPz7do4A==
+"@solana/wallet-adapter-fractal@^0.1.4":
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/@solana/wallet-adapter-fractal/-/wallet-adapter-fractal-0.1.4.tgz#c290e399813417c428ad1df0a31ac0e044e054f2"
+  integrity sha512-9mfcvqZ81rkQpW/eKTM6Mygqm7ySeYbpAzksIUz3zSyuliG0FxsqQDZItu9zWIELRGRg5W+1icrFUzyb2xvPjQ==
   dependencies:
-    "@fractalwagmi/solana-wallet-adapter" "0.0.9"
+    "@fractalwagmi/solana-wallet-adapter" "^0.1.1"
     "@solana/wallet-adapter-base" "^0.9.19"
 
 "@solana/wallet-adapter-glow@^0.1.14":
@@ -4924,10 +4924,10 @@
     "@jnwng/walletconnect-solana" "^0.1.3"
     "@solana/wallet-adapter-base" "^0.9.19"
 
-"@solana/wallet-adapter-wallets@^0.19.6":
-  version "0.19.6"
-  resolved "https://registry.yarnpkg.com/@solana/wallet-adapter-wallets/-/wallet-adapter-wallets-0.19.6.tgz#2ef553d65cac8f37c5d5f77709e2c64a976c3664"
-  integrity sha512-XfJgZXA34DLu8CiQpkKlB0no1g/i5BllgkKMmqDrldsfKMC15rNxBZfHZpKONHGKG/R8jxwTpZwFkochB64C8A==
+"@solana/wallet-adapter-wallets@^0.19.7":
+  version "0.19.7"
+  resolved "https://registry.yarnpkg.com/@solana/wallet-adapter-wallets/-/wallet-adapter-wallets-0.19.7.tgz#2c67518009616d79bf5a3df8e355514d417ec641"
+  integrity sha512-RVsoy41mh7heS5kkmez8a3ML0M5CaHAlseVfX5/pmHMmupqUk9BGXJU2rHgGRNGA0/h0CQOKJg15uUCiuiZ6lQ==
   dependencies:
     "@solana/wallet-adapter-alpha" "^0.1.6"
     "@solana/wallet-adapter-avana" "^0.1.9"
@@ -4941,7 +4941,7 @@
     "@solana/wallet-adapter-coinbase" "^0.1.14"
     "@solana/wallet-adapter-coinhub" "^0.3.14"
     "@solana/wallet-adapter-exodus" "^0.1.14"
-    "@solana/wallet-adapter-fractal" "^0.1.3"
+    "@solana/wallet-adapter-fractal" "^0.1.4"
     "@solana/wallet-adapter-glow" "^0.1.14"
     "@solana/wallet-adapter-huobi" "^0.1.11"
     "@solana/wallet-adapter-hyperpay" "^0.1.10"
@@ -5090,10 +5090,10 @@
     rpc-websockets "^7.5.0"
     superstruct "^0.14.2"
 
-"@solana/web3.js@^1.67.0":
-  version "1.67.0"
-  resolved "https://registry.yarnpkg.com/@solana/web3.js/-/web3.js-1.67.0.tgz#bd67742cd9c176889fd1954080173dd7d0c224a2"
-  integrity sha512-t6tfRbYyuoyuik4D4B8eK6hPm//+5l7k+00YppFTGoxcix8b2bpE7iANLmvw+u5iZNMwG3VFV20xRdrqz8zhvQ==
+"@solana/web3.js@^1.69.0":
+  version "1.69.0"
+  resolved "https://registry.yarnpkg.com/@solana/web3.js/-/web3.js-1.69.0.tgz#1756b1a26087172291c0b5163d3b44d24eef8aa7"
+  integrity sha512-iU2Q0IG25RITsxBkY1Vkk74LffRokViEcSblz4CGxyt+/V7xSkC2DNM0n0rB3aY/9+FvMiz4l5wHnD9UC4Ac/w==
   dependencies:
     "@babel/runtime" "^7.12.5"
     "@noble/ed25519" "^1.7.0"
@@ -6082,10 +6082,10 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react-helmet@^6.1.5":
-  version "6.1.5"
-  resolved "https://registry.yarnpkg.com/@types/react-helmet/-/react-helmet-6.1.5.tgz#35f89a6b1646ee2bc342a33a9a6c8777933f9083"
-  integrity sha512-/ICuy7OHZxR0YCAZLNg9r7I9aijWUWvxaPR6uTuyxe8tAj5RL4Sw1+R6NhXUtOsarkGYPmaHdBDvuXh2DIN/uA==
+"@types/react-helmet@^6.1.6":
+  version "6.1.6"
+  resolved "https://registry.yarnpkg.com/@types/react-helmet/-/react-helmet-6.1.6.tgz#7d1afd8cbf099616894e8240e9ef70e3c6d7506d"
+  integrity sha512-ZKcoOdW/Tg+kiUbkFCBtvDw0k3nD4HJ/h/B9yWxN4uDO8OkRksWTO+EL+z/Qu3aHTeTll3Ro0Cc/8UhwBCMG5A==
   dependencies:
     "@types/react" "*"
 
