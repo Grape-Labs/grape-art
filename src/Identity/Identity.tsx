@@ -183,7 +183,8 @@ export function IdentityView(props: any){
     const [nftMap, setNftMap] = React.useState(null);
     const [selectionModel, setSelectionModel] = React.useState([]);
     const [selectionModelClose, setSelectionModelClose] = React.useState([]);
-    
+    const [tokensNetValue, setTokensNetValue] = React.useState(null);
+
     const { t, i18n } = useTranslation();
 
     const columns: GridColDef[] = [
@@ -659,6 +660,7 @@ export function IdentityView(props: any){
 
         //console.log("nftMeta: "+JSON.stringify(nftMeta))
 
+        let netValue = 0;
         for (const item of resultValues){
             /*
             try{
@@ -729,8 +731,13 @@ export function IdentityView(props: any){
                 metadata_decoded:metadata_decoded,
                 //swap:item.account.data.parsed.info
             });
+
+            netValue += +itemValue;
+
             cnt++;
         }
+
+        setTokensNetValue(netValue);
 
         let closableholdingsrows = new Array();
         cnt = 0;
@@ -1082,11 +1089,12 @@ export function IdentityView(props: any){
                             <>
                                 {pubkey ?
                                     <>  
-                                    <Typography
-                                        variant="h6"
-                                    >
-                                        {t('ADDRESS')}:
-                                    </Typography>   
+                                    <Grid container>
+                                        <Typography
+                                            variant="h6"
+                                        >
+                                            {t('ADDRESS')}:
+                                        </Typography>   
                                         <List dense={true}>
                                             <ListItem>
                                                 <Grid container>
@@ -1096,54 +1104,144 @@ export function IdentityView(props: any){
                                                 </Grid>
                                             </ListItem>
                                         </List>
+                                    </Grid>
 
-                                    <Typography
-                                        variant="h6"
-                                    >
-                                        SOL:
-                                    </Typography>   
-                                        
-                                        <List dense={true}>
-                                            <ListItem sx={{width:'100%'}}>
-                                                <ListItemAvatar>
-                                                    <Avatar
-                                                        sx={{backgroundColor:'#222'}}
-                                                    >
-                                                        <SolCurrencyIcon sx={{color:'white'}} />
-                                                    </Avatar>
-                                                </ListItemAvatar>
-                                                <Grid container sx={{width:'100%'}}>
-                                                    <Grid item>
-                                                        <ListItemText
-                                                            primary={
-                                                                <Typography variant='h4'>
-                                                                    {solanaBalance  && 
-                                                                        <>
-                                                                        {solanaBalance/(10 ** 9)}
-                                                                        </>
+                                    <Grid container>
+                                        <Grid item sm={12} md={4}>
+                                            <Typography
+                                                variant="h6"
+                                            >
+                                                SOL:
+                                            </Typography>   
+                                                
+                                            <List dense={true}>
+                                                <ListItem sx={{width:'100%'}}>
+                                                    <ListItemAvatar>
+                                                        <Avatar
+                                                            sx={{backgroundColor:'#222'}}
+                                                        >
+                                                            <SolCurrencyIcon sx={{color:'white'}} />
+                                                        </Avatar>
+                                                    </ListItemAvatar>
+                                                    <Grid container sx={{width:'100%'}}>
+                                                        <Grid item>
+                                                            <ListItemText
+                                                                primary={
+                                                                    <Typography variant='h4'>
+                                                                        {solanaBalance  && 
+                                                                            <>
+                                                                            {solanaBalance/(10 ** 9)}
+                                                                            </>
+                                                                        }
+                                                                    </Typography>}
+                                                                secondary={
+                                                                    <>
+                                                                    {solanaUSDC &&
+                                                                        <Typography variant='caption'>
+                                                                            {((solanaBalance/(10 ** 9)) * solanaUSDC).toFixed(2)}USDC <i>(1 SOL = {solanaUSDC.toFixed(2)} USDC)</i>
+                                                                        </Typography>
                                                                     }
-                                                                </Typography>}
-                                                            secondary={
-                                                                <>
-                                                                {solanaUSDC &&
-                                                                    <Typography variant='caption'>
-                                                                        {((solanaBalance/(10 ** 9)) * solanaUSDC).toFixed(2)}USDC <i>(1 SOL = {solanaUSDC.toFixed(2)} USDC)</i>
-                                                                    </Typography>
+                                                                    </>
                                                                 }
-                                                                </>
-                                                            }
-                                                        />
-                                                    </Grid>
-
-                                                    {publicKey && pubkey === publicKey.toBase58() &&
-                                                        <Grid item xs sx={{ml:2}} alignContent='middle' textAlign='right'>
-                                                            <SendToken mint={'So11111111111111111111111111111111111111112'} name={'SOL'} logoURI={'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png'} balance={new TokenAmount(solanaBalance, 9).format()} conversionrate={0} showTokenName={false} sendType={0} fetchSolanaBalance={fetchSolanaBalance} />
+                                                            />
                                                         </Grid>
-                                                    }
-                                                </Grid>
-                                            </ListItem>
-                                        </List>
-                                        
+
+                                                        {publicKey && pubkey === publicKey.toBase58() &&
+                                                            <Grid item xs sx={{ml:2}} alignContent='middle' textAlign='center'>
+                                                                <SendToken mint={'So11111111111111111111111111111111111111112'} name={'SOL'} logoURI={'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png'} balance={new TokenAmount(solanaBalance, 9).format()} conversionrate={0} showTokenName={false} sendType={0} fetchSolanaBalance={fetchSolanaBalance} />
+                                                            </Grid>
+                                                        }
+                                                    </Grid>
+                                                </ListItem>
+                                            </List>
+                                        </Grid>
+                                        {solanaHoldings && 
+                                            <Grid item sm={12} md={4}>
+                                                <Typography
+                                                    variant="h6"
+                                                >
+                                                    Token Value:
+                                                </Typography> 
+
+
+                                                <List dense={true}>
+                                                <ListItem sx={{width:'100%'}}>
+                                                    <ListItemAvatar>
+                                                        <Avatar
+                                                            sx={{backgroundColor:'#222'}}
+                                                        >
+                                                            <SolCurrencyIcon sx={{color:'white'}} />
+                                                        </Avatar>
+                                                    </ListItemAvatar>
+                                                    <Grid container sx={{width:'100%'}}>
+                                                        <Grid item>
+                                                            <ListItemText
+                                                                primary={
+                                                                    <Typography variant='h4'>
+                                                                        {(tokensNetValue/solanaUSDC).toFixed(9)}
+                                                                    </Typography>}
+                                                                secondary={
+                                                                    <>
+                                                                    {solanaUSDC &&
+                                                                        <Typography variant='caption'>
+                                                                            {tokensNetValue.toFixed(2)} USDC
+                                                                        </Typography>
+                                                                    }
+                                                                    </>
+                                                                }
+                                                            />
+                                                        </Grid>
+                                                    </Grid>
+                                                </ListItem>
+                                            </List>
+
+                                            </Grid>
+                                        }
+
+{solanaHoldings && 
+                                            <Grid item sm={12} md={4}>
+                                                <Typography
+                                                    variant="h6"
+                                                >
+                                                    TTV:
+                                                </Typography> 
+
+
+                                                <List dense={true}>
+                                                <ListItem sx={{width:'100%'}}>
+                                                    <ListItemAvatar>
+                                                        <Avatar
+                                                            sx={{backgroundColor:'#222'}}
+                                                        >
+                                                            <SolCurrencyIcon sx={{color:'white'}} />
+                                                        </Avatar>
+                                                    </ListItemAvatar>
+                                                    <Grid container sx={{width:'100%'}}>
+                                                        <Grid item>
+                                                            <ListItemText
+                                                                primary={
+                                                                    <Typography variant='h4'>
+                                                                        {((tokensNetValue/solanaUSDC) + solanaBalance/(10 ** 9)).toFixed(9)}
+                                                                    </Typography>}
+                                                                secondary={
+                                                                    <>
+                                                                    {solanaUSDC &&
+                                                                        <Typography variant='caption'>
+                                                                            {(((solanaBalance/(10 ** 9)) * solanaUSDC) + tokensNetValue).toFixed(2)} USDC
+                                                                        </Typography>
+                                                                    }
+                                                                    </>
+                                                                }
+                                                            />
+                                                        </Grid>
+                                                    </Grid>
+                                                </ListItem>
+                                            </List>
+
+                                            </Grid>
+                                        }
+                                    </Grid>
+
                                         {(loadingWallet || loadingTokens || loadingStorage || loadingStreamingPayments) &&
                                             <Grid container spacing={0} sx={{}}>
                                                 {/*

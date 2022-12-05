@@ -84,7 +84,7 @@ export default function GalleryItem(props: any){
                     //let meta_primer = collectionitem;
                     //let buf = Buffer.from(meta_primer.data, 'base64');
                     //let meta_final = decodeMetadata(buf);
-                    let meta_final = collectionitem.meta;
+                    const meta_final = collectionitem.meta;
                     try{
 
                         let file_metadata = meta_final.data.uri;
@@ -121,7 +121,7 @@ export default function GalleryItem(props: any){
         const getCollectionMeta = async () => {
             if (!loading){
                 setLoading(true);
-                let [collectionmeta] = await Promise.all([getCollectionData()]);
+                const [collectionmeta] = await Promise.all([getCollectionData()]);
                 setCollectionMeta({
                     collectionmeta
                 });
