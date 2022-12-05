@@ -380,7 +380,8 @@ export default function BulkSend(props: any) {
                 console.log('recipient: ' + JSON.stringify(recipient));
                 setToAddress(recipient);
             } else{
-                setToAddress(address);
+                console.log("Invalid Sol SNS Address")
+                setToAddress(null);
             }
         } else{
             setToAddress(address);
