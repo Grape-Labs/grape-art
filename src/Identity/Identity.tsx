@@ -1155,7 +1155,7 @@ export function IdentityView(props: any){
                                                 </ListItem>
                                             </List>
                                         </Grid>
-                                        {solanaHoldings && 
+                                        {solanaHoldings && tokensNetValue && 
                                             <Grid item sm={12} md={4}>
                                                 <Typography
                                                     variant="h6"
@@ -1198,7 +1198,7 @@ export function IdentityView(props: any){
                                             </Grid>
                                         }
 
-{solanaHoldings && 
+                                        {solanaHoldings && tokensNetValue && 
                                             <Grid item sm={12} md={4}>
                                                 <Typography
                                                     variant="h6"
@@ -1232,6 +1232,7 @@ export function IdentityView(props: any){
                                                                     }
                                                                     </>
                                                                 }
+                                                                sx={{color:'yellow'}}
                                                             />
                                                         </Grid>
                                                     </Grid>
