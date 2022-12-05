@@ -1090,20 +1090,22 @@ export function IdentityView(props: any){
                                 {pubkey ?
                                     <>  
                                     <Grid container>
-                                        <Typography
-                                            variant="h6"
-                                        >
-                                            {t('ADDRESS')}:
-                                        </Typography>   
-                                        <List dense={true}>
-                                            <ListItem>
-                                                <Grid container>
-                                                    <Grid item>
-                                                        <ExplorerView showSolanaProfile={true} showAddress={true} grapeArtProfile={true} address={pubkey} type='address' shorten={8} hideTitle={false} style='text' color='white' fontSize='14px' />
+                                        <Grid item>
+                                            <Typography
+                                                variant="h6"
+                                            >
+                                                {t('ADDRESS')}:
+                                            </Typography>   
+                                            <List dense={true}>
+                                                <ListItem sx={{width:'100%'}}>
+                                                    <Grid container>
+                                                        <Grid item>
+                                                            <ExplorerView showSolanaProfile={true} showAddress={true} grapeArtProfile={true} address={pubkey} type='address' shorten={8} hideTitle={false} style='text' color='white' fontSize='14px' />
+                                                        </Grid>
                                                     </Grid>
-                                                </Grid>
-                                            </ListItem>
-                                        </List>
+                                                </ListItem>
+                                            </List>
+                                        </Grid>
                                     </Grid>
 
                                     <Grid container>
