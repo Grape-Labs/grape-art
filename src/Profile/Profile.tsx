@@ -1674,7 +1674,7 @@ export function ProfileView(this: any, props: any) {
             const hashedName = await getHashedName(domainName);
             const domainKey = await getNameAccountKey(hashedName, undefined, SOL_TLD_AUTHORITY);
             const registry = await NameRegistryState.retrieve(connection, new PublicKey(domainKey));
-
+            
             if (!registry) {
                 if (!registry?.registry?.owner?.toBase58()) {
                     throw new Error('Could not retrieve name data');
@@ -1682,7 +1682,7 @@ export function ProfileView(this: any, props: any) {
             }
 
             //console.log("registry.nftOwner.toBase58(): "+registry?.nftOwner?.toBase58());
-            //console.log("registry.registry.owner.toBase58(): "+registry?.registry?.owner?.toBase58());
+            console.log("registry.registry.owner.toBase58(): "+registry?.registry?.owner?.toBase58());
 
             setPubkey(registry?.registry?.owner?.toBase58());
             setRDLoading(false);
