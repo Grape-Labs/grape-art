@@ -10,6 +10,13 @@ import { RegexTextField } from '../utils/grapeTools/RegexTextField';
 import { TokenAmount } from '../utils/grapeTools/safe-math';
 import BN from "bn.js";
 
+import {
+    getHashedName,
+    getNameAccountKey,
+    NameRegistryState,
+    performReverseLookup,
+    getTwitterRegistry,
+} from '@bonfida/spl-name-service';
 
 import { styled } from '@mui/material/styles';
 
@@ -116,6 +123,7 @@ export default function BulkSend(props: any) {
     const [toaddress, setToAddress] = React.useState(null);
     const sendtype = props.sendType || 0; // just a type
     const [memotype, setMemoType] = React.useState(0);
+    const [rdloading, setRDLoading] = React.useState(false);
     const freeconnection = new Connection(TX_RPC_ENDPOINT);
     const connection = new Connection(GRAPE_RPC_ENDPOINT);//useConnection();
     const { publicKey, wallet, sendTransaction, signTransaction } = useWallet();
@@ -339,6 +347,45 @@ export default function BulkSend(props: any) {
     
         fetchSolanaTokens()
     }
+
+    const getReverseDomainLookup = async (url: string) => {
+        if (!rdloading) {
+            setRDLoading(true);
+
+            const SOL_TLD_AUTHORITY = new PublicKey('58PwtjSDuFHuUkYjH9BYnnQKHfwo9reZhC2zMJv9JPkx');
+            //const ROOT_TLD_AUTHORITY = new PublicKey('ZoAhWEqTVqHVqupYmEanDobY7dee5YKbQox9BNASZzU');
+            //const PROGRAM_ID = new PublicKey('jCebN34bUfdeUYJT13J1yG16XWQpt5PDx6Mse9GUqhR');
+            //const centralState = new PublicKey('33m47vH6Eav6jr5Ry86XjhRft2jRBLDnDgPSHoquXi2Z');
+
+            const domainName = url.slice(0, url.indexOf('.'));
+            const hashedName = await getHashedName(domainName);
+            const domainKey = await getNameAccountKey(hashedName, undefined, SOL_TLD_AUTHORITY);
+            const registry = await NameRegistryState.retrieve(connection, new PublicKey(domainKey));
+
+            if (!registry) {
+                if (!registry?.registry?.owner?.toBase58()) {
+                    throw new Error('Could not retrieve name data');
+                }
+            }
+            setRDLoading(false);
+            return registry?.registry?.owner?.toBase58();
+            
+        }
+    };
+    
+    const filterToAddress = async (address: string) => {
+        if (address.includes(".sol")){
+            const recipient = await getReverseDomainLookup(address);
+            if (recipient){
+                console.log('recipient: ' + JSON.stringify(recipient));
+                setToAddress(recipient);
+            } else{
+                setToAddress(address);
+            }
+        } else{
+            setToAddress(address);
+        }
+    }
     
     function HandleSendSubmit(event: any) {
         event.preventDefault();
@@ -364,8 +411,8 @@ export default function BulkSend(props: any) {
     React.useEffect(() => {
         if (tokensSelected){
             const hSelected = new Array();
-            for (var x of tokensSelected){
-                for (var y of solanaHoldingRows){
+            for (let x of tokensSelected){
+                for (let y of solanaHoldingRows){
                     if (y.id === x){
                         hSelected.push(y);
                     }
@@ -458,7 +505,7 @@ export default function BulkSend(props: any) {
                                                 label="To address" 
                                                 variant="standard"
                                                 autoComplete="off"
-                                                onChange={(e) => {setToAddress(e.target.value)}}
+                                                onChange={(e) => {filterToAddress(e.target.value)}}
                                                 InputProps={{
                                                     inputProps: {
                                                         style: {

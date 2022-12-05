@@ -8,6 +8,14 @@ import { TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID, getAssociatedTokenAddres
 import { GRAPE_RPC_ENDPOINT, TX_RPC_ENDPOINT, GRAPE_TREASURY } from '../utils/grapeTools/constants';
 import { RegexTextField } from '../utils/grapeTools/RegexTextField';
 
+import {
+    getHashedName,
+    getNameAccountKey,
+    NameRegistryState,
+    performReverseLookup,
+    getTwitterRegistry,
+} from '@bonfida/spl-name-service';
+
 import { styled } from '@mui/material/styles';
 
 import {
@@ -124,6 +132,8 @@ export default function SendToken(props: any) {
     const [memoref, setMemoRef] = React.useState('');
     const [memonotes, setMemoNotes] = React.useState(''); 
     const [memoText, setMemoText] = React.useState(null); 
+    const [rdloading, setRDLoading] = React.useState(false);
+
     const freeconnection = new Connection(TX_RPC_ENDPOINT);
     const connection = new Connection(GRAPE_RPC_ENDPOINT);//useConnection();
     const { publicKey, wallet, sendTransaction, signTransaction, signMessage } = useWallet();
@@ -386,25 +396,73 @@ export default function SendToken(props: any) {
         } 
 
     }
+
+    const getReverseDomainLookup = async (url: string) => {
+        if (!rdloading) {
+            setRDLoading(true);
+
+            const SOL_TLD_AUTHORITY = new PublicKey('58PwtjSDuFHuUkYjH9BYnnQKHfwo9reZhC2zMJv9JPkx');
+            //const ROOT_TLD_AUTHORITY = new PublicKey('ZoAhWEqTVqHVqupYmEanDobY7dee5YKbQox9BNASZzU');
+            //const PROGRAM_ID = new PublicKey('jCebN34bUfdeUYJT13J1yG16XWQpt5PDx6Mse9GUqhR');
+            //const centralState = new PublicKey('33m47vH6Eav6jr5Ry86XjhRft2jRBLDnDgPSHoquXi2Z');
+
+            const domainName = url.slice(0, url.indexOf('.'));
+            const hashedName = await getHashedName(domainName);
+            const domainKey = await getNameAccountKey(hashedName, undefined, SOL_TLD_AUTHORITY);
+            const registry = await NameRegistryState.retrieve(connection, new PublicKey(domainKey));
+
+            if (!registry) {
+                if (!registry?.registry?.owner?.toBase58()) {
+                    throw new Error('Could not retrieve name data');
+                }
+            }
+            setRDLoading(false);
+            return registry?.registry?.owner?.toBase58();
+
+            //console.log("registry.nftOwner.toBase58(): "+registry?.nftOwner?.toBase58());
+            //console.log("registry.registry.owner.toBase58(): "+registry?.registry?.owner?.toBase58());
+
+            //setPubkey(registry?.registry?.owner?.toBase58());
+            
+        }
+    };
     
+    const filterToAddress = async (address: string) => {
+        if (address.includes(".sol")){
+            const recipient = await getReverseDomainLookup(address);
+            if (recipient){
+                console.log('recipient: ' + JSON.stringify(recipient));
+                setToAddress(recipient);
+            } else{
+                setToAddress(address);
+            }
+        } else{
+            setToAddress(address);
+        }
+    }
+
     function HandleSendSubmit(event: any) {
         event.preventDefault();
         if (amounttosend >= 0){
-            if (toaddress){
+            const recipient = toaddress;
+            if (recipient){
                 // improve this check to do a reverse SNS lookup & cardinal check
-
-                if (toaddress.includes(".sol")){
+                let proceed = false;
+                if (recipient.includes(".sol")){
                     console.log("SNS: true");
-                } else if(toaddress.substring(0,1) === "@"){
+                } else if(recipient.substring(0,1) === "@"){
                     console.log("Twitter Handle");
                 } else {
                     // publickey
+                    if ((recipient.length >= 32) && 
+                        (recipient.length <= 44)){
+                        proceed = true;
+                    }
                     console.log("This is a pubkey");    
                 }
 
-                if ((toaddress.length >= 32) && 
-                    (toaddress.length <= 44)){ // very basic check / remove and add twitter handle support (handles are not bs58)
-                    transferTokens(mint, toaddress, amounttosend);
+                if (proceed){ // very basic check / remove and add twitter handle support (handles are not bs58)
+                    transferTokens(mint, recipient, amounttosend);
                     handleClose();
                 } else{
                     // Invalid Wallet ID
@@ -548,7 +606,7 @@ export default function SendToken(props: any) {
                                             label="To address" 
                                             variant="standard"
                                             autoComplete="off"
-                                            onChange={(e) => {setToAddress(e.target.value)}}
+                                            onChange={(e) => {filterToAddress(e.target.value)}}
                                             InputProps={{
                                                 inputProps: {
                                                     style: {
@@ -590,7 +648,7 @@ export default function SendToken(props: any) {
                                             autoComplete="off"
                                             value={GRAPE_TREASURY}
                                             disabled={true}
-                                            onChange={(e) => {setToAddress(e.target.value)}}
+                                            onChange={(e) => {filterToAddress(e.target.value)}}
                                             InputProps={{
                                                 inputProps: {
                                                     style: {
