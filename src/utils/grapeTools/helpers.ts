@@ -153,7 +153,45 @@ export async function getMintFromMetadataWithVerifiedCollection(updateAuthority:
     // add a helper function to get Metadata from Grape Verified Collection
 
     // returns the mint address
-  
+}
+
+export async function getShdwState(collection_filter: any){
+  try{
+    const url = GRAPE_COLLECTIONS_DATA+collection_filter+'_cancel_listings.json';
+    const response = await window.fetch(url, {
+        method: 'GET',
+        headers: {
+        }
+      });
+    const string = await response.text();
+    const json = string === "" ? {} : JSON.parse(string);
+    //console.log(">>> "+JSON.stringify(json));
+    
+    const filter = new Array();
+    for (let x of json){
+      filter.push({
+        tradeState: new PublicKey(1),
+        bookkeeper: new PublicKey("GrapevviL94JZRiZwn2LjpWtmDacXU8QhAJvzpUMMFdL"),
+        buyer: new PublicKey("GrapevviL94JZRiZwn2LjpWtmDacXU8QhAJvzpUMMFdL"),
+        seller: new PublicKey("GrapevviL94JZRiZwn2LjpWtmDacXU8QhAJvzpUMMFdL"),
+        auctionHouse: new PublicKey(x.auctionHouse),
+        metadata: new PublicKey(x.metadata),
+        purchaseReceipt: null,
+        tokenSize: 1,
+        price: x.price,
+        bump: 254,
+        createdAt: x.createdAt,
+        canceledAt: x?.canceledAt || null,
+        receipt_type: x.receipt_type
+      })
+    }
+
+    return filter;
+  }catch(e){ // if RPC error resend it?
+    //console.log("JSON: "+JSON.stringify(receipts))
+    return null;
+  }
+
 }
 
 export async function getMintFromMetadata(updateAuthority:string, metaData:web3.PublicKey): Promise<string>{
@@ -199,7 +237,7 @@ export async function getReceiptsFromAuctionHouse(auctionHouse_filter: string, c
     const ticonnection = new Connection(rpcEndpoint || GRAPE_RPC_ENDPOINT);   
     try{ 
       const collectionAuctionHouse = auctionHouse_filter || AUCTION_HOUSE_ADDRESS;
-          {    
+          {   
               const PrintListingReceiptSize = 236;
               const PrintBidReceiptSize = 269;
               const PrintPurchaseReceiptSize = 193;
@@ -443,6 +481,7 @@ export async function getReceiptsFromAuctionHouse(auctionHouse_filter: string, c
                               mintResults.push({metadata: recMetadata, mint: mintPk});
                           }
                       }*/
+              //console.log("receipts: "+JSON.stringify(receipts))
               return (receipts);
               
           }

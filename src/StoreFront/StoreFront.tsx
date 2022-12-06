@@ -109,7 +109,8 @@ import {
 import { 
     getReceiptsFromAuctionHouse,
     getMintFromVerifiedMetadata,
-    getTokenPrice
+    getTokenPrice,
+    getShdwState
 } from '../utils/grapeTools/helpers';
 
 import { getProfilePicture } from '@solflare-wallet/pfp';
@@ -619,8 +620,9 @@ export function StoreFrontView(this: any, props: any) {
                             "Cache-Control": "s-maxage=8640" }
             })
             const json = await response.json();
-            const resultValues = json.result;
-            // transpose values to our format
+            let resultValues = json.result;
+
+    // transpose values to our format
             
             console.log("jsonToImage: "+jsonToImage);
 
@@ -1002,7 +1004,29 @@ export function StoreFrontView(this: any, props: any) {
             */
 
             setLoadingPosition("Auction House states");
-            const results = await getReceiptsFromAuctionHouse(collectionAuthority.auctionHouse || AUCTION_HOUSE_ADDRESS, null, null, null, null, false, null);
+
+            let override = null;
+            if (collectionAuthority?.listingOverride){
+                override = await getShdwState(collectionAuthority.updateAuthority)
+            }
+
+            let results = await getReceiptsFromAuctionHouse(collectionAuthority.auctionHouse || AUCTION_HOUSE_ADDRESS, null, null, null, null, false, null);
+
+            if (override){
+                let finalResults = new Array();
+                for (let r of results){
+                    finalResults.push(r);
+                }
+                for (let q of override){
+                    finalResults.push(q);
+                }
+                results = finalResults;
+
+                //console.log("Override: "+JSON.stringify(override))
+                //console.log("results: "+JSON.stringify(results))
+                //results = results.concat(override);
+                //results = Object.assign(override, results)
+            }
 
             //console.log("results "+JSON.stringify(results));
             // if we have a secondary auction house?
@@ -1021,6 +1045,7 @@ export function StoreFrontView(this: any, props: any) {
 
             for (var item of results){
                 setLoadingPosition("Mint verified metadata");
+
                 const mintitem = await getMintFromVerifiedMetadata(item.metadata.toBase58(), fetchedCollectionMintList);
                 //console.log("item: "+JSON.stringify(item));
                 //console.log("mintitem: "+JSON.stringify(mintitem));
@@ -1048,6 +1073,7 @@ export function StoreFrontView(this: any, props: any) {
                             state: item?.receipt_type, 
                             purchaseReceipt: purchaseReceipt,
                             marketplaceListing:true});
+
                         ahListingsMints.push(mintitem.address);
 
                         if (item?.receipt_type === "purchase_receipt"){
@@ -1122,7 +1148,7 @@ export function StoreFrontView(this: any, props: any) {
                         } else if (listing.state === 'cancel_listing_receipt'){
                             if (!listing?.cancelledAt){
                                 if ((!mintElement?.listedBlockTime) || (+listing.createdAt >= +mintElement?.listedBlockTime)){
-                                    mintElement.listingPrice = 0;
+                                    mintElement.listingPrice = null;
                                     mintElement.listedTimestamp = listing.timestamp;
                                     mintElement.listedBlockTime = listing.blockTime;
                                     mintElement.listingCancelled = true;

@@ -63,7 +63,8 @@ import {
 import { decodeMetadata } from '../utils/grapeTools/utils';
 import { 
     getReceiptsFromAuctionHouse,
-    getMintFromVerifiedMetadata } from '../utils/grapeTools/helpers';
+    getMintFromVerifiedMetadata,
+    getShdwState } from '../utils/grapeTools/helpers';
 import { 
     GRAPE_RPC_ENDPOINT, 
     GRAPE_PREVIEW, 
@@ -326,10 +327,29 @@ export default function ActivityView(props: any){
         try {
             setActivityLoaded(false);
             //if (!recentActivity){
+                
+                //let override = null;
+                if (collectionAuthority?.listingOverride){
+                    //override = await getShdwState(collectionAuthority.updateAuthority)
+                }
+
                 if (mode === 0){ // all activity
                     if (!recentActivity){
                         //console.log("with aH: "+ collectionAuthority.auctionHouse+" - "+JSON.stringify(collectionAuthority))
+                        
                         const results = await getReceiptsFromAuctionHouse(collectionAuthority.auctionHouse || AUCTION_HOUSE_ADDRESS, null, null, null, null, false, null);
+                        /*
+                        if (override){
+                            let finalResults = new Array();
+                            for (let r of results){
+                                finalResults.push(r);
+                            }
+                            for (let q of override){
+                                finalResults.push(q);
+                            }
+                            results = finalResults;
+                        }
+                        */
 
                         // if we have a secondary auction house?
                         if (collectionAuthority?.otherAuctionHouses){
@@ -405,6 +425,18 @@ export default function ActivityView(props: any){
                     if (!recentActivity){
                         //console.log("with aH: "+ collectionAuthority.auctionHouse+" - "+JSON.stringify(collectionAuthority))
                         const results = await getReceiptsFromAuctionHouse(collectionAuthority.auctionHouse || AUCTION_HOUSE_ADDRESS, null, null, null, null, false, null);
+                        /*
+                        if (override){
+                            let finalResults = new Array();
+                            for (let r of results){
+                                finalResults.push(r);
+                            }
+                            for (let q of override){
+                                finalResults.push(q);
+                            }
+                            results = finalResults;
+                        }
+                        */
 
                         const activityResults = new Array();
                         const activityArray = new Array();
@@ -472,6 +504,18 @@ export default function ActivityView(props: any){
                     console.log("my activity")
                     //console.log("with aH: "+ collectionAuthority.auctionHouse+" - "+JSON.stringify(collectionAuthority))
                     const results = await getReceiptsFromAuctionHouse(collectionAuthority.auctionHouse || AUCTION_HOUSE_ADDRESS, null, publicKey.toBase58(), null, null, false, null);
+                    /*
+                    if (override){
+                        let finalResults = new Array();
+                        for (let r of results){
+                            finalResults.push(r);
+                        }
+                        for (let q of override){
+                            finalResults.push(q);
+                        }
+                        results = finalResults;
+                    }
+                    */
 
                     const activityResults = new Array();
                     const activityArray = new Array();
