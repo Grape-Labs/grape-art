@@ -479,7 +479,7 @@ function SellNowVotePrompt(props:any){
                 setSalePriceEscrow(json[0].price)
 
             setMEListing(json);
-            console.log("json: "+JSON.stringify(json))
+            //console.log("json: "+JSON.stringify(json))
             return json
         }
 
