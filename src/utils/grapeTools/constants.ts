@@ -19,6 +19,7 @@ export const GRAPE_PROFILE = '/profile/';
 export const GRAPE_IDENTITY = '/identity/';
 export const GRAPE_COLLECTION = '/collection/';
 
+// alt routing
 //export const GRAPE_PREVIEW = '/preview?pkey=';
 //export const GRAPE_PROFILE = '/profile?pkey=';
 //export const GRAPE_IDENTITY = '/identity?pkey=';
