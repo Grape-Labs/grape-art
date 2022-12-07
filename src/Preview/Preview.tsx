@@ -415,6 +415,7 @@ function GalleryItemMeta(props: any) {
     const collectionrawdata = props.collectionrawdata.meta_final || [];
     const collectionitem = props.collectionitem.collectionmeta || [];
     const collectionAuctionHouse = props.collectionAuctionHouse || null;
+    const metadataPDA = props.metadataPDA || null;
     const [mint, setMint] = React.useState(props.mint || null);
     const [refreshOwner, setRefreshOwner] = React.useState(false);
     const [loadingOwner, setLoadingOwner] = React.useState(false);
@@ -1404,6 +1405,15 @@ function GalleryItemMeta(props: any) {
                                                             </TableRow>
                                                         : null }
 
+                                                        {metadataPDA ? 
+                                                            <TableRow>
+                                                                <TableCell>{t('Metadata PDA')}:</TableCell>
+                                                                <TableCell>
+                                                                    <ExplorerView address={metadataPDA.toBase58()} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
+                                                                </TableCell>
+                                                            </TableRow>
+                                                        : null }
+
 
 
                                                         {collectionrawdata?.isMutable == 1 ?
@@ -1754,8 +1764,8 @@ function GalleryItemMeta(props: any) {
                                                     <Grid item alignItems="center">
                                                         {collectionitem.attributes?.length && collectionitem.attributes.length > 0 && (
                                                             <>
-                                                                {collectionitem.attributes?.map((item: any) => (
-                                                                    <Chip 
+                                                                {collectionitem.attributes?.map((item: any, key:number) => (
+                                                                    <Chip key={key}
                                                                         sx={{
                                                                             padding:'22.5px',
                                                                             margin: '5px',
@@ -1885,6 +1895,7 @@ export function PreviewView(this: any, props: any) {
         const [loading, setLoading] = React.useState(false);
         const [collectionmeta, setCollectionMeta] = React.useState(null);
         const [collectionrawdata, setCollectionRaw] = React.useState(null);
+        const [metadataPDA, setMetadataPDA] = React.useState(null);
         const [collectionAuctionHouse, setCollectionAuctionHouse] = React.useState(null);
         const [verifiedAuctionHouses, setVerifiedAuctionHouses] = React.useState(null);
         const [vcLoading, setVcLoading] = React.useState(false);
@@ -1898,23 +1909,24 @@ export function PreviewView(this: any, props: any) {
         
         const getCollectionData = async () => {
             try {
-                let mint_address = new PublicKey(mint)
-                let [pda, bump] = await PublicKey.findProgramAddress([
+                const mint_address = new PublicKey(mint)
+                const [pda, bump] = await PublicKey.findProgramAddress([
                     Buffer.from("metadata"),
                     MD_PUBKEY.toBuffer(),
                     new PublicKey(mint_address).toBuffer(),
                 ], MD_PUBKEY)
                 
+                setMetadataPDA(pda);
                 const meta_response = await ggoconnection.getAccountInfo(pda);
                 //console.log("meta_response: "+JSON.stringify(meta_response));
 
                 if (meta_response){
-                    let meta_final = decodeMetadata(meta_response.data);
+                    const meta_final = decodeMetadata(meta_response.data);
                     
                     //console.log("final: "+JSON.stringify(meta_final))
 
                     let file_metadata = meta_final.data.uri;
-                    let file_metadata_url = new URL(file_metadata);
+                    const file_metadata_url = new URL(file_metadata);
 
                     const IPFS = 'https://ipfs.io';
                     const IPFS_2 = "https://nftstorage.link/ipfs";
@@ -1929,8 +1941,8 @@ export function PreviewView(this: any, props: any) {
                     
 
                     if (metadata?.image){
-                        let img_metadata = metadata?.image;
-                        let img_metadata_url = new URL(img_metadata);
+                        const img_metadata = metadata?.image;
+                        const img_metadata_url = new URL(img_metadata);
 
                         const IPFS = 'https://ipfs.io';
                         const IPFS_2 = "https://nftstorage.link/ipfs";
@@ -2071,7 +2083,7 @@ export function PreviewView(this: any, props: any) {
             //if (image){
                 if (!loading){
                     return (
-                            <GalleryItemMeta floorPrice={floorPrice} verifiedAuctionHouses={verifiedAuctionHouses} viewMode={viewMode} verifiedCollection={verifiedCollection} collectionitem={collectionmeta} collectionrawdata={collectionrawdata} mint={mint} setRefresh={setRefresh} setMintPubkey={setMintPubkey} collectionAuctionHouse={collectionAuctionHouse} handlekey={handlekey} />
+                            <GalleryItemMeta floorPrice={floorPrice} verifiedAuctionHouses={verifiedAuctionHouses} viewMode={viewMode} verifiedCollection={verifiedCollection} collectionitem={collectionmeta} collectionrawdata={collectionrawdata} metadataPDA={metadataPDA} mint={mint} setRefresh={setRefresh} setMintPubkey={setMintPubkey} collectionAuctionHouse={collectionAuctionHouse} handlekey={handlekey} />
                     );
                 }
             }
