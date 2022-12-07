@@ -202,9 +202,9 @@ export default function GalleryItem(props: any){
                             let image_url = DRIVE_PROXY+img_url_string;
 
                             if (img_url_string.startsWith(IPFS)){
-                                image_url = DRIVE_PROXY+CLOUDFLARE_IPFS_CDN+''+img_url_string.replace(IPFS,'');
+                                //image_url = DRIVE_PROXY+CLOUDFLARE_IPFS_CDN+''+img_url_string.replace(IPFS,'');
                             } else if (img_url_string.startsWith(IPFS_2)){
-                                image_url = DRIVE_PROXY+CLOUDFLARE_IPFS_CDN+'/ipfs/'+img_url_string.replace(IPFS_2,'');
+                                //image_url = DRIVE_PROXY+CLOUDFLARE_IPFS_CDN+'/ipfs/'+img_url_string.replace(IPFS_2,'');
                             } else if (img_url_string.includes(IPFS_3)){
                                 //https://solana-cdn.com/cdn-cgi/image/width=256/https://cloudflare-ipfs.com/ipfs///
                                 //https://bafybeigi6scodcqz7wc2higrkfdmwt4tkyteoq4xxiy5olxpfh3pm4n3ue.ipfs.nftstorage.link/?ext=png
