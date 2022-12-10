@@ -584,13 +584,13 @@ function SellNowVotePrompt(props:any){
                             </ButtonGroup>
                         </>
                     :
-                    <Tooltip title={t('This NFT is currently owned by a program and may be listed on a third party marketplace escrow')}>
-                        <Button sx={{borderRadius:'10px'}}>
-                            <Alert severity="warning" sx={{borderRadius:'10px'}}>
-                            {t('LISTED/PROGRAM OWNED NFT')}
-                            </Alert>
-                        </Button>
-                    </Tooltip>
+                        <Tooltip title={t('This NFT is currently owned by a program and may be listed on a third party marketplace escrow')}>
+                            <Button sx={{borderRadius:'17px'}}>
+                                <Alert severity="warning" sx={{borderRadius:'17px'}}>
+                                {t('LISTED/PROGRAM OWNED NFT')}
+                                </Alert>
+                            </Button>
+                        </Tooltip>
                     }
                 </Grid>  
             )
@@ -704,7 +704,7 @@ function SellNowVotePrompt(props:any){
                         size="large" 
                         variant="outlined" 
                         sx={{
-                            borderRadius: '10px',
+                            borderRadius: '17px',
                         }}
                         value="Sell Now Instructions" onClick={handleClickOpenDialog}>
                         <HowToVoteIcon sx={{mr:1}}/> VOTE TO LIST
@@ -927,7 +927,7 @@ function SellNowPrompt(props:any){
                     color='inherit'
                     variant="outlined" 
                     sx={{
-                        borderRadius: '10px',
+                        borderRadius: '17px',
                     }}
                     value="Sell Now" onClick={handleClickOpenDialog}>
                     <AccountBalanceWalletIcon sx={{mr:1}}/> {t('Sell Now')}
@@ -1252,7 +1252,7 @@ export function OfferPrompt(props: any) {
                 disabled={hasOffer}
                 onClick={handleClickOpenDialog}
                 sx={{
-                    borderRadius: '10px',
+                    borderRadius: '17px',
                 }}
             >
                 <Confetti
@@ -2567,7 +2567,14 @@ export default function ItemOffers(props: any) {
                                                                 {((grape_whitelisted > -1) ||
                                                                     (grape_member_balance > grape_offer_threshhold)) ? (
                                                                         <>
+                                                                        
                                                                         {!ValidateCurve(mintOwner) && salePrice <= 0 &&
+                                                                            <Grid item>
+                                                                                <SellNowVotePrompt mintName={mintName} setSalePriceEscrow={setSalePriceEscrow} mint={mint} updateAuthority={updateAuthority} mintOwner={mintOwner} salePrice={salePrice} grapeWeightedScore={grape_weighted_score} setRefreshOffers={setRefreshOffers} collectionAuctionHouse={collectionAuctionHouse} />
+                                                                            </Grid>
+                                                                        }
+
+                                                                        {salePrice <= 0 &&
                                                                             <Grid item>
                                                                                 <SellNowVotePrompt mintName={mintName} setSalePriceEscrow={setSalePriceEscrow} mint={mint} updateAuthority={updateAuthority} mintOwner={mintOwner} salePrice={salePrice} grapeWeightedScore={grape_weighted_score} setRefreshOffers={setRefreshOffers} collectionAuctionHouse={collectionAuctionHouse} />
                                                                             </Grid>
@@ -2578,12 +2585,13 @@ export default function ItemOffers(props: any) {
                                                                                 <OfferPrompt floorPrice={floorPrice} mintName={mintName} image={image} mint={mint} updateAuthority={updateAuthority} mintOwner={mintOwner} setRefreshOffers={setRefreshOffers} solBalance={sol_portfolio_balance} highestOffer={highestOffer} offers={offers} collectionAuctionHouse={collectionAuctionHouse} />
                                                                             </Grid>
                                                                         )}
+
                                                                         </>
                                                                 ) : (
                                                                     <Grid item>
                                                                         <Tooltip title={`${t('The Marketplace requires')} ${TOKEN_VERIFICATION_AMOUNT} ${TOKEN_VERIFICATION_NAME} ${t('to make an offer')}`}>
-                                                                            <Button sx={{borderRadius:'10px'}}>
-                                                                                <Alert severity="warning" sx={{borderRadius:'10px'}}>
+                                                                            <Button sx={{borderRadius:'17px'}}>
+                                                                                <Alert severity="warning" sx={{borderRadius:'17px'}}>
                                                                                 {t('Offers limited to')} {TOKEN_VERIFICATION_NAME} {t('holders')}
                                                                                 </Alert>
                                                                             </Button>
@@ -2609,7 +2617,7 @@ export default function ItemOffers(props: any) {
                                                                     variant='outlined'
                                                                     onClick={() => handleCancelListing(salePrice, salePriceAH)}
                                                                     sx={{
-                                                                        borderRadius: '10px',
+                                                                        borderRadius: '17px',
                                                                     }}
                                                                 >
                                                                     <CancelIcon sx={{mr:1}}/> {t('Cancel Listing')}
@@ -2844,7 +2852,7 @@ export default function ItemOffers(props: any) {
                                                                                 //onClick={() => handleWithdrawOffer(convertSolVal(item.offeramount))}
                                                                                 onClick={() => handleCancelOffer(item.price, item.auctionHouse)}
                                                                                 sx={{
-                                                                                    borderRadius: '10px',
+                                                                                    borderRadius: '17px',
                                                                                 }}
                                                                             >
                                                                                 <CancelIcon />
@@ -2886,7 +2894,7 @@ export default function ItemOffers(props: any) {
                                                                             //onClick={() => handleWithdrawOffer(convertSolVal(item.offeramount))}
                                                                             onClick={() => handleCancelOffer(item.price, item.auctionHouse)}
                                                                             sx={{
-                                                                                borderRadius: '10px',
+                                                                                borderRadius: '17px',
                                                                             }}
                                                                         >
                                                                             <CancelIcon />
