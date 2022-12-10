@@ -146,7 +146,7 @@ button.grape-crossmint-button:hover {
 .buyNowButton {
   position: relative!important;
   background: linear-gradient(270deg, #00F0DD 0%, #DC1FFF 100%);
-  border-radius: 10px!important;
+  border-radius: 17px!important;
   color: #fff!important;
   animation: 0.5s ease-in;
 }
