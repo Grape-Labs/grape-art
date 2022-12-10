@@ -270,6 +270,7 @@ function formatBlockTime(date: string, epoch: boolean, time: boolean){
 }
 
 function SellNowVotePrompt(props:any){
+    const curve = props.curve || false;
     const [open_dialog, setOpenSPDialog] = React.useState(false);
     const [sell_now_amount, setSellNowAmount] = React.useState('');
     const mint = props.mint;  
@@ -584,13 +585,19 @@ function SellNowVotePrompt(props:any){
                             </ButtonGroup>
                         </>
                     :
-                        <Tooltip title={t('This NFT is currently owned by a program and may be listed on a third party marketplace escrow')}>
-                            <Button sx={{borderRadius:'17px'}}>
-                                <Alert severity="warning" sx={{borderRadius:'17px'}}>
-                                {t('LISTED/PROGRAM OWNED NFT')}
-                                </Alert>
-                            </Button>
-                        </Tooltip>
+                        <>{curve ?
+                            <></>
+                        :
+                            <Tooltip title={t('This NFT is currently owned by a program and may be listed on a third party marketplace escrow')}>
+                                <Button sx={{borderRadius:'17px'}}>
+                                    <Alert severity="warning" sx={{borderRadius:'17px'}}>
+                                    {t('LISTED/PROGRAM OWNED NFT')}
+                                    </Alert>
+                                </Button>
+                            </Tooltip>
+                        }
+                        </>
+                        
                     }
                 </Grid>  
             )
@@ -2568,15 +2575,15 @@ export default function ItemOffers(props: any) {
                                                                     (grape_member_balance > grape_offer_threshhold)) ? (
                                                                         <>
                                                                         
-                                                                        {!ValidateCurve(mintOwner) && salePrice <= 0 &&
+                                                                        {(!ValidateCurve(mintOwner) && salePrice <= 0) &&
                                                                             <Grid item>
-                                                                                <SellNowVotePrompt mintName={mintName} setSalePriceEscrow={setSalePriceEscrow} mint={mint} updateAuthority={updateAuthority} mintOwner={mintOwner} salePrice={salePrice} grapeWeightedScore={grape_weighted_score} setRefreshOffers={setRefreshOffers} collectionAuctionHouse={collectionAuctionHouse} />
+                                                                                <SellNowVotePrompt curve={false} mintName={mintName} setSalePriceEscrow={setSalePriceEscrow} mint={mint} updateAuthority={updateAuthority} mintOwner={mintOwner} salePrice={salePrice} grapeWeightedScore={grape_weighted_score} setRefreshOffers={setRefreshOffers} collectionAuctionHouse={collectionAuctionHouse} />
                                                                             </Grid>
                                                                         }
 
-                                                                        {salePrice <= 0 &&
+                                                                        {(ValidateCurve(mintOwner) && salePrice <= 0) &&
                                                                             <Grid item>
-                                                                                <SellNowVotePrompt mintName={mintName} setSalePriceEscrow={setSalePriceEscrow} mint={mint} updateAuthority={updateAuthority} mintOwner={mintOwner} salePrice={salePrice} grapeWeightedScore={grape_weighted_score} setRefreshOffers={setRefreshOffers} collectionAuctionHouse={collectionAuctionHouse} />
+                                                                                <SellNowVotePrompt curve={true} mintName={mintName} setSalePriceEscrow={setSalePriceEscrow} mint={mint} updateAuthority={updateAuthority} mintOwner={mintOwner} salePrice={salePrice} grapeWeightedScore={grape_weighted_score} setRefreshOffers={setRefreshOffers} collectionAuctionHouse={collectionAuctionHouse} />
                                                                             </Grid>
                                                                         }
                                                                         
