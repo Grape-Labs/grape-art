@@ -588,8 +588,8 @@ function SellNowVotePrompt(props:any){
                         <>{curve ?
                             <></>
                         :
-                            <Tooltip title={t('This NFT is currently owned by a program and may be listed on a third party marketplace escrow')}>
-                                <Button sx={{borderRadius:'17px'}}>
+                            <Tooltip title={t('This NFT is currently owned by a program and may be listed on a third party marketplace escrow, staked or on a multi-sig')}>
+                                <Button color='inherit' sx={{borderRadius:'17px',border:'none'}}>
                                     <Alert severity="warning" sx={{borderRadius:'17px'}}>
                                     {t('LISTED/PROGRAM OWNED NFT')}
                                     </Alert>
