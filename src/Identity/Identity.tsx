@@ -476,11 +476,11 @@ export function IdentityView(props: any){
                     
                     cnt++;
                 }
+
+                setSolanaTransactions(tx);
             } catch(err){
                 console.log("ERR: "+err);
-            }
-            
-            setSolanaTransactions(tx);
+            }   
         }
         
         setLoadingTransactions(false);
