@@ -433,49 +433,53 @@ export function IdentityView(props: any){
                 }
                 counter++;
             }
-            const getTransactionAccountInputs2 = await ggoconnection.getParsedTransactions(signatures, 'confirmed');
 
-            
+            try{
+                const getTransactionAccountInputs2 = await ggoconnection.getParsedTransactions(signatures, 'confirmed');
 
-            let cnt=0;
-            const tx: any[] = [];
-            for (const tvalue of getTransactionAccountInputs2){
-                //if (cnt===0)
-                //    console.log(signatures[cnt]+': '+JSON.stringify(tvalue));
-                
-                let txtype = "";
-                if (tvalue?.meta?.logMessages){
-                    for (const logvalue of tvalue.meta.logMessages){
-                        //console.log("txvalue: "+JSON.stringify(logvalue));
-                        if (logvalue.includes("Program log: Instruction: ")){
-                            if (txtype.length > 0)
-                                txtype += ", ";
-                            txtype += logvalue.substring(26,logvalue.length);
-                            
+                let cnt=0;
+                const tx: any[] = [];
+                for (const tvalue of getTransactionAccountInputs2){
+                    //if (cnt===0)
+                    //    console.log(signatures[cnt]+': '+JSON.stringify(tvalue));
+                    
+                    let txtype = "";
+                    if (tvalue?.meta?.logMessages){
+                        for (const logvalue of tvalue.meta.logMessages){
+                            //console.log("txvalue: "+JSON.stringify(logvalue));
+                            if (logvalue.includes("Program log: Instruction: ")){
+                                if (txtype.length > 0)
+                                    txtype += ", ";
+                                txtype += logvalue.substring(26,logvalue.length);
+                                
+                            }
                         }
                     }
-                }
 
-                let description = null;
-                for (const item of helius_results){
-                    if ((signatures[cnt] === item.signature) && (item.type !== 'UNKNOWN')){
-                        description = item.description + " ("+ item.type+ ")";
+                    let description = null;
+                    for (const item of helius_results){
+                        if ((signatures[cnt] === item.signature) && (item.type !== 'UNKNOWN')){
+                            description = item.description + " ("+ item.type+ ")";
+                        }
                     }
+                    
+                    tx.push({
+                        signature:signatures[cnt],
+                        blockTime:tvalue?.blockTime,
+                        //amount:tx_cost,
+                        //owner:owner,
+                        memo:memos[cnt],
+                        source:null,
+                        description:description,
+                        type:txtype,
+                    });
+                    
+                    cnt++;
                 }
-                
-                tx.push({
-                    signature:signatures[cnt],
-                    blockTime:tvalue?.blockTime,
-                    //amount:tx_cost,
-                    //owner:owner,
-                    memo:memos[cnt],
-                    source:null,
-                    description:description,
-                    type:txtype,
-                });
-                
-                cnt++;
+            } catch(err){
+                console.log("ERR: "+err);
             }
+            
             setSolanaTransactions(tx);
         }
         
