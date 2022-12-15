@@ -221,7 +221,7 @@ export default function GalleryItem(props: any){
                                 else
                                     image_url = DRIVE_PROXY+CLOUDFLARE_IPFS_CDN+'/ipfs/'+host[0]
                                 */
-                               
+
                                 // we need to split this up to this format:
                                 //https://cloudflare-ipfs.com/ipfs/bafybeigl5fquoseobbanahhb2azvrq2leivmqwcbyrlkx2eeljcsc57wwi/1027.gif
                                 // from 
@@ -230,7 +230,7 @@ export default function GalleryItem(props: any){
                             }
 
                             image = image_url;
-                                back_image = image;
+                            back_image = image;
                             
                             //console.log("DRIVE_PROXY: "+image);
                             //image = setImageUrl(image_url, image);
