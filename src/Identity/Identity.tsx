@@ -434,8 +434,12 @@ export function IdentityView(props: any){
                 counter++;
             }
 
+            console.log("fetching parsed transactions")
             try{
                 const getTransactionAccountInputs2 = await ggoconnection.getParsedTransactions(signatures, 'confirmed');
+
+
+                console.log("getTransactionAccountInputs2: "+JSON.stringify(getTransactionAccountInputs2))
 
                 let cnt=0;
                 const tx: any[] = [];

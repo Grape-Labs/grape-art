@@ -8,6 +8,7 @@ import { inject } from '@vercel/analytics';
 
 import { MyCollectionsView } from "./MyCollections/MyCollections";
 import { ProfileView } from './Profile/Profile';
+import MarketplaceView from './Profile/MarketplaceView';
 import { PreviewView } from './Preview/Preview';
 import { FeaturedView } from './Featured/Featured';
 import { IdentityView } from './Identity/Identity';
@@ -314,6 +315,11 @@ function DashboardContent() {
                                                             <Route path="store/*" element={<StoreFrontView />}>
                                                                 <Route path=":handlekey" element={<StoreFrontView />} />
                                                             </Route>
+                                                            
+                                                            <Route path="collections" element={<MarketplaceView />}>
+
+                                                            </Route>
+
                                                             <Route path="collection/*" element={<StoreFrontView />}>
                                                                 <Route path=":handlekey" element={<StoreFrontView />} />
                                                             </Route>

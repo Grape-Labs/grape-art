@@ -215,11 +215,13 @@ export default function GalleryItem(props: any){
                                 //console.log("folders: "+JSON.stringify(folders));
                                 //console.log("full_url.pathname: "+full_url.hostname);
 
+                                /*
                                 if (folders.length > 0)
                                     image_url = DRIVE_PROXY+CLOUDFLARE_IPFS_CDN+'/ipfs/'+host[0]+'/'+folders[folders.length-1];
                                 else
                                     image_url = DRIVE_PROXY+CLOUDFLARE_IPFS_CDN+'/ipfs/'+host[0]
-
+                                */
+                               
                                 // we need to split this up to this format:
                                 //https://cloudflare-ipfs.com/ipfs/bafybeigl5fquoseobbanahhb2azvrq2leivmqwcbyrlkx2eeljcsc57wwi/1027.gif
                                 // from 

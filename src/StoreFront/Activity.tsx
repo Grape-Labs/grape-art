@@ -587,6 +587,7 @@ export default function ActivityView(props: any){
         let helius_results = null;
 
         if (HELIUS_API && collectionAuthority){
+            /*
             const tx: any[] = [];
             const apiURL = "https://api.helius.xyz/v0/addresses"
             const address = collectionAuthority.address;
@@ -599,21 +600,28 @@ export default function ActivityView(props: any){
                 console.log("parsed transactions: ", data)
 
                 helius_results = data;
-                /*
-                for (const item of data){
-                    tx.push({
-                        signature:item.signature,
-                        blockTime:item.timestamp,
-                        //amount:tx_cost,
-                        //owner:owner,
-                        memo:'',
-                        source:null,
-                        type:item.description + ' | ' + item.type,
-                    });
-                }*/
 
             }
             await parseTransactions();
+            */
+
+
+            const address = collectionAuthority.address;
+            const url = `https://api.helius.xyz/v1/active-listings?api-key=${HELIUS_API}`;
+            const getActiveListings = async () => {
+                const { data } = await axios.post(url, {
+                    "query": {
+                        //"verifiedCollectionAddresses": [address]
+                        "firstVerifiedCreators": ["H1pTa14L5TzFQkqmT37Yp6FNenEnoqA2pfqXNPsFQZjo"]
+                    },
+                    "options": {
+                        "limit": 100,
+                    }
+                });
+                console.log("Active listings: ", data.result);
+                return data.result;
+            };
+            const activeListings = await getActiveListings();
 
             //setSolanaTransactions(tx);
         } 
