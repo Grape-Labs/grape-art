@@ -9,6 +9,7 @@ Primitive references:
 - Cyberconnect (https://github.com/cyberconnecthq)
 - GenesysGo Shadow Drive (https://github.com/GenesysGo/shadow-drive)
 - Bonfida (https://github.com/Bonfida)
+- Holaplex (https://github.com/holaplex/indexer)
 - Cardinal (https://github.com/cardinal-labs)
 - Solflare (https://github.com/solflare-wallet)
 - Jupiter Aggregator (https://www.npmjs.com/package/@jup-ag/react-hook)
