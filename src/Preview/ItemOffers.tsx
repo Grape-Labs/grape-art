@@ -75,10 +75,7 @@ import {
     TOKEN_REALM_ID,
     TOKEN_VERIFICATION_NAME,
     TOKEN_VERIFICATION_AMOUNT,
-    TOKEN_VERIFICATION_ADDRESS,
-    GRAPE_COLLECTIONS_DATA,
     GRAPE_RPC_ENDPOINT, 
-    OTHER_MARKETPLACES, 
     GRAPE_RPC_REFRESH, 
     GRAPE_PREVIEW, 
     GRAPE_PROFILE,
@@ -2236,7 +2233,7 @@ export default function ItemOffers(props: any) {
 
         return (
             <>
-            {(OTHER_MARKETPLACES.filter(e => e.address === mintOwner && (e?.transact && e?.transact !== true)).length > 0) ? (
+            {(verifiedAuctionHouses && verifiedAuctionHouses.filter(e => e.address === mintOwner && (e?.transact && e?.transact !== true)).length > 0) ? (
                 <></>
             ):(
                 <Box

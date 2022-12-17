@@ -94,7 +94,6 @@ import {
     TOKEN_VERIFICATION_AMOUNT,
     TOKEN_VERIFICATION_ADDRESS,
     GRAPE_RPC_ENDPOINT, 
-    OTHER_MARKETPLACES,
     TX_RPC_ENDPOINT, 
     GRAPE_RPC_REFRESH, 
     GRAPE_PREVIEW, 
@@ -1513,195 +1512,161 @@ function GalleryItemMeta(props: any) {
                                             <Typography component="div" variant="caption">
                                                 {tokenOwners && 
                                                     (<>
-                                                        {(OTHER_MARKETPLACES.filter(e => e.address === tokenOwners?.data.parsed.info.owner).length > 0) ? (
+                                                        {verifiedAuctionHouses &&
                                                             <>
-                                                                {(OTHER_MARKETPLACES.filter(e => e.address === tokenOwners?.data.parsed.info.owner)).map(filteredMarket => (
+                                                            {(verifiedAuctionHouses.filter(e => e.address === tokenOwners?.data.parsed.info.owner).length > 0) ? 
                                                                 <>
-                                                                {t('Listed on')}
-                                                                    {(filteredMarket.name.length > 0) ? (
-                                                                        <>&nbsp;
-                                                                        {filteredMarket.name}
-
-                                                                            {/*(filteredMarket.previewUrl.length > 0) ? (
-                                                                                <>
-                                                                                    <Button size="small" variant="text" component="a" href={`${filteredMarket.previewUrl}${mint}`} target="_blank" sx={{ml:1}}>
-                                                                                    
-                                                                                        {filteredMarket.logo &&
-                                                                                            <Grid item>
-                                                                                        <Avatar 
-                                                                                            component={Paper} 
-                                                                                            elevation={4}
-                                                                                            alt={filteredMarket.name}
-                                                                                            src={filteredMarket.logo}
-                                                                                            sx={{ width: 14, height: 14, bgcolor: "#eee", mr:0.5}}
-                                                                                        />
-                                                                                        </Grid>
-                                                                                        }
-                                                                                        <Grid item>
-                                                                                            {filteredMarket.name}
-                                                                                        </Grid>
-                                                                                    </Button>
-                                                                                </>
-                                                                            ):(
-                                                                                <Grid item>
-                                                                                    {filteredMarket.logo &&
-                                                                                    <Avatar 
-                                                                                        component={Paper} 
-                                                                                        elevation={4}
-                                                                                        alt={filteredMarket.name}
-                                                                                        src={filteredMarket.logo}
-                                                                                        sx={{ width: 14, height: 14, bgcolor: "#eee", mr:0.5}}
-                                                                                    />
-                                                                                    }
-                                                                                    <ExplorerView address={mint} type='address' title={filteredMarket.name}/>
-                                                                                </Grid>
-                                                                            )}
-                                                                        </Grid>
-                                                                        */}
-                                                                        </>
-                                                                    ):(
-                                                                        <>
-                                                                        {trimAddress(tokenOwners?.data.parsed.info.owner, 4)}
-                                                                        </>
-                                                                    )}
-                                                                </>
-                                                                ))}
-                                                            </>
-                                                        )
-                                                        :
-                                                        (
-                                                            <>
-                                                            {!loadingOwner ?
-                                                            <Grid container direction="row">
-                                                                <Grid item>
-                                                                {solanaDomain && solanaDomain.length > 0 ?
-                                                                <>
-                                                                    {t('Owned by')} &nbsp;
-                                                                    
-                                                                    <ExplorerView showSolanaProfile={true} grapeArtProfile={true} title={solanaDomain} address={tokenOwners?.data.parsed.info.owner} type='address' hideTitle={false} style='text' color='white' fontSize={'12px'} />
-                                                                    
-                                                                </>
-                                                                :
-                                                                <>
-                                                                    {t('Owned by')} &nbsp;
-                                                                    <ExplorerView showSolanaProfile={true} grapeArtProfile={true} shorten={4} address={tokenOwners?.data.parsed.info.owner} type='address' hideTitle={false} style='text' color='white' fontSize={'12px'} />
-                                                                </>
-                                                                }
-                                                                
-                                                                </Grid>
-                                                                <Grid item 
-                                                                    sx={{ 
-                                                                        display: "flex",
-                                                                        justifyContent: 'flex-end'
-                                                                    }}>
-                                                                    {publicKey && publicKey.toBase58() === tokenOwners?.data.parsed.info.owner ?
+                                                                    {(verifiedAuctionHouses.filter(e => e.address === tokenOwners?.data.parsed.info.owner)).map(filteredMarket => (
                                                                     <>
-                                                                        
-                                                                        <Tooltip title={t('Set this NFT as your avatar')}>
-                                                                            <Button 
-                                                                                variant="text" 
-                                                                                onClick={HandleSetAvatar}
-                                                                                
-                                                                                className="profileAvatarIcon"
-                                                                                sx={{borderRadius:'17px', color:'white'}}
-                                                                                >
-                                                                                <AccountCircleOutlinedIcon 
-                                                                                    sx={{
-                                                                                        fontSize:'17px',
-                                                                                    }} 
-                                                                                />
-                                                                            </Button>
-                                                                        </Tooltip>
-                                                                    </>
-                                                                    :
-                                                                    <>
-                                                                        {loadingFollowState ?
-                                                                            <Button 
-                                                                                sx={{borderRadius:'24px'}}
-                                                                            >
-                                                                                <CircularProgress sx={{p:'14px',m:-2}} />
-                                                                            </Button>
-                                                                        :
-                                                                            <>
-                                                                            {isFollowing ?  
-                                                                                    <Button 
-                                                                                        variant="text" 
-                                                                                        title={t('Unfollow')}
-                                                                                        onClick={() => followWalletDisconnect(tokenOwners?.data.parsed.info.owner)}
-                                                                                        size="small"
-                                                                                        className="profileAvatarIcon"
-                                                                                        sx={{borderRadius:'24px', color:'white'}}
-                                                                                        >
-                                                                                        <PersonRemoveOutlinedIcon sx={{fontSize:'14px'}} />
-                                                                                    </Button>
-                                                                                :
-                                                                                    <Button 
-                                                                                        variant="text" 
-                                                                                        title={t('Follow')}
-                                                                                        onClick={() => followWalletConnect(tokenOwners?.data.parsed.info.owner, solanaDomain || '')}
-                                                                                        size="small"
-                                                                                        className="profileAvatarIcon"
-                                                                                        sx={{borderRadius:'24px', color:'white'}}
-                                                                                        >
-                                                                                        <PersonAddOutlinedIcon sx={{fontSize:'14px'}} />
-                                                                                    </Button>
-                                                                            }
+                                                                        {t('Listed on')}
+                                                                        {(filteredMarket.name.length > 0) ? (
+                                                                            <>&nbsp;
+                                                                            {filteredMarket.name}
                                                                             </>
+                                                                        ):(
+                                                                            <>
+                                                                            {trimAddress(tokenOwners?.data.parsed.info.owner, 4)}
+                                                                            </>
+                                                                        )}
+                                                                    </>
+                                                                    ))}
+                                                                </>
+                                                            :
+                                                                (
+                                                                    <>
+                                                                    {!loadingOwner ?
+                                                                    <Grid container direction="row">
+                                                                        <Grid item>
+                                                                        {solanaDomain && solanaDomain.length > 0 ?
+                                                                        <>
+                                                                            {t('Owned by')} &nbsp;
+                                                                            
+                                                                            <ExplorerView showSolanaProfile={true} grapeArtProfile={true} title={solanaDomain} address={tokenOwners?.data.parsed.info.owner} type='address' hideTitle={false} style='text' color='white' fontSize={'12px'} />
+                                                                            
+                                                                        </>
+                                                                        :
+                                                                        <>
+                                                                            {t('Owned by')} &nbsp;
+                                                                            <ExplorerView showSolanaProfile={true} grapeArtProfile={true} shorten={4} address={tokenOwners?.data.parsed.info.owner} type='address' hideTitle={false} style='text' color='white' fontSize={'12px'} />
+                                                                        </>
                                                                         }
-                                                                        {ValidateAddress(tokenOwners?.data.parsed.info.owner) &&
-                                                                            <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                                                                                <Tooltip title="Send a direct message">
-                                                                                    <Button
-                                                                                        onClick={() => {
-                                                                                            open();
-                                                                                            navigation?.showCreateThread(tokenOwners?.data.parsed.info.owner);
-                                                                                        }}
-                                                                                        sx={{
-                                                                                            textTransform: 'none',
-                                                                                            borderRadius: '17px',
-                                                                                            transition:
-                                                                                                'opacity 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
+                                                                        
+                                                                        </Grid>
+                                                                        <Grid item 
+                                                                            sx={{ 
+                                                                                display: "flex",
+                                                                                justifyContent: 'flex-end'
+                                                                            }}>
+                                                                            {publicKey && publicKey.toBase58() === tokenOwners?.data.parsed.info.owner ?
+                                                                            <>
+                                                                                
+                                                                                <Tooltip title={t('Set this NFT as your avatar')}>
+                                                                                    <Button 
+                                                                                        variant="text" 
+                                                                                        onClick={HandleSetAvatar}
                                                                                         
-                                                                                        }}
-                                                                                    >
-                                                                                        
-                                                                                        <Chat
-                                                                                            sx={{ fontSize: 12, color: 'white' }}
+                                                                                        className="profileAvatarIcon"
+                                                                                        sx={{borderRadius:'17px', color:'white'}}
+                                                                                        >
+                                                                                        <AccountCircleOutlinedIcon 
+                                                                                            sx={{
+                                                                                                fontSize:'17px',
+                                                                                            }} 
                                                                                         />
                                                                                     </Button>
                                                                                 </Tooltip>
-                                                                            </Box>
+                                                                            </>
+                                                                            :
+                                                                            <>
+                                                                                {loadingFollowState ?
+                                                                                    <Button 
+                                                                                        sx={{borderRadius:'24px'}}
+                                                                                    >
+                                                                                        <CircularProgress sx={{p:'14px',m:-2}} />
+                                                                                    </Button>
+                                                                                :
+                                                                                    <>
+                                                                                    {isFollowing ?  
+                                                                                            <Button 
+                                                                                                variant="text" 
+                                                                                                title={t('Unfollow')}
+                                                                                                onClick={() => followWalletDisconnect(tokenOwners?.data.parsed.info.owner)}
+                                                                                                size="small"
+                                                                                                className="profileAvatarIcon"
+                                                                                                sx={{borderRadius:'24px', color:'white'}}
+                                                                                                >
+                                                                                                <PersonRemoveOutlinedIcon sx={{fontSize:'14px'}} />
+                                                                                            </Button>
+                                                                                        :
+                                                                                            <Button 
+                                                                                                variant="text" 
+                                                                                                title={t('Follow')}
+                                                                                                onClick={() => followWalletConnect(tokenOwners?.data.parsed.info.owner, solanaDomain || '')}
+                                                                                                size="small"
+                                                                                                className="profileAvatarIcon"
+                                                                                                sx={{borderRadius:'24px', color:'white'}}
+                                                                                                >
+                                                                                                <PersonAddOutlinedIcon sx={{fontSize:'14px'}} />
+                                                                                            </Button>
+                                                                                    }
+                                                                                    </>
+                                                                                }
+                                                                                {ValidateAddress(tokenOwners?.data.parsed.info.owner) &&
+                                                                                    <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                                                                                        <Tooltip title="Send a direct message">
+                                                                                            <Button
+                                                                                                onClick={() => {
+                                                                                                    open();
+                                                                                                    navigation?.showCreateThread(tokenOwners?.data.parsed.info.owner);
+                                                                                                }}
+                                                                                                sx={{
+                                                                                                    textTransform: 'none',
+                                                                                                    borderRadius: '17px',
+                                                                                                    transition:
+                                                                                                        'opacity 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
+                                                                                                
+                                                                                                }}
+                                                                                            >
+                                                                                                
+                                                                                                <Chat
+                                                                                                    sx={{ fontSize: 12, color: 'white' }}
+                                                                                                />
+                                                                                            </Button>
+                                                                                        </Tooltip>
+                                                                                    </Box>
+                                                                                }
+                                                                            </>
+                                                                            }
+        
+                                                                        </Grid>
+                                                                        
+                                                                        {publicKey && publicKey.toBase58() === tokenOwners?.data.parsed.info.owner &&
+                                                                            <Grid item>
+                                                                                <SendToken 
+                                                                                    mint={mint} 
+                                                                                    name={collectionitem.name} 
+                                                                                    logoURI={
+                                                                                        collectionitem.image ||
+                                                                                        mint
+                                                                                    } 
+                                                                                    balance={1} 
+                                                                                    conversionrate={0} 
+                                                                                    showTokenName={true} 
+                                                                                    sendType={0}
+                                                                                    buttonType={'text'}
+                                                                                    useAvatar={true}
+                                                                                    avatarSize={'10'}
+                                                                                    buttonSize={'medium'}  />
+                                                                            </Grid>  
                                                                         }
+        
+                                                                    </Grid>
+                                                                    :<>{t('Loading owner')}</>}
                                                                     </>
-                                                                    }
-
-                                                                </Grid>
-                                                                
-                                                                {publicKey && publicKey.toBase58() === tokenOwners?.data.parsed.info.owner &&
-                                                                    <Grid item>
-                                                                        <SendToken 
-                                                                            mint={mint} 
-                                                                            name={collectionitem.name} 
-                                                                            logoURI={
-                                                                                collectionitem.image ||
-                                                                                mint
-                                                                            } 
-                                                                            balance={1} 
-                                                                            conversionrate={0} 
-                                                                            showTokenName={true} 
-                                                                            sendType={0}
-                                                                            buttonType={'text'}
-                                                                            useAvatar={true}
-                                                                            avatarSize={'10'}
-                                                                            buttonSize={'medium'}  />
-                                                                    </Grid>  
-                                                                }
-
-                                                            </Grid>
-                                                            :<>{t('Loading owner')}</>}
+                                                                )
+                                                            }
                                                             </>
-                                                        )
-                                                    }
+                                                        }
                                                     </>
                                                     )
                                                 }  
