@@ -66,6 +66,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import CancelIcon from '@mui/icons-material/Cancel';
 
 import HistoryView from './HistoryView';
+import TokenSwapView from './TokenSwap';
 
 import { useAnchorWallet } from "@solana/wallet-adapter-react";
 import { WalletError } from '@solana/wallet-adapter-base';
@@ -90,7 +91,9 @@ import { AuctionHouseProgram } from '@metaplex-foundation/mpl-auction-house'
 import {  
     getReceiptsFromAuctionHouse,
     getMintFromVerifiedMetadata,
-    getTokenPrice } from '../utils/grapeTools/helpers';
+    getTokenPrice, 
+    formatAmount,
+    getFormattedNumberToLocale} from '../utils/grapeTools/helpers';
 
 import { RegexTextField } from '../utils/grapeTools/RegexTextField';
 import { MakeLinkableAddress, ValidateCurve, trimAddress, timeAgo } from '../utils/grapeTools/WalletAddress'; // global key handling
@@ -1421,6 +1424,7 @@ export default function ItemOffers(props: any) {
     const [salePrice, setSalePrice] = React.useState(props.salePrice || 0);
     const [salePriceEscrow, setSalePriceEscrow] = React.useState(null);
     const [tokenSalePrice, setTokenSalePrice] = React.useState(0);
+    const [tokenSwapSalePrice, setTokenSwapSalePrice] = React.useState(0);
     const [saleMade, setSaleMade] = React.useState(false);
     const [saleDate, setSaleDate] = React.useState(null);
     const [saleTimeAgo, setSaleTimeAgo] = React.useState(null);
@@ -2007,6 +2011,13 @@ export default function ItemOffers(props: any) {
 
                 const tpResponse = await getTokenPrice('SOL','USDC');
                 
+                if (verifiedCollection?.tokenSwapLabel){
+                    const ntpResponse = await getTokenPrice('SOL',verifiedCollection.tokenSwapLabel);
+                    if (ntpResponse?.data?.price){
+                        setTokenSwapSalePrice(ntpResponse.data.price);
+                    }
+                }
+
                 setSalePrice(
                     forSale
                 );
@@ -2314,6 +2325,7 @@ export default function ItemOffers(props: any) {
                                                     <Button variant="text" sx={{color:'white',borderRadius:'17px'}}>
                                                         <Typography component="div" variant="h4" sx={{fontWeight:'800'}}>
                                                             <strong>{salePrice} <SolCurrencyIcon /></strong> {tokenSalePrice && <Typography variant='caption' sx={{color:'#999'}}>~{(salePrice*tokenSalePrice).toFixed(2)} USDC</Typography>}
+                                                            {tokenSwapSalePrice && <Box sx={{mt:-2}}><Typography variant='caption' sx={{color:'#ccc'}}>~{getFormattedNumberToLocale((+((salePrice*tokenSwapSalePrice).toFixed(2))),2)} {verifiedCollection.tokenSwapLabel}</Typography></Box>}
                                                         </Typography>
                                                     </Button>
                                                 </Tooltip>
@@ -2377,6 +2389,7 @@ export default function ItemOffers(props: any) {
                                                             <Button variant="text" sx={{color:'white',borderRadius:'17px'}}>
                                                                 <Typography component="div" variant="h4" sx={{fontWeight:'800'}}>
                                                                     <strong>{salePrice} <SolCurrencyIcon /></strong> {tokenSalePrice && <Typography variant='caption' sx={{color:'#999'}}>~{(salePrice*tokenSalePrice).toFixed(2)} USDC</Typography>}
+                                                                    {tokenSwapSalePrice && <Box sx={{mt:-2}}><Typography variant='caption' sx={{color:'#ccc'}}>~{getFormattedNumberToLocale((+((salePrice*tokenSwapSalePrice).toFixed(2))),2)} {verifiedCollection.tokenSwapLabel}</Typography></Box>}
                                                                 </Typography>
                                                             </Button>
                                                         </Tooltip>
@@ -2534,35 +2547,44 @@ export default function ItemOffers(props: any) {
                                                                                 */}
 
                                                                                 {salePriceAH === collectionAuctionHouse || salePriceAH === AUCTION_HOUSE_ADDRESS || verifiedAuctionHouse ?
-                                                                                        <Button 
-                                                                                            size="large" 
-                                                                                            variant="contained" 
-                                                                                            value="Buy Now" 
-                                                                                            className="buyNowButton"
-                                                                                            onClick={() => setAlertBuyNowOpen(true)}
-                                                                                            sx={{
-                                                                                                
-                                                                                            }}
-                                                                                        >
-                                                                                            <AccountBalanceWalletIcon sx={{mr:1}}/> {t('Buy Now')}
+                                                                                        <>
+                                                                                            <Button 
+                                                                                                size="large" 
+                                                                                                variant="contained" 
+                                                                                                value="Buy Now" 
+                                                                                                className="buyNowButton"
+                                                                                                onClick={() => setAlertBuyNowOpen(true)}
+                                                                                                sx={{
+                                                                                                    
+                                                                                                }}
+                                                                                            >
+                                                                                                <AccountBalanceWalletIcon sx={{mr:1}}/> {t('Buy Now')}
 
-                                                                                        </Button>
+                                                                                            </Button>
+                                                                                        
+                                                                                            {verifiedCollection?.tokenSwap &&
+                                                                                                <TokenSwapView swapfrom={verifiedCollection?.tokenSwap} swapto={'So11111111111111111111111111111111111111112'} />
+                                                                                            }
+                                                                                        </>
                                                                                 :
-                                                                                    <Tooltip title="This is listed in a third party marketplace not yet supported in Grape.art">
-                                                                                        <Button 
-                                                                                            size="large" 
-                                                                                            variant="contained" 
-                                                                                            value="Buy Now" 
-                                                                                            className="buyNowButton"
-                                                                                            //onClick={() => setAlertBuyNowOpen(true)}
-                                                                                            sx={{
-                                                                                                
-                                                                                            }}
-                                                                                        >
-                                                                                            <AccountBalanceWalletIcon sx={{mr:1}}/> {t('Buy Now')}
+                                                                                    <>
+                                                                                        <Tooltip title="This is listed in a third party marketplace not yet supported in Grape.art">
+                                                                                            <Button 
+                                                                                                size="large" 
+                                                                                                variant="contained" 
+                                                                                                value="Buy Now" 
+                                                                                                className="buyNowButton"
+                                                                                                //onClick={() => setAlertBuyNowOpen(true)}
+                                                                                                sx={{
+                                                                                                    
+                                                                                                }}
+                                                                                            >
+                                                                                                <AccountBalanceWalletIcon sx={{mr:1}}/> {t('Buy Now')}
 
-                                                                                        </Button> 
-                                                                                    </Tooltip>  
+                                                                                            </Button> 
+                                                                                        </Tooltip>  
+                                                                                    
+                                                                                    </>
                                                                                 }
                                                                             </>
                                                                         :<></>)}

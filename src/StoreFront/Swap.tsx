@@ -4,6 +4,7 @@ import JSBI from 'jsbi';
 import {WalletAdapterNetwork} from '@solana/wallet-adapter-base';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { Connection, PublicKey } from '@solana/web3.js';
+import { TOKEN_PROGRAM_ID } from '@solana/spl-token-v2';
 import { styled } from '@mui/material/styles';
 import {
     Dialog,
@@ -37,6 +38,8 @@ import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import {ENV, TokenInfo, TokenListProvider} from "@solana/spl-token-registry";
 import {useSnackbar} from "notistack";
+
+import { trimAddress } from '../utils/grapeTools/WalletAddress';
 
 export interface Token {
     chainId: number; // 101,
@@ -94,37 +97,42 @@ const BootstrapDialogTitle = (props: DialogTitleProps) => {
     );
 };
 
-/*
-interface JupiterProps {
-    connection: Connection;
-    cluster: Cluster;
-    userPublicKey?: PublicKey;
-    platformFeeAndAccounts?: PlatformFeeAndAccounts;
-    quoteMintToReferrer?: QuoteMintToReferrer;
-    routeCacheDuration?: number;
-    onlyDirectRoutes?: boolean;
-    marketUrl?: string;
-    restrictIntermediateTokens?: boolean;
-    children?: ReactNode; // <- Add this here
-}*/
-
 export default function JupiterSwap(props: any ){
     //export const JupiterSwap = (props: any) => {
     //const connection = useConnection();
     const connection = new Connection(GRAPE_RPC_ENDPOINT);
     const {connected, wallet, publicKey} = useWallet();
-    const tokenMap = props?.tokenMap || null;
+    const [tokenMap, setTokenMap] = React.useState<Map<string,TokenInfo>>(props?.tokenMap || null);
+
+    const fetchTokens = async () => {
+        const tokens = await new TokenListProvider().resolve();
+        const tokenList = tokens.filterByChainId(ENV.MainnetBeta).getList();
+        const tokenMapValue = tokenList.reduce((map, item) => {
+            map.set(item.address, item);
+            return map;
+        }, new Map())
+        setTokenMap(tokenMapValue);
+        return tokenMapValue;
+    }
+
+    React.useEffect(() => { 
+        if (!tokenMap){
+            fetchTokens();
+        }
+    }, [tokenMap]);
 
     return(
-        <JupiterProvider
-            connection={connection}
-            cluster={WalletAdapterNetwork.Mainnet}
-            tokenMap={tokenMap}
-            userPublicKey={connected ? publicKey : undefined}>
-                <JupiterForm {...props}/>
-        </JupiterProvider>);
+        <>
+        {tokenMap &&
+            <JupiterProvider
+                connection={connection}
+                cluster={WalletAdapterNetwork.Mainnet}
+                userPublicKey={connected ? publicKey : undefined}>
+                    <JupiterForm tokenMap={tokenMap} portfolioPositions={props.portfolioPositions} swapfrom={props.swapfrom} swapto={props.swapto}/>
+            </JupiterProvider>
+        }</>);
+        
 }
-
 
 function JupiterForm(props: any) {
     const [tokenSwapAvailableBalance, setPortfolioSwapTokenAvailableBalance] = useState(0);
@@ -153,25 +161,27 @@ function JupiterForm(props: any) {
     const {publicKey, wallet, signAllTransactions, signTransaction, sendTransaction} = useWallet();
     const connection = useConnection();
     const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
+    const [portfolioPositions, setPortfolioPositions] = React.useState(props?.portfolioPositions || null);
 
     const getPrices = async (path?: string): Promise<any> => {
-        return fetch(path || "https://api.raydium.io/coin/price", {
+        return fetch(path || "https://api.raydium.io/v2/main/price", {//"https://api.raydium.io/coin/price", {
           method: "GET",
         })
-          .then((response) => response.json())
-          .then((response) => {
-            return response;
-          })
-          .catch((err) => {
-            console.error(err);
-          });
+        .then((response) => response.json())
+        .then((response) => {
+        return response;
+        })
+        .catch((err) => {
+        console.error(err);
+        });
     };
       
 
     const getTokenList = async () => {
         const priceList = await getPrices();
-        //console.log("priceList: "+JSON.stringify(priceList))
-        if (priceList){    
+        console.log("priceList: "+JSON.stringify(priceList))
+        if (priceList){  
+              
             if (!tokenMap){
                 const raydiumTokens = Object.keys(priceList);
                 const tokens = await new TokenListProvider().resolve();
@@ -299,17 +309,49 @@ function JupiterForm(props: any) {
         swapIt();
     }
 
-    function getPortfolioTokenBalance(swapingfrom:string){
+    const getPortfolioPositions = async () => {
+        console.log("fetching portfolio POsitions")
+        const body = {
+            method: "getTokenAccountsByOwner",
+            jsonrpc: "2.0",
+            params: [
+                publicKey.toBase58(),
+              { programId: TOKEN_PROGRAM_ID },
+              { encoding: "jsonParsed", commitment: "processed" },
+            ],
+            id: "35f0036a-3801-4485-b573-2bf29a7c77d2",
+        };
+        const resp = await window.fetch(GRAPE_RPC_ENDPOINT, {
+            method: "POST",
+            body: JSON.stringify(body),
+            headers: { "Content-Type": "application/json" },
+        })
+        const json = await resp.json();
+        
+        const pp = new Array;
+        
+        if (json?.result?.value){
+            for (let item of json.result?.value){
+                pp.push(item);
+            }
+
+            setPortfolioPositions(pp);
+        }
+    }
+
+    const getPortfolioTokenBalance = async (swapingfrom:string) => {
+    //function getPortfolioTokenBalance(swapingfrom:string){
         let balance = 0;
         //console.log("props.... "+JSON.stringify(props.portfolioPositions));
-
-        props.portfolioPositions.map((token: any) => {
-            if (token.account.data.parsed.info.mint === swapingfrom){
-                if (+token.account.data.parsed.info.tokenAmount.uiAmount > 0)
-                    balance = +token.account.data.parsed.info.tokenAmount.uiAmount;
-            }
-        });
-        setPortfolioSwapTokenAvailableBalance(balance);
+        if (portfolioPositions) {
+            portfolioPositions.map((token: any) => {
+                if (token.account.data.parsed.info.mint === swapingfrom){
+                    if (+token.account.data.parsed.info.tokenAmount.uiAmount > 0)
+                        balance = +token.account.data.parsed.info.tokenAmount.uiAmount;
+                }
+            });
+            setPortfolioSwapTokenAvailableBalance(balance);
+        }
     }
 
 
@@ -322,7 +364,7 @@ function JupiterForm(props: any) {
         setPriceImpacts([]);
         
         try{
-            setConvertedAmountValue(+(String(routes[0].outAmount)) / (10 ** (tokenMap.get(swapto)!.decimals || 6)));
+            setConvertedAmountValue(+(String(routes[0].outAmount)) / (10 ** (tokenMap.get(swapto)?.decimals || 6)));
 
             if (+(String(routes[0].outAmount)) > 0){
                 routes[0].marketInfos.forEach(mi => {
@@ -335,11 +377,11 @@ function JupiterForm(props: any) {
                 })
             }
 
-            setMinimumReceived((+(String(routes[0].outAmount))-(+(String(routes[0].outAmount))*0.001)) / (10 ** (tokenMap.get(swapto)!.decimals || 6)) || null)
+            setMinimumReceived((+(String(routes[0].outAmount))-(+(String(routes[0].outAmount))*0.001)) / (10 ** (tokenMap.get(swapto)?.decimals || 6)) || null)
 
-            const rate = ((+(String(routes[0].outAmount)) / (10 ** (tokenMap.get(swapto)!.decimals || 6)))/ (+routes[0].inAmount[0] / (10 ** tokenMap.get(swapfrom)!.decimals)) || null);
+            const rate = ((+(String(routes[0].outAmount)) / (10 ** (tokenMap.get(swapto)?.decimals || 6)))/ (+routes[0].inAmount[0] / (10 ** tokenMap.get(swapfrom)?.decimals)) || null);
             if (rate)
-                setRate(`${rate} ${tokenMap.get(swapto)!.symbol || ''} per ${tokenMap.get(swapfrom)!.symbol}`)
+                setRate(`${rate} ${tokenMap.get(swapto)?.symbol || ''} per ${tokenMap.get(swapfrom)?.symbol}`)
         }catch(e){
             console.log("ERR: "+e);
         }
@@ -366,12 +408,16 @@ function JupiterForm(props: any) {
         if (selectedValue.address === 'So11111111111111111111111111111111111111112'){
             getSolBalance();
         } else{
-            getPortfolioTokenBalance(selectedValue.address);
+            
+            if (portfolioPositions)
+                getPortfolioTokenBalance(selectedValue.address);
+            else
+                getPortfolioPositions();
         }
         // @ts-ignore
         setTokenBalanceInput(0);
         setTokensToSwap(0);
-    }, [selectedValue, swapfrom])
+    }, [selectedValue, swapfrom, portfolioPositions])
 
     useEffect(()=>{
         if(swapfrom && tokenMap && tokenMap.size > 0){
@@ -389,7 +435,7 @@ function JupiterForm(props: any) {
                 size="small"
                 sx={{borderRadius:'17px'}}
             >
-                {tokenMap?.get(swapfrom)?.symbol} <SwapHorizIcon sx={{mr:1,ml:1}} /> {tokenMap?.get(swapto)?.symbol}
+                {tokenMap?.get(swapfrom)?.symbol || trimAddress(swapfrom,3)} <SwapHorizIcon sx={{mr:1,ml:1}} /> {tokenMap?.get(swapto)?.symbol || trimAddress(swapto,3)}
             </Button>
         }
         <BootstrapDialog
