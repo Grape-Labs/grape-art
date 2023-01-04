@@ -58,6 +58,7 @@ import {
 
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
 
+import DoneAllIcon from '@mui/icons-material/DoneAll';
 import BlurOnIcon from '@mui/icons-material/BlurOn';
 import BlurOffIcon from '@mui/icons-material/BlurOff';
 import Chat from '@mui/icons-material/Chat';
@@ -358,8 +359,10 @@ function GrapeVerified(props:any){
                         src={verifiedCollection ? GRAPE_COLLECTIONS_DATA+verifiedCollection.logo : collectionImage}
                         sx={{ width: 20, height: 20, bgcolor: "#222",ml:1}}
                     />
-                    {grape_verified > -1 &&
-                        <VerifiedIcon sx={{fontSize:"20px",ml:1}} />
+                    {grapeVerified && //grape_verified > -1 &&
+                        <>
+                        <VerifiedIcon sx={{fontSize:"12px",ml:1,color:'#FFD700'}} />
+                        </>
                     }
                 </Button>
             </Tooltip>
@@ -379,8 +382,8 @@ function GrapeVerified(props:any){
                         src={GRAPE_COLLECTIONS_DATA+verifiedCollection.logo}
                         sx={{ width: 20, height: 20, bgcolor: "#222",ml:1}}
                     />
-                    {grape_verified > -1 &&
-                        <VerifiedIcon sx={{fontSize:"20px",ml:1}} />
+                    {grapeVerified && //grape_verified > -1 &&
+                        <VerifiedIcon sx={{fontSize:"12px",ml:1,color:'#FFD700'}} />
                     }
                 </Button>
             </Tooltip>
