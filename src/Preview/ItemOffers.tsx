@@ -2309,6 +2309,7 @@ export default function ItemOffers(props: any) {
                                             <Typography component="div" variant="caption" id="grape-art-last-sale"></Typography>
                                         </Typography>
                                         {( (salePrice > 0) ?
+                                            <>
                                                 <Tooltip title={
                                                     <React.Fragment>
                                                         Marketplace fees at {verifiedCollection?.rate || 1}%
@@ -2329,6 +2330,7 @@ export default function ItemOffers(props: any) {
                                                         </Typography>
                                                     </Button>
                                                 </Tooltip>
+                                            </>
                                             : <></> 
                                         )}
                                     </Box>
@@ -2378,6 +2380,7 @@ export default function ItemOffers(props: any) {
                                                 
                                                 <> 
                                                     {salePriceAH === collectionAuctionHouse || salePriceAH === AUCTION_HOUSE_ADDRESS || verifiedAuctionHouse ?
+                                                        <>
                                                         <Tooltip title={
                                                             <React.Fragment>
                                                                 {verifiedAuctionHouse && 
@@ -2393,6 +2396,19 @@ export default function ItemOffers(props: any) {
                                                                 </Typography>
                                                             </Button>
                                                         </Tooltip>
+                                                            {verifiedCollection?.tokenSwap &&
+                                                                    <>
+                                                                    <TokenSwapView 
+                                                                        fromTokenAddress={verifiedCollection.tokenSwap}
+                                                                        toTokenAddress={'So11111111111111111111111111111111111111112'}
+                                                                        fromTokenLabel={verifiedCollection.tokenSwapLabel}
+                                                                        toTokenLabel={'SOL'}
+                                                                        swapAmount={(salePrice*tokenSwapSalePrice)}
+                                                                    />
+                                                                    <br/>
+                                                                    </>
+                                                                }
+                                                        </>
                                                     :
                                                         <Tooltip title={
                                                             <React.Fragment>
@@ -2562,9 +2578,7 @@ export default function ItemOffers(props: any) {
 
                                                                                             </Button>
                                                                                         
-                                                                                            {verifiedCollection?.tokenSwap &&
-                                                                                                <TokenSwapView swapfrom={verifiedCollection?.tokenSwap} swapto={'So11111111111111111111111111111111111111112'} />
-                                                                                            }
+                                                                                            
                                                                                         </>
                                                                                 :
                                                                                     <>
