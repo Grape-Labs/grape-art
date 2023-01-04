@@ -2326,7 +2326,7 @@ export default function ItemOffers(props: any) {
                                                     <Button variant="text" sx={{color:'white',borderRadius:'17px'}}>
                                                         <Typography component="div" variant="h4" sx={{fontWeight:'800'}}>
                                                             <strong>{salePrice} <SolCurrencyIcon /></strong> {tokenSalePrice && <Typography variant='caption' sx={{color:'#999'}}>~{(salePrice*tokenSalePrice).toFixed(2)} USDC</Typography>}
-                                                            {tokenSwapSalePrice && <Box sx={{mt:-2}}><Typography variant='caption' sx={{color:'#ccc'}}>~{getFormattedNumberToLocale((+((salePrice*tokenSwapSalePrice).toFixed(2))),2)} {verifiedCollection.tokenSwapLabel}</Typography></Box>}
+                                                            {tokenSwapSalePrice > 0 && <Box sx={{mt:-2}}><Typography variant='caption' sx={{color:'#ccc'}}>~{getFormattedNumberToLocale((+((salePrice*tokenSwapSalePrice).toFixed(2))),2)} {verifiedCollection.tokenSwapLabel}</Typography></Box>}
                                                         </Typography>
                                                     </Button>
                                                 </Tooltip>
