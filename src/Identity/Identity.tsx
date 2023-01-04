@@ -1213,7 +1213,7 @@ export function IdentityView(props: any){
                                                 <Typography
                                                     variant="h6"
                                                 >
-                                                    TTV:
+                                                    Total Value:
                                                 </Typography> 
 
 
