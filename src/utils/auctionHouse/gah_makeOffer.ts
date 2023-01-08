@@ -65,16 +65,17 @@ export async function gah_makeOffer(offerAmount: number, mint: string, walletPub
     
     let lps = LAMPORTS_PER_SOL;
     if (tokenDecimals){
-      lps = Math.pow(10, tokenDecimals);
+      lps = 1;//Math.pow(10, tokenDecimals);
     }
 
     console.log("lps: "+lps)
 
     const buyerPrice = Number(offerAmount) * lps;
     
-    //console.log("buyerPrice: "+buyerPrice);
+    console.log("buyerPrice: "+buyerPrice);
     //console.log("auctionHouseObj: "+JSON.stringify(auctionHouseObj));
     const auctionHouse = new PublicKey(auctionHouseKey);//new PublicKey(auctionHouseObj.auctionHouse.address)
+    console.log("auctionHouse: "+auctionHouse.toBase58());
     //console.log("auctionHouse: "+auctionHouseObj.auctionHouse.address);
     const authority = new PublicKey(auctionHouseObj.authority)
     const auctionHouseFeeAccount = new PublicKey(

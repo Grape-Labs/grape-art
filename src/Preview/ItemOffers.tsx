@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 //import { sendSignedTransaction } from '../utils/governanceTools/sendTransactions'
 
-import { Connection, PublicKey, Transaction, TransactionInstruction } from '@solana/web3.js';
+import { Connection, LAMPORTS_PER_SOL, PublicKey, Transaction, TransactionInstruction } from '@solana/web3.js';
 import * as anchor from '@project-serum/anchor';
 import { getAssociatedTokenAddress, getOrCreateAssociatedTokenAccount } from '@solana/spl-token-v2';
 // @ts-ignore
@@ -1955,10 +1955,12 @@ export default function ItemOffers(props: any) {
                                         //console.log("listing: "+JSON.stringify(offer))
                                         if (soldDate < offer.blockTime){
                                             if (offer.bookkeeper === mintOwner){
-                                                //if (symbol === 'SOL')
+                                                if (symbol === 'SOL')
                                                     forSale = offer.price;
-                                                //else
-                                                //    forSale = offer.price * Math.pow(10, tokenDecimals);
+                                                else
+                                                    forSale = +offer.price * LAMPORTS_PER_SOL//Math.pow(10, LAMPORTS_PER_SOL);
+                                                
+                                                console.log("forSale: "+forSale)
                                                 forSaleDate = offer.blockTime;
                                                 sale_price_marketplace = offer.auctionHouse;
                                             }
@@ -2009,7 +2011,7 @@ export default function ItemOffers(props: any) {
                 const offerResults = allResults.sort((a,b) => (a.blockTime < b.blockTime) ? 1 : -1);
                 const dupRemovedResults = offerResults.filter( (ele, ind) => ind === offerResults.findIndex( elem => elem.bookkeeper === ele.bookkeeper))
                 
-                const finalOfferResults = new Array();
+                const finalOfferResults: any[] = [];
                 
                 let highest_offer_date = null;
                 let highest_offer_marketplace = null;
