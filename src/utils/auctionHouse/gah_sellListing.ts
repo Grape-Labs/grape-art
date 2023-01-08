@@ -34,7 +34,7 @@ createExecuteSaleInstruction,
 createPrintPurchaseReceiptInstruction,
 } = AuctionHouseProgram.instructions
 
-export async function gah_sellListing(offerAmount: number, mint: string, buyerPublicKey: string, mintOwner: any, weightedScore: any, daoPublicKey: string, updateAuthority: string, collectionAuctionHouse: string, lamports: number): Promise<InstructionsAndSignersSet> {
+export async function gah_sellListing(offerAmount: number, mint: string, buyerPublicKey: string, mintOwner: any, weightedScore: any, daoPublicKey: string, updateAuthority: string, collectionAuctionHouse: string, tokenDecimals: number): Promise<InstructionsAndSignersSet> {
   const tokenSize = 1;
   const auctionHouseKey = new web3.PublicKey(collectionAuctionHouse || AUCTION_HOUSE_ADDRESS);
   const mintKey = new web3.PublicKey(mint);
@@ -45,8 +45,9 @@ export async function gah_sellListing(offerAmount: number, mint: string, buyerPu
   //check if escrow amount already exists to determine if we need to deposit amount to grapevine 
   
   let lps = LAMPORTS_PER_SOL;
-    if (lamports)
-      lps = lamports;
+  if (tokenDecimals){
+    lps = Math.pow(10, tokenDecimals);
+  }
   const buyerPrice = Number(offerAmount) * lps
   //console.log("buyerPrice: "+buyerPrice);
   const auctionHouse = new PublicKey(auctionHouseKey);//new PublicKey(auctionHouseObj.auctionHouse.address)

@@ -43,7 +43,7 @@ const {
   createPrintPurchaseReceiptInstruction,
 } = AuctionHouseProgram.instructions
 
-export async function gah_acceptOffer(offerAmount: number, mint: string, sellerPublicKey: PublicKey, buyerPublicKey: any, updateAuthority: string, collectionAuctionHouse: string, listingTradeState: PublicKey, listed: boolean, lamports: number): Promise<InstructionsAndSignersSet> {
+export async function gah_acceptOffer(offerAmount: number, mint: string, sellerPublicKey: PublicKey, buyerPublicKey: any, updateAuthority: string, collectionAuctionHouse: string, listingTradeState: PublicKey, listed: boolean, tokenDecimals: number): Promise<InstructionsAndSignersSet> {
   //START CANCEL
   const tokenSize = 1;
   const auctionHouseKey = new web3.PublicKey(collectionAuctionHouse || AUCTION_HOUSE_ADDRESS);
@@ -71,8 +71,9 @@ export async function gah_acceptOffer(offerAmount: number, mint: string, sellerP
   const tokenMint = mintKey;
 
   let lps = LAMPORTS_PER_SOL;
-  //if (lamports)
-  //  lps = lamports;
+  if (tokenDecimals){
+    lps = Math.pow(10, tokenDecimals);
+  }
   const buyerPrice = Number(offerAmount) * lps;
 
   const treasuryMint = new PublicKey(auctionHouseObj.treasuryMint)

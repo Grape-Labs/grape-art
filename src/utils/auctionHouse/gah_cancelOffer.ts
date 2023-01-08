@@ -36,7 +36,7 @@ const {
   createWithdrawInstruction,
 } = AuctionHouseProgram.instructions
 
-export async function gah_cancelOffer(offerAmount: number, mint: string, buyerWalletKey: PublicKey, mintOwner: any, updateAuthority: string, collectionAuctionHouse: string, lamports: number): Promise<InstructionsAndSignersSet> {
+export async function gah_cancelOffer(offerAmount: number, mint: string, buyerWalletKey: PublicKey, mintOwner: any, updateAuthority: string, collectionAuctionHouse: string, tokenDecimals: number): Promise<InstructionsAndSignersSet> {
   //START CANCEL
   const tokenSize = 1;
   const auctionHouseKey = new web3.PublicKey(collectionAuctionHouse || AUCTION_HOUSE_ADDRESS);
@@ -58,8 +58,9 @@ export async function gah_cancelOffer(offerAmount: number, mint: string, buyerWa
   const tokenMint = mintKey;
 
   let lps = LAMPORTS_PER_SOL;
-  //if (lamports)
-  //    lps = lamports;
+  if (tokenDecimals){
+    lps = Math.pow(10, tokenDecimals);
+  }
   const buyerPrice = Number(offerAmount) * lps;
 
     /*
