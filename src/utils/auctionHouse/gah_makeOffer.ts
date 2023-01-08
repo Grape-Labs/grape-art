@@ -64,8 +64,12 @@ export async function gah_makeOffer(offerAmount: number, mint: string, walletPub
     //console.log('escrow_amount:',escrowSolAmount, 'offerAmount:', offerAmount);
     
     let lps = LAMPORTS_PER_SOL;
-    //if (lamports)
-    //  lps = lamports;
+    if (lamports){
+      lps = Math.pow(10, lamports);
+    //Math.pow(10, tokenSupply.value.decimals)
+    }
+
+    console.log("lps: "+lps)
 
     const buyerPrice = Number(offerAmount) * lps;
     
