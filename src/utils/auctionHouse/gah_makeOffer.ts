@@ -16,6 +16,8 @@ import { BN, web3 } from '@project-serum/anchor';
 import { GRAPE_RPC_ENDPOINT } from '../grapeTools/constants';
 import {InstructionsAndSignersSet} from "./helpers/types";
 
+import { Metaplex, sol, token } from '@metaplex-foundation/js';
+
 import { AuctionHouseProgram } from '@metaplex-foundation/mpl-auction-house'
 import { Metadata } from '@metaplex-foundation/mpl-token-metadata'
 //import { MetadataProgram, Metadata } from '@metaplex-foundation/mpl-token-metadata'
@@ -50,12 +52,15 @@ export async function gah_makeOffer(offerAmount: number, mint: string, walletPub
     //const { publicKey, signTransaction } = useWallet();
     console.log("collectionAuctionHouse " + JSON.stringify(collectionAuctionHouse));
     const tokenSize = 1;
+    
     const auctionHouseKey = new web3.PublicKey(collectionAuctionHouse || AUCTION_HOUSE_ADDRESS);
     const mintKey = new web3.PublicKey(mint);
     const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
     const anchorProgram = await loadAuctionHouseProgram(null, ENV_AH, GRAPE_RPC_ENDPOINT);
     const auctionHouseObj = await anchorProgram.account.auctionHouse.fetch(auctionHouseKey,);    
     const buyerWalletKey = new web3.PublicKey(walletPublicKey);
+    
+    
     //check if escrow amount already exists to determine if we need to deposit amount to grapevine 
     //const escrow = (await getAuctionHouseBuyerEscrow(auctionHouseKey, buyerWalletKey))[0];
     //const escrow_amount = await getTokenAmount(anchorProgram,escrow,new PublicKey(auctionHouseObj.treasuryMint),);
@@ -65,13 +70,21 @@ export async function gah_makeOffer(offerAmount: number, mint: string, walletPub
     
     let lps = LAMPORTS_PER_SOL;
     if (tokenDecimals){
-      lps = 1;//Math.pow(10, tokenDecimals);
+      lps = Math.pow(10, tokenDecimals);
     }
 
     console.log("lps: "+lps)
 
     const buyerPrice = Number(offerAmount) * lps;
     
+    const metaplex = new Metaplex(new Connection(GRAPE_RPC_ENDPOINT));
+    
+    /*
+    const auctionHouseJS = await metaplex
+      .auctionHouse()
+      .findByAddress({ address: new PublicKey(collectionAuctionHouse || AUCTION_HOUSE_ADDRESS) });
+    */
+
     console.log("buyerPrice: "+buyerPrice);
     //console.log("auctionHouseObj: "+JSON.stringify(auctionHouseObj));
     const auctionHouse = new PublicKey(auctionHouseKey);//new PublicKey(auctionHouseObj.auctionHouse.address)
@@ -83,6 +96,16 @@ export async function gah_makeOffer(offerAmount: number, mint: string, walletPub
     )
     const treasuryMint = new PublicKey(auctionHouseObj.treasuryMint)
 
+    /*
+    const auctionHouseModel = auctionHouseJS.model;
+    const { bid,  } = await metaplex
+      .auctionHouse()
+      .bid({
+          auctionHouseModel, // A model of the Auction House related to this listing
+          mintAccount: new PublicKey(mint), // The mint account to create a bid for
+          price: sol(offerAmount),                         // The buyer's price
+      });
+    */
     console.log("treasuryMint: "+treasuryMint.toBase58())
     
     const tokenMint = mintKey

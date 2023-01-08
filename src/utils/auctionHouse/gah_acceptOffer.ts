@@ -72,7 +72,7 @@ export async function gah_acceptOffer(offerAmount: number, mint: string, sellerP
 
   let lps = LAMPORTS_PER_SOL;
   if (tokenDecimals){
-    lps = 1//Math.pow(10, tokenDecimals);
+    lps = Math.pow(10, tokenDecimals);
   }
   const buyerPrice = Number(offerAmount) * lps;
 

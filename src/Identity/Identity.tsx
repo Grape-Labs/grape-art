@@ -22,7 +22,7 @@ import gql_client from '../gql_client'
 import { programs, tryGetAccount, withSend, findAta } from '@cardinal/token-manager';
 
 import GovernanceDetailsView from './plugins/GovernanceDetails';
-import { SquadsView } from './plugins/Squads';
+import { SquadsView } from './plugins/squads';
 import { GovernanceView } from './plugins/Governance';
 import { StorageView } from './plugins/Storage';
 import { StreamingPaymentsView } from './plugins/StreamingPayments';

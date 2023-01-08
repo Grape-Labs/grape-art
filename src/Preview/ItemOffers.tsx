@@ -1958,7 +1958,7 @@ export default function ItemOffers(props: any) {
                                                 if (symbol === 'SOL')
                                                     forSale = offer.price;
                                                 else
-                                                    forSale = +offer.price * LAMPORTS_PER_SOL//Math.pow(10, LAMPORTS_PER_SOL);
+                                                    forSale = +offer.price * Math.pow(10, (9-tokenDecimals))
                                                 
                                                 console.log("forSale: "+forSale)
                                                 forSaleDate = offer.blockTime;
