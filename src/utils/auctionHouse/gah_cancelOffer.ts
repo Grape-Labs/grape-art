@@ -36,7 +36,7 @@ const {
   createWithdrawInstruction,
 } = AuctionHouseProgram.instructions
 
-export async function gah_cancelOffer(offerAmount: number, mint: string, buyerWalletKey: PublicKey, mintOwner: any, updateAuthority: string, collectionAuctionHouse: string): Promise<InstructionsAndSignersSet> {
+export async function gah_cancelOffer(offerAmount: number, mint: string, buyerWalletKey: PublicKey, mintOwner: any, updateAuthority: string, collectionAuctionHouse: string, lamports: number): Promise<InstructionsAndSignersSet> {
   //START CANCEL
   const tokenSize = 1;
   const auctionHouseKey = new web3.PublicKey(collectionAuctionHouse || AUCTION_HOUSE_ADDRESS);
@@ -47,7 +47,7 @@ export async function gah_cancelOffer(offerAmount: number, mint: string, buyerWa
 
   //check if escrow amount already exists to determine if we need to deposit amount to grapevine 
   const escrow = (await getAuctionHouseBuyerEscrow(auctionHouseKey, buyerWalletKey))[0];
-  const escrow_amount = await getTokenAmount(anchorProgram,escrow,auctionHouseObj.treasuryMint,);
+  const escrow_amount = await getTokenAmount(anchorProgram,escrow,new PublicKey(auctionHouseObj.treasuryMint),);
   const escrowSolAmount = convertSolVal(escrow_amount);
 
   const auctionHouse = new PublicKey(auctionHouseKey);//new PublicKey(auctionHouseObj.auctionHouse.address)
@@ -55,8 +55,12 @@ export async function gah_cancelOffer(offerAmount: number, mint: string, buyerWa
   const auctionHouseFeeAccount = new PublicKey(
     auctionHouseObj.auctionHouseFeeAccount
   )
-  const tokenMint = mintKey
-  const buyerPrice = Number(offerAmount) * LAMPORTS_PER_SOL;
+  const tokenMint = mintKey;
+
+  let lps = LAMPORTS_PER_SOL;
+  //if (lamports)
+  //    lps = lamports;
+  const buyerPrice = Number(offerAmount) * lps;
 
     /*
     const buyPriceAdjusted = new BN(
@@ -90,7 +94,7 @@ export async function gah_cancelOffer(offerAmount: number, mint: string, buyerWa
       await AuctionHouseProgram.findPublicBidTradeStateAddress(
         new PublicKey(buyerWalletKey),
         auctionHouse,
-        auctionHouseObj.treasuryMint,
+        new PublicKey(auctionHouseObj.treasuryMint),
         tokenMint,
         buyerPrice,
         tokenSize

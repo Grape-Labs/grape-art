@@ -46,7 +46,7 @@ function convertSolVal(sol: any){
     return sol;
 }
 
-export async function gah_makeOffer(offerAmount: number, mint: string, walletPublicKey: string, mintOwner: any, updateAuthority: string, collectionAuctionHouse: string): Promise<InstructionsAndSignersSet> {
+export async function gah_makeOffer(offerAmount: number, mint: string, walletPublicKey: string, mintOwner: any, updateAuthority: string, collectionAuctionHouse: string, lamports: number): Promise<InstructionsAndSignersSet> {
     //const { publicKey, signTransaction } = useWallet();
     console.log("collectionAuctionHouse " + JSON.stringify(collectionAuctionHouse));
     const tokenSize = 1;
@@ -57,13 +57,18 @@ export async function gah_makeOffer(offerAmount: number, mint: string, walletPub
     const auctionHouseObj = await anchorProgram.account.auctionHouse.fetch(auctionHouseKey,);    
     const buyerWalletKey = new web3.PublicKey(walletPublicKey);
     //check if escrow amount already exists to determine if we need to deposit amount to grapevine 
-    const escrow = (await getAuctionHouseBuyerEscrow(auctionHouseKey, buyerWalletKey))[0];
-    const escrow_amount = await getTokenAmount(anchorProgram,escrow,auctionHouseObj.treasuryMint,);
+    //const escrow = (await getAuctionHouseBuyerEscrow(auctionHouseKey, buyerWalletKey))[0];
+    //const escrow_amount = await getTokenAmount(anchorProgram,escrow,new PublicKey(auctionHouseObj.treasuryMint),);
     
-    const escrowSolAmount = convertSolVal(escrow_amount);
+    //const escrowSolAmount = convertSolVal(escrow_amount);
     //console.log('escrow_amount:',escrowSolAmount, 'offerAmount:', offerAmount);
     
-    const buyerPrice = Number(offerAmount) * LAMPORTS_PER_SOL
+    let lps = LAMPORTS_PER_SOL;
+    //if (lamports)
+    //  lps = lamports;
+
+    const buyerPrice = Number(offerAmount) * lps;
+    
     //console.log("buyerPrice: "+buyerPrice);
     //console.log("auctionHouseObj: "+JSON.stringify(auctionHouseObj));
     const auctionHouse = new PublicKey(auctionHouseKey);//new PublicKey(auctionHouseObj.auctionHouse.address)

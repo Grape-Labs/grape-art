@@ -30,7 +30,7 @@ const {
   AuctionHouseProgram.instructions
 
 import { ConstructionOutlined } from '@mui/icons-material';
-  export async function gah_cancelListingReceipt(price: number, mint: string, walletPublicKey: string, mintOwner: any, weightedScore: any, daoPublicKey: string, updateAuthority: string, collectionAuctionHouse: string): Promise<InstructionsAndSignersSet> {
+  export async function gah_cancelListingReceipt(price: number, mint: string, walletPublicKey: string, mintOwner: any, weightedScore: any, daoPublicKey: string, updateAuthority: string, collectionAuctionHouse: string, lamports: number): Promise<InstructionsAndSignersSet> {
     console.log("collectionAuctionHouse " + JSON.stringify(collectionAuctionHouse));
     const tokenSize = 1;
     const auctionHouseKey = new web3.PublicKey(collectionAuctionHouse || AUCTION_HOUSE_ADDRESS);
@@ -39,7 +39,10 @@ import { ConstructionOutlined } from '@mui/icons-material';
     const auctionHouseObj = await anchorProgram.account.auctionHouse.fetch(auctionHouseKey,);    
     //check if escrow amount already exists to determine if we need to deposit amount to grapevine 
     
-    const buyerPrice = Number(price) * LAMPORTS_PER_SOL
+    let lps = LAMPORTS_PER_SOL;
+    if (lamports)
+      lps = lamports;
+    const buyerPrice = Number(price) * lps
     //console.log("buyerPrice: "+buyerPrice);
     //console.log("auctionHouseObj: "+JSON.stringify(auctionHouseObj));
     const auctionHouse = new PublicKey(auctionHouseKey);//new PublicKey(auctionHouseObj.auctionHouse.address)

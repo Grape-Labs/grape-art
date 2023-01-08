@@ -287,6 +287,9 @@ function SellNowVotePrompt(props:any){
     const setSalePriceEscrow = props.setSalePriceEscrow;
     const weightedScore = props.grapeWeightedScore || 0;
     const collectionAuctionHouse = props.collectionAuctionHouse || null; 
+    const verifiedCollection = props?.verifiedCollection;
+    const symbol = verifiedCollection?.auctionHouseTokenSymbol || 'SOL';
+    const lamports = verifiedCollection?.auctionHouseTokenLamports || null; 
     const setRefreshOffers = props.setRefreshOffers;
     //const salePrice = React.useState(props.salePrice);
     //const provider = new anchor.Provider(connection, wallet, anchor.Provider.defaultOptions)
@@ -523,7 +526,7 @@ function SellNowVotePrompt(props:any){
                                             <>
                                                 <List dense={true}>
                                                     <ListItem>
-                                                        {t('Amount')}:&nbsp;<strong>{meListing[0].price}<SolCurrencyIcon sx={{ml:1,fontSize:"10px"}} /></strong>
+                                                        {t('Amount')}:&nbsp;<strong>{meListing[0].price}{symbol === 'SOL' ? <SolCurrencyIcon sx={{ml:1,fontSize:"10px"}} /> : <>{symbol}</>}</strong>
                                                     </ListItem>
                                                     <ListItem>
                                                         {t('Mint')}:&nbsp;<ExplorerView address={mint} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
@@ -637,7 +640,7 @@ function SellNowVotePrompt(props:any){
                     */
                 } else {
                     //const transactionInstr = await sellNowListing(+sell_now_amount, mint, publicKey.toString(), mintOwner, weightedScore, daoPublicKey, updateAuthority, collectionAuctionHouse);
-                    const transactionInstr = await gah_makeListing(+sell_now_amount, mint, publicKey.toString(), mintOwner, weightedScore, daoPublicKey, updateAuthority, collectionAuctionHouse);
+                    const transactionInstr = await gah_makeListing(+sell_now_amount, mint, publicKey.toString(), mintOwner, weightedScore, daoPublicKey, updateAuthority, collectionAuctionHouse, lamports);
                     const instructionsArray = [transactionInstr.instructions].flat();            
                     transaction.add(
                         ...instructionsArray
@@ -688,12 +691,12 @@ function SellNowVotePrompt(props:any){
     }
 
     React.useEffect(() => {
-        for (var featured of FEATURED_DAO_ARRAY){
+        for (let featured of FEATURED_DAO_ARRAY){
             if (featured.address === mintOwner){
                 setDaoPublicKey(featured.address);
             }
         } 
-        for (var verified of VERIFIED_DAO_ARRAY){
+        for (let verified of VERIFIED_DAO_ARRAY){
             //if (verified.address === mintOwner){
              if (verified.solTreasury == mintOwner){
                 setDaoPublicKey(verified.address);
@@ -766,7 +769,12 @@ function SellNowVotePrompt(props:any){
                                         <Typography
                                             variant="caption"
                                         >
-                                            {t('Price set in SOL')} <SolCurrencyIcon sx={{fontSize:"12px"}} />
+                                            Price set in 
+                                            {symbol === 'SOL' ?
+                                                <> SOL <SolCurrencyIcon sx={{fontSize:"12px"}} /></>
+                                                :
+                                                <> {symbol}</>
+                                            }
                                         </Typography>
                                     </Grid>
                                 </Grid>
@@ -809,6 +817,8 @@ function SellNowPrompt(props:any){
     const salePrice = props.salePrice || null;
     const weightedScore = props.grapeWeightedScore || 0;
     const collectionAuctionHouse = props.collectionAuctionHouse || null;
+    const symbol = verifiedCollection?.auctionHouseTokenSymbol || 'SOL';
+    const lamports = verifiedCollection?.auctionHouseTokenLamports || null; 
     const royalties = props.royalties || null;
     const [adjustedSurcharge, setAdjusteSurcharge] = React.useState(false);
 
@@ -858,7 +868,7 @@ function SellNowPrompt(props:any){
             try {
                 //START SELL NOW / LIST
                 //const transactionInstr = await sellNowListing(+sell_now_amount, mint, publicKey.toString(), mintOwner, weightedScore, null, updateAuthority, collectionAuctionHouse);
-                const transactionInstr = await gah_makeListing(+sell_now_amount, mint, publicKey.toString(), mintOwner, weightedScore, null, updateAuthority, collectionAuctionHouse);
+                const transactionInstr = await gah_makeListing(+sell_now_amount, mint, publicKey.toString(), mintOwner, weightedScore, null, updateAuthority, collectionAuctionHouse, lamports);
                 const instructionsArray = [transactionInstr.instructions].flat();        
                 const transaction = new Transaction()
                 .add(
@@ -969,7 +979,7 @@ function SellNowPrompt(props:any){
 
                 {floorPrice &&
                     <Box sx={{width:'100%'}}>
-                        {t('Floor')}: {floorPrice} <SolCurrencyIcon sx={{fontSize:"12px"}} />
+                        {t('Floor')}: {floorPrice} {symbol === 'SOL' ? <SolCurrencyIcon sx={{ml:1,fontSize:"12px"}} /> : <>{symbol}</>}
                     </Box>
                 }
 
@@ -1007,13 +1017,18 @@ function SellNowPrompt(props:any){
                             <Typography
                                 variant="caption"
                             >
-                                {t('Price set in SOL')} <SolCurrencyIcon sx={{fontSize:"10px"}} />
+                                Price set in
+                                {symbol === 'SOL' ?
+                                    <> SOL <SolCurrencyIcon sx={{fontSize:"12px"}} /></>
+                                    :
+                                    <> {symbol}</>
+                                }
                                 <div>
                                     <Tooltip title="*Marketplace/transaction fees help maintain and support this marketplace">
                                         <Button
                                             sx={{textTransform:'none', color:'white',fontSize:'12px',m:0,p:0}}
                                         >
-                                            Marketplace Fees: {verifiedCollection?.rate || 1}% {+sell_now_amount > 0 && <Typography variant="caption">~{(+verifiedCollection?.rate || 1)/100*+sell_now_amount} <SolCurrencyIcon sx={{fontSize:"8px"}} /></Typography>}
+                                            Marketplace Fees: {verifiedCollection?.rate || 1}% {+sell_now_amount > 0 && <Typography variant="caption">~{(+verifiedCollection?.rate || 1)/100*+sell_now_amount} {symbol === 'SOL' ? <SolCurrencyIcon sx={{ml:1,fontSize:"8px"}} /> : <>{symbol}</>}</Typography>}
                                         </Button>
                                     </Tooltip>
                                     {verifiedCollection?.shr && verifiedCollection?.shr > 0 &&
@@ -1028,21 +1043,21 @@ function SellNowPrompt(props:any){
                                             <Button
                                                 sx={{textTransform:'none', color:'white',fontSize:'12px',m:0,p:0}}
                                             >
-                                                Royalties: {(+royalties/100).toFixed(2)}% {royalties > 0 && +sell_now_amount>0 && <Typography variant="caption">~{(+royalties/100/100*+sell_now_amount).toFixed(4)} <SolCurrencyIcon sx={{fontSize:"8px"}} /></Typography>}
+                                                Royalties: {(+royalties/100).toFixed(2)}% {royalties > 0 && +sell_now_amount>0 && <Typography variant="caption">~{(+royalties/100/100*+sell_now_amount).toFixed(4)} {symbol === 'SOL' ? <SolCurrencyIcon sx={{ml:1,fontSize:"8px"}} /> : <>{symbol}</>}</Typography>}
                                             </Button>
                                         </Tooltip>
                                     </div>
                                 }
                                 
                                 {((+verifiedCollection?.rate || 1)/100*+sell_now_amount + royalties/100/100*+sell_now_amount) > 0 &&
-                                    <><br/>Total Fees: {((verifiedCollection?.rate || 1)/100*+sell_now_amount + royalties/100/100*+sell_now_amount).toFixed(4)} <SolCurrencyIcon sx={{fontSize:"8px"}} /></>
+                                    <><br/>Total Fees: {((verifiedCollection?.rate || 1)/100*+sell_now_amount + royalties/100/100*+sell_now_amount).toFixed(4)} {symbol === 'SOL' ? <SolCurrencyIcon sx={{ml:1,fontSize:"8px"}} /> : <>{symbol}</>}</>
                                 }
 
                                 <Typography
                                     variant="body2"
                                 >
                                 {(+sell_now_amount - ((verifiedCollection?.rate || 1)/100*+sell_now_amount + royalties/100/100*+sell_now_amount)) > 0 &&
-                                    <>You receive: {(+sell_now_amount - ((verifiedCollection?.rate || 1)/100*+sell_now_amount + royalties/100/100*+sell_now_amount)).toFixed(4)} <SolCurrencyIcon sx={{fontSize:"8px"}} /></>
+                                    <>You receive: {(+sell_now_amount - ((verifiedCollection?.rate || 1)/100*+sell_now_amount + royalties/100/100*+sell_now_amount)).toFixed(4)} {symbol === 'SOL' ? <SolCurrencyIcon sx={{ml:1,fontSize:"8px"}} /> : <>{symbol}</>}</>
                                 }
 
                                 {(!adjustedSurcharge && +sell_now_amount > 0) &&
@@ -1090,7 +1105,10 @@ export function OfferPrompt(props: any) {
     const image = props.image;
     const mintOwner = props.mintOwner;
     const updateAuthority = props.updateAuthority; 
-    const collectionAuctionHouse = props.collectionAuctionHouse;  
+    const collectionAuctionHouse = props.collectionAuctionHouse; 
+    const verifiedCollection = props.verifiedCollection;
+    const symbol = verifiedCollection?.auctionHouseTokenSymbol || 'SOL';
+    const lamports = verifiedCollection?.auctionHouseTokenLamports || null; 
     const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
     const { connection } = useConnection();
     const { publicKey, wallet, sendTransaction } = useWallet();
@@ -1136,7 +1154,13 @@ export function OfferPrompt(props: any) {
                     //const transactionInstr = await submitOffer(+offer_amount, mint, publicKey.toString(), mintOwner, updateAuthority, collectionAuctionHouse);
                     //console.log("transactionInstr1 submitOffer: "+JSON.stringify(transactionInstr1));
                     
-                    const transactionInstr = await gah_makeOffer(+offer_amount, mint, publicKey.toString(), mintOwner, updateAuthority, collectionAuctionHouse);
+                    // if null it will use the SOL Default lamports
+                    // BONK 
+                    // ADDRESS: DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263
+                    // LAMPORTS: 5
+                    // SYMBOL: BONK
+
+                    const transactionInstr = await gah_makeOffer(+offer_amount, mint, publicKey.toString(), mintOwner, updateAuthority, collectionAuctionHouse, lamports);
                     //console.log("transactionInstr makeOffer: "+JSON.stringify(transactionInstr));
     
                     const instructionsArray = [transactionInstr.instructions].flat();        
@@ -1145,7 +1169,7 @@ export function OfferPrompt(props: any) {
                         ...instructionsArray
                     );
                     
-                    enqueueSnackbar(`${t('Preparing to make an offer for')} ${+offer_amount} SOL`,{ variant: 'info' });
+                    enqueueSnackbar(`${t('Preparing to make an offer for')} ${+offer_amount} ${symbol}`,{ variant: 'info' });
                     const signedTransaction = await sendTransaction(transaction, connection)
                     const snackprogress = (key:any) => (
                         <CircularProgress sx={{padding:'10px'}} />
@@ -1172,8 +1196,8 @@ export function OfferPrompt(props: any) {
                     //unicastGrapeSolflareMessage('Offer Received', offer_amount+' SOL offer made for '+mint+' on grape.art', image, publicKey.toBase58(), `${GRAPE_PREVIEW}${mint}`);
                     
                     // check if outbid
-                    let highest_offer = 0;
-                    let highest_offer_pk = null;
+                    //let highest_offer = 0;
+                    //let highest_offer_pk = null;
                     let previous_offer_pk = null;
                     let offcnt = 0;
                     if (offers){
@@ -1301,7 +1325,7 @@ export function OfferPrompt(props: any) {
                 
                     {floorPrice &&
                         <Box sx={{width:'100%'}}>
-                            {t('Floor')}: {floorPrice} <SolCurrencyIcon sx={{fontSize:"12px"}} />
+                            {t('Floor')}: {floorPrice} {symbol === 'SOL' ? <SolCurrencyIcon sx={{ml:1,fontSize:"12px"}} /> : <>{symbol}</>}
                         </Box>
                     }
                     
@@ -1405,6 +1429,8 @@ export default function ItemOffers(props: any) {
     const updateAuthority = collectionItemData?.updateAuthority;
     const collectionAuctionHouse = props.collectionAuctionHouse;
     const verifiedCollection = props.verifiedCollection;
+    const symbol = verifiedCollection?.auctionHouseTokenSymbol || 'SOL';
+    const lamports = verifiedCollection?.auctionHouseTokenLamports || null; 
     const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
     const { connection } = useConnection();
     const { publicKey, sendTransaction } = useWallet();
@@ -1476,7 +1502,7 @@ export default function ItemOffers(props: any) {
             try {
                 //START CANCEL LISTING
                 //const transactionInstr = await cancelListing(salePrice, mint, walletPublicKey.toString(), mintOwner, updateAuthority, collectionAuctionHouse);
-                const transactionInstr = await gah_cancelListing(salePrice, mint, walletPublicKey.toString(), mintOwner, null, null, updateAuthority, collectionAuctionHouse);
+                const transactionInstr = await gah_cancelListing(salePrice, mint, walletPublicKey.toString(), mintOwner, null, null, updateAuthority, collectionAuctionHouse, lamports);
                 const instructionsArray = [transactionInstr.instructions].flat();        
                 const transaction = new Transaction()
                 .add(
@@ -1545,20 +1571,20 @@ export default function ItemOffers(props: any) {
                 const listed = salePrice && salePrice > 0 ? true : false;  
                 //const transactionInstr = await acceptOffer(offerAmount, mint, walletPublicKey, buyerAddress.toString(), updateAuthority, collectionAuctionHouse);
                 if (listed){
-                    const transactionCancelInstr = await gah_cancelOffer(offerAmount, mint, walletPublicKey, buyerAddress.toString(), updateAuthority, collectionAuctionHouse);
+                    const transactionCancelInstr = await gah_cancelOffer(offerAmount, mint, walletPublicKey, buyerAddress.toString(), updateAuthority, collectionAuctionHouse, lamports);
                     const instructionsCancelArray = [transactionCancelInstr.instructions].flat();  
                     /*
                     transaction.add(
                         ...instructionsCancelArray
                     );*/ 
                 }
-                const transactionInstr = await gah_acceptOffer(offerAmount, mint, walletPublicKey, buyerAddress.toString(), updateAuthority, collectionAuctionHouse, tradeState, listed);
+                const transactionInstr = await gah_acceptOffer(offerAmount, mint, walletPublicKey, buyerAddress.toString(), updateAuthority, collectionAuctionHouse, tradeState, listed, lamports);
                 const instructionsArray = [transactionInstr.instructions].flat();  
                 transaction.add(
                     ...instructionsArray
                 );  
                 
-                enqueueSnackbar(`${t('Preparing to accept offer of')}: ${offerAmount} SOL ${t('from')}: ${buyerAddress.toString()}`,{ variant: 'info' });
+                enqueueSnackbar(`${t('Preparing to accept offer of')}: ${offerAmount} ${symbol} ${t('from')}: ${buyerAddress.toString()}`,{ variant: 'info' });
                 const signedTransaction2 = await sendTransaction(transaction, connection);
                     
                 const snackprogress = (key:any) => (
@@ -1648,7 +1674,7 @@ export default function ItemOffers(props: any) {
         try {
             //START CANCEL LISTING
             //const transactionInstr = await cancelListing(salePrice, mint, walletPublicKey.toString(), mintOwner, updateAuthority, collectionAuctionHouse);
-            const transactionInstr = await gah_cancelListing(price, mint, walletPublicKey.toString(), mintOwner, null, null, updateAuthority, priceAH);
+            const transactionInstr = await gah_cancelListing(price, mint, walletPublicKey.toString(), mintOwner, null, null, updateAuthority, priceAH, lamports);
             const instructionsArray = [transactionInstr.instructions].flat();        
             const transaction = new Transaction()
             .add(
@@ -1706,14 +1732,14 @@ export default function ItemOffers(props: any) {
             //const transactionInstr = await withdrawOffer(offerAmount, mint, walletPublicKey.toString(), mintOwner, updateAuthority);
             
             //const transactionInstr = await cancelWithdrawOffer(offerAmount, mint, walletPublicKey, mintOwner, updateAuthority, collectionAuctionHouse);
-            const transactionInstr = await gah_cancelOffer(offerAmount, mint, walletPublicKey, mintOwner, updateAuthority, collectionAuctionHouse);
+            const transactionInstr = await gah_cancelOffer(offerAmount, mint, walletPublicKey, mintOwner, updateAuthority, collectionAuctionHouse, lamports);
             const instructionsArray = [transactionInstr.instructions].flat();        
             const transaction = new Transaction()
             .add(
                 ...instructionsArray
             );
             
-            enqueueSnackbar(`${t('Preparing to withdraw offer for')} ${offerAmount} SOL`,{ variant: 'info' });
+            enqueueSnackbar(`${t('Preparing to withdraw offer for')} ${offerAmount} ${symbol}`,{ variant: 'info' });
             const signedTransaction = await sendTransaction(transaction, connection)
            
             const snackprogress = (key:any) => (
@@ -1760,7 +1786,7 @@ export default function ItemOffers(props: any) {
         try {
             console.log("with updateAuthority/collectionAuctionHouse: "+updateAuthority+" / "+collectionAuctionHouse);
             //const transactionInstr = await cancelOffer(offerAmount, mint, walletPublicKey, mintOwner, updateAuthority, collectionAuctionHouse);
-			const transactionInstr = await gah_cancelOffer(offerAmount, mint, walletPublicKey, mintOwner, updateAuthority, offerAuctionHouse);
+            const transactionInstr = await gah_cancelOffer(offerAmount, mint, walletPublicKey, mintOwner, updateAuthority, offerAuctionHouse, lamports);
             //const transactionInstr = await cancelWithdrawOffer(offerAmount, mint, walletPublicKey, mintOwner, updateAuthority, collectionAuctionHouse);
             const instructionsArray = [transactionInstr.instructions].flat();        
             const transaction = new Transaction()
@@ -1768,7 +1794,7 @@ export default function ItemOffers(props: any) {
                 ...instructionsArray
             );
 
-            enqueueSnackbar(`${t('Preparing to Cancel Offer for')} ${offerAmount} SOL`,{ variant: 'info' });
+            enqueueSnackbar(`${t('Preparing to Cancel Offer for')} ${offerAmount} ${symbol}`,{ variant: 'info' });
             //console.log('TransactionInstr:', TransactionInstr);
             const signedTransaction = await sendTransaction(transaction, connection);
             
@@ -1813,7 +1839,7 @@ export default function ItemOffers(props: any) {
     }
 
     //console.log('mintowner: ', mintOwner);
-    const GetSignatureOffers = async (spkey: string, until: any, slimit: Number)  => { // made this more generic of a function
+    const GetSignatureOffers = async (spkey: string, until: any, slimit: number)  => { // made this more generic of a function
         const gslimit = slimit || 25;
         const body = {
           method: "getSignaturesForAddress", // getAccountInfo
@@ -1869,6 +1895,7 @@ export default function ItemOffers(props: any) {
 
                     //console.log(mintOwner + " checking if bid_receipt")
                     if (item.receipt_type === 'bid_receipt' && item.bookkeeper.toBase58() === mintOwner){
+                        console.log("bid_receipt && bookkeeper");
                     }else{
                         allResults.push({
                             buyeraddress: item.bookkeeper.toBase58(), 
@@ -1900,10 +1927,10 @@ export default function ItemOffers(props: any) {
                 let bid_count = 0;
                 let listing_count = 0;
                 let highest_offer = 0;
-                let isCancelled = false;
+                //let isCancelled = false;
                 let sale_price_marketplace = null;
 
-                for (var offer of allResults){
+                for (let offer of allResults){
                     listing_count++
                     //console.log("all: "+JSON.stringify(offer))
                     if (offer.state === 'listing_receipt'){ // exit on first receipt
@@ -1977,7 +2004,7 @@ export default function ItemOffers(props: any) {
                 
                 let highest_offer_date = null;
                 let highest_offer_marketplace = null;
-                for (var offer of offerResults){
+                for (let offer of offerResults){
                     if (!offer?.cancelledAt){
                         if (offer.state === 'bid_receipt'){ // exit on first receipt
                             if (!offer?.purchaseReceipt){
@@ -2009,8 +2036,12 @@ export default function ItemOffers(props: any) {
                     finalOfferResults
                 );
 
-                const tpResponse = await getTokenPrice('SOL','USDC');
-                
+                let tpResponse = null;
+                if (symbol === 'SOL')
+                    tpResponse = await getTokenPrice(symbol,'USDC');
+                else
+                    tpResponse = await getTokenPrice(verifiedCollection?.auctionHouseTokenAddress,'USDC');
+
                 if (verifiedCollection?.tokenSwapLabel){
                     const ntpResponse = await getTokenPrice('SOL',verifiedCollection.tokenSwapLabel);
                     if (ntpResponse?.data?.price){
@@ -2036,12 +2067,12 @@ export default function ItemOffers(props: any) {
                 }
 
                 if (forSaleDate){
-                    let prettyForSaleDate = moment.unix(+forSaleDate).format("MMMM Do YYYY, h:mm a");
+                    const prettyForSaleDate = moment.unix(+forSaleDate).format("MMMM Do YYYY, h:mm a");
                     setSaleDate(
                         prettyForSaleDate
                     );
                     if (forSaleDate){
-                        let timeago = timeAgo(forSaleDate);
+                        const timeago = timeAgo(forSaleDate);
                         setSaleTimeAgo(timeago);                                          
                     }
                 }
@@ -2074,7 +2105,7 @@ export default function ItemOffers(props: any) {
 			const escrowAmount = convertSolVal(amount);
             //if (amount === 0){
                 //const transactionInstr = await buyNowListing(salePrice, mint, sellerWalletKey.toString(), buyerPublicKey, updateAuthority, auctionHouseKey.toBase58());
-                const transactionInstr = await gah_sellListing(salePrice, mint, buyerPublicKey.toBase58(), sellerWalletKey.toBase58(), null, null, updateAuthority, auctionHouseKey.toBase58());
+                const transactionInstr = await gah_sellListing(salePrice, mint, buyerPublicKey.toBase58(), sellerWalletKey.toBase58(), null, null, updateAuthority, auctionHouseKey.toBase58(), lamports);
                 const instructionsArray = [transactionInstr.instructions].flat();   
                 
                 const transaction = new Transaction()
@@ -2325,7 +2356,7 @@ export default function ItemOffers(props: any) {
                                                 >
                                                     <Button variant="text" sx={{color:'white',borderRadius:'17px'}}>
                                                         <Typography component="div" variant="h4" sx={{fontWeight:'800'}}>
-                                                            <strong>{salePrice} <SolCurrencyIcon /></strong> {tokenSalePrice && <Typography variant='caption' sx={{color:'#999'}}>~{(salePrice*tokenSalePrice).toFixed(2)} USDC</Typography>}
+                                                            <strong>{salePrice} {symbol === 'SOL' ? <SolCurrencyIcon /> : <>{symbol}</>}</strong> {tokenSalePrice > 0 && <Typography variant='caption' sx={{color:'#999'}}>~{(salePrice*tokenSalePrice).toFixed(2)} USDC</Typography>}
                                                             {tokenSwapSalePrice > 0 && <Box sx={{mt:-2}}><Typography variant='caption' sx={{color:'#ccc'}}>~{getFormattedNumberToLocale((+((salePrice*tokenSwapSalePrice).toFixed(2))),2)} {verifiedCollection.tokenSwapLabel}</Typography></Box>}
                                                         </Typography>
                                                     </Button>
@@ -2391,8 +2422,8 @@ export default function ItemOffers(props: any) {
                                                         >
                                                             <Button variant="text" sx={{color:'white',borderRadius:'17px'}}>
                                                                 <Typography component="div" variant="h4" sx={{fontWeight:'800'}}>
-                                                                    <strong>{salePrice} <SolCurrencyIcon /></strong> {tokenSalePrice && <Typography variant='caption' sx={{color:'#999'}}>~{(salePrice*tokenSalePrice).toFixed(2)} USDC</Typography>}
-                                                                    {tokenSwapSalePrice && <Box sx={{mt:-2}}><Typography variant='caption' sx={{color:'#ccc'}}>~{getFormattedNumberToLocale((+((salePrice*tokenSwapSalePrice).toFixed(2))),2)} {verifiedCollection.tokenSwapLabel}</Typography></Box>}
+                                                                    <strong>{salePrice} {symbol === 'SOL' ? <SolCurrencyIcon /> : <>{symbol}</>}</strong> {tokenSalePrice > 0 && <Typography variant='caption' sx={{color:'#999'}}>~{(salePrice*tokenSalePrice).toFixed(2)} USDC</Typography>}
+                                                                    {tokenSwapSalePrice > 0 && <Box sx={{mt:-2}}><Typography variant='caption' sx={{color:'#ccc'}}>~{getFormattedNumberToLocale((+((salePrice*tokenSwapSalePrice).toFixed(2))),2)} {verifiedCollection.tokenSwapLabel}</Typography></Box>}
                                                                 </Typography>
                                                             </Button>
                                                         </Tooltip>
@@ -2420,7 +2451,7 @@ export default function ItemOffers(props: any) {
                                                         >
                                                             <Button variant="text" sx={{color:'white',borderRadius:'17px'}}>
                                                                 <Typography component="div" variant="h4" sx={{fontWeight:'800'}}>
-                                                                    <strong>{salePrice} <SolCurrencyIcon /></strong>
+                                                                    <strong>{salePrice} {symbol === 'SOL' ? <SolCurrencyIcon /> : <>{symbol}</>}</strong>
                                                                 </Typography>
                                                             </Button>
                                                         </Tooltip>
@@ -2478,7 +2509,7 @@ export default function ItemOffers(props: any) {
                                                                             <Box sx={{width:'100%'}}>
                                                                             <List dense={true}>
                                                                                 <ListItem>
-                                                                                    {t('Amount')}:&nbsp;<strong>{salePrice}<SolCurrencyIcon sx={{ml:1,fontSize:"10px"}} /></strong>
+                                                                                    {t('Amount')}:&nbsp;<strong>{salePrice}{symbol === 'SOL' ? <SolCurrencyIcon sx={{ml:1,fontSize:"10px"}} /> : <>{symbol}</>}</strong>
                                                                                 </ListItem>
                                                                                 <ListItem>
                                                                                     {t('Mint')}:&nbsp;<ExplorerView address={mint} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
@@ -2610,19 +2641,19 @@ export default function ItemOffers(props: any) {
                                                                         
                                                                         {(!ValidateCurve(mintOwner) && salePrice <= 0) &&
                                                                             <Grid item>
-                                                                                <SellNowVotePrompt curve={false} mintName={mintName} setSalePriceEscrow={setSalePriceEscrow} mint={mint} updateAuthority={updateAuthority} mintOwner={mintOwner} salePrice={salePrice} grapeWeightedScore={grape_weighted_score} setRefreshOffers={setRefreshOffers} collectionAuctionHouse={collectionAuctionHouse} />
+                                                                                <SellNowVotePrompt curve={false} mintName={mintName} setSalePriceEscrow={setSalePriceEscrow} mint={mint} updateAuthority={updateAuthority} mintOwner={mintOwner} salePrice={salePrice} grapeWeightedScore={grape_weighted_score} setRefreshOffers={setRefreshOffers} collectionAuctionHouse={collectionAuctionHouse} verifiedCollection={verifiedCollection} />
                                                                             </Grid>
                                                                         }
 
                                                                         {(ValidateCurve(mintOwner) && salePrice <= 0) &&
                                                                             <Grid item>
-                                                                                <SellNowVotePrompt curve={true} mintName={mintName} setSalePriceEscrow={setSalePriceEscrow} mint={mint} updateAuthority={updateAuthority} mintOwner={mintOwner} salePrice={salePrice} grapeWeightedScore={grape_weighted_score} setRefreshOffers={setRefreshOffers} collectionAuctionHouse={collectionAuctionHouse} />
+                                                                                <SellNowVotePrompt curve={true} mintName={mintName} setSalePriceEscrow={setSalePriceEscrow} mint={mint} updateAuthority={updateAuthority} mintOwner={mintOwner} salePrice={salePrice} grapeWeightedScore={grape_weighted_score} setRefreshOffers={setRefreshOffers} collectionAuctionHouse={collectionAuctionHouse} verifiedCollection={verifiedCollection} />
                                                                             </Grid>
                                                                         }
                                                                         
                                                                         {(ValidateCurve(mintOwner) || (ValidateDAO(mintOwner))) && (
                                                                             <Grid item>
-                                                                                <OfferPrompt floorPrice={floorPrice} mintName={mintName} image={image} mint={mint} updateAuthority={updateAuthority} mintOwner={mintOwner} setRefreshOffers={setRefreshOffers} solBalance={sol_portfolio_balance} highestOffer={highestOffer} offers={offers} collectionAuctionHouse={collectionAuctionHouse} />
+                                                                                <OfferPrompt floorPrice={floorPrice} mintName={mintName} image={image} mint={mint} updateAuthority={updateAuthority} mintOwner={mintOwner} setRefreshOffers={setRefreshOffers} solBalance={sol_portfolio_balance} highestOffer={highestOffer} offers={offers} collectionAuctionHouse={collectionAuctionHouse} verifiedCollection={verifiedCollection} />
                                                                             </Grid>
                                                                         )}
 
@@ -2813,7 +2844,7 @@ export default function ItemOffers(props: any) {
                                                         <>
                                                             <List dense={true}>
                                                                 <ListItem>
-                                                                {t('Amount')}:&nbsp;<strong>{final_offeramount}<SolCurrencyIcon sx={{ml:1,fontSize:"10px"}} /></strong>
+                                                                {t('Amount')}:&nbsp;<strong>{final_offeramount}{symbol === 'SOL' ? <SolCurrencyIcon sx={{ml:1,fontSize:"10px"}} /> : <>{symbol}</>}</strong>
                                                                 </ListItem>
                                                                 <ListItem>
                                                                 {t('Mint')}:&nbsp;<MakeLinkableAddress addr={mint} trim={0} hasextlink={true} hascopy={false} fontsize={16} />
@@ -2867,7 +2898,7 @@ export default function ItemOffers(props: any) {
                                                             </Typography></TableCell>
                                                             <TableCell  align="right">
                                                                 <Typography variant="body2">
-                                                                    {(item.price)} <SolCurrencyIcon sx={{fontSize:"10.5px"}} />
+                                                                    {(item.price)} {symbol === 'SOL' ? <SolCurrencyIcon sx={{ml:1,fontSize:"10.5px"}} /> : <>{symbol}</>}
                                                                 </Typography>
                                                             </TableCell>
                                                             <TableCell align="right">
