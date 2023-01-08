@@ -46,7 +46,7 @@ function convertSolVal(sol: any){
     return sol;
 }
 
-export async function gah_makeOffer(offerAmount: number, mint: string, walletPublicKey: string, mintOwner: any, updateAuthority: string, collectionAuctionHouse: string, lamports: number): Promise<InstructionsAndSignersSet> {
+export async function gah_makeOffer(offerAmount: number, mint: string, walletPublicKey: string, mintOwner: any, updateAuthority: string, collectionAuctionHouse: string, tokenDecimals: number): Promise<InstructionsAndSignersSet> {
     //const { publicKey, signTransaction } = useWallet();
     console.log("collectionAuctionHouse " + JSON.stringify(collectionAuctionHouse));
     const tokenSize = 1;
@@ -64,9 +64,8 @@ export async function gah_makeOffer(offerAmount: number, mint: string, walletPub
     //console.log('escrow_amount:',escrowSolAmount, 'offerAmount:', offerAmount);
     
     let lps = LAMPORTS_PER_SOL;
-    if (lamports){
-      lps = Math.pow(10, lamports);
-    //Math.pow(10, tokenSupply.value.decimals)
+    if (tokenDecimals){
+      lps = Math.pow(10, tokenDecimals);
     }
 
     console.log("lps: "+lps)
@@ -82,6 +81,9 @@ export async function gah_makeOffer(offerAmount: number, mint: string, walletPub
       auctionHouseObj.auctionHouseFeeAccount
     )
     const treasuryMint = new PublicKey(auctionHouseObj.treasuryMint)
+
+    console.log("treasuryMint: "+treasuryMint.toBase58())
+    
     const tokenMint = mintKey
     //console.log("mintOwner: "+JSON.stringify(mintOwner));
     //const tokenAccount = new PublicKey(mintOwner)
