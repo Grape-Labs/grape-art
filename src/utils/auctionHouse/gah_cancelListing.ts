@@ -42,7 +42,7 @@ import { ConstructionOutlined } from '@mui/icons-material';
     
     let lps = LAMPORTS_PER_SOL;
     if (tokenDecimals){
-      lps = Math.pow(10, tokenDecimals);
+    //  lps = Math.pow(10, tokenDecimals);
     }
     const buyerPrice = Number(price) * lps;
     //console.log("buyerPrice: "+buyerPrice);

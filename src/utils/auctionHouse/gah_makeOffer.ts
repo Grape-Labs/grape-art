@@ -65,7 +65,7 @@ export async function gah_makeOffer(offerAmount: number, mint: string, walletPub
     
     let lps = LAMPORTS_PER_SOL;
     if (tokenDecimals){
-    //  lps = Math.pow(10, tokenDecimals);
+      lps = Math.pow(10, tokenDecimals);
     }
 
     console.log("lps: "+lps)

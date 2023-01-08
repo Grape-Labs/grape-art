@@ -289,7 +289,7 @@ function SellNowVotePrompt(props:any){
     const collectionAuctionHouse = props.collectionAuctionHouse || null; 
     const verifiedCollection = props?.verifiedCollection;
     const symbol = verifiedCollection?.auctionHouseTokenSymbol || 'SOL';
-    const lamports = verifiedCollection?.auctionHouseTokenLamports || null; 
+    const tokenDecimals = verifiedCollection?.auctionHouseTokenDecimals || null; 
     const setRefreshOffers = props.setRefreshOffers;
     //const salePrice = React.useState(props.salePrice);
     //const provider = new anchor.Provider(connection, wallet, anchor.Provider.defaultOptions)
@@ -386,9 +386,9 @@ function SellNowVotePrompt(props:any){
                                 {signedTransaction}
                             </Button>
                         );
-                        enqueueSnackbar(`Purchased NFT for ${sell_now_amount} SOL`,{ variant: 'success', action:snackaction });  
+                        enqueueSnackbar(`Purchased NFT for ${sell_now_amount} ${symbol}`,{ variant: 'success', action:snackaction });  
                         
-                        unicastGrapeSolflareMessage(`NFT SOLD`, `${mintName} was sold for ${meListing[0].price} SOL on grape.art`, null, meListing[0].seller, `https://grape.art${GRAPE_PREVIEW}${mint}`, signedTransaction, collectionAuctionHouse);
+                        unicastGrapeSolflareMessage(`NFT SOLD`, `${mintName} was sold for ${meListing[0].price} ${symbol} on grape.art`, null, meListing[0].seller, `https://grape.art${GRAPE_PREVIEW}${mint}`, signedTransaction, collectionAuctionHouse);
                         //unicastGrapeSolflareMessage(`NFT SOLD`, `${mintName} was sold for ${meListing[0].price} SOL on grape.art`, image, meListing[0].seller, `https://grape.art${GRAPE_PREVIEW}${mint}`, signedTransaction, collectionAuctionHouse);
 
                         const eskey = enqueueSnackbar(`${t('Metadata will be refreshed in a few seconds')}`, {
@@ -640,12 +640,12 @@ function SellNowVotePrompt(props:any){
                     */
                 } else {
                     //const transactionInstr = await sellNowListing(+sell_now_amount, mint, publicKey.toString(), mintOwner, weightedScore, daoPublicKey, updateAuthority, collectionAuctionHouse);
-                    const transactionInstr = await gah_makeListing(+sell_now_amount, mint, publicKey.toString(), mintOwner, weightedScore, daoPublicKey, updateAuthority, collectionAuctionHouse, lamports);
+                    const transactionInstr = await gah_makeListing(+sell_now_amount, mint, publicKey.toString(), mintOwner, weightedScore, daoPublicKey, updateAuthority, collectionAuctionHouse, tokenDecimals);
                     const instructionsArray = [transactionInstr.instructions].flat();            
                     transaction.add(
                         ...instructionsArray
                     );     
-                    enqueueSnackbar(`Preparing to set Sell Now Price to ${sell_now_amount} SOL`,{ variant: 'info' });
+                    enqueueSnackbar(`Preparing to set Sell Now Price to ${sell_now_amount} ${symbol}`,{ variant: 'info' });
                     const signedTransaction = await sendTransaction(transaction, connection);                    
                     const snackprogress = (key:any) => (
                         <CircularProgress sx={{padding:'10px'}} />
@@ -664,7 +664,7 @@ function SellNowVotePrompt(props:any){
                             {signedTransaction}
                         </Button>
                     );
-                    enqueueSnackbar(`Sell Now Price Set to ${sell_now_amount} SOL`,{ variant: 'success', action:snackaction });  
+                    enqueueSnackbar(`Sell Now Price Set to ${sell_now_amount} ${symbol}`,{ variant: 'success', action:snackaction });  
                 }
                 const eskey = enqueueSnackbar(`${t('Metadata will be refreshed in a few seconds')}`, {
                     anchorOrigin: {
@@ -818,7 +818,7 @@ function SellNowPrompt(props:any){
     const weightedScore = props.grapeWeightedScore || 0;
     const collectionAuctionHouse = props.collectionAuctionHouse || null;
     const symbol = verifiedCollection?.auctionHouseTokenSymbol || 'SOL';
-    const lamports = verifiedCollection?.auctionHouseTokenLamports || null; 
+    const tokenDecimals = verifiedCollection?.auctionHouseTokenDecimals || null; 
     const royalties = props.royalties || null;
     const [adjustedSurcharge, setAdjusteSurcharge] = React.useState(false);
 
@@ -868,13 +868,13 @@ function SellNowPrompt(props:any){
             try {
                 //START SELL NOW / LIST
                 //const transactionInstr = await sellNowListing(+sell_now_amount, mint, publicKey.toString(), mintOwner, weightedScore, null, updateAuthority, collectionAuctionHouse);
-                const transactionInstr = await gah_makeListing(+sell_now_amount, mint, publicKey.toString(), mintOwner, weightedScore, null, updateAuthority, collectionAuctionHouse, lamports);
+                const transactionInstr = await gah_makeListing(+sell_now_amount, mint, publicKey.toString(), mintOwner, weightedScore, null, updateAuthority, collectionAuctionHouse, tokenDecimals);
                 const instructionsArray = [transactionInstr.instructions].flat();        
                 const transaction = new Transaction()
                 .add(
                     ...instructionsArray
                 );
-                enqueueSnackbar(`${t('Preparing to set Sell Now Price to')} ${sell_now_amount} SOL`,{ variant: 'info' });
+                enqueueSnackbar(`${t('Preparing to set Sell Now Price to')} ${sell_now_amount} ${symbol}`,{ variant: 'info' });
                 const signedTransaction = await sendTransaction(transaction, connection);
                 
                 const snackprogress = (key:any) => (
@@ -894,9 +894,9 @@ function SellNowPrompt(props:any){
                         {signedTransaction}
                     </Button>
                 );
-                enqueueSnackbar(`${t('Listing set to')} ${sell_now_amount} SOL`,{ variant: 'success', action:snackaction });
+                enqueueSnackbar(`${t('Listing set to')} ${sell_now_amount} ${symbol}`,{ variant: 'success', action:snackaction });
                 
-                unicastGrapeSolflareMessage(`Listing Created`, `You have listed ${mintName} for ${sell_now_amount} SOL on grape.art`, image, publicKey.toString(), `https://grape.art${GRAPE_PREVIEW}${mint}`, signedTransaction, collectionAuctionHouse);
+                unicastGrapeSolflareMessage(`Listing Created`, `You have listed ${mintName} for ${sell_now_amount} ${symbol} on grape.art`, image, publicKey.toString(), `https://grape.art${GRAPE_PREVIEW}${mint}`, signedTransaction, collectionAuctionHouse);
 
                 const eskey = enqueueSnackbar(`${t('Metadata will be refreshed in a few seconds')}`, {
                     anchorOrigin: {
@@ -1108,7 +1108,7 @@ export function OfferPrompt(props: any) {
     const collectionAuctionHouse = props.collectionAuctionHouse; 
     const verifiedCollection = props.verifiedCollection;
     const symbol = verifiedCollection?.auctionHouseTokenSymbol || 'SOL';
-    const lamports = verifiedCollection?.auctionHouseTokenLamports || null; 
+    const tokenDecimals = verifiedCollection?.auctionHouseTokenDecimals || null; 
     const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
     const { connection } = useConnection();
     const { publicKey, wallet, sendTransaction } = useWallet();
@@ -1157,10 +1157,10 @@ export function OfferPrompt(props: any) {
                     // if null it will use the SOL Default lamports
                     // BONK 
                     // ADDRESS: DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263
-                    // LAMPORTS: 5
+                    // DECIMALS: 5
                     // SYMBOL: BONK
 
-                    const transactionInstr = await gah_makeOffer(+offer_amount, mint, publicKey.toString(), mintOwner, updateAuthority, collectionAuctionHouse, lamports);
+                    const transactionInstr = await gah_makeOffer(+offer_amount, mint, publicKey.toString(), mintOwner, updateAuthority, collectionAuctionHouse, tokenDecimals);
                     //console.log("transactionInstr makeOffer: "+JSON.stringify(transactionInstr));
     
                     const instructionsArray = [transactionInstr.instructions].flat();        
@@ -1436,7 +1436,7 @@ export default function ItemOffers(props: any) {
     const collectionAuctionHouse = props.collectionAuctionHouse;
     const verifiedCollection = props.verifiedCollection;
     const symbol = verifiedCollection?.auctionHouseTokenSymbol || 'SOL';
-    const lamports = verifiedCollection?.auctionHouseTokenLamports || null; 
+    const tokenDecimals = verifiedCollection?.auctionHouseTokenDecimals || null; 
     const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
     const { connection } = useConnection();
     const { publicKey, sendTransaction } = useWallet();
@@ -1508,14 +1508,14 @@ export default function ItemOffers(props: any) {
             try {
                 //START CANCEL LISTING
                 //const transactionInstr = await cancelListing(salePrice, mint, walletPublicKey.toString(), mintOwner, updateAuthority, collectionAuctionHouse);
-                const transactionInstr = await gah_cancelListing(salePrice, mint, walletPublicKey.toString(), mintOwner, null, null, updateAuthority, collectionAuctionHouse, lamports);
+                const transactionInstr = await gah_cancelListing(salePrice, mint, walletPublicKey.toString(), mintOwner, null, null, updateAuthority, collectionAuctionHouse, tokenDecimals);
                 const instructionsArray = [transactionInstr.instructions].flat();        
                 const transaction = new Transaction()
                 .add(
                     ...instructionsArray
                 );
     
-                enqueueSnackbar(`${t('Canceling Listing for')} ${salePrice} SOL`,{ variant: 'info' });
+                enqueueSnackbar(`${t('Canceling Listing for')} ${salePrice} ${symbol}`,{ variant: 'info' });
                 const signedTransaction = await sendTransaction(transaction, connection);
                 
                 const snackprogress = (key:any) => (
@@ -1577,14 +1577,14 @@ export default function ItemOffers(props: any) {
                 const listed = salePrice && salePrice > 0 ? true : false;  
                 //const transactionInstr = await acceptOffer(offerAmount, mint, walletPublicKey, buyerAddress.toString(), updateAuthority, collectionAuctionHouse);
                 if (listed){
-                    const transactionCancelInstr = await gah_cancelOffer(offerAmount, mint, walletPublicKey, buyerAddress.toString(), updateAuthority, collectionAuctionHouse, lamports);
+                    const transactionCancelInstr = await gah_cancelOffer(offerAmount, mint, walletPublicKey, buyerAddress.toString(), updateAuthority, collectionAuctionHouse, tokenDecimals);
                     const instructionsCancelArray = [transactionCancelInstr.instructions].flat();  
                     /*
                     transaction.add(
                         ...instructionsCancelArray
                     );*/ 
                 }
-                const transactionInstr = await gah_acceptOffer(offerAmount, mint, walletPublicKey, buyerAddress.toString(), updateAuthority, collectionAuctionHouse, tradeState, listed, lamports);
+                const transactionInstr = await gah_acceptOffer(offerAmount, mint, walletPublicKey, buyerAddress.toString(), updateAuthority, collectionAuctionHouse, tradeState, listed, tokenDecimals);
                 const instructionsArray = [transactionInstr.instructions].flat();  
                 transaction.add(
                     ...instructionsArray
@@ -1680,14 +1680,14 @@ export default function ItemOffers(props: any) {
         try {
             //START CANCEL LISTING
             //const transactionInstr = await cancelListing(salePrice, mint, walletPublicKey.toString(), mintOwner, updateAuthority, collectionAuctionHouse);
-            const transactionInstr = await gah_cancelListing(price, mint, walletPublicKey.toString(), mintOwner, null, null, updateAuthority, priceAH, lamports);
+            const transactionInstr = await gah_cancelListing(price, mint, walletPublicKey.toString(), mintOwner, null, null, updateAuthority, priceAH, tokenDecimals);
             const instructionsArray = [transactionInstr.instructions].flat();        
             const transaction = new Transaction()
             .add(
                 ...instructionsArray
             );
 
-            enqueueSnackbar(`${t('Canceling Listing for')} ${salePrice} SOL`,{ variant: 'info' });
+            enqueueSnackbar(`${t('Canceling Listing for')} ${salePrice} ${symbol}`,{ variant: 'info' });
             const signedTransaction = await sendTransaction(transaction, connection);
             
             const snackprogress = (key:any) => (
@@ -1738,7 +1738,7 @@ export default function ItemOffers(props: any) {
             //const transactionInstr = await withdrawOffer(offerAmount, mint, walletPublicKey.toString(), mintOwner, updateAuthority);
             
             //const transactionInstr = await cancelWithdrawOffer(offerAmount, mint, walletPublicKey, mintOwner, updateAuthority, collectionAuctionHouse);
-            const transactionInstr = await gah_cancelOffer(offerAmount, mint, walletPublicKey, mintOwner, updateAuthority, collectionAuctionHouse, lamports);
+            const transactionInstr = await gah_cancelOffer(offerAmount, mint, walletPublicKey, mintOwner, updateAuthority, collectionAuctionHouse, tokenDecimals);
             const instructionsArray = [transactionInstr.instructions].flat();        
             const transaction = new Transaction()
             .add(
@@ -1792,7 +1792,7 @@ export default function ItemOffers(props: any) {
         try {
             console.log("with updateAuthority/collectionAuctionHouse: "+updateAuthority+" / "+collectionAuctionHouse);
             //const transactionInstr = await cancelOffer(offerAmount, mint, walletPublicKey, mintOwner, updateAuthority, collectionAuctionHouse);
-            const transactionInstr = await gah_cancelOffer(offerAmount, mint, walletPublicKey, mintOwner, updateAuthority, offerAuctionHouse, lamports);
+            const transactionInstr = await gah_cancelOffer(offerAmount, mint, walletPublicKey, mintOwner, updateAuthority, offerAuctionHouse, tokenDecimals);
             //const transactionInstr = await cancelWithdrawOffer(offerAmount, mint, walletPublicKey, mintOwner, updateAuthority, collectionAuctionHouse);
             const instructionsArray = [transactionInstr.instructions].flat();        
             const transaction = new Transaction()
@@ -1955,7 +1955,10 @@ export default function ItemOffers(props: any) {
                                         //console.log("listing: "+JSON.stringify(offer))
                                         if (soldDate < offer.blockTime){
                                             if (offer.bookkeeper === mintOwner){
-                                                forSale = offer.price;
+                                                //if (symbol === 'SOL')
+                                                    forSale = offer.price;
+                                                //else
+                                                //    forSale = offer.price * Math.pow(10, tokenDecimals);
                                                 forSaleDate = offer.blockTime;
                                                 sale_price_marketplace = offer.auctionHouse;
                                             }
@@ -2111,7 +2114,7 @@ export default function ItemOffers(props: any) {
 			const escrowAmount = convertSolVal(amount);
             //if (amount === 0){
                 //const transactionInstr = await buyNowListing(salePrice, mint, sellerWalletKey.toString(), buyerPublicKey, updateAuthority, auctionHouseKey.toBase58());
-                const transactionInstr = await gah_sellListing(salePrice, mint, buyerPublicKey.toBase58(), sellerWalletKey.toBase58(), null, null, updateAuthority, auctionHouseKey.toBase58(), lamports);
+                const transactionInstr = await gah_sellListing(salePrice, mint, buyerPublicKey.toBase58(), sellerWalletKey.toBase58(), null, null, updateAuthority, auctionHouseKey.toBase58(), tokenDecimals);
                 const instructionsArray = [transactionInstr.instructions].flat();   
                 
                 const transaction = new Transaction()
@@ -2120,7 +2123,7 @@ export default function ItemOffers(props: any) {
                 );  
                 transaction.feePayer = publicKey;
                 
-                enqueueSnackbar(`${t('Preparing to Buy Now')}: ${salePrice} SOL ${t('from')}: ${buyerPublicKey.toBase58()}`,{ variant: 'info' });
+                enqueueSnackbar(`${t('Preparing to Buy Now')}: ${salePrice} ${symbol} ${t('from')}: ${buyerPublicKey.toBase58()}`,{ variant: 'info' });
                 //const signedTransaction = await sendTransaction(transaction, connection);
                 //await connection.confirmTransaction(signedTransaction, 'processed');
 
@@ -2190,7 +2193,7 @@ export default function ItemOffers(props: any) {
                     */
                     setSaleMade(true);
 
-                    unicastGrapeSolflareMessage(`NFT SOLD`, `${mintName} was sold for ${salePrice} SOL on grape.art`, image, sellerWalletKey.toString(), `https://grape.art${GRAPE_PREVIEW}${mint}`, signedTransaction2, collectionAuctionHouse);
+                    unicastGrapeSolflareMessage(`NFT SOLD`, `${mintName} was sold for ${salePrice} ${symbol} on grape.art`, image, sellerWalletKey.toString(), `https://grape.art${GRAPE_PREVIEW}${mint}`, signedTransaction2, collectionAuctionHouse);
 
                     const eskey = enqueueSnackbar(`${t('Metadata will be refreshed in a few seconds')}`, {
                             anchorOrigin: {
@@ -2207,7 +2210,7 @@ export default function ItemOffers(props: any) {
                         }catch(err){console.log("ERR: "+err);}
                     }, GRAPE_RPC_REFRESH);
                 } else{
-                    enqueueSnackbar(`${t('Transaction Simulation Failed! Check if you have enough SOL to make this purchase')}`,{ variant: 'error' });
+                    enqueueSnackbar(`Transaction Simulation Failed! Check if you have enough ${symbol} to make this purchase`,{ variant: 'error' });
                 }
 
             /*}

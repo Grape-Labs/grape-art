@@ -46,7 +46,7 @@ export async function gah_sellListing(offerAmount: number, mint: string, buyerPu
   
   let lps = LAMPORTS_PER_SOL;
   if (tokenDecimals){
-    lps = Math.pow(10, tokenDecimals);
+  //  lps = Math.pow(10, tokenDecimals);
   }
   const buyerPrice = Number(offerAmount) * lps
   //console.log("buyerPrice: "+buyerPrice);

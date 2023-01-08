@@ -59,10 +59,10 @@ export async function gah_cancelOffer(offerAmount: number, mint: string, buyerWa
 
   let lps = LAMPORTS_PER_SOL;
   if (tokenDecimals){
-    lps = Math.pow(10, tokenDecimals);
+  //  lps = Math.pow(10, tokenDecimals);
   }
   const buyerPrice = Number(offerAmount) * lps;
-  
+
     /*
     const buyPriceAdjusted = new BN(
       await getPriceWithMantissa(
