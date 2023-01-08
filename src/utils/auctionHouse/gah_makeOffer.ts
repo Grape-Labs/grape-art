@@ -16,7 +16,7 @@ import { BN, web3 } from '@project-serum/anchor';
 import { GRAPE_RPC_ENDPOINT } from '../grapeTools/constants';
 import {InstructionsAndSignersSet} from "./helpers/types";
 
-import { Metaplex, sol, token } from '@metaplex-foundation/js';
+//import { Metaplex, sol, token } from '@metaplex-foundation/js';
 
 import { AuctionHouseProgram } from '@metaplex-foundation/mpl-auction-house'
 import { Metadata } from '@metaplex-foundation/mpl-token-metadata'
@@ -77,7 +77,7 @@ export async function gah_makeOffer(offerAmount: number, mint: string, walletPub
 
     const buyerPrice = Number(offerAmount) * lps;
     
-    const metaplex = new Metaplex(new Connection(GRAPE_RPC_ENDPOINT));
+    //const metaplex = new Metaplex(new Connection(GRAPE_RPC_ENDPOINT));
     
     /*
     const auctionHouseJS = await metaplex

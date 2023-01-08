@@ -929,7 +929,7 @@ function SellNowPrompt(props:any){
             <Tooltip title={
                 <React.Fragment>
                     Marketplace fees at {verifiedCollection?.rate || 1}%
-                    {verifiedCollection?.shr && verifiedCollection?.shr > 0 &&
+                    {((verifiedCollection?.shr !== null) && (verifiedCollection?.shr > 0)) && 
                         <>
                             <br/>
                             {+verifiedCollection.shr*100}% is shared with {verifiedCollection.author} DAO
@@ -1031,10 +1031,11 @@ function SellNowPrompt(props:any){
                                             Marketplace Fees: {verifiedCollection?.rate || 1}% {+sell_now_amount > 0 && <Typography variant="caption">~{(+verifiedCollection?.rate || 1)/100*+sell_now_amount} {symbol === 'SOL' ? <SolCurrencyIcon sx={{ml:1,fontSize:"8px"}} /> : <>{symbol}</>}</Typography>}
                                         </Button>
                                     </Tooltip>
-                                    {verifiedCollection?.shr && verifiedCollection?.shr > 0 &&
+                                    {((verifiedCollection?.shr !== null) && (verifiedCollection?.shr > 0)) && 
                                         <Typography component='div' variant="caption" sx={{color:'gray'}}>
                                             *{+verifiedCollection.shr*100}% is shared with {verifiedCollection.author} DAO
                                         </Typography>
+                                        
                                     }
                                 </div>
                                 {royalties &&
@@ -2355,7 +2356,7 @@ export default function ItemOffers(props: any) {
                                                 <Tooltip title={
                                                     <React.Fragment>
                                                         Marketplace fees at {verifiedCollection?.rate || 1}%
-                                                        {verifiedCollection?.shr && verifiedCollection?.shr > 0 &&
+                                                        {((verifiedCollection?.shr !== null) && (verifiedCollection?.shr > 0)) && 
                                                             <>
                                                                 <br/>
                                                                 {+verifiedCollection.shr*100}% is shared with {verifiedCollection.author} DAO
