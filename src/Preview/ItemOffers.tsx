@@ -1363,38 +1363,44 @@ export function OfferPrompt(props: any) {
                             <Typography
                                 variant="caption"
                             >
-                                {t('Available Balance')}: {sol_balance} <SolCurrencyIcon sx={{fontSize:"10px"}} />
-                                <ButtonGroup variant="text" size="small" aria-label="outlined primary button group" sx={{ml:1}}>
-                                    <Button 
-                                        onClick={() => {
-                                            setOfferAmount((String)(sol_balance-0.002))}}
-                                    > 
-                                        {t('Max')}
-                                    </Button>
-                                    <Button  
-                                        onClick={() => {
-                                            setOfferAmount((String)(+sol_balance/2))}}
-                                    > 
-                                        {t('Half')}
-                                    </Button>
-                                </ButtonGroup>
-                                {(props.highestOffer > 0) && (
+                                {symbol === 'SOL' ?
                                     <>
-                                    <br/>{t('Highest Offer')}: 
-                                        {(props.highestOffer < sol_balance+0.001) ?
-                                            <Button 
-                                                onClick={() => {
-                                                    setOfferAmount((String)(+props.highestOffer+0.001))}}
-                                            > 
-                                                {props.highestOffer}
-                                            </Button>
-                                        : 
-                                            <>
-                                                {props.highestOffer}
-                                            </>
-                                        }
+                                    {t('Available Balance')}: {sol_balance} <SolCurrencyIcon sx={{fontSize:"10px"}} />
+                                    <ButtonGroup variant="text" size="small" aria-label="outlined primary button group" sx={{ml:1}}>
+                                        <Button 
+                                            onClick={() => {
+                                                setOfferAmount((String)(sol_balance-0.002))}}
+                                        > 
+                                            {t('Max')}
+                                        </Button>
+                                        <Button  
+                                            onClick={() => {
+                                                setOfferAmount((String)(+sol_balance/2))}}
+                                        > 
+                                            {t('Half')}
+                                        </Button>
+                                    </ButtonGroup>
+                                    {(props.highestOffer > 0) && (
+                                        <>
+                                        <br/>{t('Highest Offer')}: 
+                                            {(props.highestOffer < sol_balance+0.001) ?
+                                                <Button 
+                                                    onClick={() => {
+                                                        setOfferAmount((String)(+props.highestOffer+0.001))}}
+                                                > 
+                                                    {props.highestOffer}
+                                                </Button>
+                                            : 
+                                                <>
+                                                    {props.highestOffer}
+                                                </>
+                                            }
+                                        </>
+                                    )}
                                     </>
-                                )}
+                                :
+                                <>In {symbol}</>
+                                }
                             </Typography>
                         </Grid>
                     </Grid>
@@ -1404,7 +1410,7 @@ export function OfferPrompt(props: any) {
                     <Button 
                         type="submit"
                         variant="text" 
-                        disabled={((+offer_amount > sol_balance) || (+offer_amount < 0.001) || (+offer_amount <= props.highestOffer))}
+                        disabled={(((+offer_amount > sol_balance) || (+offer_amount < 0.001) || (+offer_amount <= props.highestOffer)) && (symbol === 'SOL'))}
                         title="Submit">
                             {t('SUBMIT')}
                     </Button>
