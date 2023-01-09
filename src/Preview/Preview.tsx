@@ -1416,6 +1416,24 @@ function GalleryItemMeta(props: any) {
                                                             </TableRow>
                                                         : null }
 
+                                                        {collectionrawdata?.mintAuthority ?
+                                                            <TableRow>
+                                                                <TableCell>{t('Mint Authority')}:</TableCell>
+                                                                <TableCell>
+                                                                    <ExplorerView address={collectionrawdata.mintAuthority} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
+                                                                </TableCell>
+                                                            </TableRow>
+                                                        : null }
+
+                                                        {collectionrawdata?.mintTransaction ?
+                                                            <TableRow>
+                                                                <TableCell>{t('Mint Transaction')}:</TableCell>
+                                                                <TableCell>
+                                                                    <ExplorerView address={collectionrawdata.mintTransaction} type='transaction' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
+                                                                </TableCell>
+                                                            </TableRow>
+                                                        : null }
+
 
 
                                                         {collectionrawdata?.isMutable == 1 ?

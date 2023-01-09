@@ -1165,7 +1165,9 @@ export function IdentityView(props: any){
                                                 </ListItem>
                                             </List>
                                         </Grid>
-                                        {solanaHoldings && tokensNetValue && 
+                                        {solanaHoldings &&
+                                            <>
+                                            {tokensNetValue && 
                                             <Grid item sm={12} md={4}>
                                                 <Typography
                                                     variant="h6"
@@ -1206,50 +1208,56 @@ export function IdentityView(props: any){
                                             </List>
 
                                             </Grid>
+                                            }
+                                            </>
                                         }
 
-                                        {solanaHoldings && tokensNetValue && 
-                                            <Grid item sm={12} md={4}>
-                                                <Typography
-                                                    variant="h6"
-                                                >
-                                                    Total Value:
-                                                </Typography> 
+                                        {solanaHoldings &&
+                                            <>
+                                            {tokensNetValue && 
+                                                <Grid item sm={12} md={4}>
+                                                    <Typography
+                                                        variant="h6"
+                                                    >
+                                                        Total Value:
+                                                    </Typography> 
 
 
-                                                <List dense={true}>
-                                                <ListItem sx={{width:'100%'}}>
-                                                    <ListItemAvatar>
-                                                        <Avatar
-                                                            sx={{backgroundColor:'#222'}}
-                                                        >
-                                                            <SolCurrencyIcon sx={{color:'white'}} />
-                                                        </Avatar>
-                                                    </ListItemAvatar>
-                                                    <Grid container sx={{width:'100%'}}>
-                                                        <Grid item>
-                                                            <ListItemText
-                                                                primary={
-                                                                    <Typography variant='h4'>
-                                                                        {((tokensNetValue/solanaUSDC) + solanaBalance/(10 ** 9)).toFixed(9)}
-                                                                    </Typography>}
-                                                                secondary={
-                                                                    <>
-                                                                    {solanaUSDC &&
-                                                                        <Typography variant='caption'>
-                                                                            {(((solanaBalance/(10 ** 9)) * solanaUSDC) + tokensNetValue).toFixed(2)} USDC
-                                                                        </Typography>
+                                                    <List dense={true}>
+                                                    <ListItem sx={{width:'100%'}}>
+                                                        <ListItemAvatar>
+                                                            <Avatar
+                                                                sx={{backgroundColor:'#222'}}
+                                                            >
+                                                                <SolCurrencyIcon sx={{color:'white'}} />
+                                                            </Avatar>
+                                                        </ListItemAvatar>
+                                                        <Grid container sx={{width:'100%'}}>
+                                                            <Grid item>
+                                                                <ListItemText
+                                                                    primary={
+                                                                        <Typography variant='h4'>
+                                                                            {((tokensNetValue/solanaUSDC) + solanaBalance/(10 ** 9)).toFixed(9)}
+                                                                        </Typography>}
+                                                                    secondary={
+                                                                        <>
+                                                                        {solanaUSDC &&
+                                                                            <Typography variant='caption'>
+                                                                                {(((solanaBalance/(10 ** 9)) * solanaUSDC) + tokensNetValue).toFixed(2)} USDC
+                                                                            </Typography>
+                                                                        }
+                                                                        </>
                                                                     }
-                                                                    </>
-                                                                }
-                                                                sx={{color:'yellow'}}
-                                                            />
+                                                                    sx={{color:'yellow'}}
+                                                                />
+                                                            </Grid>
                                                         </Grid>
-                                                    </Grid>
-                                                </ListItem>
-                                            </List>
+                                                    </ListItem>
+                                                </List>
 
-                                            </Grid>
+                                                </Grid>
+                                            }
+                                            </>
                                         }
                                     </Grid>
 
