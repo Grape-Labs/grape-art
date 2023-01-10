@@ -23,6 +23,7 @@ import {
     getTokenPrice,
     getCoinGeckoPrice } from '../utils/grapeTools/helpers';
 
+import ModalSwapView from "../Identity/plugins/ModalSwap";
 import JupiterSwap from "./Swap";
 import SendToken from "./Send";
 
@@ -283,8 +284,11 @@ export function TokenView(props: any) {
                                             alignContent: 'flex-end'}}
                                     >
                                         {portfolioPositions &&
-                                            <JupiterSwap swapfrom={'So11111111111111111111111111111111111111112'} swapto={token.address} portfolioPositions={portfolioPositions} tokenMap={tokenMap}/>
+                                            <ModalSwapView swapfrom={'So11111111111111111111111111111111111111112'} swapto={token.address} toTokenLabel={token.name} />
                                         }
+                                        {/*portfolioPositions &&
+                                            <JupiterSwap swapfrom={'So11111111111111111111111111111111111111112'} swapto={token.address} portfolioPositions={portfolioPositions} tokenMap={tokenMap}/>
+                                        */}
                                         {coinGeckoPrice &&
                                             <SendToken mint={token.address} name={token.name} logoURI={token.logoURI} balance={myToken.account.data.parsed.info.tokenAmount.uiAmount} conversionrate={+coinGeckoPrice[token.extensions.coingeckoId]?.usd} showTokenName={false} sendType={0} />
                                         }

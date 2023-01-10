@@ -22,7 +22,7 @@ import gql_client from '../gql_client'
 import { programs, tryGetAccount, withSend, findAta } from '@cardinal/token-manager';
 
 import GovernanceDetailsView from './plugins/GovernanceDetails';
-import { SwapView } from './plugins/Swap';
+import { IntegratedSwapView } from './plugins/IntegratedSwap';
 import { SquadsView } from './plugins/squads';
 import { GovernanceView } from './plugins/Governance';
 import { StorageView } from './plugins/Storage';
@@ -1574,7 +1574,7 @@ export function IdentityView(props: any){
                                                     </TabPanel>
                                                     
                                                     <TabPanel value="4">
-                                                        <SwapView pubkey={pubkey} setLoadingPosition={setLoadingPosition} />
+                                                        <IntegratedSwapView pubkey={pubkey} setLoadingPosition={setLoadingPosition} />
                                                     </TabPanel>
 
                                                     {tokenMap &&

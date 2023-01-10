@@ -7,78 +7,14 @@ import {
     Typography,
     Grid,
     Box,
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogActions,
-    FormControl,
-    TextField,
-    InputLabel,
-    Select,
-    MenuItem,
-    FormLabel,
-    FormControlLabel,
-    Radio,
-    RadioGroup,
-    IconButton,
-    Container,
-    Skeleton,
-    Avatar,
-    List,
-    ListItem,
-    ListItemAvatar,
-    ListItemIcon,
-    ListItemText,
-    ListItemButton,
-    Tooltip,
-    SwipeableDrawer,
-    CssBaseline,
-    Tab,
-    Hidden,
-    Badge,
     LinearProgress,
-    CircularProgress,
 } from '@mui/material';
 
 import CloseIcon from '@mui/icons-material/Close';
 
 import { GRAPE_RPC_ENDPOINT } from '../../utils/grapeTools/constants';
-
-const Input = styled('input')({
-    display: 'none',
-});
-
-LinearProgressWithLabel.propTypes = {
-    /**
-     * The value of the progress indicator for the determinate and buffer variants.
-     * Value between 0 and 100.
-     */
-    value: PropTypes.number.isRequired,
-};
-
-function LinearProgressWithLabel(props:any) {
-    return (
-        <>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <Box sx={{ width: '100%', mr: 1 }}>
-                <LinearProgress color="inherit" variant="determinate" {...props} />
-                </Box>
-                <Box sx={{ minWidth: 35 }}>
-                <Typography variant="body2" color="text.secondary">{`${Math.round(
-                props.value,
-                )}%`}</Typography>
-            </Box>
-            </Box>
-            <Box sx={{ alignItems: 'center', textAlign: 'center', mt:-2}}>
-                <Typography variant="caption">
-                    storage used
-                </Typography>
-            </Box>
-        </>
-    );
-  }
   
-export function SwapView(props: any){
+export function IntegratedSwapView(props: any){
     const setLoadingPosition = props.setLoadingPosition;
     const { connection } = useConnection();
     const [loadingSwap, setLoadingSwap] = React.useState(false);
