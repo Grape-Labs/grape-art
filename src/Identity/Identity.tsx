@@ -22,7 +22,8 @@ import gql_client from '../gql_client'
 import { programs, tryGetAccount, withSend, findAta } from '@cardinal/token-manager';
 
 import GovernanceDetailsView from './plugins/GovernanceDetails';
-import { SquadsView } from './plugins/squads';
+import { SwapView } from './plugins/Swap';
+import { SquadsView } from './plugins/Squads';
 import { GovernanceView } from './plugins/Governance';
 import { StorageView } from './plugins/Storage';
 import { StreamingPaymentsView } from './plugins/StreamingPayments';
@@ -70,6 +71,7 @@ import {
     TabPanel,
 } from '@mui/lab';
 
+import SwapCallsIcon from '@mui/icons-material/SwapCalls';
 import ViewComfyIcon from '@mui/icons-material/ViewComfy';
 import InventoryIcon from '@mui/icons-material/Inventory';
 import SettingsIcon from '@mui/icons-material/Settings';
@@ -1305,34 +1307,42 @@ export function IdentityView(props: any){
                                                                 label={<Hidden smDown><Badge badgeContent={solanaClosableHoldings.length} color="error"><Typography variant="h6">{t('Closable')}</Typography></Badge></Hidden>
                                                             } value="3" />
                                                         }
+
+                                                        {publicKey && publicKey.toBase58() === pubkey &&
+                                                            <Tab sx={{color:'white', textTransform:'none'}} 
+                                                                icon={<Hidden smUp><SwapCallsIcon /></Hidden>}
+                                                                label={<Hidden smDown><Typography variant="h6">{t('Swap')}</Typography></Hidden>
+                                                            } value="4" />
+                                                        }
+                                                        
                                                         <Tab sx={{color:'white', textTransform:'none'}} 
                                                             icon={<Hidden smUp><AccountBalanceIcon /></Hidden>}
                                                             label={<Hidden smDown><Typography variant="h6">{t('Governance')}</Typography></Hidden>
-                                                        } value="4" />
+                                                        } value="5" />
                                                         
                                                         {solanaDomain && 
                                                             <Tab sx={{color:'white', textTransform:'none'}} 
                                                                 icon={<Hidden smUp><Badge badgeContent={solanaDomain.length} color="primary"><LanguageIcon /></Badge></Hidden>}
                                                                 label={<Hidden smDown><Badge badgeContent={solanaDomain.length} color="primary"><Typography variant="h6">{t('Domains')}</Typography></Badge></Hidden>
-                                                            } value="5" />
+                                                            } value="6" />
                                                         }
                                                         
                                                         {publicKey && publicKey.toBase58() === pubkey &&
                                                             <Tab sx={{color:'white', textTransform:'none'}} 
                                                                     icon={<Hidden smUp><StorageIcon /></Hidden>}
                                                                     label={<Hidden smDown><Typography variant="h6">{t('Storage')}</Typography></Hidden>
-                                                                } value="6" />
+                                                                } value="7" />
                                                         }
 
                                                         <Tab sx={{color:'white', textTransform:'none'}} 
                                                                 icon={<Hidden smUp><OpacityIcon /></Hidden>}
                                                                 label={<Hidden smDown><Typography variant="h6">{t('Streaming')}</Typography></Hidden>
-                                                        } value="7" />
+                                                        } value="8" />
 
                                                         <Tab sx={{color:'white', textTransform:'none'}} disabled={true}
                                                                 icon={<Hidden smUp><ViewComfyIcon /></Hidden>}
                                                                 label={<Hidden smDown><Typography variant="h6">{t('Squads')}</Typography></Hidden>
-                                                        } value="8" />
+                                                        } value="9" />
 
                                                     </TabList>
                                                     </Box>
@@ -1562,14 +1572,18 @@ export function IdentityView(props: any){
                                                             </Grid>
                                                         }
                                                     </TabPanel>
+                                                    
+                                                    <TabPanel value="4">
+                                                        <SwapView pubkey={pubkey} setLoadingPosition={setLoadingPosition} />
+                                                    </TabPanel>
 
                                                     {tokenMap &&
-                                                        <TabPanel value="4">
+                                                        <TabPanel value="5">
                                                             <GovernanceView pubkey={pubkey} setLoadingPosition={setLoadingPosition} tokenMap={tokenMap} />
                                                         </TabPanel>
                                                     }
                                                     
-                                                    <TabPanel value="5">
+                                                    <TabPanel value="6">
                                                         {/*
                                                         <BuyDomainView pubkey={pubkey} />
                                                         */}
@@ -1626,15 +1640,15 @@ export function IdentityView(props: any){
 
                                                     </TabPanel>
                                                     
-                                                    <TabPanel value="6">
+                                                    <TabPanel value="7">
                                                         <StorageView pubkey={pubkey} setLoadingPosition={setLoadingPosition} />
                                                     </TabPanel>
 
-                                                    <TabPanel value="7">
+                                                    <TabPanel value="8">
                                                         <StreamingPaymentsView pubkey={pubkey} setLoadingPosition={setLoadingPosition} tokenMap={tokenMap} />
                                                     </TabPanel>
 
-                                                    <TabPanel value="8">
+                                                    <TabPanel value="9">
                                                         <SquadsView pubkey={pubkey} setLoadingPosition={setLoadingPosition} tokenMap={tokenMap} />
                                                     </TabPanel>
 
