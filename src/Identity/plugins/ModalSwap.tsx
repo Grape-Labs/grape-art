@@ -17,13 +17,11 @@ import { GRAPE_RPC_ENDPOINT } from '../../utils/grapeTools/constants';
   
 export default function ModalSwapView(props: any){
     const setLoadingPosition = props?.setLoadingPosition;
-    const { connection } = useConnection();
     const [loadingSwap, setLoadingSwap] = React.useState(false);
     const { publicKey, wallet } = useWallet();
     const swapfrom = props?.swapfrom;
     const swapto = props?.swapto;
     const toTokenLabel = props?.toTokenLabel
-
     
     const initJupiter = () => {
         if (wallet) {
