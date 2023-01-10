@@ -92,6 +92,7 @@ export function SwapView(props: any){
             integratedTargetId: 'integrated-terminal',
             endpoint:GRAPE_RPC_ENDPOINT,
             passThroughWallet: wallet,
+            containerStyles: {height: 500},
           });
         }
     }; 
