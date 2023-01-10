@@ -23,7 +23,7 @@ import { programs, tryGetAccount, withSend, findAta } from '@cardinal/token-mana
 
 import GovernanceDetailsView from './plugins/GovernanceDetails';
 import { SwapView } from './plugins/Swap';
-import { SquadsView } from './plugins/Squads';
+import { SquadsView } from './plugins/squads';
 import { GovernanceView } from './plugins/Governance';
 import { StorageView } from './plugins/Storage';
 import { StreamingPaymentsView } from './plugins/StreamingPayments';
