@@ -97,7 +97,8 @@ import { GRAPE_RPC_ENDPOINT,
     GRAPE_PROFILE, 
     GRAPE_PREVIEW, 
     DRIVE_PROXY,
-    HELIUS_API } from '../utils/grapeTools/constants';
+    HELIUS_API,
+    SQUADS_API } from '../utils/grapeTools/constants';
 import { ConstructionOutlined, DoNotDisturb, JavascriptRounded, LogoDevOutlined } from "@mui/icons-material";
 
 import { useTranslation } from 'react-i18next';
@@ -1339,10 +1340,12 @@ export function IdentityView(props: any){
                                                                 label={<Hidden smDown><Typography variant="h6">{t('Streaming')}</Typography></Hidden>
                                                         } value="8" />
 
-                                                        <Tab sx={{color:'white', textTransform:'none'}} disabled={true}
-                                                                icon={<Hidden smUp><ViewComfyIcon /></Hidden>}
-                                                                label={<Hidden smDown><Typography variant="h6">{t('Squads')}</Typography></Hidden>
-                                                        } value="9" />
+                                                        {SQUADS_API &&
+                                                            <Tab sx={{color:'white', textTransform:'none'}} disabled={true}
+                                                                    icon={<Hidden smUp><ViewComfyIcon /></Hidden>}
+                                                                    label={<Hidden smDown><Typography variant="h6">{t('Squads')}</Typography></Hidden>
+                                                            } value="9" />
+                                                        }
 
                                                     </TabList>
                                                     </Box>
@@ -1647,10 +1650,12 @@ export function IdentityView(props: any){
                                                     <TabPanel value="8">
                                                         <StreamingPaymentsView pubkey={pubkey} setLoadingPosition={setLoadingPosition} tokenMap={tokenMap} />
                                                     </TabPanel>
-
-                                                    <TabPanel value="9">
-                                                        <SquadsView pubkey={pubkey} setLoadingPosition={setLoadingPosition} tokenMap={tokenMap} />
-                                                    </TabPanel>
+                                                    
+                                                    {SQUADS_API &&
+                                                        <TabPanel value="9">
+                                                            <SquadsView pubkey={pubkey} setLoadingPosition={setLoadingPosition} tokenMap={tokenMap} />
+                                                        </TabPanel>
+                                                    }
 
                                                 </TabContext>
                                             </Box>

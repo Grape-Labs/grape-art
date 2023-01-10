@@ -5,6 +5,11 @@ import Squads, { getTxPDA, DEFAULT_MULTISIG_PROGRAM_ID } from '@sqds/sdk';
 import axios from 'axios';
 import { WalletContextState } from '@solana/wallet-adapter-react';
 
+import { 
+    SQUADS_API, 
+} from '../utils/grapeTools/constants';
+
+
 export interface SquadsRpcReponse {
     publicKey: PublicKey;
     threshold: number;
@@ -62,13 +67,13 @@ export const useSquads = (connection: Connection, wallet: WalletContextState) =>
     const getMultisigsByUser = async (): Promise<Squad[] | null> => {
         try {
             const { data: userSquads } = await axios.get<string[]>(
-                `${process.env.SQUADS_API_URL}/members?address=${wallet.publicKey}`
+                `${SQUADS_API}/members?address=${wallet.publicKey}`
             );
             if (userSquads) {
                 const squadsApiMetadata = await Promise.all(
                     userSquads.map((address) =>
                         axios
-                            .get<SquadsApiResponse>(`${process.env.SQUADS_API_URL}/squads?address=${address}`)
+                            .get<SquadsApiResponse>(`${SQUADS_API}/squads?address=${address}`)
                             .then<SquadsApiResponseWithAddress>((res) => ({ msAddress: address, ...res.data }))
                     )
                 );
@@ -97,7 +102,7 @@ export const useSquads = (connection: Connection, wallet: WalletContextState) =>
         const pdas = getTxPDAs(squad, startIndex);
 
         const requests = pdas.map((pda) =>
-            axios.get(`${process.env.SQUADS_API_URL}/transactions?address=${pda.toBase58()}&useProd=true`)
+            axios.get(`${SQUADS_API}/transactions?address=${pda.toBase58()}&useProd=true`)
         );
 
         const results = await Promise.allSettled(requests);
