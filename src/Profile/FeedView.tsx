@@ -466,7 +466,7 @@ export default function FeedView(props: any){
             for (var value of result){
                 signatures.push(value.signature);
             }
-            const getTransactionAccountInputs2 = await ticonnection.getParsedTransactions(signatures, 'confirmed');
+            const getTransactionAccountInputs2 = await ticonnection.getParsedTransactions(signatures, {commitment:'confirmed', maxSupportedTransactionVersion:0});
             let featured = null;
             for (var value of result){
                 

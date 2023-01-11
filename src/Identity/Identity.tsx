@@ -401,8 +401,8 @@ export function IdentityView(props: any){
             const url = "https://api.helius.xyz/v0/addresses/"+pubkey+"/transactions?api-key="+HELIUS_API
             const parseTransactions = async () => {
                 const { data } = await axios.get(url)
-                console.log("parsed transactions: ", data)
-
+                //console.log("parsed transactions: ", data)
+                
                 helius_results = data;
                 /*
                 for (const item of data){
@@ -443,10 +443,7 @@ export function IdentityView(props: any){
             console.log("fetching parsed transactions")
             try{
                 const getTransactionAccountInputs2 = await ggoconnection.getParsedTransactions(signatures, {commitment:'confirmed', maxSupportedTransactionVersion:0});
-
-
-                console.log("getTransactionAccountInputs2: "+JSON.stringify(getTransactionAccountInputs2))
-
+                //console.log("getTransactionAccountInputs2: "+JSON.stringify(getTransactionAccountInputs2))
                 let cnt=0;
                 const tx: any[] = [];
                 for (const tvalue of getTransactionAccountInputs2){
