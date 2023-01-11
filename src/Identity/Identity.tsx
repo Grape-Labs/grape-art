@@ -395,6 +395,7 @@ export function IdentityView(props: any){
         
         let helius_results = null;
 
+        
         if (HELIUS_API){
             const tx: any[] = [];
             const url = "https://api.helius.xyz/v0/addresses/"+pubkey+"/transactions?api-key="+HELIUS_API
@@ -437,9 +438,11 @@ export function IdentityView(props: any){
                 counter++;
             }
 
+            //console.log("signatures: "+JSON.stringify(signatures))
+
             console.log("fetching parsed transactions")
             try{
-                const getTransactionAccountInputs2 = await ggoconnection.getParsedTransactions(signatures, 'confirmed');
+                const getTransactionAccountInputs2 = await ggoconnection.getParsedTransactions(signatures, {commitment:'confirmed', maxSupportedTransactionVersion:0});
 
 
                 console.log("getTransactionAccountInputs2: "+JSON.stringify(getTransactionAccountInputs2))

@@ -1,14 +1,8 @@
 import React, { useEffect, Suspense, useCallback } from "react";
-import { styled } from '@mui/material/styles';
-import PropTypes from 'prop-types';
 import { AnchorWallet, useAnchorWallet, useConnection, useWallet } from '@solana/wallet-adapter-react';
 
 import {
-    Typography,
-    Grid,
-    Box,
     Button,
-    LinearProgress,
 } from '@mui/material';
 
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
@@ -16,6 +10,7 @@ import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import { GRAPE_RPC_ENDPOINT } from '../../utils/grapeTools/constants';
   
 export default function ModalSwapView(props: any){
+    const refreshCallback = props.refreshCallback;
     const setLoadingPosition = props?.setLoadingPosition;
     const [loadingSwap, setLoadingSwap] = React.useState(false);
     const { publicKey, wallet } = useWallet();
@@ -32,6 +27,13 @@ export default function ModalSwapView(props: any){
             endpoint:GRAPE_RPC_ENDPOINT,
             passThroughWallet: wallet,
             containerStyles: {height: 500},
+            onSuccess: ({ txid }) => {
+                try{
+                    console.log('onSuccess', txid);
+                    if (refreshCallback)
+                        refreshCallback();
+                }catch(err:any){console.log("ERR: "+err)}
+            }
           });
         }
     }; 
