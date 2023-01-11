@@ -394,7 +394,6 @@ export function IdentityView(props: any){
         setLoadingPosition(' last (100) Transactions');
         
         let helius_results = null;
-
         
         if (HELIUS_API){
             const tx: any[] = [];
@@ -402,7 +401,7 @@ export function IdentityView(props: any){
             const parseTransactions = async () => {
                 const { data } = await axios.get(url)
                 //console.log("parsed transactions: ", data)
-                
+
                 helius_results = data;
                 /*
                 for (const item of data){
