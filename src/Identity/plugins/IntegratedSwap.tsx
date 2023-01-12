@@ -3,6 +3,7 @@ import { AnchorWallet, useAnchorWallet, useConnection, useWallet } from '@solana
 
 import {
     Grid,
+    LinearProgress,
 } from '@mui/material';
 
 import { GRAPE_RPC_ENDPOINT } from '../../utils/grapeTools/constants';
@@ -22,7 +23,7 @@ export function IntegratedSwapView(props: any){
             integratedTargetId: 'integrated-terminal',
             endpoint:GRAPE_RPC_ENDPOINT,
             passThroughWallet: wallet,
-            containerStyles: {height: 500},
+            containerStyles: {minHeight: 500},
             onSuccess: ({ txid }) => {
                 try{
                     console.log('onSuccess', txid);
@@ -51,7 +52,8 @@ export function IntegratedSwapView(props: any){
             */}
             <Grid id='integrated-terminal'
                 sx={{minHeight:'90vh',zIndex: 100}}
-            ></Grid>
+            >
+            </Grid>
         </>
     )
 }
