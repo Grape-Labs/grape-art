@@ -199,7 +199,7 @@ export function TokenView(props: any) {
 
                         <Grid container spacing={2}>
                         
-                        {tokenPrice &&
+                        {(tokenPrice && tokenPrice?.data?.price) &&
                             <Grid item xs={6}>
                                 <Card sx={{borderRadius:'17px'}}>
                                     <CardContent>
@@ -270,9 +270,11 @@ export function TokenView(props: any) {
                                         <Typography variant="body2" component="div">
                                             {(myToken.account.data.parsed.info.tokenAmount.uiAmount*coinGeckoPrice[token.extensions.coingeckoId]?.usd).toFixed(6)} USD
                                         </Typography>
-                                        <Typography variant="body2" component="div">
-                                            {(myToken.account.data.parsed.info.tokenAmount.uiAmount * tokenPrice.data.price).toFixed(6)} SOL
-                                        </Typography>
+                                        {tokenPrice?.data?.price &&
+                                            <Typography variant="body2" component="div">
+                                                {(myToken.account.data.parsed.info.tokenAmount.uiAmount * tokenPrice.data.price).toFixed(6)} SOL
+                                            </Typography>
+                                        }
                                         <Typography sx={{ mb: 1.5 }} color="text.secondary" variant="caption">
                                         Source: 
                                         <ExplorerView showSolanaProfile={true} grapeArtProfile={true} showAddress={true} address={publicKey.toBase58()} type='address' shorten={0} hideTitle={false} style='text' color='white' fontSize='11px' />
