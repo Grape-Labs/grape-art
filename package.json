@@ -180,7 +180,7 @@
         "os-browserify": "^0.3.0",
         "parcel": "^2.7.0",
         "path-browserify": "^1.0.1",
-        "prettier": "^2.5.1",
+        "prettier": "^2.8.3",
         "querystring-es3": "^0.2.1",
         "react-snap": "^1.23.0",
         "shx": "^0.3.4",
