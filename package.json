@@ -42,7 +42,7 @@
         "@blockworks-foundation/voter-stake-registry-client": "^0.2.3",
         "@bonfida/spl-name-service": "0.1.55",
         "@cardinal/namespaces": "^4.1.61",
-        "@cardinal/token-manager": "2.0.0",
+        "@cardinal/token-manager": "3.1.0",
         "@crossmint/connect": "^0.0.5-alpha-2",
         "@cyberlab/cyberconnect": "^4.4.2",
         "@dialectlabs/identity-cardinal": "^0.0.2",
