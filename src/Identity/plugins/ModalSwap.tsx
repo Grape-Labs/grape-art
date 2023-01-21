@@ -37,7 +37,7 @@ export default function ModalSwapView(props: any){
                 mint: swapto,
                 endpoint:GRAPE_RPC_ENDPOINT,
                 passThroughWallet: wallet,
-                containerStyles: {height: 500},
+                containerStyles: {height: 500,zIndex:1},
                 onSuccess: ({ txid }) => {
                     try{
                         console.log('onSuccess', txid);

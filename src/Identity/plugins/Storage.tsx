@@ -9,6 +9,7 @@ import { Link, useParams, useSearchParams } from "react-router-dom";
 // @ts-ignore
 import { BN } from '@project-serum/anchor';
 import { PublicKey, Connection, Commitment } from '@solana/web3.js';
+import ModalSwapView from "./ModalSwap";
 import {ENV, TokenInfo, TokenListProvider} from '@solana/spl-token-registry';
 import { AnchorWallet, useAnchorWallet, useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { WalletError } from '@solana/wallet-adapter-base';
@@ -461,19 +462,23 @@ export function StorageView(props: any){
     
         return (
             <>
-                <Grid container sx={{mt:1,mb:1}}>
+                <Grid container sx={{mt:0,mb:1}}>
+                    
+                    <Grid item xs={12} alignContent={'right'} textAlign={'right'} sx={{mb:1}}>
+                        <ModalSwapView swapfrom={'So11111111111111111111111111111111111111112'} swapto={'SHDWyBxihqiCj6YekG2GUr7wqKLeLAMK1gHZck9pL6y'} toTokenLabel={'SHDW'} />
+                    </Grid>
                     <Grid item xs={12} alignContent={'right'} textAlign={'right'}>
-                        <Button
-                            variant="contained"
-                            color="success" 
-                            title={`Add Storage Pool`}
-                            onClick={handleClickOpen}
-                            size="large"
-                            fullWidth
-                            sx={{borderRadius:'17px'}}
-                            >
-                            Add Storage Pool
-                        </Button>
+                            <Button
+                                variant="contained"
+                                color="success" 
+                                title={`Add Storage Pool`}
+                                onClick={handleClickOpen}
+                                size="large"
+                                fullWidth
+                                sx={{borderRadius:'17px'}}
+                                >
+                                Add Storage Pool
+                            </Button>
                     </Grid>
                 </Grid>
                 <BootstrapDialog 
@@ -848,7 +853,7 @@ const deserialized = deserializeUnchecked(dataSchema, AccoundData, metavalue?.da
                 //const signedTransaction = await thisDrive.uploadFile(storagePublicKey, files[0]);
                 
                 let count = 0;
-                for (var file of signedTransaction){
+                for (let file of signedTransaction){
                     if (file.status === "Uploaded."){
                         count++;
                     }
@@ -1340,8 +1345,8 @@ const deserialized = deserializeUnchecked(dataSchema, AccoundData, metavalue?.da
             
             const storageTable = new Array();
             if (asa_v2){
-                var asa_v2_array = new Array();
-                for (var item of asa_v2){
+                let asa_v2_array = new Array();
+                for (let item of asa_v2){
                     const body = {
                         storage_account: item.publicKey
                     };
@@ -1355,7 +1360,7 @@ const deserialized = deserializeUnchecked(dataSchema, AccoundData, metavalue?.da
                 
                     const json = await response.json();
 
-                    var storage = {
+                    let storage = {
                         publicKey:item.publicKey,
                         account:item.account,
                         additional:{
@@ -1408,7 +1413,7 @@ const deserialized = deserializeUnchecked(dataSchema, AccoundData, metavalue?.da
             if (asa_v1){
                 setAccountV1(asa_v1);
 
-                for (var item of asa_v1){
+                for (let item of asa_v1){
                     storageTable.push({
                         id:item.publicKey.toBase58(),
                         expand:{
