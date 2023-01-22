@@ -20,6 +20,7 @@ import { gql } from '@apollo/client'
 import gql_client from '../gql_client'
 
 import { programs, tryGetAccount, withSend, findAta } from '@cardinal/token-manager';
+//import { tryGetAccount } from '@cardinal/common';
 
 import GovernanceDetailsView from './plugins/GovernanceDetails';
 import { IntegratedSwapView } from './plugins/IntegratedSwap';
@@ -1565,7 +1566,7 @@ export function IdentityView(props: any){
                                                                 <Grid item xs={12} alignContent={'right'} textAlign={'right'}>
                                                                     <Grid item alignContent={'right'} textAlign={'right'}>
                                                                         {selectionModelClose.length <= 100 ?
-                                                                            <BulkBurnClose tokensSelected={selectionModelClose} solanaHoldingRows={solanaClosableHoldingsRows} tokenMap={tokenMap} nftMap={nftMap} fetchSolanaTokens={fetchSolanaTokens} type={1}  />
+                                                                            <BulkBurnClose tokensSelected={selectionModelClose} clearSelectionModels={clearSelectionModels} solanaHoldingRows={solanaClosableHoldingsRows} tokenMap={tokenMap} nftMap={nftMap} fetchSolanaTokens={fetchSolanaTokens} type={1}  />
                                                                         :
                                                                             <Typography variant="caption">Currently limited to 100 token accounts</Typography>
                                                                         }
