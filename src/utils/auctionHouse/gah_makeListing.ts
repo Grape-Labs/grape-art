@@ -17,7 +17,7 @@ import { InstructionsAndSignersSet } from "./helpers/types";
 
 import { AuctionHouseProgram } from '@metaplex-foundation/mpl-auction-house'
 
-import { programs, tryGetAccount, withInitTransferAuthority } from "@cardinal/token-manager";
+import { withInitTransferAuthority } from "@cardinal/token-manager";
 import { isCardinalWrappedToken, assertOwnerInstruction } from "../../utils/cardinal/helpers";
 
 import {

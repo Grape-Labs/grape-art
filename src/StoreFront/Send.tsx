@@ -4,6 +4,7 @@ import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { Signer, Connection, PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js';
 import { TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID, getAssociatedTokenAddress, createAssociatedTokenAccountInstruction, getOrCreateAssociatedTokenAccount, createAssociatedTokenAccount, createTransferInstruction } from "@solana/spl-token-v2";
 //import { TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID, Token } from "@solana/spl-token";
+//import { TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID, Token } from "@solana/spl-token";
 
 import { GRAPE_RPC_ENDPOINT, TX_RPC_ENDPOINT, GRAPE_TREASURY } from '../utils/grapeTools/constants';
 import { RegexTextField } from '../utils/grapeTools/RegexTextField';
@@ -46,7 +47,7 @@ import { SelectChangeEvent } from '@mui/material/Select';
 import { MakeLinkableAddress, ValidateAddress } from '../utils/grapeTools/WalletAddress'; // global key handling
 import { useSnackbar } from 'notistack';
 
-import { programs, tryGetAccount, withSend } from "@cardinal/token-manager";
+import { withSend } from "@cardinal/token-manager";
 import { isCardinalWrappedToken, assertOwnerInstruction } from "../utils/cardinal/helpers";
 
 import SendIcon from '@mui/icons-material/Send';

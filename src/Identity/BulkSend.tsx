@@ -50,7 +50,7 @@ import {
 
 import { SelectChangeEvent } from '@mui/material/Select';
 
-import { programs, tryGetAccount, withSend } from "@cardinal/token-manager";
+import { withSend } from "@cardinal/token-manager";
 import { isCardinalWrappedToken, assertOwnerInstruction } from "../utils/cardinal/helpers";
 
 import { useSnackbar } from 'notistack';
