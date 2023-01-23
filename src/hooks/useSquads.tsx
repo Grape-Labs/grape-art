@@ -58,7 +58,7 @@ export interface Transaction {
 
 export const TRANSACTIONS_PER_PAGE = 5;
 
-export const useSquads = (connection: Connection, wallet: WalletContextState) => {
+export const useSquads = (connection: Connection, wallet: WalletContextState, pubkey: PublicKey) => {
     const [squads, setSquads] = React.useState<Squad[]>([]);
     const [loading, setLoading] = React.useState(true);
     const [fetched, setFetched] = React.useState(false);
@@ -67,7 +67,7 @@ export const useSquads = (connection: Connection, wallet: WalletContextState) =>
     const getMultisigsByUser = async (): Promise<Squad[] | null> => {
         try {
             const { data: userSquads } = await axios.get<string[]>(
-                `${SQUADS_API}/members?address=${wallet.publicKey}`
+                `${SQUADS_API}/members?address=${pubkey || wallet.publicKey}`
             );
             if (userSquads) {
                 const squadsApiMetadata = await Promise.all(

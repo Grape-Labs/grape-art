@@ -1341,10 +1341,14 @@ export function IdentityView(props: any){
                                                         } value="8" />
 
                                                         {SQUADS_API &&
-                                                            <Tab sx={{color:'white', textTransform:'none'}} disabled={true}
-                                                                    icon={<Hidden smUp><ViewComfyIcon /></Hidden>}
-                                                                    label={<Hidden smDown><Typography variant="h6">{t('Squads')}</Typography></Hidden>
-                                                            } value="9" />
+                                                            <>
+                                                            {publicKey && publicKey.toBase58() === pubkey &&
+                                                                <Tab sx={{color:'white', textTransform:'none'}} disabled={true}
+                                                                        icon={<Hidden smUp><ViewComfyIcon /></Hidden>}
+                                                                        label={<Hidden smDown><Typography variant="h6">{t('Squads')}</Typography></Hidden>
+                                                                } value="9" />
+                                                            }
+                                                            </>
                                                         }
 
                                                     </TabList>
@@ -1653,7 +1657,7 @@ export function IdentityView(props: any){
                                                     
                                                     {SQUADS_API &&
                                                         <TabPanel value="9">
-                                                            <SquadsView pubkey={pubkey} setLoadingPosition={setLoadingPosition} tokenMap={tokenMap} />
+                                                            <SquadsView pubkey={pubkey} setLoadingPosition={setLoadingPosition} />
                                                         </TabPanel>
                                                     }
 

@@ -43,11 +43,11 @@ export function SquadsView(props: any) {
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
     const wallet = useWallet();
-
+    const pubkey = props?.pubkey;
     const { publicKey } = useWallet();
     const connection = new Connection(GRAPE_RPC_ENDPOINT);
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
-    const { squads, loading } = useSquads(connection, wallet);
+    const { squads, loading } = useSquads(connection, wallet, pubkey);
 
     const rows = squads.length;
     const emptyRows = rowsPerPage - rows > 0 ? rowsPerPage - rows : 0;
