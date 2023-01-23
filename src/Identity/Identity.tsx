@@ -418,8 +418,8 @@ export function IdentityView(props: any){
                 }*/
 
             }
-            await parseTransactions();
-
+            if (helius_results)
+                await parseTransactions();
             //setSolanaTransactions(tx);
         } 
         
@@ -1168,9 +1168,9 @@ export function IdentityView(props: any){
                                                 </ListItem>
                                             </List>
                                         </Grid>
-                                        {solanaHoldings &&
+                                        {tokensNetValue > 0 &&
                                             <>
-                                            {(tokensNetValue && solanaUSDC) &&
+                                            {(solanaUSDC) &&
                                             <Grid item sm={12} md={4}>
                                                 <Typography
                                                     variant="h6"
@@ -1215,7 +1215,7 @@ export function IdentityView(props: any){
                                             </>
                                         }
 
-                                        {(solanaHoldings && solanaUSDC) &&
+                                        {(tokensNetValue > 0 && solanaBalance > 0) &&
                                             <>
                                             {tokensNetValue && 
                                                 <Grid item sm={12} md={4}>
@@ -1288,7 +1288,7 @@ export function IdentityView(props: any){
                                             </Grid>
                                         }
 
-                                        {solanaHoldings &&
+                                        {(solanaHoldings && solanaUSDC) &&
                                             <Box sx={{ width: '100%', typography: 'body1' }}>
                                                 <TabContext value={value} >
                                                     <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
