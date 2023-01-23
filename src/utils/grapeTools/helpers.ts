@@ -134,6 +134,20 @@ export async function getCoinGeckoPrice(token:string) {
   }catch(e){return null;}
 }
 
+export async function getTokenTicker(tokenIn:string,tokenOut:string) {
+  const body = {
+    id: tokenIn,
+    vsToken: tokenOut
+  }
+  const apiUrl = "https://stats.jup.ag/coingecko/tickers?ticker_id="+tokenIn+"_"+tokenOut;
+  const resp = await window.fetch(apiUrl, {
+    //method:'GET',
+    //body: JSON.stringify(body)
+  })
+  const json = await resp.json(); 
+  return json
+}
+
 export async function getTokenPrice(tokenIn:string,tokenOut:string) {
   const body = {
     id: tokenIn,

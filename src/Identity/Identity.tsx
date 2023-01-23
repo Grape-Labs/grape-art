@@ -43,6 +43,7 @@ import { useWallet } from '@solana/wallet-adapter-react';
 
 import {  
     getTokenPrice,
+    getTokenTicker,
     getCoinGeckoPrice } from '../utils/grapeTools/helpers';
 
 import {
@@ -165,6 +166,7 @@ export function IdentityView(props: any){
     const [solanaClosableHoldings, setSolanaClosableHoldings] = React.useState(null);
     const [solanaClosableHoldingsRows, setSolanaClosableHoldingsRows] = React.useState(null);
     const [solanaBalance, setSolanaBalance] = React.useState(null);
+    const [solanaTicker, setSolanaTicker] = React.useState(null);
     const [solanaUSDC, setSolanaUSDC] = React.useState(null);
     const [solanaTransactions, setSolanaTransactions] = React.useState(null);
     const [loadingWallet, setLoadingWallet] = React.useState(false);
@@ -386,6 +388,9 @@ export function IdentityView(props: any){
         setLoadingPosition('SOL Balance');
         const response = await ggoconnection.getBalance(new PublicKey(pubkey));
         const converted = await getTokenPrice('SOL','USDC');
+        const ticker = await getTokenTicker('So11111111111111111111111111111111111111112','EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v');
+        console.log("ticker: "+JSON.stringify(ticker))
+        setSolanaTicker(ticker);
         setSolanaUSDC(converted.data.price);
         setSolanaBalance(response);
     }
@@ -1101,7 +1106,7 @@ export function IdentityView(props: any){
                                 {pubkey ?
                                     <>  
                                     <Grid container>
-                                        <Grid item>
+                                        <Grid item xs={12} md={6}>
                                             <Typography
                                                 variant="h6"
                                             >
@@ -1116,6 +1121,21 @@ export function IdentityView(props: any){
                                                     </Grid>
                                                 </ListItem>
                                             </List>
+                                        </Grid>
+                                        <Grid item xs={12} md={6}>
+                                            {solanaTicker && 
+                                                <Typography variant='caption'>
+                                                    Rate: 1 SOL = {(+solanaTicker.last_price).toFixed(2)} USDC
+                                                    <Typography variant='caption' sx={{color:'#999'}}>
+                                                        <br/>
+                                                        Timestamp: {moment(new Date()).format("YYYY-MM-DD h:mma")}
+                                                        <br/>
+                                                        Volume: {solanaTicker.base_volume}
+                                                        <br/>
+                                                        High/Low: {solanaTicker.high}/{solanaTicker.low}
+                                                    </Typography>
+                                                </Typography>
+                                            }
                                         </Grid>
                                     </Grid>
 
@@ -1151,7 +1171,7 @@ export function IdentityView(props: any){
                                                                     <>
                                                                     {solanaUSDC &&
                                                                         <Typography variant='caption'>
-                                                                            {((solanaBalance/(10 ** 9)) * solanaUSDC).toFixed(2)}USDC <i>(1 SOL = {solanaUSDC.toFixed(2)} USDC)</i>
+                                                                            {((solanaBalance/(10 ** 9)) * solanaUSDC).toFixed(2)}USDC
                                                                         </Typography>
                                                                     }
                                                                     </>

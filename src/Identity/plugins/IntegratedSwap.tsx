@@ -16,15 +16,19 @@ export function IntegratedSwapView(props: any){
     const { connection } = useConnection();
     const [loadingSwap, setLoadingSwap] = React.useState(false);
     const { publicKey, wallet } = useWallet();
+    const [platformFeeAndAccounts, setPlatformFeeAndAccounts] = React.useState(null);
     
-    /*
-    const platformFeeAndAccounts = {
-        feeBps: 10,
-        feeAccounts: await getPlatformFeeAccounts(
-        connection,
-        new PublicKey('9Y1EEuwtxk2JTe8TkvxMfA27A9sY4WVbymroSd5upGiW') // The platform fee account owner
-        ) // map of mint to token account pubkey
-    }*/
+    const fetchPlatformFeeAndAccounts = async () => {
+        const pfaa = {
+            feeBps: 10,
+            feeAccounts: await getPlatformFeeAccounts(
+                connection,
+                new PublicKey('9Y1EEuwtxk2JTe8TkvxMfA27A9sY4WVbymroSd5upGiW') // The platform fee account owner
+            ) // map of mint to token account pubkey
+        }
+
+        setPlatformFeeAndAccounts(pfaa)
+    }
 
     const initJupiter = () => {
         if (wallet) {
@@ -49,6 +53,7 @@ export function IntegratedSwapView(props: any){
 
     React.useEffect(() => {
         if (wallet){
+            fetchPlatformFeeAndAccounts();
             initJupiter();
         }
     }, [wallet]);
