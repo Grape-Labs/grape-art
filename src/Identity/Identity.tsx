@@ -389,7 +389,7 @@ export function IdentityView(props: any){
         const response = await ggoconnection.getBalance(new PublicKey(pubkey));
         const converted = await getTokenPrice('SOL','USDC');
         const ticker = await getTokenTicker('So11111111111111111111111111111111111111112','EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v');
-        console.log("ticker: "+JSON.stringify(ticker))
+        //console.log("ticker: "+JSON.stringify(ticker))
         setSolanaTicker(ticker);
         setSolanaUSDC(converted.data.price);
         setSolanaBalance(response);
@@ -402,30 +402,34 @@ export function IdentityView(props: any){
         let helius_results = null;
         
         if (HELIUS_API){
-            const tx: any[] = [];
-            const url = "https://api.helius.xyz/v0/addresses/"+pubkey+"/transactions?api-key="+HELIUS_API
-            const parseTransactions = async () => {
-                const { data } = await axios.get(url)
-                //console.log("parsed transactions: ", data)
+            try{
+                const tx: any[] = [];
+                const url = "https://api.helius.xyz/v0/addresses/"+pubkey+"/transactions?api-key="+HELIUS_API
+                const parseTransactions = async () => {
+                    const { data } = await axios.get(url)
+                    //console.log("parsed transactions: ", data)
 
-                helius_results = data;
-                /*
-                for (const item of data){
-                    tx.push({
-                        signature:item.signature,
-                        blockTime:item.timestamp,
-                        //amount:tx_cost,
-                        //owner:owner,
-                        memo:'',
-                        source:null,
-                        type:item.description + ' | ' + item.type,
-                    });
-                }*/
+                    helius_results = data;
+                    /*
+                    for (const item of data){
+                        tx.push({
+                            signature:item.signature,
+                            blockTime:item.timestamp,
+                            //amount:tx_cost,
+                            //owner:owner,
+                            memo:'',
+                            source:null,
+                            type:item.description + ' | ' + item.type,
+                        });
+                    }*/
 
-            }
-            if (helius_results)
+                }
+            //if (helius_results)
                 await parseTransactions();
             //setSolanaTransactions(tx);
+            }catch(terr){
+                console.log("ERR: "+terr);
+            }
         } 
         
         {
@@ -1128,11 +1132,11 @@ export function IdentityView(props: any){
                                                     Rate: 1 SOL = {(+solanaTicker.last_price).toFixed(2)} USDC
                                                     <Typography variant='caption' sx={{color:'#999'}}>
                                                         <br/>
+                                                        High/Low: {solanaTicker?.high}/{solanaTicker?.low}
+                                                        <br/>
+                                                        Volume: {solanaTicker?.base_volume}
+                                                        <br/>
                                                         Timestamp: {moment(new Date()).format("YYYY-MM-DD h:mma")}
-                                                        <br/>
-                                                        Volume: {solanaTicker.base_volume}
-                                                        <br/>
-                                                        High/Low: {solanaTicker.high}/{solanaTicker.low}
                                                     </Typography>
                                                 </Typography>
                                             }
