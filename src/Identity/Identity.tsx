@@ -1132,9 +1132,9 @@ export function IdentityView(props: any){
                                                     Rate: 1 SOL = {(+solanaTicker.last_price).toFixed(2)} USDC
                                                     <Typography variant='caption' sx={{color:'#999'}}>
                                                         <br/>
-                                                        High/Low: {solanaTicker?.high}/{solanaTicker?.low}
+                                                        24h High/Low: {solanaTicker?.high}/{solanaTicker?.low}
                                                         <br/>
-                                                        Volume: {solanaTicker?.base_volume}
+                                                        24h Volume: {solanaTicker?.base_volume}
                                                         <br/>
                                                         Timestamp: {moment(new Date()).format("YYYY-MM-DD h:mma")}
                                                     </Typography>
