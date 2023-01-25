@@ -424,7 +424,6 @@ export function IdentityView(props: any){
                     }*/
 
                 }
-            //if (helius_results)
                 await parseTransactions();
             //setSolanaTransactions(tx);
             }catch(terr){
@@ -473,12 +472,14 @@ export function IdentityView(props: any){
                     }
 
                     let description = null;
-                    for (const item of helius_results){
-                        if ((signatures[cnt] === item.signature) && (item.type !== 'UNKNOWN')){
-                            description = item.description + " ("+ item.type+ ")";
+                    if (helius_results){
+                        for (const item of helius_results){
+                            if ((signatures[cnt] === item.signature) && (item.type !== 'UNKNOWN')){
+                                description = item.description + " ("+ item.type+ ")";
+                            }
                         }
                     }
-                    
+
                     tx.push({
                         signature:signatures[cnt],
                         blockTime:tvalue?.blockTime,
