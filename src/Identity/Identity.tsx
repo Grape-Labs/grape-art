@@ -441,6 +441,11 @@ export function IdentityView(props: any){
             for (const value of response){
                 if (counter<100){
                     signatures.push(value.signature);
+                    if (value.memo){
+                        //let start_memo = value.memo.indexOf('[');
+                        //let end_memo = value.memo.indexOf(']');
+
+                    }
                     memos.push(value.memo);
                 }
                 counter++;
@@ -1495,9 +1500,9 @@ export function IdentityView(props: any){
                                                                                 primary={
                                                                                     <>
                                                                                         <ExplorerView address={item.signature} type='tx' title={item.signature}/>
-                                                                                        {item.description &&
+                                                                                        {item?.description &&
                                                                                             <Typography variant='subtitle1' sx={{mt:1}}>
-                                                                                                {item.description}
+                                                                                                {item?.description}
                                                                                             </Typography>
                                                                                         }
                                                                                         <Typography variant='body2'>
@@ -1512,7 +1517,9 @@ export function IdentityView(props: any){
                                                                                     </>}
                                                                                 secondary={
                                                                                     <>
-                                                                                        {item?.memo && <Typography variant="caption">{item?.memo}</Typography>}
+                                                                                        {item?.memo && 
+                                                                                            <Typography variant="caption">{item?.memo}</Typography>
+                                                                                        }
                                                                                     </>
                                                                                 }
                                                                             />
