@@ -43,6 +43,7 @@
         "@bonfida/spl-name-service": "0.1.55",
         "@cardinal/namespaces": "^4.1.56",
         "@cardinal/token-manager": "2.0.0",
+        "@certusone/wormhole-sdk": "^0.9.9",
         "@crossmint/connect": "^0.0.5-alpha-2",
         "@cyberlab/cyberconnect": "^4.4.2",
         "@dialectlabs/identity-cardinal": "^0.0.2",
