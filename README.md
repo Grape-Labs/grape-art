@@ -23,11 +23,11 @@ UI:
 - Interface: MUI 5 https://mui.com
 
 BUILD/START:
-- `yarn install`
+- `yarn`
 - `yarn start`
 
 CONSTANTS: 
--   * connection endpoints can be edited in the `utils/grapeTools/constants.tsx`
+-   * connection endpoints can be edited directly in the `utils/grapeTools/constants.tsx` or with a .env file
 -   * Default AH is set with 0% fees | list on Grape and share marketplace fees with a custom auction house setup on grape.art
 -   * Board your collection have it featured on grape.art at https://grape.art/boarding
 
