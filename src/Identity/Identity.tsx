@@ -999,8 +999,10 @@ export function IdentityView(props: any){
                                 }
                                 if (!found_from_map){
                                     //if (collectionmeta.length <= 25){ // limitd to 25 fetches (will need to optimize this so it does not delay)
-                                        collectionmeta[i]['urimeta'] = await window.fetch(meta_final.data.uri).then((res: any) => res.json());
-                                        collectionmeta[i]['image'] = DRIVE_PROXY+collectionmeta[i]['urimeta'].image;
+                                        if (meta_final.data?.uri){
+                                            collectionmeta[i]['urimeta'] = await window.fetch(meta_final.data.uri).then((res: any) => res.json());
+                                            collectionmeta[i]['image'] = DRIVE_PROXY+collectionmeta[i]['urimeta'].image;
+                                        }
                                     //}
                                 }
                             } 
@@ -1034,14 +1036,6 @@ export function IdentityView(props: any){
             setPubkey(publicKey.toBase58());
         }
     }, [urlParams, publicKey]);
-
-    /*
-    const fetchStoragePools = async () => {
-        setLoadingStorage(true);
-        await fetchStorage();
-        setLoadingStorage(false);
-    }
-    */
 
     const fetchTokenPositions = async () => {
         setLoadingTokens(true);
@@ -1245,7 +1239,7 @@ export function IdentityView(props: any){
                                             </>
                                         }
 
-                                        {(tokensNetValue > 0 && solanaBalance > 0) &&
+                                        {(tokensNetValue > 0 && solanaBalance > 0 && solanaUSDC) &&
                                             <>
                                             {tokensNetValue && 
                                                 <Grid item sm={12} md={4}>
