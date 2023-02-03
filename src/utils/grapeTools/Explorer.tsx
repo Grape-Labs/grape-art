@@ -124,7 +124,8 @@ export default function ExplorerView(props:any){
     };
     const handleCloseDialog = () => {
         setOpenDialog(false);
-      };
+        handleClose();
+    };
 
     const handleClick = (event:any) => {
         setAnchorEl(event.currentTarget);
