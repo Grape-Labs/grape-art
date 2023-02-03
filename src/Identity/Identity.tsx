@@ -387,12 +387,16 @@ export function IdentityView(props: any){
     const fetchSolanaBalance = async () => {
         setLoadingPosition('SOL Balance');
         const response = await ggoconnection.getBalance(new PublicKey(pubkey));
-        const converted = await getTokenPrice('So11111111111111111111111111111111111111112','USDC');
-        const ticker = await getTokenTicker('So11111111111111111111111111111111111111112','EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v');
+        const converted = await getTokenPrice('So11111111111111111111111111111111111111112','EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'); // SOL > USDC
+        const ticker = await getTokenTicker('So11111111111111111111111111111111111111112','EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'); // SOL > USDC
         //console.log("ticker: "+JSON.stringify(ticker))
         setSolanaTicker(ticker);
-        //console.log("price: "+JSON.stringify(converted))
-        setSolanaUSDC(converted.data.price);
+        //console.log("price converted: "+JSON.stringify(converted))
+        //console.log("price ticker: "+JSON.stringify(ticker))
+        if (converted?.data?.price)
+            setSolanaUSDC(converted.data.price);
+        else if (ticker?.last_price)
+            setSolanaUSDC(+ticker.last_price);
         setSolanaBalance(response);
     }
 
