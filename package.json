@@ -128,6 +128,7 @@
         "react-jazzicon": "^1.0.3",
         "react-markdown": "^8.0.3",
         "react-material-file-upload": "^0.0.4",
+        "react-qr-code": "^2.0.11",
         "react-query": "^4.0.0",
         "react-router": "^6.4.3",
         "react-router-dom": "^6.4.3",

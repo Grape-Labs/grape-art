@@ -5,6 +5,7 @@ import { useSnackbar } from 'notistack';
 import { Link } from "react-router-dom";
 import { PublicKey, TokenAmount, Connection } from '@solana/web3.js';
 import axios from "axios";
+import QRCode from "react-qr-code";
 
 import { 
     tryGetName,
@@ -29,6 +30,12 @@ import {
     Paper,
     Divider,
     Tooltip,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+    IconButton,
 } from '@mui/material';
 
 import {
@@ -38,6 +45,8 @@ import {
 
 import { ValidateCurve } from '../grapeTools/WalletAddress';
 
+import CloseIcon from '@mui/icons-material/Close';
+import QrCode2Icon from '@mui/icons-material/QrCode2';
 import TwitterIcon from '@mui/icons-material/Twitter';
 import ExploreOutlinedIcon from '@mui/icons-material/ExploreOutlined';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
@@ -46,6 +55,36 @@ import PersonIcon from '@mui/icons-material/Person';
 
 import { trimAddress } from "./WalletAddress";
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
+
+export interface DialogTitleProps {
+    id: string;
+    children?: React.ReactNode;
+    onClose: () => void;
+  }
+  
+  const BootstrapDialogTitle = (props: DialogTitleProps) => {
+    const { children, onClose, ...other } = props;
+  
+    return (
+      <DialogTitle sx={{ m: 0, p: 2 }} {...other}>
+        {children}
+        {onClose ? (
+          <IconButton
+            aria-label="close"
+            onClick={onClose}
+            sx={{
+              position: 'absolute',
+              right: 8,
+              top: 8,
+              color: (theme) => theme.palette.grey[500],
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+        ) : null}
+      </DialogTitle>
+    );
+  };
 
 const StyledMenu = styled(Menu)(({ theme }) => ({
     '& .MuiMenu-root': {
@@ -78,6 +117,14 @@ export default function ExplorerView(props:any){
     const [profilePictureUrl, setProfilePictureUrl] = React.useState(null);
     const [twitterRegistration, setTwitterRegistration] = React.useState(null);
     const [hasProfilePicture, setHasProfilePicture] = React.useState(null);
+    const [openDialog, setOpenDialog] = React.useState(false);
+
+    const handleClickOpenDialog = (event:any) => {
+        setOpenDialog(true);
+    };
+    const handleCloseDialog = () => {
+        setOpenDialog(false);
+      };
 
     const handleClick = (event:any) => {
         setAnchorEl(event.currentTarget);
@@ -300,11 +347,50 @@ export default function ExplorerView(props:any){
                                 <ContentCopyIcon fontSize="small" />
                             </ListItemIcon>
                             Copy
-                            
                         </MenuItem>
                     </CopyToClipboard>
-                    <Divider />
+                    {grapeArtProfile &&
+                        <>
+                        <Divider />
+                        <MenuItem 
+                            onClick={handleClickOpenDialog}>
+                                <ListItemIcon>
+                                    <QrCode2Icon fontSize="small" />
+                                </ListItemIcon>
+                                QR Code
+                        </MenuItem>
+                        
+                        <Dialog
+                            open={openDialog}
+                            onClose={handleCloseDialog}
+                            aria-labelledby="alert-dialog-title"
+                            aria-describedby="alert-dialog-description"
+                        >
+                            <BootstrapDialogTitle id="customized-dialog-title" onClose={handleCloseDialog}>
+                            {"Send to this address"}
+                            </BootstrapDialogTitle>
+                            <DialogContent>
+                                <DialogContentText id="alert-dialog-description">
+                                    <div style={{ height: "auto", margin: "0 auto", maxWidth: "100%", width: "100%", borderRadius: "10px", padding:10, backgroundColor:'#fff' }}>
+                                        <QRCode
+                                        size={256}
+                                        style={{ height: "auto", maxWidth: "100%", width: "100%" }}
+                                        value={address}
+                                        viewBox={`0 0 256 256`}
+                                        />
+                                    </div>
 
+                                    <Typography variant='caption'>SOL Address</Typography>
+                                    <Typography variant='body2'>{address}</Typography>
+                                    
+                                </DialogContentText>
+                            </DialogContent>
+                        </Dialog>
+                        </>
+                    }
+                    <Divider />
+                    
+                    
                     {grapeArtProfile && 
                         <>
                         {ValidateCurve(address) ?
@@ -350,6 +436,18 @@ export default function ExplorerView(props:any){
                             </ListItemIcon>
                             SolScan
                     </MenuItem>
+                    {/*
+                    <MenuItem 
+                        component='a'
+                        href={`https://solanabeach.io/${type === 'address' ? 'address' : 'transaction'}/${address}`}
+                        target='_blank'
+                        onClick={handleClose}>
+                            <ListItemIcon>
+                                <ExploreOutlinedIcon fontSize="small" />
+                            </ListItemIcon>
+                            Solana Beach
+                    </MenuItem>
+                    */}
                     <MenuItem 
                         component='a'
                         href={`https://explorer.solana.com/${type}/${address}`}
