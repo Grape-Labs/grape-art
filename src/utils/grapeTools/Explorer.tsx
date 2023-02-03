@@ -436,7 +436,6 @@ export default function ExplorerView(props:any){
                             </ListItemIcon>
                             SolScan
                     </MenuItem>
-                    {/*
                     <MenuItem 
                         component='a'
                         href={`https://solanabeach.io/${type === 'address' ? 'address' : 'transaction'}/${address}`}
@@ -447,7 +446,6 @@ export default function ExplorerView(props:any){
                             </ListItemIcon>
                             Solana Beach
                     </MenuItem>
-                    */}
                     <MenuItem 
                         component='a'
                         href={`https://explorer.solana.com/${type}/${address}`}
