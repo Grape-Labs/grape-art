@@ -30,6 +30,7 @@ import { Provider, AnchorProvider } from "@project-serum/anchor";
 import { SplTokenBonding } from "@strata-foundation/spl-token-bonding";
 import { SplTokenCollective } from "@strata-foundation/spl-token-collective";
 import { getAssociatedAccountBalance, SplTokenMetadata, getMintInfo, getTokenAccount } from "@strata-foundation/spl-utils";
+import StrataSwap from "./StrataSwap";
 
 import BackedTokenSwap from "./BackedTokenSwap";
 import JupiterSwap from "./Swap";
@@ -67,6 +68,7 @@ export function BackedTokenView(props: any) {
     const [tokenSupply, setTokenSupply] = React.useState(null);
     const [tokenBonding, setTokenBonding] = React.useState(null);
     const [tokenBondingPricing, setTokenBondingPricing] = React.useState(null);
+    const [quoteAmount, setQuoteAmount] = React.useState(1);
 
     const [loadingStrata, setLoadingStrata] = React.useState(false);
     const [loadingPosition, setLoadingPosition] = React.useState('');
@@ -79,7 +81,7 @@ export function BackedTokenView(props: any) {
         const tokenMetadataSdk = await SplTokenMetadata.init(provider);
         const tokenBondingSdk = await SplTokenBonding.init(provider);
         const tokenCollectiveSdk = await SplTokenCollective.init(provider);
-
+        
         console.log("getting minttoken refkey")
         const mintTokenRef = (await SplTokenCollective.mintTokenRefKey(new PublicKey(collectionAuthority.address)))[0];
         console.log("mintTokenRef: "+JSON.stringify(mintTokenRef));
@@ -88,7 +90,23 @@ export function BackedTokenView(props: any) {
 
         //console.log("tokenRef: "+JSON.stringify(tokenRef));
 
+        const collective = await tokenCollectiveSdk.getCollective(new PublicKey(tokenRef.collective));
+        console.log("collective: "+JSON.stringify(collective))
+        const tokenMetadata = await tokenMetadataSdk.getMetadata(tokenRef.tokenMetadata)
+        console.log("tokenMetadata: "+JSON.stringify(tokenMetadata))
         const meta = await tokenMetadataSdk.getTokenMetadata(tokenRef.tokenMetadata)
+
+        const collectiveMint = await getMintInfo(provider, collective.mint);
+        console.log("collectiveMint: "+JSON.stringify(collectiveMint))
+
+        const tknBonding = await tokenBondingSdk.getTokenBonding(tokenRef.tokenBonding);
+        console.log("tknBonding: "+JSON.stringify(tknBonding))
+        const buyBaseRoyalties = await getTokenAccount(
+            provider,
+            tknBonding.buyBaseRoyalties
+        );
+        console.log("buyBaseRoyalties: "+JSON.stringify(buyBaseRoyalties))
+        console.log("buyBaseRoyalties amount: "+buyBaseRoyalties.amount.toNumber())
 
         const tokenBondingKey = (await SplTokenBonding.tokenBondingKey(new PublicKey(collectionAuthority.address)))[0];
         //console.log("getting bonding")
@@ -97,6 +115,19 @@ export function BackedTokenView(props: any) {
         setTokenBonding(tbonding);
 
         const tbondingpricing = await tokenBondingSdk.getPricing(tokenBondingKey)
+        
+        console.log("tbondingpricing: "+JSON.stringify(tbondingpricing));
+        
+        var currentBuyPriceSol = tbondingpricing.buyTargetAmount(1);
+        var currentSellPriceSol = tbondingpricing.sellTargetAmount(1);
+        var amountPerOneSol = tbondingpricing.buyWithBaseAmount(1);
+
+        console.log("currentBuyPriceSol (GRAPE FOR 1GAN): "+JSON.stringify(currentBuyPriceSol));
+        console.log("currentSellPriceSol (GAN TO GRAPE): "+JSON.stringify(currentSellPriceSol));
+        console.log("amountPerOneSol (GRAPE TO GAN): "+JSON.stringify(amountPerOneSol));
+        
+        
+        
         setTokenBondingPricing(tbondingpricing);
 
         //const bonding = await tokenBondingSdk.getPricing(tokenBondingKey)
@@ -380,17 +411,22 @@ export function BackedTokenView(props: any) {
                                     <CardContent>
                                         <Typography variant="h5" component="div">
                                             <List>
+                                                <ListItem>GRAPE for {quoteAmount} {token.symbol}: {tokenBondingPricing.buyTargetAmount(quoteAmount)}</ListItem>
+                                                <ListItem>{quoteAmount} {token.symbol} to GRAPE: {tokenBondingPricing.sellTargetAmount(quoteAmount)}</ListItem>
+                                                <ListItem>{quoteAmount} GRAPE to {token.symbol}: {tokenBondingPricing.buyWithBaseAmount(quoteAmount)}</ListItem>
+                                                
                                                 <ListItem>Base Mint: {tokenBondingPricing.hierarchy.tokenBonding.baseMint.toBase58()}</ListItem>
-                                                <ListItem>Royalty (Buy/Sell): {tokenBondingPricing.hierarchy.tokenBonding.buyBaseRoyaltyPercentage}/{tokenBondingPricing.hierarchy.tokenBonding.sellBaseRoyaltyPercentage}</ListItem>
-                                                <ListItem>Supply from Bonding: {tokenBondingPricing.hierarchy.tokenBonding.supplyFromBonding.toNumber()}</ListItem>
-                                                <ListItem>Base Amount: {tokenBondingPricing.hierarchy.pricingCurve.baseAmount}</ListItem>
+                                                <ListItem>Royalty (Buy/Sell): {getFormattedNumberToLocale(formatAmount(+((tokenBondingPricing.hierarchy.tokenBonding.buyBaseRoyaltyPercentage)/Math.pow(10, tokenSupply.value.decimals)).toFixed(tokenSupply.value.decimals)))}/{getFormattedNumberToLocale(formatAmount(+((tokenBondingPricing.hierarchy.tokenBonding.sellBaseRoyaltyPercentage)/Math.pow(10, tokenSupply.value.decimals)).toFixed(tokenSupply.value.decimals)))}</ListItem>
+                                                <ListItem>Supply from Bonding: {getFormattedNumberToLocale(formatAmount(+((tokenBondingPricing.hierarchy.tokenBonding.supplyFromBonding.toNumber())/Math.pow(10, tokenSupply.value.decimals)).toFixed(tokenSupply.value.decimals)))}</ListItem>
+                                                <ListItem>Reserve Balance from Bonding: {getFormattedNumberToLocale(formatAmount(+((tokenBondingPricing.hierarchy.tokenBonding.reserveBalanceFromBonding.toNumber())/Math.pow(10, tokenSupply.value.decimals)).toFixed(tokenSupply.value.decimals)))}</ListItem>
+                                                <ListItem>Base Amount: {((+((tokenBondingPricing.hierarchy.pricingCurve.baseAmount)/Math.pow(10, tokenSupply.value.decimals))))}</ListItem>
                                                 <ListItem></ListItem>
 
                                             </List>
                                         </Typography>
                                     </CardContent>
                                     <CardActions sx={{}}>
-                                        ...
+                                        <StrataSwap swapfrom={token.parentTokenAddress} swapto={token.address} swapfromlabel={'Grape'} swaptolabel={token.symbol} swapAmount={quoteAmount} refreshCallback={null} />
                                     </CardActions>
                                 </Card>
                             </Grid>
