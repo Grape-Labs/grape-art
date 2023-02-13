@@ -360,6 +360,59 @@ export function BackedTokenView(props: any) {
                             </Grid>
                         }
 
+                        {tokenBondingPricing &&
+                            <Grid item xs={12}>
+                                <Card sx={{borderRadius:'17px'}}>
+                                    <CardContent>
+                                        <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+                                            Backed Token Details
+                                        </Typography>
+
+                                        <Typography variant="h5" component="div">
+                                            <Grid container direction="row">
+                                                <Grid item>
+                                                    <Typography variant="body2" component="div">
+                                                        GRAPE for {quoteAmount} {token.symbol}: {tokenBondingPricing.buyTargetAmount(quoteAmount)}
+                                                    </Typography>
+                                                
+                                                    <Typography variant="body2" component="div">
+                                                        {quoteAmount} {token.symbol} to GRAPE: {tokenBondingPricing.sellTargetAmount(quoteAmount)}
+                                                    </Typography>
+                                                    <Typography variant="body2" component="div">
+                                                        {quoteAmount} GRAPE to {token.symbol}: {tokenBondingPricing.buyWithBaseAmount(quoteAmount)}
+                                                    </Typography>
+                                                </Grid>
+                                            </Grid>
+
+                                            <Typography sx={{ mb: 1.5 }} color="text.secondary" variant="caption">
+                                                Backed by: 
+                                                <ExplorerView address={tokenBondingPricing.hierarchy.tokenBonding.baseMint.toBase58()} type='address' shorten={0} hideTitle={false} style='text' color='white' fontSize='12px' />
+                                            </Typography>
+                                            
+                                            {/*
+                                            <List>
+                                                <ListItem>GRAPE for {quoteAmount} {token.symbol}: {tokenBondingPricing.buyTargetAmount(quoteAmount)}</ListItem>
+                                                <ListItem>{quoteAmount} {token.symbol} to GRAPE: {tokenBondingPricing.sellTargetAmount(quoteAmount)}</ListItem>
+                                                <ListItem>{quoteAmount} GRAPE to {token.symbol}: {tokenBondingPricing.buyWithBaseAmount(quoteAmount)}</ListItem>
+                                                
+                                                <ListItem>Base Mint: {tokenBondingPricing.hierarchy.tokenBonding.baseMint.toBase58()}</ListItem>
+                                                <ListItem>Royalty (Buy/Sell): {getFormattedNumberToLocale(formatAmount(+((tokenBondingPricing.hierarchy.tokenBonding.buyBaseRoyaltyPercentage)/Math.pow(10, tokenSupply.value.decimals)).toFixed(tokenSupply.value.decimals)))}/{getFormattedNumberToLocale(formatAmount(+((tokenBondingPricing.hierarchy.tokenBonding.sellBaseRoyaltyPercentage)/Math.pow(10, tokenSupply.value.decimals)).toFixed(tokenSupply.value.decimals)))}</ListItem>
+                                                <ListItem>Supply from Bonding: {getFormattedNumberToLocale(formatAmount(+((tokenBondingPricing.hierarchy.tokenBonding.supplyFromBonding.toNumber())/Math.pow(10, tokenSupply.value.decimals)).toFixed(tokenSupply.value.decimals)))}</ListItem>
+                                                <ListItem>Reserve Balance from Bonding: {getFormattedNumberToLocale(formatAmount(+((tokenBondingPricing.hierarchy.tokenBonding.reserveBalanceFromBonding.toNumber())/Math.pow(10, tokenSupply.value.decimals)).toFixed(tokenSupply.value.decimals)))}</ListItem>
+                                                <ListItem>Base Amount: {((+((tokenBondingPricing.hierarchy.pricingCurve.baseAmount)/Math.pow(10, tokenSupply.value.decimals))))}</ListItem>
+                                                <ListItem></ListItem>
+
+                                            </List>
+                                            */}
+                                        </Typography>
+                                    </CardContent>
+                                    <CardActions sx={{}}>
+                                        <StrataSwap swapfrom={token.parentTokenAddress} swapto={token.address} swapfromlabel={'Grape'} swaptolabel={token.symbol} swapAmount={quoteAmount} refreshCallback={null} />
+                                    </CardActions>
+                                </Card>
+                            </Grid>
+                        }
+
                         {publicKey && myToken &&
                             <Grid item xs={12}>
                                 <Card sx={{borderRadius:'17px'}}>
@@ -391,42 +444,14 @@ export function BackedTokenView(props: any) {
                                             justifyContent:'flex-end',
                                             alignContent: 'flex-end'}}
                                     >
-                                        {portfolioPositions &&
+                                        {/*portfolioPositions &&
                                             <JupiterSwap swapfrom={'So11111111111111111111111111111111111111112'} swapto={token.address} portfolioPositions={portfolioPositions} tokenMap={tokenMap}/>
-                                        }
-                                        {coinGeckoPrice &&
-                                            <SendToken mint={token.address} name={token.name} logoURI={token.logoURI} balance={myToken.account.data.parsed.info.tokenAmount.uiAmount} conversionrate={coinGeckoPrice ? +coinGeckoPrice[token.extensions.coingeckoId]?.usd : null} showTokenName={false} sendType={0} />
-                                        }
+                                        */}
+                                        
+                                        <SendToken mint={token.address} name={token.name} logoURI={token.logoURI} balance={myToken.account.data.parsed.info.tokenAmount.uiAmount} showTokenName={false} sendType={0} />
                                         {/*
                                         <Swap id={token.address} />
                                         */}
-                                    </CardActions>
-                                </Card>
-                            </Grid>
-                        }
-
-                        {tokenBondingPricing &&
-                            <Grid item xs={12}>
-                                <Card sx={{borderRadius:'17px'}}>
-                                    <CardContent>
-                                        <Typography variant="h5" component="div">
-                                            <List>
-                                                <ListItem>GRAPE for {quoteAmount} {token.symbol}: {tokenBondingPricing.buyTargetAmount(quoteAmount)}</ListItem>
-                                                <ListItem>{quoteAmount} {token.symbol} to GRAPE: {tokenBondingPricing.sellTargetAmount(quoteAmount)}</ListItem>
-                                                <ListItem>{quoteAmount} GRAPE to {token.symbol}: {tokenBondingPricing.buyWithBaseAmount(quoteAmount)}</ListItem>
-                                                
-                                                <ListItem>Base Mint: {tokenBondingPricing.hierarchy.tokenBonding.baseMint.toBase58()}</ListItem>
-                                                <ListItem>Royalty (Buy/Sell): {getFormattedNumberToLocale(formatAmount(+((tokenBondingPricing.hierarchy.tokenBonding.buyBaseRoyaltyPercentage)/Math.pow(10, tokenSupply.value.decimals)).toFixed(tokenSupply.value.decimals)))}/{getFormattedNumberToLocale(formatAmount(+((tokenBondingPricing.hierarchy.tokenBonding.sellBaseRoyaltyPercentage)/Math.pow(10, tokenSupply.value.decimals)).toFixed(tokenSupply.value.decimals)))}</ListItem>
-                                                <ListItem>Supply from Bonding: {getFormattedNumberToLocale(formatAmount(+((tokenBondingPricing.hierarchy.tokenBonding.supplyFromBonding.toNumber())/Math.pow(10, tokenSupply.value.decimals)).toFixed(tokenSupply.value.decimals)))}</ListItem>
-                                                <ListItem>Reserve Balance from Bonding: {getFormattedNumberToLocale(formatAmount(+((tokenBondingPricing.hierarchy.tokenBonding.reserveBalanceFromBonding.toNumber())/Math.pow(10, tokenSupply.value.decimals)).toFixed(tokenSupply.value.decimals)))}</ListItem>
-                                                <ListItem>Base Amount: {((+((tokenBondingPricing.hierarchy.pricingCurve.baseAmount)/Math.pow(10, tokenSupply.value.decimals))))}</ListItem>
-                                                <ListItem></ListItem>
-
-                                            </List>
-                                        </Typography>
-                                    </CardContent>
-                                    <CardActions sx={{}}>
-                                        <StrataSwap swapfrom={token.parentTokenAddress} swapto={token.address} swapfromlabel={'Grape'} swaptolabel={token.symbol} swapAmount={quoteAmount} refreshCallback={null} />
                                     </CardActions>
                                 </Card>
                             </Grid>
@@ -441,9 +466,9 @@ export function BackedTokenView(props: any) {
                                         </Typography>
                                     </CardContent>
                                     <CardActions sx={{}}>
-                                        {portfolioPositions &&
+                                        {/*portfolioPositions &&
                                             <JupiterSwap swapfrom={'So11111111111111111111111111111111111111112'} swapto={token.address} portfolioPositions={portfolioPositions} tokenMap={tokenMap}/>
-                                        }
+                                        */}
                                     </CardActions>
                                 </Card>
                             </Grid>
