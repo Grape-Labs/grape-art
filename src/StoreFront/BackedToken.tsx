@@ -372,14 +372,14 @@ export function BackedTokenView(props: any) {
                                             <Grid container direction="row">
                                                 <Grid item>
                                                     <Typography variant="body2" component="div">
-                                                        GRAPE for {quoteAmount} {token.symbol}: {tokenBondingPricing.buyTargetAmount(quoteAmount)}
+                                                        <Typography sx={{color:'green'}} component="span">BUY</Typography> GRAPE for {quoteAmount} {token.symbol}: {tokenBondingPricing.buyTargetAmount(quoteAmount)}
                                                     </Typography>
                                                 
                                                     <Typography variant="body2" component="div">
-                                                        {quoteAmount} {token.symbol} to GRAPE: {tokenBondingPricing.sellTargetAmount(quoteAmount)}
+                                                        <Typography sx={{color:'red'}} component="span">SELL</Typography> {quoteAmount} {token.symbol} to GRAPE: {tokenBondingPricing.sellTargetAmount(quoteAmount)}
                                                     </Typography>
                                                     <Typography variant="body2" component="div">
-                                                        {quoteAmount} GRAPE to {token.symbol}: {tokenBondingPricing.buyWithBaseAmount(quoteAmount)}
+                                                        {quoteAmount} GRAPE can be converted to {tokenBondingPricing.buyWithBaseAmount(quoteAmount)} {token.symbol}
                                                     </Typography>
                                                 </Grid>
                                             </Grid>
