@@ -146,6 +146,7 @@ export default function StrataSwap(props: any) {
     return (
         <>
             <ButtonGroup
+                color={'inherit'}
             >
                 <Button 
                     onClick={() => {

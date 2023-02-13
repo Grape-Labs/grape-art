@@ -361,7 +361,7 @@ export function BackedTokenView(props: any) {
                         }
 
                         {tokenBondingPricing &&
-                            <Grid item xs={12}>
+                            <Grid item xs={12} sm={6}>
                                 <Card sx={{borderRadius:'17px'}}>
                                     <CardContent>
                                         <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
@@ -406,7 +406,11 @@ export function BackedTokenView(props: any) {
                                             */}
                                         </Typography>
                                     </CardContent>
-                                    <CardActions sx={{}}>
+                                    <CardActions 
+                                        sx={{
+                                            justifyContent:'flex-end',
+                                            alignContent: 'flex-end'}}
+                                    >
                                         <StrataSwap swapfrom={token.parentTokenAddress} swapto={token.address} swapfromlabel={'Grape'} swaptolabel={token.symbol} swapAmount={quoteAmount} refreshCallback={null} />
                                     </CardActions>
                                 </Card>
@@ -414,7 +418,7 @@ export function BackedTokenView(props: any) {
                         }
 
                         {publicKey && myToken &&
-                            <Grid item xs={12}>
+                            <Grid item xs={12} sm={6}>
                                 <Card sx={{borderRadius:'17px'}}>
                                     <CardContent>
                                         <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
