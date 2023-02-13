@@ -361,7 +361,7 @@ export function BackedTokenView(props: any) {
                         }
 
                         {tokenBondingPricing &&
-                            <Grid item xs={12} sm={6}>
+                            <Grid item xs={12} md={6}>
                                 <Card sx={{borderRadius:'17px'}}>
                                     <CardContent>
                                         <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
@@ -418,7 +418,7 @@ export function BackedTokenView(props: any) {
                         }
 
                         {publicKey && myToken &&
-                            <Grid item xs={12} sm={6}>
+                            <Grid item xs={12} md={6}>
                                 <Card sx={{borderRadius:'17px'}}>
                                     <CardContent>
                                         <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
@@ -428,20 +428,10 @@ export function BackedTokenView(props: any) {
                                         
                                         {myToken.account.data.parsed.info.tokenAmount.uiAmount}
                                         </Typography>
-                                        {coinGeckoPrice && tokenPrice &&
-                                            <>
-                                                <Typography variant="body2" component="div">
-                                                    {myToken.account.data.parsed.info.tokenAmount.uiAmount*coinGeckoPrice[token.extensions.coingeckoId]?.usd} USD
-                                                </Typography>
-                                                <Typography variant="body2" component="div">
-                                                    {myToken.account.data.parsed.info.tokenAmount.uiAmount * tokenPrice.data.price} SOL
-                                                </Typography>
-                                                <Typography sx={{ mb: 1.5 }} color="text.secondary" variant="caption">
-                                                Source: 
-                                                <ExplorerView showSolanaProfile={true} grapeArtProfile={true} showAddress={true} address={publicKey.toBase58()} type='address' shorten={0} hideTitle={false} style='text' color='white' fontSize='11px' />
-                                                </Typography>
-                                            </>
-                                        }
+                                        <Typography sx={{ mb: 1.5 }} color="text.secondary" variant="caption">
+                                            Source: 
+                                            <ExplorerView showSolanaProfile={true} grapeArtProfile={true} showAddress={true} address={publicKey.toBase58()} type='address' shorten={0} hideTitle={false} style='text' color='white' fontSize='11px' />
+                                        </Typography>
                                     </CardContent>
                                     <CardActions
                                         sx={{
