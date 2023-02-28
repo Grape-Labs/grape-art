@@ -275,6 +275,13 @@ function GetParticipants(props: any){
                 )
             }
         },
+        { field: 'voteAddress', headerName: 'Address', width: 150,
+            renderCell: (params) => {
+                return(
+                    <ExplorerView address={params.value} type='address' shorten={4} hideTitle={false} style='text' color='white' fontSize='14px' />
+                )
+            }
+        },
         { field: 'quorumWeight', headerName: 'Quorum Weight', headerAlign: 'center', width: 250, align: 'right', hide: totalQuorum ? false : true,
             renderCell: (params) => {
                 return(
@@ -563,6 +570,7 @@ function GetParticipants(props: any){
                     pubkey:item.pubkey.toBase58(),
                     proposal:item.account.proposal.toBase58(),
                     governingTokenOwner:item.account.governingTokenOwner.toBase58(),
+                    voteAddress:item.pubkey.toBase58(),
                     quorumWeight:{
                         vote:item.account.vote,
                         voterWeight:(item.account?.voterWeight ?  item.account?.voterWeight.toNumber() : null),
