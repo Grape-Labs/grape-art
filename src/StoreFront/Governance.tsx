@@ -1089,7 +1089,13 @@ function GetParticipants(props: any){
                                                 {thisGovernance && thisGovernance?.account?.config?.maxVotingTime ?
                                                     <>
                                                         {thisitem.account?.votingAt &&
-                                                            `Ending ${moment.unix(thisitem.account?.votingAt.toNumber()+thisGovernance?.account?.config?.maxVotingTime).fromNow()}`
+                                                            <>
+                                                                {thisitem.account?.votingCompletedAt ?
+                                                                    `Ended ${moment.unix(thisitem.account?.votingAt.toNumber()+thisGovernance?.account?.config?.maxVotingTime).fromNow()}`
+                                                                :
+                                                                    `Ending ${moment.unix(thisitem.account?.votingAt.toNumber()+thisGovernance?.account?.config?.maxVotingTime).fromNow()}`
+                                                                }
+                                                            </>
                                                         }
                                                     </>
                                                 :
