@@ -122,6 +122,7 @@ import ActivityView from './Activity';
 import { SocialMediaView } from './SocialMedia';
 import { GovernanceView } from './Governance';
 import { MembersView } from './Members';
+import { TokenHoldersView } from './TokenHolders';
 import { HoldersView } from './Holders';
 import { TokenView } from './Token';
 import { BackedTokenView } from './BackedToken';
@@ -455,6 +456,7 @@ enum NavPanel {
     Marketplace,
     Collectors,
     Holders,
+    TokenHolders,
     Governance,
     Members,
     Topics,
@@ -2132,6 +2134,9 @@ export function StoreFrontView(this: any, props: any) {
                         {collectionAuthority?.tokenType && collectionAuthority?.tokenType === 'BSPL' &&
                             <Tab icon={<SolCurrencyIcon />} aria-label="Backed Token" value={NavPanel.BackedToken} sx={{color:'white'}} title="Token Backed Community" />
                         }
+                        {collectionAuthority?.tokenType && (collectionAuthority?.tokenType === 'SPL' || collectionAuthority?.tokenType === 'BSPL') &&
+                            <Tab icon={<PeopleIcon />} aria-label="Token Holders" value={NavPanel.TokenHolders} sx={{color:'white'}} title="Token Holders" />
+                        }
                         {collectionAuthority?.tokenType && collectionAuthority?.tokenType === 'NFT' &&
                             <Tab icon={<StorefrontIcon />} aria-label="Marketplace" value={NavPanel.Marketplace} sx={{color:'white'}} title="Marketplace" />
                         }
@@ -2191,6 +2196,14 @@ export function StoreFrontView(this: any, props: any) {
                         <Box> 
                             {collectionAuthority &&  
                                 <HoldersView collectionAuthority={collectionAuthority} mode={1} />
+                            }
+                        </Box>
+                    </TabPanel>
+
+                    <TabPanel value={tabValue} index={NavPanel.TokenHolders}>
+                        <Box> 
+                            {collectionAuthority &&  
+                                <TokenHoldersView collectionAuthority={collectionAuthority} mode={0} />
                             }
                         </Box>
                     </TabPanel>
