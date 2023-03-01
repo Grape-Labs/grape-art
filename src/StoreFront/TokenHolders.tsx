@@ -180,7 +180,7 @@ function RenderTokenHoldersTable(props:any) {
     const { connection } = useConnection();
     const { publicKey } = useWallet();
     const [page, setPage] = React.useState(0);
-    const [rowsPerPage, setRowsPerPage] = React.useState(20);
+    const [rowsPerPage, setRowsPerPage] = React.useState(200);
     // Avoid a layout jump when reaching the last page with empty rows.
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - tokenHolders.length) : 0;
     const token = props.token || null;
@@ -254,7 +254,7 @@ function RenderTokenHoldersTable(props:any) {
     };
 
     const handleChangeRowsPerPage = (event:any) => {
-        setRowsPerPage(parseInt(event.target.value, 20));
+        setRowsPerPage(parseInt(event.target.value, 200));
         setPage(0);
     };
 
@@ -406,7 +406,7 @@ export function TokenHoldersView(props: any) {
 
                 // fetch token value?
                 // consider fetching this at a later stage
-                
+
                 // fetch holders
                 const apiUrl = "https://api.solscan.io/token/holders";
             
@@ -415,7 +415,7 @@ export function TokenHoldersView(props: any) {
                     params: {
                         token:collectionAuthority?.address || collectionAuthority?.updateAuthority,
                         offset:0,
-                        size:20,
+                        size:200,
                         cluster:""
                     },
                     //headers: { Authorization: "Bearer " + ME_KEYBASE }
