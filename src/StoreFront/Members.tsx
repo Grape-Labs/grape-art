@@ -156,6 +156,8 @@ function RenderGovernanceMembersTable(props:any) {
     //const [proposals, setProposals] = React.useState(props.proposals);
     const participating = props.participating;
     const members = props.members;
+    const circulatingSupply = props.circulatingSupply;
+    const totalDepositedVotes = props.totalDepositedVotes;
     const connection = new Connection(GRAPE_RPC_ENDPOINT);//useConnection();
     const { publicKey } = useWallet();
     const [page, setPage] = React.useState(0);
@@ -201,8 +203,12 @@ function RenderGovernanceMembersTable(props:any) {
                         <TableRow>
                             <TableCell><Typography variant="caption">Member</Typography></TableCell>
                             <TableCell><Typography variant="caption">Votes</Typography></TableCell>
+                            {/*
                             <TableCell><Typography variant="caption">Votes Casted</Typography></TableCell>
                             <TableCell><Typography variant="caption">Council Votes Casted</Typography></TableCell>
+                            */}
+                            <TableCell><Typography variant="caption">% of Deposited Governance</Typography></TableCell>
+                            <TableCell><Typography variant="caption">% of Supply</Typography></TableCell>
                             {/*<TableCell><Typography variant="caption">Outstanding Proposals</Typography></TableCell>*/}
                             <TableCell><Typography variant="caption"></Typography></TableCell>
                             
@@ -243,6 +249,8 @@ function RenderGovernanceMembersTable(props:any) {
                                                
                                             </Typography>
                                         </TableCell>
+                                        
+                                        {/*
                                         <TableCell align="center" >
                                             <Typography variant="h6">
                                                 {item.totalVotesCount}
@@ -253,6 +261,38 @@ function RenderGovernanceMembersTable(props:any) {
                                                 {item.councilVotesCount}
                                             </Typography>
                                         </TableCell>
+                                        */}
+
+                                        <TableCell align="center" >
+                                            <Typography variant="h6">
+                                                {circulatingSupply &&
+                                                    <>{+item.governingTokenDepositAmount.toNumber() > 0 ?
+                                                    ((+item.governingTokenDepositAmount.toNumber()/totalDepositedVotes)*100).toFixed(2)
+                                                    :
+                                                        <>
+                                                        -
+                                                        </>
+                                                    }
+                                                    </>
+                                                }%
+                                            </Typography>
+                                        </TableCell>
+
+                                        <TableCell align="center" >
+                                            <Typography variant="h6">
+                                                {circulatingSupply &&
+                                                    <>{+item.governingTokenDepositAmount.toNumber() > 0 ?
+                                                        ((+item.governingTokenDepositAmount.toNumber()/circulatingSupply.value.amount)*100).toFixed(2)
+                                                    :
+                                                        <>
+                                                        -
+                                                        </>
+                                                    }
+                                                    </>
+                                                }%
+                                            </Typography>
+                                        </TableCell>
+
                                         {/*
                                         <TableCell align="center" >
                                             <Typography variant="h6">
@@ -368,7 +408,7 @@ export function MembersView(props: any) {
     const [governingTokenMint, setGoverningTokenMint] = React.useState(null);
     const [governingTokenDecimals, setGoverningTokenDecimals] = React.useState(null);
     const [circulatingSupply, setCirculatingSupply] = React.useState(null);
-
+    
     const getTokens = async () => {
         const tarray:any[] = [];
         try{
@@ -754,7 +794,7 @@ export function MembersView(props: any) {
                                 </Box>
                             }
 
-                        <RenderGovernanceMembersTable members={members} participating={participating} tokenMap={tokenMap} governingTokenMint={governingTokenMint} governingTokenDecimals={governingTokenDecimals} />
+                        <RenderGovernanceMembersTable members={members} participating={participating} tokenMap={tokenMap} governingTokenMint={governingTokenMint} governingTokenDecimals={governingTokenDecimals} circulatingSupply={circulatingSupply} totalDepositedVotes={totalDepositedVotes} />
                     </Box>
                                 
                 );
