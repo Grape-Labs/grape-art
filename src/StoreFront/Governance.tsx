@@ -977,10 +977,35 @@ function GetParticipants(props: any){
                                         sx={{borderRadius:'24px',m:2,p:1}}
                                     >
                                         <Typography variant="body2" sx={{color:'yellow'}}>
-                                            <>Participants</>
+                                            <>Participation</>
                                         </Typography>
                                         <Typography variant="subtitle2">
-                                            {solanaVotingResultRows && solanaVotingResultRows.length}
+                                            <Tooltip title='Unique Votes / Total Votes casted from Participants'>
+                                                <Button
+                                                    sx={{borderRadius:'17px'}}
+                                                    variant="text"
+                                                    color="inherit"
+                                                >
+                                                <>
+                                                {solanaVotingResultRows && solanaVotingResultRows.length}
+                                                </>&nbsp;/&nbsp;
+                                                <>
+                                                    {thisitem.account?.options && thisitem.account?.options.length >= 0 ? 
+                                                        <Typography variant="caption">
+                                                            {getFormattedNumberToLocale(formatAmount(+((thisitem.account.options[0].voteWeight.toNumber() + thisitem.account.denyVoteWeight.toNumber())/Math.pow(10, tokenDecimals)).toFixed(0)))}
+                                                        </Typography>
+                                                    :
+                                                        <>
+                                                            {thisitem.account?.yesVotesCount && 
+                                                                <Typography variant="caption">
+                                                                    {getFormattedNumberToLocale(formatAmount(+((thisitem.account.yesVotesCount.toNumber() + thisitem.account.noVotesCount.toNumber()) /Math.pow(10, tokenDecimals)).toFixed(0)))}
+                                                                </Typography>
+                                                            }
+                                                        </>
+                                                    }
+                                                </>
+                                                </Button>
+                                            </Tooltip>
                                         </Typography>
                                     </Box>
                                 </Grid>
@@ -993,7 +1018,15 @@ function GetParticipants(props: any){
                                             <>General Sentiment</>
                                         </Typography>
                                         <Typography variant="subtitle2">
-                                            {uniqueYes}/{uniqueNo} (unique voters)
+                                            <Tooltip title='Unique For Votes / Unique Against Votes'>
+                                                <Button
+                                                    sx={{borderRadius:'17px'}}
+                                                    variant="text"
+                                                    color="inherit"
+                                                >
+                                                    {uniqueYes} / {uniqueNo}
+                                                </Button>
+                                            </Tooltip>
                                         </Typography>
                                     </Box>
                                 </Grid>

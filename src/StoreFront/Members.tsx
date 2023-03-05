@@ -458,16 +458,16 @@ export function MembersView(props: any) {
 
                 setGoverningTokenMint(grealm.account.communityMint.toBase58());
                 // with realm check if this is a backed token
+                let thisTokenDecimals = 0;
                 if (tokenMap.get(grealm.account.communityMint.toBase58())){
-                    setGoverningTokenDecimals(tokenMap.get(grealm.account.communityMint.toBase58()).decimals);
+                    thisTokenDecimals = tokenMap.get(grealm.account.communityMint.toBase58()).decimals; 
                 } else{
                    const btkn = await getBackedTokenMetadata(grealm.account.communityMint.toBase58(), wallet);
                     if (btkn){
-                        setGoverningTokenDecimals(btkn.decimals)
-                    } else{
-                        setGoverningTokenDecimals(0);
+                        thisTokenDecimals = btkn.decimals;
                     }
                 }
+                setGoverningTokenDecimals(thisTokenDecimals);
 
                 const tknSupply = await connection.getTokenSupply(grealm.account.communityMint);
 
@@ -558,15 +558,21 @@ export function MembersView(props: any) {
                             if ((record.account.governingTokenDepositAmount.toNumber() > 0) || (record.account.governingTokenDepositAmount.toNumber() > 0))
                                 lParticipants++;
                             tParticipants++; // all time
-                        
-                            if (tParticipants > 1)
-                                csvFile += '\r\n';
-                            else
-                                csvFile = 'Member,Votes\r\n';
-                            
-                            csvFile += record.account.governingTokenOwner.toBase58()+','+record.account.governingTokenDepositAmount.toNumber();
-                
                     }
+                }
+
+                let pcount = 0;
+                for (let singleParticipant of participantArray){
+                        if (pcount > 0)
+                            csvFile += '\r\n';
+                        else
+                            csvFile = 'Member,VotesDeposited,TokenDecimals,RawVotesDeposited,CouncilVotesDeposited\r\n';
+                        
+                        let formattedDepositedAmount = (+((singleParticipant.governingTokenDepositAmount.toNumber())/Math.pow(10, thisTokenDecimals || 0)).toFixed(0));
+                        //csvFile += record.account.governingTokenOwner.toBase58()+','+record.account.governingTokenDepositAmount.toNumber();
+                        csvFile += singleParticipant.governingTokenOwner.toBase58()+','+formattedDepositedAmount+','+thisTokenDecimals+','+singleParticipant.governingTokenDepositAmount.toNumber()+','+singleParticipant.governingCouncilDepositAmount.toNumber();
+                    
+                        pcount++;
                 }
 
                 const jsonCSVString = encodeURI(`data:text/csv;chatset=utf-8,${csvFile}`);
@@ -650,28 +656,33 @@ export function MembersView(props: any) {
                         {realm &&
                             <>
                                 <Typography variant="h4">
-                                    {realm.account.name} Governance Members
+                                    <Grid container>
+                                        <Grid item xs={12} sm={6} container justifyContent="flex-start">
+                                            {realm.account.name} Governance Members
 
-                                    <Button
-                                        size='small'
-                                        sx={{ml:1, color:'white', borderRadius:'17px'}}
-                                        href={'https://realms.today/dao/'+(collectionAuthority.governanceVanityUrl || collectionAuthority.governance)}
-                                        target='blank'
-                                    >
-                                        <OpenInNewIcon/>
-                                    </Button>
-
-                                    {csvGenerated &&
-                                        <Tooltip title="Download Voter Participation CSV file">
                                             <Button
+                                                size='small'
                                                 sx={{ml:1, color:'white', borderRadius:'17px'}}
-                                                download={`${(collectionAuthority.governanceVanityUrl || collectionAuthority.governance)}_Governance_Members.csv`}
-                                                href={csvGenerated}
+                                                href={'https://realms.today/dao/'+(collectionAuthority.governanceVanityUrl || collectionAuthority.governance)}
+                                                target='blank'
                                             >
-                                                <DownloadIcon /> CSV
+                                                <OpenInNewIcon/>
                                             </Button>
-                                        </Tooltip>
-                                    }
+                                        </Grid>
+                                        {csvGenerated &&
+                                            <Grid item xs={12} sm={6} container justifyContent="flex-end">
+                                                <Tooltip title="Download Governance Member CSV file">
+                                                    <Button
+                                                        sx={{ml:1, color:'white', borderRadius:'17px'}}
+                                                        download={`${(collectionAuthority.governanceVanityUrl || collectionAuthority.governance)}_Governance_Members.csv`}
+                                                        href={csvGenerated}
+                                                    >
+                                                        <DownloadIcon /> CSV
+                                                    </Button>
+                                                </Tooltip>
+                                            </Grid>
+                                        }
+                                    </Grid>
                                 </Typography>
                             </>
                         }
