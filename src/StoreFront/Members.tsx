@@ -41,6 +41,7 @@ import { getProfilePicture } from '@solflare-wallet/pfp';
 import { findDisplayName } from '../utils/name-service';
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
 
+import DownloadIcon from '@mui/icons-material/Download';
 import AssuredWorkloadIcon from '@mui/icons-material/AssuredWorkload';
 import Chat from '@mui/icons-material/Chat';
 import FirstPageIcon from '@mui/icons-material/FirstPage';
@@ -408,7 +409,7 @@ export function MembersView(props: any) {
     const [governingTokenMint, setGoverningTokenMint] = React.useState(null);
     const [governingTokenDecimals, setGoverningTokenDecimals] = React.useState(null);
     const [circulatingSupply, setCirculatingSupply] = React.useState(null);
-    
+    const [csvGenerated, setCSVGenerated] = React.useState(null);
     const getTokens = async () => {
         const tarray:any[] = [];
         try{
@@ -496,6 +497,8 @@ export function MembersView(props: any) {
                 let tParticipants = 0;
                 let aParticipants = 0;
                 let lParticipants = 0;
+                let csvFile = '';
+                
 
                 for (let record of trecords){
                     //console.log("record: "+JSON.stringify(record));
@@ -556,8 +559,20 @@ export function MembersView(props: any) {
                                 lParticipants++;
                             tParticipants++; // all time
                         
+                            if (tParticipants > 1)
+                                csvFile += '\r\n';
+                            else
+                                csvFile = 'Member,Votes\r\n';
+                            
+                            csvFile += record.account.governingTokenOwner.toBase58()+','+record.account.governingTokenDepositAmount.toNumber();
+                
                     }
                 }
+
+                const jsonCSVString = encodeURI(`data:text/csv;chatset=utf-8,${csvFile}`);
+                //console.log("jsonCSVString: "+JSON.stringify(jsonCSVString));
+                
+                setCSVGenerated(jsonCSVString);
                 
                 setTotalDepositedVotes(tVotes > 0 ? tVotes : null);
                 setTotalVotesCasted(tVotesCasted > 0 ? tVotesCasted : null);
@@ -645,6 +660,18 @@ export function MembersView(props: any) {
                                     >
                                         <OpenInNewIcon/>
                                     </Button>
+
+                                    {csvGenerated &&
+                                        <Tooltip title="Download Voter Participation CSV file">
+                                            <Button
+                                                sx={{ml:1, color:'white', borderRadius:'17px'}}
+                                                download={`${(collectionAuthority.governanceVanityUrl || collectionAuthority.governance)}_Governance_Members.csv`}
+                                                href={csvGenerated}
+                                            >
+                                                <DownloadIcon /> CSV
+                                            </Button>
+                                        </Tooltip>
+                                    }
                                 </Typography>
                             </>
                         }
