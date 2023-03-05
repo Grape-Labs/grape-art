@@ -216,7 +216,14 @@ export function IdentityView(props: any){
                 </>);
             }
         },
-        { field: 'name', headerName: 'Token', minWidth: 200, flex: 1, },
+        { field: 'name', headerName: 'Token', minWidth: 200, flex: 1
+            /*
+            renderCell: (params) => {
+                return (
+                    <ExplorerView useLogo={params.value.logo} showAddress={true} address={params.value.address.mint} type='address' shorten={8} title={params.value.name} hideTitle={false} style='text' color='white' fontSize='14px' />                                  
+                );
+            }*/
+        },
         { field: 'balance', headerName: 'Balance', width: 130, align: 'right',
             renderCell: (params) => {
                 return (params.value)
@@ -304,7 +311,14 @@ export function IdentityView(props: any){
                 </>);
             }
         },
-        { field: 'name', headerName: 'Token', minWidth: 250, flex: 1, },
+        { field: 'name', headerName: 'Token', minWidth: 200, flex: 1 
+            /*
+            renderCell: (params) => {
+                return (
+                    <ExplorerView useLogo={params.value.logo} showAddress={true} address={params.value.address.mint} type='address' shorten={8} title={params.value.name} hideTitle={false} style='text' color='white' fontSize='14px' />                                  
+                );
+            }*/
+        },
         { field: 'balance', headerName: 'Balance', width: 130, align: 'right',
             renderCell: (params) => {
                 return (params.value)
@@ -746,6 +760,12 @@ export function IdentityView(props: any){
                     metadata: metadata
                 },
                 name:name,
+                /*
+                name:{
+                    name:name,
+                    logo:logo,
+                    address:item.account.data.parsed.info
+                },*/
                 balance:itemBalance,
                 price:item.account.data.parsed.info.tokenAmount.decimals === 0 ? 0 : cgPrice[item?.coingeckoId]?.usd || 0,
                 change:item.account.data.parsed.info.tokenAmount.decimals === 0 ? 0 : cgPrice[item?.coingeckoId]?.usd_24h_change || 0,
@@ -820,6 +840,13 @@ export function IdentityView(props: any){
                     metadata: metadata
                 },
                 name:name,
+                /*
+                name:{
+                    name:name,
+                    logo:logo,
+                    address:item.account.data.parsed.info
+                },
+                */
                 balance:itemBalance,
                 oncurve: ValidateCurve(item.account.data.parsed.info.mint),
                 nft: item.account.data.parsed.info.tokenAmount.decimals === 0 ? true : false,
