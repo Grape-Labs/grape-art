@@ -246,7 +246,6 @@ function GetParticipants(props: any){
     const freeconnection = new Connection(TX_RPC_ENDPOINT);
     const [loadingParticipants, setLoadingParticipants] = React.useState(false);
 
-    
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
     const onError = useCallback(
         (error: WalletError) => {
@@ -449,19 +448,6 @@ function GetParticipants(props: any){
                 setQuorumTargetPercentage((totalVotesNeeded / totalVotes) * 100);
                 setQuorumTarget(totalVotesNeeded);
             }
-
-            /*
-            if (tokenMap.get(grealm.account.communityMint.toBase58())){
-                setGoverningTokenDecimals(tokenMap.get(grealm.account.communityMint.toBase58()).decimals);
-            } else{
-               const btkn = await getBackedTokenMetadata(grealm.account.communityMint.toBase58(), wallet);
-                if (btkn){
-                    setGoverningTokenDecimals(btkn.decimals)
-                } else{
-                    setGoverningTokenDecimals(0);
-                }
-            }
-            */
 
         }catch(e){
             console.log('ERR: '+e)

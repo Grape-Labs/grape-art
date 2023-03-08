@@ -1349,10 +1349,12 @@ export function IdentityView(props: any){
                                                 <TabContext value={value} >
                                                     <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                                                     <TabList variant="scrollable" scrollButtons="auto" onChange={handleChange} aria-label="Wallet Navigation">
+                                                        
                                                         <Tab sx={{color:'white', textTransform:'none'}} 
                                                             icon={<Hidden smUp><Badge badgeContent={solanaHoldings.length} color="primary"><AccountBalanceWalletIcon /></Badge></Hidden>}
                                                             label={<Hidden smDown><Badge badgeContent={solanaHoldings.length} color="primary"><Typography variant="h6">{t('Tokens')}</Typography></Badge></Hidden>
                                                         } value="1" />
+
                                                         <Tab sx={{color:'white', textTransform:'none'}} 
                                                             icon={<Hidden smUp><SwapHorizIcon /></Hidden>}
                                                             label={<Hidden smDown><Typography variant="h6">{t('Transactions')}</Typography></Hidden>
@@ -1385,7 +1387,7 @@ export function IdentityView(props: any){
                                                         }
                                                         
                                                         {publicKey && publicKey.toBase58() === pubkey &&
-                                                            <Tab sx={{color:'white', textTransform:'none'}} 
+                                                            <Tab color='inherit' sx={{color:'white', textTransform:'none'}} 
                                                                     icon={<Hidden smUp><StorageIcon /></Hidden>}
                                                                     label={<Hidden smDown><Typography variant="h6">{t('Storage')}</Typography></Hidden>
                                                                 } value="7" />
@@ -1395,16 +1397,12 @@ export function IdentityView(props: any){
                                                                 icon={<Hidden smUp><OpacityIcon /></Hidden>}
                                                                 label={<Hidden smDown><Typography variant="h6">{t('Streaming')}</Typography></Hidden>
                                                         } value="8" />
-
-                                                        {SQUADS_API &&
-                                                            <>
-                                                            {publicKey && publicKey.toBase58() === pubkey &&
-                                                                <Tab sx={{color:'white', textTransform:'none'}} disabled={true}
-                                                                        icon={<Hidden smUp><ViewComfyIcon /></Hidden>}
-                                                                        label={<Hidden smDown><Typography variant="h6">{t('Squads')}</Typography></Hidden>
-                                                                } value="9" />
-                                                            }
-                                                            </>
+                                                        
+                                                        {(SQUADS_API && publicKey && (publicKey.toBase58() === pubkey)) &&
+                                                            <Tab sx={{color:'white', textTransform:'none'}}
+                                                                    icon={<Hidden smUp><ViewComfyIcon /></Hidden>}
+                                                                    label={<Hidden smDown><Typography variant="h6">{t('Squads')}</Typography></Hidden>
+                                                            } value="9" />
                                                         }
 
                                                     </TabList>
@@ -1713,11 +1711,10 @@ export function IdentityView(props: any){
                                                         <StreamingPaymentsView pubkey={pubkey} setLoadingPosition={setLoadingPosition} tokenMap={tokenMap} />
                                                     </TabPanel>
                                                     
-                                                    {SQUADS_API &&
-                                                        <TabPanel value="9">
-                                                            <SquadsView pubkey={pubkey} setLoadingPosition={setLoadingPosition} />
-                                                        </TabPanel>
-                                                    }
+                                                    <TabPanel value="9">
+                                                        <SquadsView pubkey={pubkey} setLoadingPosition={setLoadingPosition} />
+                                                    </TabPanel>
+                                                    
 
                                                 </TabContext>
                                             </Box>
