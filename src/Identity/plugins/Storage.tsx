@@ -368,13 +368,13 @@ export function StorageView(props: any){
             await connection.confirmTransaction({
                 blockhash: latestBlockHash.blockhash,
                 lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
-                signature: signedTransaction.txid}, 
+                signature: signedTransaction.transaction_signature}, 
                 'processed'
             );
             closeSnackbar(cnfrmkey);
             const snackaction = (key:any) => (
-                <Button href={`https://explorer.solana.com/tx/${signedTransaction.txid}`} target='_blank'  sx={{color:'white'}}>
-                    {signedTransaction.txid}
+                <Button href={`https://explorer.solana.com/tx/${signedTransaction.transaction_signature}`} target='_blank'  sx={{color:'white'}}>
+                    {signedTransaction.transaction_signature}
                 </Button>
             );
             enqueueSnackbar(`Transaction Confirmed`,{ variant: 'success', action:snackaction });
@@ -402,13 +402,13 @@ export function StorageView(props: any){
             await connection.confirmTransaction({
                 blockhash: latestBlockHash.blockhash,
                 lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
-                signature: signedTransaction.txid}, 
+                signature: signedTransaction.transaction_signature}, 
                 'processed'
             );
             closeSnackbar(cnfrmkey);
             const snackaction = (key:any) => (
-                <Button href={`https://explorer.solana.com/tx/${signedTransaction.txid}`} target='_blank'  sx={{color:'white'}}>
-                    {signedTransaction.txid}
+                <Button href={`https://explorer.solana.com/tx/${signedTransaction.transaction_signature}`} target='_blank'  sx={{color:'white'}}>
+                    {signedTransaction.transaction_signature}
                 </Button>
             );
             enqueueSnackbar(`Transaction Confirmed`,{ variant: 'success', action:snackaction });
@@ -840,8 +840,7 @@ const deserialized = deserializeUnchecked(dataSchema, AccoundData, metavalue?.da
                 //console.log("Error: "+JSON.stringify(e));
             } 
         }
-    
-
+        
         const uploadToStoragePool = async (files: any, storagePublicKey: PublicKey) => { 
             try{
                 enqueueSnackbar(`Preparing to upload some files to ${storagePublicKey.toString()}`,{ variant: 'info' });
@@ -919,8 +918,6 @@ const deserialized = deserializeUnchecked(dataSchema, AccoundData, metavalue?.da
                         </Button>
                     );
                     enqueueSnackbar(`Transaction Confirmed`,{ variant: 'success', action:snackaction });
-                } else{
-    
                 }
                 /*
                 await connection.confirmTransaction({
