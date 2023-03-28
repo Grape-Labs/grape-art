@@ -74,7 +74,7 @@ import {
 } from "@streamflow/stream";
 
 import ExplorerView from '../../utils/grapeTools/Explorer';
-import { RPC_CONNECTION } from '../../utils/grapeTools/constants';
+import { RPC_CONNECTION, RPC_ENDPOINT } from '../../utils/grapeTools/constants';
 import { load } from "../../browser";
 import { PanoramaVerticalSelect } from "@mui/icons-material";
 import { trimAddress } from "../../utils/grapeTools/WalletAddress";
@@ -260,8 +260,9 @@ export function StreamingPaymentsView(props: any){
         );
     }
 
+    
     const StreamPaymentClient = new StreamClient(
-        GRAPE_RPC_ENDPOINT, // "https://api.mainnet-beta.solana.com",
+        RPC_ENDPOINT, // "https://api.mainnet-beta.solana.com",
         Cluster.Mainnet,
         "confirmed"
     );
