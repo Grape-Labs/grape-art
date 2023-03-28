@@ -13,7 +13,7 @@ import {
   SYSVAR_INSTRUCTIONS_PUBKEY
 } from '@solana/web3.js'
 import { BN, web3 } from '@project-serum/anchor';
-import { RPC_CONNECTION, GRAPE_RPC_ENDPOINT } from '../grapeTools/constants';
+import { RPC_CONNECTION, RPC_ENDPOINT } from '../grapeTools/constants';
 import {InstructionsAndSignersSet} from "./helpers/types";
 
 //import { Metaplex, sol, token } from '@metaplex-foundation/js';
@@ -56,7 +56,7 @@ export async function gah_makeOffer(offerAmount: number, mint: string, walletPub
     const auctionHouseKey = new web3.PublicKey(collectionAuctionHouse || AUCTION_HOUSE_ADDRESS);
     const mintKey = new web3.PublicKey(mint);
     const ggoconnection = RPC_CONNECTION;
-    const anchorProgram = await loadAuctionHouseProgram(null, ENV_AH, GRAPE_RPC_ENDPOINT);
+    const anchorProgram = await loadAuctionHouseProgram(null, ENV_AH, RPC_ENDPOINT);
     const auctionHouseObj = await anchorProgram.account.auctionHouse.fetch(auctionHouseKey,);    
     const buyerWalletKey = new web3.PublicKey(walletPublicKey);
     
@@ -76,7 +76,7 @@ export async function gah_makeOffer(offerAmount: number, mint: string, walletPub
 
     const buyerPrice = Number(offerAmount) * lps;
     
-    //const metaplex = new Metaplex(new Connection(GRAPE_RPC_ENDPOINT));
+    //const metaplex = new Metaplex(new Connection(RPC_ENDPOINT));
     
     /*
     const auctionHouseJS = await metaplex

@@ -9,7 +9,7 @@ import {
 
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 
-import { GRAPE_RPC_ENDPOINT } from '../../utils/grapeTools/constants';
+import { RPC_ENDPOINT } from '../../utils/grapeTools/constants';
   
 export default function ModalSwapView(props: any){
     const refreshCallback = props.refreshCallback;
@@ -42,7 +42,7 @@ export default function ModalSwapView(props: any){
                 mode: 'default',        
                 displayMode: 'modal',
                 mint: swapto,
-                endpoint:GRAPE_RPC_ENDPOINT,
+                endpoint:RPC_ENDPOINT,
                 passThroughWallet: wallet,
                 //platformFeeAndAccounts,
                 containerStyles: {height: 500,zIndex:1},

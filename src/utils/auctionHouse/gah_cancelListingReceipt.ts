@@ -11,7 +11,7 @@ import {
   TransactionInstruction,
   SYSVAR_INSTRUCTIONS_PUBKEY } from '@solana/web3.js'
 import { web3 } from '@project-serum/anchor';
-import { GRAPE_RPC_ENDPOINT } from '../grapeTools/constants';
+import { RPC_ENDPOINT } from '../grapeTools/constants';
 import { InstructionsAndSignersSet } from "./helpers/types";
 
 import { AuctionHouseProgram } from '@metaplex-foundation/mpl-auction-house'
@@ -35,7 +35,7 @@ import { ConstructionOutlined } from '@mui/icons-material';
     const tokenSize = 1;
     const auctionHouseKey = new web3.PublicKey(collectionAuctionHouse || AUCTION_HOUSE_ADDRESS);
     const mintKey = new web3.PublicKey(mint);
-    const anchorProgram = await loadAuctionHouseProgram(null, ENV_AH, GRAPE_RPC_ENDPOINT);
+    const anchorProgram = await loadAuctionHouseProgram(null, ENV_AH, RPC_ENDPOINT);
     const auctionHouseObj = await anchorProgram.account.auctionHouse.fetch(auctionHouseKey,);    
     //check if escrow amount already exists to determine if we need to deposit amount to grapevine 
     

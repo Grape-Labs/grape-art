@@ -69,8 +69,7 @@ import { GRAPE_BOTTOM_CHAT_ID } from '../utils/ui-contants';
 import PropTypes from 'prop-types';
 import { 
     GRAPE_PREVIEW,
-    GRAPE_RPC_ENDPOINT, 
-    THEINDEX_RPC_ENDPOINT,
+    RPC_ENDPOINT, 
     TWITTER_PROXY,
     DRIVE_PROXY,
 } from '../utils/grapeTools/constants';

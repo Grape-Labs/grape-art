@@ -26,7 +26,7 @@ import {
 
 import { 
     RPC_CONNECTION,
-    GRAPE_RPC_ENDPOINT, 
+    RPC_ENDPOINT, 
 } from '../utils/grapeTools/constants';
 
 import CircularProgress from '@mui/material/CircularProgress';
@@ -160,8 +160,7 @@ function JupiterForm(props: any) {
     const [ autoCompleteOptions, setAutoCompleteOptions ] = useState([]);
     const [ allAutoCompleteOptions, setAllAutoCompleteOptions ] = useState([]);
     const {publicKey, wallet, signAllTransactions, signTransaction, sendTransaction} = useWallet();
-    const connection = useConnection();
-    const ggoconnection = RPC_CONNECTION;
+    const connection = RPC_CONNECTION;//useConnection();
     const [portfolioPositions, setPortfolioPositions] = React.useState(props?.portfolioPositions || null);
 
     const getPrices = async (path?: string): Promise<any> => {
@@ -272,8 +271,8 @@ function JupiterForm(props: any) {
                 routeInfo: routes[0],
                 onTransaction: async (txid) => {
 
-                    const latestBlockHash = await ggoconnection.getLatestBlockhash();
-                    await ggoconnection.confirmTransaction({
+                    const latestBlockHash = await connection.getLatestBlockhash();
+                    await connection.confirmTransaction({
                         blockhash: latestBlockHash.blockhash,
                         lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
                         signature: txid}, 
@@ -281,7 +280,7 @@ function JupiterForm(props: any) {
                     );
 
                     //await connection.connection.confirmTransaction(txid);
-                    return await connection.connection.getTransaction(txid, {
+                    return await connection.getTransaction(txid, {
                         commitment: "confirmed",
                     });
 
@@ -311,7 +310,10 @@ function JupiterForm(props: any) {
     }
 
     const getPortfolioPositions = async () => {
-        console.log("fetching portfolio POsitions")
+        console.log("fetching portfolio Positions")
+        const resp = await connection.getParsedTokenAccountsByOwner(new PublicKey(publicKey), {programId: new PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA")});
+        const resultValues = resp.value;
+        /*
         const body = {
             method: "getTokenAccountsByOwner",
             jsonrpc: "2.0",
@@ -322,17 +324,17 @@ function JupiterForm(props: any) {
             ],
             id: "35f0036a-3801-4485-b573-2bf29a7c77d2",
         };
-        const resp = await window.fetch(GRAPE_RPC_ENDPOINT, {
+        const resp = await window.fetch(RPC_ENDPOINT, {
             method: "POST",
             body: JSON.stringify(body),
             headers: { "Content-Type": "application/json" },
         })
         const json = await resp.json();
-        
+        */
         const pp = new Array;
         
-        if (json?.result?.value){
-            for (let item of json.result?.value){
+        if (resultValues){
+            for (let item of resultValues){
                 pp.push(item);
             }
 
@@ -393,7 +395,7 @@ function JupiterForm(props: any) {
     },[inputValue])
 
     const getSolBalance = async () => {
-        const sol = await ggoconnection.getBalance(publicKey);
+        const sol = await connection.getBalance(publicKey);
         //console.log("Balance: "+JSON.stringify(sol))
         const adjustedAmountToSend = (sol / Math.pow(10, 9));
         setPortfolioSwapTokenAvailableBalance(adjustedAmountToSend);

@@ -441,7 +441,7 @@ export default function FeedView(props: any){
         
         if (!loading){
             setLoading(true);
-            //const anchorProgram = await loadAuctionHouseProgram(null, ENV_AH, GRAPE_RPC_ENDPOINT);
+            //const anchorProgram = await loadAuctionHouseProgram(null, ENV_AH, RPC_ENDPOINT);
             const auctionHouseKey = new web3.PublicKey(AUCTION_HOUSE_ADDRESS);
             //const auctionHouseObj = await anchorProgram.account.auctionHouse.fetch(auctionHouseKey,);
             //let derivedMintPDA = await web3.PublicKey.findProgramAddress([Buffer.from((new PublicKey(mint)).toBuffer())], auctionHouseKey);

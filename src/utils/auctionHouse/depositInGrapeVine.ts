@@ -6,7 +6,7 @@ import {
   } from './helpers/constants';
 import { PublicKey, SystemProgram, TransactionInstruction } from '@solana/web3.js'
 import { BN, web3 } from '@project-serum/anchor';
-import { GRAPE_RPC_ENDPOINT } from '../grapeTools/constants';
+import { RPC_ENDPOINT } from '../grapeTools/constants';
 import {InstructionsAndSignersSet} from "./helpers/types";
 
 import {
@@ -23,7 +23,7 @@ export async function depositInGrapeVine(escrowAmount: number, buyerWalletKey: P
   
     const auctionHouseKey = new web3.PublicKey(AUCTION_HOUSE_ADDRESS);  
 
-    let anchorProgram = await loadAuctionHouseProgram(null, ENV_AH, GRAPE_RPC_ENDPOINT);
+    let anchorProgram = await loadAuctionHouseProgram(null, ENV_AH, RPC_ENDPOINT);
     const auctionHouseObj = await anchorProgram.account.auctionHouse.fetch(auctionHouseKey,);    
 
     const amountAdjusted = await getPriceWithMantissa(

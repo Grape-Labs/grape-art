@@ -88,7 +88,7 @@ import { CrossmintSolanaWalletAdapter, networkToCrossmintEnvironment } from "@cr
 //import { mainListItems, secondaryListItems } from './components/SidebarList/SidebarList';
 import grapeTheme from './utils/config/theme';
 //import "./App.less";
-import { GRAPE_RPC_ENDPOINT, TX_RPC_ENDPOINT, GENSYSGO_RPC_ENDPOINT } from './utils/grapeTools/constants';
+import { RPC_ENDPOINT } from './utils/grapeTools/constants';
 import {
     BottomChat as DialectBottomChat,
     DialectUiManagementProvider,
@@ -126,7 +126,7 @@ const walletToDialectWallet = (wallet: WalletContextState): DialectWalletAdapter
 });
 
 function DialectProviders({ children }: { children: ReactNode }): JSX.Element {
-    const connection = new Connection(GENSYSGO_RPC_ENDPOINT);
+    const connection = new Connection(RPC_ENDPOINT);
     const wallet = useWallet();
     const [dialectWalletAdapter, setDialectWalletAdapter] = React.useState<DialectWalletAdapter>(() =>
         walletToDialectWallet(wallet)
@@ -150,8 +150,8 @@ function DialectProviders({ children }: { children: ReactNode }): JSX.Element {
             identity: {
                 resolvers: [
                     new DialectDappsIdentityResolver(),
-                    new SNSIdentityResolver(new Connection(GENSYSGO_RPC_ENDPOINT)),
-                    new CardinalTwitterIdentityResolver(new Connection(GENSYSGO_RPC_ENDPOINT)),
+                    new SNSIdentityResolver(new Connection(RPC_ENDPOINT)),
+                    new CardinalTwitterIdentityResolver(new Connection(RPC_ENDPOINT)),
                 ],
             },
         }),
@@ -205,9 +205,9 @@ function DashboardContent() {
     // You can also provide a custom RPC endpoint
     const network = WalletAdapterNetwork.Mainnet; //.Devnet;
     // You can also provide a custom RPC endpoint
-    //const endpoint =  useMemo(() => clusterApiUrl(network), [network]); // GRAPE_RPC_ENDPOINT;
-    //const endpoint =  GRAPE_RPC_ENDPOINT;
-    const endpoint = TX_RPC_ENDPOINT;
+    //const endpoint =  useMemo(() => clusterApiUrl(network), [network]); // RPC_ENDPOINT;
+    //const endpoint =  RPC_ENDPOINT;
+    const endpoint = RPC_ENDPOINT;
     const wallets = useMemo(
         () => [
             new SolflareWalletAdapter(),

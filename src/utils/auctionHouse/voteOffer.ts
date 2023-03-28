@@ -6,7 +6,7 @@ import {
   } from './helpers/constants';
 import { PublicKey, SystemProgram, TransactionInstruction } from '@solana/web3.js'
 import { BN, web3 } from '@project-serum/anchor';
-import { GRAPE_RPC_ENDPOINT, VERIFIED_DAO_ARRAY, } from '../grapeTools/constants';
+import { RPC_ENDPOINT, VERIFIED_DAO_ARRAY, } from '../grapeTools/constants';
 import {InstructionsAndSignersSet} from "./helpers/types";
 
 import {
@@ -40,7 +40,7 @@ export async function voteOffer(offerAmount: number, mint: string, mintOwner: st
 
   //const solTreasury = new PublicKey(COLLABORATION_SOL_TREASURY);
   const sellerWalletKey = new PublicKey(mintOwner);
-  let anchorProgram = await loadAuctionHouseProgram(null, ENV_AH, GRAPE_RPC_ENDPOINT);
+  let anchorProgram = await loadAuctionHouseProgram(null, ENV_AH, RPC_ENDPOINT);
   const auctionHouseObj = await anchorProgram.account.auctionHouse.fetch(auctionHouseKey,);    
   const buyPriceAdjusted = new BN(
     await getPriceWithMantissa(

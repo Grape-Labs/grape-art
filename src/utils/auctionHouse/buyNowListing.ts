@@ -6,7 +6,7 @@ import {
   } from './helpers/constants';
 import { PublicKey, SystemProgram, TransactionInstruction } from '@solana/web3.js'
 import { BN, web3 } from '@project-serum/anchor';
-import { GRAPE_RPC_ENDPOINT } from '../../utils/grapeTools/constants';
+import { RPC_ENDPOINT } from '../../utils/grapeTools/constants';
 import {InstructionsAndSignersSet} from "./helpers/types";
 
 import {
@@ -27,7 +27,7 @@ export async function buyNowListing(offerAmount: number, mint: string, walletPub
   let tokenSize = 1;
   const auctionHouseKey = new web3.PublicKey(collectionAuctionHouse || AUCTION_HOUSE_ADDRESS);
   const mintKey = new web3.PublicKey(mint);
-  let anchorProgram = await loadAuctionHouseProgram(null, ENV_AH, GRAPE_RPC_ENDPOINT);
+  let anchorProgram = await loadAuctionHouseProgram(null, ENV_AH, RPC_ENDPOINT);
   const auctionHouseObj = await anchorProgram.account.auctionHouse.fetch(auctionHouseKey,);    
   const sellerWalletKey = new web3.PublicKey(walletPublicKey);
 

@@ -38,7 +38,7 @@ import {
 } from '../utils/auctionHouse/helpers/constants';
 
 import { decodeMetadata } from '../utils/grapeTools/utils';
-import { RPC_CONNECTION, GRAPE_RPC_ENDPOINT, GRAPE_PREVIEW, DRIVE_PROXY } from '../utils/grapeTools/constants';
+import { RPC_CONNECTION, RPC_ENDPOINT, GRAPE_PREVIEW, DRIVE_PROXY } from '../utils/grapeTools/constants';
 
 import { useTranslation } from 'react-i18next';
 import SolCurrencyIcon from '../components/static/SolCurrencyIcon';
@@ -74,7 +74,7 @@ export default function ListForCollectionView(props: any){
     const [loading, setLoading] = React.useState(false);
     const [selectedMint, setSelectedMint] = React.useState(null);
     const [openPreviewDialog, setOpenPreviewDialog] = React.useState(false);
-    const ggoconnection = RPC_CONNECTION;
+    const connection = RPC_CONNECTION;
     const rpclimit = 100;
 
     const handleClickOpenPreviewDialog = (mint:string) => {
@@ -102,23 +102,9 @@ export default function ListForCollectionView(props: any){
     // filter by updateAuthority
 
     const fetchWalletCollection = async () => { 
+        const resp = await connection.getParsedTokenAccountsByOwner(new PublicKey(pubkey), {programId: new PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA")});
+        const resultValues = resp.value;   
         /*
-        try{
-            const results = await ggoconnection.getTokenAccountsByOwner(publicKey, {
-                programId: TOKEN_PROGRAM_ID,
-            })
-
-            return results.value.map((r) => {
-                const publicKey = r.pubkey
-                const data = Buffer.from(r.account.data)
-                const tokenAccount = await ggoconnection.getParsedAccountInfo(publicKey))
-                return { publicKey, tokenAccount }
-            })
-        } catch(e){
-            console.log("ERR: "+e);
-        } 
-        */    
-        
         const body = {
           method: "getTokenAccountsByOwner",
           jsonrpc: "2.0",
@@ -131,15 +117,15 @@ export default function ListForCollectionView(props: any){
           id: "35f0036a-3801-4485-b573-2bf29a7c77d4",
         };
         
-        const response = await window.fetch(GRAPE_RPC_ENDPOINT, {
+        const response = await window.fetch(RPC_ENDPOINT, {
           method: "POST",
           body: JSON.stringify(body),
           headers: { "Content-Type": "application/json" },
         });
         
         const json = await response.json();
+        */
         try{
-                const resultValues = json.result.value
                 const walletCollection = new Array();
                 const wallet = resultValues && resultValues?.map((collectionInfo: any) => {
                     (+collectionInfo.account.data.parsed.info.tokenAmount.amount >= 1) &&
@@ -190,7 +176,7 @@ export default function ListForCollectionView(props: any){
             }
             
             //console.log("pushed pdas: "+JSON.stringify(mintsPDAs));
-            const metadata = await ggoconnection.getMultipleAccountsInfo(mintsPDAs);
+            const metadata = await connection.getMultipleAccountsInfo(mintsPDAs);
         
             //console.log("returned: "+JSON.stringify(metadata));
             // LOOP ALL METADATA WE HAVE

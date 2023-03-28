@@ -97,7 +97,7 @@ import SolCurrencyIcon from '../components/static/SolCurrencyIcon';
 import { ValidateAddress, ValidateCurve, trimAddress, timeAgo, formatBlockTime } from '../utils/grapeTools/WalletAddress'; // global key handling
 import { 
     RPC_CONNECTION,
-    GRAPE_RPC_ENDPOINT, 
+    RPC_ENDPOINT, 
     GRAPE_PROFILE, 
     GRAPE_PREVIEW, 
     DRIVE_PROXY,
@@ -181,8 +181,6 @@ export function IdentityView(props: any){
     
     const { publicKey } = useWallet();
     const [pubkey, setPubkey] = React.useState(props.pubkey || null);
-    const ggoconnection = RPC_CONNECTION;
-    const ticonnection = RPC_CONNECTION;
     const {handlekey} = useParams<{ handlekey: string }>();
     const [searchParams, setSearchParams] = useSearchParams();
     const urlParams = searchParams.get("pkey") || searchParams.get("address") || handlekey;
@@ -192,7 +190,7 @@ export function IdentityView(props: any){
     const [selectionModel, setSelectionModel] = React.useState([]);
     const [selectionModelClose, setSelectionModelClose] = React.useState([]);
     const [tokensNetValue, setTokensNetValue] = React.useState(null);
-
+    const connection = RPC_CONNECTION;
     const { t, i18n } = useTranslation();
 
     const columns: GridColDef[] = [
@@ -402,7 +400,7 @@ export function IdentityView(props: any){
 
     const fetchSolanaBalance = async () => {
         setLoadingPosition('SOL Balance');
-        const response = await ggoconnection.getBalance(new PublicKey(pubkey));
+        const response = await connection.getBalance(new PublicKey(pubkey));
         const converted = await getTokenPrice('So11111111111111111111111111111111111111112','EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'); // SOL > USDC
         const ticker = await getTokenTicker('So11111111111111111111111111111111111111112','EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'); // SOL > USDC
         //console.log("ticker: "+JSON.stringify(ticker))
@@ -453,7 +451,7 @@ export function IdentityView(props: any){
         } 
         
         {
-            const response = await ggoconnection.getSignaturesForAddress(new PublicKey(pubkey));
+            const response = await connection.getSignaturesForAddress(new PublicKey(pubkey));
 
             const memos: any[] = [];
             const signatures: any[] = [];
@@ -476,7 +474,7 @@ export function IdentityView(props: any){
 
             console.log("fetching parsed transactions")
             try{
-                const getTransactionAccountInputs2 = await ggoconnection.getParsedTransactions(signatures, {commitment:'confirmed', maxSupportedTransactionVersion:0});
+                const getTransactionAccountInputs2 = await connection.getParsedTransactions(signatures, {commitment:'confirmed', maxSupportedTransactionVersion:0});
                 //console.log("getTransactionAccountInputs2: "+JSON.stringify(getTransactionAccountInputs2))
                 let cnt=0;
                 const tx: any[] = [];
@@ -642,11 +640,13 @@ export function IdentityView(props: any){
 
     const fetchSolanaTokens = async () => {
         setLoadingPosition('Tokens');
-        //const response = await ggoconnection.getTokenAccountsByOwner(new PublicKey(pubkey), {programId: new PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA")});
+        const resp = await connection.getParsedTokenAccountsByOwner(new PublicKey(pubkey), {programId: new PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA")});
+        const resultValues = resp.value
         /*
             let meta_final = JSON.parse(item.account.data);
             let buf = Buffer.from(JSON.stringify(item.account.data), 'base64');
-        */
+        
+
         // Use JSONParse for now until we decode 
         const body = {
             method: "getTokenAccountsByOwner",
@@ -658,13 +658,15 @@ export function IdentityView(props: any){
             ],
             id: "35f0036a-3801-4485-b573-2bf29a7c77d2",
         };
-        const resp = await window.fetch(GRAPE_RPC_ENDPOINT, {
+        const resp = await window.fetch(RPC_ENDPOINT, {
             method: "POST",
             body: JSON.stringify(body),
             headers: { "Content-Type": "application/json" },
         })
         const json = await resp.json();
         const resultValues = json.result.value
+        
+        */
         //return resultValues;
 
         const holdings: any[] = [];
@@ -866,7 +868,7 @@ export function IdentityView(props: any){
     } 
 
     const fetchProfilePicture = async () => {
-        const { isAvailable, url } = await getProfilePicture(ggoconnection, new PublicKey(pubkey));
+        const { isAvailable, url } = await getProfilePicture(connection, new PublicKey(pubkey));
         let img_url = url;
         if (url)
             img_url = url.replace(/width=100/g, 'width=256');
@@ -881,7 +883,7 @@ export function IdentityView(props: any){
     
     const fetchSolanaDomain = async () => {
         setLoadingPosition('SNS Records');
-        const domain = await findDisplayName(ggoconnection, pubkey);
+        const domain = await findDisplayName(connection, pubkey);
         if (domain){
             if (domain.toString()!==pubkey){
                 
@@ -943,7 +945,7 @@ export function IdentityView(props: any){
 
             //console.log("pushed pdas: "+JSON.stringify(mintsPDAs));
             const final_meta = new Array();
-            const metadata = await ggoconnection.getMultipleAccountsInfo(mintsPDAs);
+            const metadata = await connection.getMultipleAccountsInfo(mintsPDAs);
             //console.log("returned: "+JSON.stringify(metadata));
             // LOOP ALL METADATA WE HAVE
             /*

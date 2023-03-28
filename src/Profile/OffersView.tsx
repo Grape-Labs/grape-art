@@ -72,7 +72,7 @@ import CancelIcon from '@mui/icons-material/Cancel';
 
 import { 
     RPC_CONNECTION,
-    GRAPE_RPC_ENDPOINT, 
+    RPC_ENDPOINT, 
     GRAPE_RPC_REFRESH, 
     GRAPE_PREVIEW, 
     GRAPE_PROFILE, 
@@ -606,7 +606,7 @@ export default function OffersView(props:any){
     }
 
     const getEscrowBalance = async () => {
-        const anchorProgram = await loadAuctionHouseProgram(null, ENV_AH, GRAPE_RPC_ENDPOINT);
+        const anchorProgram = await loadAuctionHouseProgram(null, ENV_AH, RPC_ENDPOINT);
         const auctionHouseKey = new web3.PublicKey(AUCTION_HOUSE_ADDRESS);
         const auctionHouseObj = await anchorProgram.account.auctionHouse.fetch(auctionHouseKey,);
         

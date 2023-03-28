@@ -77,7 +77,7 @@ import {
     TOKEN_VERIFICATION_NAME,
     TOKEN_VERIFICATION_AMOUNT,
     RPC_CONNECTION,
-    GRAPE_RPC_ENDPOINT, 
+    RPC_ENDPOINT, 
     GRAPE_RPC_REFRESH, 
     GRAPE_PREVIEW, 
     GRAPE_PROFILE,
@@ -1146,7 +1146,7 @@ export function OfferPrompt(props: any) {
             handleCloseDialog();
             //check the buyerwallet offer balance and that no other pending offer exists
             /*const auctionHouseKey = new web3.PublicKey(AUCTION_HOUSE_ADDRESS);
-            let anchorProgram = await loadAuctionHouseProgram(null, ENV_AH, GRAPE_RPC_ENDPOINT);
+            let anchorProgram = await loadAuctionHouseProgram(null, ENV_AH, RPC_ENDPOINT);
             const auctionHouseObj = await anchorProgram.account.auctionHouse.fetch(auctionHouseKey,);
             const escrow = (await getAuctionHouseBuyerEscrow(auctionHouseKey, publicKey))[0];
             const balance = await getTokenAmount(anchorProgram,escrow,auctionHouseObj.treasuryMint,);
@@ -1866,7 +1866,7 @@ export default function ItemOffers(props: any) {
           "id":1,
         };
 
-        const response = await window.fetch(GRAPE_RPC_ENDPOINT, {
+        const response = await window.fetch(RPC_ENDPOINT, {
           method: "POST",
           body: JSON.stringify(body),
           headers: { "Content-Type": "application/json" },
@@ -1986,7 +1986,7 @@ export default function ItemOffers(props: any) {
                 if (forSale && forSale > 0){
                     /*
                     // check here if this is actually still for sale...
-                    let anchorProgram = await loadAuctionHouseProgram(null, ENV_AH, GRAPE_RPC_ENDPOINT);
+                    let anchorProgram = await loadAuctionHouseProgram(null, ENV_AH, RPC_ENDPOINT);
                     const auctionHouseObj = await anchorProgram.account.auctionHouse.fetch(auctionHouseKey,); 
                     const treasuryMint = new PublicKey(auctionHouseObj.treasuryMint)
                     const tokenMint = new PublicKey(mint)
@@ -2109,7 +2109,7 @@ export default function ItemOffers(props: any) {
         handleAlertBuyNowClose();
 
         try {
-            const anchorProgram = await loadAuctionHouseProgram(null, ENV_AH, GRAPE_RPC_ENDPOINT);
+            const anchorProgram = await loadAuctionHouseProgram(null, ENV_AH, RPC_ENDPOINT);
             const auctionHouseKey = new web3.PublicKey(collectionAuctionHouse || AUCTION_HOUSE_ADDRESS);
             //const auctionHouseObj = await anchorProgram.account.auctionHouse.fetch(auctionHouseKey,);
             const auctionHouseObj = await anchorProgram.account.auctionHouse.fetch(auctionHouseKey,);

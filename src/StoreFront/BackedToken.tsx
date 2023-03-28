@@ -41,7 +41,7 @@ import { formatAmount, getFormattedNumberToLocale } from '../utils/grapeTools/he
 
 import ExplorerView from '../utils/grapeTools/Explorer';
 
-import { RPC_CONNECTION, GRAPE_RPC_ENDPOINT } from '../utils/grapeTools/constants';
+import { RPC_CONNECTION, RPC_ENDPOINT } from '../utils/grapeTools/constants';
 import { MakeLinkableAddress, ValidateAddress, ValidateCurve, trimAddress, timeAgo } from '../utils/grapeTools/WalletAddress'; // global key handling
 import { BatteryUnknown, ConstructionOutlined } from '@mui/icons-material';
 //import { RevokeCollectionAuthority } from '@metaplex-foundation/mpl-token-metadata';
@@ -152,6 +152,9 @@ export function BackedTokenView(props: any) {
     }
 
     const getMyTokenInfo = async () => {
+        const resp = await connection.getParsedTokenAccountsByOwner(new PublicKey(publicKey), {programId: new PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA")});
+        const resultValues = resp.value;
+        /*
         const body = {
             method: "getTokenAccountsByOwner",
             jsonrpc: "2.0",
@@ -162,23 +165,24 @@ export function BackedTokenView(props: any) {
             ],
             id: "35f0036a-3801-4485-b573-2bf29a7c77d2",
         };
-        const resp = await window.fetch(GRAPE_RPC_ENDPOINT, {
+        const resp = await window.fetch(RPC_ENDPOINT, {
             method: "POST",
             body: JSON.stringify(body),
             headers: { "Content-Type": "application/json" },
         })
         const json = await resp.json();
-        
+        */
+       
         const pp = new Array;
         
-        if (json?.result?.value){
-            for (let item of json.result?.value){
+        if (resultValues){
+            for (let item of resultValues){
                 pp.push(item);
             }
 
             setPortfolioPositions(pp);
 
-            for (let token of json.result?.value){
+            for (let token of resultValues){
                 if (token.account.data.parsed.info.mint === collectionAuthority.address){
                     setMyToken(token);
                 }

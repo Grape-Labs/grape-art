@@ -4,8 +4,7 @@ import { Connection, PublicKey, Transaction, LAMPORTS_PER_SOL } from '@solana/we
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { 
   RPC_CONNECTION,
-  GRAPE_RPC_ENDPOINT,
-  THEINDEX_RPC_ENDPOINT,
+  RPC_ENDPOINT,
   PROXY,
   GRAPE_COLLECTIONS_DATA
 } from './constants';
@@ -248,8 +247,7 @@ export async function getMintFromVerifiedMetadata(metadata:string, collectionMin
 export async function getReceiptsFromAuctionHouse(auctionHouse_filter: string, collection_filter: string, wallet_filter: string, mint_filter: string, bid_receipt_filter:string, getAllAh: boolean, rpcEndpoint: string) {
     // if wallet is set we should also filter by wallet address
     
-    //const ticonnection = new Connection(rpcEndpoint || THEINDEX_RPC_ENDPOINT);  
-    const ticonnection = new Connection(rpcEndpoint || GRAPE_RPC_ENDPOINT);   
+    const ticonnection = new Connection(rpcEndpoint || RPC_ENDPOINT);   
     try{ 
       const collectionAuctionHouse = auctionHouse_filter || AUCTION_HOUSE_ADDRESS;
           {   
@@ -501,7 +499,7 @@ export async function getReceiptsFromAuctionHouse(auctionHouse_filter: string, c
               
           }
     }catch(e){ // if RPC error resend it?
-      const receipts = await getReceiptsFromAuctionHouse(auctionHouse_filter, collection_filter, wallet_filter, mint_filter, bid_receipt_filter, getAllAh, GRAPE_RPC_ENDPOINT)
+      const receipts = await getReceiptsFromAuctionHouse(auctionHouse_filter, collection_filter, wallet_filter, mint_filter, bid_receipt_filter, getAllAh, RPC_ENDPOINT)
       //console.log("JSON: "+JSON.stringify(receipts))
       return receipts;
     }

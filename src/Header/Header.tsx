@@ -45,7 +45,6 @@ import SearchIcon from '@mui/icons-material/Search';
 import Mail from '@mui/icons-material/Mail';
 
 import { 
-    GRAPE_RPC_ENDPOINT, 
     GRAPE_PREVIEW,
     GRAPE_PROFILE, 
     GRAPE_COLLECTION,
@@ -216,7 +215,7 @@ export function Header(props: any) {
 
               // sort by name
               json.sort((a:any,b:any) => (a.name > b.name) ? 1 : -1);
-
+              
               for (let item of json){
                 if (item?.discover)
                     vCA.push(item);

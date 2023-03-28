@@ -90,7 +90,7 @@ import { MARKET_LOGO } from '../utils/grapeTools/constants';
 
 import {
     RPC_CONNECTION,
-    GRAPE_RPC_ENDPOINT,
+    RPC_ENDPOINT,
     GRAPE_RPC_REFRESH,
     GRAPE_PREVIEW,
     GRAPE_PROFILE,
@@ -1592,12 +1592,14 @@ export function ProfileView(this: any, props: any) {
     const { t, i18n } = useTranslation();
 
     const fetchWalletCollection = async () => {
+        const resp = await connection.getParsedTokenAccountsByOwner(new PublicKey(pubkey), {programId: new PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA")});
+        const resultValues = resp.value;
         /*
         TokenAccountsFilter
         const response = await connection.getTokenAccountsByOwner(
             { programId: "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA" }
         );*/
-
+        /*
         const body = {
             method: 'getTokenAccountsByOwner',
             jsonrpc: '2.0',
@@ -1610,20 +1612,19 @@ export function ProfileView(this: any, props: any) {
             id: '35f0036a-3801-4485-b573-2bf29a7c77d4',
         };
 
-        const response = await window.fetch(GRAPE_RPC_ENDPOINT, {
+        const response = await window.fetch(RPC_ENDPOINT, {
             method: 'POST',
             body: JSON.stringify(body),
             headers: { 'Content-Type': 'application/json' },
         });
+        */
 
-        const json = await response.json();
         try {
             //const err = json?.result || true;
             //if (!err){
             //    return [];
             //} else{
-            const resultValues = json.result.value;
-
+            
             const walletCollection = [];
             const wallet =
                 resultValues &&

@@ -8,7 +8,7 @@ import {
     LinearProgress,
 } from '@mui/material';
 
-import { GRAPE_RPC_ENDPOINT } from '../../utils/grapeTools/constants';
+import { RPC_ENDPOINT } from '../../utils/grapeTools/constants';
 
 export function IntegratedSwapView(props: any){
     const refreshCallback = props.refreshCallback;
@@ -36,7 +36,7 @@ export function IntegratedSwapView(props: any){
                 mode: 'default',        
                 displayMode: 'integrated',
                 integratedTargetId: 'integrated-terminal',
-                endpoint:GRAPE_RPC_ENDPOINT,
+                endpoint:RPC_ENDPOINT,
                 passThroughWallet: wallet,
                 //platformFeeAndAccounts,
                 containerStyles: {minHeight: 500},

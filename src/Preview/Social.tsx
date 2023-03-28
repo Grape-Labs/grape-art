@@ -38,7 +38,7 @@ import {
     TOKEN_VERIFICATION_NAME,
     TOKEN_VERIFICATION_AMOUNT,
     TOKEN_VERIFICATION_ADDRESS,
-    GRAPE_RPC_ENDPOINT, 
+    RPC_ENDPOINT, 
     TX_RPC_ENDPOINT, 
     GRAPE_RPC_REFRESH, 
     GRAPE_PREVIEW, 
@@ -261,7 +261,7 @@ export function SocialFlags(props: any){
     
     const { publicKey, sendTransaction } = useWallet();
 
-    const freeconnection = new Connection(TX_RPC_ENDPOINT);
+    const freeconnection = new Connection(RPC_ENDPOINT);
     const { connection } = useConnection();
     
     const [followListInfo, setFollowListInfo] = useState<FollowListInfoResp | null>(null);

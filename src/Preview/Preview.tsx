@@ -95,7 +95,7 @@ import {
     TOKEN_VERIFICATION_AMOUNT,
     TOKEN_VERIFICATION_ADDRESS,
     RPC_CONNECTION,
-    GRAPE_RPC_ENDPOINT, 
+    RPC_ENDPOINT, 
     TX_RPC_ENDPOINT, 
     GRAPE_RPC_REFRESH, 
     GRAPE_PREVIEW, 
@@ -442,7 +442,7 @@ function GalleryItemMeta(props: any) {
     const [open_description, setOpenDescription] = React.useState(true);
     const [open_traits, setOpenTraits] = React.useState(true);
     const ggoconnection = RPC_CONNECTION;
-    const { connection } = useConnection();
+    const connection = RPC_CONNECTION; //useConnection();
     const {publicKey, sendTransaction} = useWallet();
     const [solanaDomain, setSolanaDomain] = React.useState(null);
     const [isFollowing, setIsFollowing] = React.useState(false);
@@ -558,6 +558,10 @@ function GalleryItemMeta(props: any) {
     }
 
     const fetchBalances = async () => {
+        const resp = await connection.getParsedTokenAccountsByOwner(new PublicKey(publicKey), {programId: new PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA")});
+        const resultValues = resp.value
+        return resultValues;
+        /*
         const body = {
           method: "getTokenAccountsByOwner",
           jsonrpc: "2.0",
@@ -570,7 +574,7 @@ function GalleryItemMeta(props: any) {
           id: "35f0036a-3801-4485-b573-2bf29a7c77d2",
         };
     
-          const response = await window.fetch(GRAPE_RPC_ENDPOINT, {
+          const response = await window.fetch(RPC_ENDPOINT, {
             method: "POST",
             body: JSON.stringify(body),
             headers: { "Content-Type": "application/json" },
@@ -578,7 +582,7 @@ function GalleryItemMeta(props: any) {
           const json = await response.json();
           const resultValues = json.result.value
           return resultValues;
-    
+        */
       };
 
     const GetTokenOwner = async (tokenAddress:any) => {
@@ -599,7 +603,7 @@ function GalleryItemMeta(props: any) {
           "id":1,
         };
     
-        const response = await window.fetch(GRAPE_RPC_ENDPOINT, {
+        const response = await window.fetch(RPC_ENDPOINT, {
           method: "POST",
           body: JSON.stringify(body),
           headers: { "Content-Type": "application/json" },
@@ -640,7 +644,7 @@ function GalleryItemMeta(props: any) {
           "id":1,
         };
     
-        const response = await window.fetch(GRAPE_RPC_ENDPOINT, {
+        const response = await window.fetch(RPC_ENDPOINT, {
           method: "POST",
           body: JSON.stringify(body),
           headers: { "Content-Type": "application/json" },
@@ -674,7 +678,7 @@ function GalleryItemMeta(props: any) {
           id: "35f0036a-3801-4485-b573-2bf29a7c77d3",
         };
     
-        const response = await window.fetch(GRAPE_RPC_ENDPOINT, {
+        const response = await window.fetch(RPC_ENDPOINT, {
           method: "POST",
           body: JSON.stringify(body),
           headers: { "Content-Type": "application/json" },
