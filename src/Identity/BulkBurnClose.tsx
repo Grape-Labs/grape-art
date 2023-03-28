@@ -11,7 +11,7 @@ import { TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID, createBurnInstruction, c
 
 //import { TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID, Token } from "@solana/spl-token";
 
-import { GRAPE_RPC_ENDPOINT, TX_RPC_ENDPOINT, GRAPE_TREASURY } from '../utils/grapeTools/constants';
+import { RPC_CONNECTION, GRAPE_TREASURY } from '../utils/grapeTools/constants';
 import { RegexTextField } from '../utils/grapeTools/RegexTextField';
 import { TokenAmount } from '../utils/grapeTools/safe-math';
 import BN from "bn.js";
@@ -128,8 +128,8 @@ export default function BulkBurnClose(props: any) {
     const [open, setOpen] = React.useState(false);
     const sendtype = props.sendType || 0; // just a type
     
-    const freeconnection = new Connection(TX_RPC_ENDPOINT);
-    const connection = new Connection(GRAPE_RPC_ENDPOINT);//useConnection();
+    const freeconnection = RPC_CONNECTION;
+    const connection = RPC_CONNECTION;
     const { publicKey, wallet, sendTransaction, signTransaction } = useWallet();
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
     const onError = useCallback(

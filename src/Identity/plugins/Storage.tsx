@@ -77,12 +77,8 @@ import ExpandIcon from '@mui/icons-material/Expand';
 import SettingsIcon from '@mui/icons-material/Settings';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-import { GRAPE_RPC_ENDPOINT, 
-    THEINDEX_RPC_ENDPOINT, 
-    GRAPE_PROFILE, 
-    GRAPE_PREVIEW, 
-    DRIVE_PROXY,
-    PROXY } from '../../utils/grapeTools/constants';
+import { 
+    RPC_CONNECTION } from '../../utils/grapeTools/constants';
 import { load } from "../../browser";
 import { ParaglidingSharp } from "@mui/icons-material";
 import { stateDiscriminator } from "@project-serum/anchor/dist/cjs/coder";
@@ -1330,7 +1326,7 @@ const deserialized = deserializeUnchecked(dataSchema, AccoundData, metavalue?.da
             //new Wallet(pubkey);
             //const tmpWallet = useAnchorWallet();
             //tmpWallet.publicKey = pubkey;
-            const drive = await new ShdwDrive(new Connection(GRAPE_RPC_ENDPOINT), wallet).init();
+            const drive = await new ShdwDrive(RPC_CONNECTION, wallet).init();
             //console.log("drive: "+JSON.stringify(drive));
             setThisDrive(drive);
             //const asa = await drive.getStorageAccounts();

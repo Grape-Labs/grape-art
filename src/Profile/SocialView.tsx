@@ -30,7 +30,7 @@ import {
 
 import CircularProgress from '@mui/material/CircularProgress';
 
-import { GRAPE_RPC_ENDPOINT, GRAPE_RPC_REFRESH, GRAPE_PREVIEW, GRAPE_PROFILE, FEATURED_DAO_ARRAY } from '../utils/grapeTools/constants';
+import { RPC_CONNECTION, GRAPE_RPC_REFRESH, GRAPE_PREVIEW, GRAPE_PROFILE, FEATURED_DAO_ARRAY } from '../utils/grapeTools/constants';
 import { trimAddress } from '../utils/grapeTools/WalletAddress'; // global key handling
 
 import { useTranslation } from 'react-i18next';
@@ -41,7 +41,7 @@ export default function SocialView(props: any){
     const [loading, setLoading] = React.useState(false);
     const [page, setPage] = React.useState(1);
     const rpclimit = 100;
-    const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
+    const ggoconnection = RPC_CONNECTION;
     const { connection } = useConnection();
     const [solanaDomain, setSolanaDomain] = React.useState(null);
     const [isFollowing, setIsFollowing] = React.useState(false);

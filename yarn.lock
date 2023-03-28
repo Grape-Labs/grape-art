@@ -1320,10 +1320,10 @@
     "@types/long" "^4.0.2"
     "@types/node" "^18.0.3"
 
-"@certusone/wormhole-sdk@^0.9.10":
-  version "0.9.10"
-  resolved "https://registry.yarnpkg.com/@certusone/wormhole-sdk/-/wormhole-sdk-0.9.10.tgz#ebf42f44fb20cd948a73e8a87887c4d712a2f0bc"
-  integrity sha512-hHqv8IDcInPwdk05yswvWd987m+/wB5MoIA9adiFfhL6Sy6DkPWRzorOENkJqJ6I46w+uZERRkSfjnL6APDYcw==
+"@certusone/wormhole-sdk@^0.9.11":
+  version "0.9.11"
+  resolved "https://registry.yarnpkg.com/@certusone/wormhole-sdk/-/wormhole-sdk-0.9.11.tgz#ee48c7e0364264efad1ce2663711f168e1048d29"
+  integrity sha512-HpqlgNle09E6v8EhEBSjBe9MexO7av4cznM4kRR4CYCKTLfwqT75LQRYuSnCJgxrpwNiVRDVJaPWRi7ZEgIipw==
   dependencies:
     "@certusone/wormhole-sdk-proto-web" "0.0.6"
     "@certusone/wormhole-sdk-wasm" "^0.0.1"
@@ -3445,15 +3445,15 @@
     prop-types "^15.8.1"
     react-is "^18.2.0"
 
-"@mui/base@5.0.0-alpha.119":
-  version "5.0.0-alpha.119"
-  resolved "https://registry.yarnpkg.com/@mui/base/-/base-5.0.0-alpha.119.tgz#923e148ceb84898fdd28da069b7c42635053c128"
-  integrity sha512-XA5zhlYfXi67u613eIF0xRmktkatx6ERy3h+PwrMN5IcWFbgiL1guz8VpdXON+GWb8+G7B8t5oqTFIaCqaSAeA==
+"@mui/base@5.0.0-alpha.122":
+  version "5.0.0-alpha.122"
+  resolved "https://registry.yarnpkg.com/@mui/base/-/base-5.0.0-alpha.122.tgz#707c33834cfb627b81c273a25d50b2bef44a1256"
+  integrity sha512-IgZEFQyHa39J1+Q3tekVdhPuUm1fr3icddaNLmiAIeYTVXmR7KR5FhBAIL0P+4shlPq0liUPGlXryoTm0iCeFg==
   dependencies:
     "@babel/runtime" "^7.21.0"
     "@emotion/is-prop-valid" "^1.2.0"
     "@mui/types" "^7.2.3"
-    "@mui/utils" "^5.11.11"
+    "@mui/utils" "^5.11.13"
     "@popperjs/core" "^2.11.6"
     clsx "^1.2.1"
     prop-types "^15.8.1"
@@ -3464,10 +3464,10 @@
   resolved "https://registry.npmjs.org/@mui/core-downloads-tracker/-/core-downloads-tracker-5.10.14.tgz"
   integrity sha512-qLgIJNOR9Dre8JiZ/neVzOf4jf88J6YtOkQqugtMrleLjbfRVUSS4LWl9CSOjNq76quYdmYWnSDgfQqOooT2cQ==
 
-"@mui/core-downloads-tracker@^5.11.11":
-  version "5.11.11"
-  resolved "https://registry.yarnpkg.com/@mui/core-downloads-tracker/-/core-downloads-tracker-5.11.11.tgz#eb5b3f0900ad96a72a37f85fca11545d47a7bc10"
-  integrity sha512-0YK0K9GfW1ysw9z4ztWAjLW+bktf+nExMyn2+EQe1Ijb0kF2kz1kIOmb4+di0/PsXG70uCuw4DhEIdNd+JQkRA==
+"@mui/core-downloads-tracker@^5.11.14":
+  version "5.11.14"
+  resolved "https://registry.yarnpkg.com/@mui/core-downloads-tracker/-/core-downloads-tracker-5.11.14.tgz#0ea7d3890fa50e1fc8028674f39ee8b39b7d43c0"
+  integrity sha512-rfc08z6+3Fif+Gopx2/qmk+MEQlwYeA+gOcSK048BHkTty/ol/boHuVeL2BNC/cf9OVRjJLYHtVb/DeW791LSQ==
 
 "@mui/icons-material@^5.11.9":
   version "5.11.11"
@@ -3476,31 +3476,31 @@
   dependencies:
     "@babel/runtime" "^7.21.0"
 
-"@mui/lab@^5.0.0-alpha.120":
-  version "5.0.0-alpha.121"
-  resolved "https://registry.yarnpkg.com/@mui/lab/-/lab-5.0.0-alpha.121.tgz#bb8586cdec41ead32bd90a30278779012967d15a"
-  integrity sha512-/W5H09zje9psma3RixtilTf1Tk2zUuK9j16e1W+V7oe/1pW6hNj6aZfm8y0t4qPUDQfxMBzlQm26XQx9i8F9PA==
+"@mui/lab@^5.0.0-alpha.124":
+  version "5.0.0-alpha.124"
+  resolved "https://registry.yarnpkg.com/@mui/lab/-/lab-5.0.0-alpha.124.tgz#89ff2b315305b841efca279057e6997e026e6dc1"
+  integrity sha512-K/XEv1zYyLi3tS63tyDta1mqWql+at5w7rWp5Yd63Jx1NjPUtgopAvyRZG2SVYPs/yBwfyDPW1iqQXpRw8h9Xw==
   dependencies:
     "@babel/runtime" "^7.21.0"
-    "@mui/base" "5.0.0-alpha.119"
-    "@mui/system" "^5.11.11"
+    "@mui/base" "5.0.0-alpha.122"
+    "@mui/system" "^5.11.14"
     "@mui/types" "^7.2.3"
-    "@mui/utils" "^5.11.11"
+    "@mui/utils" "^5.11.13"
     clsx "^1.2.1"
     prop-types "^15.8.1"
     react-is "^18.2.0"
 
-"@mui/material@^5.11.10":
-  version "5.11.11"
-  resolved "https://registry.yarnpkg.com/@mui/material/-/material-5.11.11.tgz#9896e6f6e53057622345ebd078bc66a4100a364a"
-  integrity sha512-sSe0dmKjB1IGOYt32Pcha+cXV3IIrX5L5mFAF9LDRssp/x53bluhgLLbkc8eTiJvueVvo6HAyze6EkFEYLQRXQ==
+"@mui/material@^5.11.14":
+  version "5.11.14"
+  resolved "https://registry.yarnpkg.com/@mui/material/-/material-5.11.14.tgz#f7e3fb9262d09b801deafd41c22dc2767c198c9d"
+  integrity sha512-uoiUyybmo+M+nYARBygmbXgX6s/hH0NKD56LCAv9XvmdGVoXhEGjOvxI5/Bng6FS3NNybnA8V+rgZW1Z/9OJtA==
   dependencies:
     "@babel/runtime" "^7.21.0"
-    "@mui/base" "5.0.0-alpha.119"
-    "@mui/core-downloads-tracker" "^5.11.11"
-    "@mui/system" "^5.11.11"
+    "@mui/base" "5.0.0-alpha.122"
+    "@mui/core-downloads-tracker" "^5.11.14"
+    "@mui/system" "^5.11.14"
     "@mui/types" "^7.2.3"
-    "@mui/utils" "^5.11.11"
+    "@mui/utils" "^5.11.13"
     "@types/react-transition-group" "^4.4.5"
     clsx "^1.2.1"
     csstype "^3.1.1"
@@ -3535,13 +3535,13 @@
     "@mui/utils" "^5.10.14"
     prop-types "^15.8.1"
 
-"@mui/private-theming@^5.11.11":
-  version "5.11.11"
-  resolved "https://registry.yarnpkg.com/@mui/private-theming/-/private-theming-5.11.11.tgz#f766a794a2f16fb27b510b11062b6e3a6c1464d1"
-  integrity sha512-yLgTkjNC1mpye2SOUkc+zQQczUpg8NvQAETvxwXTMzNgJK1pv4htL7IvBM5vmCKG7IHAB3hX26W2u6i7bxwF3A==
+"@mui/private-theming@^5.11.13":
+  version "5.11.13"
+  resolved "https://registry.yarnpkg.com/@mui/private-theming/-/private-theming-5.11.13.tgz#7841acc7e0d85e3aad223b1a0fad11be9349ef01"
+  integrity sha512-PJnYNKzW5LIx3R+Zsp6WZVPs6w5sEKJ7mgLNnUXuYB1zo5aX71FVLtV7geyPXRcaN2tsoRNK7h444ED0t7cIjA==
   dependencies:
     "@babel/runtime" "^7.21.0"
-    "@mui/utils" "^5.11.11"
+    "@mui/utils" "^5.11.13"
     prop-types "^15.8.1"
 
 "@mui/styled-engine@^5.10.14":
@@ -3601,16 +3601,16 @@
     csstype "^3.1.1"
     prop-types "^15.8.1"
 
-"@mui/system@^5.11.11":
-  version "5.11.11"
-  resolved "https://registry.yarnpkg.com/@mui/system/-/system-5.11.11.tgz#6727b19245ad25e260cb8144104831315a8f7095"
-  integrity sha512-a9gaOAJBjpzypDfhbGZQ8HzdcxdxsKkFvbp1aAWZhFHBPdehEkARNh7mj851VfEhD/GdffYt85PFKFKdUta5Eg==
+"@mui/system@^5.11.14":
+  version "5.11.14"
+  resolved "https://registry.yarnpkg.com/@mui/system/-/system-5.11.14.tgz#7e7489e5266b56a6890043c623fa91a850a6669a"
+  integrity sha512-/MBv5dUoijJNEKEGi5tppIszGN0o2uejmeISi5vl0CLcaQsI1cd+uBgK+JYUP1VWvI/MtkWRLVSWtF2FWhu5Nw==
   dependencies:
     "@babel/runtime" "^7.21.0"
-    "@mui/private-theming" "^5.11.11"
+    "@mui/private-theming" "^5.11.13"
     "@mui/styled-engine" "^5.11.11"
     "@mui/types" "^7.2.3"
-    "@mui/utils" "^5.11.11"
+    "@mui/utils" "^5.11.13"
     clsx "^1.2.1"
     csstype "^3.1.1"
     prop-types "^15.8.1"
@@ -3636,10 +3636,10 @@
     prop-types "^15.8.1"
     react-is "^18.2.0"
 
-"@mui/utils@^5.10.3", "@mui/utils@^5.11.11":
-  version "5.11.11"
-  resolved "https://registry.yarnpkg.com/@mui/utils/-/utils-5.11.11.tgz#c5dddc80c02dc76bd95f492550a5a616548e5557"
-  integrity sha512-neMM5rrEXYQrOrlxUfns/TGgX4viS8K2zb9pbQh11/oUUYFlGI32Tn+PHePQx7n6Fy/0zq6WxdBFC9VpnJ5JrQ==
+"@mui/utils@^5.10.3", "@mui/utils@^5.11.13":
+  version "5.11.13"
+  resolved "https://registry.yarnpkg.com/@mui/utils/-/utils-5.11.13.tgz#8d7317f221e8973200764820fa7f2a622dbc7150"
+  integrity sha512-5ltA58MM9euOuUcnvwFJqpLdEugc9XFsRR8Gt4zZNb31XzMfSKJPR4eumulyhsOTK1rWf7K4D63NKFPfX0AxqA==
   dependencies:
     "@babel/runtime" "^7.21.0"
     "@types/prop-types" "^15.7.5"
@@ -3647,7 +3647,7 @@
     prop-types "^15.8.1"
     react-is "^18.2.0"
 
-"@mui/x-data-grid@^5.17.24":
+"@mui/x-data-grid@^5.17.26":
   version "5.17.26"
   resolved "https://registry.yarnpkg.com/@mui/x-data-grid/-/x-data-grid-5.17.26.tgz#1f7fa73dd3986cf052e2fd2cb56eb4678a7bd913"
   integrity sha512-eGJq9J0g9cDGLFfMmugOadZx0mJeOd/yQpHwEa5gUXyONS6qF0OhXSWyDOhDdA3l2TOoQzotMN5dY/T4Wl1KYA==
@@ -4893,10 +4893,24 @@
     bs58 "^5.0.0"
     js-base64 "^3.7.2"
 
+"@solana-mobile/mobile-wallet-adapter-protocol-web3js@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@solana-mobile/mobile-wallet-adapter-protocol-web3js/-/mobile-wallet-adapter-protocol-web3js-2.0.0.tgz#5433705c174f59a177280f85396df051711be09d"
+  integrity sha512-cMADp/UIAN42QJVCM1oyj1wFM/9DTZNIa5z5eHXUXBksw/bNv2fWkiO+4ZUoQj1P4UoMoZJUBx9+qMVl18sPOA==
+  dependencies:
+    "@solana-mobile/mobile-wallet-adapter-protocol" "^2.0.0"
+    bs58 "^5.0.0"
+    js-base64 "^3.7.2"
+
 "@solana-mobile/mobile-wallet-adapter-protocol@^0.9.9":
   version "0.9.9"
   resolved "https://registry.npmjs.org/@solana-mobile/mobile-wallet-adapter-protocol/-/mobile-wallet-adapter-protocol-0.9.9.tgz"
   integrity sha512-Jxd3O3txeUiAXLIo6YfWhTs7UTVMlnIgz/xgdYmf99TSE4IaUhWGEVC2/OcOA7eAA85y0/XItU5OhHhXSPva8g==
+
+"@solana-mobile/mobile-wallet-adapter-protocol@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@solana-mobile/mobile-wallet-adapter-protocol/-/mobile-wallet-adapter-protocol-2.0.0.tgz#75a3e8163544f659803260cb1dd7aede6da96b36"
+  integrity sha512-mLK9B/AQgOxzbdRoOMH3G5wB5akWgGSBoVqIZ/6iDWY37uu/CuyX4lTwRyoRlOb8Cxs/tDwiovIGobkti2qF/w==
 
 "@solana-mobile/wallet-adapter-mobile@^0.9.9":
   version "0.9.9"
@@ -4905,6 +4919,16 @@
   dependencies:
     "@react-native-async-storage/async-storage" "^1.17.7"
     "@solana-mobile/mobile-wallet-adapter-protocol-web3js" "^0.9.9"
+    "@solana/wallet-adapter-base" "^0.9.17"
+    js-base64 "^3.7.2"
+
+"@solana-mobile/wallet-adapter-mobile@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@solana-mobile/wallet-adapter-mobile/-/wallet-adapter-mobile-2.0.0.tgz#4429dec675e5a3339b7734521dd386d94bf3ad71"
+  integrity sha512-q/m0X+LUhoSYBUaQsw+9YhttbokA5+klrC2euLhbDu+Wy/n9hL4NXNvw7291bzVvNXVh9ovBi7DjoCdcfPXRWA==
+  dependencies:
+    "@react-native-async-storage/async-storage" "^1.17.7"
+    "@solana-mobile/mobile-wallet-adapter-protocol-web3js" "^2.0.0"
     "@solana/wallet-adapter-base" "^0.9.17"
     js-base64 "^3.7.2"
 
@@ -5225,13 +5249,13 @@
   dependencies:
     "@solana/wallet-adapter-base" "^0.9.22"
 
-"@solana/wallet-adapter-material-ui@^0.16.28":
-  version "0.16.28"
-  resolved "https://registry.yarnpkg.com/@solana/wallet-adapter-material-ui/-/wallet-adapter-material-ui-0.16.28.tgz#4b14e3f36fdf69ae937e769a2e30e9a9b5a9a2dd"
-  integrity sha512-0k87XrylZAHWuQxqi8Gy3B8j1hehqWNcNBz3YnYfGk1QPH2qcl8lHYm+cQF6ujhZKyWG2Zo81LtpXFc4svN/bg==
+"@solana/wallet-adapter-material-ui@^0.16.30":
+  version "0.16.30"
+  resolved "https://registry.yarnpkg.com/@solana/wallet-adapter-material-ui/-/wallet-adapter-material-ui-0.16.30.tgz#8a0eb811cc354aab28fd79e87052dba6bdf93884"
+  integrity sha512-G+40BNKyHmzxCRO0F4MNZXha5X2Fsz4dtz5xpVWYHMqi89olg4K0yAG8kJo1slHS2u8/z/f+/zKgAzpCqJvd/Q==
   dependencies:
     "@solana/wallet-adapter-base" "^0.9.22"
-    "@solana/wallet-adapter-react" "^0.15.30"
+    "@solana/wallet-adapter-react" "^0.15.32"
 
 "@solana/wallet-adapter-mathwallet@^0.9.17":
   version "0.9.17"
@@ -5247,17 +5271,17 @@
   dependencies:
     "@solana/wallet-adapter-base" "^0.9.22"
 
-"@solana/wallet-adapter-nightly@^0.1.14":
-  version "0.1.14"
-  resolved "https://registry.yarnpkg.com/@solana/wallet-adapter-nightly/-/wallet-adapter-nightly-0.1.14.tgz#c72211ddc3ce9c48362baefd59ba815ee4ddf431"
-  integrity sha512-EnrSkduVi1ds/0zc2xORIkcBZCQESz+cllrTeX5RmeZCFKdIjHpUZfbKrvhtz/OpOZbOvRi7ojBLeyx63V2T/A==
+"@solana/wallet-adapter-nightly@^0.1.15":
+  version "0.1.15"
+  resolved "https://registry.yarnpkg.com/@solana/wallet-adapter-nightly/-/wallet-adapter-nightly-0.1.15.tgz#8aa20eb207c36e37640e4210773e20d24d8b2e90"
+  integrity sha512-WbaZGETPZup2q/PXK6lXDlLPOiRbhrb7zqK1WJKpb5Lj/Ik2CoKb+nddAEBgc9EmHVzUMfvHjpop76qU78X0ug==
   dependencies:
     "@solana/wallet-adapter-base" "^0.9.22"
 
-"@solana/wallet-adapter-nufi@^0.1.15":
-  version "0.1.15"
-  resolved "https://registry.yarnpkg.com/@solana/wallet-adapter-nufi/-/wallet-adapter-nufi-0.1.15.tgz#37be8fe15e11454dfa700b27a6886f1da2bba3ff"
-  integrity sha512-KSZefEMiEZIGKDBzyK9CV/srCmPy4vZ9gdrmHTkZuzssZ9YfFwMR71zKpCyYvtJ9mfk+MxmSU6mizUkaB+AHCw==
+"@solana/wallet-adapter-nufi@^0.1.16":
+  version "0.1.16"
+  resolved "https://registry.yarnpkg.com/@solana/wallet-adapter-nufi/-/wallet-adapter-nufi-0.1.16.tgz#0db352238edffd6cc845e8b11f18d5bb32980107"
+  integrity sha512-6dykeYFPrIE/O7snc8pbERDzyoN7wDIuN70s/LfftZxab6oIo1UdR0pUi1BmB8c4E1Is/w+aIl9Bvv/2O8094w==
   dependencies:
     "@solana/wallet-adapter-base" "^0.9.22"
 
@@ -5283,12 +5307,20 @@
   dependencies:
     "@solana/wallet-adapter-base" "^0.9.22"
 
-"@solana/wallet-adapter-react@^0.15.30":
-  version "0.15.30"
-  resolved "https://registry.yarnpkg.com/@solana/wallet-adapter-react/-/wallet-adapter-react-0.15.30.tgz#88ce539601ea296f7bb9a854c7bf044745eb0e1b"
-  integrity sha512-62fg46AIia0udRlQLjMxHPa/cQUE2Neur/s74r96gakyPPEEFbbAcVPHMkEX7r0DPjl5lWj834beIbUXBwHjlw==
+"@solana/wallet-adapter-react-ui@^0.9.31":
+  version "0.9.31"
+  resolved "https://registry.yarnpkg.com/@solana/wallet-adapter-react-ui/-/wallet-adapter-react-ui-0.9.31.tgz#72ac4dd26e36b8647048d4bd58c52354ffb76dd6"
+  integrity sha512-shk42x9tvtkZAX0TSatrJMxM7Lb2xbzKmgVE2X9NsDODiO7MORyUGTaspK695u4f1CrhUhZnbUlLhTw3vDHRUw==
   dependencies:
-    "@solana-mobile/wallet-adapter-mobile" "^0.9.9"
+    "@solana/wallet-adapter-base" "^0.9.22"
+    "@solana/wallet-adapter-react" "^0.15.32"
+
+"@solana/wallet-adapter-react@^0.15.32":
+  version "0.15.32"
+  resolved "https://registry.yarnpkg.com/@solana/wallet-adapter-react/-/wallet-adapter-react-0.15.32.tgz#3e8a949dbf183460d54fee707374f22799199c01"
+  integrity sha512-dnbMVQeO2WBvK13M4kiUo1TBONJpfpO1r9JA5FuXG/Zwdt4RbGT+h6HSOaplHPO6pzDVk2nT/bU8wjqI9GxTYQ==
+  dependencies:
+    "@solana-mobile/wallet-adapter-mobile" "^2.0.0"
     "@solana/wallet-adapter-base" "^0.9.22"
     "@solana/wallet-standard-wallet-adapter-react" "^1.0.1"
 
@@ -5424,10 +5456,10 @@
     "@jnwng/walletconnect-solana" "^0.1.5"
     "@solana/wallet-adapter-base" "^0.9.22"
 
-"@solana/wallet-adapter-wallets@^0.19.15":
-  version "0.19.15"
-  resolved "https://registry.yarnpkg.com/@solana/wallet-adapter-wallets/-/wallet-adapter-wallets-0.19.15.tgz#3d148a37a30a320aa172b1bfabfc2526fad107bf"
-  integrity sha512-HakQwKor5f5dbKlRPCBMu3E0gALX2mt0fp44qIKrmLDH7J/UpTIuIDu0z5eidaABJCSVMBNuEC+0uS1UYUXS8w==
+"@solana/wallet-adapter-wallets@^0.19.16":
+  version "0.19.16"
+  resolved "https://registry.yarnpkg.com/@solana/wallet-adapter-wallets/-/wallet-adapter-wallets-0.19.16.tgz#07bf9db5378c3f338b22aa6aae1774c5fd38d67e"
+  integrity sha512-Q+6Tv+oIkD+fhsUuPp+jLb+dyoB3hrX7XT+Xr5vMZvxQuB5bcUn7m0ZWGoAh0dw1FsfsOXMTGu1aNwS3XSqxtw==
   dependencies:
     "@solana/wallet-adapter-alpha" "^0.1.9"
     "@solana/wallet-adapter-avana" "^0.1.12"
@@ -5452,8 +5484,8 @@
     "@solana/wallet-adapter-magiceden" "^0.1.12"
     "@solana/wallet-adapter-mathwallet" "^0.9.17"
     "@solana/wallet-adapter-neko" "^0.2.11"
-    "@solana/wallet-adapter-nightly" "^0.1.14"
-    "@solana/wallet-adapter-nufi" "^0.1.15"
+    "@solana/wallet-adapter-nightly" "^0.1.15"
+    "@solana/wallet-adapter-nufi" "^0.1.16"
     "@solana/wallet-adapter-onto" "^0.1.6"
     "@solana/wallet-adapter-particle" "^0.1.9"
     "@solana/wallet-adapter-phantom" "^0.9.22"
@@ -5644,10 +5676,10 @@
     rpc-websockets "^7.5.0"
     superstruct "^0.14.2"
 
-"@solana/web3.js@^1.73.3":
-  version "1.73.3"
-  resolved "https://registry.yarnpkg.com/@solana/web3.js/-/web3.js-1.73.3.tgz#60e6bd68f6f364d4be360b1e0a03a0a68468a029"
-  integrity sha512-vHRMo589XEIpoujpE2sZZ1aMZvfA1ImKfNxobzEFyMb+H5j6mRRUXfdgWD0qJ0sm11e5BcBC7HPeRXJB+7f3Lg==
+"@solana/web3.js@^1.74.0":
+  version "1.74.0"
+  resolved "https://registry.yarnpkg.com/@solana/web3.js/-/web3.js-1.74.0.tgz#dbcbeabb830dd7cbbcf5e31404ca79c9785cbf2d"
+  integrity sha512-RKZyPqizPCxmpMGfpu4fuplNZEWCrhRBjjVstv5QnAJvgln1jgOfgui+rjl1ExnqDnWKg9uaZ5jtGROH/cwabg==
   dependencies:
     "@babel/runtime" "^7.12.5"
     "@noble/ed25519" "^1.7.0"
@@ -5839,7 +5871,7 @@
 
 "@strata-foundation/accelerator@^3.11.1":
   version "3.11.1"
-  resolved "https://registry.npmjs.org/@strata-foundation/accelerator/-/accelerator-3.11.1.tgz"
+  resolved "https://registry.yarnpkg.com/@strata-foundation/accelerator/-/accelerator-3.11.1.tgz#83183c92dcd8de168f4a668651fec00121253dab"
   integrity sha512-cK5zs5UcjaYtZzQv8sWymV0dFR+cwraLhcXkfQvpLBncjP745VwGRIXcO6mGr+/PM+gArh9K6SjalsGIuG3KvQ==
   dependencies:
     "@solana/web3.js" "^1.43.4"
@@ -5849,7 +5881,7 @@
 
 "@strata-foundation/fungible-entangler@^3.11.2":
   version "3.11.2"
-  resolved "https://registry.npmjs.org/@strata-foundation/fungible-entangler/-/fungible-entangler-3.11.2.tgz"
+  resolved "https://registry.yarnpkg.com/@strata-foundation/fungible-entangler/-/fungible-entangler-3.11.2.tgz#7571befb64cb4ad0f7d7b730a1e9b37ed24eac2c"
   integrity sha512-5ptQGChJT40frMfiXXZtjEJ4zxEpXF/zffL5rGnqsA58G+JbU8RsxCYotqx9HkVE4moczqzZrq5Qb2Lht2Wl3Q==
   dependencies:
     "@project-serum/anchor" "^0.24.2"
@@ -5861,7 +5893,7 @@
 
 "@strata-foundation/react@^3.11.2":
   version "3.11.2"
-  resolved "https://registry.npmjs.org/@strata-foundation/react/-/react-3.11.2.tgz"
+  resolved "https://registry.yarnpkg.com/@strata-foundation/react/-/react-3.11.2.tgz#a700fb4d3c76c310cce3649dc29ae14124c80f4a"
   integrity sha512-RmfDNEGEHBejhbJaP1TFPHIS0vIaSkILvbmhWti9SfUniPFUPClKyDyTqTerVgCAapv/zPwkCnbRqen7xh0sQQ==
   dependencies:
     "@apollo/client" "^3.6.9"
@@ -5897,7 +5929,7 @@
 
 "@strata-foundation/spl-token-bonding@^3.11.2":
   version "3.11.2"
-  resolved "https://registry.npmjs.org/@strata-foundation/spl-token-bonding/-/spl-token-bonding-3.11.2.tgz"
+  resolved "https://registry.yarnpkg.com/@strata-foundation/spl-token-bonding/-/spl-token-bonding-3.11.2.tgz#21090d25af8247265c22176ee371bcc2a03672bd"
   integrity sha512-ko+9ZDFlq+SXrRfmxTkpIVT/ix7Ih79T+wSR9vv8n+FixEjKU30eZUBFXxQzxmWxLHfV/N7TlEzevxcKgEfuzA==
   dependencies:
     "@metaplex-foundation/mpl-token-metadata" "^1.2.5"
@@ -5911,7 +5943,7 @@
 
 "@strata-foundation/spl-token-collective@^3.11.2":
   version "3.11.2"
-  resolved "https://registry.npmjs.org/@strata-foundation/spl-token-collective/-/spl-token-collective-3.11.2.tgz"
+  resolved "https://registry.yarnpkg.com/@strata-foundation/spl-token-collective/-/spl-token-collective-3.11.2.tgz#df2ce4fec7ecef9b643ec8637073a4057a3f6ab1"
   integrity sha512-pWW/Y528xEJiNOp/Yc31DPe5U4sB7e6dBDuB4itUi5s3AXwI7ZSC/mo/BZImuGFtKld82sH0ZfsIdc6yA+hV0g==
   dependencies:
     "@metaplex-foundation/mpl-token-metadata" "^1.2.5"
@@ -6852,7 +6884,7 @@
 
 "@types/uuid@^8.3.4":
   version "8.3.4"
-  resolved "https://registry.npmjs.org/@types/uuid/-/uuid-8.3.4.tgz"
+  resolved "https://registry.yarnpkg.com/@types/uuid/-/uuid-8.3.4.tgz#bd86a43617df0594787d38b735f55c805becf1bc"
   integrity sha512-c/I8ZRb51j+pYGAu5CrFMRxqZ2ke4y2grEBO5AUjgSkSk+qT2Ea+OdWElz/OiMf5MNpn2b17kuVBwZLQJXzihw==
 
 "@types/ws@^7.4.4":
@@ -7012,10 +7044,10 @@
   resolved "https://registry.npmjs.org/@ungap/promise-all-settled/-/promise-all-settled-1.1.2.tgz"
   integrity sha512-sL/cEvJWAnClXw0wHk85/2L0G6Sj8UB0Ctc1TEMbKSsmpRosqhwj9gWgFRZSrBr2f9tiXISwNhCPmlfqUqyb9Q==
 
-"@vercel/analytics@^0.1.8":
-  version "0.1.8"
-  resolved "https://registry.yarnpkg.com/@vercel/analytics/-/analytics-0.1.8.tgz#71f1f8c7bb98ac0c5c47eb3fb8ccbe8141b9fe47"
-  integrity sha512-PQrOI8BJ9qUiVJuQfnKiJd15eDjDJH9TBKsNeMrtelT4NAk7d9mBVz1CoZkvoFnHQ0OW7Xnqmr1F2nScfAnznQ==
+"@vercel/analytics@^0.1.11":
+  version "0.1.11"
+  resolved "https://registry.yarnpkg.com/@vercel/analytics/-/analytics-0.1.11.tgz#727a0ac655a4a89104cdea3e6925476470299428"
+  integrity sha512-mj5CPR02y0BRs1tN3oZcBNAX9a8NxsIUl9vElDPcqxnMfP0RbRc9fI9Ud7+QDg/1Izvt5uMumsr+6YsmVHcyuw==
 
 "@wallet-standard/app@^1.0.0":
   version "1.0.0"
@@ -7959,7 +7991,7 @@ async-limiter@~1.0.0:
 
 async-lock@^1.3.2:
   version "1.4.0"
-  resolved "https://registry.npmjs.org/async-lock/-/async-lock-1.4.0.tgz"
+  resolved "https://registry.yarnpkg.com/async-lock/-/async-lock-1.4.0.tgz#c8b6630eff68fbbdd8a5b6eb763dac3bfbb8bf02"
   integrity sha512-coglx5yIWuetakm3/1dsX9hxCNox22h7+V80RQOu2XUUMidtArxKoZoOtHUPuR84SycKTXzgGzAUR5hJxujyJQ==
 
 async-mutex@^0.3.2:
@@ -17688,7 +17720,7 @@ react-error-overlay@^6.0.11:
 
 react-fast-compare@^3.1.1, react-fast-compare@^3.2.0:
   version "3.2.0"
-  resolved "https://registry.npmjs.org/react-fast-compare/-/react-fast-compare-3.2.0.tgz"
+  resolved "https://registry.yarnpkg.com/react-fast-compare/-/react-fast-compare-3.2.0.tgz#641a9da81b6a6320f270e89724fb45a0b39e43bb"
   integrity sha512-rtGImPZ0YyLrscKI9xTpV8psd6I8VAtjKCzQDlzyDvqJA8XOW78TXYQwNRNd8g8JZnDu8q9Fu/1v4HPAVwVdHA==
 
 react-gist@^1.2.4:

@@ -13,7 +13,7 @@ SYSVAR_INSTRUCTIONS_PUBKEY,
 SYSVAR_RENT_PUBKEY,
 Connection} from '@solana/web3.js'
 import { web3 } from '@project-serum/anchor';
-import { GRAPE_RPC_ENDPOINT } from '../grapeTools/constants';
+import { RPC_CONNECTION, GRAPE_RPC_ENDPOINT } from '../grapeTools/constants';
 import { InstructionsAndSignersSet } from "./helpers/types";
 import { concat } from 'ramda';
 
@@ -92,7 +92,7 @@ export async function gah_sellListing(offerAmount: number, mint: string, buyerPu
       tokenSize
     )
 
-  const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
+  const ggoconnection = RPC_CONNECTION;
   //const tokenMetadata = await getMetadata(tokenMint);
   //const [tokenMetadata] = await Metadata.fromAccountAddress(ggoconnection, tokenMint); //await getMetadata(tokenMint)
   const metadata = await getMetadata(tokenMint);

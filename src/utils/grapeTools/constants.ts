@@ -1,6 +1,26 @@
+import { Connection } from '@solana/web3.js';
 export const GRAPE_ART_TYPE = null; // set to a specific collection here otherwise it is universal for all marketplaces
 export const TX_RPC_ENDPOINT = process.env.REACT_APP_API_TX_RPC_ENDPOINT || 'https://api.mainnet-beta.solana.com';
 export const GRAPE_RPC_ENDPOINT = process.env.REACT_APP_API_GRAPE_RPC_ENDPOINT || 'https://api.mainnet-beta.solana.com';
+export const QUICKNODE_RPC_ENDPOINT = process.env.REACT_APP_API_GRAPE_RPC_ENDPOINT || 'https://api.mainnet-beta.solana.com';
+export const HELIUS_RPC_ENDPOINT = 'https://rpc.helius.xyz/?api-key='+process.env.REACT_APP_API_HELIUS;
+export const RPC_ENDPOINT = process.env.REACT_APP_API_QUICKNODE_RPC_ENDPOINT || 'https://api.mainnet-beta.solana.com';
+
+/*
+export const RPC_CONNECTION = new Connection(
+    "https://rest-api.hellomoon.io/v0/rpc",
+    {
+      httpHeaders: {
+        Authorization: `Bearer ${process.env.REACT_APP_API_HELLOMOON_API_KEY}`, 
+      },
+    }
+  );
+*/
+export const RPC_CONNECTION = new Connection(
+    RPC_ENDPOINT
+);
+
+
 export const GENSYSGO_RPC_ENDPOINT = process.env.REACT_APP_API_GENSYSGO_RPC_ENDPOINT || 'https://api.mainnet-beta.solana.com';
 export const THEINDEX_RPC_ENDPOINT = process.env.REACT_APP_API_THEINDEX_RPC_ENDPOINT || 'https://api.mainnet-beta.solana.com';
 export const HELIUS_API = process.env.REACT_APP_API_HELIUS || null;

@@ -95,7 +95,9 @@ import SolIcon from '../components/static/SolIcon';
 import SolCurrencyIcon from '../components/static/SolCurrencyIcon';
 
 import { ValidateAddress, ValidateCurve, trimAddress, timeAgo, formatBlockTime } from '../utils/grapeTools/WalletAddress'; // global key handling
-import { GRAPE_RPC_ENDPOINT, 
+import { 
+    RPC_CONNECTION,
+    GRAPE_RPC_ENDPOINT, 
     GRAPE_PROFILE, 
     GRAPE_PREVIEW, 
     DRIVE_PROXY,
@@ -179,8 +181,8 @@ export function IdentityView(props: any){
     
     const { publicKey } = useWallet();
     const [pubkey, setPubkey] = React.useState(props.pubkey || null);
-    const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
-    const ticonnection = new Connection(GRAPE_RPC_ENDPOINT);
+    const ggoconnection = RPC_CONNECTION;
+    const ticonnection = RPC_CONNECTION;
     const {handlekey} = useParams<{ handlekey: string }>();
     const [searchParams, setSearchParams] = useSearchParams();
     const urlParams = searchParams.get("pkey") || searchParams.get("address") || handlekey;

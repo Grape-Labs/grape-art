@@ -38,7 +38,7 @@ import {
 } from '../utils/auctionHouse/helpers/constants';
 
 import { decodeMetadata } from '../utils/grapeTools/utils';
-import { GRAPE_RPC_ENDPOINT, GRAPE_PREVIEW, DRIVE_PROXY } from '../utils/grapeTools/constants';
+import { RPC_CONNECTION, GRAPE_RPC_ENDPOINT, GRAPE_PREVIEW, DRIVE_PROXY } from '../utils/grapeTools/constants';
 
 import { useTranslation } from 'react-i18next';
 import SolCurrencyIcon from '../components/static/SolCurrencyIcon';
@@ -74,7 +74,7 @@ export default function ListForCollectionView(props: any){
     const [loading, setLoading] = React.useState(false);
     const [selectedMint, setSelectedMint] = React.useState(null);
     const [openPreviewDialog, setOpenPreviewDialog] = React.useState(false);
-    const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
+    const ggoconnection = RPC_CONNECTION;
     const rpclimit = 100;
 
     const handleClickOpenPreviewDialog = (mint:string) => {

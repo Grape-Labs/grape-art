@@ -52,10 +52,9 @@ import { AuctionHouseProgram  } from '@metaplex-foundation/mpl-auction-house';
 import { dataBeet, Metadata } from '@metaplex-foundation/mpl-token-metadata';
 
 import { 
-    GRAPE_RPC_ENDPOINT,
+    RPC_CONNECTION,
     GRAPE_PROFILE,
     GRAPE_PREVIEW,
-    THEINDEX_RPC_ENDPOINT,
 } from '../utils/grapeTools/constants';
 
 import { MakeLinkableAddress, ValidateCurve, trimAddress, timeAgo, formatBlockTime } from '../utils/grapeTools/WalletAddress'; // global key handling
@@ -89,7 +88,7 @@ function convertSolVal(sol: any){
 //const getPage = async (page, perpage) => {
 export async function getPage(myArray: any, page: number, perPage: number): Promise<any []> {
     //console.log('myArray:', myArray, 'page:', page, 'perPage:', perPage);
-    const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
+    const ggoconnection = RPC_CONNECTION;
     //const paginatedPublicKeys = myArray[0].slice(
     const paginatedPublicKeys = myArray.slice(
         (page - 1) * perPage,
@@ -139,7 +138,7 @@ export async function getMintFromMetadata (
     metaData: web3.PublicKey,
   ): Promise<string> {
     let value = 'N/A';
-    const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
+    const ggoconnection = RPC_CONNECTION;
     const metaSignature = await ggoconnection.getConfirmedSignaturesForAddress2(metaData, {limit:2});
     const mintPk = (await ggoconnection.getParsedTransaction(metaSignature[0].signature, 'confirmed'));
     //console.log('metaData:', metaData, 'JSON FILE:' +JSON.stringify(mintPk));
@@ -159,9 +158,7 @@ export default function GlobalView(props: any){
     const [openMEHistory, setMEOpenHistory] = React.useState(0);
     const [mint, setMint] = React.useState(props.mint || null);
     const [symbol, setSymbol] = React.useState(props.symbol || null);
-    const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
-    const ticonnection = new Connection(THEINDEX_RPC_ENDPOINT);   
-    const { connection } = useConnection();
+    const ggoconnection = RPC_CONNECTION;
 
     const [receiptListing, setReceiptListing] = React.useState(null);
     const [receiptPurchase, setReceiptPurchase] = React.useState(null);

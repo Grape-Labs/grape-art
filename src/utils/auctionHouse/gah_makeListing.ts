@@ -12,7 +12,7 @@ import {
   TransactionInstruction,
   SYSVAR_INSTRUCTIONS_PUBKEY } from '@solana/web3.js'
 import { web3 } from '@project-serum/anchor';
-import { GRAPE_RPC_ENDPOINT } from '../../utils/grapeTools/constants';
+import { RPC_CONNECTION, GRAPE_RPC_ENDPOINT } from '../../utils/grapeTools/constants';
 import { InstructionsAndSignersSet } from "./helpers/types";
 
 import { AuctionHouseProgram } from '@metaplex-foundation/mpl-auction-house'
@@ -139,7 +139,7 @@ import { ConstructionOutlined } from '@mui/icons-material';
     txt.feePayer = sellerWalletKey;
 
     /*
-    const icwt = await isCardinalWrappedToken(new Connection(GRAPE_RPC_ENDPOINT), mint);
+    const icwt = await isCardinalWrappedToken(RPC_CONNECTION, mint);
     //console.log("mint: "+ tokenMintAddress);
     console.log("cardinal wrapped: "+JSON.stringify(icwt));
 

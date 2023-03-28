@@ -66,7 +66,7 @@ import {
     getMintFromVerifiedMetadata,
     getShdwState } from '../utils/grapeTools/helpers';
 import { 
-    GRAPE_RPC_ENDPOINT, 
+    RPC_CONNECTION, 
     GRAPE_PREVIEW, 
     GRAPE_PROFILE,
     DRIVE_PROXY, 
@@ -126,7 +126,7 @@ export default function ActivityView(props: any){
     const [activityLoaded, setActivityLoaded] = React.useState(false);
     const [recentActivity, setRecentActivity] = React.useState(null);
     const [selectedMint, setSelectedMint] = React.useState(null);
-    const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
+    const ggoconnection = RPC_CONNECTION;
     const rpclimit = 100;
 
     const [activityRows, setActivityRows] = React.useState(null);

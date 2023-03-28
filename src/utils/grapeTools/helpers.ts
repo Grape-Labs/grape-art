@@ -3,6 +3,7 @@ import { BN, web3 } from '@project-serum/anchor';
 import { Connection, PublicKey, Transaction, LAMPORTS_PER_SOL } from '@solana/web3.js'
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { 
+  RPC_CONNECTION,
   GRAPE_RPC_ENDPOINT,
   THEINDEX_RPC_ENDPOINT,
   PROXY,
@@ -118,7 +119,7 @@ export function getRemainingDays(targetDate?: string): number {
 
 //Get Prices RPC
 export async function getCoinGeckoPrice(token:string) {
-  const response = await fetch(PROXY+"https://api.coingecko.com/api/v3/simple/price?include_24hr_change=true&ids="+token+"&vs_currencies=usd",{
+  const response = await fetch("https://api.coingecko.com/api/v3/simple/price?include_24hr_change=true&ids="+token+"&vs_currencies=usd",{
     method: "GET",
     //body: JSON.stringify(body),
     headers: { "Content-Type": "application/json",
@@ -133,7 +134,7 @@ export async function getCoinGeckoPrice(token:string) {
     return json;
   }catch(e){return null;}
 }
-
+ 
 export async function getTokenTicker(tokenIn:string,tokenOut:string) {
   const body = {
     id: tokenIn,
@@ -211,7 +212,7 @@ export async function getShdwState(collection_filter: any){
 export async function getMintFromMetadata(updateAuthority:string, metaData:web3.PublicKey): Promise<string>{
   let value = ' ';
   let mintPk: any;
-    const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
+    const ggoconnection = RPC_CONNECTION;
     try{
         const metaSignature = await ggoconnection.getConfirmedSignaturesForAddress2(metaData, {limit:1});
         /*for (var i = 0; i < metaSignature.length; i++) {

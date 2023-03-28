@@ -32,7 +32,9 @@ import { formatAmount, getFormattedNumberToLocale } from '../utils/grapeTools/he
 
 import ExplorerView from '../utils/grapeTools/Explorer';
 
-import { GRAPE_RPC_ENDPOINT } from '../utils/grapeTools/constants';
+import { 
+    RPC_CONNECTION, 
+    GRAPE_RPC_ENDPOINT } from '../utils/grapeTools/constants';
 import { MakeLinkableAddress, ValidateAddress, ValidateCurve, trimAddress, timeAgo } from '../utils/grapeTools/WalletAddress'; // global key handling
 //import { RevokeCollectionAuthority } from '@metaplex-foundation/mpl-token-metadata';
 
@@ -46,7 +48,7 @@ export function TokenView(props: any) {
     const collectionAuthority = props.collectionAuthority;
     const [loading, setLoading] = React.useState(false);
     const [token, setToken] = React.useState(null);
-    const connection = new Connection(GRAPE_RPC_ENDPOINT);
+    const connection = RPC_CONNECTION;
     const { publicKey } = useWallet();
     const [realm, setRealm] = React.useState(null);
     const [tokenMap, setTokenMap] = React.useState<Map<string,TokenInfo>>(undefined);

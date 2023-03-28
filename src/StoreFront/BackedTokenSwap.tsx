@@ -3,6 +3,14 @@ import * as anchor from "@project-serum/anchor";
 import { Provider, AnchorProvider } from "@project-serum/anchor";
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { BN } from "bn.js";
+
+import {
+    Swap,
+    useTokenBonding,
+    useTokenBondingKey,
+    useTokenMetadata,
+  } from "@strata-foundation/react";
+import { useWalletModal } from "@solana/wallet-adapter-react-ui";
 import { SplTokenBonding } from "@strata-foundation/spl-token-bonding";
 import { SplTokenCollective } from "@strata-foundation/spl-token-collective";
 import { getAssociatedAccountBalance, SplTokenMetadata } from "@strata-foundation/spl-utils";
@@ -18,14 +26,15 @@ import {
 
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 
-import { GRAPE_RPC_ENDPOINT } from '../utils/grapeTools/constants';
+import { RPC_CONNECTION } from '../utils/grapeTools/constants';
 
 export default function BackedTokenSwap(props: any) {
+    const { setVisible } = useWalletModal();
     const refreshCallback = props.refreshCallback;
     const swapAmount = props.swapAmount || 1;
     const swapFrom = props.swapFrom || '8upjSpvjcdpuzhfR1zriwg5NXkwDruejqNE9WNbPRtyA';
     const swapTo = props.swapTo || '4BF5sVW5wRR56cy9XR8NFDQGDy5oaNEFrCHMuwA9sBPd'; 
-    const connection = new Connection(GRAPE_RPC_ENDPOINT);
+    const connection = RPC_CONNECTION;
     //const provider = anchor.getProvider();
     const { publicKey } = useWallet();
     const wallet = useWallet();
@@ -130,7 +139,7 @@ export default function BackedTokenSwap(props: any) {
                         swapUsingStrata();
                     }}
                     sx={{borderTopLeftRadius:'17px',borderBottomLeftRadius:'17px'}}
-                >
+                >t
                     Get {swapAmount} GAN with Grape
                 </Button>
                 <Button 
@@ -141,6 +150,34 @@ export default function BackedTokenSwap(props: any) {
                 >
                     <OpenInNewIcon fontSize='small' />
                 </Button>
+
+                <>{/*
+                    {trigger({ mint, connected, onClick, btnProps })}
+                    <Modal isOpen={isOpen} onClose={onClose} size="2xl" isCentered trapFocus>
+                        <ModalOverlay />
+                        <ModalContent borderRadius="xl" shadow="xl">
+                        <ModalHeader>Buy More {metadata?.data.symbol}</ModalHeader>
+                        <ModalBody minH="500px">
+                            {!account && !loadingBonding && (
+                            <Alert status="info">
+                                Buy is not yet supported for this token
+                            </Alert>
+                            )}
+                            {account && !loadingBonding && tokenBondingKey && (
+                            <Swap
+                                id={new PublicKey(swapTo)!}
+                                onConnectWallet={() => {
+                                onClose();
+                                setVisible(true);
+                                }}
+                            />
+                            )}
+                            {loading && <Spinner />}
+                        </ModalBody>
+                        </ModalContent>
+                    </Modal>
+                */}
+                </>
             </ButtonGroup>
         </>
     );

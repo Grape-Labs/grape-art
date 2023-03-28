@@ -39,10 +39,9 @@ import CircularProgress from '@mui/material/CircularProgress';
 import WarningIcon from '@mui/icons-material/Warning';
 
 import { 
-    GRAPE_RPC_ENDPOINT, 
+    RPC_CONNECTION, 
     GRAPE_PREVIEW,
     REPORT_ALERT_THRESHOLD,
-    THEINDEX_RPC_ENDPOINT, 
 } from '../utils/grapeTools/constants';
 import { trimAddress, timeAgo } from '../utils/grapeTools/WalletAddress'; // global key handling
 
@@ -199,8 +198,8 @@ export default function FeedView(props: any){
     const [featured, setFeatured] = React.useState(null);
     const [featuredmeta, setFeaturedMeta] = React.useState(null);
     const [mergedfeaturedmeta, setMergedFeaturedMeta] = React.useState(null);
-    const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
-    const ticonnection = new Connection(THEINDEX_RPC_ENDPOINT);
+    const ggoconnection = RPC_CONNECTION;
+    const ticonnection = RPC_CONNECTION;
     //const { connection } = useConnection();
 
     const [saleTimeAgo, setSaleTimeAgo] = React.useState(null);

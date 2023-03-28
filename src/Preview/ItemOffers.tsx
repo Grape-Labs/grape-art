@@ -76,6 +76,7 @@ import {
     TOKEN_REALM_ID,
     TOKEN_VERIFICATION_NAME,
     TOKEN_VERIFICATION_AMOUNT,
+    RPC_CONNECTION,
     GRAPE_RPC_ENDPOINT, 
     GRAPE_RPC_REFRESH, 
     GRAPE_PREVIEW, 
@@ -277,7 +278,8 @@ function SellNowVotePrompt(props:any){
     const mintName = props.mintName;
     const updateAuthority = props.updateAuthority;  
     const mintOwner = props.mintOwner;
-    const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
+    const ggoconnection = RPC_CONNECTION;
+
     const { connection } = useConnection();
     const { publicKey, sendTransaction, signTransaction } = useWallet();
     const wallet = useWallet();
@@ -811,7 +813,7 @@ function SellNowPrompt(props:any){
     const updateAuthority = props.updateAuthority;
     const verifiedCollection = props.verifiedCollection;
     const mintOwner = props.mintOwner;
-    const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
+    const ggoconnection = RPC_CONNECTION;
     const { connection } = useConnection();
     const { publicKey, wallet, sendTransaction } = useWallet();
     const salePrice = props.salePrice || null;
@@ -1110,7 +1112,7 @@ export function OfferPrompt(props: any) {
     const verifiedCollection = props.verifiedCollection;
     const symbol = verifiedCollection?.auctionHouseTokenSymbol || 'SOL';
     const tokenDecimals = verifiedCollection?.auctionHouseTokenDecimals || null; 
-    const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
+    const ggoconnection = RPC_CONNECTION;
     const { connection } = useConnection();
     const { publicKey, wallet, sendTransaction } = useWallet();
 
@@ -1438,7 +1440,7 @@ export default function ItemOffers(props: any) {
     const verifiedCollection = props.verifiedCollection;
     const symbol = verifiedCollection?.auctionHouseTokenSymbol || 'SOL';
     const tokenDecimals = verifiedCollection?.auctionHouseTokenDecimals || null; 
-    const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
+    const ggoconnection = RPC_CONNECTION;
     const { connection } = useConnection();
     const { publicKey, sendTransaction } = useWallet();
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();

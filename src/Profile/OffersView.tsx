@@ -71,6 +71,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import CancelIcon from '@mui/icons-material/Cancel';
 
 import { 
+    RPC_CONNECTION,
     GRAPE_RPC_ENDPOINT, 
     GRAPE_RPC_REFRESH, 
     GRAPE_PREVIEW, 
@@ -135,8 +136,8 @@ export default function OffersView(props:any){
     const [ahloading, setAHLoading] = React.useState(false);
     const [ thisPublicKey, setThisPublicKey] = React.useState(props.pubkey || null);
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
-    const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
-    const connection = new Connection(GRAPE_RPC_ENDPOINT);
+    const ggoconnection = RPC_CONNECTION;
+    const connection = RPC_CONNECTION;
     const { publicKey, sendTransaction } = useWallet();
     const [walletCollection, setWalletCollection] = React.useState(props.wallet_collection);
     const [walletCollectionMeta, setWalletCollectionMeta] = React.useState(props.wallet_collection_meta);

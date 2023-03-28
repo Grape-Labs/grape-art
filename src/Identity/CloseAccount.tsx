@@ -5,7 +5,7 @@ import { Signer, Connection, PublicKey, SystemProgram, Transaction, TransactionI
 import { TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID, createCloseAccountInstruction, createBurnInstruction } from "@solana/spl-token-v2";
 //import { TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID, Token } from "@solana/spl-token";
 
-import { GRAPE_RPC_ENDPOINT, TX_RPC_ENDPOINT, GRAPE_TREASURY } from '../utils/grapeTools/constants';
+import { RPC_CONNECTION, GRAPE_TREASURY } from '../utils/grapeTools/constants';
 //import { RegexTextField } from '../utils/grapeTools/RegexTextField';
 
 import { styled } from '@mui/material/styles';
@@ -93,8 +93,8 @@ export default function CloseAccount(props: any) {
     const [memoref, setMemoRef] = React.useState('');
     const [memonotes, setMemoNotes] = React.useState(''); 
     const [memoText, setMemoText] = React.useState(null); 
-    const freeconnection = new Connection(TX_RPC_ENDPOINT);
-    const connection = new Connection(GRAPE_RPC_ENDPOINT);//useConnection();
+    const freeconnection = RPC_CONNECTION;
+    const connection = RPC_CONNECTION;//useConnection();
     const { publicKey, wallet, sendTransaction, signTransaction } = useWallet();
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
     const onError = useCallback(

@@ -1,4 +1,4 @@
-import { GRAPE_RPC_ENDPOINT } from './constants';
+import { RPC_CONNECTION } from './constants';
 import { PublicKey, Connection } from '@solana/web3.js';
 import { useWallet } from '@solana/wallet-adapter-react';
 
@@ -10,7 +10,7 @@ import { Provider, AnchorProvider } from "@project-serum/anchor";
 
 export async function getBackedTokenMetadata(tokenMint:string, wallet: any) {
     //console.log("checking: "+tokenMint);
-    const connection = new Connection(GRAPE_RPC_ENDPOINT);
+    const connection = RPC_CONNECTION;
     const provider = new AnchorProvider(connection, wallet, {});
 
     const tokenMetadataSdk = await SplTokenMetadata.init(provider);

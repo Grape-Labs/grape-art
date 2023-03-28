@@ -56,9 +56,7 @@ import { GRAPE_BOTTOM_CHAT_ID } from '../utils/ui-contants';
 
 import PropTypes from 'prop-types';
 import { 
-    GRAPE_RPC_ENDPOINT, 
-    THEINDEX_RPC_ENDPOINT,
-    TWITTER_PROXY } from '../utils/grapeTools/constants';
+    RPC_CONNECTION } from '../utils/grapeTools/constants';
 
 import { MakeLinkableAddress, ValidateAddress, ValidateCurve, trimAddress, timeAgo } from '../utils/grapeTools/WalletAddress'; // global key handling
 import { A } from '../utils/auctionHouse/helpers/constants';
@@ -159,7 +157,7 @@ function RenderGovernanceMembersTable(props:any) {
     const members = props.members;
     const circulatingSupply = props.circulatingSupply;
     const totalDepositedVotes = props.totalDepositedVotes;
-    const connection = new Connection(GRAPE_RPC_ENDPOINT);//useConnection();
+    const connection = RPC_CONNECTION;
     const { publicKey } = useWallet();
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
@@ -391,7 +389,7 @@ export function MembersView(props: any) {
     const collectionAuthority = props.collectionAuthority;
     const [loading, setLoading] = React.useState(false);
     const [members, setMembers] = React.useState(null);
-    const connection = new Connection(GRAPE_RPC_ENDPOINT)//useConnection();
+    const connection = RPC_CONNECTION;
     const { publicKey, wallet } = useWallet();
     const [realm, setRealm] = React.useState(null);
     const [participating, setParticipating] = React.useState(false)
@@ -452,7 +450,7 @@ export function MembersView(props: any) {
                 }
                 setParticipating(pcp);
 
-                const grealm = await getRealm(new Connection(GRAPE_RPC_ENDPOINT), new PublicKey(collectionAuthority.governance))
+                const grealm = await getRealm(RPC_CONNECTION, new PublicKey(collectionAuthority.governance))
                 setRealm(grealm);
                 //console.log("realm: "+JSON.stringify(grealm))
 
@@ -478,7 +476,7 @@ export function MembersView(props: any) {
             
                 const realmPk = grealm.pubkey;
 
-                const trecords = await getAllTokenOwnerRecords(new Connection(GRAPE_RPC_ENDPOINT), grealm.owner, realmPk)
+                const trecords = await getAllTokenOwnerRecords(RPC_CONNECTION, grealm.owner, realmPk)
                 
                 //console.log("trecords: "+JSON.stringify(trecords));
 

@@ -94,7 +94,7 @@ import {
 } from '../utils/auctionHouse/helpers/constants';
 
 import { 
-    GRAPE_RPC_ENDPOINT, 
+    RPC_CONNECTION, 
     GRAPE_PREVIEW,
     REPORT_ALERT_THRESHOLD,
     THEINDEX_RPC_ENDPOINT, 
@@ -514,8 +514,8 @@ export async function findOwnedNameAccountsForUser(
 
 export function StoreFrontView(this: any, props: any) {
     const effectCalled = React.useRef(false);
-    const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
-    const ticonnection = new Connection(THEINDEX_RPC_ENDPOINT);
+    const ggoconnection = RPC_CONNECTION;
+    const ticonnection = RPC_CONNECTION;
     //const [provider, setProvider] = React.useState(getParam('provider'));
     const [gallery, setGallery] = React.useState(null);
     const [collectionMintList, setCollectionMintList] = React.useState(null);
@@ -1499,9 +1499,9 @@ export function StoreFrontView(this: any, props: any) {
 
                         // TODO: to speed things up take an incremental approach first fetch from indexed mint list and then refetch list dynamically
                         if (verified?.tokenType === "NFT"){
-                            if ((verified.collection) && (!verified.staticMintList))
-                                var oml = fetchIndexedMintList(verified.collection, verified?.jsonToImage, verified.updateAuthority);
-                            else 
+                            //if ((verified.collection) && (!verified.staticMintList))
+                            //    var oml = fetchIndexedMintList(verified.collection, verified?.jsonToImage, verified.updateAuthority);
+                            //else 
                                 var fml = fetchMintList(verified.address);
                         }
                         break;
@@ -1513,9 +1513,9 @@ export function StoreFrontView(this: any, props: any) {
 
                         // TODO: to speed things up take an incremental approach first fetch from indexed mint list and then refetch list dynamically
                         if (verified?.tokenType === "NFT"){
-                            if ((verified.collection) && (!verified.staticMintList))
-                                var oml = fetchIndexedMintList(verified.collection, verified?.jsonToImage, verified.updateAuthority);
-                            else 
+                            //if ((verified.collection) && (!verified.staticMintList))
+                            //    var oml = fetchIndexedMintList(verified.collection, verified?.jsonToImage, verified.updateAuthority);
+                            //else 
                                 var fml = fetchMintList(verified.address);
                         }
                         break;

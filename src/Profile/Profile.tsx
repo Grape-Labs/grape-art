@@ -89,6 +89,7 @@ import Mail from '@mui/icons-material/Mail';
 import { MARKET_LOGO } from '../utils/grapeTools/constants';
 
 import {
+    RPC_CONNECTION,
     GRAPE_RPC_ENDPOINT,
     GRAPE_RPC_REFRESH,
     GRAPE_PREVIEW,
@@ -780,7 +781,7 @@ const GeneralProfileView = (props: any) => {
     const [wallet_collection, setCollectionArray] = React.useState(props.collection.collection);
     const [wallet_collection_meta, setCollectionMeta] = React.useState(null);
     const [final_collection, setCollectionMetaFinal] = React.useState(null);
-    const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
+    const ggoconnection = RPC_CONNECTION;
     const { connection } = useConnection();
     const [featuredObj, setFeaturedObj] = React.useState(null);
     const [profilePictureUrl, setProfilePictureUrl] = React.useState(null);

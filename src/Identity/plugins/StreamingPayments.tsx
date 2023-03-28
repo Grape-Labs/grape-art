@@ -74,7 +74,7 @@ import {
 } from "@streamflow/stream";
 
 import ExplorerView from '../../utils/grapeTools/Explorer';
-import { GRAPE_RPC_ENDPOINT, THEINDEX_RPC_ENDPOINT, GRAPE_PROFILE, GRAPE_PREVIEW, DRIVE_PROXY } from '../../utils/grapeTools/constants';
+import { RPC_CONNECTION } from '../../utils/grapeTools/constants';
 import { load } from "../../browser";
 import { PanoramaVerticalSelect } from "@mui/icons-material";
 import { trimAddress } from "../../utils/grapeTools/WalletAddress";
@@ -141,7 +141,7 @@ export function StreamingPaymentsView(props: any){
     const wallet = useWallet();
     
     const { publicKey, sendTransaction } = useWallet();
-    const connection = new Connection(GRAPE_RPC_ENDPOINT);
+    const connection = RPC_CONNECTION;
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
     function TransferStreamComponent(props:any){

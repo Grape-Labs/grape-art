@@ -25,6 +25,7 @@ import {
 } from '@mui/material';
 
 import { 
+    RPC_CONNECTION,
     GRAPE_RPC_ENDPOINT, 
 } from '../utils/grapeTools/constants';
 
@@ -100,7 +101,7 @@ const BootstrapDialogTitle = (props: DialogTitleProps) => {
 export default function JupiterSwap(props: any ){
     //export const JupiterSwap = (props: any) => {
     //const connection = useConnection();
-    const connection = new Connection(GRAPE_RPC_ENDPOINT);
+    const connection = RPC_CONNECTION;
     const {connected, wallet, publicKey} = useWallet();
     const [tokenMap, setTokenMap] = React.useState<Map<string,TokenInfo>>(props?.tokenMap || null);
 
@@ -160,7 +161,7 @@ function JupiterForm(props: any) {
     const [ allAutoCompleteOptions, setAllAutoCompleteOptions ] = useState([]);
     const {publicKey, wallet, signAllTransactions, signTransaction, sendTransaction} = useWallet();
     const connection = useConnection();
-    const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
+    const ggoconnection = RPC_CONNECTION;
     const [portfolioPositions, setPortfolioPositions] = React.useState(props?.portfolioPositions || null);
 
     const getPrices = async (path?: string): Promise<any> => {

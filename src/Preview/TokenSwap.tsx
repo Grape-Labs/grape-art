@@ -16,7 +16,7 @@ import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import { useSnackbar } from 'notistack';
 
 import { 
-  GRAPE_RPC_ENDPOINT, 
+  RPC_CONNECTION, 
 } from '../utils/grapeTools/constants';
 
 export default function TokenSwapView(props: any) {
@@ -27,7 +27,7 @@ export default function TokenSwapView(props: any) {
   const swapAmount = props?.swapAmount;
   const { connection } = useConnection();
   const {connected, wallet, publicKey, sendTransaction} = useWallet();
-  const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
+  const ggoconnection = RPC_CONNECTION;
 
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const onError = useCallback(

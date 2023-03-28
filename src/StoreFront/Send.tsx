@@ -6,7 +6,7 @@ import { TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID, getAssociatedTokenAddres
 //import { TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID, Token } from "@solana/spl-token";
 //import { TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID, Token } from "@solana/spl-token";
 
-import { GRAPE_RPC_ENDPOINT, TX_RPC_ENDPOINT, GRAPE_TREASURY } from '../utils/grapeTools/constants';
+import { RPC_CONNECTION, GRAPE_TREASURY } from '../utils/grapeTools/constants';
 import { RegexTextField } from '../utils/grapeTools/RegexTextField';
 
 import {
@@ -135,8 +135,8 @@ export default function SendToken(props: any) {
     const [memoText, setMemoText] = React.useState(null); 
     const [rdloading, setRDLoading] = React.useState(false);
 
-    const freeconnection = new Connection(TX_RPC_ENDPOINT);
-    const connection = new Connection(GRAPE_RPC_ENDPOINT);//useConnection();
+    const freeconnection = RPC_CONNECTION;
+    const connection = RPC_CONNECTION;
     const { publicKey, wallet, sendTransaction, signTransaction, signMessage } = useWallet();
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
     const onError = useCallback(

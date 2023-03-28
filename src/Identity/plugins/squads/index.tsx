@@ -28,7 +28,7 @@ import {
     Button,
 } from '@mui/material';
 
-import { GRAPE_RPC_ENDPOINT } from '../../../utils/grapeTools/constants';
+import { RPC_CONNECTION } from '../../../utils/grapeTools/constants';
 import { MsRow } from './MsRow';
 
 export interface DialogTitleProps {
@@ -45,7 +45,7 @@ export function SquadsView(props: any) {
     const wallet = useWallet();
     const pubkey = props?.pubkey;
     const { publicKey } = useWallet();
-    const connection = new Connection(GRAPE_RPC_ENDPOINT);
+    const connection = RPC_CONNECTION;
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
     const { squads, loading } = useSquads(connection, wallet, pubkey);
 

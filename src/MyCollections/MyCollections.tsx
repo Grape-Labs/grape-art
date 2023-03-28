@@ -42,7 +42,7 @@ import { ApprovedTable } from './ApprovedTable';
 import { useEffect, useState } from 'react';
 import { PendingTable } from './PendingTable';
 
-import { GRAPE_RPC_ENDPOINT, TX_RPC_ENDPOINT } from '../utils/grapeTools/constants';
+import { RPC_CONNECTION } from '../utils/grapeTools/constants';
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -120,7 +120,7 @@ export function AddCollectionView() {
     const [open, setOpen] = React.useState(false);
     //const { connection } = useConnection();
     //const connection = new Connection('https://api.devnet.solana.com');
-    const connection = new Connection(GRAPE_RPC_ENDPOINT);
+    const connection = RPC_CONNECTION;
     const anchorWallet = useAnchorWallet();
 
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();

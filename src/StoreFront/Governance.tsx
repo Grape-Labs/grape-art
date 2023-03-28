@@ -71,7 +71,7 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import HowToVoteIcon from '@mui/icons-material/HowToVote';
 
 import PropTypes from 'prop-types';
-import { GRAPE_RPC_ENDPOINT, THEINDEX_RPC_ENDPOINT, TX_RPC_ENDPOINT } from '../utils/grapeTools/constants';
+import { RPC_CONNECTION } from '../utils/grapeTools/constants';
 import { formatAmount, getFormattedNumberToLocale } from '../utils/grapeTools/helpers'
 //import { RevokeCollectionAuthority } from '@metaplex-foundation/mpl-token-metadata';
 
@@ -214,7 +214,7 @@ function TablePaginationActions(props) {
   }
 
 function GetParticipants(props: any){
-    const connection = new Connection(GRAPE_RPC_ENDPOINT);
+    const connection = RPC_CONNECTION;
     const tokenMap = props.tokenMap;
     const memberMap = props.memberMap;
     const governanceToken = props.governanceToken;
@@ -243,7 +243,7 @@ function GetParticipants(props: any){
     const [exceededQuorumPercentage, setExceededQuorumPercentage] = React.useState(null);
     const [selectedDelegate, setSelectedDelegate] = React.useState("");
     const { publicKey, wallet, sendTransaction, signTransaction } = useWallet();
-    const freeconnection = new Connection(TX_RPC_ENDPOINT);
+    const freeconnection = RPC_CONNECTION;
     const [loadingParticipants, setLoadingParticipants] = React.useState(false);
 
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
@@ -1202,7 +1202,7 @@ function RenderGovernanceTable(props:any) {
     const proposals = props.proposals;
     const nftBasedGovernance = props.nftBasedGovernance;
     const token = props.token;
-    const connection = new Connection(GRAPE_RPC_ENDPOINT);
+    const connection = RPC_CONNECTION;
     const { publicKey } = useWallet();
     const [propTokenDecimals, setPropTokenDecimals] = React.useState(token?.decimals || 6);
     const [page, setPage] = React.useState(0);
@@ -1556,7 +1556,7 @@ export function GovernanceView(props: any) {
     const [realm, setRealm] = React.useState(null);
     const [tokenMap, setTokenMap] = React.useState(null);
     const [tokenArray, setTokenArray] = React.useState(null);
-    const connection = new Connection(GRAPE_RPC_ENDPOINT);
+    const connection = RPC_CONNECTION;
     const { publicKey, wallet } = useWallet();
     const [proposals, setProposals] = React.useState(null);
     const [participating, setParticipating] = React.useState(false)
@@ -1644,7 +1644,7 @@ export function GovernanceView(props: any) {
                 }
                 setParticipating(pcp);
 
-                const grealm = await getRealm(new Connection(GRAPE_RPC_ENDPOINT), new PublicKey(governanceToken?.governance || governanceToken))
+                const grealm = await getRealm(RPC_CONNECTION, new PublicKey(governanceToken?.governance || governanceToken))
                 setRealm(grealm);
                 //console.log("B realm: "+JSON.stringify(grealm));
 
@@ -1704,7 +1704,7 @@ export function GovernanceView(props: any) {
                 }
 
 
-                const rawTokenOwnerRecords = await getAllTokenOwnerRecords(new Connection(GRAPE_RPC_ENDPOINT), grealm.owner, realmPk)
+                const rawTokenOwnerRecords = await getAllTokenOwnerRecords(RPC_CONNECTION, grealm.owner, realmPk)
                 
                 /*
                 rawTokenOwnerRecords?.map((member) => {
@@ -1805,7 +1805,7 @@ export function GovernanceView(props: any) {
                 //console.log("gpbgprops: "+JSON.stringify(gpbgprops));
                 
                 
-                const gprops = await getAllProposals(new Connection(GRAPE_RPC_ENDPOINT), grealm.owner, realmPk);
+                const gprops = await getAllProposals(RPC_CONNECTION, grealm.owner, realmPk);
                 
                 const allprops: any[] = [];
                 let passed = 0;

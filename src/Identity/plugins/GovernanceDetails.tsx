@@ -5,7 +5,7 @@ import { Signer, Connection, PublicKey, SystemProgram, Transaction, TransactionI
 //import { TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID, Token } from "@solana/spl-token";
 import * as anchor from '@project-serum/anchor';
 
-import { GRAPE_RPC_ENDPOINT, TX_RPC_ENDPOINT, GRAPE_TREASURY } from '../../utils/grapeTools/constants';
+import { RPC_CONNECTION } from '../../utils/grapeTools/constants';
 
 import { styled } from '@mui/material/styles';
 
@@ -77,7 +77,7 @@ export default function GovernanceDetailsView(props: any) {
     const governanceToken = props.governanceToken;
     const [open, setOpen] = React.useState(false);
     
-    const connection = new Connection(GRAPE_RPC_ENDPOINT);//useConnection();
+    const connection = RPC_CONNECTION;//useConnection();
     const { publicKey, wallet, sendTransaction, signTransaction } = useWallet();
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
     const onError = useCallback(

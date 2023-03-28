@@ -15,8 +15,7 @@ import { findDisplayName } from '../name-service';
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
 
 import { 
-    GRAPE_RPC_ENDPOINT, 
-    THEINDEX_RPC_ENDPOINT,
+    RPC_CONNECTION,
     TWITTER_PROXY } from './constants';
 
 import { 
@@ -111,7 +110,7 @@ export default function ExplorerView(props:any){
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
     const showSolanaProfile = props.showSolanaProfile || null;
-    const connection = new Connection(GRAPE_RPC_ENDPOINT);
+    const connection = RPC_CONNECTION;
     const [solanaDomain, setSolanaDomain] = React.useState(null);
     const [hasSolanaDomain, setHasSolanaDomain] = React.useState(false);
     const [profilePictureUrl, setProfilePictureUrl] = React.useState(null);
@@ -270,7 +269,7 @@ export default function ExplorerView(props:any){
                 onClick={handleClick}
                 variant={buttonStyle}
                 color='inherit'
-                sx={{m:0,borderRadius:'17px',color:`${buttonColor}` }}
+                sx={{m:0,borderRadius:'17px',color:`${buttonColor}`, textTransform:'none' }}
                 startIcon={
                     <>
                         {profilePictureUrl ?

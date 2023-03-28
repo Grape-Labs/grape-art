@@ -18,7 +18,7 @@ import {
 
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 
-import { GRAPE_RPC_ENDPOINT } from '../utils/grapeTools/constants';
+import { RPC_CONNECTION } from '../utils/grapeTools/constants';
 
 export default function StrataSwap(props: any) {
     const refreshCallback = props.refreshCallback;
@@ -27,7 +27,7 @@ export default function StrataSwap(props: any) {
     const swapAmount = props.swapAmount || 1;
     const swapFrom = props.swapFrom || '8upjSpvjcdpuzhfR1zriwg5NXkwDruejqNE9WNbPRtyA';
     const swapTo = props.swapTo || '4BF5sVW5wRR56cy9XR8NFDQGDy5oaNEFrCHMuwA9sBPd'; 
-    const connection = new Connection(GRAPE_RPC_ENDPOINT);
+    const connection = RPC_CONNECTION;
     //const provider = anchor.getProvider();
     const { publicKey } = useWallet();
     const wallet = useWallet();

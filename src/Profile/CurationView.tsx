@@ -27,7 +27,7 @@ import {
 import CircularProgress from '@mui/material/CircularProgress';
 
 import GalleryView from './GalleryView';
-import { GRAPE_RPC_ENDPOINT, GRAPE_RPC_REFRESH, GRAPE_PREVIEW, GRAPE_PROFILE, FEATURED_DAO_ARRAY } from '../utils/grapeTools/constants';
+import { RPC_CONNECTION } from '../utils/grapeTools/constants';
 import { trimAddress } from '../utils/grapeTools/WalletAddress'; // global key handling
 
 export default function CurationView(props: any){
@@ -37,8 +37,7 @@ export default function CurationView(props: any){
     const [loading, setLoading] = React.useState(false);
     const [page, setPage] = React.useState(1);
     const rpclimit = 100;
-    const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
-    const { connection } = useConnection();
+    const ggoconnection = RPC_CONNECTION;
     const [likeListInfo, setLikeListInfo] = useState<LikeListInfoResp | null>(null);
     const solanaProvider = useWallet();
     const { publicKey } = useWallet();

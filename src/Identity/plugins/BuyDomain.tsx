@@ -5,7 +5,7 @@ import { Signer, Connection, PublicKey, SystemProgram, Transaction, TransactionI
 //import { TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID, Token } from "@solana/spl-token";
 import * as anchor from '@project-serum/anchor';
 
-import { GRAPE_RPC_ENDPOINT, TX_RPC_ENDPOINT, GRAPE_TREASURY } from '../../utils/grapeTools/constants';
+import { RPC_CONNECTION } from '../../utils/grapeTools/constants';
 
 import {
     NameRegistryState,
@@ -90,8 +90,8 @@ export default function BuyDomainView(props: any) {
     const [spaceAllocated, setSpaceAllocated] = React.useState(null);
     const [snsDomain, setSNSDomain] = React.useState(null);
 
-    const freeconnection = new Connection(TX_RPC_ENDPOINT);
-    const connection = new Connection(GRAPE_RPC_ENDPOINT);//useConnection();
+    const freeconnection = RPC_CONNECTION;
+    const connection = RPC_CONNECTION;
     const { publicKey, wallet, sendTransaction, signTransaction } = useWallet();
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
     const onError = useCallback(

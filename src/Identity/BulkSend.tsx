@@ -5,7 +5,7 @@ import { Signer, Connection, PublicKey, SystemProgram, Transaction, TransactionI
 import { TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID, getAssociatedTokenAddress, createAssociatedTokenAccountInstruction, getOrCreateAssociatedTokenAccount, createAssociatedTokenAccount, createTransferInstruction } from "@solana/spl-token-v2";
 //import { TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID, Token } from "@solana/spl-token";
 
-import { GRAPE_RPC_ENDPOINT, TX_RPC_ENDPOINT, GRAPE_TREASURY } from '../utils/grapeTools/constants';
+import { RPC_CONNECTION } from '../utils/grapeTools/constants';
 import { RegexTextField } from '../utils/grapeTools/RegexTextField';
 import { TokenAmount } from '../utils/grapeTools/safe-math';
 import BN from "bn.js";
@@ -124,8 +124,8 @@ export default function BulkSend(props: any) {
     const sendtype = props.sendType || 0; // just a type
     const [memotype, setMemoType] = React.useState(0);
     const [rdloading, setRDLoading] = React.useState(false);
-    const freeconnection = new Connection(TX_RPC_ENDPOINT);
-    const connection = new Connection(GRAPE_RPC_ENDPOINT);//useConnection();
+    const freeconnection = RPC_CONNECTION;
+    const connection = RPC_CONNECTION;
     const { publicKey, wallet, sendTransaction, signTransaction } = useWallet();
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
     const onError = useCallback(

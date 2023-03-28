@@ -10,7 +10,7 @@ import {
   } from "@solana/web3.js";
   
 //  import { SPL_PUBLIC_KEY, RPC_CONNECTION } from "../constants/Solana";
-import { GRAPE_RPC_ENDPOINT, THEINDEX_RPC_ENDPOINT } from '../../../../utils/grapeTools/constants';  
+import { RPC_CONNECTION } from '../../../../utils/grapeTools/constants';  
 
   import {
     Realm,
@@ -29,7 +29,7 @@ import { GRAPE_RPC_ENDPOINT, THEINDEX_RPC_ENDPOINT } from '../../../../utils/gra
   } from "./account";
   // end plugin stuff
   
-  const connection = new Connection(GRAPE_RPC_ENDPOINT, "confirmed");
+  const connection = RPC_CONNECTION;
   
   export const createCastVoteTransaction = async (
     selectedRealm: Realm,

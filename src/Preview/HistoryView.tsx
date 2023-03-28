@@ -36,7 +36,7 @@ import {
 } from '@mui/material';
 
 import { 
-    GRAPE_RPC_ENDPOINT,
+    RPC_CONNECTION,
     GRAPE_PROFILE,
     PROXY
 } from '../utils/grapeTools/constants';
@@ -81,7 +81,7 @@ export default function HistoryView(props: any){
     const [salePrice, setSalePrice] = React.useState(props.salePrice || null);
     const [salePriceAH, setSalePriceAH] = React.useState(props.salePriceAH || null);
     const [symbol, setSymbol] = React.useState(props.symbol || null);
-    const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
+    const ggoconnection = RPC_CONNECTION;
     const { connection } = useConnection();
     const { navigation, open } = useDialectUiId<ChatNavigationHelpers>(GRAPE_BOTTOM_CHAT_ID);
     const [receiptListing, setReceiptListing] = React.useState(null);

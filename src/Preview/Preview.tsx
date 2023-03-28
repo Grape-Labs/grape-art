@@ -94,6 +94,7 @@ import {
     TOKEN_VERIFICATION_NAME,
     TOKEN_VERIFICATION_AMOUNT,
     TOKEN_VERIFICATION_ADDRESS,
+    RPC_CONNECTION,
     GRAPE_RPC_ENDPOINT, 
     TX_RPC_ENDPOINT, 
     GRAPE_RPC_REFRESH, 
@@ -239,8 +240,8 @@ function GrapeVerified(props:any){
     const [verifiedPK, setVerificationPK] = React.useState(null);
     const [collectionImage, setCollectionImage] = React.useState(null);
     const [collectionName, setCollectionName] = React.useState(props?.symbol);
-    const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
-    const ticonnection = new Connection(THEINDEX_RPC_ENDPOINT);
+    const ggoconnection = RPC_CONNECTION;
+    const ticonnection = RPC_CONNECTION;
     const verifiedCollection = props.verifiedCollection;
     const [collectionRawData, setCollectionRawData]  = React.useState(props?.collectionRawData);
     
@@ -440,7 +441,7 @@ function GalleryItemMeta(props: any) {
     const [open_offers, setOpenOffers] = React.useState(false);
     const [open_description, setOpenDescription] = React.useState(true);
     const [open_traits, setOpenTraits] = React.useState(true);
-    const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
+    const ggoconnection = RPC_CONNECTION;
     const { connection } = useConnection();
     const {publicKey, sendTransaction} = useWallet();
     const [solanaDomain, setSolanaDomain] = React.useState(null);
@@ -1886,7 +1887,7 @@ export function PreviewView(this: any, props: any) {
         const [verifiedAuctionHouses, setVerifiedAuctionHouses] = React.useState(null);
         const [vcLoading, setVcLoading] = React.useState(false);
         const [verifiedCollection, setVerifiedCollection] = React.useState(null);
-        const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
+        const ggoconnection = RPC_CONNECTION;
         const MD_PUBKEY = METAPLEX_PROGRAM_ID;
         
         const handleExpandClick = () => {
