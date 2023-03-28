@@ -400,128 +400,135 @@ export function IdentityView(props: any){
 
     const fetchSolanaBalance = async () => {
         setLoadingPosition('SOL Balance');
-        const response = await connection.getBalance(new PublicKey(pubkey));
-        const converted = await getTokenPrice('So11111111111111111111111111111111111111112','EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'); // SOL > USDC
-        const ticker = await getTokenTicker('So11111111111111111111111111111111111111112','EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'); // SOL > USDC
-        //console.log("ticker: "+JSON.stringify(ticker))
-        setSolanaTicker(ticker);
-        //console.log("price converted: "+JSON.stringify(converted))
-        //console.log("price ticker: "+JSON.stringify(ticker))
-        if (converted?.data?.price)
-            setSolanaUSDC(converted.data.price);
-        else if (ticker?.last_price)
-            setSolanaUSDC(+ticker.last_price);
-        setSolanaBalance(response);
+        try{
+            const response = await connection.getBalance(new PublicKey(pubkey));
+            const converted = await getTokenPrice('So11111111111111111111111111111111111111112','EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'); // SOL > USDC
+            const ticker = await getTokenTicker('So11111111111111111111111111111111111111112','EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'); // SOL > USDC
+            //console.log("ticker: "+JSON.stringify(ticker))
+            setSolanaTicker(ticker);
+            //console.log("price converted: "+JSON.stringify(converted))
+            //console.log("price ticker: "+JSON.stringify(ticker))
+            if (converted?.data?.price)
+                setSolanaUSDC(converted.data.price);
+            else if (ticker?.last_price)
+                setSolanaUSDC(+ticker.last_price);
+            setSolanaBalance(response);
+        }catch(e){
+            console.log("ERR: "+e);
+        }
     }
 
     const fetchSolanaTransactions = async () => {
         setLoadingTransactions(true);
         setLoadingPosition(' last (100) Transactions');
-        
-        let helius_results = null;
-        
-        if (HELIUS_API){
-            try{
-                const tx: any[] = [];
-                const url = "https://api.helius.xyz/v0/addresses/"+pubkey+"/transactions?api-key="+HELIUS_API
-                const parseTransactions = async () => {
-                    const { data } = await axios.get(url)
-                    //console.log("parsed transactions: ", data)
+        try{
+            let helius_results = null;
+            
+            if (HELIUS_API){
+                try{
+                    const tx: any[] = [];
+                    const url = "https://api.helius.xyz/v0/addresses/"+pubkey+"/transactions?api-key="+HELIUS_API
+                    const parseTransactions = async () => {
+                        const { data } = await axios.get(url)
+                        //console.log("parsed transactions: ", data)
 
-                    helius_results = data;
-                    /*
-                    for (const item of data){
+                        helius_results = data;
+                        /*
+                        for (const item of data){
+                            tx.push({
+                                signature:item.signature,
+                                blockTime:item.timestamp,
+                                //amount:tx_cost,
+                                //owner:owner,
+                                memo:'',
+                                source:null,
+                                type:item.description + ' | ' + item.type,
+                            });
+                        }*/
+
+                    }
+                    await parseTransactions();
+                //setSolanaTransactions(tx);
+                }catch(terr){
+                    console.log("ERR: "+terr);
+                }
+            } 
+            
+            {
+                const response = await connection.getSignaturesForAddress(new PublicKey(pubkey));
+
+                const memos: any[] = [];
+                const signatures: any[] = [];
+                let counter = 0;
+                // get last 100
+                for (const value of response){
+                    if (counter<100){
+                        signatures.push(value.signature);
+                        if (value.memo){
+                            //let start_memo = value.memo.indexOf('[');
+                            //let end_memo = value.memo.indexOf(']');
+
+                        }
+                        memos.push(value.memo);
+                    }
+                    counter++;
+                }
+
+                //console.log("signatures: "+JSON.stringify(signatures))
+
+                console.log("fetching parsed transactions")
+                try{
+                    const getTransactionAccountInputs2 = await connection.getParsedTransactions(signatures, {commitment:'confirmed', maxSupportedTransactionVersion:0});
+                    //console.log("getTransactionAccountInputs2: "+JSON.stringify(getTransactionAccountInputs2))
+                    let cnt=0;
+                    const tx: any[] = [];
+                    for (const tvalue of getTransactionAccountInputs2){
+                        //if (cnt===0)
+                        //    console.log(signatures[cnt]+': '+JSON.stringify(tvalue));
+                        
+                        let txtype = "";
+                        if (tvalue?.meta?.logMessages){
+                            for (const logvalue of tvalue.meta.logMessages){
+                                //console.log("txvalue: "+JSON.stringify(logvalue));
+                                if (logvalue.includes("Program log: Instruction: ")){
+                                    if (txtype.length > 0)
+                                        txtype += ", ";
+                                    txtype += logvalue.substring(26,logvalue.length);
+                                    
+                                }
+                            }
+                        }
+
+                        let description = null;
+                        if (helius_results){
+                            for (const item of helius_results){
+                                if ((signatures[cnt] === item.signature) && (item.type !== 'UNKNOWN')){
+                                    description = item.description + " ("+ item.type+ ")";
+                                }
+                            }
+                        }
+
                         tx.push({
-                            signature:item.signature,
-                            blockTime:item.timestamp,
+                            signature:signatures[cnt],
+                            blockTime:tvalue?.blockTime,
                             //amount:tx_cost,
                             //owner:owner,
-                            memo:'',
+                            memo:memos[cnt],
                             source:null,
-                            type:item.description + ' | ' + item.type,
+                            description:description,
+                            type:txtype,
                         });
-                    }*/
+                        
+                        cnt++;
+                    }
 
-                }
-                await parseTransactions();
-            //setSolanaTransactions(tx);
-            }catch(terr){
-                console.log("ERR: "+terr);
+                    setSolanaTransactions(tx);
+                } catch(err){
+                    console.log("ERR: "+err);
+                }   
             }
-        } 
-        
-        {
-            const response = await connection.getSignaturesForAddress(new PublicKey(pubkey));
-
-            const memos: any[] = [];
-            const signatures: any[] = [];
-            let counter = 0;
-            // get last 100
-            for (const value of response){
-                if (counter<100){
-                    signatures.push(value.signature);
-                    if (value.memo){
-                        //let start_memo = value.memo.indexOf('[');
-                        //let end_memo = value.memo.indexOf(']');
-
-                    }
-                    memos.push(value.memo);
-                }
-                counter++;
-            }
-
-            //console.log("signatures: "+JSON.stringify(signatures))
-
-            console.log("fetching parsed transactions")
-            try{
-                const getTransactionAccountInputs2 = await connection.getParsedTransactions(signatures, {commitment:'confirmed', maxSupportedTransactionVersion:0});
-                //console.log("getTransactionAccountInputs2: "+JSON.stringify(getTransactionAccountInputs2))
-                let cnt=0;
-                const tx: any[] = [];
-                for (const tvalue of getTransactionAccountInputs2){
-                    //if (cnt===0)
-                    //    console.log(signatures[cnt]+': '+JSON.stringify(tvalue));
-                    
-                    let txtype = "";
-                    if (tvalue?.meta?.logMessages){
-                        for (const logvalue of tvalue.meta.logMessages){
-                            //console.log("txvalue: "+JSON.stringify(logvalue));
-                            if (logvalue.includes("Program log: Instruction: ")){
-                                if (txtype.length > 0)
-                                    txtype += ", ";
-                                txtype += logvalue.substring(26,logvalue.length);
-                                
-                            }
-                        }
-                    }
-
-                    let description = null;
-                    if (helius_results){
-                        for (const item of helius_results){
-                            if ((signatures[cnt] === item.signature) && (item.type !== 'UNKNOWN')){
-                                description = item.description + " ("+ item.type+ ")";
-                            }
-                        }
-                    }
-
-                    tx.push({
-                        signature:signatures[cnt],
-                        blockTime:tvalue?.blockTime,
-                        //amount:tx_cost,
-                        //owner:owner,
-                        memo:memos[cnt],
-                        source:null,
-                        description:description,
-                        type:txtype,
-                    });
-                    
-                    cnt++;
-                }
-
-                setSolanaTransactions(tx);
-            } catch(err){
-                console.log("ERR: "+err);
-            }   
+        }catch(e){
+            console.log("ERR: "+e);
         }
         
         setLoadingTransactions(false);
@@ -640,231 +647,235 @@ export function IdentityView(props: any){
 
     const fetchSolanaTokens = async () => {
         setLoadingPosition('Tokens');
-        const resp = await connection.getParsedTokenAccountsByOwner(new PublicKey(pubkey), {programId: new PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA")});
-        const resultValues = resp.value
-        /*
-            let meta_final = JSON.parse(item.account.data);
-            let buf = Buffer.from(JSON.stringify(item.account.data), 'base64');
-        
-
-        // Use JSONParse for now until we decode 
-        const body = {
-            method: "getTokenAccountsByOwner",
-            jsonrpc: "2.0",
-            params: [
-              pubkey,
-              { programId: "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA" },
-              { encoding: "jsonParsed", commitment: "processed" },
-            ],
-            id: "35f0036a-3801-4485-b573-2bf29a7c77d2",
-        };
-        const resp = await window.fetch(RPC_ENDPOINT, {
-            method: "POST",
-            body: JSON.stringify(body),
-            headers: { "Content-Type": "application/json" },
-        })
-        const json = await resp.json();
-        const resultValues = json.result.value
-        
-        */
-        //return resultValues;
-
-        const holdings: any[] = [];
-        const allholdings: any[] = [];
-        const closable: any[] = [];
-        for (const item of resultValues){
-            //let buf = Buffer.from(item.account, 'base64');
-            //console.log("item: "+JSON.stringify(item));
-            if (item.account.data.parsed.info.tokenAmount.amount > 0)
-                holdings.push(item);
-            else
-                closable.push(item);
-            // consider using https://raw.githubusercontent.com/solana-labs/token-list/main/src/tokens/solana.tokenlist.json to view more details on the tokens held
-        }
-
-        const sortedholdings = JSON.parse(JSON.stringify(holdings));
-        sortedholdings.sort((a:any,b:any) => (b.account.data.parsed.info.tokenAmount.amount - a.account.data.parsed.info.tokenAmount.amount));
-
-        const solholdingrows: any[] = [];
-        let cnt = 0;
-
-        let cgArray = '';//new Array()
-        for (const item of resultValues){
-            //console.log("item: "+JSON.stringify(item))
-            const tm = tokenMap.get(item.account.data.parsed.info.mint)
-            if (tm && tm?.extensions?.coingeckoId){
-                if (cgArray.length > 0)
-                    cgArray += ',';
-                cgArray+=tm.extensions.coingeckoId
-                item.coingeckoId = tm.extensions.coingeckoId;
-                //cgArray.push(tm.extensions.coingeckoId)
-            }
-        }    
-
-        setLoadingPosition('Prices');
-        const cgPrice = await getCoinGeckoPrice(cgArray);
-
-        setLoadingPosition('NFT Metadata');
-        const nftMeta = await fetchNFTMetadata(resultValues);
-
-        //console.log("nftMeta: "+JSON.stringify(nftMeta))
-
-        let netValue = 0;
-        for (const item of resultValues){
+        try{
+            const resp = await connection.getParsedTokenAccountsByOwner(new PublicKey(pubkey), {programId: new PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA")});
+            const resultValues = resp.value
             /*
-            try{
-                const tknPrice = await getTokenPrice(item.account.data.parsed.info.mint, "USDC");
-                item.account.data.parsed.info.tokenPrice = tknPrice.data.price
-            }catch(e){}
+                let meta_final = JSON.parse(item.account.data);
+                let buf = Buffer.from(JSON.stringify(item.account.data), 'base64');
+            
+
+            // Use JSONParse for now until we decode 
+            const body = {
+                method: "getTokenAccountsByOwner",
+                jsonrpc: "2.0",
+                params: [
+                pubkey,
+                { programId: "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA" },
+                { encoding: "jsonParsed", commitment: "processed" },
+                ],
+                id: "35f0036a-3801-4485-b573-2bf29a7c77d2",
+            };
+            const resp = await window.fetch(RPC_ENDPOINT, {
+                method: "POST",
+                body: JSON.stringify(body),
+                headers: { "Content-Type": "application/json" },
+            })
+            const json = await resp.json();
+            const resultValues = json.result.value
+            
             */
-            
-            const itemValue = item?.coingeckoId ? +cgPrice[item?.coingeckoId]?.usd ? (cgPrice[item?.coingeckoId].usd * +item.account.data.parsed.info.tokenAmount.amount/Math.pow(10, +item.account.data.parsed.info.tokenAmount.decimals)).toFixed(item.account.data.parsed.info.tokenAmount.decimals) : 0 :0;
-            const itemBalance = Number(new TokenAmount(item.account.data.parsed.info.tokenAmount.amount, item.account.data.parsed.info.tokenAmount.decimals).format().replace(/[^0-9.-]+/g,""));
-            
-            
-            let logo = null;
-            let name = item.account.data.parsed.info.mint;
-            let metadata = null;
-            let metadata_decoded = null;
+            //return resultValues;
 
-            let foundMetaName = false;
+            const holdings: any[] = [];
+            const allholdings: any[] = [];
+            const closable: any[] = [];
+            for (const item of resultValues){
+                //let buf = Buffer.from(item.account, 'base64');
+                //console.log("item: "+JSON.stringify(item));
+                if (item.account.data.parsed.info.tokenAmount.amount > 0)
+                    holdings.push(item);
+                else
+                    closable.push(item);
+                // consider using https://raw.githubusercontent.com/solana-labs/token-list/main/src/tokens/solana.tokenlist.json to view more details on the tokens held
+            }
 
-            for (const nft of nftMeta){
-                //console.log('meta: '+JSON.stringify(nft));
-                if (nft.meta.mint === item.account.data.parsed.info.mint){
-                    //console.log("nft: "+JSON.stringify(nft))
+            const sortedholdings = JSON.parse(JSON.stringify(holdings));
+            sortedholdings.sort((a:any,b:any) => (b.account.data.parsed.info.tokenAmount.amount - a.account.data.parsed.info.tokenAmount.amount));
 
-                    metadata_decoded = decodeMetadata(nft.data);
-                    //console.log("meta_final: "+JSON.stringify(metadata_decoded))
-                    
-                    name = nft.meta.data.name;
-                    metadata = nft.meta.data.uri;
-                    // fetch
-                    if (nft?.image)
-                        logo = nft.image;
-                    else if (nft?.urimeta?.image)
-                        logo = nft.urimeta?.image;
-                    foundMetaName = true;
+            const solholdingrows: any[] = [];
+            let cnt = 0;
+
+            let cgArray = '';//new Array()
+            for (const item of resultValues){
+                //console.log("item: "+JSON.stringify(item))
+                const tm = tokenMap.get(item.account.data.parsed.info.mint)
+                if (tm && tm?.extensions?.coingeckoId){
+                    if (cgArray.length > 0)
+                        cgArray += ',';
+                    cgArray+=tm.extensions.coingeckoId
+                    item.coingeckoId = tm.extensions.coingeckoId;
+                    //cgArray.push(tm.extensions.coingeckoId)
                 }
-            }
-            
-            if (!foundMetaName){
-                name = tokenMap.get(item.account.data.parsed.info.mint)?.name;
-                logo = tokenMap.get(item.account.data.parsed.info.mint)?.logoURI;
-            }
-            if ((name && name?.length <= 0) || (!name))
-                name = item.account.data.parsed.info.mint;
-            
-            solholdingrows.push({
-                id:cnt,
-                mint:item.account.data.parsed.info.mint,
-                logo: {
-                    mint: item.account.data.parsed.info.mint,
-                    logo: logo,
-                    metadata: metadata
-                },
-                name:name,
+            }    
+
+            setLoadingPosition('Prices');
+            const cgPrice = await getCoinGeckoPrice(cgArray);
+
+            setLoadingPosition('NFT Metadata');
+            const nftMeta = await fetchNFTMetadata(resultValues);
+
+            //console.log("nftMeta: "+JSON.stringify(nftMeta))
+
+            let netValue = 0;
+            for (const item of resultValues){
                 /*
-                name:{
-                    name:name,
-                    logo:logo,
-                    address:item.account.data.parsed.info
-                },*/
-                balance:itemBalance,
-                price:item.account.data.parsed.info.tokenAmount.decimals === 0 ? 0 : cgPrice[item?.coingeckoId]?.usd || 0,
-                change:item.account.data.parsed.info.tokenAmount.decimals === 0 ? 0 : cgPrice[item?.coingeckoId]?.usd_24h_change || 0,
-                value: +itemValue,
-                send:{
-                    name:name,
-                    logo:logo,
-                    mint: item.account.data.parsed.info.mint,
-                    info:item.account.data.parsed.info,
-                    metadata: metadata,
-                    tokenAmount:item.account.data.parsed.info.tokenAmount,
-                    decimals:item.account.data.parsed.info.decimals,
-                },
-                metadata_decoded:metadata_decoded,
-                //swap:item.account.data.parsed.info
-            });
-
-            netValue += +itemValue;
-
-            cnt++;
-        }
-
-        setTokensNetValue(netValue);
-
-        let closableholdingsrows = new Array();
-        cnt = 0;
-        for (const item of closable){
-            /*
-            try{
-                const tknPrice = await getTokenPrice(item.account.data.parsed.info.mint, "USDC");
-                item.account.data.parsed.info.tokenPrice = tknPrice.data.price
-            }catch(e){}
-            */
-            
-            const itemValue = 0;
-            const itemBalance = 0;
-
-            let logo = null;
-            let name = item.account.data.parsed.info.mint;
-            let metadata = null;
-            
-            let foundMetaName = false;
-            for (const nft of nftMeta){
-                //console.log('meta: '+JSON.stringify(nft));
-                if (nft.meta.mint === item.account.data.parsed.info.mint){
-                    //console.log("nft: "+JSON.stringify(nft))
-                    
-                    name = nft.meta.data.name;
-                    metadata = nft.meta.data.uri;
-                    // fetch
-                    if (nft?.image)
-                        logo = nft.image;
-                    else if (nft?.urimeta?.image)
-                        logo = nft.urimeta?.image;
-                    foundMetaName = true;
-                }
-            }
-
-            if (!foundMetaName){
-                name = tokenMap.get(item.account.data.parsed.info.mint)?.name;
-                logo = tokenMap.get(item.account.data.parsed.info.mint)?.logoURI;
-            }
-            if ((name && name?.length <= 0) || (!name))
-                name = item.account.data.parsed.info.mint;
-            
-            closableholdingsrows.push({
-                id:cnt,
-                mint:item.account.data.parsed.info.mint,
-                logo: {
-                    mint: item.account.data.parsed.info.mint,
-                    logo: logo,
-                    metadata: metadata
-                },
-                name:name,
-                /*
-                name:{
-                    name:name,
-                    logo:logo,
-                    address:item.account.data.parsed.info
-                },
+                try{
+                    const tknPrice = await getTokenPrice(item.account.data.parsed.info.mint, "USDC");
+                    item.account.data.parsed.info.tokenPrice = tknPrice.data.price
+                }catch(e){}
                 */
-                balance:itemBalance,
-                oncurve: ValidateCurve(item.account.data.parsed.info.mint),
-                nft: item.account.data.parsed.info.tokenAmount.decimals === 0 ? true : false,
-                close:item.account.data.parsed.info,
-                preview:item.account.data.parsed.info.mint
-            });
-            cnt++;
+                
+                const itemValue = item?.coingeckoId ? +cgPrice[item?.coingeckoId]?.usd ? (cgPrice[item?.coingeckoId].usd * +item.account.data.parsed.info.tokenAmount.amount/Math.pow(10, +item.account.data.parsed.info.tokenAmount.decimals)).toFixed(item.account.data.parsed.info.tokenAmount.decimals) : 0 :0;
+                const itemBalance = Number(new TokenAmount(item.account.data.parsed.info.tokenAmount.amount, item.account.data.parsed.info.tokenAmount.decimals).format().replace(/[^0-9.-]+/g,""));
+                
+                
+                let logo = null;
+                let name = item.account.data.parsed.info.mint;
+                let metadata = null;
+                let metadata_decoded = null;
+
+                let foundMetaName = false;
+
+                for (const nft of nftMeta){
+                    //console.log('meta: '+JSON.stringify(nft));
+                    if (nft.meta.mint === item.account.data.parsed.info.mint){
+                        //console.log("nft: "+JSON.stringify(nft))
+
+                        metadata_decoded = decodeMetadata(nft.data);
+                        //console.log("meta_final: "+JSON.stringify(metadata_decoded))
+                        
+                        name = nft.meta.data.name;
+                        metadata = nft.meta.data.uri;
+                        // fetch
+                        if (nft?.image)
+                            logo = nft.image;
+                        else if (nft?.urimeta?.image)
+                            logo = nft.urimeta?.image;
+                        foundMetaName = true;
+                    }
+                }
+                
+                if (!foundMetaName){
+                    name = tokenMap.get(item.account.data.parsed.info.mint)?.name;
+                    logo = tokenMap.get(item.account.data.parsed.info.mint)?.logoURI;
+                }
+                if ((name && name?.length <= 0) || (!name))
+                    name = item.account.data.parsed.info.mint;
+                
+                solholdingrows.push({
+                    id:cnt,
+                    mint:item.account.data.parsed.info.mint,
+                    logo: {
+                        mint: item.account.data.parsed.info.mint,
+                        logo: logo,
+                        metadata: metadata
+                    },
+                    name:name,
+                    /*
+                    name:{
+                        name:name,
+                        logo:logo,
+                        address:item.account.data.parsed.info
+                    },*/
+                    balance:itemBalance,
+                    price:item.account.data.parsed.info.tokenAmount.decimals === 0 ? 0 : cgPrice[item?.coingeckoId]?.usd || 0,
+                    change:item.account.data.parsed.info.tokenAmount.decimals === 0 ? 0 : cgPrice[item?.coingeckoId]?.usd_24h_change || 0,
+                    value: +itemValue,
+                    send:{
+                        name:name,
+                        logo:logo,
+                        mint: item.account.data.parsed.info.mint,
+                        info:item.account.data.parsed.info,
+                        metadata: metadata,
+                        tokenAmount:item.account.data.parsed.info.tokenAmount,
+                        decimals:item.account.data.parsed.info.decimals,
+                    },
+                    metadata_decoded:metadata_decoded,
+                    //swap:item.account.data.parsed.info
+                });
+
+                netValue += +itemValue;
+
+                cnt++;
+            }
+
+            setTokensNetValue(netValue);
+
+            let closableholdingsrows = new Array();
+            cnt = 0;
+            for (const item of closable){
+                /*
+                try{
+                    const tknPrice = await getTokenPrice(item.account.data.parsed.info.mint, "USDC");
+                    item.account.data.parsed.info.tokenPrice = tknPrice.data.price
+                }catch(e){}
+                */
+                
+                const itemValue = 0;
+                const itemBalance = 0;
+
+                let logo = null;
+                let name = item.account.data.parsed.info.mint;
+                let metadata = null;
+                
+                let foundMetaName = false;
+                for (const nft of nftMeta){
+                    //console.log('meta: '+JSON.stringify(nft));
+                    if (nft.meta.mint === item.account.data.parsed.info.mint){
+                        //console.log("nft: "+JSON.stringify(nft))
+                        
+                        name = nft.meta.data.name;
+                        metadata = nft.meta.data.uri;
+                        // fetch
+                        if (nft?.image)
+                            logo = nft.image;
+                        else if (nft?.urimeta?.image)
+                            logo = nft.urimeta?.image;
+                        foundMetaName = true;
+                    }
+                }
+
+                if (!foundMetaName){
+                    name = tokenMap.get(item.account.data.parsed.info.mint)?.name;
+                    logo = tokenMap.get(item.account.data.parsed.info.mint)?.logoURI;
+                }
+                if ((name && name?.length <= 0) || (!name))
+                    name = item.account.data.parsed.info.mint;
+                
+                closableholdingsrows.push({
+                    id:cnt,
+                    mint:item.account.data.parsed.info.mint,
+                    logo: {
+                        mint: item.account.data.parsed.info.mint,
+                        logo: logo,
+                        metadata: metadata
+                    },
+                    name:name,
+                    /*
+                    name:{
+                        name:name,
+                        logo:logo,
+                        address:item.account.data.parsed.info
+                    },
+                    */
+                    balance:itemBalance,
+                    oncurve: ValidateCurve(item.account.data.parsed.info.mint),
+                    nft: item.account.data.parsed.info.tokenAmount.decimals === 0 ? true : false,
+                    close:item.account.data.parsed.info,
+                    preview:item.account.data.parsed.info.mint
+                });
+                cnt++;
+            }
+
+            setSolanaClosableHoldings(closable);
+            setSolanaClosableHoldingsRows(closableholdingsrows);
+
+            setSolanaHoldingRows(solholdingrows)
+            setSolanaHoldings(sortedholdings);
+        }catch(cerr){
+            console.log("CERR: "+cerr);
         }
-
-        setSolanaClosableHoldings(closable);
-        setSolanaClosableHoldingsRows(closableholdingsrows);
-
-        setSolanaHoldingRows(solholdingrows)
-        setSolanaHoldings(sortedholdings);
     } 
 
     const fetchProfilePicture = async () => {
@@ -1065,7 +1076,7 @@ export function IdentityView(props: any){
     React.useEffect(() => {
         if (urlParams){
             if (!pubkey){
-                if (ValidateAddress(urlParams))
+                //if (ValidateAddress(urlParams))
                     setPubkey(urlParams);
             }
         } else if (publicKey) {
@@ -1397,10 +1408,12 @@ export function IdentityView(props: any){
                                                                 } value="7" />
                                                         }
 
-                                                        <Tab sx={{color:'white', textTransform:'none'}} 
-                                                                icon={<Hidden smUp><OpacityIcon /></Hidden>}
-                                                                label={<Hidden smDown><Typography variant="h6">{t('Streaming')}</Typography></Hidden>
-                                                        } value="8" />
+                                                        {ValidateCurve(pubkey) &&
+                                                            <Tab sx={{color:'white', textTransform:'none'}} 
+                                                                    icon={<Hidden smUp><OpacityIcon /></Hidden>}
+                                                                    label={<Hidden smDown><Typography variant="h6">{t('Streaming')}</Typography></Hidden>
+                                                            } value="8" />
+                                                        }
                                                         
                                                         {(SQUADS_API && publicKey && (publicKey.toBase58() === pubkey)) &&
                                                             <Tab sx={{color:'white', textTransform:'none'}}
