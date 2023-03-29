@@ -102,41 +102,43 @@ export default function ListForCollectionView(props: any){
     // filter by updateAuthority
 
     const fetchWalletCollection = async () => { 
-        const resp = await connection.getParsedTokenAccountsByOwner(new PublicKey(pubkey), {programId: new PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA")});
-        const resultValues = resp.value;   
-        /*
-        const body = {
-          method: "getTokenAccountsByOwner",
-          jsonrpc: "2.0",
-          params: [
-            // Get the public key of the account you want the balance for.
-            publicKey,
-            { programId: TOKEN_PROGRAM_ID },
-            { encoding: "jsonParsed", commitment: "processed" },
-          ],
-          id: "35f0036a-3801-4485-b573-2bf29a7c77d4",
-        };
-        
-        const response = await window.fetch(RPC_ENDPOINT, {
-          method: "POST",
-          body: JSON.stringify(body),
-          headers: { "Content-Type": "application/json" },
-        });
-        
-        const json = await response.json();
-        */
-        try{
-                const walletCollection = new Array();
-                const wallet = resultValues && resultValues?.map((collectionInfo: any) => {
-                    (+collectionInfo.account.data.parsed.info.tokenAmount.amount >= 1) &&
-                        (+collectionInfo.account.data.parsed.info.tokenAmount.decimals === 0) && 
-                            walletCollection.push(collectionInfo);    
-                            return collectionInfo;
-                });
-                return walletCollection;
-        } catch(e){console.log(e);}
-        
-        return [];
+        if (publicKey){
+            const resp = await connection.getParsedTokenAccountsByOwner(new PublicKey(publicKey), {programId: new PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA")});
+            const resultValues = resp.value;   
+            /*
+            const body = {
+            method: "getTokenAccountsByOwner",
+            jsonrpc: "2.0",
+            params: [
+                // Get the public key of the account you want the balance for.
+                publicKey,
+                { programId: TOKEN_PROGRAM_ID },
+                { encoding: "jsonParsed", commitment: "processed" },
+            ],
+            id: "35f0036a-3801-4485-b573-2bf29a7c77d4",
+            };
+            
+            const response = await window.fetch(RPC_ENDPOINT, {
+            method: "POST",
+            body: JSON.stringify(body),
+            headers: { "Content-Type": "application/json" },
+            });
+            
+            const json = await response.json();
+            */
+            try{
+                    const walletCollection = new Array();
+                    const wallet = resultValues && resultValues?.map((collectionInfo: any) => {
+                        (+collectionInfo.account.data.parsed.info.tokenAmount.amount >= 1) &&
+                            (+collectionInfo.account.data.parsed.info.tokenAmount.decimals === 0) && 
+                                walletCollection.push(collectionInfo);    
+                                return collectionInfo;
+                    });
+                    return walletCollection;
+            } catch(e){console.log(e);}
+            
+            return [];
+        }
     };
 
     const getCollectionData = async (start:number, collection:any) => {
@@ -278,7 +280,8 @@ export default function ListForCollectionView(props: any){
     }
 
     React.useEffect(() => {
-        getCollectionGallery();
+        if (publicKey)
+            getCollectionGallery();
     }, [publicKey]);
 
     function SellNowButton(props:any){

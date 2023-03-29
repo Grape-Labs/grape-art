@@ -2,6 +2,7 @@
 import { gql } from '@apollo/client'
 import gql_client from '../gql_client'
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
+import { PublicKey } from "@solana/web3.js";
 
 //import { CardinalTwitterIdentityResolver } from '@dialectlabs/identity-cardinal';
 
@@ -493,6 +494,31 @@ export function HoldersView(props: any) {
                 }
             }
         }`
+    
+    const getNFTOwners = async(collectionAddress:any) => {
+            //const connection = connection;//new Connection("https://api.mainnet-beta.solana.com");
+            const collectionMetadataAddress = new PublicKey(collectionAddress);
+            const collectionData = await connection.getAccountInfo(collectionMetadataAddress);
+
+            if (!collectionData) {
+              throw new Error("Collection not found");
+            }
+          
+            const collection = JSON.parse(Buffer.from(collectionData.data).toString());
+            const nftMetadataAccounts = collection.data.nfts.map((nft:any) => new PublicKey(nft));
+            const nftPromises = nftMetadataAccounts.map((nftAddress:any) => connection.getAccountInfo(nftAddress));
+          
+            const nftAccounts = await Promise.all(nftPromises);
+            const nftData = nftAccounts.map((nftAccount) => {
+              const metadata = JSON.parse(Buffer.from(nftAccount.data).toString());
+              const ownerAddress = new PublicKey(metadata.data.sellerFeeAccount);
+              return ownerAddress;
+            });
+            
+            const holderArray = Array.from(new Set(nftData));
+            console.log("holderArray: "+JSON.stringify(holderArray))
+            return holderArray;
+     }
 
     const getHolders = async() => {
         if (!loading){
@@ -648,6 +674,11 @@ export function HoldersView(props: any) {
     React.useEffect(() => { 
         if (publicKey && !loading){   
             getHolders();
+            // test new method
+            if (collectionAuthority.collection){
+                //getNFTOwners(collectionAuthority.collection);
+            }
+
         }
     }, [publicKey]);
     
