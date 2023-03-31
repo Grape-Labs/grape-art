@@ -1016,7 +1016,9 @@ export function IdentityView(props: any){
             let nftMap = null;
             if (mintarr){
                 //console.log("mintarr: "+JSON.stringify(mintarr))
+                
                 const gql_result = await getGqlNfts(mintarr);
+                
                 nftMap = gql_result;
                 //console.log('gql_results: ' + JSON.stringify(nftMap));
             }

@@ -2,7 +2,7 @@
 import { gql } from '@apollo/client'
 import gql_client from '../gql_client'
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
-import { PublicKey } from "@solana/web3.js";
+import { PublicKey, ConfirmedSignatureInfo, VersionedTransaction } from "@solana/web3.js";
 
 //import { CardinalTwitterIdentityResolver } from '@dialectlabs/identity-cardinal';
 
@@ -63,6 +63,11 @@ import IconButton from '@mui/material/IconButton';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import HowToVoteIcon from '@mui/icons-material/HowToVote';
+
+import {
+    Metadata,
+    PROGRAM_ADDRESS as metaplexProgramId,
+  } from "@metaplex-foundation/mpl-token-metadata";
 
 import { ChatNavigationHelpers, useDialectUiId } from '@dialectlabs/react-ui';
 import { GRAPE_BOTTOM_CHAT_ID } from '../utils/ui-contants';
@@ -496,28 +501,99 @@ export function HoldersView(props: any) {
         }`
     
     const getNFTOwners = async(collectionAddress:any) => {
-            //const connection = connection;//new Connection("https://api.mainnet-beta.solana.com");
-            const collectionMetadataAddress = new PublicKey(collectionAddress);
-            const collectionData = await connection.getAccountInfo(collectionMetadataAddress);
+            // 1. for each fetched mint
+            // const nftAccount = await connection.getParsedAccountInfo(new PublicKey(NFT_ADDRESS));
+            // const ownerAddress = nftAccount.value?.owner;
 
-            if (!collectionData) {
-              throw new Error("Collection not found");
-            }
-          
-            const collection = JSON.parse(Buffer.from(collectionData.data).toString());
-            const nftMetadataAccounts = collection.data.nfts.map((nft:any) => new PublicKey(nft));
-            const nftPromises = nftMetadataAccounts.map((nftAddress:any) => connection.getAccountInfo(nftAddress));
-          
-            const nftAccounts = await Promise.all(nftPromises);
-            const nftData = nftAccounts.map((nftAccount) => {
-              const metadata = JSON.parse(Buffer.from(nftAccount.data).toString());
-              const ownerAddress = new PublicKey(metadata.data.sellerFeeAccount);
-              return ownerAddress;
-            });
+            // push to use getMultipleAccountInfo
+            //connection.getMultipleParsedAccounts()
+
+            // do this in batches of 100 (so for 10k NFTs we need to do it 100 times!)
+
+            /*
+            const collectionPublicKey = new PublicKey(collectionAddress);
+            console.log("Getting signatures...");
+            const allSignatures: ConfirmedSignatureInfo[] = [];
+            let signatures = await connection.getSignaturesForAddress(collectionPublicKey);
+            allSignatures.push(...signatures);
+
+            //console.log("allSignatures: "+JSON.stringify(allSignatures));
             
-            const holderArray = Array.from(new Set(nftData));
-            console.log("holderArray: "+JSON.stringify(holderArray))
-            return holderArray;
+            do {
+                let options = {
+                  before: signatures[signatures.length - 1].signature,
+                };
+                signatures = await connection.getSignaturesForAddress(
+                    collectionPublicKey,
+                    options
+                );
+                allSignatures.push(...signatures);
+            } while (signatures.length > 0);
+            
+            console.log(`Found ${allSignatures.length} signatures`);
+
+            let metadataAddresses: PublicKey[] = [];
+            let mintAddresses = new Set<string>();
+            const latestBlockHash = await connection.getLatestBlockhash();
+
+            console.log("Getting transaction data...");
+            
+            const promises = allSignatures.map((s) =>
+                connection.getTransaction(
+                    s.signature,
+                    {commitment: 'confirmed',
+                    maxSupportedTransactionVersion: 1})
+            );
+            const transactions = await Promise.all(promises);
+
+            console.log("Parsing transaction data...");
+
+            for (const tx of transactions) {
+                if (tx) {
+                let programIds = tx!.transaction.message
+                    .programIds()
+                    .map((p) => p.toString());
+                let accountKeys = tx!.transaction.message.accountKeys.map((p) =>
+                    p.toString()
+                );
+
+                // Only look in transactions that call the Metaplex token metadata program
+                if (programIds.includes(metaplexProgramId)) {
+                    // Go through all instructions in a given transaction
+                    for (const ix of tx!.transaction.message.instructions) {
+                    // Filter for setAndVerify or verify instructions in the Metaplex token metadata program
+                    if (
+                        (ix.data == "K" || // VerifyCollection instruction
+                        ix.data == "S" || // SetAndVerifyCollection instruction
+                        ix.data == "X" || // VerifySizedCollectionItem instruction
+                        ix.data == "Z") && // SetAndVerifySizedCollectionItem instruction
+                        accountKeys[ix.programIdIndex] == metaplexProgramId
+                    ) {
+                        let metadataAddressIndex = ix.accounts[0];
+                        let metadata_address =
+                        tx!.transaction.message.accountKeys[metadataAddressIndex];
+                        metadataAddresses.push(metadata_address);
+                    }
+                    }
+                }
+                }
+            }
+
+            const promises2 = metadataAddresses.map((a) => connection.getAccountInfo(a));
+            const metadataAccounts = await Promise.all(promises2);
+            for (const account of metadataAccounts) {
+                if (account) {
+                let metadata = await Metadata.deserialize(account!.data);
+                mintAddresses.add(metadata[0].mint.toBase58());
+                }
+            }
+            let mints: string[] = Array.from(mintAddresses);
+
+            
+            console.log("mints: "+JSON.stringify(mints))
+            //return tokenAccounts;
+            */
+            
      }
 
     const getHolders = async() => {
@@ -676,7 +752,7 @@ export function HoldersView(props: any) {
             getHolders();
             // test new method
             if (collectionAuthority.collection){
-                //getNFTOwners(collectionAuthority.collection);
+                getNFTOwners(collectionAuthority.collection);
             }
 
         }
