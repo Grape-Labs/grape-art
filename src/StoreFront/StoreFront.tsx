@@ -2144,10 +2144,10 @@ export function StoreFrontView(this: any, props: any) {
                             <Tab icon={<CollectionsBookmarkIcon />} aria-label="Collectors" value={NavPanel.Collectors} sx={{color:'white'}} title="Collectors" disabled={true} />
                         }
                         {collectionAuthority?.tokenType && collectionAuthority?.tokenType === 'NFT' &&
-                            <Tab icon={<PeopleIcon />} aria-label="Holders" value={NavPanel.Holders} sx={{color:'white'}} title="Holders" />
+                            <Tab icon={<PeopleIcon />} aria-label="Holders" value={NavPanel.Holders} sx={{color:'white'}} title="Holders" disabled={true} />
                         }
                         {collectionAuthority?.governance &&
-                            <Tab icon={<AccountBalanceIcon />} aria-label="Governance" value={NavPanel.Governance} sx={{color:'white'}} title="Governance" disabled={true} />
+                            <Tab icon={<AccountBalanceIcon />} aria-label="Governance" value={NavPanel.Governance} sx={{color:'white'}} title="Governance" />
                         }
                         {collectionAuthority?.governance &&
                             <Tab icon={<HowToRegIcon />} aria-label="Members" value={NavPanel.Members} sx={{color:'white'}} title="Members" />
