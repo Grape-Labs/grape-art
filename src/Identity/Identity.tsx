@@ -199,24 +199,27 @@ export function IdentityView(props: any){
         { field: 'logo', headerName: '', width: 50, 
             renderCell: (params) => {
                 //console.log(params);
+                //const logo = params.value.logo || tokenMap.get(params.value.mint)?.logoURI || params.value.mint;
+                /*
+                if (logo === params.value.mint){
+                    let urimeta = window.fetch(params.value.metadata).then((res: any) => res.json());
+                    if (urimeta && urimeta?.image)
+                        logo = DRIVE_PROXY+urimeta?.image;
+                }*/
 
-                
-
-                return (<>
+                return (
+                    <>
                         <Avatar
                             sx={{backgroundColor:'#222'}}
-                                src={
-                                    params.value.logo ||
-                                    tokenMap.get(params.value.mint)?.logoURI || 
-                                    params.value.mint}
+                                src={params.value.logo || tokenMap.get(params.value.mint)?.logoURI || params.value.mint}
                                 alt={
                                     tokenMap.get(params.value.mint)?.name || 
                                     params.value.mint}
                         >
                             <QrCode2Icon sx={{color:'white'}} />
-                        </Avatar>
-                    
-                </>);
+                        </Avatar> 
+                    </>
+                );
             }
         },
         { field: 'name', headerName: 'Token', minWidth: 200, flex: 1
@@ -296,15 +299,13 @@ export function IdentityView(props: any){
         { field: 'mint', headerName: 'Mint', width: 70, align: 'center', hide: true },
         { field: 'logo', headerName: '', width: 50, 
             renderCell: (params) => {
+                //const logo = params.value.logo || tokenMap.get(params.value.mint)?.logoURI || params.value.mint;
                 //console.log(params);
                 return (
                     <>
                         <Avatar
                             sx={{backgroundColor:'#222'}}
-                                src={
-                                    params.value.logo ||
-                                    tokenMap.get(params.value.mint)?.logoURI || 
-                                    params.value.mint}
+                                src={params.value.logo || tokenMap.get(params.value.mint)?.logoURI || params.value.mint}
                                 alt={
                                     tokenMap.get(params.value.mint)?.name || 
                                     params.value.mint}
@@ -739,23 +740,28 @@ export function IdentityView(props: any){
                 let metadata_decoded = null;
 
                 let foundMetaName = false;
+                if (nftMeta){
+                    for (const nft of nftMeta){
+                        //console.log('meta: '+JSON.stringify(nft));
+                        if (nft.meta.mint === item.account.data.parsed.info.mint){
+                            //console.log("nft: "+JSON.stringify(nft))
 
-                for (const nft of nftMeta){
-                    //console.log('meta: '+JSON.stringify(nft));
-                    if (nft.meta.mint === item.account.data.parsed.info.mint){
-                        //console.log("nft: "+JSON.stringify(nft))
-
-                        metadata_decoded = decodeMetadata(nft.data);
-                        //console.log("meta_final: "+JSON.stringify(metadata_decoded))
-                        
-                        name = nft.meta.data.name;
-                        metadata = nft.meta.data.uri;
-                        // fetch
-                        if (nft?.image)
-                            logo = nft.image;
-                        else if (nft?.urimeta?.image)
-                            logo = nft.urimeta?.image;
-                        foundMetaName = true;
+                            metadata_decoded = decodeMetadata(nft.data);
+                            //console.log("meta_final: "+JSON.stringify(metadata_decoded))
+                            
+                            name = nft.meta.data.name;
+                            metadata = nft.meta.data.uri;
+                            // fetch
+                            if (nft?.image){
+                                logo = nft.image;
+                            }else if (nft?.urimeta?.image){
+                                logo = nft.urimeta?.image;
+                            }/*else if (nft?.meta){
+                                let urimeta = await window.fetch(metadata).then((res: any) => res.json());
+                                logo = DRIVE_PROXY+urimeta.image;
+                            }*/
+                            foundMetaName = true;
+                        }
                     }
                 }
                 
@@ -831,10 +837,14 @@ export function IdentityView(props: any){
                         name = nft.meta.data.name;
                         metadata = nft.meta.data.uri;
                         // fetch
-                        if (nft?.image)
+                        if (nft?.image){
                             logo = nft.image;
-                        else if (nft?.urimeta?.image)
+                        }else if (nft?.urimeta?.image){
                             logo = nft.urimeta?.image;
+                        }/* else if (nft?.meta){
+                            let urimeta = await window.fetch(metadata).then((res: any) => res.json());
+                            logo = DRIVE_PROXY+urimeta.image;
+                        }*/
                         foundMetaName = true;
                     }
                 }
