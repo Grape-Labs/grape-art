@@ -732,8 +732,6 @@ export function IdentityView(props: any){
                 
                 const itemValue = item?.coingeckoId ? +cgPrice[item?.coingeckoId]?.usd ? (cgPrice[item?.coingeckoId].usd * +item.account.data.parsed.info.tokenAmount.amount/Math.pow(10, +item.account.data.parsed.info.tokenAmount.decimals)).toFixed(item.account.data.parsed.info.tokenAmount.decimals) : 0 :0;
                 const itemBalance = Number(new TokenAmount(item.account.data.parsed.info.tokenAmount.amount, item.account.data.parsed.info.tokenAmount.decimals).format().replace(/[^0-9.-]+/g,""));
-                
-                
                 let logo = null;
                 let name = item.account.data.parsed.info.mint;
                 let metadata = null;
@@ -742,8 +740,7 @@ export function IdentityView(props: any){
                 let foundMetaName = false;
                 if (nftMeta){
                     for (const nft of nftMeta){
-                        //console.log('meta: '+JSON.stringify(nft));
-                        if (nft.meta.mint === item.account.data.parsed.info.mint){
+                        if (nft?.meta && nft.meta.mint === item.account.data.parsed.info.mint){
                             //console.log("nft: "+JSON.stringify(nft))
 
                             metadata_decoded = decodeMetadata(nft.data);
@@ -831,21 +828,23 @@ export function IdentityView(props: any){
                 let foundMetaName = false;
                 for (const nft of nftMeta){
                     //console.log('meta: '+JSON.stringify(nft));
-                    if (nft.meta.mint === item.account.data.parsed.info.mint){
-                        //console.log("nft: "+JSON.stringify(nft))
-                        
-                        name = nft.meta.data.name;
-                        metadata = nft.meta.data.uri;
-                        // fetch
-                        if (nft?.image){
-                            logo = nft.image;
-                        }else if (nft?.urimeta?.image){
-                            logo = nft.urimeta?.image;
-                        }/* else if (nft?.meta){
-                            let urimeta = await window.fetch(metadata).then((res: any) => res.json());
-                            logo = DRIVE_PROXY+urimeta.image;
-                        }*/
-                        foundMetaName = true;
+                    if (nft.meta?.mint){
+                        if (nft.meta.mint === item.account.data.parsed.info.mint){
+                            //console.log("nft: "+JSON.stringify(nft))
+                            
+                            name = nft.meta.data.name;
+                            metadata = nft.meta.data.uri;
+                            // fetch
+                            if (nft?.image){
+                                logo = nft.image;
+                            }else if (nft?.urimeta?.image){
+                                logo = nft.urimeta?.image;
+                            }/* else if (nft?.meta){
+                                let urimeta = await window.fetch(metadata).then((res: any) => res.json());
+                                logo = DRIVE_PROXY+urimeta.image;
+                            }*/
+                            foundMetaName = true;
+                        }
                     }
                 }
 
@@ -1043,40 +1042,82 @@ export function IdentityView(props: any){
                 if (collectionmeta[i]) {
                     collectionmeta[i]['wallet'] = sholdings[i];
                     try {
-                        const meta_primer = collectionmeta[i];
-                        const buf = Buffer.from(meta_primer.data, 'base64');
-                        const meta_final = decodeMetadata(buf);
-                        collectionmeta[i]['meta'] = meta_final;
-                        //console.log("meta: "+JSON.stringify(collectionmeta[i]['meta'].mint))
-                        try{
-                            //console.log("checking: "+collectionmeta[i]['meta'].mint);
-                            if (nftMap){
-                                //var index = Object.keys(nftMap).indexOf(collectionmeta[i]['meta'].mint);
-                                let found_from_map = false;
-                                for (const [key, value] of Object.entries(nftMap)){
-                                    if (key === collectionmeta[i]['meta'].mint){
-                                        collectionmeta[i]['image'] = DRIVE_PROXY+value?.image;
-                                        found_from_map = true;
-                                        //console.log("image: "+ value?.image);
+                        if (collectionmeta[i]['wallet'].account?.data?.parsed?.info?.tokenAmount?.decimals === 0){
+                            //console.log("NFT: "+JSON.stringify(collectionmeta[i]['wallet']))
+                            const meta_primer = collectionmeta[i];
+                            const buf = Buffer.from(meta_primer.data, 'base64');
+                            const meta_final = decodeMetadata(buf);
+                            collectionmeta[i]['meta'] = meta_final;
+                            //console.log("meta: "+JSON.stringify(collectionmeta[i]['meta'].mint))
+                        
+                            try{
+                                //console.log("checking: "+collectionmeta[i]['meta'].mint);
+                                if (nftMap){
+                                    //var index = Object.keys(nftMap).indexOf(collectionmeta[i]['meta'].mint);
+                                    let found_from_map = false;
+                                    for (const [key, value] of Object.entries(nftMap)){
+                                        if (key === collectionmeta[i]['meta'].mint){
+                                            collectionmeta[i]['image'] = DRIVE_PROXY+value?.image;
+                                            found_from_map = true;
+                                            //console.log("image: "+ value?.image);
+                                        }
+                                    }
+
+                                    if (!found_from_map){
+                                        //if (collectionmeta.length <= 25){ // limitd to 25 fetches (will need to optimize this so it does not delay)
+                                            if (meta_final.data?.uri){
+                                                collectionmeta[i]['urimeta'] = await window.fetch(meta_final.data.uri).then((res: any) => res.json());
+                                                collectionmeta[i]['image'] = DRIVE_PROXY+collectionmeta[i]['urimeta'].image;
+                                            }
+                                        //}
+                                    }
+                                } else {
+                                    if (meta_final.data?.uri){
+                                        collectionmeta[i]['urimeta'] = await window.fetch(meta_final.data.uri).then((res: any) => res.json());
+                                        collectionmeta[i]['image'] = DRIVE_PROXY+collectionmeta[i]['urimeta'].image;
                                     }
                                 }
 
-                                if (!found_from_map){
-                                    //if (collectionmeta.length <= 25){ // limitd to 25 fetches (will need to optimize this so it does not delay)
-                                        if (meta_final.data?.uri){
-                                            collectionmeta[i]['urimeta'] = await window.fetch(meta_final.data.uri).then((res: any) => res.json());
-                                            collectionmeta[i]['image'] = DRIVE_PROXY+collectionmeta[i]['urimeta'].image;
-                                        }
-                                    //}
+                                if (collectionmeta[i]['image']){
+                                    /*
+                                    const img_url_string = collectionmeta[i]['image'];
+                                    const full_url = new URL(img_url_string);
+                                    const ARWEAVE = 'https://arweave.net';
+                                    const IPFS = 'https://ipfs.io';
+                                    const IPFS_2 = "https://nftstorage.link/ipfs";
+                                    const IPFS_3 = ".ipfs.nftstorage.link";
+                                    
+                                    if ((img_url_string?.toLocaleUpperCase().indexOf('?EXT=PNG') > -1) ||
+                                        (img_url_string?.toLocaleUpperCase().indexOf('?EXT=JPEG') > -1) ||
+                                        (img_url_string?.toLocaleUpperCase().indexOf('?EXT=GIF') > -1) ||
+                                        (img_url_string?.toLocaleUpperCase().indexOf('.JPEG') > -1) ||
+                                        (img_url_string?.toLocaleUpperCase().indexOf('.PNG') > -1) ||
+                                        (img_url_string?.startsWith(IPFS))){
+                                            
+                                            let image_url = DRIVE_PROXY+img_url_string;
+
+                                            if (img_url_string.startsWith(IPFS)){
+                                                //image_url = DRIVE_PROXY+CLOUDFLARE_IPFS_CDN+''+img_url_string.replace(IPFS,'');
+                                            } else if (img_url_string.startsWith(IPFS_2)){
+                                                //image_url = DRIVE_PROXY+CLOUDFLARE_IPFS_CDN+'/ipfs/'+img_url_string.replace(IPFS_2,'');
+                                            } else if (img_url_string.includes(IPFS_3)){
+                                                //https://solana-cdn.com/cdn-cgi/image/width=256/https://cloudflare-ipfs.com/ipfs///
+                                                //https://bafybeigi6scodcqz7wc2higrkfdmwt4tkyteoq4xxiy5olxpfh3pm4n3ue.ipfs.nftstorage.link/?ext=png
+                                                const host = full_url.hostname.split('.');
+                                                const folders = full_url.pathname.split('/');
+                                            }
+
+                                            
+                                            collectionmeta[i]['image'] = image_url;
+                                    }
+                                    */
+
                                 }
-                            } else {
-                                if (meta_final.data?.uri){
-                                    collectionmeta[i]['urimeta'] = await window.fetch(meta_final.data.uri).then((res: any) => res.json());
-                                    collectionmeta[i]['image'] = DRIVE_PROXY+collectionmeta[i]['urimeta'].image;
-                                }
+                            }catch(err){
+                                console.log("ERR: "+err);
                             }
-                        }catch(err){
-                            console.log("ERR: "+err);
+                        } else{ // push null if empty
+                            collectionmeta[i]['meta'] = null;
                         }
                         collectionmeta[i]['groupBySymbol'] = 0;
                         collectionmeta[i]['groupBySymbolIndex'] = 0;
