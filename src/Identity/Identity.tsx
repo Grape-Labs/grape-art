@@ -199,6 +199,9 @@ export function IdentityView(props: any){
         { field: 'logo', headerName: '', width: 50, 
             renderCell: (params) => {
                 //console.log(params);
+
+                
+
                 return (<>
                         <Avatar
                             sx={{backgroundColor:'#222'}}
@@ -1016,13 +1019,14 @@ export function IdentityView(props: any){
             let nftMap = null;
             if (mintarr){
                 //console.log("mintarr: "+JSON.stringify(mintarr))
-                
-                const gql_result = await getGqlNfts(mintarr);
-                
-                nftMap = gql_result;
+                // RETIRED HOLAPLEX INDEXER:
+                //const gql_result = await getGqlNfts(mintarr);
+                //nftMap = gql_result;
                 //console.log('gql_results: ' + JSON.stringify(nftMap));
             }
             
+            
+
             const final_collection_meta: any[] = [];
             for (let i = 0; i < collectionmeta.length; i++) {
                 //console.log(i+": "+JSON.stringify(collectionmeta[i])+" --- with --- "+JSON.stringify(collectionmeta[i]));
@@ -1046,6 +1050,7 @@ export function IdentityView(props: any){
                                         //console.log("image: "+ value?.image);
                                     }
                                 }
+
                                 if (!found_from_map){
                                     //if (collectionmeta.length <= 25){ // limitd to 25 fetches (will need to optimize this so it does not delay)
                                         if (meta_final.data?.uri){
@@ -1054,7 +1059,12 @@ export function IdentityView(props: any){
                                         }
                                     //}
                                 }
-                            } 
+                            } else {
+                                if (meta_final.data?.uri){
+                                    collectionmeta[i]['urimeta'] = await window.fetch(meta_final.data.uri).then((res: any) => res.json());
+                                    collectionmeta[i]['image'] = DRIVE_PROXY+collectionmeta[i]['urimeta'].image;
+                                }
+                            }
                         }catch(err){
                             console.log("ERR: "+err);
                         }
