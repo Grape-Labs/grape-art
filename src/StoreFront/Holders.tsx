@@ -1,6 +1,7 @@
 
 import { gql } from '@apollo/client'
 import gql_client from '../gql_client'
+import { RestClient, NftMintsByOwnerRequest } from '@hellomoon/api';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { PublicKey, ConfirmedSignatureInfo, VersionedTransaction } from "@solana/web3.js";
 
@@ -78,6 +79,7 @@ import {
     RPC_ENDPOINT, 
     TWITTER_PROXY,
     DRIVE_PROXY,
+    HELLO_MOON_BEARER,
 } from '../utils/grapeTools/constants';
 
 import { formatAmount, getFormattedNumberToLocale } from '../utils/grapeTools/helpers'
@@ -501,6 +503,25 @@ export function HoldersView(props: any) {
         }`
     
     const getNFTOwners = async(collectionAddress:any) => {
+    
+        const client = new RestClient(HELLO_MOON_BEARER);
+
+        // 1. find out how many in the collection (hint we already have this fetched in our cache)
+        // 2. loop and push data per loop (1000 p/loop)
+        // 3. data here will not have the mint image, additional fetch will be required if we would like to show that
+        
+        const results = await client.send(new NftMintsByOwnerRequest({
+            nftCollectionMint: collectionAddress,
+            limit: 1000
+        }))
+            .then(console.log)
+            .catch(console.error);
+
+        console.log("results: "+JSON.stringify(results));
+
+    }
+    
+    const getTokenOwners = async(collectionAddress:any) => {
             // 1. for each fetched mint
             // const nftAccount = await connection.getParsedAccountInfo(new PublicKey(NFT_ADDRESS));
             // const ownerAddress = nftAccount.value?.owner;

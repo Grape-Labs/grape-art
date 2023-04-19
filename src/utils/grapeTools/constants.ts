@@ -5,13 +5,14 @@ export const GRAPE_RPC_ENDPOINT = process.env.REACT_APP_API_GRAPE_RPC_ENDPOINT |
 export const QUICKNODE_RPC_ENDPOINT = process.env.REACT_APP_API_GRAPE_RPC_ENDPOINT || 'https://api.mainnet-beta.solana.com';
 export const HELIUS_RPC_ENDPOINT = 'https://rpc.helius.xyz/?api-key='+process.env.REACT_APP_API_HELIUS;
 export const RPC_ENDPOINT = process.env.REACT_APP_API_QUICKNODE_RPC_ENDPOINT || 'https://api.mainnet-beta.solana.com';
+export const HELLO_MOON_BEARER = process.env.REACT_APP_API_HELLOMOON_API_KEY;
 
 /*
 export const RPC_CONNECTION = new Connection(
     "https://rest-api.hellomoon.io/v0/rpc",
     {
       httpHeaders: {
-        Authorization: `Bearer ${process.env.REACT_APP_API_HELLOMOON_API_KEY}`, 
+        Authorization: `Bearer ${HELLO_MOON_BEARER}`, 
       },
     }
 );
