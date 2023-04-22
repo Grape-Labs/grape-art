@@ -2443,7 +2443,7 @@ export default function ItemOffers(props: any) {
                                                     <>
                                                     &nbsp;
                                                     {sentmeta?.marketplace ?
-                                                        <>Listed on 
+                                                        <>Listed on&nbsp;
                                                             {sentmeta.marketplace.toUpperCase() === "HYPERSPACE" &&
                                                             <Tooltip title={`Buy on ${sentmeta.marketplace}`}><Button
                                                                 color='inherit'    
@@ -2451,11 +2451,16 @@ export default function ItemOffers(props: any) {
                                                                 target='_blank'
                                                                 sx={{borderRadius:'17px'}}
                                                                 >{sentmeta.marketplace}</Button></Tooltip>
-                                                            }</>
+                                                            }
+                                                            {sentmeta.marketplace.toUpperCase() === "TENSOR" &&
+                                                                <>&nbsp;{sentmeta.marketplace}</>
+                                                            }
+                                                        </>
                                                     :
-                                                        <>{t('not listed for sale')}</>
-                                                    }
-                                                    </>
+                                                    <>
+                                                    &nbsp;{t('not listed for sale')}
+                                                    </>}
+                                                </>
                                                 }
                                                 </>
                                             :
