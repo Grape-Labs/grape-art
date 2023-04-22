@@ -511,6 +511,10 @@ export default function GalleryItem(props: any){
                                                                     </ListItem>
                                                                 }
 
+                                                                {collectionitem?.marketplace &&
+                                                                    <>{collectionitem.marketplace.replaceAll("_", " ")}</>
+                                                                }
+
                                                                 {collectionitem?.attributes &&
                                                                     <ListItem sx={{pt:0,pb:0}}>
                                                                         <ListItemText sx={{textAlign:'center'}}>
