@@ -1339,6 +1339,11 @@ export function StoreFrontView(this: any, props: any) {
                                     } else{
                                         crossTotalListings++;
                                     }
+
+                                    //if (mintListItem.address === "AVze8PmYs9oVJDXkenPSFeN6z8D3xW2F4fignjR3sACQ"){
+                                    //    console.log("item.activeListings "+JSON.stringify(item));
+                                    //}
+
                                     mintListItem.listingPrice = +item.activeListings[0].amount /(10 ** 9);
                                     mintListItem.marketplaceListing = false;
                                     mintListItem.marketplace = item.activeListings[0].marketplace
@@ -1373,6 +1378,14 @@ export function StoreFrontView(this: any, props: any) {
         if (HELIUS_API && collectionAuthority){
             const creatorAddress = collectionAuthority?.creatorAddress;
             const url = `https://api.helius.xyz/v1/active-listings?api-key=${HELIUS_API}`;
+            
+            /*
+                We may be able to pass this too but noticed that this does sometimes resolve bad data
+                "verifiedCollectionAddresses": [
+                "4mKSoDDqApmF1DqXvVTSL6tu2zixrSSNjqMxUnwvVzy2"
+                ]
+            */
+            
             const getActiveListings = async () => {
                 if (creatorAddress){
                     const allListings = new Array();

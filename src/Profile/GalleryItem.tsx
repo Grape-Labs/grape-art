@@ -583,7 +583,7 @@ export default function GalleryItem(props: any){
                                     }}
                                 >
                                     <DialogContent>
-                                        <PreviewView floorPrice={floorPrice} handlekey={collectionitem?.address || mint} />
+                                        <PreviewView floorPrice={floorPrice} handlekey={collectionitem?.address || mint} sentmeta={collectionitem} />
                                     </DialogContent>
                                     <DialogActions>
                                         <Button variant="text" onClick={handleCloseDialog}>Close</Button>

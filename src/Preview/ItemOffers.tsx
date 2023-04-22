@@ -72,14 +72,12 @@ import { useAnchorWallet } from "@solana/wallet-adapter-react";
 import { WalletError } from '@solana/wallet-adapter-base';
 
 import { 
-    TOKEN_REALM_PROGRAM_ID,
-    TOKEN_REALM_ID,
     TOKEN_VERIFICATION_NAME,
     TOKEN_VERIFICATION_AMOUNT,
     RPC_CONNECTION,
+    HELIUS_API,
     RPC_ENDPOINT, 
     GRAPE_RPC_REFRESH, 
-    GRAPE_PREVIEW, 
     GRAPE_PROFILE,
     FEATURED_DAO_ARRAY,
     VERIFIED_DAO_ARRAY,
@@ -470,6 +468,51 @@ function SellNowVotePrompt(props:any){
             return response;
         }
 
+        const getNftEvents = async () => {
+            if (HELIUS_API){
+                const url = `https://api.helius.xyz/v1/nft-events?api-key=${HELIUS_API}`;
+                
+                const getRecentNftEvents = async () => {
+                    const allEvents = new Array();
+                    let paginate = true;
+                    let paginationToken = null;
+
+                    while(paginate){
+                        const { data } = await axios.post(url, {
+                            "query": {
+                                //"verifiedCollectionAddresses": [address]
+                                "accounts": [mint]
+                            },
+                            "options": {
+                                "limit": 1000,
+                                "paginationToken": paginationToken,   
+                            }
+                        });
+                        if (data.paginationToken){
+                            //console.log("Active listings: ", data.result);
+                            //console.log("Active listings: ", data);
+                            paginationToken = data.paginationToken;
+                        } else{
+                            paginate = false;
+                        }
+                        for (let listing of data.result){
+                            allEvents.push(listing);
+                        }
+                    }
+                    return allEvents;
+                };
+                
+                const nftEvents = await getRecentNftEvents();
+    
+                console.log("helius events: ("+nftEvents.length+") "+JSON.stringify(nftEvents));
+    
+                return nftEvents;
+                //setSolanaTransactions(tx);
+            } else{
+                return null;
+            }
+        }
+
         const fetchMEMintWithTimeout = async () => {
             setLoadingTP(true);
             const apiUrl = PROXY+"https://api-mainnet.magiceden.dev/v2/tokens/"+mint+"/listings";
@@ -490,7 +533,10 @@ function SellNowVotePrompt(props:any){
         }
 
         React.useEffect(() => {
-            const result = fetchMEMintWithTimeout();
+            const me_result = fetchMEMintWithTimeout();
+
+            const helius_result = getNftEvents();
+
         },[]);
 
         if (loadingTP){
@@ -1425,6 +1471,7 @@ export function OfferPrompt(props: any) {
 }
 
 export default function ItemOffers(props: any) {
+    const sentmeta = props?.sentmeta;
     const floorPrice = props.floorPrice || null;
     const [mintAta, setMintAta] = React.useState(props.mintAta);
     const [offers, setOffers] = React.useState(null);
@@ -2394,7 +2441,20 @@ export default function ItemOffers(props: any) {
                                                     <>&nbsp;listed on escrow</>
                                                 :
                                                     <>
-                                                    &nbsp;{t('not listed for sale')}
+                                                    &nbsp;
+                                                    {sentmeta?.marketplace ?
+                                                        <>Listed on 
+                                                            {sentmeta.marketplace.toUpperCase() === "HYPERSPACE" &&
+                                                            <Tooltip title={`Buy on ${sentmeta.marketplace}`}><Button
+                                                                color='inherit'    
+                                                                href={`https://hyperspace.xyz/token/${mint}`}
+                                                                target='_blank'
+                                                                sx={{borderRadius:'17px'}}
+                                                                >{sentmeta.marketplace}</Button></Tooltip>
+                                                            }</>
+                                                    :
+                                                        <>{t('not listed for sale')}</>
+                                                    }
                                                     </>
                                                 }
                                                 </>

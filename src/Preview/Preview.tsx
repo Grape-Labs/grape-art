@@ -403,6 +403,7 @@ function GrapeVerified(props:any){
 }
 
 function GalleryItemMeta(props: any) {
+    const sentmeta = props?.sentmeta;
     const floorPrice = props.floorPrice || null;
     const viewMode = props.viewMode;
     const handlekey = props.handlekey || null;
@@ -1703,6 +1704,7 @@ function GalleryItemMeta(props: any) {
 
                                 {tokenOwners?.data.parsed.info.owner &&
                                     <ItemOffers
+                                        sentmeta={sentmeta}
                                         floorPrice={floorPrice}
                                         mintAta={mintAta} 
                                         collectionItemData={collectionrawdata}
@@ -1835,7 +1837,8 @@ type Props = {
 };
 
 export function PreviewView(this: any, props: any) {
-    const floorPrice = props.floorPrice || null;
+    const sentmeta = props?.sentmeta;
+    const floorPrice = props?.floorPrice || null;
     const [collection, setCollection] = React.useState(null);
     //const isConnected = session && session.isConnected;
     const [loading, setLoading] = React.useState(false);
@@ -2074,7 +2077,7 @@ export function PreviewView(this: any, props: any) {
             //if (image){
                 if (!loading){
                     return (
-                            <GalleryItemMeta floorPrice={floorPrice} verifiedAuctionHouses={verifiedAuctionHouses} viewMode={viewMode} verifiedCollection={verifiedCollection} collectionitem={collectionmeta} collectionrawdata={collectionrawdata} metadataPDA={metadataPDA} mint={mint} setRefresh={setRefresh} setMintPubkey={setMintPubkey} collectionAuctionHouse={collectionAuctionHouse} handlekey={handlekey} />
+                            <GalleryItemMeta sentmeta={sentmeta} floorPrice={floorPrice} verifiedAuctionHouses={verifiedAuctionHouses} viewMode={viewMode} verifiedCollection={verifiedCollection} collectionitem={collectionmeta} collectionrawdata={collectionrawdata} metadataPDA={metadataPDA} mint={mint} setRefresh={setRefresh} setMintPubkey={setMintPubkey} collectionAuctionHouse={collectionAuctionHouse} handlekey={handlekey} />
                     );
                 }
             }
