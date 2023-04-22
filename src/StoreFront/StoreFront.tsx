@@ -1279,7 +1279,7 @@ export function StoreFrontView(this: any, props: any) {
 
                     const allListings = await getNftListings();
 
-                    
+                    console.log("allListings: "+JSON.stringify(allListings))
                     if (!allListings){ // backup use ME directly
                         let json1 = [];
                         let json2 = [];
@@ -1307,52 +1307,57 @@ export function StoreFrontView(this: any, props: any) {
                         } catch(erf){ console.log("ERR: "+erf);}
                         
                         const json = [...json1,...json2,...json3,...json4,...json5,...json6];
-                        }
+                    
+                        try{
+                            
+                            let found = false;
+                            for (var item of json){
+                                for (var mintListItem of tempCollectionMintList){
+                                    if (mintListItem.address === item.tokenMint){
+                                        if (mintListItem.listingPrice === null){
+                                            thisTotalListings++;
+                                        } else{
+                                            crossTotalListings++;
+                                        }
+                                        // no need to check date as this is an escrow check
+                                        mintListItem.listingPrice = item.price;
+                                        mintListItem.marketplaceListing = false;
+                                    }
+                                }
+                                if ((thisFloorPrice > +item.price)||(!thisFloorPrice))
+                                    thisFloorPrice = +item.price;
+                            }
+                        }catch(e){console.log("ERR: "+e);}
+                    
+                    } else{
+                        try{
+                            
+                            for (let item of allListings){
+                                for (let mintListItem of tempCollectionMintList){
+                                    if (mintListItem.address === item.mint){
+                                        if (mintListItem.listingPrice === null){
+                                            thisTotalListings++;
+                                        } else{
+                                            crossTotalListings++;
+                                        }
+    
+                                        //if (mintListItem.address === "AVze8PmYs9oVJDXkenPSFeN6z8D3xW2F4fignjR3sACQ"){
+                                        //    console.log("item.activeListings "+JSON.stringify(item));
+                                        //}
+    
+                                        mintListItem.listingPrice = +item.activeListings[0].amount /(10 ** 9);
+                                        mintListItem.marketplaceListing = false;
+                                        mintListItem.marketplace = item.activeListings[0].marketplace
+                                    }
+                                }
+                                if ((thisFloorPrice > +item.activeListings[0].amount  /(10 ** 9))||(!thisFloorPrice))
+                                    thisFloorPrice = +item.activeListings[0].amount /(10 ** 9);
+                            }
+                        }catch(e){console.log("ERR: "+e);}
+                    }
                     
 
-                    try{
-                        /*
-                        let found = false;
-                        for (var item of json){
-                            for (var mintListItem of tempCollectionMintList){
-                                if (mintListItem.address === item.tokenMint){
-                                    if (mintListItem.listingPrice === null){
-                                        thisTotalListings++;
-                                    } else{
-                                        crossTotalListings++;
-                                    }
-                                    // no need to check date as this is an escrow check
-                                    mintListItem.listingPrice = item.price;
-                                    mintListItem.marketplaceListing = false;
-                                }
-                            }
-                            if ((thisFloorPrice > +item.price)||(!thisFloorPrice))
-                                thisFloorPrice = +item.price;
-                        }
-                        */
-
-                        for (let item of allListings){
-                            for (let mintListItem of tempCollectionMintList){
-                                if (mintListItem.address === item.mint){
-                                    if (mintListItem.listingPrice === null){
-                                        thisTotalListings++;
-                                    } else{
-                                        crossTotalListings++;
-                                    }
-
-                                    //if (mintListItem.address === "AVze8PmYs9oVJDXkenPSFeN6z8D3xW2F4fignjR3sACQ"){
-                                    //    console.log("item.activeListings "+JSON.stringify(item));
-                                    //}
-
-                                    mintListItem.listingPrice = +item.activeListings[0].amount /(10 ** 9);
-                                    mintListItem.marketplaceListing = false;
-                                    mintListItem.marketplace = item.activeListings[0].marketplace
-                                }
-                            }
-                            if ((thisFloorPrice > +item.activeListings[0].amount  /(10 ** 9))||(!thisFloorPrice))
-                                thisFloorPrice = +item.activeListings[0].amount /(10 ** 9);
-                        }
-                    }catch(e){console.log("ERR: "+e);}
+                    
                 }
             }catch(err){console.log("ERR: "+err)}
             
