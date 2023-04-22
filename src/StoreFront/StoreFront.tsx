@@ -1279,7 +1279,7 @@ export function StoreFrontView(this: any, props: any) {
 
                     const allListings = await getNftListings();
 
-                    console.log("allListings: "+JSON.stringify(allListings))
+                    //console.log("allListings: "+JSON.stringify(allListings))
                     if (!allListings){ // backup use ME directly
                         let json1 = [];
                         let json2 = [];

@@ -504,7 +504,7 @@ function SellNowVotePrompt(props:any){
                 
                 const nftEvents = await getRecentNftEvents();
     
-                console.log("helius events: ("+nftEvents.length+") "+JSON.stringify(nftEvents));
+                //console.log("helius events: ("+nftEvents.length+") "+JSON.stringify(nftEvents));
     
                 return nftEvents;
                 //setSolanaTransactions(tx);
