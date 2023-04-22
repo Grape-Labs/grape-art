@@ -3,6 +3,7 @@ import { Link, useParams, useSearchParams } from "react-router-dom";
 import { Helmet } from 'react-helmet';
 import { decodeMetadata } from '../utils/grapeTools/utils';
 // @ts-ignore
+import axios from "axios";
 
 import { gql } from '@apollo/client'
 import gql_client from '../gql_client'
@@ -95,8 +96,7 @@ import {
 
 import { 
     RPC_CONNECTION, 
-    GRAPE_PREVIEW,
-    REPORT_ALERT_THRESHOLD,
+    HELIUS_API,
     THEINDEX_RPC_ENDPOINT, 
     GRAPE_PROFILE,  
     GRAPE_COLLECTION, 
@@ -1276,35 +1276,42 @@ export function StoreFrontView(this: any, props: any) {
                     if (jsonStats){
                         setMEStats(jsonStats);
                     }
+
+                    const allListings = await getNftListings();
+
                     
-                    let json1 = [];
-                    let json2 = [];
-                    let json3 = [];
-                    let json4 = [];
-                    let json5 = [];
-                    let json6 = [];
-                    try{
-                        json1 = await fetchMEWithTimeout(collectionAuthority.me_symbol,0);
-                    } catch(erf){ console.log("ERR: "+erf);}
-                    try{
-                        json2 = await fetchMEWithTimeout(collectionAuthority.me_symbol,20);
-                    } catch(erf){ console.log("ERR: "+erf);}
-                    try{
-                        json3 = await fetchMEWithTimeout(collectionAuthority.me_symbol,40);
-                    } catch(erf){ console.log("ERR: "+erf);}
-                    try{
-                        json4 = await fetchMEWithTimeout(collectionAuthority.me_symbol,60);
-                    } catch(erf){ console.log("ERR: "+erf);}
-                    try{
-                        json5 = await fetchMEWithTimeout(collectionAuthority.me_symbol,80);
-                    } catch(erf){ console.log("ERR: "+erf);}
-                    try{
-                        json6 = await fetchMEWithTimeout(collectionAuthority.me_symbol,100);
-                    } catch(erf){ console.log("ERR: "+erf);}
+                    if (!allListings){ // backup use ME directly
+                        let json1 = [];
+                        let json2 = [];
+                        let json3 = [];
+                        let json4 = [];
+                        let json5 = [];
+                        let json6 = [];
+                        try{
+                            json1 = await fetchMEWithTimeout(collectionAuthority.me_symbol,0);
+                        } catch(erf){ console.log("ERR: "+erf);}
+                        try{
+                            json2 = await fetchMEWithTimeout(collectionAuthority.me_symbol,20);
+                        } catch(erf){ console.log("ERR: "+erf);}
+                        try{
+                            json3 = await fetchMEWithTimeout(collectionAuthority.me_symbol,40);
+                        } catch(erf){ console.log("ERR: "+erf);}
+                        try{
+                            json4 = await fetchMEWithTimeout(collectionAuthority.me_symbol,60);
+                        } catch(erf){ console.log("ERR: "+erf);}
+                        try{
+                            json5 = await fetchMEWithTimeout(collectionAuthority.me_symbol,80);
+                        } catch(erf){ console.log("ERR: "+erf);}
+                        try{
+                            json6 = await fetchMEWithTimeout(collectionAuthority.me_symbol,100);
+                        } catch(erf){ console.log("ERR: "+erf);}
+                        
+                        const json = [...json1,...json2,...json3,...json4,...json5,...json6];
+                        }
                     
-                    const json = [...json1,...json2,...json3,...json4,...json5,...json6];
-                    
+
                     try{
+                        /*
                         let found = false;
                         for (var item of json){
                             for (var mintListItem of tempCollectionMintList){
@@ -1321,6 +1328,24 @@ export function StoreFrontView(this: any, props: any) {
                             }
                             if ((thisFloorPrice > +item.price)||(!thisFloorPrice))
                                 thisFloorPrice = +item.price;
+                        }
+                        */
+
+                        for (let item of allListings){
+                            for (let mintListItem of tempCollectionMintList){
+                                if (mintListItem.address === item.mint){
+                                    if (mintListItem.listingPrice === null){
+                                        thisTotalListings++;
+                                    } else{
+                                        crossTotalListings++;
+                                    }
+                                    mintListItem.listingPrice = +item.activeListings[0].amount /(10 ** 9);
+                                    mintListItem.marketplaceListing = false;
+                                    mintListItem.marketplace = item.activeListings[0].marketplace
+                                }
+                            }
+                            if ((thisFloorPrice > +item.activeListings[0].amount  /(10 ** 9))||(!thisFloorPrice))
+                                thisFloorPrice = +item.activeListings[0].amount /(10 ** 9);
                         }
                     }catch(e){console.log("ERR: "+e);}
                 }
@@ -1341,6 +1366,57 @@ export function StoreFrontView(this: any, props: any) {
         setTimeout(() => controller.abort(), time * 1000);
         return controller;
     };
+
+    const getNftListings = async () => {
+        //let helius_results = null;
+
+        if (HELIUS_API && collectionAuthority){
+            const creatorAddress = collectionAuthority?.creatorAddress;
+            const url = `https://api.helius.xyz/v1/active-listings?api-key=${HELIUS_API}`;
+            const getActiveListings = async () => {
+                if (creatorAddress){
+                    const allListings = new Array();
+                    let paginate = true;
+                    let paginationToken = null;
+
+                    while(paginate){
+                        const { data } = await axios.post(url, {
+                            "query": {
+                                //"verifiedCollectionAddresses": [address]
+                                "firstVerifiedCreators": [creatorAddress]
+                            },
+                            "options": {
+                                "limit": 1000,
+                                "paginationToken": paginationToken,   
+                            }
+                        });
+                        if (data.paginationToken){
+                            //console.log("Active listings: ", data.result);
+                            //console.log("Active listings: ", data);
+                            paginationToken = data.paginationToken;
+                        } else{
+                            paginate = false;
+                        }
+                        for (let listing of data.result){
+                            allListings.push(listing);
+                        }
+                    }
+                    return allListings;
+                }else{
+                    return null;
+                }
+            };
+            
+            const activeListings = await getActiveListings();
+
+            //console.log("activeLists: ("+activeListings.length+") "+JSON.stringify(activeListings));
+
+            return activeListings;
+            //setSolanaTransactions(tx);
+        } else{
+            return null;
+        }
+    }
 
     const fetchMEWithTimeout = async (symbol:string,start:number) => {
         const apiUrl = PROXY+"https://api-mainnet.magiceden.dev/v2/collections/"+symbol+"/listings?offset="+start+"&limit=20";
