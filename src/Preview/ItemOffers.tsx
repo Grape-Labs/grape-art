@@ -2445,11 +2445,12 @@ export default function ItemOffers(props: any) {
                                                     {sentmeta?.marketplace ?
                                                         <>
                                                             {sentmeta.marketplace.toUpperCase() === "HYPERSPACE" ?
-                                                            <Tooltip title={`Buy on ${sentmeta.marketplace}`}><Button
+                                                            <Tooltip title={`Buy on ${sentmeta.marketplace}`}>
+                                                                <Button
                                                                 color='inherit'    
                                                                 href={`https://hyperspace.xyz/token/${mint}`}
                                                                 target='_blank'
-                                                                sx={{borderRadius:'17px'}}
+                                                                sx={{borderRadius:'17px',textTransform:'none'}}
                                                                 >Listed on {sentmeta.marketplace}</Button></Tooltip>
                                                             :<>
                                                                 {sentmeta.marketplace.toUpperCase() === "TENSOR" ?
