@@ -2452,11 +2452,20 @@ export default function ItemOffers(props: any) {
                                                                 target='_blank'
                                                                 sx={{borderRadius:'17px',textTransform:'none'}}
                                                                 >Listed on {sentmeta.marketplace}</Button></Tooltip>
-                                                            :<>
-                                                                {sentmeta.marketplace.toUpperCase() === "TENSOR" ?
-                                                                    <>Listed on {sentmeta.marketplace}</>
-                                                                :
-                                                                    <>&nbsp;{t('not listed for sale')}</>
+                                                            :<>{sentmeta.marketplace.toUpperCase() === "OPENSEA" ?
+                                                                <Tooltip title={`Buy on ${sentmeta.marketplace}`}>
+                                                                    <Button
+                                                                    color='inherit'    
+                                                                    href={`https://opensea.io/assets/solana/${mint}`}
+                                                                    target='_blank'
+                                                                    sx={{borderRadius:'17px',textTransform:'none'}}
+                                                                    >Listed on {sentmeta.marketplace}</Button></Tooltip>
+                                                                :<>
+                                                                    {sentmeta.marketplace.toUpperCase() === "TENSOR" ?
+                                                                        <>Listed on {sentmeta.marketplace}</>
+                                                                    :
+                                                                        <>&nbsp;{t('not listed for sale')}</>
+                                                                    }</>
                                                                 }</>
                                                             }
                                                             
