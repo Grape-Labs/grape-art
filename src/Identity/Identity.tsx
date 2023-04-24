@@ -65,6 +65,9 @@ import {
     Hidden,
     Badge,
     LinearProgress,
+    FormGroup,
+    FormControlLabel,
+    Switch,
 } from '@mui/material';
 
 import {
@@ -181,6 +184,8 @@ export function IdentityView(props: any){
     const [loadingStreamingPayments, setLoadingStreamingPayments] = React.useState(false);
     const [loadingPosition, setLoadingPosition] = React.useState('');
     
+    const [loadNfts, setLoadNfts] = React.useState(false);
+
     const { publicKey } = useWallet();
     const [pubkey, setPubkey] = React.useState(props.pubkey || null);
     const {handlekey} = useParams<{ handlekey: string }>();
@@ -403,6 +408,9 @@ export function IdentityView(props: any){
         },
       ];
       
+    const setLoadNftToggle = () => {
+        setLoadNfts(!loadNfts);
+    }
       
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -655,7 +663,7 @@ export function IdentityView(props: any){
         }catch(e){console.log("ERR: "+e)}
     }
 
-    const fetchSolanaTokens = async () => {
+    const fetchSolanaTokens = async (loadNftMeta: boolean) => {
         setLoadingPosition('Tokens');
         try{
             const resp = await connection.getParsedTokenAccountsByOwner(new PublicKey(pubkey), {programId: new PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA")});
@@ -723,7 +731,10 @@ export function IdentityView(props: any){
             const cgPrice = await getCoinGeckoPrice(cgArray);
 
             setLoadingPosition('NFT Metadata');
-            const nftMeta = await fetchNFTMetadata(resultValues);
+            let nftMeta =null;
+            if (loadNftMeta || loadNfts){
+                nftMeta = await fetchNFTMetadata(resultValues);
+            }
 
             //console.log("nftMeta: "+JSON.stringify(nftMeta))
 
@@ -832,24 +843,26 @@ export function IdentityView(props: any){
                 let metadata = null;
                 
                 let foundMetaName = false;
-                for (const nft of nftMeta){
-                    //console.log('meta: '+JSON.stringify(nft));
-                    if (nft.meta?.mint){
-                        if (nft.meta.mint === item.account.data.parsed.info.mint){
-                            //console.log("nft: "+JSON.stringify(nft))
-                            
-                            name = nft.meta.data.name;
-                            metadata = nft.meta.data.uri;
-                            // fetch
-                            if (nft?.image){
-                                logo = nft.image;
-                            }else if (nft?.urimeta?.image){
-                                logo = nft.urimeta?.image;
-                            }/* else if (nft?.meta){
-                                let urimeta = await window.fetch(metadata).then((res: any) => res.json());
-                                logo = DRIVE_PROXY+urimeta.image;
-                            }*/
-                            foundMetaName = true;
+                if (nftMeta){
+                    for (const nft of nftMeta){
+                        //console.log('meta: '+JSON.stringify(nft));
+                        if (nft.meta?.mint){
+                            if (nft.meta.mint === item.account.data.parsed.info.mint){
+                                //console.log("nft: "+JSON.stringify(nft))
+                                
+                                name = nft.meta.data.name;
+                                metadata = nft.meta.data.uri;
+                                // fetch
+                                if (nft?.image){
+                                    logo = nft.image;
+                                }else if (nft?.urimeta?.image){
+                                    logo = nft.urimeta?.image;
+                                }/* else if (nft?.meta){
+                                    let urimeta = await window.fetch(metadata).then((res: any) => res.json());
+                                    logo = DRIVE_PROXY+urimeta.image;
+                                }*/
+                                foundMetaName = true;
+                            }
                         }
                     }
                 }
@@ -1153,9 +1166,10 @@ export function IdentityView(props: any){
         }
     }, [urlParams, publicKey]);
 
-    const fetchTokenPositions = async () => {
+    const fetchTokenPositions = async (loadNftsMeta: boolean) => {
         setLoadingTokens(true);
-        await fetchSolanaTokens();
+
+        await fetchSolanaTokens(loadNftsMeta);
         await fetchSolanaTransactions();
         setLoadingTokens(false);
     }
@@ -1172,9 +1186,9 @@ export function IdentityView(props: any){
 
     React.useEffect(() => {
         if (pubkey && tokenMap){
-            fetchTokenPositions();
+            fetchTokenPositions(loadNfts);
         }
-    }, [tokenMap]);
+    }, [tokenMap, loadNfts]);
 
     React.useEffect(() => {
         if (pubkey){
@@ -1554,6 +1568,19 @@ export function IdentityView(props: any){
                                                                     }
                                                                 </div>
                                                             </div>
+                                                            <Box
+                                                                display="flex"
+                                                                justifyContent="flex-end"
+                                                                sx={{
+                                                                    alignItems:"right",
+                                                                    m:1
+                                                                }}
+                                                            >
+                                                                <FormGroup>
+                                                                    <FormControlLabel 
+                                                                        control={<Switch defaultChecked checked={loadNfts} onChange={setLoadNftToggle} size="small" />} label={<><Typography variant="caption">Load NFT Metadata</Typography></>} />
+                                                                </FormGroup>
+                                                            </Box>
                                                         </div>    
                                                     }
 
