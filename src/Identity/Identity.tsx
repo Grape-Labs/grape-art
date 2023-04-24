@@ -94,6 +94,8 @@ import QrCode2Icon from '@mui/icons-material/QrCode2';
 import SolIcon from '../components/static/SolIcon';
 import SolCurrencyIcon from '../components/static/SolCurrencyIcon';
 
+import { formatAmount, getFormattedNumberToLocale } from '../utils/grapeTools/helpers'
+
 import { ValidateAddress, ValidateCurve, trimAddress, timeAgo, formatBlockTime } from '../utils/grapeTools/WalletAddress'; // global key handling
 import { 
     RPC_CONNECTION,
@@ -1277,7 +1279,7 @@ export function IdentityView(props: any){
                                                                     <Typography variant='h4'>
                                                                         {solanaBalance  && 
                                                                             <>
-                                                                            {solanaBalance/(10 ** 9)}
+                                                                            {(solanaBalance/(10 ** 9)).toFixed(4)}
                                                                             </>
                                                                         }
                                                                     </Typography>}
@@ -1285,7 +1287,7 @@ export function IdentityView(props: any){
                                                                     <>
                                                                     {solanaUSDC &&
                                                                         <Typography variant='caption'>
-                                                                            {((solanaBalance/(10 ** 9)) * solanaUSDC).toFixed(2)}USDC
+                                                                            {getFormattedNumberToLocale(+((solanaBalance/(10 ** 9)) * solanaUSDC).toFixed(2))} USDC
                                                                         </Typography>
                                                                     }
                                                                     </>
@@ -1327,13 +1329,13 @@ export function IdentityView(props: any){
                                                             <ListItemText
                                                                 primary={
                                                                     <Typography variant='h4'>
-                                                                        {(tokensNetValue/solanaUSDC).toFixed(9)}
+                                                                        {(tokensNetValue/solanaUSDC).toFixed(4)}
                                                                     </Typography>}
                                                                 secondary={
                                                                     <>
                                                                     {solanaUSDC &&
                                                                         <Typography variant='caption'>
-                                                                            {tokensNetValue.toFixed(2)} USDC
+                                                                            {getFormattedNumberToLocale(+tokensNetValue.toFixed(2))} USDC
                                                                         </Typography>
                                                                     }
                                                                     </>
@@ -1374,13 +1376,13 @@ export function IdentityView(props: any){
                                                                 <ListItemText
                                                                     primary={
                                                                         <Typography variant='h4'>
-                                                                            {((tokensNetValue/solanaUSDC) + solanaBalance/(10 ** 9)).toFixed(9)}
+                                                                            {((tokensNetValue/solanaUSDC) + solanaBalance/(10 ** 9)).toFixed(4)}
                                                                         </Typography>}
                                                                     secondary={
                                                                         <>
                                                                         {solanaUSDC &&
                                                                             <Typography variant='caption'>
-                                                                                {(((solanaBalance/(10 ** 9)) * solanaUSDC) + tokensNetValue).toFixed(2)} USDC
+                                                                                {getFormattedNumberToLocale(+(((solanaBalance/(10 ** 9)) * solanaUSDC) + tokensNetValue).toFixed(2))} USDC
                                                                             </Typography>
                                                                         }
                                                                         </>
