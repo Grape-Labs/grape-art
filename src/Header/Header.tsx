@@ -40,6 +40,7 @@ import {
 
 import { createFilterOptions } from '@mui/material/Autocomplete';
 
+import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
 import SearchIcon from '@mui/icons-material/Search';
 import Mail from '@mui/icons-material/Mail';
@@ -390,13 +391,21 @@ export function Header(props: any) {
                     </Button>
                 </Tooltip>
             )}
-            {location.pathname && location.pathname.includes('collection') && (
-                <Tooltip title="Profile">
-                    <Button component={Link} to="/" sx={{ color: 'white', borderRadius: '24px', m: 0 }}>
+            {location.pathname && !location.pathname.includes('profile') && (
+                <Tooltip title="Grape Profile">
+                    <Button component={Link} to="/profile" sx={{ color: 'white', borderRadius: '24px', m: 0 }}>
                         <PersonOutlineOutlinedIcon />
                     </Button>
                 </Tooltip>
             )}
+            {location.pathname && !location.pathname.includes('identity') && (
+                <Tooltip title="Grape Wallet/Identity">
+                    <Button component={Link} to="/identity" sx={{ color: 'white', borderRadius: '24px', m: 0 }}>
+                        <AccountBalanceWalletIcon />
+                    </Button>
+                </Tooltip>
+            )}
+            
             <div className="grape-wallet-adapter">
                 <WalletDialogProvider className="grape-wallet-provider">
                     <WalletMultiButton className="grape-wallet-button" />

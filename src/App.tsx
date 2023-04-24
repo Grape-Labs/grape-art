@@ -307,17 +307,19 @@ function DashboardContent() {
                                                                 <Route path=":handlekey" element={<MyCollectionsView />} />
                                                             </Route>
                                                             
-                                                            <Route path="/" element={<ProfileView />}>
+                                                            <Route path="/" element={<MarketplaceView />}>
                                                                 <Route path=":handlekey" element={<ProfileView />} />
                                                             </Route>
+                                                            
+                                                            <Route index element={<MarketplaceView />} />
+                                                            {/*
                                                             <Route index element={<ProfileView />} />
-
+                                                            */}
                                                             <Route path="store/*" element={<StoreFrontView />}>
                                                                 <Route path=":handlekey" element={<StoreFrontView />} />
                                                             </Route>
                                                             
                                                             <Route path="collections" element={<MarketplaceView />}>
-
                                                             </Route>
 
                                                             <Route path="collection/*" element={<StoreFrontView />}>
