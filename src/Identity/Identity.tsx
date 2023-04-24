@@ -234,7 +234,7 @@ export function IdentityView(props: any){
         },
         { field: 'balance', headerName: 'Balance', width: 130, align: 'right',
             renderCell: (params) => {
-                return (params.value)
+                return (getFormattedNumberToLocale(+params.value))
             }
         },
         { field: 'price', headerName: 'Price', width: 130, align: 'right'},
