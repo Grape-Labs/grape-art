@@ -255,7 +255,11 @@ export function IdentityView(props: any){
                 )
             }
         },
-        { field: 'value', headerName: 'Value', width: 130, align: 'right'},
+        { field: 'value', headerName: 'Value', width: 130, align: 'right',
+            renderCell: (params) => {
+                return (getFormattedNumberToLocale(+params.value))
+            }
+        },
         { field: 'send', headerName: '', width: 140,  align: 'center',
             renderCell: (params) => {
                 return (
