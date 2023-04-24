@@ -39,6 +39,7 @@ import {
 
 import {
     GRAPE_PROFILE,
+    GRAPE_IDENTITY,
     GRAPE_COLLECTIONS_DATA
 } from '../grapeTools/constants';
 
@@ -51,6 +52,7 @@ import ExploreOutlinedIcon from '@mui/icons-material/ExploreOutlined';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import ExploreIcon from '@mui/icons-material/Explore';
 import PersonIcon from '@mui/icons-material/Person';
+import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 
 import { trimAddress } from "./WalletAddress";
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
@@ -394,6 +396,7 @@ export default function ExplorerView(props:any){
                     {grapeArtProfile && 
                         <>
                         {ValidateCurve(address) ?
+                                <>
                                 <MenuItem 
                                     component={Link}
                                     to={`${GRAPE_PROFILE}${address}`}
@@ -403,6 +406,17 @@ export default function ExplorerView(props:any){
                                         </ListItemIcon>
                                         Grape Profile
                                 </MenuItem>
+                                <MenuItem 
+                                component={Link}
+                                to={`${GRAPE_IDENTITY}${address}`}
+                                onClick={handleClose}>
+                                    <ListItemIcon>
+                                        <AccountBalanceWalletIcon fontSize="small" />
+                                    </ListItemIcon>
+                                    Grape Wallet
+                            </MenuItem>
+                            <Divider/>
+                            </>
                         :
                             <Tooltip title='The address is off-curve (this address does not lie on a Ed25519 curve - typically a valid curve is generated when creating a new wallet), the address here is off-curve and can be a program derived address (PDA) like a multi-sig or escrow'>
                                 <MenuItem >
@@ -456,6 +470,16 @@ export default function ExplorerView(props:any){
                             <ExploreOutlinedIcon fontSize="small" />
                         </ListItemIcon>
                         Explorer
+                    </MenuItem>
+                    <MenuItem 
+                        component='a'
+                        href={`https://xray.helius.xyz/${type === 'address' ? 'account' : 'tx'}/${address}`}
+                        target='_blank'
+                        onClick={handleClose}>
+                            <ListItemIcon>
+                                <ExploreOutlinedIcon fontSize="small" />
+                            </ListItemIcon>
+                            XRay
                     </MenuItem>
 
                    
