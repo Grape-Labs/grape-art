@@ -380,7 +380,7 @@ export function Header(props: any) {
                     </Tooltip>
                 </Container>
             </Box>
-            {wallet.connected && (
+            {wallet.connected && location.pathname && location.pathname.includes('profile') && (
                 <Tooltip title="Inbox">
                     <Button
                         component={Link}
