@@ -75,16 +75,17 @@ export default function MarketplaceView(props: any) {
         try{
             const connection = RPC_CONNECTION;
 
-            const recentPerformanceSamples = await connection.getRecentPerformanceSamples();
+            const recentPerformanceSamples = await connection.getRecentPerformanceSamples(1);
 
             if (recentPerformanceSamples && recentPerformanceSamples.length > 0){
+                //console.log("tps: "+JSON.stringify(recentPerformanceSamples))
                 const tps = recentPerformanceSamples[0].numTransactions/recentPerformanceSamples[0].samplePeriodSecs;
                 setTps(tps);
             }
 
             const tknPrice = await getTokenPrice("SOL", "USDC");
             if (tknPrice){
-                console.log("tknPrice: "+JSON.stringify(tknPrice))
+                //console.log("tknPrice: "+JSON.stringify(tknPrice))
                 setSolConversion(tknPrice.data.price);
             }
             setTimestamp(moment().format("llll"));
