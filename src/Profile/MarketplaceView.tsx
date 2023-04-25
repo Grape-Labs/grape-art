@@ -60,7 +60,7 @@ export default function MarketplaceView(props: any) {
         const span = props.span;
         
         return (
-            <Grid item xs={12} sm={span}>
+            <Grid item xs={12} sm={6} md={4} lg={3}>
                 <>
                     <Card sx={{
                         borderRadius:'26px',mb:2
@@ -263,11 +263,11 @@ export default function MarketplaceView(props: any) {
     const color = '#fff';
 
     return (
-        <Grid container spacing={2} sx={{mt:6}}>
+        <Grid container spacing={1} sx={{mt:6}}>
             {verifiedCollectionArray && verifiedCollectionArray.map((featured: any, key: number) => (
                 <>
                     {(!GRAPE_ART_TYPE && (featured?.enabled && featured?.discover)) ?
-                        <MarketplaceComponentView featured={featured} span={6} />
+                        <MarketplaceComponentView featured={featured} />
                         :
                         <>
                             {GRAPE_ART_TYPE === featured?.address &&
