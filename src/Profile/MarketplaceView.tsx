@@ -49,6 +49,7 @@ export default function MarketplaceView(props: any) {
     const [tps, setTps] = React.useState(null);
     const [solConversion, setSolConversion] = React.useState(null);
     const [timestamp, setTimestamp] = React.useState(null);
+    const [splGovernanceProposals, setSplGovernanceProposals] = React.useState(10);
 
     const fetchVerifiedCollection = async(address:string) => {
         try{
@@ -303,14 +304,18 @@ export default function MarketplaceView(props: any) {
             <Box sx={{background:'rgba(0,0,0,0.1)',borderRadius:'17px',p:1,mt:5,mb:2}}>
                 <Grid container>
                     {tps && 
-                        <Grid item xs={4} sx={{textAlign:'center'}}><Typography variant="caption">Solana Network: </Typography><Typography variant="caption" sx={{color:'yellow'}}>{tps.toFixed(0)} TPS</Typography></Grid>
+                        <Grid item xs={12} sm={4} sx={{textAlign:'center'}}><Typography variant="caption">Solana Network: </Typography><Typography variant="caption" sx={{color:'yellow'}}>{tps.toFixed(0)} TPS</Typography></Grid>
                     }
                     {solConversion && 
-                        <Grid item xs={4} sx={{textAlign:'center'}}><Typography variant="caption">SOL/USDC: </Typography><Typography variant="caption" sx={{color:'yellow'}}>${solConversion.toFixed(2)}</Typography></Grid>
+                        <Grid item xs={12} sm={4} sx={{textAlign:'center'}}><Typography variant="caption">SOL/USDC: </Typography><Typography variant="caption" sx={{color:'yellow'}}>${solConversion.toFixed(2)}</Typography></Grid>
                     }
                     {timestamp && 
-                        <Grid item xs={4} sx={{textAlign:'center'}}><Typography variant="caption">Timestamp: </Typography><Typography variant="caption" sx={{color:'yellow'}}>{timestamp}</Typography></Grid>
+                        <Grid item xs={12} sm={4} sx={{textAlign:'center'}}><Typography variant="caption">Timestamp: </Typography><Typography variant="caption" sx={{color:'yellow'}}>{timestamp}</Typography></Grid>
                     }
+
+                    {/*splGovernanceProposals && 
+                        <Grid item xs={3} sx={{textAlign:'center'}}><Typography variant="caption">Active SPL Governance Proposals: </Typography><Typography variant="caption" sx={{color:'yellow'}}>{splGovernanceProposals}</Typography></Grid>
+                    */}
                 </Grid>
             </Box>
             <Grid container spacing={1} >
