@@ -8,6 +8,7 @@ import { GRAPE_PROFILE,
     FEATURED_DAO_ARRAY,
     GRAPE_ART_TYPE } from '../utils/grapeTools/constants';
 //import { useFadedShadowStyles } from '@mui-treasury/styles/shadow/faded';
+import moment from 'moment';
 
 import {
     Box,
@@ -22,6 +23,17 @@ import {
     Avatar,
 } from '@mui/material';
 
+import { Connection, Commitment } from '@solana/web3.js';
+
+import { 
+    RPC_CONNECTION,
+    RPC_ENDPOINT, 
+    HELIUS_API} from '../utils/grapeTools/constants';
+
+import {  
+    getTokenPrice 
+} from '../utils/grapeTools/helpers';
+
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import ShareSocialURL from '../utils/grapeTools/ShareUrl';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
@@ -34,6 +46,9 @@ export default function MarketplaceView(props: any) {
     //const styles = useFadedShadowStyles();
     const [verifiedCollectionArray, setVerifiedCollectionArray] = React.useState(null);
     const { t, i18n } = useTranslation();
+    const [tps, setTps] = React.useState(null);
+    const [solConversion, setSolConversion] = React.useState(null);
+    const [timestamp, setTimestamp] = React.useState(null);
 
     const fetchVerifiedCollection = async(address:string) => {
         try{
@@ -52,6 +67,26 @@ export default function MarketplaceView(props: any) {
               setVerifiedCollectionArray(json); 
               return json;
             
+        } catch(e){console.log("ERR: "+e)}
+    }
+
+    const fetchSolanaStats = async() => {
+        try{
+            const connection = RPC_CONNECTION;
+
+            const recentPerformanceSamples = await connection.getRecentPerformanceSamples();
+
+            if (recentPerformanceSamples && recentPerformanceSamples.length > 0){
+                const tps = recentPerformanceSamples[0].numTransactions/recentPerformanceSamples[0].samplePeriodSecs;
+                setTps(tps);
+            }
+
+            const tknPrice = await getTokenPrice("SOL", "USDC");
+            if (tknPrice){
+                console.log("tknPrice: "+JSON.stringify(tknPrice))
+                setSolConversion(tknPrice.data.price);
+            }
+            setTimestamp(moment().format("llll"));
         } catch(e){console.log("ERR: "+e)}
     }
 
@@ -258,25 +293,41 @@ export default function MarketplaceView(props: any) {
     
     React.useEffect(() => { 
         fetchVerifiedCollection("");
+        fetchSolanaStats();
     }, []);
 
     const color = '#fff';
 
     return (
-        <Grid container spacing={1} sx={{mt:6}}>
-            {verifiedCollectionArray && verifiedCollectionArray.map((featured: any, key: number) => (
-                <>
-                    {(!GRAPE_ART_TYPE && (featured?.enabled && featured?.discover)) ?
-                        <MarketplaceComponentView featured={featured} />
-                        :
-                        <>
-                            {GRAPE_ART_TYPE === featured?.address &&
-                                <MarketplaceComponentView featured={featured} span={12} />
-                            }
-                        </>
+        <>
+            <Box sx={{background:'rgba(0,0,0,0.1)',borderRadius:'17px',p:1,mt:5,mb:2}}>
+                <Grid container>
+                    {tps && 
+                        <Grid item xs={4} sx={{textAlign:'center'}}><Typography variant="caption">Solana Network: </Typography><Typography variant="caption" sx={{color:'yellow'}}>{tps.toFixed(0)} TPS</Typography></Grid>
                     }
-                </>
-            ))}
-        </Grid>
+                    {solConversion && 
+                        <Grid item xs={4} sx={{textAlign:'center'}}><Typography variant="caption">SOL/USDC: </Typography><Typography variant="caption" sx={{color:'yellow'}}>${solConversion.toFixed(2)}</Typography></Grid>
+                    }
+                    {timestamp && 
+                        <Grid item xs={4} sx={{textAlign:'center'}}><Typography variant="caption">Timestamp: </Typography><Typography variant="caption" sx={{color:'yellow'}}>{timestamp}</Typography></Grid>
+                    }
+                </Grid>
+            </Box>
+            <Grid container spacing={1} >
+                {verifiedCollectionArray && verifiedCollectionArray.map((featured: any, key: number) => (
+                    <>
+                        {(!GRAPE_ART_TYPE && (featured?.enabled && featured?.discover)) ?
+                            <MarketplaceComponentView featured={featured} />
+                            :
+                            <>
+                                {GRAPE_ART_TYPE === featured?.address &&
+                                    <MarketplaceComponentView featured={featured} span={12} />
+                                }
+                            </>
+                        }
+                    </>
+                ))}
+            </Grid>
+        </>
     );
 }

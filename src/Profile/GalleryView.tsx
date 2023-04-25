@@ -4,8 +4,6 @@ import { styled, alpha } from '@mui/material/styles';
 import { Link } from "react-router-dom";
 import { decodeMetadata } from '../utils/grapeTools/utils'
 // @ts-ignore
-import fetch from 'node-fetch'
-import { PublicKey } from '@solana/web3.js';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 import {
