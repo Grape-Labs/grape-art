@@ -258,7 +258,7 @@ export default function HistoryView(props: any){
                 
                 const json = await fetchMEHistoryWithTimeout(mint,0);
                 //console.log("json: "+JSON.stringify(json));
-
+                
                 try{
                     // here get the last sale and show it:
                     let found = false;
@@ -487,7 +487,7 @@ export default function HistoryView(props: any){
                                                                 </TableCell>
                                                                 <TableCell  align="right">
                                                                         <Typography variant="body2">
-                                                                            {+item.price.toFixed(4)} <SolCurrencyIcon sx={{fontSize:"10.5px"}} />
+                                                                            {+item.price.toFixed(3)} <SolCurrencyIcon sx={{fontSize:"10.5px"}} />
                                                                         </Typography>
                                                                     </TableCell>
                                                                 <TableCell align="right">
