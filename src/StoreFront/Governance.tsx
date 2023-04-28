@@ -650,67 +650,6 @@ function GetParticipants(props: any){
         const isCommunityVote = propVoteType !== 'Council'; //realm.account.config?.councilMint?.toBase58() !== thisitem?.account.governingTokenMint;// realm?.communityMint === thisitem?.account.governingTokenMint;
         //console.log("isCommunityVote: "+JSON.stringify(isCommunityVote));
         
-        const handleVoteYes = async () => {
-            const proposal = {
-                governanceId: thisitem.account.governance,
-                proposalId: thisitem.pubkey,
-                tokenOwnerRecord: thisitem.account.tokenOwnerRecord,
-                governingTokenMint: thisitem.account.governingTokenMint
-            }
-            const transactionData = {proposal:proposal,action:0}
-            console.log("realm: "+JSON.stringify(realm));
-            console.log("thisitem/proposal: "+JSON.stringify(thisitem));
-            console.log("thisGovernance: "+JSON.stringify(thisGovernance));
-            
-            const realmData = {
-                pubKey:thisGovernance.pubkey,
-                realmId:thisitem.pubkey,
-                governanceId:thisitem.account.governance,
-                communityMint: thisitem.account.governingTokenMint
-            }
-
-            const vvvt = await createCastVoteTransaction(
-                realmData,
-                publicKey.toBase58(),
-                transactionData,
-                memberMap,
-                null,
-                isCommunityVote
-            );
-
-            try{
-                enqueueSnackbar(`Preparing to cast vote`,{ variant: 'info' });
-                const signature = await sendTransaction(vvvt, freeconnection, {
-                    skipPreflight: true,
-                    preflightCommitment: "confirmed",
-                });
-                const snackprogress = (key:any) => (
-                    <CircularProgress sx={{padding:'10px'}} />
-                );
-                const cnfrmkey = enqueueSnackbar(`Confirming transaction`,{ variant: 'info', action:snackprogress, persist: true });
-                //await connection.confirmTransaction(signature, 'processed');
-                const latestBlockHash = await connection.getLatestBlockhash();
-                await connection.confirmTransaction({
-                    blockhash: latestBlockHash.blockhash,
-                    lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
-                    signature: signature}, 
-                    'processed'
-                );
-                closeSnackbar(cnfrmkey);
-                const action = (key:any) => (
-                        <Button href={`https://explorer.solana.com/tx/${signature}`} target='_blank'  sx={{color:'white'}}>
-                            Signature: {signature}
-                        </Button>
-                );
-                
-                enqueueSnackbar(`Congratulations, you have participated in voting for this Proposal`,{ variant: 'success', action });
-            }catch(e:any){
-                enqueueSnackbar(e.message ? `${e.name}: ${e.message}` : e.name, { variant: 'error' });
-            } 
-            
-
-        }
-
         return (
         <>
             {/*thisitem.account?.state === 2 && 
