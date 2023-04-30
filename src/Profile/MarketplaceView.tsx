@@ -100,7 +100,7 @@ export default function MarketplaceView(props: any) {
             <Grid item xs={12} sm={6} md={4} lg={3}>
                 <>
                     <Card sx={{
-                        borderRadius:'26px',mb:2,background:`${featured?.theme ? `${featured.theme}` : 'none'}`,backgroundBlendMode:'darken, luminosity' }}
+                        boxShadow:'1px 2px 4px rgba(0,0,0,0.5)',borderRadius:'26px',mb:2,background:`${featured?.theme ? `${featured.theme}` : 'none'}`,backgroundBlendMode:'darken, luminosity' }}
                     >
                         <CardActionArea
                                 component={Link} to={`${GRAPE_COLLECTION}${featured.vanityUrl}`}
@@ -119,18 +119,17 @@ export default function MarketplaceView(props: any) {
                                             position: 'relative',
                                             zIndex: 1,
                                             borderRadius: '1rem',
-                                            boxShadow: `0 6px 16px 0 ${Color(color).fade(0.85)}`,
+                                            boxShadow: `0 1px 0 0 rgba(0,0,0)`,
                                         }}
                                         />
                                         
                                     <CardContent
-                                        
                                     >
                                         <Typography 
                                             gutterBottom variant="h5" 
                                             component="div"
                                         >
-                                            <Grid container>
+                                            <Grid container direction='row'>
                                                 <Grid item>
                                                     <Avatar
                                                         variant="square"
