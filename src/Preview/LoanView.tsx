@@ -53,6 +53,8 @@ import { gah_cancelListingReceipt } from '../utils/auctionHouse/gah_cancelListin
 import { TokenAmount } from '../utils/grapeTools/safe-math';
 import { useTranslation } from 'react-i18next';
 
+import HandshakeIcon from '@mui/icons-material/Handshake';
+import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
 import CancelIcon from '@mui/icons-material/Cancel';
 import Chat from '@mui/icons-material/Chat';
 import BarChartOutlinedIcon from '@mui/icons-material/BarChartOutlined';
@@ -185,10 +187,10 @@ export default function HistoryView(props: any){
                             sx={{borderRadius:'20px'}}
                         >
                             <ListItemIcon>
-                            <BarChartOutlinedIcon />
+                            <HandshakeIcon />
                             </ListItemIcon>
                             <ListItemText 
-                                primary='Loan Summary'
+                                primary='Loan History'
                             />
                                 <Typography variant="caption"><strong>{openHistory}</strong></Typography>
                                 {open_history_collapse ? <ExpandLess /> : <ExpandMoreIcon />}
@@ -227,11 +229,11 @@ export default function HistoryView(props: any){
                                                             </TableCell>
 
                                                             <TableCell>
-                                                                <ExplorerView address={item.lender} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
+                                                                <ExplorerView grapeArtProfile={true} address={item.lender} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
                                                             </TableCell>
                                                             
                                                             <TableCell>
-                                                                <ExplorerView address={item.borrower} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
+                                                                <ExplorerView grapeArtProfile={true} address={item.borrower} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
                                                             </TableCell>
 
                                                             <TableCell>

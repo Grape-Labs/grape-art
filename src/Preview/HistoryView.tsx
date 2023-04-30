@@ -568,7 +568,7 @@ export default function HistoryView(props: any){
                                                             <TableCell>
                                                                 <ButtonGroup>
 
-                                                                    <ExplorerView address={item.bookkeeper} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
+                                                                    <ExplorerView address={item.bookkeeper} grapeArtProfile={true} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
 
                                                                     {key === 0 &&
                                                                         <> 
