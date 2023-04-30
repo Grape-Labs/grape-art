@@ -1273,13 +1273,18 @@ export function StoreFrontView(this: any, props: any) {
                     
                     const jsonStats = await fetchMEStatsWithTimeout(collectionAuthority.me_symbol);
 
+                    //console.log("jsonStats "+JSON.stringify(jsonStats))
+
                     if (jsonStats){
                         setMEStats(jsonStats);
                     }
 
-                    const allListings = await getNftListings();
+                    const allListings = await getNftListings(jsonStats?.floorPrice);
 
                     //console.log("allListings: "+JSON.stringify(allListings))
+                    
+                    // also fetch ME listings and ME floor?
+                    
                     if (!allListings){ // backup use ME directly
                         let json1 = [];
                         let json2 = [];
@@ -1377,7 +1382,7 @@ export function StoreFrontView(this: any, props: any) {
         return controller;
     };
 
-    const getNftListings = async () => {
+    const getNftListings = async (floorPrice: number) => {
         //let helius_results = null;
 
         if (HELIUS_API && collectionAuthority){
@@ -1416,7 +1421,12 @@ export function StoreFrontView(this: any, props: any) {
                             paginate = false;
                         }
                         for (let listing of data.result){
-                            allListings.push(listing);
+                            if (floorPrice){
+                                if (listing?.activeListings[0].amount >= floorPrice)
+                                    allListings.push(listing);
+                            } else{
+                                allListings.push(listing);
+                            }
                         }
                     }
                     return allListings;
