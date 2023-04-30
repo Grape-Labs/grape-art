@@ -2445,37 +2445,41 @@ export default function ItemOffers(props: any) {
                                                     {sentmeta?.marketplace ?
                                                         <>
                                                             {sentmeta.marketplace.toUpperCase() === "HYPERSPACE" ?
-                                                            <Tooltip title={`Buy on ${sentmeta.marketplace}`}>
+                                                            <Tooltip title={`Listed on ${sentmeta.marketplace}`}>
                                                                 <Button
-                                                                color='inherit'    
-                                                                href={`https://hyperspace.xyz/token/${mint}`}
-                                                                target='_blank'
-                                                                sx={{borderRadius:'17px',textTransform:'none'}}
-                                                                >Listed on {sentmeta.marketplace}</Button></Tooltip>
-                                                            :<>{sentmeta.marketplace.toUpperCase() === "OPENSEA" ?
-                                                                <Tooltip title={`Buy on ${sentmeta.marketplace}`}>
-                                                                    <Button
+                                                                    variant='outlined'
                                                                     color='inherit'    
-                                                                    href={`https://opensea.io/assets/solana/${mint}`}
+                                                                    href={`https://hyperspace.xyz/token/${mint}`}
                                                                     target='_blank'
-                                                                    sx={{borderRadius:'17px',textTransform:'none'}}
-                                                                    >Listed on {sentmeta.marketplace}</Button></Tooltip>
-                                                                :<>{sentmeta.marketplace.toUpperCase() === "CORAL_CUBE" ?
-                                                                    <Tooltip title={`Buy on ${sentmeta.marketplace}`}>
-                                                                        <Button
+                                                                    sx={{ml:1,borderRadius:'17px',textTransform:'none'}}
+                                                                >Buy on {sentmeta.marketplace} <ShoppingCartIcon fontSize='small' sx={{ml:1}} /></Button></Tooltip>
+                                                            :<>{sentmeta.marketplace.toUpperCase() === "OPENSEA" ?
+                                                                <Tooltip title={`Listed on ${sentmeta.marketplace}`}>
+                                                                    <Button
+                                                                        variant='outlined'
                                                                         color='inherit'    
-                                                                        href={`https://coralcube.io/detail/${mint}`}
+                                                                        href={`https://opensea.io/assets/solana/${mint}`}
                                                                         target='_blank'
-                                                                        sx={{borderRadius:'17px',textTransform:'none'}}
-                                                                        >Listed on {sentmeta.marketplace.replaceAll("_"," ")}</Button></Tooltip>
-                                                                    :<>{sentmeta.marketplace.toUpperCase() === "SOLANART" ?
-                                                                        <Tooltip title={`Buy on ${sentmeta.marketplace}`}>
-                                                                            <Button
+                                                                        sx={{ml:1,borderRadius:'17px',textTransform:'none'}}
+                                                                    >Buy on {sentmeta.marketplace} <ShoppingCartIcon fontSize='small' sx={{ml:1}} /></Button></Tooltip>
+                                                                :<>{sentmeta.marketplace.toUpperCase() === "CORAL_CUBE" ?
+                                                                    <Tooltip title={`Listed on ${sentmeta.marketplace}`}>
+                                                                        <Button
+                                                                            variant='outlined'
                                                                             color='inherit'    
-                                                                            href={`https://solanart.io/nft/${mint}`}
+                                                                            href={`https://coralcube.io/detail/${mint}`}
                                                                             target='_blank'
-                                                                            sx={{borderRadius:'17px',textTransform:'none'}}
-                                                                            >Listed on {sentmeta.marketplace.replaceAll("_"," ")}</Button></Tooltip>
+                                                                            sx={{ml:1,borderRadius:'17px',textTransform:'none'}}
+                                                                        >Buy on {sentmeta.marketplace.replaceAll("_"," ")} <ShoppingCartIcon fontSize='small' sx={{ml:1}} /></Button></Tooltip>
+                                                                    :<>{sentmeta.marketplace.toUpperCase() === "SOLANART" ?
+                                                                        <Tooltip title={`Listed on ${sentmeta.marketplace}`}>
+                                                                            <Button
+                                                                                variant='outlined'
+                                                                                color='inherit'    
+                                                                                href={`https://solanart.io/nft/${mint}`}
+                                                                                target='_blank'
+                                                                                sx={{ml:1,borderRadius:'17px',textTransform:'none'}}
+                                                                            >Buy on {sentmeta.marketplace.replaceAll("_"," ")} <ShoppingCartIcon fontSize='small' sx={{ml:1}} /></Button></Tooltip>
                                                                         :<>
                                                                             {sentmeta.marketplace.toUpperCase() === "TENSOR" ?
                                                                                 <>Listed on {sentmeta.marketplace}</>
