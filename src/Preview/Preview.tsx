@@ -115,6 +115,9 @@ import {
     METAPLEX_PROGRAM_ID,
   } from '../utils/auctionHouse/helpers/constants';
 
+
+import LoanView from './LoanView';
+
 import SendToken from '../StoreFront/Send';
 import ItemOffers from './ItemOffers';
 import { SocialLikes, SocialFlags } from './Social';
@@ -1727,6 +1730,8 @@ function GalleryItemMeta(props: any) {
                                         sol_portfolio_balance={sol_portfolio_balance}
                                         />
                                 }
+
+                                <LoanView mint={mint} />
                                 
                                 {collectionitem.attributes?.length && collectionitem.attributes.length > 0 ? (
                                     <Box
@@ -1785,7 +1790,6 @@ function GalleryItemMeta(props: any) {
                                 )
                                 : <></>
                                 }
-                                    
                             </Grid>
                         </Grid>    
                     

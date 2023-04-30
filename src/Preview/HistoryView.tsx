@@ -333,7 +333,7 @@ export default function HistoryView(props: any){
                                     source: source,
                                     directmessage:directmessage});
                             } else{
-                                console.log("Found instance with no bookkeeper - "+createdAt+" - "+source+" - "+meitem.price)
+                                //console.log("Found instance with no bookkeeper - "+createdAt+" - "+source+" - "+meitem.price)
                             }
 
                         }
