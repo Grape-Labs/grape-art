@@ -100,8 +100,8 @@ export default function MarketplaceView(props: any) {
             <Grid item xs={12} sm={6} md={4} lg={3}>
                 <>
                     <Card sx={{
-                        borderRadius:'26px',mb:2
-                        }}>
+                        borderRadius:'26px',mb:2,background:`${featured?.theme ? `${featured.theme}` : 'none'}`,backgroundBlendMode:'darken, luminosity' }}
+                    >
                         <CardActionArea
                                 component={Link} to={`${GRAPE_COLLECTION}${featured.vanityUrl}`}
                                 sx={{
@@ -144,11 +144,11 @@ export default function MarketplaceView(props: any) {
                                                     ></Avatar>
                                                 </Grid>
                                                 <Grid item>
-                                                    {featured.name}
+                                                    <Typography variant='h6' sx={{textShadow:'0px 2px 2px rgba(0, 0, 0, 0.4)'}}>{featured.name}</Typography>
                                                 </Grid>
                                             </Grid>
                                         </Typography>
-                                        <Typography variant="body2" color="text.primary">
+                                        <Typography variant="body2" color="text.primary" sx={{textShadow:'0px 1px 1px rgba(0,0,0,0.5)'}}>
                                             {featured.description}
                                         </Typography>
                                             {/*
@@ -206,7 +206,7 @@ export default function MarketplaceView(props: any) {
                                         </Grid>
                                     </Grid>
                                 </Typography>
-                                <Typography variant="body2" color="text.primary">
+                                <Typography variant="body2" color="text.primary" sx={{textShadow:'0px 1px 1px rgba(0,0,0,0.5)'}}>
                                     {featured.description}
                                 </Typography>
                                     <img
@@ -263,7 +263,7 @@ export default function MarketplaceView(props: any) {
 
                                         <Button size="small"    
                                             component={Link} to={`${GRAPE_COLLECTION}${featured.vanityUrl}`}
-                                            sx={{borderRadius:'24px', color:'white'}}
+                                            sx={{borderRadius:'24px', color:'white', textShadow:'0px 1px 1px rgba(0,0,0,0.5)'}}
                                         >View 
                                         {featured?.tokenType === 'SPL' ?
                                             <>&nbsp;{featured?.tokenType} Token</>
