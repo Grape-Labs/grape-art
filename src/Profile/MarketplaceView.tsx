@@ -119,7 +119,8 @@ export default function MarketplaceView(props: any) {
                                             position: 'relative',
                                             zIndex: 1,
                                             borderRadius: '1rem',
-                                            boxShadow: `0 1px 0 0 rgba(0,0,0)`,
+                                            boxShadow: `0 0.75px 0 0 rgba(0,0,0,0.5)`,
+                                            
                                         }}
                                         />
                                         
