@@ -2468,11 +2468,20 @@ export default function ItemOffers(props: any) {
                                                                         target='_blank'
                                                                         sx={{borderRadius:'17px',textTransform:'none'}}
                                                                         >Listed on {sentmeta.marketplace.replaceAll("_"," ")}</Button></Tooltip>
-                                                                    :<>
-                                                                        {sentmeta.marketplace.toUpperCase() === "TENSOR" ?
-                                                                            <>Listed on {sentmeta.marketplace}</>
-                                                                        :
-                                                                            <>&nbsp;{t('not listed for sale')}</>
+                                                                    :<>{sentmeta.marketplace.toUpperCase() === "SOLANART" ?
+                                                                        <Tooltip title={`Buy on ${sentmeta.marketplace}`}>
+                                                                            <Button
+                                                                            color='inherit'    
+                                                                            href={`https://solanart.io/nft/${mint}`}
+                                                                            target='_blank'
+                                                                            sx={{borderRadius:'17px',textTransform:'none'}}
+                                                                            >Listed on {sentmeta.marketplace.replaceAll("_"," ")}</Button></Tooltip>
+                                                                        :<>
+                                                                            {sentmeta.marketplace.toUpperCase() === "TENSOR" ?
+                                                                                <>Listed on {sentmeta.marketplace}</>
+                                                                            :
+                                                                                <>&nbsp;{t('not listed for sale')}</>
+                                                                            }</>
                                                                         }</>
                                                                     }</>
                                                                 }</>
