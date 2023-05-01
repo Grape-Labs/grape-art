@@ -174,6 +174,7 @@ export function LendingView(props: any){
                 lended: 0,
                 borrower: 0,
                 borrowed: 0,
+                totalBorrower: 0,
                 extended: 0,
             };
             for (const item of finalResults){
@@ -213,6 +214,9 @@ export function LendingView(props: any){
                         summary.borrowed = item.principalAmount;
                     }
                 }
+
+                if (type === 'Borrower')
+                    summary.totalBorrower++;
 
                 cnt++;
             }
@@ -339,7 +343,7 @@ export function LendingView(props: any){
                                 </Typography>
                                 
                                 <Typography textAlign='center'>
-                                    <Tooltip title={<>Total Loans Defaulted<br/>Default Rate: <strong>{((loanSummary.defaults/loanSummary.borrower)*100).toFixed(1)}%</strong></>}>
+                                    <Tooltip title={<>Total Loans Defaulted<br/>Default Rate: <strong>{((loanSummary.defaults/loanSummary.totalBorrower)*100).toFixed(1)}%</strong></>}>
                                         <Button
                                             color='inherit'
                                             sx={{borderRadius:'17px'}}
