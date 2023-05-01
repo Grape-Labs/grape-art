@@ -9,6 +9,8 @@ import { PublicKey, Connection, Commitment } from '@solana/web3.js';
 import {ENV, TokenInfo, TokenListProvider} from '@solana/spl-token-registry';
 import axios from "axios";
 
+import { RestClient, NftMintsByOwnerRequest, NftMintPriceByCreatorAvgRequest, CollectionFloorpriceRequest } from '@hellomoon/api';
+
 import { gql } from '@apollo/client'
 import gql_client from '../gql_client'
 
@@ -193,6 +195,7 @@ export function IdentityView(props: any){
     const [selectionModel, setSelectionModel] = React.useState([]);
     const [selectionModelClose, setSelectionModelClose] = React.useState([]);
     const [tokensNetValue, setTokensNetValue] = React.useState(null);
+    const [nftFloorValue, setNftFloorValue] = React.useState(null);
     const connection = RPC_CONNECTION;
     const { t, i18n } = useTranslation();
 
@@ -560,33 +563,7 @@ export function IdentityView(props: any){
         try{
             const resp = await connection.getParsedTokenAccountsByOwner(new PublicKey(pubkey), {programId: new PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA")});
             const resultValues = resp.value
-            /*
-                let meta_final = JSON.parse(item.account.data);
-                let buf = Buffer.from(JSON.stringify(item.account.data), 'base64');
             
-
-            // Use JSONParse for now until we decode 
-            const body = {
-                method: "getTokenAccountsByOwner",
-                jsonrpc: "2.0",
-                params: [
-                pubkey,
-                { programId: "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA" },
-                { encoding: "jsonParsed", commitment: "processed" },
-                ],
-                id: "35f0036a-3801-4485-b573-2bf29a7c77d2",
-            };
-            const resp = await window.fetch(RPC_ENDPOINT, {
-                method: "POST",
-                body: JSON.stringify(body),
-                headers: { "Content-Type": "application/json" },
-            })
-            const json = await resp.json();
-            const resultValues = json.result.value
-            
-            */
-            //return resultValues;
-
             const holdings: any[] = [];
             const allholdings: any[] = [];
             const closable: any[] = [];
@@ -602,7 +579,7 @@ export function IdentityView(props: any){
 
             const sortedholdings = JSON.parse(JSON.stringify(holdings));
             sortedholdings.sort((a:any,b:any) => (b.account.data.parsed.info.tokenAmount.amount - a.account.data.parsed.info.tokenAmount.amount));
-
+            
             const solholdingrows: any[] = [];
             let cnt = 0;
 
@@ -624,9 +601,9 @@ export function IdentityView(props: any){
 
             setLoadingPosition('NFT Metadata');
             let nftMeta =null;
-            if (loadNftMeta || loadNfts){
-                nftMeta = await fetchNFTMetadata(resultValues);
-            }
+            //if (loadNfts){
+                nftMeta = await fetchNFTMetadata(resultValues, loadNftMeta || loadNfts);
+            //}
 
             //console.log("nftMeta: "+JSON.stringify(nftMeta))
 
@@ -652,7 +629,8 @@ export function IdentityView(props: any){
                         if (nft?.meta && nft.meta.mint === item.account.data.parsed.info.mint){
                             //console.log("nft: "+JSON.stringify(nft))
 
-                            metadata_decoded = decodeMetadata(nft.data);
+                            if (nft?.data)
+                                metadata_decoded = decodeMetadata(nft.data);
                             //console.log("meta_final: "+JSON.stringify(metadata_decoded))
                             
                             name = nft.meta.data.name;
@@ -847,6 +825,7 @@ export function IdentityView(props: any){
                 .map((value: any, index: number) => {
                     return value.account.data.parsed.info.mint;
                 });
+            
 
             for (const value of mintarr) {
                 if (value) {
@@ -863,8 +842,10 @@ export function IdentityView(props: any){
                 }
             }
 
+            // fetch also NFTs per wallet
+            
             //console.log("pushed pdas: "+JSON.stringify(mintsPDAs));
-            const final_meta = new Array();
+            //const final_meta = new Array();
             const metadata = await connection.getMultipleAccountsInfo(mintsPDAs);
             //console.log("returned: "+JSON.stringify(metadata));
             // LOOP ALL METADATA WE HAVE
@@ -886,6 +867,7 @@ export function IdentityView(props: any){
             }
             */
             return metadata;
+            
         } catch (e) {
             // Handle errors from invalid calls
             console.log(e);
@@ -893,7 +875,7 @@ export function IdentityView(props: any){
         }
     };  
     
-    const fetchNFTMetadata = async (holdings:any) => {
+    const fetchNFTMetadata = async (holdings:any, loadNftMeta: boolean) => {
         if (holdings){
             const walletlength = holdings.length;
 
@@ -910,124 +892,201 @@ export function IdentityView(props: any){
             }
 
             //console.log('sholdings: ' + JSON.stringify(sholdings));
+            const final_collection_meta: any[] = [];            
+
+            const client = new RestClient(HELLO_MOON_BEARER);
+            let walletNfts = null;
             
-            for (let x = 0; x < loops; x++) {
-                const tmpcollectionmeta = await getCollectionData(x, sholdings);
-                //console.log('tmpcollectionmeta: ' + JSON.stringify(tmpcollectionmeta));
-                collectionmeta = collectionmeta.concat(tmpcollectionmeta);
+            try{
+                walletNfts = await client.send(new NftMintsByOwnerRequest({
+                    ownerAccount: pubkey,
+                    limit: 1000
+                }))
+            }catch(e){
+                console.log("ERR: "+e);
             }
 
-            const mintarr = sholdings
-                .map((value: any, index: number) => {
-                    return value.account.data.parsed.info.mint;
-                });
+            let totalFloor = 0;
             
-            let nftMap = null;
-            if (mintarr){
-                //console.log("mintarr: "+JSON.stringify(mintarr))
-                // RETIRED HOLAPLEX INDEXER:
-                //const gql_result = await getGqlNfts(mintarr);
-                //nftMap = gql_result;
-                //console.log('gql_results: ' + JSON.stringify(nftMap));
-            }
+            if (walletNfts){
+                for (let walletItem of sholdings){
+                    const collectionitem = {
+                        wallet: walletItem,
+                        meta:null,
+                        groupBySymbol: 0,
+                        groupBySymbolIndex: 0,
+                        floorPrice: 0,
+                        helloMoonCollectionId: null,
+                    }
+                    for (let item of walletNfts.data){
+                        //console.log("found: "+JSON.stringify(walletItem));
+                        if (walletItem.account.data.parsed.info.mint === item.nftMint){
+                            //console.log("found: "+JSON.stringify(item));
+                            //console.log(">>>>>: "+JSON.stringify(walletItem));
+
+                            collectionitem.meta = {
+                                mint: item.nftMint,
+                                data: {
+                                    name: item.metadataJson.name,
+                                    uri: item.metadataJson.uri,
+                                    symbol: item.metadataJson.symbol
+                                }
+                            }
+
+                            //collectionitem.meta.data.symbol = item.metadataJson.symbol;
+                            collectionitem.helloMoonCollectionId = item.helloMoonCollectionId;
+                            if (loadNftMeta){
+                                collectionitem.urimeta = await window.fetch(item.metadataJson.uri).then((res: any) => res.json());
+                                if (collectionitem.urimeta)
+                                    collectionitem.image = DRIVE_PROXY+collectionitem.urimeta.image;
+                            }
+
+                            setLoadingPosition('Floor Value');
+                            const results = await client.send(new CollectionFloorpriceRequest({
+                                helloMoonCollectionId: collectionitem.helloMoonCollectionId,
+                                limit: 1
+                            }))
+                                .then(x => {
+                                    //console.log; 
+                                    return x;})
+                                .catch(console.error);
+        
+                            if (results?.data){
+                                for (let resitem of results.data){
+                                    //console.log("FLR price for: "+resitem.floorPriceLamports)
+                                    collectionitem.floorPrice = +resitem.floorPriceLamports;
+                                    totalFloor+= +resitem.floorPriceLamports;
+                                }
+                            }
+                            
+                        }
+                    }
+
+                    final_collection_meta.push(collectionitem);
+                }
+            } else{
             
-            
-            const final_collection_meta: any[] = [];
-            for (let i = 0; i < collectionmeta.length; i++) {
-                //console.log(i+": "+JSON.stringify(collectionmeta[i])+" --- with --- "+JSON.stringify(collectionmeta[i]));
-                if (collectionmeta[i]) {
-                    collectionmeta[i]['wallet'] = sholdings[i];
-                    try {
-                        if (collectionmeta[i]['wallet'].account?.data?.parsed?.info?.tokenAmount?.decimals === 0){
-                            //console.log("NFT: "+JSON.stringify(collectionmeta[i]['wallet']))
-                            const meta_primer = collectionmeta[i];
-                            const buf = Buffer.from(meta_primer.data, 'base64');
-                            const meta_final = decodeMetadata(buf);
-                            collectionmeta[i]['meta'] = meta_final;
-                            //console.log("meta: "+JSON.stringify(collectionmeta[i]['meta'].mint))
-                        
-                            try{
-                                //console.log("checking: "+collectionmeta[i]['meta'].mint);
-                                if (nftMap){
-                                    //var index = Object.keys(nftMap).indexOf(collectionmeta[i]['meta'].mint);
-                                    let found_from_map = false;
-                                    for (const [key, value] of Object.entries(nftMap)){
-                                        if (key === collectionmeta[i]['meta'].mint){
-                                            collectionmeta[i]['image'] = DRIVE_PROXY+value?.image;
-                                            found_from_map = true;
-                                            //console.log("image: "+ value?.image);
+                for (let x = 0; x < loops; x++) {
+                    const tmpcollectionmeta = await getCollectionData(x, sholdings);
+                    console.log('tmpcollectionmeta: ' + JSON.stringify(tmpcollectionmeta));
+                    collectionmeta = collectionmeta.concat(tmpcollectionmeta);
+                }
+    
+                const mintarr = sholdings
+                    .map((value: any, index: number) => {
+                        return value.account.data.parsed.info.mint;
+                    });
+                
+                if (mintarr){
+                    //console.log("mintarr: "+JSON.stringify(mintarr))
+                    // RETIRED HOLAPLEX INDEXER:
+                    //const gql_result = await getGqlNfts(mintarr);
+                    //nftMap = gql_result;
+                    //console.log('gql_results: ' + JSON.stringify(nftMap));
+                }
+
+                for (let i = 0; i < collectionmeta.length; i++) {
+                    //console.log(i+": "+JSON.stringify(collectionmeta[i])+" --- with --- "+JSON.stringify(collectionmeta[i]));
+                    if (collectionmeta[i]) {
+                        collectionmeta[i]['wallet'] = sholdings[i];
+                        try {
+                            if (collectionmeta[i]['wallet'].account?.data?.parsed?.info?.tokenAmount?.decimals === 0){
+                                //console.log("NFT: "+JSON.stringify(collectionmeta[i]['wallet']))
+                                const meta_primer = collectionmeta[i];
+                                const buf = Buffer.from(meta_primer.data, 'base64');
+                                const meta_final = decodeMetadata(buf);
+                                collectionmeta[i]['meta'] = meta_final;
+                                //console.log("meta: "+JSON.stringify(collectionmeta[i]['meta'].mint))
+                            
+                                try{
+                                    //console.log("checking: "+collectionmeta[i]['meta'].mint);
+                                    if (nftMap){
+                                        //var index = Object.keys(nftMap).indexOf(collectionmeta[i]['meta'].mint);
+                                        let found_from_map = false;
+                                        for (const [key, value] of Object.entries(nftMap)){
+                                            if (key === collectionmeta[i]['meta'].mint){
+                                                collectionmeta[i]['image'] = DRIVE_PROXY+value?.image;
+                                                found_from_map = true;
+                                                //console.log("image: "+ value?.image);
+                                            }
                                         }
-                                    }
 
-                                    if (!found_from_map){
-                                        //if (collectionmeta.length <= 25){ // limitd to 25 fetches (will need to optimize this so it does not delay)
-                                            if (meta_final.data?.uri){
+                                        if (!found_from_map){
+                                            //if (collectionmeta.length <= 25){ // limitd to 25 fetches (will need to optimize this so it does not delay)
+                                                if (meta_final.data?.uri){
+                                                    if (loadNftMeta){
+                                                        collectionmeta[i]['urimeta'] = await window.fetch(meta_final.data.uri).then((res: any) => res.json());
+                                                        collectionmeta[i]['image'] = DRIVE_PROXY+collectionmeta[i]['urimeta'].image;
+                                                    }
+                                                }
+                                            //}
+                                        }
+                                    } else {
+                                        if (meta_final.data?.uri){
+                                            if (loadNftMeta){
                                                 collectionmeta[i]['urimeta'] = await window.fetch(meta_final.data.uri).then((res: any) => res.json());
                                                 collectionmeta[i]['image'] = DRIVE_PROXY+collectionmeta[i]['urimeta'].image;
                                             }
-                                        //}
+                                        }
                                     }
-                                } else {
-                                    if (meta_final.data?.uri){
-                                        collectionmeta[i]['urimeta'] = await window.fetch(meta_final.data.uri).then((res: any) => res.json());
-                                        collectionmeta[i]['image'] = DRIVE_PROXY+collectionmeta[i]['urimeta'].image;
+
+                                    if (collectionmeta[i]['image']){
+                                        /*
+                                        const img_url_string = collectionmeta[i]['image'];
+                                        const full_url = new URL(img_url_string);
+                                        const ARWEAVE = 'https://arweave.net';
+                                        const IPFS = 'https://ipfs.io';
+                                        const IPFS_2 = "https://nftstorage.link/ipfs";
+                                        const IPFS_3 = ".ipfs.nftstorage.link";
+                                        
+                                        if ((img_url_string?.toLocaleUpperCase().indexOf('?EXT=PNG') > -1) ||
+                                            (img_url_string?.toLocaleUpperCase().indexOf('?EXT=JPEG') > -1) ||
+                                            (img_url_string?.toLocaleUpperCase().indexOf('?EXT=GIF') > -1) ||
+                                            (img_url_string?.toLocaleUpperCase().indexOf('.JPEG') > -1) ||
+                                            (img_url_string?.toLocaleUpperCase().indexOf('.PNG') > -1) ||
+                                            (img_url_string?.startsWith(IPFS))){
+                                                
+                                                let image_url = DRIVE_PROXY+img_url_string;
+
+                                                if (img_url_string.startsWith(IPFS)){
+                                                    //image_url = DRIVE_PROXY+CLOUDFLARE_IPFS_CDN+''+img_url_string.replace(IPFS,'');
+                                                } else if (img_url_string.startsWith(IPFS_2)){
+                                                    //image_url = DRIVE_PROXY+CLOUDFLARE_IPFS_CDN+'/ipfs/'+img_url_string.replace(IPFS_2,'');
+                                                } else if (img_url_string.includes(IPFS_3)){
+                                                    //https://solana-cdn.com/cdn-cgi/image/width=256/https://cloudflare-ipfs.com/ipfs///
+                                                    //https://bafybeigi6scodcqz7wc2higrkfdmwt4tkyteoq4xxiy5olxpfh3pm4n3ue.ipfs.nftstorage.link/?ext=png
+                                                    const host = full_url.hostname.split('.');
+                                                    const folders = full_url.pathname.split('/');
+                                                }
+
+                                                
+                                                collectionmeta[i]['image'] = image_url;
+                                        }
+                                        */
+
                                     }
+                                }catch(err){
+                                    console.log("ERR: "+err);
                                 }
-
-                                if (collectionmeta[i]['image']){
-                                    /*
-                                    const img_url_string = collectionmeta[i]['image'];
-                                    const full_url = new URL(img_url_string);
-                                    const ARWEAVE = 'https://arweave.net';
-                                    const IPFS = 'https://ipfs.io';
-                                    const IPFS_2 = "https://nftstorage.link/ipfs";
-                                    const IPFS_3 = ".ipfs.nftstorage.link";
-                                    
-                                    if ((img_url_string?.toLocaleUpperCase().indexOf('?EXT=PNG') > -1) ||
-                                        (img_url_string?.toLocaleUpperCase().indexOf('?EXT=JPEG') > -1) ||
-                                        (img_url_string?.toLocaleUpperCase().indexOf('?EXT=GIF') > -1) ||
-                                        (img_url_string?.toLocaleUpperCase().indexOf('.JPEG') > -1) ||
-                                        (img_url_string?.toLocaleUpperCase().indexOf('.PNG') > -1) ||
-                                        (img_url_string?.startsWith(IPFS))){
-                                            
-                                            let image_url = DRIVE_PROXY+img_url_string;
-
-                                            if (img_url_string.startsWith(IPFS)){
-                                                //image_url = DRIVE_PROXY+CLOUDFLARE_IPFS_CDN+''+img_url_string.replace(IPFS,'');
-                                            } else if (img_url_string.startsWith(IPFS_2)){
-                                                //image_url = DRIVE_PROXY+CLOUDFLARE_IPFS_CDN+'/ipfs/'+img_url_string.replace(IPFS_2,'');
-                                            } else if (img_url_string.includes(IPFS_3)){
-                                                //https://solana-cdn.com/cdn-cgi/image/width=256/https://cloudflare-ipfs.com/ipfs///
-                                                //https://bafybeigi6scodcqz7wc2higrkfdmwt4tkyteoq4xxiy5olxpfh3pm4n3ue.ipfs.nftstorage.link/?ext=png
-                                                const host = full_url.hostname.split('.');
-                                                const folders = full_url.pathname.split('/');
-                                            }
-
-                                            
-                                            collectionmeta[i]['image'] = image_url;
-                                    }
-                                    */
-
-                                }
-                            }catch(err){
-                                console.log("ERR: "+err);
+                            } else{ // push null if empty
+                                collectionmeta[i]['meta'] = null;
                             }
-                        } else{ // push null if empty
-                            collectionmeta[i]['meta'] = null;
+                            collectionmeta[i]['groupBySymbol'] = 0;
+                            collectionmeta[i]['groupBySymbolIndex'] = 0;
+                            collectionmeta[i]['floorPrice'] = 0;
+                            final_collection_meta.push(collectionmeta[i]);
+                        } catch (e) {
+                            console.log('ERR:' + e);
                         }
-                        collectionmeta[i]['groupBySymbol'] = 0;
-                        collectionmeta[i]['groupBySymbolIndex'] = 0;
-                        collectionmeta[i]['floorPrice'] = 0;
-                        final_collection_meta.push(collectionmeta[i]);
-                    } catch (e) {
-                        console.log('ERR:' + e);
                     }
                 }
             }
-
+            //console.log('final_collection_meta: ' + JSON.stringify(final_collection_meta));
+            
+            setNftFloorValue(totalFloor);
             setNftMap(final_collection_meta);
             return final_collection_meta;
-            //console.log('final_collection_meta: ' + JSON.stringify(final_collection_meta));
+            
 
         }
     }
@@ -1119,7 +1178,7 @@ export function IdentityView(props: any){
                                                 color='inherit'
                                                 component={Link} to={`./`}
                                                 sx={{borderRadius:'17px',textTransform:'none'}}
-                                            ><AccountBalanceWalletIcon sx={{mr:1}}/> Go to my Wallet</Button>
+                                            ><AccountBalanceWalletIcon sx={{mr:1}}/> Go to my wallet</Button>
                                         }
                                     </Grid>
                                     
@@ -1163,7 +1222,7 @@ export function IdentityView(props: any){
                                     </Grid>
 
                                     <Grid container>
-                                        <Grid item sm={12} md={4}>
+                                        <Grid item xs={12} sm={12} md={3}>
                                             <Typography
                                                 variant="h6"
                                             >
@@ -1183,7 +1242,7 @@ export function IdentityView(props: any){
                                                         <Grid item>
                                                             <ListItemText
                                                                 primary={
-                                                                    <Typography variant='h4'>
+                                                                    <Typography variant='h5'>
                                                                         {solanaBalance  && 
                                                                             <>
                                                                             {(solanaBalance/(10 ** 9)).toFixed(4)}
@@ -1214,7 +1273,7 @@ export function IdentityView(props: any){
                                         {tokensNetValue > 0 &&
                                             <>
                                             {(solanaUSDC) &&
-                                            <Grid item sm={12} md={4}>
+                                            <Grid item xs={12} sm={12} md={3}>
                                                 <Typography
                                                     variant="h6"
                                                 >
@@ -1235,7 +1294,7 @@ export function IdentityView(props: any){
                                                         <Grid item>
                                                             <ListItemText
                                                                 primary={
-                                                                    <Typography variant='h4'>
+                                                                    <Typography variant='h5'>
                                                                         {(tokensNetValue/solanaUSDC).toFixed(4)}
                                                                     </Typography>}
                                                                 secondary={
@@ -1258,10 +1317,57 @@ export function IdentityView(props: any){
                                             </>
                                         }
 
+                                        {nftFloorValue > 0 &&
+                                            <>
+                                            {(solanaUSDC) &&
+                                            <Grid item xs={12} sm={12} md={3}>
+                                                <Typography
+                                                    variant="h6"
+                                                >
+                                                    NFT Floor Value:
+                                                </Typography> 
+
+
+                                                <List dense={true}>
+                                                <ListItem sx={{width:'100%'}}>
+                                                    <ListItemAvatar>
+                                                        <Avatar
+                                                            sx={{backgroundColor:'#222'}}
+                                                        >
+                                                            <SolCurrencyIcon sx={{color:'white'}} />
+                                                        </Avatar>
+                                                    </ListItemAvatar>
+                                                    <Grid container sx={{width:'100%'}}>
+                                                        <Grid item>
+                                                            <ListItemText
+                                                                primary={
+                                                                    <Typography variant='h5'>
+                                                                        {(nftFloorValue/(10 ** 9)).toFixed(4)}
+                                                                    </Typography>}
+                                                                secondary={
+                                                                    <>
+                                                                    {solanaUSDC &&
+                                                                        <Typography variant='caption'>
+                                                                            {getFormattedNumberToLocale((+nftFloorValue/(10 ** 9)*solanaUSDC).toFixed(2))} USDC
+                                                                        </Typography>
+                                                                    }
+                                                                    </>
+                                                                }
+                                                            />
+                                                        </Grid>
+                                                    </Grid>
+                                                </ListItem>
+                                            </List>
+
+                                            </Grid>
+                                            }
+                                            </>
+                                        }
+
                                         {(tokensNetValue > 0 && solanaBalance > 0 && solanaUSDC) &&
                                             <>
                                             {tokensNetValue && 
-                                                <Grid item sm={12} md={4}>
+                                                <Grid item xs={12} sm={12} md={3}>
                                                     <Typography
                                                         variant="h6"
                                                     >
@@ -1282,14 +1388,14 @@ export function IdentityView(props: any){
                                                             <Grid item>
                                                                 <ListItemText
                                                                     primary={
-                                                                        <Typography variant='h4'>
-                                                                            {((tokensNetValue/solanaUSDC) + solanaBalance/(10 ** 9)).toFixed(4)}
+                                                                        <Typography variant='h5'>
+                                                                            {((tokensNetValue/solanaUSDC) + solanaBalance/(10 ** 9) + nftFloorValue/(10 ** 9)).toFixed(4)}
                                                                         </Typography>}
                                                                     secondary={
                                                                         <>
                                                                         {solanaUSDC &&
                                                                             <Typography variant='caption'>
-                                                                                {getFormattedNumberToLocale(+(((solanaBalance/(10 ** 9)) * solanaUSDC) + tokensNetValue).toFixed(2))} USDC
+                                                                                {getFormattedNumberToLocale(+(((solanaBalance/(10 ** 9)) * solanaUSDC) + tokensNetValue + (nftFloorValue/(10 ** 9) * solanaUSDC)).toFixed(2))} USDC
                                                                             </Typography>
                                                                         }
                                                                         </>
