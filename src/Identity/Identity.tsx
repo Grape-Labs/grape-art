@@ -1086,31 +1086,43 @@ export function IdentityView(props: any){
                     > 
                             <Grid 
                                 container 
-                                direction="column" 
+                                direction="row" 
                                 spacing={2} 
                                 alignItems="center"
+                                justifyContent="flex-start"
                                 rowSpacing={8}
                             >
                                     <Grid 
-                                        item xs={12}
-                                        alignItems="center"
+                                        item md={2} sm={3} xs={12}
+                                        display="flex" justifyContent="center" alignItems="center"
+                                    ></Grid>
+                                    <Grid 
+                                        item md={8} sm={6} xs={12}
+                                        display="flex" justifyContent="center" alignItems="center"
                                     > 
                                         <Typography
                                             variant="h5"
                                             color="inherit"
-                                            display='flex'
                                             sx={{mb:3}}
                                         >
                                             <SolIcon sx={{fontSize:'20px',mr:1}} />WALLET
                                         </Typography>
-                                        {publicKey && pubkey !== publicKey.toBase58() &&
-                                            <Button
-                                                component={Link} to={`./`}
-                                                sx={{borderRadius:'17px'}}
-                                            >Show my wallet</Button>
-                                        }
+                                        
 
                                     </Grid>
+                                    <Grid 
+                                        item md={2} sm={3} xs={12}
+                                        display="flex" justifyContent="center" alignItems="center"
+                                    > 
+                                        {publicKey && pubkey !== publicKey.toBase58() &&
+                                            <Button
+                                                color='inherit'
+                                                component={Link} to={`./`}
+                                                sx={{borderRadius:'17px',textTransform:'none'}}
+                                            ><AccountBalanceWalletIcon sx={{mr:1}}/> Go to my Wallet</Button>
+                                        }
+                                    </Grid>
+                                    
                             </Grid>
                             
                             <>
