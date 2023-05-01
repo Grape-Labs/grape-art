@@ -24,6 +24,7 @@ import {
     HELLO_MOON_BEARER
 } from '../../utils/grapeTools/constants';
 
+
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
@@ -175,14 +176,21 @@ export function LendingView(props: any){
                 borrower: 0,
                 borrowed: 0,
                 totalBorrower: 0,
+                totalLender: 0,
                 extended: 0,
+                totalAmountDefaulted: 0,
+                totalAmountRepaid: 0,
             };
             for (const item of finalResults){
                 let type = ``;
-                if (pubkey === item.lender) 
+                if (pubkey === item.lender) {
                     type = `Lender`
-                else type = `Borrower`
-                
+                    summary.totalLender++;
+                }else {
+                    type = `Borrower`
+                    summary.totalBorrower++;
+                }
+
                 lending.push({
                     id:cnt,
                     market:item.market,
@@ -200,8 +208,10 @@ export function LendingView(props: any){
 
                 if (item.status === 'repaid'){
                     summary.repaid++;
+                    summary.totalAmountRepaid+=item.principalAmount;
                 } else if (item.status === 'defaulted' || item.status === 'default' || item.status === 'liquidated'){
                     summary.defaults++;
+                    summary.totalAmountDefaulted+=item.principalAmount;
                 } else if (item.status === 'active' || item.status === 'extended'){
                     if (item.status === 'extended')
                         summary.extended++;
@@ -214,9 +224,6 @@ export function LendingView(props: any){
                         summary.borrowed = item.principalAmount;
                     }
                 }
-
-                if (type === 'Borrower')
-                    summary.totalBorrower++;
 
                 cnt++;
             }
@@ -315,7 +322,11 @@ export function LendingView(props: any){
                                 </Typography>
                                 
                                 <Typography textAlign='center'>
-                                    <Tooltip title='Total Loans Repaid'>
+                                    <Tooltip title={
+                                        <>Total Loans Repaid
+                                        <br/>
+                                         Total Amount Repaid: <strong>{((loanSummary.totalAmountRepaid/(10 ** 9))).toFixed(3)} sol</strong>
+                                    </>}>
                                         <Button
                                             color='inherit'
                                             sx={{borderRadius:'17px'}}
@@ -343,7 +354,11 @@ export function LendingView(props: any){
                                 </Typography>
                                 
                                 <Typography textAlign='center'>
-                                    <Tooltip title={<>Total Loans Defaulted<br/>Default Rate: <strong>{((loanSummary.defaults/loanSummary.totalBorrower)*100).toFixed(1)}%</strong></>}>
+                                    <Tooltip title={
+                                        <>Total Loans Defaulted<br/>
+                                            Default Rate: <strong>{((loanSummary.defaults/loanSummary.totalBorrower)*100).toFixed(1)}%</strong><br/>
+                                            Total Amount Defaulted: <strong>{((loanSummary.totalAmountDefaulted/(10 ** 9))).toFixed(3)} sol</strong>
+                                        </>}>
                                         <Button
                                             color='inherit'
                                             sx={{borderRadius:'17px'}}
