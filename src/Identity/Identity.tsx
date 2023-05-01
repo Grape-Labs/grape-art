@@ -9,7 +9,7 @@ import { PublicKey, Connection, Commitment } from '@solana/web3.js';
 import {ENV, TokenInfo, TokenListProvider} from '@solana/spl-token-registry';
 import axios from "axios";
 
-import { RestClient, NftMintsByOwnerRequest, NftMintPriceByCreatorAvgRequest, CollectionFloorpriceRequest } from '@hellomoon/api';
+import { RestClient, NftMintsByOwnerRequest, NftMintPriceByCreatorAvgRequest, CollectionFloorpriceRequest, FloorpriceBatchedRequest } from '@hellomoon/api';
 
 import { gql } from '@apollo/client'
 import gql_client from '../gql_client'
@@ -908,6 +908,44 @@ export function IdentityView(props: any){
 
             let totalFloor = 0;
             
+            // FloorpriceBatchedRequest
+            const hmcid = new Array();
+            for (let witem of walletNfts.data){
+                hmcid.push(witem.helloMoonCollectionId);
+            }
+
+            let floorResults = null;
+            try{
+                /*
+                const url = 'https://rest-api.hellomoon.io/v0/nft/collection/floorprice/batched';
+                const config = {
+                    headers:{
+                    accept: `application/json`,
+                    authorization: `Bearer ${HELLO_MOON_BEARER}`,
+                    'content-type': `application/json`
+                    }
+                };
+                const data = {
+                    helloMoonCollectionId: JSON.stringify(hmcid),
+                    limit: 1000
+                }
+                floorResults = await axios.post(url, data, config); 
+                */
+                /*
+                floorResults = await client.send(new CollectionFloorpriceRequest({
+                //floorResults = await client.send(new FloorpriceBatchedRequest({
+                    helloMoonCollectionId: JSON.stringify(hmcid),
+                    limit: 1000
+                }))
+                    .then(x => {
+                        //console.log; 
+                        return x;})
+                    .catch(console.error);
+                */
+            }catch(e){
+                console.log("ERR: "+e);
+            }
+            
             if (walletNfts){
                 let count = 0;
                 for (let walletItem of sholdings){
@@ -916,7 +954,7 @@ export function IdentityView(props: any){
                         meta:null,
                         groupBySymbol: 0,
                         groupBySymbolIndex: 0,
-                        floorPrice: 0,
+                        floorPrice: null,
                         helloMoonCollectionId: null,
                     }
                     for (let item of walletNfts.data){
@@ -936,28 +974,43 @@ export function IdentityView(props: any){
 
                             //collectionitem.meta.data.symbol = item.metadataJson.symbol;
                             collectionitem.helloMoonCollectionId = item.helloMoonCollectionId;
-                            if (loadNftMeta){
-                                collectionitem.urimeta = await window.fetch(item.metadataJson.uri).then((res: any) => res.json());
-                                if (collectionitem.urimeta)
-                                    collectionitem.image = DRIVE_PROXY+collectionitem.urimeta.image;
+                            if (!collectionitem.image){
+                                if (loadNftMeta){
+                                    collectionitem.urimeta = await window.fetch(item.metadataJson.uri).then((res: any) => res.json());
+                                    if (collectionitem.urimeta)
+                                        collectionitem.image = DRIVE_PROXY+collectionitem.urimeta.image;
+                                }
                             }
 
-                            setLoadingPosition('Floor Value ('+(count+1)+' of '+sholdings.length+')');
-                            const results = await client.send(new CollectionFloorpriceRequest({
-                                helloMoonCollectionId: collectionitem.helloMoonCollectionId,
-                                limit: 1
-                            }))
-                                .then(x => {
-                                    //console.log; 
-                                    return x;})
-                                .catch(console.error);
-        
-                            if (results?.data){
-                                for (let resitem of results.data){
-                                    //console.log("FLR price for: "+resitem.floorPriceLamports)
-                                    collectionitem.floorPrice = +resitem.floorPriceLamports;
-                                    totalFloor+= +resitem.floorPriceLamports;
+                            if (!collectionitem.floorPrice){
+                                setLoadingPosition('Floor Value ('+(count+1)+' of '+sholdings.length+')');
+                                
+                                if (floorResults && floorResults?.data){
+                                    for (let flritem of floorResults.data){
+                                        if (collectionitem.helloMoonCollectionId === flritem.helloMoonCollectionId)
+                                        //console.log("FLR price for: "+resitem.floorPriceLamports)
+                                        collectionitem.floorPrice = +flritem.floorPriceLamports;
+                                        totalFloor+= +flritem.floorPriceLamports;
+                                    }
+                                } else{
+                                    const results = await client.send(new CollectionFloorpriceRequest({
+                                        helloMoonCollectionId: collectionitem.helloMoonCollectionId,
+                                        limit: 1
+                                    }))
+                                        .then(x => {
+                                            //console.log; 
+                                            return x;})
+                                        .catch(console.error);
+                
+                                    if (results?.data){
+                                        for (let resitem of results.data){
+                                            //console.log("FLR price for: "+resitem.floorPriceLamports)
+                                            collectionitem.floorPrice = +resitem.floorPriceLamports;
+                                            totalFloor+= +resitem.floorPriceLamports;
+                                        }
+                                    }
                                 }
+                                
                             }
                             
                         }
