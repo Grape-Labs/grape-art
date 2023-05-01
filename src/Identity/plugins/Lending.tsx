@@ -339,7 +339,7 @@ export function LendingView(props: any){
                                 </Typography>
                                 
                                 <Typography textAlign='center'>
-                                    <Tooltip title='Total Loans Defaulted'>
+                                    <Tooltip title={<>Total Loans Defaulted<br/>Default Rate: <strong>{((loanSummary.defaults/loanSummary.borrower)*100).toFixed(1)}%</strong></>}>
                                         <Button
                                             color='inherit'
                                             sx={{borderRadius:'17px'}}
