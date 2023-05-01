@@ -229,11 +229,11 @@ export default function HistoryView(props: any){
                                                             </TableCell>
 
                                                             <TableCell>
-                                                                <ExplorerView showSolanaProfile={true} grapeArtProfile={true} address={item.lender} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
+                                                                <ExplorerView showSolBalance={true} showSolanaProfile={true} grapeArtProfile={true} address={item.lender} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
                                                             </TableCell>
                                                             
                                                             <TableCell>
-                                                                <ExplorerView showSolanaProfile={true} grapeArtProfile={true} address={item.borrower} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
+                                                                <ExplorerView showSolBalance={true} showSolanaProfile={true} grapeArtProfile={true} address={item.borrower} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
                                                             </TableCell>
 
                                                             <TableCell>

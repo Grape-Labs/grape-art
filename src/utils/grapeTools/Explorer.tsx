@@ -51,6 +51,7 @@ import { ValidateCurve } from '../grapeTools/WalletAddress';
 import SolIcon from '../../components/static/SolIcon';
 import SolCurrencyIcon from '../../components/static/SolCurrencyIcon';
 
+import SubdirectoryArrowRightIcon from '@mui/icons-material/SubdirectoryArrowRight';
 import ImageIcon from '@mui/icons-material/Image';
 import CloseIcon from '@mui/icons-material/Close';
 import QrCode2Icon from '@mui/icons-material/QrCode2';
@@ -428,20 +429,6 @@ export default function ExplorerView(props:any){
                                 QR Code
                         </MenuItem>
 
-                        {solBalance &&
-                        <>
-                            <Divider />
-                            <Tooltip title="SOL balance in wallet">
-                                <MenuItem>
-                                        <ListItemIcon>
-                                            <SolCurrencyIcon sx={{color:'white'}} />
-                                        </ListItemIcon>
-                                        {solBalance}
-                                </MenuItem>
-                            </Tooltip>
-                        </>
-                        }
-                        
                         <Dialog
                             open={openDialog}
                             onClose={handleCloseDialog}
@@ -491,6 +478,7 @@ export default function ExplorerView(props:any){
                         <>
                         {ValidateCurve(address) ?
                                 <>
+                                {/*
                                 <MenuItem 
                                     component={Link}
                                     to={`${GRAPE_PROFILE}${address}`}
@@ -500,6 +488,7 @@ export default function ExplorerView(props:any){
                                         </ListItemIcon>
                                         Grape Profile
                                 </MenuItem>
+                                */}
                                 <MenuItem 
                                 component={Link}
                                 to={`${GRAPE_IDENTITY}${address}`}
@@ -509,6 +498,20 @@ export default function ExplorerView(props:any){
                                     </ListItemIcon>
                                     Grape Wallet
                             </MenuItem>
+
+                            {solBalance &&
+                            <>
+                                <Tooltip title="SOL balance in wallet">
+                                    <MenuItem>
+                                            <ListItemIcon>
+                                                <SubdirectoryArrowRightIcon sx={{color:'#555'}} />
+                                            </ListItemIcon>
+                                            <SolCurrencyIcon sx={{color:'white',mr:1,fontSize:'12px'}} />{solBalance}
+                                    </MenuItem>
+                                </Tooltip>
+                            </>
+                            }
+
                             <Divider/>
                             </>
                         :
