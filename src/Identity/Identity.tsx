@@ -961,10 +961,10 @@ export function IdentityView(props: any){
                             }
                             
                         }
-                        count++;
+                        
                     }
                     
-
+                    count++;
                     final_collection_meta.push(collectionitem);
                 }
             } else{
