@@ -1087,10 +1087,10 @@ export function IdentityView(props: any){
                             <Grid 
                                 container 
                                 direction="row" 
-                                spacing={2} 
+                                spacing={1} 
                                 alignItems="center"
                                 justifyContent="flex-start"
-                                rowSpacing={8}
+                                rowSpacing={1}
                             >
                                     <Grid 
                                         item md={2} sm={3} xs={12}
