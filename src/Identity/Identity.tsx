@@ -909,6 +909,7 @@ export function IdentityView(props: any){
             let totalFloor = 0;
             
             if (walletNfts){
+                let count = 0;
                 for (let walletItem of sholdings){
                     const collectionitem = {
                         wallet: walletItem,
@@ -941,7 +942,7 @@ export function IdentityView(props: any){
                                     collectionitem.image = DRIVE_PROXY+collectionitem.urimeta.image;
                             }
 
-                            setLoadingPosition('Floor Value');
+                            setLoadingPosition('Floor Value ('+(count+1)+' of '+sholdings.length+')');
                             const results = await client.send(new CollectionFloorpriceRequest({
                                 helloMoonCollectionId: collectionitem.helloMoonCollectionId,
                                 limit: 1
@@ -960,7 +961,9 @@ export function IdentityView(props: any){
                             }
                             
                         }
+                        count++;
                     }
+                    
 
                     final_collection_meta.push(collectionitem);
                 }
