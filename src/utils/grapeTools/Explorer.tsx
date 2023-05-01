@@ -43,6 +43,8 @@ import {
     GRAPE_COLLECTIONS_DATA
 } from '../grapeTools/constants';
 
+import { decodeMetadata } from '../grapeTools/utils';
+
 import { ValidateCurve } from '../grapeTools/WalletAddress';
 
 import CloseIcon from '@mui/icons-material/Close';
@@ -112,6 +114,7 @@ export default function ExplorerView(props:any){
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
     const showSolanaProfile = props.showSolanaProfile || null;
+    const showNftData = props.showNftData || null;
     const connection = RPC_CONNECTION;
     const [solanaDomain, setSolanaDomain] = React.useState(null);
     const [hasSolanaDomain, setHasSolanaDomain] = React.useState(false);
@@ -142,6 +145,23 @@ export default function ExplorerView(props:any){
         enqueueSnackbar(`Copied!`,{ variant: 'success' });
         handleClose();
     };
+
+    const fetchTokenData = async() => {
+        try{
+            const tokendata = await connection.getAccountInfo(new PublicKey(address));
+
+            if (tokendata?.data){
+                /*
+                const buf = Buffer.from(tokendata.data);
+                const meta_final = decodeMetadata(buf);
+
+                */
+                //console.log("tokendata: "+JSON.stringify(meta_final));
+            }
+        }catch(e){
+            console.log("ERR: "+e)
+        }
+    }
 
     const fetchProfilePicture = async () => {
         //setLoadingPicture(true);  
@@ -261,6 +281,12 @@ export default function ExplorerView(props:any){
             fetchSolanaDomain();
         }
     }, [showSolanaProfile, address]);
+
+    React.useEffect(() => {   
+        if (showNftData){
+            fetchTokenData()
+        }
+    }, [showNftData, address]);
 
     return (
         <>

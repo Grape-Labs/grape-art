@@ -47,6 +47,13 @@ const historycolumns: GridColDef[] = [
             )
         }
     },
+    { field: 'collateralMint', headerName: 'Mint', width: 150, align: 'left',
+        renderCell: (params) => {
+            return (
+                <ExplorerView showNftData={true} address={params.value} type='address' shorten={4} hideTitle={false} style='text' color='white' fontSize='14px' />
+            )
+        }
+    },
     { field: 'status', headerName: 'Status', width: 130, align: 'center'},
     { field: 'principalAmount', headerName: 'Principal', width: 130, align: 'center',
         renderCell: (params) => {
@@ -182,6 +189,7 @@ export function LendingView(props: any){
                     lender:item.lender,
                     borrower:item.borrower,
                     status:item.status,
+                    collateralMint:item.collateralMint,
                     principalAmount:item.principalAmount,
                     amountToRepay:item.amountToRepay,
                     duration:(item.loanDurationSeconds/60/60/24).toFixed(0),
@@ -191,7 +199,7 @@ export function LendingView(props: any){
 
                 if (item.status === 'repaid'){
                     summary.repaid++;
-                } else if (item.status === 'defaulted' || item.status === 'default'){
+                } else if (item.status === 'defaulted' || item.status === 'default' || item.status === 'liquidated'){
                     summary.defaults++;
                 } else if (item.status === 'active' || item.status === 'extended'){
                     if (item.status === 'extended')

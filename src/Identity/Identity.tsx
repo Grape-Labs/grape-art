@@ -898,7 +898,7 @@ export function IdentityView(props: any){
 
             const loops = Math.ceil(walletlength / rpclimit);
             let collectionmeta: any[] = [];
-
+            
             const sholdings: any[] = [];
             for (const item of holdings){
                 if (item){
@@ -931,7 +931,6 @@ export function IdentityView(props: any){
             }
             
             
-
             const final_collection_meta: any[] = [];
             for (let i = 0; i < collectionmeta.length; i++) {
                 //console.log(i+": "+JSON.stringify(collectionmeta[i])+" --- with --- "+JSON.stringify(collectionmeta[i]));
