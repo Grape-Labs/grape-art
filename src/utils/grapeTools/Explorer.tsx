@@ -148,15 +148,31 @@ export default function ExplorerView(props:any){
 
     const fetchTokenData = async() => {
         try{
-            const tokendata = await connection.getAccountInfo(new PublicKey(address));
+            const MD_PUBKEY = new PublicKey('metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s');
+            const [pda, bump] = await PublicKey.findProgramAddress(
+                [Buffer.from('metadata'), MD_PUBKEY.toBuffer(), new PublicKey(address).toBuffer()],
+                MD_PUBKEY
+            );
+            
+            const tokendata = await connection.getParsedAccountInfo(new PublicKey(pda));
 
-            if (tokendata?.data){
-                /*
-                const buf = Buffer.from(tokendata.data);
+            if (tokendata){
+                //console.log("tokendata: "+JSON.stringify(tokendata));
+                const buf = Buffer.from(tokendata.value.data, 'base64');
                 const meta_final = decodeMetadata(buf);
-
-                */
-                //console.log("tokendata: "+JSON.stringify(meta_final));
+                
+                if (meta_final?.data?.name){
+                    setSolanaDomain(meta_final.data.name);
+                    if (meta_final.data?.uri){
+                        const urimeta = await window.fetch(meta_final.data.uri).then((res: any) => res.json());
+                        const image = urimeta?.image;
+                        if (image){
+                            setProfilePictureUrl(image);
+                            setHasProfilePicture(true);
+                        }
+                    }
+                }
+                console.log("meta_final: "+JSON.stringify(meta_final));
             }
         }catch(e){
             console.log("ERR: "+e)
@@ -252,7 +268,7 @@ export default function ExplorerView(props:any){
                 return null;
             }
         }
-      
+        
         React.useEffect(() => {   
             if (thisAddress)
                 fetchVerifiedAuctionHouses();
