@@ -37,14 +37,14 @@ const historycolumns: GridColDef[] = [
     { field: 'lender', headerName: 'Lender', minWidth: 130, flex: 1, align: 'left',
         renderCell: (params) => {
             return (
-                <ExplorerView showSolanaProfile={true} grapeArtProfile={true} address={params.value} type='address' shorten={4} hideTitle={false} style='text' color='white' fontSize='14px' />
+                <ExplorerView showSolanaProfile={true} showSolBalance={true} grapeArtProfile={true} address={params.value} type='address' shorten={4} hideTitle={false} style='text' color='white' fontSize='14px' />
             )
         }
     },
     { field: 'borrower', headerName: 'Borrower', width: 150, align: 'left',
         renderCell: (params) => {
             return (
-                <ExplorerView showSolanaProfile={true} grapeArtProfile={true} address={params.value} type='address' shorten={4} hideTitle={false} style='text' color='white' fontSize='14px' />
+                <ExplorerView showSolanaProfile={true} showSolBalance={true} grapeArtProfile={true} address={params.value} type='address' shorten={4} hideTitle={false} style='text' color='white' fontSize='14px' />
             )
         }
     },

@@ -38,6 +38,7 @@ import {
 } from '@mui/material';
 
 import {
+    GRAPE_PREVIEW,
     GRAPE_PROFILE,
     GRAPE_IDENTITY,
     GRAPE_COLLECTIONS_DATA
@@ -47,6 +48,10 @@ import { decodeMetadata } from '../grapeTools/utils';
 
 import { ValidateCurve } from '../grapeTools/WalletAddress';
 
+import SolIcon from '../../components/static/SolIcon';
+import SolCurrencyIcon from '../../components/static/SolCurrencyIcon';
+
+import ImageIcon from '@mui/icons-material/Image';
 import CloseIcon from '@mui/icons-material/Close';
 import QrCode2Icon from '@mui/icons-material/QrCode2';
 import TwitterIcon from '@mui/icons-material/Twitter';
@@ -115,6 +120,7 @@ export default function ExplorerView(props:any){
     const open = Boolean(anchorEl);
     const showSolanaProfile = props.showSolanaProfile || null;
     const showNftData = props.showNftData || null;
+    const showSolBalance = props.showSolBalance || null;
     const connection = RPC_CONNECTION;
     const [solanaDomain, setSolanaDomain] = React.useState(null);
     const [hasSolanaDomain, setHasSolanaDomain] = React.useState(false);
@@ -122,6 +128,7 @@ export default function ExplorerView(props:any){
     const [twitterRegistration, setTwitterRegistration] = React.useState(null);
     const [hasProfilePicture, setHasProfilePicture] = React.useState(null);
     const [openDialog, setOpenDialog] = React.useState(false);
+    const [solBalance, setSolBalance] = React.useState(null);
 
     const handleClickOpenDialog = (event:any) => {
         setOpenDialog(true);
@@ -145,6 +152,17 @@ export default function ExplorerView(props:any){
         enqueueSnackbar(`Copied!`,{ variant: 'success' });
         handleClose();
     };
+
+    const fetchSolBalance = async() => {
+        try{
+            const balance = await connection.getBalance(new PublicKey(address));
+            const adjusted_balance = +(balance/(10 ** 9)).toFixed(3)
+            console.log("balance: "+adjusted_balance)
+            setSolBalance(adjusted_balance);
+        }catch(e){
+            console.log("ERR: "+e);
+        }
+    }
 
     const fetchTokenData = async() => {
         try{
@@ -172,7 +190,7 @@ export default function ExplorerView(props:any){
                         }
                     }
                 }
-                console.log("meta_final: "+JSON.stringify(meta_final));
+                //console.log("meta_final: "+JSON.stringify(meta_final));
             }
         }catch(e){
             console.log("ERR: "+e)
@@ -304,6 +322,12 @@ export default function ExplorerView(props:any){
         }
     }, [showNftData, address]);
 
+    React.useEffect(() => {   
+        if (showSolBalance){
+            fetchSolBalance()
+        }
+    }, [showSolBalance, address]);
+
     return (
         <>
             <Button
@@ -403,6 +427,20 @@ export default function ExplorerView(props:any){
                                 </ListItemIcon>
                                 QR Code
                         </MenuItem>
+
+                        {solBalance &&
+                        <>
+                            <Divider />
+                            <Tooltip title="SOL balance in wallet">
+                                <MenuItem>
+                                        <ListItemIcon>
+                                            <SolCurrencyIcon sx={{color:'white'}} />
+                                        </ListItemIcon>
+                                        {solBalance}
+                                </MenuItem>
+                            </Tooltip>
+                        </>
+                        }
                         
                         <Dialog
                             open={openDialog}
@@ -434,6 +472,20 @@ export default function ExplorerView(props:any){
                     }
                     <Divider />
                     
+                    {showNftData &&
+                        <>
+                            <MenuItem 
+                                component={Link}
+                                to={`${GRAPE_PREVIEW}${address}`}
+                                onClick={handleClose}>
+                                    <ListItemIcon>
+                                        <ImageIcon fontSize="small" />
+                                    </ListItemIcon>
+                                    Grape Preview
+                            </MenuItem>
+                            <Divider />
+                        </>
+                    }
                     
                     {grapeArtProfile && 
                         <>
@@ -444,7 +496,7 @@ export default function ExplorerView(props:any){
                                     to={`${GRAPE_PROFILE}${address}`}
                                     onClick={handleClose}>
                                         <ListItemIcon>
-                                            <PersonIcon fontSize="small" />
+                                            <ImageIcon fontSize="small" />
                                         </ListItemIcon>
                                         Grape Profile
                                 </MenuItem>
