@@ -213,8 +213,8 @@ export default function HistoryView(props: any){
                                                         <TableCell><Typography variant="caption">Status</Typography></TableCell>
                                                         <TableCell align="center"><Typography variant="caption">Principal</Typography></TableCell>
                                                         <TableCell align="center"><Typography variant="caption">Repay Amount</Typography></TableCell>
-                                                        <TableCell align="center"><Typography variant="caption">Accepted on</Typography></TableCell>
-                                                        <TableCell align="center"><Typography variant="caption">Paid on</Typography></TableCell>
+                                                        <TableCell align="center"><Typography variant="caption">Accepted</Typography></TableCell>
+                                                        <TableCell align="center"><Typography variant="caption">Repaid</Typography></TableCell>
                                                     </TableRow>
 
                                                 </TableHead>
@@ -229,11 +229,11 @@ export default function HistoryView(props: any){
                                                             </TableCell>
 
                                                             <TableCell>
-                                                                <ExplorerView grapeArtProfile={true} address={item.lender} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
+                                                                <ExplorerView showSolanaProfile={true} grapeArtProfile={true} address={item.lender} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
                                                             </TableCell>
                                                             
                                                             <TableCell>
-                                                                <ExplorerView grapeArtProfile={true} address={item.borrower} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
+                                                                <ExplorerView showSolanaProfile={true} grapeArtProfile={true} address={item.borrower} type='address' shorten={5} hideTitle={false} style='text' color='white' fontSize='14px' />
                                                             </TableCell>
 
                                                             <TableCell>

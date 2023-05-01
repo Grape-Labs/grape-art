@@ -9,13 +9,6 @@ import { PublicKey, Connection, Commitment } from '@solana/web3.js';
 import {ENV, TokenInfo, TokenListProvider} from '@solana/spl-token-registry';
 import axios from "axios";
 
-import { getRealm, 
-    getRealms, 
-    getTokenOwnerRecordsByOwner,
-    getTokenOwnerRecord, 
-} from '@solana/spl-governance';
-//import { ShdwDrive } from "@shadow-drive/sdk";
-
 import { gql } from '@apollo/client'
 import gql_client from '../gql_client'
 
@@ -26,6 +19,7 @@ import GovernanceDetailsView from './plugins/GovernanceDetails';
 import { IntegratedSwapView } from './plugins/IntegratedSwap';
 import { SquadsView } from './plugins/squads';
 import { GovernanceView } from './plugins/Governance';
+import { LendingView } from './plugins/Lending';
 import { StorageView } from './plugins/Storage';
 import { StreamingPaymentsView } from './plugins/StreamingPayments';
 import SendToken from '../StoreFront/Send';
@@ -76,6 +70,7 @@ import {
     TabPanel,
 } from '@mui/lab';
 
+import HandshakeIcon from '@mui/icons-material/Handshake';
 import SwapCallsIcon from '@mui/icons-material/SwapCalls';
 import ViewComfyIcon from '@mui/icons-material/ViewComfy';
 import InventoryIcon from '@mui/icons-material/Inventory';
@@ -552,110 +547,6 @@ export function IdentityView(props: any){
         setLoadingTransactions(false);
     }
 
-    const getGqlNfts = async(publicKeys: any) => {
-        
-            const GET_NFTS = gql`
-                query nftsByMintAddress($addresses: [PublicKey!]!) {
-                    nftsByMintAddress(addresses: $addresses) {
-                    address
-                    name
-                    sellerFeeBasisPoints
-                    mintAddress
-                    primarySaleHappened
-                    updateAuthorityAddress
-                    description
-                    category
-                    parser
-                    image
-                    animationUrl
-                    externalUrl
-                    }
-                }
-                `
-            
-            const using = publicKeys;
-            const usequery = GET_NFTS;
-            
-            return await gql_client
-                .query({
-                    query: usequery,
-                    variables: {
-                        addresses: using
-                    }
-                }).then((res) => {
-                    
-                    //console.log("res: "+JSON.stringify(res.data.nftsByMintAddress))
-                    
-                    const response = res.data.nftsByMintAddress;
-                    
-                    const final = new Array();
-
-                    const nftMapValues = response.reduce(function(map: Map<any,any>, item:any) {
-                        map[item.mintAddress] = item;
-                        return map;
-                    }, new Map())
-                    
-                    //console.log("final: "+JSON.stringify(final))
-                    setGQLMints(nftMapValues)
-                    return nftMapValues;
-                }).catch((err) => {
-                    console.log("ERR: "+JSON.stringify(err))
-                })
-            //console.log("QUERY: "+JSON.stringify(results))
-
-            //return results;
-    }
-
-    const getGqlRealms = async(publicKeys: any) => {
-        
-        const GET_REALMS = gql`
-            query realms($addresses: [PublicKey!], $communityMints: [PublicKey!]) {
-                realms(addresses: $addresses, communityMints: $communityMints) {
-                address
-                communityMint
-                votingProposalCount
-                authority
-                name
-                realmConfig {
-                    ...RealmConfigFragment
-                }
-                }
-            }    
-        `
-        
-        const using = publicKeys;
-        const usequery = GET_REALMS;
-        
-        return await gql_client
-            .query({
-                query: usequery,
-                variables: {
-                    addresses: using
-                }
-            }).then((res) => {
-                
-                //console.log("res: "+JSON.stringify(res.data.nftsByMintAddress))
-                
-                const response = res.data.nftsByMintAddress;
-                
-                const final = new Array();
-
-                const nftMapValues = response.reduce(function(map: Map<any,any>, item:any) {
-                    map[item.mintAddress] = item;
-                    return map;
-                }, new Map())
-                
-                //console.log("final: "+JSON.stringify(final))
-                setGQLRealms(nftMapValues)
-                return nftMapValues;
-            }).catch((err) => {
-                console.log("ERR: "+JSON.stringify(err))
-            })
-        //console.log("QUERY: "+JSON.stringify(results))
-
-        //return results;
-}
-
     function clearSelectionModels(){
         try{
             setSelectionModel([]);
@@ -908,20 +799,6 @@ export function IdentityView(props: any){
             console.log("CERR: "+cerr);
         }
     } 
-
-    const fetchProfilePicture = async () => {
-        const { isAvailable, url } = await getProfilePicture(connection, new PublicKey(pubkey));
-        let img_url = url;
-        if (url)
-            img_url = url.replace(/width=100/g, 'width=256');
-
-        const solcdn = DRIVE_PROXY;
-        if (img_url.indexOf(solcdn) > -1){
-                img_url = img_url.slice(solcdn.length, img_url.length);
-        }
-
-        setProfilePictureUrl(img_url);
-    }
     
     const fetchSolanaDomain = async () => {
         setLoadingPosition('SNS Records');
@@ -1476,33 +1353,38 @@ export function IdentityView(props: any){
                                                             icon={<Hidden smUp><AccountBalanceIcon /></Hidden>}
                                                             label={<Hidden smDown><Typography variant="h6">{t('Governance')}</Typography></Hidden>
                                                         } value="5" />
+
+                                                        <Tab sx={{color:'white', textTransform:'none'}} 
+                                                            icon={<Hidden smUp><HandshakeIcon /></Hidden>}
+                                                            label={<Hidden smDown><Typography variant="h6">{t('Lending')}</Typography></Hidden>
+                                                        } value="6" />
                                                         
                                                         {solanaDomain && 
                                                             <Tab sx={{color:'white', textTransform:'none'}} 
                                                                 icon={<Hidden smUp><Badge badgeContent={solanaDomain.length} color="primary"><LanguageIcon /></Badge></Hidden>}
                                                                 label={<Hidden smDown><Badge badgeContent={solanaDomain.length} color="primary"><Typography variant="h6">{t('Domains')}</Typography></Badge></Hidden>
-                                                            } value="6" />
+                                                            } value="7" />
                                                         }
                                                         
                                                         {publicKey && publicKey.toBase58() === pubkey &&
                                                             <Tab color='inherit' sx={{color:'white', textTransform:'none'}} 
                                                                     icon={<Hidden smUp><StorageIcon /></Hidden>}
                                                                     label={<Hidden smDown><Typography variant="h6">{t('Storage')}</Typography></Hidden>
-                                                                } value="7" />
+                                                                } value="8" />
                                                         }
 
                                                         {ValidateCurve(pubkey) &&
                                                             <Tab sx={{color:'white', textTransform:'none'}} 
                                                                     icon={<Hidden smUp><OpacityIcon /></Hidden>}
                                                                     label={<Hidden smDown><Typography variant="h6">{t('Streaming')}</Typography></Hidden>
-                                                            } value="8" />
+                                                            } value="9" />
                                                         }
                                                         
                                                         {(SQUADS_API && publicKey && (publicKey.toBase58() === pubkey)) &&
                                                             <Tab sx={{color:'white', textTransform:'none'}}
                                                                     icon={<Hidden smUp><ViewComfyIcon /></Hidden>}
                                                                     label={<Hidden smDown><Typography variant="h6">{t('Squads')}</Typography></Hidden>
-                                                            } value="9" />
+                                                            } value="10" />
                                                         }
 
                                                     </TabList>
@@ -1758,8 +1640,12 @@ export function IdentityView(props: any){
                                                             <GovernanceView pubkey={pubkey} setLoadingPosition={setLoadingPosition} tokenMap={tokenMap} />
                                                         </TabPanel>
                                                     }
-                                                    
+
                                                     <TabPanel value="6">
+                                                        <LendingView pubkey={pubkey} setLoadingPosition={setLoadingPosition} />
+                                                    </TabPanel>
+                                                    
+                                                    <TabPanel value="7">
                                                         {/*
                                                         <BuyDomainView pubkey={pubkey} />
                                                         */}
@@ -1816,15 +1702,15 @@ export function IdentityView(props: any){
 
                                                     </TabPanel>
                                                     
-                                                    <TabPanel value="7">
+                                                    <TabPanel value="8">
                                                         <StorageView pubkey={pubkey} setLoadingPosition={setLoadingPosition} />
                                                     </TabPanel>
 
-                                                    <TabPanel value="8">
+                                                    <TabPanel value="9">
                                                         <StreamingPaymentsView pubkey={pubkey} setLoadingPosition={setLoadingPosition} tokenMap={tokenMap} />
                                                     </TabPanel>
                                                     
-                                                    <TabPanel value="9">
+                                                    <TabPanel value="10">
                                                         <SquadsView pubkey={pubkey} setLoadingPosition={setLoadingPosition} />
                                                     </TabPanel>
                                                     
