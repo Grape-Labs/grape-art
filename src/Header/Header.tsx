@@ -48,6 +48,7 @@ import Mail from '@mui/icons-material/Mail';
 import { 
     GRAPE_PREVIEW,
     GRAPE_PROFILE, 
+    GRAPE_IDENTITY,
     GRAPE_COLLECTION,
     GRAPE_COLLECTIONS_DATA
 } from '../utils/grapeTools/constants';
@@ -243,7 +244,8 @@ export function Header(props: any) {
         ) {
             navigate(
                 {
-                    pathname: GRAPE_PROFILE + newinputpkvalue,
+                    //pathname: GRAPE_PROFILE + newinputpkvalue,
+                    pathname: GRAPE_IDENTITY + newinputpkvalue,
                 },
                 { replace: true }
             );
