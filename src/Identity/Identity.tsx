@@ -102,6 +102,7 @@ import {
     GRAPE_PREVIEW, 
     DRIVE_PROXY,
     HELIUS_API,
+    HELLO_MOON_BEARER,
     SQUADS_API } from '../utils/grapeTools/constants';
 import { ConstructionOutlined, DoNotDisturb, JavascriptRounded, LogoDevOutlined } from "@mui/icons-material";
 
@@ -898,7 +899,7 @@ export function IdentityView(props: any){
 
             const loops = Math.ceil(walletlength / rpclimit);
             let collectionmeta: any[] = [];
-            
+
             const sholdings: any[] = [];
             for (const item of holdings){
                 if (item){
@@ -1353,10 +1354,12 @@ export function IdentityView(props: any){
                                                             label={<Hidden smDown><Typography variant="h6">{t('Governance')}</Typography></Hidden>
                                                         } value="5" />
 
-                                                        <Tab sx={{color:'white', textTransform:'none'}} 
-                                                            icon={<Hidden smUp><HandshakeIcon /></Hidden>}
-                                                            label={<Hidden smDown><Typography variant="h6">{t('Lending')}</Typography></Hidden>
-                                                        } value="6" />
+                                                        {HELLO_MOON_BEARER &&
+                                                            <Tab sx={{color:'white', textTransform:'none'}} 
+                                                                icon={<Hidden smUp><HandshakeIcon /></Hidden>}
+                                                                label={<Hidden smDown><Typography variant="h6">{t('Lending')}</Typography></Hidden>
+                                                            } value="6" />
+                                                        }
                                                         
                                                         {solanaDomain && 
                                                             <Tab sx={{color:'white', textTransform:'none'}} 
