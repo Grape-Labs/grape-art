@@ -8,8 +8,9 @@ import { decodeMetadata } from '../utils/grapeTools/utils';
 import { PublicKey, Connection, Commitment } from '@solana/web3.js';
 import {ENV, TokenInfo, TokenListProvider} from '@solana/spl-token-registry';
 import axios from "axios";
+import { WalletDialogProvider, WalletMultiButton } from '@solana/wallet-adapter-material-ui';
 
-import { RestClient, NftMintsByOwnerRequest, NftMintPriceByCreatorAvgRequest, CollectionFloorpriceRequest, FloorpriceBatchedRequest } from '@hellomoon/api';
+import { RestClient, NftMintsByOwnerRequest, NftMintPriceByCreatorAvgRequest, CollectionFloorpriceRequest } from '@hellomoon/api';
 
 import { gql } from '@apollo/client'
 import gql_client from '../gql_client'
@@ -1917,9 +1918,21 @@ export function IdentityView(props: any){
                                         }
                                     </>
                                 :
-                                    <Typography variant="h5">
-                                        Connect your wallet or search an address
-                                    </Typography>    
+                                    <Grid container>
+                                        <Grid item xs={12} textAlign={'center'}>
+                                            <WalletDialogProvider className="grape-wallet-provider">
+                                                <WalletMultiButton className="grape-wallet-button">
+                                                    Connect your wallet
+                                                </WalletMultiButton>
+                                            </WalletDialogProvider>
+                                        </Grid>
+
+                                        <Grid item xs={12} textAlign={'center'}>
+                                            <Typography variant="h5">
+                                                Connect your wallet or search an address
+                                            </Typography>
+                                        </Grid>    
+                                    </Grid>
                                 }
                             </>
                             
