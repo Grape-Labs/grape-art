@@ -254,7 +254,7 @@ export function IdentityView(props: any){
                 )
             }                                                    
         },
-        { field: 'delegateAmount', headerName: 'Delegated', width: 400, align: 'center', hide: true,
+        { field: 'delegateAmount', headerName: 'Delegated', width: 70, align: 'center', hide: true,
             renderCell: (params) => {
                 return (
                     <>{(params.value && params.value?.amount > 0) ? 
