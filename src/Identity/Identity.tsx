@@ -23,6 +23,7 @@ import { IntegratedSwapView } from './plugins/IntegratedSwap';
 import { SquadsView } from './plugins/squads';
 import { GovernanceView } from './plugins/Governance';
 import { LendingView } from './plugins/Lending';
+import { DelegationView } from './plugins/Delegation';
 import { StakingView } from './plugins/Staking';
 import { StorageView } from './plugins/Storage';
 import { StreamingPaymentsView } from './plugins/StreamingPayments';
@@ -74,6 +75,7 @@ import {
     TabPanel,
 } from '@mui/lab';
 
+import ReduceCapacityIcon from '@mui/icons-material/ReduceCapacity';
 import PercentIcon from '@mui/icons-material/Percent';
 import HandshakeIcon from '@mui/icons-material/Handshake';
 import SwapCallsIcon from '@mui/icons-material/SwapCalls';
@@ -186,7 +188,7 @@ export function IdentityView(props: any){
     const [loadingPosition, setLoadingPosition] = React.useState('');
     
     const [loadNfts, setLoadNfts] = React.useState(false);
-    const [loadNftFloor, setLoadNftFloor] = React.useState(true);
+    const [loadNftFloor, setLoadNftFloor] = React.useState(false);
 
     const { publicKey } = useWallet();
     const [pubkey, setPubkey] = React.useState(props.pubkey || null);
@@ -240,6 +242,27 @@ export function IdentityView(props: any){
                     <ExplorerView useLogo={params.value.logo} showAddress={true} address={params.value.address.mint} type='address' shorten={8} title={params.value.name} hideTitle={false} style='text' color='white' fontSize='14px' />                                  
                 );
             }*/
+        },
+        { field: 'delegate', headerName: 'Delegate To', width: 130, align: 'center', hide: true, 
+            renderCell: (params) => {
+                return (
+                    <>{params.value ?
+                        <ExplorerView address={params.value} type='address' shorten={4} hideTitle={false} style='text' color='white' fontSize='14px' />
+                        :
+                        <></>}
+                    </>
+                )
+            }                                                    
+        },
+        { field: 'delegateAmount', headerName: 'Delegated', width: 400, align: 'center', hide: true,
+            renderCell: (params) => {
+                return (
+                    <>{(params.value && params.value?.amount > 0) ? 
+                        <>{params.value.amount / (10 ** params.value.decimals)}</>
+                        :<></>
+                        }</>
+                )
+            }     
         },
         { field: 'balance', headerName: 'Balance', width: 130, align: 'right',
             renderCell: (params) => {
@@ -685,6 +708,8 @@ export function IdentityView(props: any){
                         address:item.account.data.parsed.info
                     },*/
                     balance:itemBalance,
+                    delegate:item.account.data.parsed.info?.delegate ? new PublicKey(item.account.data.parsed.info?.delegate).toBase58() : ``,
+                    delegateAmount:item.account.data.parsed.info?.delegatedAmount,
                     price:item.account.data.parsed.info.tokenAmount.decimals === 0 ? +(nftValue/(10 ** 9)*solanaUSDC).toFixed(2) : cgPrice[item?.coingeckoId]?.usd || 0,
                     change:item.account.data.parsed.info.tokenAmount.decimals === 0 ? 0 : cgPrice[item?.coingeckoId]?.usd_24h_change || 0,
                     value: item.account.data.parsed.info.tokenAmount.decimals === 0 ?  +(nftValue/(10 ** 9)*solanaUSDC).toFixed(2) : +itemValue,
@@ -1575,56 +1600,62 @@ export function IdentityView(props: any){
                                                             } value="3" />
                                                         }
 
+                                                        {/*
+                                                        <Tab sx={{color:'white', textTransform:'none'}} 
+                                                            icon={<Hidden smUp><ReduceCapacityIcon /></Hidden>}
+                                                            label={<Hidden smDown><Typography variant="h6">{t('Delegated')}</Typography></Hidden>
+                                                        } value="4" />
+                                                        */}
                                                         {publicKey && publicKey.toBase58() === pubkey &&
                                                             <Tab sx={{color:'white', textTransform:'none'}} 
                                                                 icon={<Hidden smUp><SwapCallsIcon /></Hidden>}
                                                                 label={<Hidden smDown><Typography variant="h6">{t('Swap')}</Typography></Hidden>
-                                                            } value="4" />
+                                                            } value="5" />
                                                         }
                                                         
                                                         <Tab sx={{color:'white', textTransform:'none'}} 
                                                             icon={<Hidden smUp><PercentIcon /></Hidden>}
                                                             label={<Hidden smDown><Typography variant="h6">{t('Staking')}</Typography></Hidden>
-                                                        } value="5" />
+                                                        } value="6" />
 
                                                         <Tab sx={{color:'white', textTransform:'none'}} 
                                                             icon={<Hidden smUp><AccountBalanceIcon /></Hidden>}
                                                             label={<Hidden smDown><Typography variant="h6">{t('Governance')}</Typography></Hidden>
-                                                        } value="6" />
+                                                        } value="7" />
 
                                                         {HELLO_MOON_BEARER &&
                                                             <Tab sx={{color:'white', textTransform:'none'}} 
                                                                 icon={<Hidden smUp><HandshakeIcon /></Hidden>}
                                                                 label={<Hidden smDown><Typography variant="h6">{t('Lending')}</Typography></Hidden>
-                                                            } value="7" />
+                                                            } value="8" />
                                                         }
                                                         
                                                         {solanaDomain && 
                                                             <Tab sx={{color:'white', textTransform:'none'}} 
                                                                 icon={<Hidden smUp><Badge badgeContent={solanaDomain.length} color="primary"><LanguageIcon /></Badge></Hidden>}
                                                                 label={<Hidden smDown><Badge badgeContent={solanaDomain.length} color="primary"><Typography variant="h6">{t('Domains')}</Typography></Badge></Hidden>
-                                                            } value="8" />
+                                                            } value="9" />
                                                         }
                                                         
                                                         {publicKey && publicKey.toBase58() === pubkey &&
                                                             <Tab color='inherit' sx={{color:'white', textTransform:'none'}} 
                                                                     icon={<Hidden smUp><StorageIcon /></Hidden>}
                                                                     label={<Hidden smDown><Typography variant="h6">{t('Storage')}</Typography></Hidden>
-                                                                } value="9" />
+                                                                } value="10" />
                                                         }
 
                                                         {ValidateCurve(pubkey) &&
                                                             <Tab sx={{color:'white', textTransform:'none'}} 
                                                                     icon={<Hidden smUp><OpacityIcon /></Hidden>}
                                                                     label={<Hidden smDown><Typography variant="h6">{t('Streaming')}</Typography></Hidden>
-                                                            } value="10" />
+                                                            } value="11" />
                                                         }
                                                         
                                                         {(SQUADS_API && publicKey && (publicKey.toBase58() === pubkey)) &&
                                                             <Tab sx={{color:'white', textTransform:'none'}}
                                                                     icon={<Hidden smUp><ViewComfyIcon /></Hidden>}
                                                                     label={<Hidden smDown><Typography variant="h6">{t('Squads')}</Typography></Hidden>
-                                                            } value="11" />
+                                                            } value="12" />
                                                         }
 
                                                     </TabList>
@@ -1871,25 +1902,31 @@ export function IdentityView(props: any){
                                                         }
                                                     </TabPanel>
                                                     
-                                                    <TabPanel value="4">
+                                                    {/*
+                                                    <TabPanel value="4" >
+                                                        <DelegationView pubkey={pubkey} setLoadingPosition={setLoadingPosition} />
+                                                    </TabPanel>
+                                                    */}
+
+                                                    <TabPanel value="5">
                                                         <IntegratedSwapView pubkey={pubkey} setLoadingPosition={setLoadingPosition} />
                                                     </TabPanel>
 
-                                                    <TabPanel value="5">
+                                                    <TabPanel value="6">
                                                         <StakingView pubkey={pubkey} setLoadingPosition={setLoadingPosition} />
                                                     </TabPanel>
 
                                                     {tokenMap &&
-                                                        <TabPanel value="6">
+                                                        <TabPanel value="7">
                                                             <GovernanceView pubkey={pubkey} setLoadingPosition={setLoadingPosition} tokenMap={tokenMap} />
                                                         </TabPanel>
                                                     }
 
-                                                    <TabPanel value="7">
+                                                    <TabPanel value="8">
                                                         <LendingView pubkey={pubkey} setLoadingPosition={setLoadingPosition} />
                                                     </TabPanel>
                                                     
-                                                    <TabPanel value="8">
+                                                    <TabPanel value="9">
                                                         {/*
                                                         <BuyDomainView pubkey={pubkey} />
                                                         */}
@@ -1946,15 +1983,15 @@ export function IdentityView(props: any){
 
                                                     </TabPanel>
                                                     
-                                                    <TabPanel value="9">
+                                                    <TabPanel value="10">
                                                         <StorageView pubkey={pubkey} setLoadingPosition={setLoadingPosition} />
                                                     </TabPanel>
 
-                                                    <TabPanel value="10">
+                                                    <TabPanel value="11">
                                                         <StreamingPaymentsView pubkey={pubkey} setLoadingPosition={setLoadingPosition} tokenMap={tokenMap} />
                                                     </TabPanel>
                                                     
-                                                    <TabPanel value="11">
+                                                    <TabPanel value="12">
                                                         <SquadsView pubkey={pubkey} setLoadingPosition={setLoadingPosition} />
                                                     </TabPanel>
                                                     
