@@ -1337,7 +1337,7 @@ export function IdentityView(props: any){
 
                                     <Box sx={{ width: '100%' }}>
                                         <Grid container>
-                                            <Grid item xs={12} sm={12} md={3} lg={3} textAlign={'center'}
+                                            <Grid item xs={12} sm={12} md={nftFloorValue > 0 ? 3 : 4} lg={nftFloorValue > 0 ? 3 : 4} textAlign={'center'}
                                                 sx={{
                                                     border:'1px solid rgba(0,0,0,0.15)',
                                                     borderRadius:'17px',
@@ -1394,7 +1394,7 @@ export function IdentityView(props: any){
                                             {tokensNetValue > 0 &&
                                                 <>
                                                 {(solanaUSDC) &&
-                                                <Grid item xs={12} sm={12} md={3} lg={3} textAlign={'center'}
+                                                <Grid item xs={12} sm={12} md={nftFloorValue > 0 ? 3 : 4} lg={nftFloorValue > 0 ? 3 : 4} textAlign={'center'}
                                                     sx={{
                                                         border:'1px solid rgba(0,0,0,0.15)',
                                                         borderRadius:'17px',
@@ -1500,7 +1500,7 @@ export function IdentityView(props: any){
                                             {(tokensNetValue > 0 && solanaBalance > 0 && solanaUSDC) &&
                                                 <>
                                                 {tokensNetValue && 
-                                                    <Grid item xs={12} sm={12} md={3} lg={3} textAlign={'center'}
+                                                    <Grid item xs={12} sm={12} md={nftFloorValue > 0 ? 3 : 4} lg={nftFloorValue > 0 ? 3 : 4} textAlign={'center'}
                                                         sx={{
                                                             border:'1px solid rgba(0,0,0,0.15)',
                                                             borderRadius:'17px',
