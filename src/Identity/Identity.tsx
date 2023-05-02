@@ -1168,10 +1168,13 @@ export function IdentityView(props: any){
 
     React.useEffect(() => {
         if (urlParams){
-            if (!pubkey){
+            //console.log("urlParams: "+urlParams);
+            //console.log("pubkey set?: "+pubkey);
+            
+            //if (!pubkey){
                 //if (ValidateAddress(urlParams))
                     setPubkey(urlParams);
-            }
+            //}
         } else if (publicKey) {
             setPubkey(publicKey.toBase58());
         }
@@ -1184,7 +1187,7 @@ export function IdentityView(props: any){
         await fetchSolanaTransactions();
         setLoadingTokens(false);
     }
-    
+
     const fetchWalletPositions = async () => {
         setLoadingWallet(true);
         const tmap = await fetchTokens();
@@ -1199,10 +1202,11 @@ export function IdentityView(props: any){
         if (pubkey && tokenMap && solanaUSDC){
             fetchTokenPositions(loadNfts);
         }
-    }, [tokenMap, loadNfts, solanaUSDC]);
+    }, [pubkey, tokenMap, loadNfts, solanaUSDC]);
 
     React.useEffect(() => {
         if (pubkey){
+            //console.log("using pubkey: "+pubkey)
             fetchWalletPositions();
         }
     }, [pubkey]);

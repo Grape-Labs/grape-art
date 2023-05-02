@@ -490,14 +490,14 @@ export default function ExplorerView(props:any){
                                 </MenuItem>
                                 */}
                                 <MenuItem 
-                                component={Link}
-                                to={`${GRAPE_IDENTITY}${address}`}
-                                onClick={handleClose}>
-                                    <ListItemIcon>
-                                        <AccountBalanceWalletIcon fontSize="small" />
-                                    </ListItemIcon>
-                                    Grape Wallet
-                            </MenuItem>
+                                    component={Link}
+                                    to={`${GRAPE_IDENTITY}${address}`}
+                                    onClick={handleClose}>
+                                        <ListItemIcon>
+                                            <AccountBalanceWalletIcon fontSize="small" />
+                                        </ListItemIcon>
+                                        Grape Wallet
+                                </MenuItem>
 
                             {solBalance &&
                             <>
