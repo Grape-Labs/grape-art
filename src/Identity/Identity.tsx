@@ -624,6 +624,7 @@ export function IdentityView(props: any){
                 let metadata_decoded = null;
 
                 let foundMetaName = false;
+                let nftValue = 0;
                 if (nftMeta){
                     for (const nft of nftMeta){
                         if (nft?.meta && nft.meta.mint === item.account.data.parsed.info.mint){
@@ -644,6 +645,9 @@ export function IdentityView(props: any){
                                 let urimeta = await window.fetch(metadata).then((res: any) => res.json());
                                 logo = DRIVE_PROXY+urimeta.image;
                             }*/
+
+                            nftValue = nft?.floorPrice ? nft.floorPrice : 0;
+
                             foundMetaName = true;
                         }
                     }
@@ -672,9 +676,9 @@ export function IdentityView(props: any){
                         address:item.account.data.parsed.info
                     },*/
                     balance:itemBalance,
-                    price:item.account.data.parsed.info.tokenAmount.decimals === 0 ? 0 : cgPrice[item?.coingeckoId]?.usd || 0,
+                    price:item.account.data.parsed.info.tokenAmount.decimals === 0 ? +(nftValue/(10 ** 9)*solanaUSDC).toFixed(2) : cgPrice[item?.coingeckoId]?.usd || 0,
                     change:item.account.data.parsed.info.tokenAmount.decimals === 0 ? 0 : cgPrice[item?.coingeckoId]?.usd_24h_change || 0,
-                    value: +itemValue,
+                    value: item.account.data.parsed.info.tokenAmount.decimals === 0 ?  +(nftValue/(10 ** 9)*solanaUSDC).toFixed(2) : +itemValue,
                     send:{
                         name:name,
                         logo:logo,
@@ -1180,7 +1184,7 @@ export function IdentityView(props: any){
         await fetchSolanaTransactions();
         setLoadingTokens(false);
     }
-
+    
     const fetchWalletPositions = async () => {
         setLoadingWallet(true);
         const tmap = await fetchTokens();
@@ -1192,10 +1196,10 @@ export function IdentityView(props: any){
     }
 
     React.useEffect(() => {
-        if (pubkey && tokenMap){
+        if (pubkey && tokenMap && solanaUSDC){
             fetchTokenPositions(loadNfts);
         }
-    }, [tokenMap, loadNfts]);
+    }, [tokenMap, loadNfts, solanaUSDC]);
 
     React.useEffect(() => {
         if (pubkey){
