@@ -184,6 +184,7 @@ export function IdentityView(props: any){
     const [loadingPosition, setLoadingPosition] = React.useState('');
     
     const [loadNfts, setLoadNfts] = React.useState(false);
+    const [loadNftFloor, setLoadNftFloor] = React.useState(true);
 
     const { publicKey } = useWallet();
     const [pubkey, setPubkey] = React.useState(props.pubkey || null);
@@ -197,6 +198,7 @@ export function IdentityView(props: any){
     const [selectionModelClose, setSelectionModelClose] = React.useState([]);
     const [tokensNetValue, setTokensNetValue] = React.useState(null);
     const [nftFloorValue, setNftFloorValue] = React.useState(null);
+    
     const connection = RPC_CONNECTION;
     const { t, i18n } = useTranslation();
 
@@ -411,6 +413,10 @@ export function IdentityView(props: any){
     const setLoadNftToggle = () => {
         setLoadNfts(!loadNfts);
     }
+
+    const setLoadNftFloorToggle = () => {
+        setLoadNftFloor(!loadNftFloor);
+    }
       
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -603,7 +609,7 @@ export function IdentityView(props: any){
             setLoadingPosition('NFT Metadata');
             let nftMeta =null;
             //if (loadNfts){
-                nftMeta = await fetchNFTMetadata(resultValues, loadNftMeta || loadNfts);
+                nftMeta = await fetchNFTMetadata(resultValues, loadNftMeta || loadNfts, loadNftFloor);
             //}
 
             //console.log("nftMeta: "+JSON.stringify(nftMeta))
@@ -880,7 +886,7 @@ export function IdentityView(props: any){
         }
     };  
     
-    const fetchNFTMetadata = async (holdings:any, loadNftMeta: boolean) => {
+    const fetchNFTMetadata = async (holdings:any, loadNftMeta: boolean, loadNftFloor: boolean) => {
         if (holdings){
             const walletlength = holdings.length;
 
@@ -1010,8 +1016,8 @@ export function IdentityView(props: any){
                                             }
                                         }
                                     }
-
-                                    if (!floorCached){
+                                    
+                                    if (!floorCached && loadNftFloor){
                                         const results = await client.send(new CollectionFloorpriceRequest({
                                             helloMoonCollectionId: collectionitem.helloMoonCollectionId,
                                             limit: 1
@@ -1201,7 +1207,7 @@ export function IdentityView(props: any){
         if (pubkey && tokenMap && solanaUSDC){
             fetchTokenPositions(loadNfts);
         }
-    }, [pubkey, tokenMap, loadNfts, solanaUSDC]);
+    }, [pubkey, tokenMap, loadNfts, loadNftFloor, solanaUSDC]);
 
     React.useEffect(() => {
         if (pubkey){
@@ -1685,9 +1691,9 @@ export function IdentityView(props: any){
                                                                     m:1
                                                                 }}
                                                             >
-                                                                <FormGroup>
-                                                                    <FormControlLabel 
-                                                                        control={<Switch defaultChecked checked={loadNfts} onChange={setLoadNftToggle} size="small" />} label={<><Typography variant="caption">Load NFT Metadata</Typography></>} />
+                                                                <FormGroup row>
+                                                                    <FormControlLabel control={<Switch defaultChecked checked={loadNfts} onChange={setLoadNftToggle} size="small" />} label={<><Typography variant="caption">Load NFT Metadata</Typography></>} />
+                                                                    <FormControlLabel control={<Switch defaultChecked checked={loadNftFloor} onChange={setLoadNftFloorToggle} size="small" />} label={<><Typography variant="caption">Load NFT Floor Pricing</Typography></>} />
                                                                 </FormGroup>
                                                             </Box>
                                                         </div>    
