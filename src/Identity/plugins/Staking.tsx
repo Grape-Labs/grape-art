@@ -56,7 +56,7 @@ const stakecolumns: GridColDef[] = [
     { field: 'epochAge', headerName: 'Age (Epochs)', width: 150, align: 'right',
         renderCell: (params) => {
             return (
-                <>{params.value < 0 ? `Not started (${params.value})` : params.value}</>
+                <>{params.value < 0 ? `${params.value}` : params.value}</>
             )
         }
     },
