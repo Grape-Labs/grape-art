@@ -962,7 +962,7 @@ export function IdentityView(props: any){
                         if (walletItem.account.data.parsed.info.mint === item.nftMint){
                             //console.log("found: "+JSON.stringify(item));
                             //console.log(">>>>>: "+JSON.stringify(walletItem));
-
+                            
                             collectionitem.meta = {
                                 mint: item.nftMint,
                                 data: {
@@ -987,26 +987,41 @@ export function IdentityView(props: any){
                                 
                                 if (floorResults && floorResults?.data){
                                     for (let flritem of floorResults.data){
-                                        if (collectionitem.helloMoonCollectionId === flritem.helloMoonCollectionId)
-                                        //console.log("FLR price for: "+resitem.floorPriceLamports)
-                                        collectionitem.floorPrice = +flritem.floorPriceLamports;
-                                        totalFloor+= +flritem.floorPriceLamports;
+                                        if (collectionitem.helloMoonCollectionId === flritem.helloMoonCollectionId){
+                                            //console.log("FLR price for: "+resitem.floorPriceLamports)
+                                            collectionitem.floorPrice = +flritem.floorPriceLamports;
+                                            totalFloor+= +flritem.floorPriceLamports;
+                                        }
                                     }
                                 } else{
-                                    const results = await client.send(new CollectionFloorpriceRequest({
-                                        helloMoonCollectionId: collectionitem.helloMoonCollectionId,
-                                        limit: 1
-                                    }))
-                                        .then(x => {
-                                            //console.log; 
-                                            return x;})
-                                        .catch(console.error);
-                
-                                    if (results?.data){
-                                        for (let resitem of results.data){
-                                            //console.log("FLR price for: "+resitem.floorPriceLamports)
-                                            collectionitem.floorPrice = +resitem.floorPriceLamports;
-                                            totalFloor+= +resitem.floorPriceLamports;
+                                    // check first if this collection has not already been fetched
+                                    let floorCached = false;
+                                    for (let reitem of final_collection_meta){
+                                        if (reitem.helloMoonCollectionId === collectionitem.helloMoonCollectionId){
+                                            if (reitem?.floorPrice && reitem.floorPrice > 0){
+                                                collectionitem.floorPrice = +reitem.floorPrice;
+                                                totalFloor+= +reitem.floorPrice;
+                                                floorCached = true;
+                                            }
+                                        }
+                                    }
+
+                                    if (!floorCached){
+                                        const results = await client.send(new CollectionFloorpriceRequest({
+                                            helloMoonCollectionId: collectionitem.helloMoonCollectionId,
+                                            limit: 1
+                                        }))
+                                            .then(x => {
+                                                //console.log; 
+                                                return x;})
+                                            .catch(console.error);
+                    
+                                        if (results?.data){
+                                            for (let resitem of results.data){
+                                                //console.log("FLR price for: "+resitem.floorPriceLamports)
+                                                collectionitem.floorPrice = +resitem.floorPriceLamports;
+                                                totalFloor+= +resitem.floorPriceLamports;
+                                            }
                                         }
                                     }
                                 }
