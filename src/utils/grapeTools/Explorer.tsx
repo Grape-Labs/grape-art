@@ -35,6 +35,7 @@ import {
     DialogContentText,
     DialogTitle,
     IconButton,
+    Grid,
 } from '@mui/material';
 
 import {
@@ -71,7 +72,7 @@ export interface DialogTitleProps {
     onClose: () => void;
   }
   
-  const BootstrapDialogTitle = (props: DialogTitleProps) => {
+const BootstrapDialogTitle = (props: DialogTitleProps) => {
     const { children, onClose, ...other } = props;
   
     return (
@@ -93,7 +94,16 @@ export interface DialogTitleProps {
         ) : null}
       </DialogTitle>
     );
-  };
+};
+
+const BootstrapDialog = styled(Dialog)(({ theme }) => ({
+  '& .MuDialogContent-root': {
+    padding: theme.spacing(2),
+  },
+  '& .MuDialogActions-root': {
+    padding: theme.spacing(1),
+  },
+}));
 
 const StyledMenu = styled(Menu)(({ theme }) => ({
     '& .MuiMenu-root': {
@@ -429,32 +439,39 @@ export default function ExplorerView(props:any){
                                 QR Code
                         </MenuItem>
 
-                        <Dialog
-                            open={openDialog}
+                        <BootstrapDialog
                             onClose={handleCloseDialog}
-                            aria-labelledby="alert-dialog-title"
-                            aria-describedby="alert-dialog-description"
+                            aria-labelledby="customized-dialog-title"
+                            open={openDialog}
+                            PaperProps={{
+                                style: {
+                                    boxShadow: '3',
+                                    borderRadius: '17px',
+                                    },
+                                }}
                         >
-                            <BootstrapDialogTitle id="customized-dialog-title" onClose={handleCloseDialog}>
-                            {"Send to this address"}
-                            </BootstrapDialogTitle>
-                            <DialogContent>
-                                <DialogContentText id="alert-dialog-description">
-                                    <div style={{ height: "auto", margin: "0 auto", maxWidth: "100%", width: "100%", borderRadius: "10px", padding:10, backgroundColor:'#fff' }}>
-                                        <QRCode
-                                        size={256}
-                                        style={{ height: "auto", maxWidth: "100%", width: "100%" }}
-                                        value={address}
-                                        viewBox={`0 0 256 256`}
-                                        />
-                                    </div>
+                            <DialogContentText id="alert-dialog-description">
+                                <div style={{ height: "auto", margin: "0 auto", maxWidth: "100%", width: "100%", borderRadius: "10px", padding:10, backgroundColor:'#fff' }}>
+                                    <QRCode
+                                    size={256}
+                                    style={{ height: "auto", maxWidth: "100%", width: "100%" }}
+                                    value={address}
+                                    viewBox={`0 0 256 256`}
+                                    />
+                                </div>
 
-                                    <Typography variant='caption'>SOL Address</Typography>
-                                    <Typography variant='body2'>{address}</Typography>
-                                    
-                                </DialogContentText>
-                            </DialogContent>
-                        </Dialog>
+                                <Grid container>
+                                    <Grid item xs={12} textAlign={'center'}>
+                                        <Typography variant='body2'>{address}</Typography>
+                                    </Grid>
+                                    <Grid item xs={12} textAlign={'center'}>
+                                        <Typography variant='caption'>Send to this SOL Address</Typography>
+                                    </Grid>
+                                </Grid>
+                                
+                            </DialogContentText>
+                        </BootstrapDialog>
+                        
                         </>
                     }
                     <Divider />

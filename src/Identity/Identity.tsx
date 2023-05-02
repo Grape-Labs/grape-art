@@ -1181,7 +1181,6 @@ export function IdentityView(props: any){
 
     const fetchTokenPositions = async (loadNftsMeta: boolean) => {
         setLoadingTokens(true);
-
         await fetchSolanaTokens(loadNftsMeta);
         await fetchSolanaTransactions();
         setLoadingTokens(false);
