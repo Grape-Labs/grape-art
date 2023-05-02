@@ -490,8 +490,10 @@ export default function ExplorerView(props:any){
                                 </MenuItem>
                                 */}
                                 <MenuItem 
-                                    component={Link}
-                                    to={`${GRAPE_IDENTITY}${address}`}
+                                    //component={Link}
+                                    //to={`${GRAPE_IDENTITY}${address}`}
+                                    component='a'
+                                    href={`https://grape.art/${GRAPE_IDENTITY}${address}`}
                                     onClick={handleClose}>
                                         <ListItemIcon>
                                             <AccountBalanceWalletIcon fontSize="small" />

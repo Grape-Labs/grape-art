@@ -1170,11 +1170,10 @@ export function IdentityView(props: any){
         if (urlParams){
             //console.log("urlParams: "+urlParams);
             //console.log("pubkey set?: "+pubkey);
-            
-            //if (!pubkey){
+            if (!pubkey){
                 //if (ValidateAddress(urlParams))
                     setPubkey(urlParams);
-            //}
+            }
         } else if (publicKey) {
             setPubkey(publicKey.toBase58());
         }
