@@ -23,6 +23,7 @@ import { IntegratedSwapView } from './plugins/IntegratedSwap';
 import { SquadsView } from './plugins/squads';
 import { GovernanceView } from './plugins/Governance';
 import { LendingView } from './plugins/Lending';
+import { StakingView } from './plugins/Staking';
 import { StorageView } from './plugins/Storage';
 import { StreamingPaymentsView } from './plugins/StreamingPayments';
 import SendToken from '../StoreFront/Send';
@@ -73,6 +74,7 @@ import {
     TabPanel,
 } from '@mui/lab';
 
+import PercentIcon from '@mui/icons-material/Percent';
 import HandshakeIcon from '@mui/icons-material/Handshake';
 import SwapCallsIcon from '@mui/icons-material/SwapCalls';
 import ViewComfyIcon from '@mui/icons-material/ViewComfy';
@@ -1581,43 +1583,48 @@ export function IdentityView(props: any){
                                                         }
                                                         
                                                         <Tab sx={{color:'white', textTransform:'none'}} 
+                                                            icon={<Hidden smUp><PercentIcon /></Hidden>}
+                                                            label={<Hidden smDown><Typography variant="h6">{t('Staking')}</Typography></Hidden>
+                                                        } value="5" />
+
+                                                        <Tab sx={{color:'white', textTransform:'none'}} 
                                                             icon={<Hidden smUp><AccountBalanceIcon /></Hidden>}
                                                             label={<Hidden smDown><Typography variant="h6">{t('Governance')}</Typography></Hidden>
-                                                        } value="5" />
+                                                        } value="6" />
 
                                                         {HELLO_MOON_BEARER &&
                                                             <Tab sx={{color:'white', textTransform:'none'}} 
                                                                 icon={<Hidden smUp><HandshakeIcon /></Hidden>}
                                                                 label={<Hidden smDown><Typography variant="h6">{t('Lending')}</Typography></Hidden>
-                                                            } value="6" />
+                                                            } value="7" />
                                                         }
                                                         
                                                         {solanaDomain && 
                                                             <Tab sx={{color:'white', textTransform:'none'}} 
                                                                 icon={<Hidden smUp><Badge badgeContent={solanaDomain.length} color="primary"><LanguageIcon /></Badge></Hidden>}
                                                                 label={<Hidden smDown><Badge badgeContent={solanaDomain.length} color="primary"><Typography variant="h6">{t('Domains')}</Typography></Badge></Hidden>
-                                                            } value="7" />
+                                                            } value="8" />
                                                         }
                                                         
                                                         {publicKey && publicKey.toBase58() === pubkey &&
                                                             <Tab color='inherit' sx={{color:'white', textTransform:'none'}} 
                                                                     icon={<Hidden smUp><StorageIcon /></Hidden>}
                                                                     label={<Hidden smDown><Typography variant="h6">{t('Storage')}</Typography></Hidden>
-                                                                } value="8" />
+                                                                } value="9" />
                                                         }
 
                                                         {ValidateCurve(pubkey) &&
                                                             <Tab sx={{color:'white', textTransform:'none'}} 
                                                                     icon={<Hidden smUp><OpacityIcon /></Hidden>}
                                                                     label={<Hidden smDown><Typography variant="h6">{t('Streaming')}</Typography></Hidden>
-                                                            } value="9" />
+                                                            } value="10" />
                                                         }
                                                         
                                                         {(SQUADS_API && publicKey && (publicKey.toBase58() === pubkey)) &&
                                                             <Tab sx={{color:'white', textTransform:'none'}}
                                                                     icon={<Hidden smUp><ViewComfyIcon /></Hidden>}
                                                                     label={<Hidden smDown><Typography variant="h6">{t('Squads')}</Typography></Hidden>
-                                                            } value="10" />
+                                                            } value="11" />
                                                         }
 
                                                     </TabList>
@@ -1868,17 +1875,21 @@ export function IdentityView(props: any){
                                                         <IntegratedSwapView pubkey={pubkey} setLoadingPosition={setLoadingPosition} />
                                                     </TabPanel>
 
+                                                    <TabPanel value="5">
+                                                        <StakingView pubkey={pubkey} setLoadingPosition={setLoadingPosition} />
+                                                    </TabPanel>
+
                                                     {tokenMap &&
-                                                        <TabPanel value="5">
+                                                        <TabPanel value="6">
                                                             <GovernanceView pubkey={pubkey} setLoadingPosition={setLoadingPosition} tokenMap={tokenMap} />
                                                         </TabPanel>
                                                     }
 
-                                                    <TabPanel value="6">
+                                                    <TabPanel value="7">
                                                         <LendingView pubkey={pubkey} setLoadingPosition={setLoadingPosition} />
                                                     </TabPanel>
                                                     
-                                                    <TabPanel value="7">
+                                                    <TabPanel value="8">
                                                         {/*
                                                         <BuyDomainView pubkey={pubkey} />
                                                         */}
@@ -1935,15 +1946,15 @@ export function IdentityView(props: any){
 
                                                     </TabPanel>
                                                     
-                                                    <TabPanel value="8">
+                                                    <TabPanel value="9">
                                                         <StorageView pubkey={pubkey} setLoadingPosition={setLoadingPosition} />
                                                     </TabPanel>
 
-                                                    <TabPanel value="9">
+                                                    <TabPanel value="10">
                                                         <StreamingPaymentsView pubkey={pubkey} setLoadingPosition={setLoadingPosition} tokenMap={tokenMap} />
                                                     </TabPanel>
                                                     
-                                                    <TabPanel value="10">
+                                                    <TabPanel value="11">
                                                         <SquadsView pubkey={pubkey} setLoadingPosition={setLoadingPosition} />
                                                     </TabPanel>
                                                     
