@@ -1026,8 +1026,6 @@ export function IdentityView(props: any){
                             }
 
                             if (!collectionitem.floorPrice){
-                                setLoadingPosition('NFT Floor Value ('+(count+1)+' of '+sholdings.length+')');
-                                
                                 if (floorResults && floorResults?.data){
                                     for (let flritem of floorResults.data){
                                         if (collectionitem.helloMoonCollectionId === flritem.helloMoonCollectionId){
@@ -1039,17 +1037,35 @@ export function IdentityView(props: any){
                                 } else{
                                     // check first if this collection has not already been fetched
                                     let floorCached = false;
-                                    for (let reitem of final_collection_meta){
-                                        if (reitem.helloMoonCollectionId === collectionitem.helloMoonCollectionId){
-                                            if (reitem?.floorPrice && reitem.floorPrice > 0){
-                                                collectionitem.floorPrice = +reitem.floorPrice;
-                                                totalFloor+= +reitem.floorPrice;
-                                                floorCached = true;
+                                    
+                                    // check if we do have the floor price already fetched
+                                    if (solanaHoldingRows){
+                                        for (let shr of solanaHoldingRows){ 
+                                            if (shr.mint === item.nftMint){
+                                                //console.log("shr: "+JSON.stringify(shr))
+                                                if (shr.price && shr.price > 0){
+                                                    collectionitem.floorPrice = +shr.price;
+                                                    totalFloor+= +shr.price;
+                                                    floorCached = true;
+                                                }
                                             }
                                         }
                                     }
                                     
+                                    if (!floorCached){
+                                        for (let reitem of final_collection_meta){
+                                            if (reitem.helloMoonCollectionId === collectionitem.helloMoonCollectionId){
+                                                if (reitem?.floorPrice && reitem.floorPrice > 0){
+                                                    collectionitem.floorPrice = +reitem.floorPrice;
+                                                    totalFloor+= +reitem.floorPrice;
+                                                    floorCached = true;
+                                                }
+                                            }
+                                        }
+                                    }
+
                                     if (!floorCached && loadNftFloor){
+                                        setLoadingPosition('NFT Floor Value ('+(count+1)+' of '+sholdings.length+')');
                                         const results = await client.send(new CollectionFloorpriceRequest({
                                             helloMoonCollectionId: collectionitem.helloMoonCollectionId,
                                             limit: 1
@@ -1129,6 +1145,7 @@ export function IdentityView(props: any){
                                             //if (collectionmeta.length <= 25){ // limitd to 25 fetches (will need to optimize this so it does not delay)
                                                 if (meta_final.data?.uri){
                                                     if (loadNftMeta){
+                                                        setLoadingPosition('NFT Image from Metadata ('+(i+1)+' of '+collectionmeta.length+')');
                                                         collectionmeta[i]['urimeta'] = await window.fetch(meta_final.data.uri).then((res: any) => res.json());
                                                         collectionmeta[i]['image'] = DRIVE_PROXY+collectionmeta[i]['urimeta'].image;
                                                     }
@@ -1138,6 +1155,7 @@ export function IdentityView(props: any){
                                     } else {
                                         if (meta_final.data?.uri){
                                             if (loadNftMeta){
+                                                setLoadingPosition('NFT Image from Metadata ('+(i+1)+' of '+collectionmeta.length+')');
                                                 collectionmeta[i]['urimeta'] = await window.fetch(meta_final.data.uri).then((res: any) => res.json());
                                                 collectionmeta[i]['image'] = DRIVE_PROXY+collectionmeta[i]['urimeta'].image;
                                             }
