@@ -310,7 +310,10 @@ export function IdentityView(props: any){
                                 conversionrate={0} 
                                 showTokenName={false} 
                                 sendType={0} 
-                                fetchSolanaTokens={fetchSolanaTokens} />
+                                fetchSolanaTokens={fetchSolanaTokens}
+                                delegate={params.value.delegate}
+                                delegateAmount={params.value.delegateAmount}
+                                />
                             </>          
                         }
                    </>
@@ -721,6 +724,8 @@ export function IdentityView(props: any){
                         metadata: metadata,
                         tokenAmount:item.account.data.parsed.info.tokenAmount,
                         decimals:item.account.data.parsed.info.decimals,
+                        delegate:item.account.data.parsed.info?.delegate ? new PublicKey(item.account.data.parsed.info?.delegate).toBase58() : null,
+                        delegateAmount:item.account.data.parsed.info?.delegatedAmount,
                     },
                     metadata_decoded:metadata_decoded,
                     //swap:item.account.data.parsed.info
@@ -1730,8 +1735,8 @@ export function IdentityView(props: any){
                                                                 }}
                                                             >
                                                                 <FormGroup row>
-                                                                    <FormControlLabel control={<Switch defaultChecked checked={loadNfts} onChange={setLoadNftToggle} size="small" />} label={<><Typography variant="caption">Load NFT Metadata</Typography></>} />
-                                                                    <FormControlLabel control={<Switch defaultChecked checked={loadNftFloor} onChange={setLoadNftFloorToggle} size="small" />} label={<><Typography variant="caption">Load NFT Floor Pricing</Typography></>} />
+                                                                    <FormControlLabel control={<Switch defaultChecked disabled={loadingTokens} checked={loadNfts} onChange={setLoadNftToggle} size="small" />} label={<><Typography variant="caption">Load NFT Metadata</Typography></>} />
+                                                                    <FormControlLabel control={<Switch defaultChecked disabled={loadingTokens} checked={loadNftFloor} onChange={setLoadNftFloorToggle} size="small" />} label={<><Typography variant="caption">Load NFT Floor Pricing</Typography></>} />
                                                                 </FormGroup>
                                                             </Box>
                                                         </div>    

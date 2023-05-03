@@ -38,7 +38,9 @@ import {
   Avatar,
   Grid,
   Paper,
-  Typography
+  Typography,
+  Box,
+  Alert
 } from '@mui/material';
 
 import ExplorerView from '../utils/grapeTools/Explorer';
@@ -50,6 +52,7 @@ import { useSnackbar } from 'notistack';
 import { withSend } from "@cardinal/token-manager";
 import { isCardinalWrappedToken, assertOwnerInstruction } from "../utils/cardinal/helpers";
 
+import WarningIcon from '@mui/icons-material/Warning';
 import SendIcon from '@mui/icons-material/Send';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -105,6 +108,8 @@ const BootstrapDialogTitle = (props: DialogTitleProps) => {
 };
 
 export default function SendToken(props: any) {
+    const delegate = props?.delegate || null;
+    const delegateAmount = props?.delegateAmount || null;
     const fetchSolanaTokens = props.fetchSolanaTokens || null;
     const fetchSolanaBalance = props.fetchSolanaBalance || null;
     const [open, setOpen] = React.useState(false);
@@ -520,7 +525,27 @@ export default function SendToken(props: any) {
     
     return (
         <div>
-            <Tooltip title={'Send this token'}>
+            <Tooltip arrow title={
+                <Grid
+                    container
+                >
+                    <Grid item justifyContent="center" alignItems="center">
+                        {mint === "So11111111111111111111111111111111111111112" ?
+                            <Typography variant="body2">Send</Typography>
+                        :
+                            <Typography variant="body2">Send this token</Typography>
+                        }
+                        {delegate ? 
+                        <>
+                            <Box><Typography variant='caption' color={'yellow'} sx={{fontSize:'9px'}}>{delegateAmount.amount / (10 ** delegateAmount.decimals)} delegated</Typography></Box>
+                        </>
+                        :
+                        <>
+                        </>
+                        }
+                    </Grid>
+                </Grid>
+                }>
                 <Button
                     variant={buttonType}
                     //aria-controls={menuId}
@@ -603,6 +628,7 @@ export default function SendToken(props: any) {
                                             Max 
                                         </Button>
                                         <Button  
+                                            //disabled={decimals === 0 && balance < 1}
                                             onClick={() => {
                                                 setTokensToSend(+balance/2)
                                                 setTokenBalanceInput(+balance/2) }}
@@ -758,6 +784,21 @@ export default function SendToken(props: any) {
                                 </>
                             )}
 
+                            <Grid item xs={12}>
+                            {delegate ? 
+                            <>
+                                <Alert severity="warning"
+                                    sx={{borderRadius:'17px',background:'rgba(0,0,0,0.25)'}}
+                                >
+                                    You have delegated {delegateAmount.amount / (10 ** delegateAmount.decimals)} token to {delegate}
+                                    <Typography variant='caption'><br/>* This may be a listing on an escrowless marketplace or a staking program</Typography>
+                                </Alert>
+                            </>
+                            :
+                            <>
+                            </>
+                            }
+                            </Grid>
                         </Grid>
                     </FormControl>
                 </DialogContent>
