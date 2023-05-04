@@ -2,7 +2,7 @@ import React, { useEffect, Suspense } from "react";
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import moment from 'moment';
 import { Global } from '@emotion/react';
-import { Link, useParams, useSearchParams } from "react-router-dom";
+import { Link, useLocation, useParams, useSearchParams } from "react-router-dom";
 import { decodeMetadata } from '../utils/grapeTools/utils';
 // @ts-ignore
 import { PublicKey, Connection, Commitment } from '@solana/web3.js';
@@ -165,6 +165,20 @@ function calculateStorageUsed(available: any, allocated: any){
     }   
 }
 
+enum NavPanel {
+    Holdings,
+    Transactions,
+    Closable,
+    Swap,
+    Staking,
+    Governance,
+    Lending,
+    Domains,
+    Storage,
+    Streaming,
+    Squads,
+}
+
 export function IdentityView(props: any){
     const [profilePictureUrl, setProfilePictureUrl] = React.useState(null);
     const [solanaDomain, setSolanaDomain] = React.useState(null);
@@ -195,7 +209,7 @@ export function IdentityView(props: any){
     const {handlekey} = useParams<{ handlekey: string }>();
     const [searchParams, setSearchParams] = useSearchParams();
     const urlParams = searchParams.get("pkey") || searchParams.get("address") || handlekey;
-    const [value, setValue] = React.useState('1');
+    
     const [tokenMap, setTokenMap] = React.useState<Map<string,TokenInfo>>(undefined);
     const [nftMap, setNftMap] = React.useState(null);
     const [selectionModel, setSelectionModel] = React.useState([]);
@@ -203,6 +217,22 @@ export function IdentityView(props: any){
     const [tokensNetValue, setTokensNetValue] = React.useState(null);
     const [nftFloorValue, setNftFloorValue] = React.useState(null);
     
+    const { hash } = useLocation();
+    const [value, setValue] = React.useState(
+        hash === '#lending' ? NavPanel.Lending.toString() : 
+        hash === '#transactions' ? NavPanel.Transactions.toString() : 
+        hash === '#closable' ? NavPanel.Closable.toString() : 
+        hash === '#swap' ? NavPanel.Swap.toString() : 
+        hash === '#staking' ? NavPanel.Staking.toString() : 
+        hash === '#governance' ? NavPanel.Governance.toString() : 
+        hash === '#lending' ? NavPanel.Lending.toString() : 
+        hash === '#domains' ? NavPanel.Domains.toString() : 
+        hash === '#storage' ? NavPanel.Storage.toString() : 
+        hash === '#streaming' ? NavPanel.Streaming.toString() : 
+        hash === '#squads' ? NavPanel.Squads.toString() : 
+        NavPanel.Holdings.toString());
+    //const [activeTab, setActiveTab] = React.useState(hash === '#lending' ? NavPanel.Lending : NavPanel.Holdings);
+
     const connection = RPC_CONNECTION;
     const { t, i18n } = useTranslation();
 
@@ -1609,18 +1639,18 @@ export function IdentityView(props: any){
                                                         <Tab sx={{color:'white', textTransform:'none'}} 
                                                             icon={<Hidden smUp><Badge badgeContent={solanaHoldings.length} color="primary"><AccountBalanceWalletIcon /></Badge></Hidden>}
                                                             label={<Hidden smDown><Badge badgeContent={solanaHoldings.length} color="primary"><Typography variant="h6">{t('Tokens')}</Typography></Badge></Hidden>
-                                                        } value="1" />
+                                                        } value={NavPanel.Holdings.toString()}/>
 
                                                         <Tab sx={{color:'white', textTransform:'none'}} 
                                                             icon={<Hidden smUp><SwapHorizIcon /></Hidden>}
                                                             label={<Hidden smDown><Typography variant="h6">{t('Transactions')}</Typography></Hidden>
-                                                        } value="2" />
+                                                        } value={NavPanel.Transactions.toString()} />
 
                                                         {solanaClosableHoldings && solanaClosableHoldings.length > 0 &&
                                                             <Tab sx={{color:'white', textTransform:'none'}} 
                                                                 icon={<Hidden smUp><Badge badgeContent={solanaClosableHoldings.length} color="error"><DoNotDisturbIcon /></Badge></Hidden>}
                                                                 label={<Hidden smDown><Badge badgeContent={solanaClosableHoldings.length} color="error"><Typography variant="h6">{t('Closable')}</Typography></Badge></Hidden>
-                                                            } value="3" />
+                                                            } value={NavPanel.Closable.toString()} />
                                                         }
 
                                                         {/*
@@ -1633,173 +1663,173 @@ export function IdentityView(props: any){
                                                             <Tab sx={{color:'white', textTransform:'none'}} 
                                                                 icon={<Hidden smUp><SwapCallsIcon /></Hidden>}
                                                                 label={<Hidden smDown><Typography variant="h6">{t('Swap')}</Typography></Hidden>
-                                                            } value="5" />
+                                                            } value={NavPanel.Swap.toString()} />
                                                         }
                                                         
                                                         <Tab sx={{color:'white', textTransform:'none'}} 
                                                             icon={<Hidden smUp><PercentIcon /></Hidden>}
                                                             label={<Hidden smDown><Typography variant="h6">{t('Staking')}</Typography></Hidden>
-                                                        } value="6" />
+                                                        } value={NavPanel.Staking.toString()} />
 
                                                         <Tab sx={{color:'white', textTransform:'none'}} 
                                                             icon={<Hidden smUp><AccountBalanceIcon /></Hidden>}
                                                             label={<Hidden smDown><Typography variant="h6">{t('Governance')}</Typography></Hidden>
-                                                        } value="7" />
+                                                        } value={NavPanel.Governance.toString()} />
 
                                                         {HELLO_MOON_BEARER &&
                                                             <Tab sx={{color:'white', textTransform:'none'}} 
                                                                 icon={<Hidden smUp><HandshakeIcon /></Hidden>}
                                                                 label={<Hidden smDown><Typography variant="h6">{t('Lending')}</Typography></Hidden>
-                                                            } value="8" />
+                                                            } value={NavPanel.Lending.toString()} />
                                                         }
                                                         
                                                         {solanaDomain && 
                                                             <Tab sx={{color:'white', textTransform:'none'}} 
                                                                 icon={<Hidden smUp><Badge badgeContent={solanaDomain.length} color="primary"><LanguageIcon /></Badge></Hidden>}
                                                                 label={<Hidden smDown><Badge badgeContent={solanaDomain.length} color="primary"><Typography variant="h6">{t('Domains')}</Typography></Badge></Hidden>
-                                                            } value="9" />
+                                                            } value={NavPanel.Domains.toString()} />
                                                         }
                                                         
                                                         {publicKey && publicKey.toBase58() === pubkey &&
                                                             <Tab color='inherit' sx={{color:'white', textTransform:'none'}} 
                                                                     icon={<Hidden smUp><StorageIcon /></Hidden>}
                                                                     label={<Hidden smDown><Typography variant="h6">{t('Storage')}</Typography></Hidden>
-                                                                } value="10" />
+                                                                } value={NavPanel.Storage.toString()} />
                                                         }
 
                                                         {ValidateCurve(pubkey) &&
                                                             <Tab sx={{color:'white', textTransform:'none'}} 
                                                                     icon={<Hidden smUp><OpacityIcon /></Hidden>}
                                                                     label={<Hidden smDown><Typography variant="h6">{t('Streaming')}</Typography></Hidden>
-                                                            } value="11" />
+                                                            } value={NavPanel.Streaming.toString()} />
                                                         }
                                                         
                                                         {(SQUADS_API && publicKey && (publicKey.toBase58() === pubkey)) &&
                                                             <Tab sx={{color:'white', textTransform:'none'}}
                                                                     icon={<Hidden smUp><ViewComfyIcon /></Hidden>}
                                                                     label={<Hidden smDown><Typography variant="h6">{t('Squads')}</Typography></Hidden>
-                                                            } value="12" />
+                                                            } value={NavPanel.Squads.toString()} />
                                                         }
 
                                                     </TabList>
                                                     </Box>
 
-                                                    <TabPanel value="1">
+                                                    <TabPanel value={NavPanel.Holdings.toString()}>
                                                     
-                                                    {publicKey && publicKey.toBase58() === pubkey && selectionModel && selectionModel.length > 0 &&
-                                                        <Grid container sx={{mt:1,mb:1}}>
-                                                            <Grid item xs={12} alignContent={'right'} textAlign={'right'}>
-                                                                {selectionModel.length <= 500 &&
-                                                                    <BulkSend tokensSelected={selectionModel} solanaHoldingRows={solanaHoldingRows} tokenMap={tokenMap} fetchSolanaTokens={fetchSolanaTokens}  />
-                                                                }
+                                                        {publicKey && publicKey.toBase58() === pubkey && selectionModel && selectionModel.length > 0 &&
+                                                            <Grid container sx={{mt:1,mb:1}}>
+                                                                <Grid item xs={12} alignContent={'right'} textAlign={'right'}>
+                                                                    {selectionModel.length <= 500 &&
+                                                                        <BulkSend tokensSelected={selectionModel} solanaHoldingRows={solanaHoldingRows} tokenMap={tokenMap} fetchSolanaTokens={fetchSolanaTokens}  />
+                                                                    }
+                                                                </Grid>
                                                             </Grid>
-                                                        </Grid>
-                                                    }
+                                                        }
 
-                                                    {solanaHoldingRows && 
-                                                        <div style={{ height: 600, width: '100%' }}>
-                                                            <div style={{ display: 'flex', height: '100%' }}>
-                                                                <div style={{ flexGrow: 1 }}>
-                                                                    {publicKey && publicKey.toBase58() === pubkey ?
+                                                        {solanaHoldingRows && 
+                                                            <div style={{ height: 600, width: '100%' }}>
+                                                                <div style={{ display: 'flex', height: '100%' }}>
+                                                                    <div style={{ flexGrow: 1 }}>
+                                                                        {publicKey && publicKey.toBase58() === pubkey ?
+                                                                            <DataGrid
+                                                                                rows={solanaHoldingRows}
+                                                                                columns={columns}
+                                                                                rowsPerPageOptions={[25, 50, 100, 250]}
+                                                                                sx={{
+                                                                                    borderRadius:'17px',
+                                                                                    borderColor:'rgba(255,255,255,0.25)',
+                                                                                    '& .MuiDataGrid-cell':{
+                                                                                        borderColor:'rgba(255,255,255,0.25)'
+                                                                                    }}}
+                                                                                selectionModel={selectionModel}
+                                                                                onSelectionModelChange={(newSelectionModel) => {
+                                                                                    setSelectionModel(newSelectionModel);
+                                                                                }}
+                                                                                initialState={{
+                                                                                    sorting: {
+                                                                                        sortModel: [{ field: 'value', sort: 'desc' }],
+                                                                                    },
+                                                                                }}
+                                                                                sortingOrder={['asc', 'desc', null]}
+                                                                                checkboxSelection
+                                                                            />
+                                                                        :
                                                                         <DataGrid
                                                                             rows={solanaHoldingRows}
                                                                             columns={columns}
-                                                                            rowsPerPageOptions={[25, 50, 100, 250]}
+                                                                            initialState={{
+                                                                                sorting: {
+                                                                                    sortModel: [{ field: 'value', sort: 'desc' }],
+                                                                                },
+                                                                            }}
                                                                             sx={{
                                                                                 borderRadius:'17px',
                                                                                 borderColor:'rgba(255,255,255,0.25)',
                                                                                 '& .MuiDataGrid-cell':{
                                                                                     borderColor:'rgba(255,255,255,0.25)'
                                                                                 }}}
-                                                                            selectionModel={selectionModel}
-                                                                            onSelectionModelChange={(newSelectionModel) => {
-                                                                                setSelectionModel(newSelectionModel);
-                                                                            }}
-                                                                            initialState={{
-                                                                                sorting: {
-                                                                                    sortModel: [{ field: 'value', sort: 'desc' }],
-                                                                                },
-                                                                            }}
-                                                                            sortingOrder={['asc', 'desc', null]}
-                                                                            checkboxSelection
+                                                                            pageSize={25}
+                                                                            rowsPerPageOptions={[]}
                                                                         />
-                                                                    :
-                                                                    <DataGrid
-                                                                        rows={solanaHoldingRows}
-                                                                        columns={columns}
-                                                                        initialState={{
-                                                                            sorting: {
-                                                                                sortModel: [{ field: 'value', sort: 'desc' }],
-                                                                            },
-                                                                        }}
-                                                                        sx={{
-                                                                            borderRadius:'17px',
-                                                                            borderColor:'rgba(255,255,255,0.25)',
-                                                                            '& .MuiDataGrid-cell':{
-                                                                                borderColor:'rgba(255,255,255,0.25)'
-                                                                            }}}
-                                                                        pageSize={25}
-                                                                        rowsPerPageOptions={[]}
-                                                                    />
-                                                                    }
+                                                                        }
+                                                                    </div>
                                                                 </div>
-                                                            </div>
-                                                            <Box
-                                                                display="flex"
-                                                                justifyContent="flex-end"
-                                                                sx={{
-                                                                    alignItems:"right",
-                                                                    m:1
-                                                                }}
-                                                            >
-                                                                <FormGroup row>
-                                                                    <FormControlLabel control={<Switch defaultChecked disabled={loadingTokens} checked={loadNfts} onChange={setLoadNftToggle} size="small" />} label={<><Typography variant="caption">Load NFT Metadata</Typography></>} />
-                                                                    <FormControlLabel control={<Switch defaultChecked disabled={loadingTokens} checked={loadNftFloor} onChange={setLoadNftFloorToggle} size="small" />} label={<><Typography variant="caption">Load NFT Floor Pricing</Typography></>} />
-                                                                </FormGroup>
-                                                            </Box>
-                                                        </div>    
-                                                    }
+                                                                <Box
+                                                                    display="flex"
+                                                                    justifyContent="flex-end"
+                                                                    sx={{
+                                                                        alignItems:"right",
+                                                                        m:1
+                                                                    }}
+                                                                >
+                                                                    <FormGroup row>
+                                                                        <FormControlLabel control={<Switch defaultChecked disabled={loadingTokens} checked={loadNfts} onChange={setLoadNftToggle} size="small" />} label={<><Typography variant="caption">Load NFT Metadata</Typography></>} />
+                                                                        <FormControlLabel control={<Switch defaultChecked disabled={loadingTokens} checked={loadNftFloor} onChange={setLoadNftFloorToggle} size="small" />} label={<><Typography variant="caption">Load NFT Floor Pricing</Typography></>} />
+                                                                    </FormGroup>
+                                                                </Box>
+                                                            </div>    
+                                                        }
 
-                                                    {publicKey && publicKey.toBase58() === pubkey && selectionModel && selectionModel.length > 0 &&
-                                                        <Grid container sx={{mt:1}}>
-                                                            <Grid item xs={12} alignContent={'right'} textAlign={'right'}>
-                                                                <Grid item alignContent={'right'} textAlign={'right'}>
-                                                                    {selectionModel.length <= 500 ?
-                                                                        <BulkSend tokensSelected={selectionModel} solanaHoldingRows={solanaHoldingRows} tokenMap={tokenMap} nftMap={nftMap} fetchSolanaTokens={fetchSolanaTokens}  />
-                                                                    :
-                                                                        <Typography variant="caption">Currently limited to 500 token accounts</Typography>
-                                                                    }
-                                                                </Grid>
+                                                        {publicKey && publicKey.toBase58() === pubkey && selectionModel && selectionModel.length > 0 &&
+                                                            <Grid container sx={{mt:1}}>
+                                                                <Grid item xs={12} alignContent={'right'} textAlign={'right'}>
+                                                                    <Grid item alignContent={'right'} textAlign={'right'}>
+                                                                        {selectionModel.length <= 500 ?
+                                                                            <BulkSend tokensSelected={selectionModel} solanaHoldingRows={solanaHoldingRows} tokenMap={tokenMap} nftMap={nftMap} fetchSolanaTokens={fetchSolanaTokens}  />
+                                                                        :
+                                                                            <Typography variant="caption">Currently limited to 500 token accounts</Typography>
+                                                                        }
+                                                                    </Grid>
 
-                                                                <Grid item alignContent={'right'} textAlign={'right'}>
-                                                            
-                                                                    {selectionModel.length > 0 &&
-                                                                        <>
-                                                                            <br />
-                                                                            <Typography variant="caption">*If batch sending fails please try sending in bulks of 8</Typography>
-                                                                        </>
-                                                                    }
-                                                                </Grid>
-                                                            </Grid>
-                                                        </Grid>
-                                                    }
-
-                                                    {publicKey && publicKey.toBase58() === pubkey && selectionModel && selectionModel.length > 0 && solanaHoldingRows && solanaHoldingRows.length > 0 &&
-                                                        <Grid container sx={{mt:1}}>
-                                                            <Grid item xs={12} alignContent={'right'} textAlign={'right'}>
-                                                                <Grid item alignContent={'right'} textAlign={'right'}>
-                                                                    {selectionModel.length <= 100 ?
-                                                                        <BulkBurnClose tokensSelected={selectionModel} clearSelectionModels={clearSelectionModels} solanaHoldingRows={solanaHoldingRows} tokenMap={tokenMap} nftMap={nftMap} fetchSolanaTokens={fetchSolanaTokens} type={0}  />
-                                                                    :
-                                                                        <Typography variant="caption">Currently limited to 100 token accounts</Typography>
-                                                                    }
+                                                                    <Grid item alignContent={'right'} textAlign={'right'}>
+                                                                
+                                                                        {selectionModel.length > 0 &&
+                                                                            <>
+                                                                                <br />
+                                                                                <Typography variant="caption">*If batch sending fails please try sending in bulks of 8</Typography>
+                                                                            </>
+                                                                        }
+                                                                    </Grid>
                                                                 </Grid>
                                                             </Grid>
-                                                        </Grid>
-                                                    }
+                                                        }
+
+                                                        {publicKey && publicKey.toBase58() === pubkey && selectionModel && selectionModel.length > 0 && solanaHoldingRows && solanaHoldingRows.length > 0 &&
+                                                            <Grid container sx={{mt:1}}>
+                                                                <Grid item xs={12} alignContent={'right'} textAlign={'right'}>
+                                                                    <Grid item alignContent={'right'} textAlign={'right'}>
+                                                                        {selectionModel.length <= 100 ?
+                                                                            <BulkBurnClose tokensSelected={selectionModel} clearSelectionModels={clearSelectionModels} solanaHoldingRows={solanaHoldingRows} tokenMap={tokenMap} nftMap={nftMap} fetchSolanaTokens={fetchSolanaTokens} type={0}  />
+                                                                        :
+                                                                            <Typography variant="caption">Currently limited to 100 token accounts</Typography>
+                                                                        }
+                                                                    </Grid>
+                                                                </Grid>
+                                                            </Grid>
+                                                        }
                                                     
                                                     </TabPanel>
-                                                    <TabPanel value="2">
+                                                    <TabPanel value={NavPanel.Transactions.toString()}>
                                                     {solanaTransactions ?
                                                         <List dense={true}>
                                                             {solanaTransactions.length > 0 ? solanaTransactions.map((item: any,key:any) => (
@@ -1855,7 +1885,7 @@ export function IdentityView(props: any){
 
                                                     </TabPanel>
 
-                                                    <TabPanel value="3">
+                                                    <TabPanel value={NavPanel.Closable.toString()}>
                                                         {solanaClosableHoldings && 
                                                             <div style={{ height: 600, width: '100%' }}>
                                                                 <div style={{ display: 'flex', height: '100%' }}>
@@ -1926,30 +1956,30 @@ export function IdentityView(props: any){
                                                     </TabPanel>
                                                     
                                                     {/*
-                                                    <TabPanel value="4" >
+                                                    <TabPanel value={NavPanel.Delegation.toString()} >
                                                         <DelegationView pubkey={pubkey} setLoadingPosition={setLoadingPosition} />
                                                     </TabPanel>
                                                     */}
 
-                                                    <TabPanel value="5">
+                                                    <TabPanel value={NavPanel.Swap.toString()}>
                                                         <IntegratedSwapView pubkey={pubkey} setLoadingPosition={setLoadingPosition} />
                                                     </TabPanel>
 
-                                                    <TabPanel value="6">
+                                                    <TabPanel value={NavPanel.Staking.toString()}>
                                                         <StakingView pubkey={pubkey} setLoadingPosition={setLoadingPosition} />
                                                     </TabPanel>
 
                                                     {tokenMap &&
-                                                        <TabPanel value="7">
+                                                        <TabPanel value={NavPanel.Governance.toString()}>
                                                             <GovernanceView pubkey={pubkey} setLoadingPosition={setLoadingPosition} tokenMap={tokenMap} />
                                                         </TabPanel>
                                                     }
 
-                                                    <TabPanel value="8">
+                                                    <TabPanel value={NavPanel.Lending.toString()}>
                                                         <LendingView pubkey={pubkey} setLoadingPosition={setLoadingPosition} />
                                                     </TabPanel>
                                                     
-                                                    <TabPanel value="9">
+                                                    <TabPanel value={NavPanel.Domains.toString()}>
                                                         {/*
                                                         <BuyDomainView pubkey={pubkey} />
                                                         */}
@@ -2006,15 +2036,15 @@ export function IdentityView(props: any){
 
                                                     </TabPanel>
                                                     
-                                                    <TabPanel value="10">
+                                                    <TabPanel value={NavPanel.Storage.toString()}>
                                                         <StorageView pubkey={pubkey} setLoadingPosition={setLoadingPosition} />
                                                     </TabPanel>
 
-                                                    <TabPanel value="11">
+                                                    <TabPanel value={NavPanel.Streaming.toString()}>
                                                         <StreamingPaymentsView pubkey={pubkey} setLoadingPosition={setLoadingPosition} tokenMap={tokenMap} />
                                                     </TabPanel>
                                                     
-                                                    <TabPanel value="12">
+                                                    <TabPanel value={NavPanel.Squads.toString()}>
                                                         <SquadsView pubkey={pubkey} setLoadingPosition={setLoadingPosition} />
                                                     </TabPanel>
                                                     
