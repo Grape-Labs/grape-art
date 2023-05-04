@@ -219,7 +219,7 @@ export function IdentityView(props: any){
     
     const { hash } = useLocation();
     const [value, setValue] = React.useState(
-        hash === '#lending' ? NavPanel.Lending.toString() : 
+        hash === '#holdings' ? NavPanel.Holdings.toString() : 
         hash === '#transactions' ? NavPanel.Transactions.toString() : 
         hash === '#closable' ? NavPanel.Closable.toString() : 
         hash === '#swap' ? NavPanel.Swap.toString() : 
