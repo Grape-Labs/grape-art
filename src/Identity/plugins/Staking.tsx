@@ -4,9 +4,7 @@ import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import { PublicKey, Connection } from '@solana/web3.js';
 
 import ExplorerView from '../../utils/grapeTools/Explorer';
-import { getBackedTokenMetadata } from '../../utils/grapeTools/strataHelpers';
 
-import { RestClient } from "@hellomoon/api";
 import axios from "axios";
 
 import {
@@ -17,12 +15,11 @@ import {
     Grid,
     Box,
     Badge,
+    Avatar,
 } from '@mui/material';
 
 import { 
     RPC_CONNECTION,
-    HELLO_MOON_BEARER,
-    RPC_ENDPOINT
 } from '../../utils/grapeTools/constants';
 
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
@@ -43,6 +40,23 @@ const stakecolumns: GridColDef[] = [
         renderCell: (params) => {
             return (
                 <ExplorerView address={params.value} type='address' shorten={4} hideTitle={false} style='text' color='white' fontSize='14px' />
+            )
+        }
+    },
+    { field: 'validator', headerName: 'Validator', width: 250,
+        renderCell: (params) => {
+            return (
+                <>
+                    <Tooltip title={params.value.details}>
+                        <Button
+                            color='inherit'
+                            sx={{m:0,borderRadius:'17px', textTransform:'none' }}
+                            startIcon={ <Avatar alt={params.value.name} src={params.value.logo} sx={{mr:1}} />}
+                        >
+                            {params.value.name}
+                        </Button>
+                    </Tooltip>
+                </>
             )
         }
     },
@@ -120,9 +134,44 @@ export function StakingView(props: any){
                 const epochCurrent = Number(item.account.rentEpoch);
                 const epochAge = epochCurrent - epochStart;
 
+                let validatorInfo = null;
+                try{
+                    const url = 'https://api-production.solflare.com/api/v2/validators';
+                    const config = {
+                        headers:{
+                        accept: `application/json`,
+                        'content-type': `application/json`
+                        }
+                    };
+                    const data = {
+                        page: 0,
+                        pageSize: 20,
+                        network: "mainnet",
+                        validators: new PublicKey(item.account.data.parsed.info?.stake.delegation.voter).toBase58()
+                    }
+                    const stakeMeta = await axios.get(url+'?page='+data.page+'&pageSize='+data.pageSize+'&network='+data.network+'&validators='+data.validators); 
+
+                    if (stakeMeta?.data?.data){
+                        //console.log("stakeMeta.data: "+JSON.stringify(stakeMeta.data.data));
+                        for (let validatorItem of stakeMeta.data.data){
+                            validatorInfo = {
+                                name: validatorItem.name,
+                                logo: validatorItem.image,
+                                details: validatorItem.details,
+                                commission: validatorItem.commission,
+                                stakePercentage: validatorItem.stakePercentage,
+                                website: validatorItem.website
+                            }
+                        }
+                    }
+                } catch(e){
+                    console.log("ERR: "+e);
+                }
+
                 staking.push({
                     id: cnt,
                     voter: new PublicKey(item.account.data.parsed.info?.stake.delegation.voter).toBase58(),
+                    validator: validatorInfo,
                     address: new PublicKey(item.pubkey).toBase58(),
                     lamports: item.account.lamports,
                     creditsObserved: item.account.data.parsed?.info.stake.creditsObserved,
