@@ -24,6 +24,7 @@ import { SquadsView } from './plugins/squads';
 import { GovernanceView } from './plugins/Governance';
 import { LendingView } from './plugins/Lending';
 import { DelegationView } from './plugins/Delegation';
+import { TransactionsView } from './plugins/Transactions';
 import { StakingView } from './plugins/Staking';
 import { StorageView } from './plugins/Storage';
 import { StreamingPaymentsView } from './plugins/StreamingPayments';
@@ -192,10 +193,8 @@ export function IdentityView(props: any){
     const [solanaBalance, setSolanaBalance] = React.useState(null);
     const [solanaTicker, setSolanaTicker] = React.useState(null);
     const [solanaUSDC, setSolanaUSDC] = React.useState(null);
-    const [solanaTransactions, setSolanaTransactions] = React.useState(null);
     const [loadingWallet, setLoadingWallet] = React.useState(false);
     const [loadingTokens, setLoadingTokens] = React.useState(false);
-    const [loadingTransactions, setLoadingTransactions] = React.useState(false);
     
     const [loadingStorage, setLoadingStorage] = React.useState(false);
     const [loadingStreamingPayments, setLoadingStreamingPayments] = React.useState(false);
@@ -498,122 +497,6 @@ export function IdentityView(props: any){
         }catch(e){
             console.log("ERR: "+e);
         }
-    }
-
-    const fetchSolanaTransactions = async () => {
-        setLoadingTransactions(true);
-        setLoadingPosition(' last (100) Transactions');
-        try{
-            let helius_results = null;
-            
-            if (HELIUS_API){
-                try{
-                    const tx: any[] = [];
-                    const url = "https://api.helius.xyz/v0/addresses/"+pubkey+"/transactions?api-key="+HELIUS_API
-                    const parseTransactions = async () => {
-                        const { data } = await axios.get(url)
-                        //console.log("parsed transactions: ", data)
-
-                        helius_results = data;
-                        /*
-                        for (const item of data){
-                            tx.push({
-                                signature:item.signature,
-                                blockTime:item.timestamp,
-                                //amount:tx_cost,
-                                //owner:owner,
-                                memo:'',
-                                source:null,
-                                type:item.description + ' | ' + item.type,
-                            });
-                        }*/
-
-                    }
-                    await parseTransactions();
-                //setSolanaTransactions(tx);
-                }catch(terr){
-                    console.log("ERR: "+terr);
-                }
-            } 
-            
-            {
-                const response = await connection.getSignaturesForAddress(new PublicKey(pubkey));
-
-                const memos: any[] = [];
-                const signatures: any[] = [];
-                let counter = 0;
-                // get last 100
-                for (const value of response){
-                    if (counter<100){
-                        signatures.push(value.signature);
-                        if (value.memo){
-                            //let start_memo = value.memo.indexOf('[');
-                            //let end_memo = value.memo.indexOf(']');
-
-                        }
-                        memos.push(value.memo);
-                    }
-                    counter++;
-                }
-
-                //console.log("signatures: "+JSON.stringify(signatures))
-
-                console.log("fetching parsed transactions")
-                try{
-                    const getTransactionAccountInputs2 = await connection.getParsedTransactions(signatures, {commitment:'confirmed', maxSupportedTransactionVersion:0});
-                    //console.log("getTransactionAccountInputs2: "+JSON.stringify(getTransactionAccountInputs2))
-                    let cnt=0;
-                    const tx: any[] = [];
-                    for (const tvalue of getTransactionAccountInputs2){
-                        //if (cnt===0)
-                        //    console.log(signatures[cnt]+': '+JSON.stringify(tvalue));
-                        
-                        let txtype = "";
-                        if (tvalue?.meta?.logMessages){
-                            for (const logvalue of tvalue.meta.logMessages){
-                                //console.log("txvalue: "+JSON.stringify(logvalue));
-                                if (logvalue.includes("Program log: Instruction: ")){
-                                    if (txtype.length > 0)
-                                        txtype += ", ";
-                                    txtype += logvalue.substring(26,logvalue.length);
-                                    
-                                }
-                            }
-                        }
-
-                        let description = null;
-                        if (helius_results){
-                            for (const item of helius_results){
-                                if ((signatures[cnt] === item.signature) && (item.type !== 'UNKNOWN')){
-                                    description = item.description + " ("+ item.type+ ")";
-                                }
-                            }
-                        }
-
-                        tx.push({
-                            signature:signatures[cnt],
-                            blockTime:tvalue?.blockTime,
-                            //amount:tx_cost,
-                            //owner:owner,
-                            memo:memos[cnt],
-                            source:null,
-                            description:description,
-                            type:txtype,
-                        });
-                        
-                        cnt++;
-                    }
-
-                    setSolanaTransactions(tx);
-                } catch(err){
-                    console.log("ERR: "+err);
-                }   
-            }
-        }catch(e){
-            console.log("ERR: "+e);
-        }
-        
-        setLoadingTransactions(false);
     }
 
     function clearSelectionModels(){
@@ -1269,7 +1152,6 @@ export function IdentityView(props: any){
     const fetchTokenPositions = async (loadNftsMeta: boolean) => {
         setLoadingTokens(true);
         await fetchSolanaTokens(loadNftsMeta);
-        await fetchSolanaTransactions();
         setLoadingTokens(false);
     }
 
@@ -1830,59 +1712,7 @@ export function IdentityView(props: any){
                                                     
                                                     </TabPanel>
                                                     <TabPanel value={NavPanel.Transactions.toString()}>
-                                                    {solanaTransactions ?
-                                                        <List dense={true}>
-                                                            {solanaTransactions.length > 0 ? solanaTransactions.map((item: any,key:any) => (
-                                                                <>
-                                                                    {key > 0 &&
-                                                                        <Divider variant="fullWidth" component="li" />
-                                                                    }
-                                                                    <ListItem key={key}>
-                                                                        <>
-                                                                            <ListItemText
-                                                                                primary={
-                                                                                    <>
-                                                                                        <ExplorerView address={item.signature} type='tx' title={item.signature}/>
-                                                                                        {item?.description &&
-                                                                                            <Typography variant='subtitle1' sx={{mt:1}}>
-                                                                                                {item?.description}
-                                                                                            </Typography>
-                                                                                        }
-                                                                                        <Typography variant='body2'>
-                                                                                            <Tooltip title={formatBlockTime(item.blockTime,true,true)}>
-                                                                                                <Button sx={{borderRadius:'17px'}}>
-                                                                                                {timeAgo(item.blockTime)}
-                                                                                                </Button>
-                                                                                            </Tooltip> - {item.type}
-                                                                                        </Typography>
-                                                                                        
-                                                                                        
-                                                                                    </>}
-                                                                                secondary={
-                                                                                    <>
-                                                                                        {item?.memo && 
-                                                                                            <Typography variant="caption">{item?.memo}</Typography>
-                                                                                        }
-                                                                                    </>
-                                                                                }
-                                                                            />
-                                                                        </>
-                                                                    </ListItem>
-                                                                </>
-                                                            ))
-                                                            :
-                                                            <></>}
-                                                        </List>
-                                                        :
-                                                        <List dense={true}>
-                                                            {loadingTransactions ?
-                                                                <ListItem key={0}>{t('Loading transactions...')}</ListItem>    
-                                                            :
-                                                                <ListItem key={0}>{t('No transactions for this address!')}</ListItem>    
-                                                            }
-                                                        </List>
-                                                    }
-
+                                                        <TransactionsView pubkey={pubkey} setLoadingPosition={setLoadingPosition} />
                                                     </TabPanel>
 
                                                     <TabPanel value={NavPanel.Closable.toString()}>

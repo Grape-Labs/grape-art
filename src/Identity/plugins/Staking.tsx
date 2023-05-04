@@ -166,7 +166,7 @@ export function StakingView(props: any){
                 } catch(e){
                     console.log("ERR: "+e);
                 }
-
+                
                 staking.push({
                     id: cnt,
                     voter: new PublicKey(item.account.data.parsed.info?.stake.delegation.voter).toBase58(),
