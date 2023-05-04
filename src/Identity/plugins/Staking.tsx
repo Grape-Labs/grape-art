@@ -107,7 +107,6 @@ export function StakingView(props: any){
             setLoading(true);
 
             console.log("Fetching staking data")
-
             setLoadingPosition("Fetching wallet staking");
 
             const stakeAccounts = await connection.getParsedProgramAccounts(
