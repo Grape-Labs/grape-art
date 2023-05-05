@@ -20,6 +20,7 @@ import {
 } from '@mui/material';
 
 import { 
+    PROXY,
     RPC_CONNECTION,
     HELLO_MOON_BEARER
 } from '../../utils/grapeTools/constants';
@@ -129,7 +130,7 @@ export function LendingView(props: any){
 
             setLoadingPosition("Fetching wallet borrowing/lending history");
 
-            const url = 'https://rest-api.hellomoon.io/v0/nft/loans';
+            const url = PROXY+'https://rest-api.hellomoon.io/v0/nft/loans';
             const config = {
                 headers:{
                   accept: `application/json`,
