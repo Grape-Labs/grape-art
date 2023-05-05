@@ -5713,7 +5713,7 @@
     rpc-websockets "^7.5.0"
     superstruct "^0.14.2"
 
-"@solana/web3.js@^1.75.0":
+"@solana/web3.js@^1.73.2", "@solana/web3.js@^1.75.0":
   version "1.75.0"
   resolved "https://registry.yarnpkg.com/@solana/web3.js/-/web3.js-1.75.0.tgz#824c6f78865007bca758ca18f268d6f7363b42e5"
   integrity sha512-rHQgdo1EWfb+nPUpHe4O7i8qJPELHKNR5PAZRK+a7XxiykqOfbaAlPt5boDWAGPnYbSv0ziWZv5mq9DlFaQCxg==
@@ -5757,6 +5757,16 @@
     bs58 "^4.0.1"
     eventemitter3 "^4.0.7"
     uuid "^8.3.2"
+
+"@sqds/iframe-adapter@^1.0.16":
+  version "1.0.16"
+  resolved "https://registry.yarnpkg.com/@sqds/iframe-adapter/-/iframe-adapter-1.0.16.tgz#2439045b2eff89237bc194a45198288adf4297db"
+  integrity sha512-Qt210kDzA9N4hWWl2sXennoP6eyCb87hWAA7+wawDqP9phcgRuFZEfEh/ebrhBg05cEOMY/cWxUHCF7A8LOAEw==
+  dependencies:
+    "@solana/wallet-adapter-base" "^0.9.21"
+    "@solana/web3.js" "^1.73.2"
+    bs58 "^5.0.0"
+    encoding "^0.1.13"
 
 "@sqds/sdk@^1.0.4":
   version "1.0.8"
@@ -10628,7 +10638,7 @@ encodeurl@~1.0.2:
   resolved "https://registry.npmjs.org/encodeurl/-/encodeurl-1.0.2.tgz"
   integrity sha512-TPJXq8JqFaVYm2CWmPvnP2Iyo4ZSM7/QKcSmuMLDObfpH5fi7RUGmd/rTDf+rut/saiDiQEeVTNgAmJEdAOx0w==
 
-encoding@^0.1.11:
+encoding@^0.1.11, encoding@^0.1.13:
   version "0.1.13"
   resolved "https://registry.npmjs.org/encoding/-/encoding-0.1.13.tgz"
   integrity sha512-ETBauow1T35Y/WZMkio9jiM0Z5xjHHmJ4XmjZOq1l/dXz3lr2sRn87nJy20RupqSh1F2m3HHPSp8ShIPQJrJ3A==

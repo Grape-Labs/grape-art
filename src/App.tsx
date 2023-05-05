@@ -38,6 +38,8 @@ import { Box, Grid, Paper, Container, Typography, AppBar } from '@mui/material';
 
 import Header from './Header/Header';
 import { SnackbarProvider } from 'notistack';
+
+import {detectEmbeddedInSquadsIframe, SquadsEmbeddedWalletAdapter} from '@sqds/iframe-adapter';
 import {
     ConnectionProvider,
     useConnection,
@@ -208,6 +210,56 @@ function DashboardContent() {
     //const endpoint =  useMemo(() => clusterApiUrl(network), [network]); // RPC_ENDPOINT;
     //const endpoint =  RPC_ENDPOINT;
     const endpoint = RPC_ENDPOINT;
+
+    const wallets = useMemo(
+        () =>
+        detectEmbeddedInSquadsIframe() ? 
+        [new SquadsEmbeddedWalletAdapter("https://iframe-preview.squads.so")] : 
+        [
+            new SolflareWalletAdapter(),
+            new PhantomWalletAdapter(),
+            new LedgerWalletAdapter(),
+            new WalletConnectWalletAdapter({
+                network,
+                options: {
+                    relayUrl: 'wss://relay.walletconnect.com',
+                    // example WC dapp project ID
+                    projectId: 'f84d0a55da814eb378cc432010765260',
+                    metadata: {
+                        name: 'GrapeArt',
+                        description: 'Grape Art | Social. Stateless. Marketplace. on Solana',
+                        url: 'https://grape.art',
+                        icons: ['https://shdw-drive.genesysgo.net/5pKmUSyh4VEpVhCCYon1kFf6fn5REtmk1rz4sGXyMrAZ/8upjSpvjc.logo.png'],
+                    },
+                },
+            }),
+            new CrossmintSolanaWalletAdapter({
+                apiKey: "grape-verification",
+                environment: networkToCrossmintEnvironment(network),
+            }),
+            new ExodusWalletAdapter(),
+            new SolletWalletAdapter({ network }),
+            new SolletExtensionWalletAdapter({ network }),
+            new BraveWalletAdapter(),
+            new CoinbaseWalletAdapter(),
+            new TorusWalletAdapter(),
+            new CloverWalletAdapter(),
+            new MathWalletAdapter(),
+            new Coin98WalletAdapter(),
+            //new SolongWalletAdapter(),
+            //new BitKeepWalletAdapter(),
+            //new TokenPocketWalletAdapter(),
+            //new SafePalWalletAdapter(),
+            //new BitpieWalletAdapter(),
+            new NightlyWalletAdapter(),
+            //new MagicEdenWalletAdapter(),
+            new SpotWalletAdapter(),
+            new UnsafeBurnerWalletAdapter(),
+            new SlopeWalletAdapter(),
+        ],
+        [network]);
+        
+        /*
     const wallets = useMemo(
         () => [
             new SolflareWalletAdapter(),
@@ -252,7 +304,7 @@ function DashboardContent() {
             new SlopeWalletAdapter(),
         ],
         [network]
-    );
+    );*/
 
     const renderLoader = () => <p>Loading</p>;
 
