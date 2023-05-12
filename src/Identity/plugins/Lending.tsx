@@ -64,7 +64,13 @@ const historycolumns: GridColDef[] = [
     { field: 'collateralMint', headerName: 'Mint', width: 175, align: 'left',
         renderCell: (params) => {
             return (
-                <ExplorerView showNftData={true} address={params.value} type='address' shorten={4} hideTitle={false} style='text' color='white' fontSize='14px' />
+                <>
+                {params.value ?
+                    <ExplorerView showNftData={true} address={params.value} type='address' shorten={4} hideTitle={false} style='text' color='white' fontSize='14px' />
+                :
+                    <><HourglassEmptyIcon /></>
+                }
+                </>
             )
         }
     },
