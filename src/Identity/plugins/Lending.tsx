@@ -25,7 +25,7 @@ import {
     HELLO_MOON_BEARER
 } from '../../utils/grapeTools/constants';
 
-
+import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
@@ -38,14 +38,26 @@ const historycolumns: GridColDef[] = [
     { field: 'lender', headerName: 'Lender', minWidth: 130, flex: 1, align: 'left',
         renderCell: (params) => {
             return (
-                <ExplorerView showSolanaProfile={true} showSolBalance={true} grapeArtProfile={true} address={params.value} type='address' shorten={4} hideTitle={false} style='text' color='white' fontSize='14px' />
+                <>
+                {params.value ?
+                    <ExplorerView showSolanaProfile={true} showSolBalance={true} grapeArtProfile={true} address={params.value} type='address' shorten={4} hideTitle={false} style='text' color='white' fontSize='14px' />
+                :
+                    <><HourglassEmptyIcon /></>
+                }
+                </>
             )
         }
     },
     { field: 'borrower', headerName: 'Borrower', width: 150, align: 'left',
         renderCell: (params) => {
             return (
-                <ExplorerView showSolanaProfile={true} showSolBalance={true} grapeArtProfile={true} address={params.value} type='address' shorten={4} hideTitle={false} style='text' color='white' fontSize='14px' />
+                <>
+                {params.value ?
+                    <ExplorerView showSolanaProfile={true} showSolBalance={true} grapeArtProfile={true} address={params.value} type='address' shorten={4} hideTitle={false} style='text' color='white' fontSize='14px' />
+                :
+                    <><HourglassEmptyIcon /></>
+                }
+                </>
             )
         }
     },
@@ -179,6 +191,7 @@ export function LendingView(props: any){
                 totalBorrower: 0,
                 totalLender: 0,
                 extended: 0,
+                cancelled: 0,
                 totalAmountDefaulted: 0,
                 totalAmountRepaid: 0,
             };
@@ -192,38 +205,42 @@ export function LendingView(props: any){
                     summary.totalBorrower++;
                 }
 
-                lending.push({
-                    id:cnt,
-                    market:item.market,
-                    type:type,
-                    lender:item.lender,
-                    borrower:item.borrower,
-                    status:item.status,
-                    collateralMint:item.collateralMint,
-                    principalAmount:item.principalAmount,
-                    amountToRepay:item.amountToRepay,
-                    duration:(item.loanDurationSeconds/60/60/24).toFixed(0),
-                    acceptBlocktime:item.acceptBlocktime,
-                    repayBlocktime:item.repayBlocktime,
-                });
+                if (item.status !== 'cancelled'){
+                    lending.push({
+                        id:cnt,
+                        market:item.market,
+                        type:type,
+                        lender:item.lender,
+                        borrower:item.borrower,
+                        status:item.status,
+                        collateralMint:item.collateralMint,
+                        principalAmount:item.principalAmount,
+                        amountToRepay:item.amountToRepay,
+                        duration:(item.loanDurationSeconds/60/60/24).toFixed(0),
+                        acceptBlocktime:item.acceptBlocktime,
+                        repayBlocktime:item.repayBlocktime,
+                    });
 
-                if (item.status === 'repaid'){
-                    summary.repaid++;
-                    summary.totalAmountRepaid+=item.principalAmount;
-                } else if (item.status === 'defaulted' || item.status === 'default' || item.status === 'liquidated'){
-                    summary.defaults++;
-                    summary.totalAmountDefaulted+=item.principalAmount;
-                } else if (item.status === 'active' || item.status === 'extended'){
-                    if (item.status === 'extended')
-                        summary.extended++;
+                    if (item.status === 'repaid'){
+                        summary.repaid++;
+                        summary.totalAmountRepaid+=item.principalAmount;
+                    } else if (item.status === 'defaulted' || item.status === 'default' || item.status === 'liquidated'){
+                        summary.defaults++;
+                        summary.totalAmountDefaulted+=item.principalAmount;
+                    } else if (item.status === 'active' || item.status === 'extended'){
+                        if (item.status === 'extended')
+                            summary.extended++;
 
-                    if (pubkey === item.lender){
-                        summary.lender++;
-                        summary.lended = item.principalAmount;
-                    }else{
-                        summary.borrower++;
-                        summary.borrowed = item.principalAmount;
+                        if (pubkey === item.lender){
+                            summary.lender++;
+                            summary.lended = item.principalAmount;
+                        }else{
+                            summary.borrower++;
+                            summary.borrowed = item.principalAmount;
+                        }
                     }
+                } else{
+                    summary.cancelled++;
                 }
 
                 cnt++;

@@ -248,7 +248,8 @@ function GrapeVerified(props:any){
     const verifiedCollection = props.verifiedCollection;
     const [collectionRawData, setCollectionRawData]  = React.useState(props?.collectionRawData);
     
-    let grape_verified = -1;
+    //let grape_verified = -1;
+    //console.log("verifiedCollection: "+JSON.stringify(verifiedCollection))
 
     const MD_PUBKEY = METAPLEX_PROGRAM_ID;
     
@@ -301,7 +302,7 @@ function GrapeVerified(props:any){
     React.useEffect(() => { 
         try{
             if (collectionRawData && !loading){
-                let verified = false;
+                //let verified = false;
                 let verified_creator = false;
                 //console.log("Verified: "+JSON.stringify(collectionRawData))
                 // first stage verification
