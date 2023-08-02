@@ -147,7 +147,7 @@ export function LendingView(props: any){
             console.log("Fetching loan data")
 
             setLoadingPosition("Fetching wallet borrowing/lending history");
-
+            
             const url = PROXY+'https://rest-api.hellomoon.io/v0/nft/loans';
             const config = {
                 headers:{

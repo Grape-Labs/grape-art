@@ -522,6 +522,20 @@ export function HoldersView(props: any) {
     }
     
     const getTokenOwners = async(collectionAddress:any) => {
+        
+        const fetchAllOwnersOfCollection = async(collectionAddress) => {
+            //const provider = new Connection(new web3.providers.HttpProvider("https://api.devnet.solana.com"));
+            const collection = await connection.getParsedResponse("get_collection", { address: collectionAddress });
+            const owners = [];
+            for (const token of collection.data.tokens) {
+              const owner = await connection.getParsedAccountInfo(token.owner); //.getAccountInfo(token.owner);
+              owners.push(owner.address);
+            }
+            return owners;
+        }
+
+        const owners = await fetchAllOwnersOfCollection(collectionAddress); //"7777777777777777777777777777777777777777");
+        
             // 1. for each fetched mint
             // const nftAccount = await connection.getParsedAccountInfo(new PublicKey(NFT_ADDRESS));
             // const ownerAddress = nftAccount.value?.owner;

@@ -1,3 +1,4 @@
+//import { Client, Token } from '@solflare-wallet/utl-sdk';
 import React, { useEffect, Suspense } from "react";
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import moment from 'moment';
@@ -11,9 +12,6 @@ import axios from "axios";
 import { WalletDialogProvider, WalletMultiButton } from '@solana/wallet-adapter-material-ui';
 
 import { RestClient, NftMintsByOwnerRequest, NftMintPriceByCreatorAvgRequest, CollectionFloorpriceRequest } from '@hellomoon/api';
-
-import { gql } from '@apollo/client'
-import gql_client from '../gql_client'
 
 import { programs, tryGetAccount, withSend, findAta } from '@cardinal/token-manager';
 //import { tryGetAccount } from '@cardinal/common';
@@ -118,6 +116,10 @@ import { useTranslation } from 'react-i18next';
 import { getByPlaceholderText } from "@testing-library/react";
 import { parseMintAccount } from "@project-serum/common";
 import { any } from "prop-types";
+
+import {
+    METAPLEX_PROGRAM_ID,
+  } from '../utils/auctionHouse/helpers/constants';
 
 function formatBytes(bytes: any, decimals = 2) {
     if (bytes === 0) return '0 Bytes';
@@ -534,6 +536,18 @@ export function IdentityView(props: any){
             let cgArray = '';//new Array()
             for (const item of resultValues){
                 //console.log("item: "+JSON.stringify(item))
+                /*
+                const accountInfo = await connection.getParsedAccountInfo(new PublicKey(item.account.data.parsed.info.mint));
+                if (accountInfo) {
+                    console.log(item.account.data.parsed.info.mint + ": "+JSON.stringify(accountInfo));
+                    //const buffer = Buffer.from(accountInfo.data);
+                    // Parse the buffer to extract the token metadata (you may need to adjust this based on the token standard)
+                    //const metadata = JSON.parse(buffer.toString());
+                    //console.log(item.account.data.parsed.info.mint + ": "+JSON.stringify(metadata));
+                    //setMetadata(metadata);
+                  }
+                */
+
                 const tm = tokenMap.get(item.account.data.parsed.info.mint)
                 if (tm && tm?.extensions?.coingeckoId){
                     if (cgArray.length > 0)
@@ -547,7 +561,7 @@ export function IdentityView(props: any){
             setLoadingPosition('Prices');
             const cgPrice = await getCoinGeckoPrice(cgArray);
 
-            setLoadingPosition('NFT Metadata');
+            setLoadingPosition('NFT & Token Metadata');
             let nftMeta =null;
             //if (loadNfts){
                 nftMeta = await fetchNFTMetadata(resultValues, loadNftMeta || loadNfts, loadNftFloor);
@@ -605,6 +619,55 @@ export function IdentityView(props: any){
                     name = tokenMap.get(item.account.data.parsed.info.mint)?.name;
                     logo = tokenMap.get(item.account.data.parsed.info.mint)?.logoURI;
                 }
+
+                if (item.account.data.parsed.info.mint === "A6GComqUgUZ7mTqZcDrgnigPEdYDcw5yCumbHaaQxVKK")
+                    console.log("name: "+name);
+
+                if (!foundMetaName){
+                    if (loadNftMeta){
+
+                        const mint_address = new PublicKey(item.account.data.parsed.info.mint)
+                        const [pda, bump] = await PublicKey.findProgramAddress([
+                            Buffer.from("metadata"),
+                            METAPLEX_PROGRAM_ID.toBuffer(),
+                            new PublicKey(mint_address).toBuffer(),
+                        ], METAPLEX_PROGRAM_ID)
+                        const meta_response = await connection.getAccountInfo(pda);
+                        //console.log("meta_response: "+JSON.stringify(meta_response));
+
+                        if (meta_response){
+                            const meta_final = decodeMetadata(meta_response.data);
+                            
+                            //console.log("final: "+JSON.stringify(meta_final))
+
+                            const file_metadata = meta_final.data.uri;
+
+                            if (file_metadata && file_metadata.length > 0){
+                                const file_metadata_url = new URL(file_metadata);
+
+                                const IPFS = 'https://ipfs.io';
+                                const IPFS_2 = "https://nftstorage.link/ipfs";
+                                /*
+                                if (file_metadata.startsWith(IPFS) || file_metadata.startsWith(IPFS_2)){
+                                    file_metadata = CLOUDFLARE_IPFS_CDN+file_metadata_url.pathname;
+                                }*/
+                                
+                                //setCollectionRaw({meta_final,meta_response});
+                                
+                                const metadata = await window.fetch(file_metadata).then(
+                                    (res: any) => res.json());
+                                
+                                if (metadata?.image){
+                                    logo = metadata.image;
+                                    name = meta_final.data.name;
+                                    //const img_metadata_url = new URL(img_metadata);
+                                    foundMetaName = true;
+                                }
+                            }
+                        }
+                    }
+                }
+
                 if ((name && name?.length <= 0) || (!name))
                     name = item.account.data.parsed.info.mint;
                 
@@ -687,7 +750,9 @@ export function IdentityView(props: any){
                                     let urimeta = await window.fetch(metadata).then((res: any) => res.json());
                                     logo = DRIVE_PROXY+urimeta.image;
                                 }*/
-                                foundMetaName = true;
+
+                                if (name)
+                                    foundMetaName = true;
                             }
                         }
                     }
@@ -696,7 +761,49 @@ export function IdentityView(props: any){
                 if (!foundMetaName){
                     name = tokenMap.get(item.account.data.parsed.info.mint)?.name;
                     logo = tokenMap.get(item.account.data.parsed.info.mint)?.logoURI;
+                    if (name)
+                        foundMetaName = true;
                 }
+
+                if (!foundMetaName){
+                    const mint_address = new PublicKey(item.account.data.parsed.info.mint)
+                    const [pda, bump] = await PublicKey.findProgramAddress([
+                        Buffer.from("metadata"),
+                        METAPLEX_PROGRAM_ID.toBuffer(),
+                        new PublicKey(mint_address).toBuffer(),
+                    ], METAPLEX_PROGRAM_ID)
+                    const meta_response = await connection.getAccountInfo(pda);
+                    //console.log("meta_response: "+JSON.stringify(meta_response));
+
+                    if (meta_response){
+                        const meta_final = decodeMetadata(meta_response.data);
+                        
+                        const file_metadata = meta_final.data.uri;
+                        if (file_metadata && file_metadata.length > 0){
+                            const file_metadata_url = new URL(file_metadata);
+
+                            const IPFS = 'https://ipfs.io';
+                            const IPFS_2 = "https://nftstorage.link/ipfs";
+                            /*
+                            if (file_metadata.startsWith(IPFS) || file_metadata.startsWith(IPFS_2)){
+                                file_metadata = CLOUDFLARE_IPFS_CDN+file_metadata_url.pathname;
+                            }*/
+                            
+                            //setCollectionRaw({meta_final,meta_response});
+                            
+                            const metadata = await window.fetch(file_metadata).then(
+                                (res: any) => res.json());
+                            
+                            if (metadata?.image){
+                                logo = metadata.image;
+                                name = meta_final.data.name;
+                                //const img_metadata_url = new URL(img_metadata);
+                                foundMetaName = true;
+                            }
+                        }
+                    }
+                }
+
                 if ((name && name?.length <= 0) || (!name))
                     name = item.account.data.parsed.info.mint;
                 
@@ -1665,7 +1772,7 @@ export function IdentityView(props: any){
                                                                     }}
                                                                 >
                                                                     <FormGroup row>
-                                                                        <FormControlLabel control={<Switch defaultChecked disabled={loadingTokens} checked={loadNfts} onChange={setLoadNftToggle} size="small" />} label={<><Typography variant="caption">Load NFT Metadata</Typography></>} />
+                                                                        <FormControlLabel control={<Switch defaultChecked disabled={loadingTokens} checked={loadNfts} onChange={setLoadNftToggle} size="small" />} label={<><Typography variant="caption">Load NFT & Token Metadata</Typography></>} />
                                                                         <FormControlLabel control={<Switch defaultChecked disabled={loadingTokens} checked={loadNftFloor} onChange={setLoadNftFloorToggle} size="small" />} label={<><Typography variant="caption">Load NFT Floor Pricing</Typography></>} />
                                                                     </FormGroup>
                                                                 </Box>
