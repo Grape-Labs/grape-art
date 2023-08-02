@@ -1049,8 +1049,10 @@ export function IdentityView(props: any){
                             collectionitem.helloMoonCollectionId = item.helloMoonCollectionId;
                             if (!collectionitem.image){
                                 if (loadNftMeta){
-                                    collectionitem.urimeta = await window.fetch(item.metadataJson.uri).then((res: any) => res.json());
-                                    if (collectionitem.urimeta)
+                                    collectionitem.urimeta = await window.fetch(item.metadataJson.uri)
+                                    .then((res: any) => res.json())
+                                    .catch((error) => console.error("Error fetching data:", error));
+                                    if (collectionitem?.urimeta)
                                         collectionitem.image = DRIVE_PROXY+collectionitem.urimeta.image;
                                 }
                             }
@@ -1176,7 +1178,9 @@ export function IdentityView(props: any){
                                                 if (meta_final.data?.uri){
                                                     if (loadNftMeta){
                                                         setLoadingPosition('NFT Image from Metadata ('+(i+1)+' of '+collectionmeta.length+')');
-                                                        collectionmeta[i]['urimeta'] = await window.fetch(meta_final.data.uri).then((res: any) => res.json());
+                                                        collectionmeta[i]['urimeta'] = await window.fetch(meta_final.data.uri)
+                                                        .then((res: any) => res.json())
+                                                        .catch((error) => console.error("Error fetching data:", error));
                                                         collectionmeta[i]['image'] = DRIVE_PROXY+collectionmeta[i]['urimeta'].image;
                                                     }
                                                 }
@@ -1186,7 +1190,9 @@ export function IdentityView(props: any){
                                         if (meta_final.data?.uri){
                                             if (loadNftMeta){
                                                 setLoadingPosition('NFT Image from Metadata ('+(i+1)+' of '+collectionmeta.length+')');
-                                                collectionmeta[i]['urimeta'] = await window.fetch(meta_final.data.uri).then((res: any) => res.json());
+                                                collectionmeta[i]['urimeta'] = await window.fetch(meta_final.data.uri)
+                                                .then((res: any) => res.json())
+                                                .catch((error) => console.error("Error fetching data:", error));
                                                 collectionmeta[i]['image'] = DRIVE_PROXY+collectionmeta[i]['urimeta'].image;
                                             }
                                         }

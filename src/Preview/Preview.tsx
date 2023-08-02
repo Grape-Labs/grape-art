@@ -276,25 +276,29 @@ function GrapeVerified(props:any){
                 file_metadata = CLOUDFLARE_IPFS_CDN+file_metadata_url.pathname;
             }
 
-            const metadata = await window.fetch(file_metadata).then(
-                (res: any) => res.json())
-            .catch((error) => {
-                // Handle any errors that occur during the fetch or parsing JSON
-                console.error("Error fetching data:", error);
-                });
-            
-            if (metadata){
-                setCollectionName(metadata.name);
-                //console.log("found: "+metadata.image);
-                //console.log("IPFS: "+IPFS);
+            try{
+                const metadata = await window.fetch(file_metadata).then(
+                    (res: any) => res.json())
+                .catch((error) => {
+                    // Handle any errors that occur during the fetch or parsing JSON
+                    console.error("Error fetching data:", error);
+                    });
                 
-                let thisImage = metadata.image;
-                if (metadata.image.startsWith(IPFS)){
-                    const meta_image_url = new URL(metadata.image)
-                    thisImage = CLOUDFLARE_IPFS_CDN+meta_image_url.pathname;
-                }
+                if (metadata){
+                    setCollectionName(metadata.name);
+                    //console.log("found: "+metadata.image);
+                    //console.log("IPFS: "+IPFS);
+                    
+                    let thisImage = metadata.image;
+                    if (metadata.image.startsWith(IPFS)){
+                        const meta_image_url = new URL(metadata.image)
+                        thisImage = CLOUDFLARE_IPFS_CDN+meta_image_url.pathname;
+                    }
 
-                setCollectionImage(thisImage) 
+                    setCollectionImage(thisImage) 
+                }
+            }catch(err){
+                console.log("ERR: ",err)
             }
             //return metadata;
             return null;
