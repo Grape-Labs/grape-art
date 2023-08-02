@@ -616,12 +616,13 @@ export function IdentityView(props: any){
                 }
                 
                 if (!foundMetaName){
-                    name = tokenMap.get(item.account.data.parsed.info.mint)?.name;
-                    logo = tokenMap.get(item.account.data.parsed.info.mint)?.logoURI;
+                    if (tokenMap.get(item.account.data.parsed.info.mint)){
+                        name = tokenMap.get(item.account.data.parsed.info.mint)?.name;
+                        logo = tokenMap.get(item.account.data.parsed.info.mint)?.logoURI;
+                        if (name)
+                            foundMetaName = true;
+                    }
                 }
-
-                if (item.account.data.parsed.info.mint === "A6GComqUgUZ7mTqZcDrgnigPEdYDcw5yCumbHaaQxVKK")
-                    console.log("name: "+name);
 
                 if (!foundMetaName){
                     if (loadNftMeta){
@@ -767,10 +768,12 @@ export function IdentityView(props: any){
                 }
 
                 if (!foundMetaName){
-                    name = tokenMap.get(item.account.data.parsed.info.mint)?.name;
-                    logo = tokenMap.get(item.account.data.parsed.info.mint)?.logoURI;
-                    if (name)
-                        foundMetaName = true;
+                    if (tokenMap.get(item.account.data.parsed.info.mint)){
+                        name = tokenMap.get(item.account.data.parsed.info.mint)?.name;
+                        logo = tokenMap.get(item.account.data.parsed.info.mint)?.logoURI;
+                        if (name)
+                            foundMetaName = true;
+                    }
                 }
 
                 if (!foundMetaName){
@@ -788,7 +791,7 @@ export function IdentityView(props: any){
                         
                         const file_metadata = meta_final.data.uri;
                         if (file_metadata && file_metadata.length > 0){
-                            const file_metadata_url = new URL(file_metadata);
+                            //const file_metadata_url = new URL(file_metadata);
 
                             const IPFS = 'https://ipfs.io';
                             const IPFS_2 = "https://nftstorage.link/ipfs";
