@@ -1710,7 +1710,7 @@
     nanoid "^3.3.4"
     swr "^1.3.0"
 
-"@dialectlabs/react-ui@1.0.0-beta.67":
+"@dialectlabs/react-ui@^1.0.0-beta.66":
   version "1.0.0-beta.67"
   resolved "https://registry.yarnpkg.com/@dialectlabs/react-ui/-/react-ui-1.0.0-beta.67.tgz#7c749365e22eb713ecf5ed3efbf2f637303089a0"
   integrity sha512-3v+5MYrPPeAwNXfz3zZoTeBDKna2jVeyHHJIwOqmJkziUN2rKDQ4V+rTa6rC4nD+0DMuwI4OW80nTjTcMiYMaA==
@@ -5304,7 +5304,7 @@
   dependencies:
     "@solana/wallet-adapter-base" "^0.9.22"
 
-"@solana/wallet-adapter-material-ui@^0.16.31":
+"@solana/wallet-adapter-material-ui@^0.16.30":
   version "0.16.31"
   resolved "https://registry.yarnpkg.com/@solana/wallet-adapter-material-ui/-/wallet-adapter-material-ui-0.16.31.tgz#f1037d0fb835fa56d4a6790c501196419ca5ea7b"
   integrity sha512-NtU84tXOoMnrGUPUw6CKdDVE0NL6+KJTBB1GNE53sOUeDzxUFq8U+A3BZFOmdiPMT41uUJRCooIvWqq6FFmCNw==
@@ -5363,7 +5363,7 @@
   dependencies:
     "@solana/wallet-adapter-base" "^0.9.22"
 
-"@solana/wallet-adapter-react-ui@^0.9.32":
+"@solana/wallet-adapter-react-ui@^0.9.31":
   version "0.9.32"
   resolved "https://registry.yarnpkg.com/@solana/wallet-adapter-react-ui/-/wallet-adapter-react-ui-0.9.32.tgz#12cd8892873cb70bd186b2310d243932521551b8"
   integrity sha512-d6CbJLcrn4joPwsKITB9bG+VbmqYE/kRjgsJtO6xBoF2xRQTjbfPg+T38weTZZT1QEtROomkmHqvthzt+TeT6g==
@@ -5372,7 +5372,7 @@
     "@solana/wallet-adapter-base-ui" "^0.1.0"
     "@solana/wallet-adapter-react" "^0.15.33"
 
-"@solana/wallet-adapter-react@^0.15.33":
+"@solana/wallet-adapter-react@^0.15.32", "@solana/wallet-adapter-react@^0.15.33":
   version "0.15.33"
   resolved "https://registry.yarnpkg.com/@solana/wallet-adapter-react/-/wallet-adapter-react-0.15.33.tgz#85c7e6528cb572338cc5fa331e2371a3c2818392"
   integrity sha512-0bkP6wbWuLtIiswwFke4XjF++Tbyk+cBa1XY7r4msMCg+oQo+BA3TvoiuuL3dPOgsZ2f21A+cr6ekXZ5nfZNIA==
@@ -5513,7 +5513,7 @@
     "@jnwng/walletconnect-solana" "^0.2.0"
     "@solana/wallet-adapter-base" "^0.9.22"
 
-"@solana/wallet-adapter-wallets@^0.19.19":
+"@solana/wallet-adapter-wallets@^0.19.16":
   version "0.19.19"
   resolved "https://registry.yarnpkg.com/@solana/wallet-adapter-wallets/-/wallet-adapter-wallets-0.19.19.tgz#6316bd3114c4ab5327873799c205bda959ef1eb1"
   integrity sha512-wjpwmZh9eF5rfxpXZkD+sygx/0+AN0i2oBRvxVThybVlKS0GOzXHTMIO4tpsfDYZDPkHVXA3La5rOVUyKUu7uw==
@@ -5755,7 +5755,7 @@
     rpc-websockets "^7.5.1"
     superstruct "^0.14.2"
 
-"@solana/web3.js@^1.78.2":
+"@solana/web3.js@^1.75.0":
   version "1.78.2"
   resolved "https://registry.yarnpkg.com/@solana/web3.js/-/web3.js-1.78.2.tgz#ae976ce2f793077aa104ab455f9f75be86a3e2a4"
   integrity sha512-oF+TmBZCt3eAEl4Meu3GO2p6G8wdyoKgXgTKzQpIUIhpMGA/dVQzyMFpKjCgoTU1Kx+/UF3gXUdsZOxQukGbvQ==
@@ -9049,11 +9049,6 @@ caniuse-lite@^1.0.0, caniuse-lite@^1.0.30001400, caniuse-lite@^1.0.30001426:
   version "1.0.30001431"
   resolved "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001431.tgz"
   integrity sha512-zBUoFU0ZcxpvSt9IU66dXVT/3ctO1cy4y9cscs1szkPlcWb6pasYM144GqrUygUbT+k7cmUCW61cvskjcv0enQ==
-
-caniuse-lite@^1.0.30001518:
-  version "1.0.30001518"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001518.tgz#b3ca93904cb4699c01218246c4d77a71dbe97150"
-  integrity sha512-rup09/e3I0BKjncL+FesTayKtPrdwKhUufQFd3riFw1hHg8JmIFoInYfB102cFcY/pPgGmdyl/iy+jgiDi2vdA==
 
 canvas-renderer@~2.2.0:
   version "2.2.1"
