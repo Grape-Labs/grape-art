@@ -653,20 +653,23 @@ export function IdentityView(props: any){
                                 }*/
                                 
                                 //setCollectionRaw({meta_final,meta_response});
-                                
-                                const metadata = await window.fetch(file_metadata)
-                                .then(
-                                    (res: any) => res.json())
-                                .catch((error) => {
-                                    // Handle any errors that occur during the fetch or parsing JSON
-                                    console.error("Error fetching data:", error);
-                                    });
-                                
-                                if (metadata && metadata?.image){
-                                    logo = metadata.image;
-                                    name = meta_final.data.name;
-                                    //const img_metadata_url = new URL(img_metadata);
-                                    foundMetaName = true;
+                                try{
+                                    const metadata = await window.fetch(file_metadata)
+                                    .then(
+                                        (res: any) => res.json())
+                                    .catch((error) => {
+                                        // Handle any errors that occur during the fetch or parsing JSON
+                                        console.error("Error fetching data:", error);
+                                        });
+                                    
+                                    if (metadata && metadata?.image){
+                                        logo = metadata.image;
+                                        name = meta_final.data.name;
+                                        //const img_metadata_url = new URL(img_metadata);
+                                        foundMetaName = true;
+                                    }
+                                }catch(err){
+                                    console.log("ERR: ",err);
                                 }
                             }
                         }
@@ -796,19 +799,23 @@ export function IdentityView(props: any){
                             
                             //setCollectionRaw({meta_final,meta_response});
                             
-                            const metadata = await window.fetch(file_metadata)
-                            .then(
-                                (res: any) => res.json())
-                            .catch((error) => {
-                                    // Handle any errors that occur during the fetch or parsing JSON
-                                    console.error("Error fetching data:", error);
-                            });
-                            
-                            if (metadata && metadata?.image){
-                                logo = metadata.image;
-                                name = meta_final.data.name;
-                                //const img_metadata_url = new URL(img_metadata);
-                                foundMetaName = true;
+                            try{
+                                const metadata = await window.fetch(file_metadata)
+                                .then(
+                                    (res: any) => res.json())
+                                .catch((error) => {
+                                        // Handle any errors that occur during the fetch or parsing JSON
+                                        console.error("Error fetching data:", error);
+                                });
+                                
+                                if (metadata && metadata?.image){
+                                    logo = metadata.image;
+                                    name = meta_final.data.name;
+                                    //const img_metadata_url = new URL(img_metadata);
+                                    foundMetaName = true;
+                                }
+                            }catch(err){
+                                console.log("ERR: ",err);
                             }
                         }
                     }
