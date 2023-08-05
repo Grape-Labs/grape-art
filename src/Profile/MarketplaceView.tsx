@@ -331,7 +331,7 @@ export default function MarketplaceView(props: any) {
             <Box sx={{background:'rgba(0,0,0,0.1)',borderRadius:'17px',p:1,mb:4}}>
 
                 <Typography variant="h2">Explore Grape Identity</Typography>
-                <Typography variant="body1">Do more with your wallet & explore connected protocols on <Button component={Link} to={`/identity`} variant="outlined" color="inherit" size="small" sx={{borderRadius:'17px',ml:1}}>Grape Identity <AccountBalanceWalletIcon sx={{ml:1}} /></Button></Typography>
+                <Typography variant="body1">Unlock greater possibilities with your wallet and explore a wide array of connected protocols supporting a multitude of exciting features, including full token closing &amp; burning, seamless integrated token swapping, staking, lending, domains, decentralized storage, streaming payments, multisig, and seamless governance integration on <Button component={Link} to={`/identity`} variant="outlined" color="inherit" size="small" sx={{borderRadius:'17px',ml:1}}>Grape Identity <AccountBalanceWalletIcon sx={{ml:1}} /></Button></Typography>
 
             </Box>
 
