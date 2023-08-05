@@ -331,7 +331,7 @@ export default function MarketplaceView(props: any) {
             <Box sx={{background:'rgba(0,0,0,0.1)',borderRadius:'17px',p:1,mb:4}}>
 
                 <Typography variant="h2">Explore Grape Identity</Typography>
-                <Typography variant="body1">Do more with your wallet & do more with connected protocols on <Button component={Link} to={`/identity`} variant="outlined" color="inherit" size="small" sx={{borderRadius:'17px',ml:1}}>Grape Identity <AccountBalanceWalletIcon sx={{ml:1}} /></Button></Typography>
+                <Typography variant="body1">Do more with your wallet & explore connected protocols on <Button component={Link} to={`/identity`} variant="outlined" color="inherit" size="small" sx={{borderRadius:'17px',ml:1}}>Grape Identity <AccountBalanceWalletIcon sx={{ml:1}} /></Button></Typography>
 
             </Box>
 
