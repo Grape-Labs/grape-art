@@ -37,10 +37,12 @@ import {
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import ShareSocialURL from '../utils/grapeTools/ShareUrl';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 
 import { CardActionArea } from '@mui/material';
 
 import { useTranslation } from 'react-i18next';
+import { WalletIcon } from '@solana/wallet-adapter-material-ui';
 
 export default function MarketplaceView(props: any) {
     //const styles = useFadedShadowStyles();
@@ -310,13 +312,13 @@ export default function MarketplaceView(props: any) {
             <Box sx={{background:'rgba(0,0,0,0.1)',borderRadius:'17px',p:1,mt:5,mb:2}}>
                 <Grid container>
                     {tps && 
-                        <Grid item xs={12} sm={4} sx={{textAlign:'center'}}><Typography variant="caption">Solana Network: </Typography><Typography variant="caption" sx={{color:'yellow'}}>{tps.toFixed(0)} TPS</Typography></Grid>
+                        <Grid item xs={12} sm={(tps && solConversion) ? 4 : 6} sx={{textAlign:'center'}}><Typography variant="caption">Solana Network: </Typography><Typography variant="caption" sx={{color:'yellow'}}>{tps.toFixed(0)} TPS</Typography></Grid>
                     }
                     {solConversion && 
-                        <Grid item xs={12} sm={4} sx={{textAlign:'center'}}><Typography variant="caption">SOL/USDC: </Typography><Typography variant="caption" sx={{color:'yellow'}}>${solConversion.toFixed(2)}</Typography></Grid>
+                        <Grid item xs={12} sm={(tps && solConversion) ? 4: 12} sx={{textAlign:'center'}}><Typography variant="caption">SOL/USDC: </Typography><Typography variant="caption" sx={{color:'yellow'}}>${solConversion.toFixed(2)}</Typography></Grid>
                     }
                     {timestamp && 
-                        <Grid item xs={12} sm={4} sx={{textAlign:'center'}}><Typography variant="caption">Timestamp: </Typography><Typography variant="caption" sx={{color:'yellow'}}>{timestamp}</Typography></Grid>
+                        <Grid item xs={12} sm={(tps && solConversion) ? 4 : 6} sx={{textAlign:'center'}}><Typography variant="caption">Timestamp: </Typography><Typography variant="caption" sx={{color:'yellow'}}>{timestamp}</Typography></Grid>
                     }
 
                     {/*splGovernanceProposals && 
@@ -324,6 +326,16 @@ export default function MarketplaceView(props: any) {
                     */}
                 </Grid>
             </Box>
+
+            
+            <Box sx={{background:'rgba(0,0,0,0.1)',borderRadius:'17px',p:1,mb:4}}>
+
+                <Typography variant="h2">Explore Grape Identity</Typography>
+                <Typography variant="body1">Do more with your wallet & do more with connected protocols on <Button variant="outlined" color="inherit" size="small" sx={{borderRadius:'17px',ml:1}}>Grape Identity <AccountBalanceWalletIcon sx={{ml:1}} /></Button></Typography>
+
+            </Box>
+
+
             <Grid container spacing={1} >
                 {verifiedCollectionArray && verifiedCollectionArray.map((featured: any, key: number) => (
                     <>
