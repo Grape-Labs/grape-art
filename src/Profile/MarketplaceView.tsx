@@ -85,9 +85,9 @@ export default function MarketplaceView(props: any) {
                 setTps(tps);
             }
 
-            const tknPrice = await getTokenPrice("SOL", "USDC");
+            const tknPrice = await getTokenPrice("SOL", "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v");
+            //console.log("tokenPrice: "+JSON.stringify(tknPrice));
             if (tknPrice){
-                //console.log("tknPrice: "+JSON.stringify(tknPrice))
                 setSolConversion(tknPrice.data.price);
             }
             setTimestamp(moment().format("llll"));
