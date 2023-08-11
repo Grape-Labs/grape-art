@@ -21,6 +21,7 @@ import {
   Grid,
   Typography
 } from '@mui/material';
+import { DialogProps } from '@mui/material/Dialog';
 
 import { SelectChangeEvent } from '@mui/material/Select';
 import { MakeLinkableAddress, ValidateAddress } from '../../utils/grapeTools/WalletAddress'; // global key handling
@@ -76,7 +77,8 @@ const BootstrapDialogTitle = (props: DialogTitleProps) => {
 export default function GovernanceDetailsView(props: any) {
     const governanceToken = props.governanceToken;
     const [open, setOpen] = React.useState(false);
-    
+    const [scroll, setScroll] = React.useState<DialogProps['scroll']>('paper');
+
     const connection = RPC_CONNECTION;//useConnection();
     const { publicKey, wallet, sendTransaction, signTransaction } = useWallet();
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
@@ -118,6 +120,7 @@ export default function GovernanceDetailsView(props: any) {
             onClose={handleClose}
             aria-labelledby="customized-dialog-title"
             open={open}
+            scroll={scroll}
             PaperProps={{
                 style: {
                     boxShadow: '3',
@@ -125,9 +128,9 @@ export default function GovernanceDetailsView(props: any) {
                     },
                 }}
         >
-
+          <DialogContent dividers={scroll === 'paper'} sx={{background:'black',m:0,p:0}}>
             <GovernanceView governanceToken={governanceToken} />
-            
+          </DialogContent>
         </BootstrapDialog>
         </div>
     );
