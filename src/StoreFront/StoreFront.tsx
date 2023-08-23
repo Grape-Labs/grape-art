@@ -121,6 +121,7 @@ import ListForCollectionView from './ListForCollection';
 import ActivityView from './Activity';
 import { SocialMediaView } from './SocialMedia';
 import { GovernanceView } from './Governance';
+import GovernanceEmbed from '../Identity/GovernanceEmbed';
 import { MembersView } from './Members';
 import { TokenHoldersView } from './TokenHolders';
 import { HoldersView } from './Holders';
@@ -2322,8 +2323,12 @@ export function StoreFrontView(this: any, props: any) {
 
                     <TabPanel value={tabValue} index={NavPanel.Governance}>
                         <Box> 
-                            {collectionAuthority &&  
+                            {/*collectionAuthority &&  
                                 <GovernanceView governanceToken={collectionAuthority} />
+                            */}
+
+                            {collectionAuthority &&  
+                                <GovernanceEmbed governanceAddress={collectionAuthority?.governance} />
                             }
                         </Box>
                     </TabPanel>

@@ -1623,11 +1623,13 @@ export function GovernanceView(props: any) {
                         )
                         //console.log("realmConfig: "+JSON.stringify(realmConfig));
                         
+                        /*
                         const tryRealmConfig = await tryGetRealmConfig(
                             connection,
                             programId,
                             realmPk
                         )
+                        */
                         
                         //console.log("tryRealmConfig: "+JSON.stringify(tryRealmConfig));
                         //setRealmConfig(realmConfigPK)

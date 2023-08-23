@@ -34,6 +34,7 @@ import ArrowCircleRightIcon from '@mui/icons-material/ArrowCircleRight';
 import ArrowCircleRightOutlinedIcon from '@mui/icons-material/ArrowCircleRightOutlined';
 
 import { GovernanceView } from '../../StoreFront/Governance';
+import GovernanceEmbed from '../GovernanceEmbed';
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuDialogContent-root': {
@@ -49,6 +50,8 @@ export interface DialogTitleProps {
   children?: React.ReactNode;
   onClose: () => void;
 }
+
+
 
 const BootstrapDialogTitle = (props: DialogTitleProps) => {
   const { children, onClose, ...other } = props;
@@ -75,7 +78,7 @@ const BootstrapDialogTitle = (props: DialogTitleProps) => {
 };
 
 export default function GovernanceDetailsView(props: any) {
-    const governanceToken = props.governanceToken;
+    const governanceAddress = props.governanceToken;
     const [open, setOpen] = React.useState(false);
     const [scroll, setScroll] = React.useState<DialogProps['scroll']>('paper');
 
@@ -125,11 +128,14 @@ export default function GovernanceDetailsView(props: any) {
                 style: {
                     boxShadow: '3',
                     borderRadius: '17px',
+                    width:'100%',
+                    backgroundColor:'none'
                     },
                 }}
         >
-          <DialogContent dividers={scroll === 'paper'} sx={{background:'black',m:0,p:0}}>
-            <GovernanceView governanceToken={governanceToken} />
+          <DialogContent dividers={scroll === 'paper'} sx={{width:'100%',background:'black',m:0,p:0}}>
+            <GovernanceEmbed governanceAddress={governanceAddress?.governanceVanityUrl || governanceAddress?.governance || governanceAddress} />
+            {/*<GovernanceView governanceToken={governanceAddress} />*/}
           </DialogContent>
         </BootstrapDialog>
         </div>

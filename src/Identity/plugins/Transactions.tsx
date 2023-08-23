@@ -135,6 +135,8 @@ export function TransactionsView(props: any){
                 }catch(terr){
                     console.log("ERR: "+terr);
                 }
+            } else { // try another API
+                
             }
 
 
