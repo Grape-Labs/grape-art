@@ -120,7 +120,6 @@ import GalleryView from '../Profile/GalleryView';
 import ListForCollectionView from './ListForCollection';
 import ActivityView from './Activity';
 import { SocialMediaView } from './SocialMedia';
-import { GovernanceView } from './Governance';
 import GovernanceEmbed from '../Identity/GovernanceEmbed';
 import { MembersView } from './Members';
 import { TokenHoldersView } from './TokenHolders';

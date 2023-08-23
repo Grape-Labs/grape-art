@@ -9,8 +9,7 @@ function GovernanceEmbed({ governanceAddress }: { governanceAddress: string }) {
 
     //src={`http://localhost:1234/embedgovernance/${governanceAddress}`}        
     // src={`https://spl-gov.vercel.app/embedgovernance/${governanceAddress}`}
-                
-
+    
     return (
         <div>
             <iframe 
@@ -22,10 +21,10 @@ function GovernanceEmbed({ governanceAddress }: { governanceAddress: string }) {
                     background: 'transparent', // Set background to transparent
                 }} // Apply dynamic width style
                 onLoad={handleIframeLoad} // Attach onLoad event handler
-                height="800" 
+                height={iframeLoaded ? '800' : '200'}
                 loading="lazy" 
                 frameBorder="0"
-                title="Embed Template">
+                title="Embeded Governance">
             </iframe>
         </div>
   );

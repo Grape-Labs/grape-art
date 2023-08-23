@@ -33,7 +33,6 @@ import CloseIcon from '@mui/icons-material/Close';
 import ArrowCircleRightIcon from '@mui/icons-material/ArrowCircleRight';
 import ArrowCircleRightOutlinedIcon from '@mui/icons-material/ArrowCircleRightOutlined';
 
-import { GovernanceView } from '../../StoreFront/Governance';
 import GovernanceEmbed from '../GovernanceEmbed';
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
