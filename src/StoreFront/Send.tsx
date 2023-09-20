@@ -202,7 +202,7 @@ export default function SendToken(props: any) {
         await redeemOnEth(ETH_TOKEN_BRIDGE_ADDRESS, signer, signedVAA);
     }
     */
-
+   
     async function transferTokens(tokenMintAddress: string, to: string, amount: number) {
         const fromWallet = publicKey;
         const toWallet = new PublicKey(toaddress);
