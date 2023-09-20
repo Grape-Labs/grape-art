@@ -57,6 +57,7 @@ export function TokenView(props: any) {
     const [myToken, setMyToken] = React.useState(null);
     const [portfolioPositions, setPortfolioPositions] = React.useState(null);
     const [tokenSupply, setTokenSupply] = React.useState(null);
+    const [tokenHolders, setTokenHolders] = React.useState(null);
 
     const fetchTokens = async () => {
         const tokens = await new TokenListProvider().resolve();
@@ -119,6 +120,18 @@ export function TokenView(props: any) {
                 setTokenSupply(tknSupply);
                 //console.log("tknSupply: "+JSON.stringify(tknSupply));
 
+                /*
+                const tokenAccounts = await connection.getParsedTokenAccountsByOwner(new PublicKey(collectionAuthority.address), {programId: TOKEN_PROGRAM_ID});
+
+                const uniqueHoldersSet = new Set();
+                tokenAccounts.value.forEach((taccount) => {
+                    uniqueHoldersSet.add(taccount.account.owner.toBase58());
+                });
+
+                const uniqueHoldersArray = Array.from(uniqueHoldersSet);
+                if (uniqueHoldersArray && uniqueHoldersArray.length > 0)
+                    setTokenHolders(uniqueHoldersArray.length);
+                */
                 const tknMap = await fetchTokens();
 
                 const tkn = tknMap.get(collectionAuthority.address);
@@ -196,6 +209,11 @@ export function TokenView(props: any) {
                         {tokenSupply &&
                             <Typography variant="caption" component='div'>
                                 Supply: {getFormattedNumberToLocale(formatAmount(+((tokenSupply.value.amount)/Math.pow(10, tokenSupply.value.decimals)).toFixed(0)))}
+                            </Typography>
+                        }
+                        {tokenHolders &&
+                            <Typography variant="caption" component='div'>
+                                Token Holders: {tokenHolders.toLocaleString()}
                             </Typography>
                         }
                     </>

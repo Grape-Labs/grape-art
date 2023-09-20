@@ -258,8 +258,8 @@ export default function SendToken(props: any) {
                 //const { walletPublicKey, tokenClient, commitment } = ctx;
                 //const { mint, destination } = req;
 
-                const destinationAta = await getAssociatedTokenAddress(mintPubkey, destPublicKey);
-                const sourceAta = await getAssociatedTokenAddress(mintPubkey, fromPublicKey);
+                const destinationAta = await getAssociatedTokenAddress(mintPubkey, destPublicKey, true);
+                const sourceAta = await getAssociatedTokenAddress(mintPubkey, fromPublicKey, true);
 
                 const [destinationAccount, destinationAtaAccount] = await connection.getMultipleAccountsInfo([destPublicKey, destinationAta])
                 console.log("destination: "+JSON.stringify(destinationAccount))
@@ -339,14 +339,16 @@ export default function SendToken(props: any) {
                 try{
                     const fromTokenAccount = await getAssociatedTokenAddress(
                         mintPubkey,
-                        publicKey
+                        publicKey,
+                        true
                     )
 
                     const fromPublicKey = publicKey
                     const destPublicKey = new PublicKey(to)
                     const destTokenAccount = await getAssociatedTokenAddress(
                         mintPubkey,
-                        destPublicKey
+                        destPublicKey,
+                        true
                     )
                     const receiverAccount = await connection.getAccountInfo(
                         destTokenAccount

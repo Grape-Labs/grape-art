@@ -162,7 +162,7 @@ function JupiterForm(props: any) {
     const {publicKey, wallet, signAllTransactions, signTransaction, sendTransaction} = useWallet();
     const connection = RPC_CONNECTION;//useConnection();
     const [portfolioPositions, setPortfolioPositions] = React.useState(props?.portfolioPositions || null);
-
+    
     const getPrices = async (path?: string): Promise<any> => {
         return fetch(path || "https://api.raydium.io/v2/main/price", {//"https://api.raydium.io/coin/price", {
           method: "GET",
