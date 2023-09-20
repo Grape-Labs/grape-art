@@ -3943,14 +3943,14 @@
   dependencies:
     chalk "^4.1.0"
 
-"@parcel/compressor-brotli@2.9.3":
+"@parcel/compressor-brotli@^2.8.0":
   version "2.9.3"
   resolved "https://registry.yarnpkg.com/@parcel/compressor-brotli/-/compressor-brotli-2.9.3.tgz#b395bc6af6a0b0987533972df8e41eec30033af4"
   integrity sha512-yLxTous+fPIaw8v8kR5UdWLzJTL7e3ISThNWsu9w9L4vqK0DUUIUePvwZjSNiYQcxFu9L/1X3vlKSzHv3TvS0Q==
   dependencies:
     "@parcel/plugin" "2.9.3"
 
-"@parcel/compressor-gzip@2.9.3":
+"@parcel/compressor-gzip@^2.8.0":
   version "2.9.3"
   resolved "https://registry.yarnpkg.com/@parcel/compressor-gzip/-/compressor-gzip-2.9.3.tgz#deea772c3a2effb2467bece4cdb2dc654e2e58c1"
   integrity sha512-ffQDpPlr3XzqDa/Gwgj7kFPMKYPHnpTZCYnoFW0zzHJTI0umDUULb2XHRke804yiHplKA6fcj2TQjC5FU1beYw==
@@ -4473,7 +4473,7 @@
     globals "^13.2.0"
     nullthrows "^1.1.1"
 
-"@parcel/packager-raw-url@2.9.3":
+"@parcel/packager-raw-url@^2.8.0":
   version "2.9.3"
   resolved "https://registry.yarnpkg.com/@parcel/packager-raw-url/-/packager-raw-url-2.9.3.tgz#317ea74fe090b71614bc97c4e37906514501179c"
   integrity sha512-4kYOwYsnkfjIj4gew0xLNUcxfV+7tyCvp3FO0XIxo31JJMHCJpEL5BZjoUWHsmfSBNX27iOAG1iu5hu6j4W8TQ==
@@ -4602,7 +4602,7 @@
     "@parcel/node-resolver-core" "3.0.3"
     "@parcel/plugin" "2.9.3"
 
-"@parcel/resolver-glob@2.9.3":
+"@parcel/resolver-glob@^2.8.0":
   version "2.9.3"
   resolved "https://registry.yarnpkg.com/@parcel/resolver-glob/-/resolver-glob-2.9.3.tgz#3e5943e6ab34b20e2216f68d87bd02610baa935b"
   integrity sha512-Yx6iUL92EJQOiSrGFmlHW0sGnoJBbnzDNzNRfcW+PIOYdKr1Z5YNYiwJ0hMp5Hs02jVdFRqnj+YzeFDc11KqnA==
@@ -4845,7 +4845,7 @@
     "@parcel/plugin" "2.9.3"
     json5 "^2.2.0"
 
-"@parcel/transformer-less@2.9.3":
+"@parcel/transformer-less@^2.8.0":
   version "2.9.3"
   resolved "https://registry.yarnpkg.com/@parcel/transformer-less/-/transformer-less-2.9.3.tgz#1bb441f5f628861d33cfff82b9fc70458dc4d695"
   integrity sha512-qwF5NQ8rPZjS79tv9RRPxzkZcwLcI4Xg2gHm9c1PvsgoaL2tVNpfjiRA6MOrzfJp+xr7xEzeMDZksOJ1WQiiQg==
@@ -4968,7 +4968,7 @@
     posthtml-render "^3.0.0"
     semver "^7.5.2"
 
-"@parcel/transformer-webmanifest@2.9.3":
+"@parcel/transformer-webmanifest@^2.8.0":
   version "2.9.3"
   resolved "https://registry.yarnpkg.com/@parcel/transformer-webmanifest/-/transformer-webmanifest-2.9.3.tgz#cdd385a3b7e489c942f7ff9b5bbdda665207dac1"
   integrity sha512-xkerfb+5OnCJFwOjN8PJQcitCvNuZxg+NIWjG2hMjKfeyqWT00C8uXTSTu8gYTrg0fdQd2c+URdoT/iv/Y7tPQ==
@@ -17364,7 +17364,7 @@ param-case@^3.0.4:
     dot-case "^3.0.4"
     tslib "^2.0.3"
 
-parcel@2.9.3:
+parcel@^2.7.0:
   version "2.9.3"
   resolved "https://registry.yarnpkg.com/parcel/-/parcel-2.9.3.tgz#315660ccbaa5a830cf71280ab0cfbd3079247cc5"
   integrity sha512-2GTVocFkwblV/TIg9AmT7TI2fO4xdWkyN8aFUEVtiVNWt96GTR3FgQyHFValfCbcj1k9Xf962Ws2hYXYUr9k1Q==
