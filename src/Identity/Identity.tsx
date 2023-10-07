@@ -993,8 +993,10 @@ export function IdentityView(props: any){
             
             // FloorpriceBatchedRequest
             const hmcid = new Array();
-            for (let witem of walletNfts.data){
-                hmcid.push(witem.helloMoonCollectionId);
+            if (walletNfts){
+                for (let witem of walletNfts.data){
+                    hmcid.push(witem.helloMoonCollectionId);
+                }
             }
 
             let floorResults = null;

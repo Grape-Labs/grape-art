@@ -24,7 +24,6 @@ import {
 import { RPC_CONNECTION
 } from '../../utils/grapeTools/constants';
 
-
 const governancecolumns: GridColDef[] = [
     { field: 'id', headerName: 'ID', width: 70, hide: true },
     { field: 'pubkey', headerName: 'PublicKey', width: 70, hide: true },

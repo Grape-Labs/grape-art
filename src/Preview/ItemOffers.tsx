@@ -438,7 +438,7 @@ function SellNowVotePrompt(props:any){
             console.log("price: "+meListing[0].price);
             console.log("seller_referral: "+seller_referral);
             */
-
+           
             //const apiUrl = PROXY+"https://api-mainnet.magiceden.dev/v2/instructions/buy_now";
             const apiUrl = PROXY+"https://hyper.solana.fm/v3/instructions/buy_now";
             

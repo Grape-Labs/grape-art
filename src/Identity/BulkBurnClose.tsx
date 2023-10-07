@@ -303,7 +303,7 @@ export default function BulkBurnClose(props: any) {
                         
                         
                         // get collectionMetadata
-                        var collectionMetadata = null as PublicKey;
+                        let collectionMetadata = null as PublicKey;
 
                         try{
                             if (holdingsSelected[item * maxLen + holding]?.metadata_decoded){
