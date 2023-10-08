@@ -2266,7 +2266,7 @@ export function StoreFrontView(this: any, props: any) {
                         
 
                         {collectionAuthority?.links?.twitter &&
-                            <Tab icon={<TwitterIcon />} aria-label="Twitter" value={NavPanel.SocialFeed} sx={{color:'white'}} title="Twitter Feed" />
+                            <Tab icon={<TwitterIcon />} aria-label="Twitter" disabled={true} value={NavPanel.SocialFeed} sx={{color:'white'}} title="Twitter Feed" />
                         }
                         
                     </Tabs>

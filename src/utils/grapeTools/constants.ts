@@ -8,7 +8,7 @@ export const ALCHEMY_RPC_ENDPOINT = process.env.REACT_APP_API_ALCHEMY_RPC_ENDPOI
 export const RPC_ENDPOINT = QUICKNODE_RPC_ENDPOINT || 'https://api.mainnet-beta.solana.com';
 export const HELLO_MOON_BEARER = process.env.REACT_APP_API_HELLOMOON_API_KEY;
 
-/*
+
 export const RPC_CONNECTION = new Connection(
     "https://rest-api.hellomoon.io/v0/rpc",
     {
@@ -17,12 +17,13 @@ export const RPC_CONNECTION = new Connection(
       },
     }
 );
-*/
 
 
+/*
 export const RPC_CONNECTION = new Connection(
     RPC_ENDPOINT
 );
+*/
 
 export const GENSYSGO_RPC_ENDPOINT = process.env.REACT_APP_API_GENSYSGO_RPC_ENDPOINT || 'https://api.mainnet-beta.solana.com';
 export const THEINDEX_RPC_ENDPOINT = process.env.REACT_APP_API_THEINDEX_RPC_ENDPOINT || 'https://api.mainnet-beta.solana.com';

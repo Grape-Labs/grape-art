@@ -21,7 +21,9 @@ import {
     LinearProgress
 } from '@mui/material';
 
-import { RPC_CONNECTION
+import { 
+    RPC_CONNECTION,
+    QUICKNODE_RPC_ENDPOINT,
 } from '../../utils/grapeTools/constants';
 
 const governancecolumns: GridColDef[] = [
@@ -65,9 +67,10 @@ export function GovernanceView(props: any){
     const setLoadingPosition = props.setLoadingPosition;
     const pubkey = props.pubkey;
     const tokenMap = props.tokenMap;
-    const ggoconnection = RPC_CONNECTION;
-    const ticonnection = RPC_CONNECTION;
-    const txonnection = RPC_CONNECTION;
+    const connection = new Connection(QUICKNODE_RPC_ENDPOINT);
+    const ggoconnection = connection;
+    const ticonnection = connection;
+    const txonnection = connection;
     const [realms, setRealms] = React.useState(null);
     const [governanceRecord, setGovernanceRecord] = React.useState(null);
     const [governanceRecordRows, setGovernanceRecordRows] = React.useState(null);
