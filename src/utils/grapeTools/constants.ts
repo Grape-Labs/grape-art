@@ -4,11 +4,12 @@ export const TX_RPC_ENDPOINT = process.env.REACT_APP_API_TX_RPC_ENDPOINT || 'htt
 export const GRAPE_RPC_ENDPOINT = process.env.REACT_APP_API_GRAPE_RPC_ENDPOINT || 'https://api.mainnet-beta.solana.com';
 export const QUICKNODE_RPC_ENDPOINT = process.env.REACT_APP_API_GRAPE_RPC_ENDPOINT || 'https://api.mainnet-beta.solana.com';
 export const HELIUS_RPC_ENDPOINT = 'https://rpc.helius.xyz/?api-key='+process.env.REACT_APP_API_HELIUS;
-export const ALCHEMY_RPC_ENDPOINT = process.env.REACT_APP_API_ALCHEMY_RPC_ENDPOINT || 'https://api.mainnet-beta.solana.com';
-export const RPC_ENDPOINT = QUICKNODE_RPC_ENDPOINT || 'https://api.mainnet-beta.solana.com';
 export const HELLO_MOON_BEARER = process.env.REACT_APP_API_HELLOMOON_API_KEY;
+export const HELLO_MOON_ENDPOINT = HELLO_MOON_BEARER ? `https://rpc.hellomoon.io/${HELLO_MOON_BEARER}` : `https://api.mainnet-beta.solana.com`;
+export const ALCHEMY_RPC_ENDPOINT = process.env.REACT_APP_API_ALCHEMY_API_KEY || `https://api.mainnet-beta.solana.com`;
+export const RPC_ENDPOINT = HELLO_MOON_ENDPOINT || 'https://api.mainnet-beta.solana.com';
 
-
+/*
 export const RPC_CONNECTION = new Connection(
     "https://rest-api.hellomoon.io/v0/rpc",
     {
@@ -17,13 +18,12 @@ export const RPC_CONNECTION = new Connection(
       },
     }
 );
+*/
 
 
-/*
 export const RPC_CONNECTION = new Connection(
     RPC_ENDPOINT
 );
-*/
 
 export const GENSYSGO_RPC_ENDPOINT = process.env.REACT_APP_API_GENSYSGO_RPC_ENDPOINT || 'https://api.mainnet-beta.solana.com';
 export const THEINDEX_RPC_ENDPOINT = process.env.REACT_APP_API_THEINDEX_RPC_ENDPOINT || 'https://api.mainnet-beta.solana.com';
