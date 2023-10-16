@@ -343,6 +343,81 @@ function SellNowVotePrompt(props:any){
             return controller;
         };
 
+        async function handleEscrowCancelListing(event: any) {
+            handleAlertBuyEscrowClose();
+            event.preventDefault();
+            
+            if (meListing && meListing[0].price > 0) {
+                
+                //handleCloseDialog();
+                //const setSellNowPrice = async () => {
+                try {
+                    const transaction = new Transaction();
+                    const transactionInstr = await fetchMECancelListingTimeout();
+
+                    if (transactionInstr){
+                        const txSigned = transactionInstr;//transactionInstr.txSigned;
+
+                        //console.log("txSigned: "+JSON.stringify(txSigned));
+                        const txn = anchor.web3.Transaction.from(Buffer.from(txSigned.data));
+
+                        enqueueSnackbar(`Preparing to cancel listing from Magic Eden at ${meListing[0].price} SOL`,{ variant: 'info' });
+                        const signedTransaction = await sendTransaction(txn, connection, {
+                            skipPreflight: true,
+                            preflightCommitment: "confirmed"
+                        });   
+                        
+                        const snackprogress = (key:any) => (
+                            <CircularProgress sx={{padding:'10px'}} />
+                        );
+                        const cnfrmkey = enqueueSnackbar(`Confirming transaction`,{ variant: 'info', action:snackprogress, persist: true });
+                        const latestBlockHash = await connection.getLatestBlockhash();
+                        
+                        await ggoconnection.confirmTransaction({
+                            blockhash: latestBlockHash.blockhash,
+                            lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+                            signature: signedTransaction}, 
+                            'processed'
+                        );
+                        
+                        closeSnackbar(cnfrmkey);
+                        const snackaction = (key:any) => (
+                            <Button href={`https://explorer.solana.com/tx/${signedTransaction}`} target='_blank'  sx={{color:'white'}}>
+                                {signedTransaction}
+                            </Button>
+                        );
+                        enqueueSnackbar(`Cancelled listing`,{ variant: 'success', action:snackaction });  
+                        
+                        //unicastGrapeSolflareMessage(`NFT SOLD`, `${mintName} was sold for ${meListing[0].price} ${symbol} on grape.art`, null, meListing[0].seller, `https://grape.art${GRAPE_PREVIEW}${mint}`, signedTransaction, collectionAuctionHouse);
+                        //unicastGrapeSolflareMessage(`NFT SOLD`, `${mintName} was sold for ${meListing[0].price} SOL on grape.art`, image, meListing[0].seller, `https://grape.art${GRAPE_PREVIEW}${mint}`, signedTransaction, collectionAuctionHouse);
+
+                        const eskey = enqueueSnackbar(`${t('Metadata will be refreshed in a few seconds')}`, {
+                            anchorOrigin: {
+                                vertical: 'top',
+                                horizontal: 'center',
+                            },
+                            persist: true,
+                        });
+                        setTimeout(function() {
+                            closeSnackbar(eskey);
+                            setRefreshOffers(true);
+                        }, GRAPE_RPC_REFRESH); 
+                    } else{
+                        closeSnackbar();
+                        enqueueSnackbar(`Invalid transaction instructions returned by the Magic Eden API, this occurs transactions are generated from their centralized API, and are not escrowless!`,{ variant: 'error' });
+                    }       
+                    
+                } catch(e){
+                    closeSnackbar();
+                    enqueueSnackbar(`${e}`,{ variant: 'error' });
+                    console.log("Error: "+e);
+                    //console.log("Error: "+JSON.stringify(e));
+                } 
+            } else{
+                console.log("INVALID AMOUNT");
+            }
+        }
+
         async function handleEscrowBuyNow(event: any) {
             handleAlertBuyEscrowClose();
             event.preventDefault();
@@ -439,8 +514,8 @@ function SellNowVotePrompt(props:any){
             console.log("seller_referral: "+seller_referral);
             */
            
-            //const apiUrl = PROXY+"https://api-mainnet.magiceden.dev/v2/instructions/buy_now";
-            const apiUrl = PROXY+"https://hyper.solana.fm/v3/instructions/buy_now";
+            const apiUrl = PROXY+"https://api-mainnet.magiceden.dev/v2/instructions/buy_now";
+            //const apiUrl = PROXY+"https://hyper.solana.fm/v3/instructions/buy_now";
             
             const response = await axios.get(
                 apiUrl, {
@@ -453,6 +528,56 @@ function SellNowVotePrompt(props:any){
                     tokenATA:tokenAta.toBase58(),
                     price:meListing[0].price,
                     buyerReferral:buyer_referral,
+                    sellerReferral:seller_referral,
+                    //buyerExpiry:0,
+                    sellerExpiry:-1
+                },
+                headers: { Authorization: "Bearer " + ME_KEYBASE }
+            }).then((res) => {
+                return res.data.txSigned;
+                
+            }).catch((err) => {
+                return null;  
+            })
+            
+            return response;
+        }
+
+        const fetchMECancelListingTimeout = async () => {
+            const buyer_referral = ''//publicKey.toBase58();
+            const seller_referral = meListing[0].sellerReferral;
+            
+            const tokenAta = await getAssociatedTokenAddress(
+                new PublicKey(meListing[0].tokenMint),
+                new PublicKey(meListing[0].seller),
+                true
+            );
+            
+            
+            console.log("buyer: "+publicKey.toBase58());
+            console.log("seller: "+meListing[0].seller);
+            console.log("auctionHouse: "+meListing[0].auctionHouse);
+            console.log("tokenAta: "+tokenAta.toBase58());
+            console.log("tokenMint: "+meListing[0].tokenMint);
+            console.log("tokenPDA: "+meListing[0].pdaAddress);
+            console.log("price: "+meListing[0].price);
+            console.log("seller_referral: "+seller_referral);
+            
+            const apiUrl = PROXY+"https://api-mainnet.magiceden.dev/v2/instructions/sell_cancel";
+            //const apiUrl = PROXY+"https://hyper.solana.fm/v3/instructions/sell_cancel";
+            
+            const response = await axios.get(
+                apiUrl, {
+                params: {
+                    network:'mainnet',
+                    //buyer:publicKey.toBase58(),
+                    seller:meListing[0].seller,
+                    auctionHouseAddress:meListing[0].auctionHouse,
+                    tokenMint:meListing[0].tokenMint,
+                    //tokenATA:tokenAta.toBase58(),
+                    tokenAccount:tokenAta.toBase58(),
+                    price:meListing[0].price,
+                    //buyerReferral:buyer_referral,
                     sellerReferral:seller_referral,
                     //buyerExpiry:0,
                     sellerExpiry:-1
@@ -608,31 +733,44 @@ function SellNowVotePrompt(props:any){
                                 
                                     </DialogContent>
                                     <DialogActions>
-                                        <Button onClick={handleAlertBuyEscrowClose}>Cancel</Button>
-                                        <Button 
-                                            onClick={(e) => handleEscrowBuyNow(e)}
-                                            autoFocus>
-                                        {t('Buy with Wallet')}
-                                        </Button>
+                                        {publicKey.toBase58() === meListing[0].seller ?
+                                            <Button onClick={(e) => handleEscrowCancelListing(e)} autoFocus>Cancel Listing</Button>
+                                        :
+                                            <>
+                                                <Button onClick={handleAlertBuyEscrowClose}>Cancel</Button>
+                                                <Button 
+                                                    onClick={(e) => handleEscrowBuyNow(e)}
+                                                    autoFocus>
+                                                {t('Buy with Wallet')}
+                                                </Button>
+                                            </>
+                                        }
                                     </DialogActions>
                                 </BootstrapDialog>
                             <ButtonGroup>
-                                <Tooltip title={`Buy this NFT which is listed on Magic Eden using an escrow program: ${meListing[0]?.auctionHouse}`}>
-                                    <Button sx={{borderTopLeftRadius:'17px',borderBottomLeftRadius:'17px'}}
-                                        onClick={handleAlertBuyEscrowOpen}
-                                    >
-                                        Listed on Magic Eden for {meListing && meListing[0]?.price} SOL
-                                    </Button>
-                                </Tooltip>
-                                <Tooltip title={`Buy from Magic Eden listing on escrow: ${meListing[0]?.auctionHouse}`}>
-                                    <Button sx={{borderTopRightRadius:'17px',borderBottomRightRadius:'17px'}}
-                                        variant='contained'
-                                        color='error'
-                                        onClick={handleAlertBuyEscrowOpen}
-                                    >
-                                        <ShoppingCartIcon />
-                                    </Button>
-                                </Tooltip>
+                                
+                                {publicKey.toBase58() === meListing[0].seller ?
+                                    <Button sx={{borderRadius:'17px'}} onClick={(e) => handleEscrowCancelListing(e)} autoFocus>Cancel {meListing && meListing[0]?.price} SOL Listing</Button>
+                                :
+                                    <>
+                                    <Tooltip title={`Buy this NFT which is listed on Magic Eden using an escrow program: ${meListing[0]?.auctionHouse}`}>
+                                        <Button sx={{borderTopLeftRadius:'17px',borderBottomLeftRadius:'17px'}}
+                                            onClick={handleAlertBuyEscrowOpen}
+                                        >
+                                            Listed on Magic Eden for {meListing && meListing[0]?.price} SOL
+                                        </Button>
+                                    </Tooltip>
+                                    <Tooltip title={`Buy from Magic Eden listing on escrow: ${meListing[0]?.auctionHouse}`}>
+                                        <Button sx={{borderTopRightRadius:'17px',borderBottomRightRadius:'17px'}}
+                                            variant='contained'
+                                            color='error'
+                                            onClick={handleAlertBuyEscrowOpen}
+                                        >
+                                            <ShoppingCartIcon />
+                                        </Button>
+                                    </Tooltip>
+                                    </>
+                                }
                             </ButtonGroup>
                         </>
                     :
