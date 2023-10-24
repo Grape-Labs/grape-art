@@ -263,7 +263,10 @@ export function TokenView(props: any) {
                                                         </Typography>
                                                     :
                                                         <Typography sx={{color:'green'}}>
-                                                        +{coinGeckoPrice[token.extensions.coingeckoId]?.usd_24h_change.toFixed(2)}%
+                                                        {coinGeckoPrice[token.extensions.coingeckoId]?.usd_24h_change && <>
+                                                            +{coinGeckoPrice[token.extensions.coingeckoId]?.usd_24h_change.toFixed(2)}%
+                                                            </>
+                                                        }
                                                         </Typography>
                                                     }
                                                 </Grid>
