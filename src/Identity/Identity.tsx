@@ -578,7 +578,10 @@ export function IdentityView(props: any){
                 }catch(e){}
                 */
                 
-                const itemValue = item?.coingeckoId ? +cgPrice[item?.coingeckoId]?.usd ? (cgPrice[item?.coingeckoId].usd * +item.account.data.parsed.info.tokenAmount.amount/Math.pow(10, +item.account.data.parsed.info.tokenAmount.decimals)).toFixed(item.account.data.parsed.info.tokenAmount.decimals) : 0 :0;
+                const itemValue = cgPrice ? 
+                    item?.coingeckoId ? +cgPrice[item?.coingeckoId]?.usd ? (cgPrice[item?.coingeckoId].usd * +item.account.data.parsed.info.tokenAmount.amount/Math.pow(10, +item.account.data.parsed.info.tokenAmount.decimals)).toFixed(item.account.data.parsed.info.tokenAmount.decimals) : 0 :0
+                    : null;
+                
                 const itemBalance = Number(new TokenAmount(item.account.data.parsed.info.tokenAmount.amount, item.account.data.parsed.info.tokenAmount.decimals).format().replace(/[^0-9.-]+/g,""));
                 let logo = null;
                 let name = item.account.data.parsed.info.mint;
@@ -698,8 +701,18 @@ export function IdentityView(props: any){
                     balance:itemBalance,
                     delegate:item.account.data.parsed.info?.delegate ? new PublicKey(item.account.data.parsed.info?.delegate).toBase58() : ``,
                     delegateAmount:item.account.data.parsed.info?.delegatedAmount,
-                    price:item.account.data.parsed.info.tokenAmount.decimals === 0 ? +(nftValue/(10 ** 9)*solanaUSDC).toFixed(2) : cgPrice[item?.coingeckoId]?.usd || 0,
-                    change:item.account.data.parsed.info.tokenAmount.decimals === 0 ? 0 : cgPrice[item?.coingeckoId]?.usd_24h_change || 0,
+                    //price:item.account.data.parsed.info.tokenAmount.decimals === 0 ? +(nftValue/(10 ** 9)*solanaUSDC).toFixed(2) : (cgPrice && cgPrice[item?.coingeckoId]?.usd) ? cgPrice[item?.coingeckoId]?.usd) : 0,
+                    price: cgPrice && cgPrice[item?.coingeckoId] && cgPrice[item?.coingeckoId]?.usd
+                        ? cgPrice[item?.coingeckoId]?.usd
+                        : item.account.data.parsed.info.tokenAmount.decimals === 0
+                            ? +(nftValue / (10 ** 9) * solanaUSDC).toFixed(2)
+                            : 0,
+                    //change:item.account.data.parsed.info.tokenAmount.decimals === 0 ? 0 : (cgPrice && cgPrice[item?.coingeckoId]?.usd_24h_change) ? cgPrice[item?.coingeckoId]?.usd_24h_change : 0,
+                    change: item.account.data.parsed.info.tokenAmount.decimals === 0
+                        ? 0
+                        : (cgPrice && cgPrice[item?.coingeckoId]?.usd_24h_change)
+                            ? cgPrice[item?.coingeckoId]?.usd_24h_change
+                            : 0,
                     value: item.account.data.parsed.info.tokenAmount.decimals === 0 ?  +(nftValue/(10 ** 9)*solanaUSDC).toFixed(2) : +itemValue,
                     send:{
                         name:name,
@@ -766,7 +779,7 @@ export function IdentityView(props: any){
                         }
                     }
                 }
-
+                
                 if (!foundMetaName){
                     if (tokenMap.get(item.account.data.parsed.info.mint)){
                         name = tokenMap.get(item.account.data.parsed.info.mint)?.name;
@@ -775,7 +788,7 @@ export function IdentityView(props: any){
                             foundMetaName = true;
                     }
                 }
-
+                
                 if (!foundMetaName){
                     const mint_address = new PublicKey(item.account.data.parsed.info.mint)
                     const [pda, bump] = await PublicKey.findProgramAddress([
