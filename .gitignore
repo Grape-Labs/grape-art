@@ -7,6 +7,10 @@ yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
 
+yarn.new.lock
+yarn.old.lock
+yarn.temp.lock
+
 .parcel-cache
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
