@@ -42,7 +42,8 @@ import {
     GRAPE_PREVIEW,
     GRAPE_PROFILE,
     GRAPE_IDENTITY,
-    GRAPE_COLLECTIONS_DATA
+    GRAPE_COLLECTIONS_DATA,
+    SHYFT_KEY,
 } from '../grapeTools/constants';
 
 import { decodeMetadata } from '../grapeTools/utils';
@@ -177,31 +178,65 @@ export default function ExplorerView(props:any){
 
     const fetchTokenData = async() => {
         try{
-            const MD_PUBKEY = new PublicKey('metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s');
-            const [pda, bump] = await PublicKey.findProgramAddress(
-                [Buffer.from('metadata'), MD_PUBKEY.toBuffer(), new PublicKey(address).toBuffer()],
-                MD_PUBKEY
-            );
-            
-            const tokendata = await connection.getParsedAccountInfo(new PublicKey(pda));
+            const uri = `https://rpc.shyft.to/?api_key=${SHYFT_KEY}`;
 
-            if (tokendata){
-                //console.log("tokendata: "+JSON.stringify(tokendata));
-                const buf = Buffer.from(tokendata.value.data, 'base64');
-                const meta_final = decodeMetadata(buf);
+            const response = await fetch(uri, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    jsonrpc: '2.0',
+                    id: 'rpc-id',
+                    method: 'getAsset',
+                    params: {
+                    id: address
+                    },
+                }),
+                });
+            const { result } = await response.json();
+            //console.log("Asset: ", result);
+
+            if (result){
+                if (result?.content?.metadata?.name){
+                    setSolanaDomain(result?.content?.metadata?.name);
+                }
+                const image = result?.content?.links?.image;
                 
-                if (meta_final?.data?.name){
-                    setSolanaDomain(meta_final.data.name);
-                    if (meta_final.data?.uri){
-                        const urimeta = await window.fetch(meta_final.data.uri).then((res: any) => res.json());
-                        const image = urimeta?.image;
-                        if (image){
-                            setProfilePictureUrl(image);
-                            setHasProfilePicture(true);
-                        }
+                if (image){
+                    if (image){
+                        setProfilePictureUrl(image);
+                        setHasProfilePicture(true);
                     }
                 }
-                //console.log("meta_final: "+JSON.stringify(meta_final));
+            } else {
+
+                const MD_PUBKEY = new PublicKey('metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s');
+                const [pda, bump] = await PublicKey.findProgramAddress(
+                    [Buffer.from('metadata'), MD_PUBKEY.toBuffer(), new PublicKey(address).toBuffer()],
+                    MD_PUBKEY
+                );
+                
+                const tokendata = await connection.getParsedAccountInfo(new PublicKey(pda));
+
+                if (tokendata){
+                    //console.log("tokendata: "+JSON.stringify(tokendata));
+                    const buf = Buffer.from(tokendata.value.data, 'base64');
+                    const meta_final = decodeMetadata(buf);
+                    
+                    if (meta_final?.data?.name){
+                        setSolanaDomain(meta_final.data.name);
+                        if (meta_final.data?.uri){
+                            const urimeta = await window.fetch(meta_final.data.uri).then((res: any) => res.json());
+                            const image = urimeta?.image;
+                            if (image){
+                                setProfilePictureUrl(image);
+                                setHasProfilePicture(true);
+                            }
+                        }
+                    }
+                    //console.log("meta_final: "+JSON.stringify(meta_final));
+                }
             }
         }catch(e){
             console.log("ERR: "+e)
