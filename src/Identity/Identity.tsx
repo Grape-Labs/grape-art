@@ -109,7 +109,9 @@ import {
     DRIVE_PROXY,
     HELIUS_API,
     HELLO_MOON_BEARER,
-    SQUADS_API } from '../utils/grapeTools/constants';
+    SQUADS_API,
+    SHYFT_KEY,
+} from '../utils/grapeTools/constants';
 import { ConstructionOutlined, DoNotDisturb, JavascriptRounded, LogoDevOutlined } from "@mui/icons-material";
 
 import { useTranslation } from 'react-i18next';
@@ -570,6 +572,38 @@ export function IdentityView(props: any){
             //console.log("nftMeta: "+JSON.stringify(nftMeta))
 
             let netValue = 0;
+
+            let dasMeta = null;
+            if (SHYFT_KEY) {
+                try{
+                    const uri = `https://rpc.shyft.to/?api_key=${SHYFT_KEY}`;
+        
+                    const response = await fetch(uri, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            jsonrpc: '2.0',
+                            id: 'rpc-id',
+                            method: 'getAssetsByOwner',
+                            params: {
+                                ownerAddress: pubkey,
+                                page: 1, // Starts at 1
+                                limit: 1000
+                            },
+                        }),
+                        });
+                    const { result } = await response.json();
+                    dasMeta = result.items;
+                    /*
+                    console.log("Assets owned by a wallet: ", result.items);
+                    */
+                } catch(err){
+                    console.log("DAS: Err")
+                }
+            }
+
             for (const item of resultValues){
                 /*
                 try{
@@ -590,30 +624,51 @@ export function IdentityView(props: any){
 
                 let foundMetaName = false;
                 let nftValue = 0;
+
+                if (dasMeta){
+                    for (const das_item of dasMeta){
+                        if (das_item.id === item.account.data.parsed.info.mint){
+                            if (das_item?.metadata?.name)
+                                name = das_item.metadata.name;
+                            
+                            if (das_item?.content?.metadata)
+                                metadata = das_item.content.metadata;
+
+                            if (das_item?.content?.links?.image)
+                                logo = das_item.content.links.image;
+
+                        }
+                    }
+                }
+
                 if (nftMeta){
                     for (const nft of nftMeta){
                         if (nft?.meta && nft.meta.mint === item.account.data.parsed.info.mint){
-                            //console.log("nft: "+JSON.stringify(nft))
 
-                            if (nft?.data)
-                                metadata_decoded = decodeMetadata(nft.data);
-                            //console.log("meta_final: "+JSON.stringify(metadata_decoded))
-                            
-                            name = nft.meta.data.name;
-                            metadata = nft.meta.data.uri;
-                            // fetch
-                            if (nft?.image){
-                                logo = nft.image;
-                            }else if (nft?.urimeta?.image){
-                                logo = nft.urimeta?.image;
-                            }/*else if (nft?.meta){
-                                let urimeta = await window.fetch(metadata).then((res: any) => res.json());
-                                logo = DRIVE_PROXY+urimeta.image;
-                            }*/
+                            if (!name && !logo){
 
-                            nftValue = nft?.floorPrice ? nft.floorPrice : 0;
+                                //console.log("nft: "+JSON.stringify(nft))
 
-                            foundMetaName = true;
+                                if (nft?.data)
+                                    metadata_decoded = decodeMetadata(nft.data);
+                                //console.log("meta_final: "+JSON.stringify(metadata_decoded))
+                                
+                                name = nft.meta.data.name;
+                                metadata = nft.meta.data.uri;
+                                // fetch
+                                if (nft?.image){
+                                    logo = nft.image;
+                                }else if (nft?.urimeta?.image){
+                                    logo = nft.urimeta?.image;
+                                }/*else if (nft?.meta){
+                                    let urimeta = await window.fetch(metadata).then((res: any) => res.json());
+                                    logo = DRIVE_PROXY+urimeta.image;
+                                }*/
+
+                                nftValue = nft?.floorPrice ? nft.floorPrice : 0;
+
+                                foundMetaName = true;
+                            }
                         }
                     }
                 }
@@ -1152,7 +1207,10 @@ export function IdentityView(props: any){
                     final_collection_meta.push(collectionitem);
                 }
             } else{
-            
+                
+
+
+
                 for (let x = 0; x < loops; x++) {
                     const tmpcollectionmeta = await getCollectionData(x, sholdings);
                     console.log('tmpcollectionmeta: ' + JSON.stringify(tmpcollectionmeta));
