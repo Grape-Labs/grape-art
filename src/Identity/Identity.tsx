@@ -195,6 +195,7 @@ export function IdentityView(props: any){
     const [solanaClosableHoldings, setSolanaClosableHoldings] = React.useState(null);
     const [solanaClosableHoldingsRows, setSolanaClosableHoldingsRows] = React.useState(null);
     const [solanaBalance, setSolanaBalance] = React.useState(null);
+    const [solanaBasicTicker, setSolanaBasicTicker] = React.useState(null);
     const [solanaTicker, setSolanaTicker] = React.useState(null);
     const [solanaUSDC, setSolanaUSDC] = React.useState(null);
     const [loadingWallet, setLoadingWallet] = React.useState(false);
@@ -488,6 +489,7 @@ export function IdentityView(props: any){
         try{
             const response = await connection.getBalance(new PublicKey(pubkey));
             const converted = await getTokenPrice('So11111111111111111111111111111111111111112','EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'); // SOL > USDC
+            /*
             const ticker = await getTokenTicker('So11111111111111111111111111111111111111112','EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'); // SOL > USDC
             //console.log("ticker: "+JSON.stringify(ticker))
             setSolanaTicker(ticker);
@@ -497,6 +499,9 @@ export function IdentityView(props: any){
                 setSolanaUSDC(converted.data.price);
             else if (ticker?.last_price)
                 setSolanaUSDC(+ticker.last_price);
+            */
+            setSolanaUSDC(converted.data["So11111111111111111111111111111111111111112"].price);
+            setSolanaBasicTicker(converted);
             setSolanaBalance(response);
         }catch(e){
             console.log("ERR: "+e);
@@ -628,15 +633,14 @@ export function IdentityView(props: any){
                 if (dasMeta){
                     for (const das_item of dasMeta){
                         if (das_item.id === item.account.data.parsed.info.mint){
-                            if (das_item?.metadata?.name)
-                                name = das_item.metadata.name;
+                            if (das_item?.content?.metadata?.name)
+                                name = das_item.content.metadata.name;
                             
                             if (das_item?.content?.metadata)
                                 metadata = das_item.content.metadata;
 
                             if (das_item?.content?.links?.image)
                                 logo = das_item.content.links.image;
-
                         }
                     }
                     // add any assets that are not in the wallet i.e. compressed NFTs?
@@ -789,6 +793,60 @@ export function IdentityView(props: any){
 
                 cnt++;
             }
+
+
+            for (const dasItem of dasMeta){
+                let found = false;
+                for (const holdingItem of solholdingrows){
+                    if (holdingItem.mint === dasItem.id){
+                        found = true;
+                    }
+                }
+                if (!found){
+                    if (dasItem.id){
+
+                        console.log("Add from DAS: "+dasItem.content.metadata.name+" - "+dasItem.id);
+                        
+                        /*
+                        solholdingrows.push({
+                            id: solholdingrows.length+1,
+                            mint: dasItem.id,
+                            logo: {
+                                mint: dasItem.id,
+                                logo: dasItem.content.links.image,
+                                metadata: dasItem.content.json_uri
+                            },
+                            name:"+++ "+dasItem.content.metadata.name,
+                            balance:dasItem.supply.print_current_supply,
+                            delegate:null,
+                            delegateAmount:null,
+                            price:null,
+                            change:null,
+                            value:null,
+                            send:{
+                                name:dasItem.content.metadata.name,
+                                logo:dasItem.content.links.image,
+                                mint: dasItem.id,
+                                info:{
+                                    mint:dasItem.id,
+                                    tokenAmount:{
+                                        amount:1,
+                                        decimals:0,
+                                    }
+                                },
+                                metadata: dasItem.content.json_uri,
+                                tokenAmount:1,
+                                decimals:0,
+                                delegate:null,
+                                delegateAmount:null,
+                            },
+                            metadata_decoded:dasItem.content.json_uri,
+                        })
+                        */
+                    }
+                }
+            }
+
 
             setTokensNetValue(netValue);
 
@@ -1462,7 +1520,7 @@ export function IdentityView(props: any){
                                                 </List>
                                             </Grid>
                                             <Grid item xs={12} md={6}>
-                                                {solanaTicker && 
+                                                {solanaTicker ?
                                                     <Typography variant='caption'>
                                                         Rate: 1 SOL = {(+solanaTicker.last_price).toFixed(2)} USDC
                                                         <Typography variant='caption' sx={{color:'#999'}}>
@@ -1474,7 +1532,21 @@ export function IdentityView(props: any){
                                                             Timestamp: {moment(new Date()).format("YYYY-MM-DD HH:mm:ss")}
                                                         </Typography>
                                                     </Typography>
+                                                : 
+                                                    <>
+                                                        {solanaBasicTicker && 
+                                                            <Typography variant='caption'>
+                                                                Rate: 1 SOL = {(+solanaBasicTicker.data["So11111111111111111111111111111111111111112"]["price"]).toFixed(2)} USDC
+                                                                <Typography variant='caption' sx={{color:'#999'}}>
+                                                                    <br/>
+                                                                    Timestamp: {moment(new Date()).format("YYYY-MM-DD HH:mm:ss")}
+                                                                </Typography>
+                                                            </Typography>
+                                                        }
+                                                    </>
                                                 }
+                                                
+                                                
                                             </Grid>
                                         </Grid>
                                     </Box>
