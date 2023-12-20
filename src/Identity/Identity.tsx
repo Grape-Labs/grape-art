@@ -1946,8 +1946,8 @@ export function IdentityView(props: any){
                                                                     }}
                                                                 >
                                                                     <FormGroup row>
-                                                                        <FormControlLabel control={<Switch defaultChecked disabled={loadingTokens} checked={loadNfts} onChange={setLoadNftToggle} size="small" />} label={<><Typography variant="caption">Load NFT & Token Metadata</Typography></>} />
-                                                                        <FormControlLabel control={<Switch defaultChecked disabled={loadingTokens} checked={loadNftFloor} onChange={setLoadNftFloorToggle} size="small" />} label={<><Typography variant="caption">Load NFT Floor Pricing</Typography></>} />
+                                                                        <FormControlLabel control={<Switch defaultChecked disabled={loadingTokens} checked={loadNfts} onChange={setLoadNftToggle} size="small" />} label={<><Typography variant="caption">Load Token Metadata</Typography></>} />
+                                                                        <FormControlLabel control={<Switch defaultChecked disabled={loadingTokens} checked={loadNftFloor} onChange={setLoadNftFloorToggle} size="small" />} label={<><Typography variant="caption">Load Floor Pricing</Typography></>} />
                                                                     </FormGroup>
                                                                 </Box>
                                                             </div>    
