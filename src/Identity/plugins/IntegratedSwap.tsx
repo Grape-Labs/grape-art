@@ -40,6 +40,7 @@ export function IntegratedSwapView(props: any){
                 passThroughWallet: wallet,
                 //platformFeeAndAccounts,
                 containerStyles: {minHeight: 500},
+                strictTokenList: false,
                 onSuccess: ({ txid }) => {
                     try{
                         console.log('onSuccess', txid);

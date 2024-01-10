@@ -46,6 +46,7 @@ export default function ModalSwapView(props: any){
                 passThroughWallet: wallet,
                 //platformFeeAndAccounts,
                 containerStyles: {height: 500,zIndex:1},
+                strictTokenList: false,
                 onSuccess: ({ txid }) => {
                     try{
                         console.log('onSuccess', txid);
