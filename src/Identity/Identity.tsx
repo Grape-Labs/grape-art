@@ -578,35 +578,66 @@ export function IdentityView(props: any){
 
             let netValue = 0;
 
+            let tokenMeta = null;
             let dasMeta = null;
             if (SHYFT_KEY) {
+
                 try{
-                    const uri = `https://rpc.shyft.to/?api_key=${SHYFT_KEY}`;
-        
-                    const response = await fetch(uri, {
-                        method: 'POST',
+                    const uri = `https://api.shyft.to/sol/v1/wallet/all_tokens?network=mainnet-beta&wallet=${pubkey}`;
+                
+                    const response = await axios.get(uri, {
                         headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            jsonrpc: '2.0',
-                            id: 'rpc-id',
-                            method: 'getAssetsByOwner',
-                            params: {
-                                ownerAddress: pubkey,
-                                page: 1, // Starts at 1
-                                limit: 1000
-                            },
-                        }),
+                            'x-api-key': SHYFT_KEY
+                        }
+                        })
+                        .then(response => {
+                            if (response?.data?.result){
+                                return response.data.result;
+                            }
+                            return null
+                        })
+                        .catch(error => {   
+                                // revert to RPC
+                                console.error(error);
+                                return null;
                         });
-                    const { result } = await response.json();
-                    dasMeta = result.items;
-                    /*
-                    console.log("Assets owned by a wallet: ", result.items);
-                    */
+                    
+                    //const { results } = await response;
+                    tokenMeta = response;
+                    console.log("tokenMeta: "+JSON.stringify(tokenMeta));
                 } catch(err){
-                    console.log("DAS: Err")
+                    console.log("AT API: Err")
                 }
+                
+                //if (!tokenMeta){
+                    try{
+                        const uri = `https://rpc.shyft.to/?api_key=${SHYFT_KEY}`;
+            
+                        const response = await fetch(uri, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                jsonrpc: '2.0',
+                                id: 'rpc-id',
+                                method: 'getAssetsByOwner',
+                                params: {
+                                    ownerAddress: pubkey,
+                                    page: 1, // Starts at 1
+                                    limit: 1000
+                                },
+                            }),
+                        });
+                        const { result } = await response.json();
+                        dasMeta = result.items;
+                        /*
+                        console.log("Assets owned by a wallet: ", result.items);
+                        */
+                    } catch(err){
+                        console.log("DAS API: Err")
+                    }
+                //}
             }
 
             for (const item of resultValues){
@@ -630,7 +661,27 @@ export function IdentityView(props: any){
                 let foundMetaName = false;
                 let nftValue = 0;
 
+                if (tokenMeta){
+                    for (const token_item of tokenMeta){
+                        console.log("checking: "+JSON.stringify(token_item))
+                        if ((token_item.address === item.account.data.parsed.info.mint)){//||
+                            //(token_tem.address === item.)){
+                            if (token_item?.info?.name)
+                                name = token_item.info.name;
+                            
+                            //if (das_item?.content?.metadata)
+                            //    metadata = das_item.content.metadata;
+
+                            if (token_item?.info?.image)
+                                logo = token_item.info.image;
+                        }
+                    }
+                    // add any assets that are not in the wallet i.e. compressed NFTs?
+                    //console.log(name+" - "+logo)
+                }
+
                 if (dasMeta){
+
                     for (const das_item of dasMeta){
                         if (das_item.id === item.account.data.parsed.info.mint){
                             if (das_item?.content?.metadata?.name)
@@ -644,6 +695,7 @@ export function IdentityView(props: any){
                         }
                     }
                     // add any assets that are not in the wallet i.e. compressed NFTs?
+                    //console.log(name+" - "+logo)
                 }
 
                 if (nftMeta){
@@ -794,63 +846,63 @@ export function IdentityView(props: any){
                 cnt++;
             }
 
-
-            for (const dasItem of dasMeta){
-                let found = false;
-                for (const holdingItem of solholdingrows){
-                    if (holdingItem.mint === dasItem.id){
-                        found = true;
+            if (dasMeta){
+                for (const dasItem of dasMeta){
+                    let found = false;
+                    for (const holdingItem of solholdingrows){
+                        if (holdingItem.mint === dasItem.id){
+                            found = true;
+                        }
                     }
-                }
-                if (!found){
-                    if (dasItem.id){
+                    if (!found){
+                        if (dasItem.id){
 
-                        console.log("Add from DAS: "+dasItem.content.metadata.name+" - "+dasItem.id);
-                        
-                        /*
-                        solholdingrows.push({
-                            id: solholdingrows.length+1,
-                            mint: dasItem.id,
-                            logo: {
+                            console.log("Add from DAS: "+dasItem.content.metadata.name+" - "+dasItem.id);
+                            
+                            /*
+                            solholdingrows.push({
+                                id: solholdingrows.length+1,
                                 mint: dasItem.id,
-                                logo: dasItem.content.links.image,
-                                metadata: dasItem.content.json_uri
-                            },
-                            name:"+++ "+dasItem.content.metadata.name,
-                            balance:dasItem.supply.print_current_supply,
-                            delegate:null,
-                            delegateAmount:null,
-                            price:null,
-                            change:null,
-                            value:null,
-                            send:{
-                                name:dasItem.content.metadata.name,
-                                logo:dasItem.content.links.image,
-                                mint: dasItem.id,
-                                info:{
-                                    mint:dasItem.id,
-                                    tokenAmount:{
-                                        amount:1,
-                                        decimals:0,
-                                    }
+                                logo: {
+                                    mint: dasItem.id,
+                                    logo: dasItem.content.links.image,
+                                    metadata: dasItem.content.json_uri
                                 },
-                                metadata: dasItem.content.json_uri,
-                                tokenAmount:1,
-                                decimals:0,
+                                name:"+++ "+dasItem.content.metadata.name,
+                                balance:dasItem.supply.print_current_supply,
                                 delegate:null,
                                 delegateAmount:null,
-                            },
-                            metadata_decoded:dasItem.content.json_uri,
-                        })
-                        */
+                                price:null,
+                                change:null,
+                                value:null,
+                                send:{
+                                    name:dasItem.content.metadata.name,
+                                    logo:dasItem.content.links.image,
+                                    mint: dasItem.id,
+                                    info:{
+                                        mint:dasItem.id,
+                                        tokenAmount:{
+                                            amount:1,
+                                            decimals:0,
+                                        }
+                                    },
+                                    metadata: dasItem.content.json_uri,
+                                    tokenAmount:1,
+                                    decimals:0,
+                                    delegate:null,
+                                    delegateAmount:null,
+                                },
+                                metadata_decoded:dasItem.content.json_uri,
+                            })
+                            */
+                        }
                     }
                 }
             }
 
-
             setTokensNetValue(netValue);
 
-            let closableholdingsrows = new Array();
+            const closableholdingsrows = new Array();
             cnt = 0;
             for (const item of closable){
                 /*
@@ -1412,7 +1464,7 @@ export function IdentityView(props: any){
         } else if (publicKey) {
             setPubkey(publicKey.toBase58());
         }
-    }, [urlParams, publicKey]);
+    }, [urlParams, publicKey, pubkey]);
 
     const fetchTokenPositions = async (loadNftsMeta: boolean) => {
         setLoadingTokens(true);
@@ -1551,13 +1603,13 @@ export function IdentityView(props: any){
                                         </Grid>
                                     </Box>
 
-                                    <Box sx={{ width: '100%' }}>
-                                        <Grid container>
-                                            <Grid item xs={12} sm={12} md={nftFloorValue > 0 ? 3 : 4} lg={nftFloorValue > 0 ? 3 : 4} textAlign={'center'}
+                                    <Box>
+                                        <Grid container spacing={{ xs: 0 }} columns={{ xs: 4, sm: 4, md: 12 }}>
+                                            <Grid item textAlign={'center'} xs={12} sm={12} md={nftFloorValue > 0 ? 3 : 4} lg={nftFloorValue > 0 ? 3 : 4} 
                                                 sx={{
                                                     border:'1px solid rgba(0,0,0,0.15)',
                                                     borderRadius:'17px',
-                                                    background:'rgba(0,0,0,0.05)'
+                                                    background:'rgba(0,0,0,0.05)',
                                                 }}
                                             >   
                                                 <Grid container>
@@ -1573,7 +1625,7 @@ export function IdentityView(props: any){
                                                     } 
                                                 </Grid>
                                                 <List dense={true}>
-                                                    <ListItem sx={{width:'100%'}}>
+                                                    <ListItem>
                                                         <ListItemAvatar>
                                                             <Avatar
                                                                 sx={{backgroundColor:'#222'}}
@@ -1581,7 +1633,7 @@ export function IdentityView(props: any){
                                                                 <SolCurrencyIcon sx={{color:'white'}} />
                                                             </Avatar>
                                                         </ListItemAvatar>
-                                                        <Grid container sx={{width:'100%'}}>
+                                                        <Grid container>
                                                             <Grid item>
                                                                 <ListItemText
                                                                     primary={
@@ -1610,7 +1662,7 @@ export function IdentityView(props: any){
                                             {tokensNetValue > 0 &&
                                                 <>
                                                 {(solanaUSDC) &&
-                                                <Grid item xs={12} sm={12} md={nftFloorValue > 0 ? 3 : 4} lg={nftFloorValue > 0 ? 3 : 4} textAlign={'center'}
+                                                <Grid item textAlign={'center'} xs={12} sm={12} md={nftFloorValue > 0 ? 3 : 4} lg={nftFloorValue > 0 ? 3 : 4} 
                                                     sx={{
                                                         border:'1px solid rgba(0,0,0,0.15)',
                                                         borderRadius:'17px',
@@ -1663,7 +1715,7 @@ export function IdentityView(props: any){
                                             {nftFloorValue > 0 &&
                                                 <>
                                                 {(solanaUSDC) &&
-                                                <Grid item xs={12} sm={12} md={3} lg={3} textAlign={'center'}
+                                                <Grid item textAlign={'center'} xs={12} sm={12} md={3} lg={3} 
                                                     sx={{
                                                         border:'1px solid rgba(0,0,0,0.15)',
                                                         borderRadius:'17px',
@@ -2043,7 +2095,7 @@ export function IdentityView(props: any){
                                                                 <Grid item xs={12} alignContent={'right'} textAlign={'right'}>
                                                                     <Grid item alignContent={'center'} textAlign={'center'}>
                                                                         <>
-                                                                            <Typography variant="caption" color='error'>* IMPORTANT: Prior to closing any accounts; verify that you have removed any deposited positions in SPL Governance, Staking, Farming, Streaming services; visit those services and withdraw/transfer positions and deposits from those accounts first, i.e. SPL Governance Council Tokens should be withdrawn from the respective Realms first to avoid any permanent loss of those positions, Streaming services support transfering of streams to a new account</Typography>
+                                                                            <Typography variant="caption" color='error'>* IMPORTANT: By closing a token account you will be recovering the account rent, this is not reversable</Typography>
                                                                         </>
                                                                         
                                                                     </Grid>

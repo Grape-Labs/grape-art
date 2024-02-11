@@ -120,7 +120,7 @@ export default function BulkBurnClose(props: any) {
     const solanaHoldingRows = props.solanaHoldingRows;
     const tokenMap = props.tokenMap;
     const nftMap = props.nftMap;
-    const fetchSolanaTokens = props.fetchSolanaTokens;
+    const fetchSolanaTokens = props?.fetchSolanaTokens;
 
     const [holdingsSelected, setHoldingsSelected] = React.useState(null);
     const [accept, setAccept] = React.useState(false);
@@ -247,15 +247,15 @@ export default function BulkBurnClose(props: any) {
     }
     
     async function closeTokens() {
-        var maxLen = 7;
-        var maxLenTx = Math.ceil(holdingsSelected.length / maxLen);
-        for (var item = 0; item < maxLenTx; item++) {
+        const maxLen = 7;
+        const maxLenTx = Math.ceil(holdingsSelected.length / maxLen);
+        for (let item = 0; item < maxLenTx; item++) {
             enqueueSnackbar(`Processing close transaction ${item+1} of ${maxLenTx}`,{ variant: 'info' });
             const batchtx = new Transaction;
-            for (var holding = 0; holding < maxLen; holding++) {
+            for (let holding = 0; holding < maxLen; holding++) {
                 if (holdingsSelected[item * maxLen + holding]) {
                     console.log("adding to close ("+(item * maxLen + holding)+"): "+(holdingsSelected[item * maxLen + holding]).mint)
-                    var tti = await closeTokenInstruction((holdingsSelected[item * maxLen + holding]).mint);
+                    const tti = await closeTokenInstruction((holdingsSelected[item * maxLen + holding]).mint);
                     if (tti)
                         batchtx.add(tti);
                 }
@@ -272,12 +272,12 @@ export default function BulkBurnClose(props: any) {
     const MD_PUBKEY = new PublicKey('metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s');
 
     async function burnTokens() {
-        var maxLen = 7;
-        var maxLenTx = Math.ceil(holdingsSelected.length / maxLen);
-        for (var item = 0; item < maxLenTx; item++) {
+        const maxLen = 7;
+        const maxLenTx = Math.ceil(holdingsSelected.length / maxLen);
+        for (let item = 0; item < maxLenTx; item++) {
             enqueueSnackbar(`Processing burn transaction ${item+1} of ${maxLenTx}`,{ variant: 'info' });
             const batchtx = new Transaction;
-            for (var holding = 0; holding < maxLen; holding++) {
+            for (let holding = 0; holding < maxLen; holding++) {
                 if (holdingsSelected[item * maxLen + holding]) {
                     console.log("adding to burn ("+(item * maxLen + holding)+"): "+(holdingsSelected[item * maxLen + holding]).mint)
                     //console.log("burning: "+JSON.stringify(holdingsSelected[item * maxLen + holding]))
@@ -332,7 +332,7 @@ export default function BulkBurnClose(props: any) {
                             splTokenProgram: new PublicKey(TOKEN_PROGRAM_ID),
                             collectionMetadata: collectionMetadata || null
                         }
-                        var tti = await createBurnNftInstruction(accounts)
+                        const tti = await createBurnNftInstruction(accounts)
 
                         const transaction = new Transaction()
                             .add(tti);
@@ -347,7 +347,7 @@ export default function BulkBurnClose(props: any) {
                             } else {
                                 //console.log("test burn");
                                 const amountToBurn = holdingsSelected[item * maxLen + holding].send.tokenAmount.amount;
-                                var tt = await burnTokenInstruction((holdingsSelected[item * maxLen + holding]).mint, amountToBurn);
+                                const tt = await burnTokenInstruction((holdingsSelected[item * maxLen + holding]).mint, amountToBurn);
                                 if (tt){
                                     //console.log("test burn 2");
                                     //const transaction2 = new Transaction().add(tt);
@@ -370,7 +370,7 @@ export default function BulkBurnClose(props: any) {
                     }else{
                         // get tokens to burn
                         const amountToBurn = holdingsSelected[item * maxLen + holding].send.tokenAmount.amount;
-                        var tt = await burnTokenInstruction((holdingsSelected[item * maxLen + holding]).mint, amountToBurn);
+                        const tt = await burnTokenInstruction((holdingsSelected[item * maxLen + holding]).mint, amountToBurn);
                         if (tt)
                             batchtx.add(tt);
                     }
@@ -379,8 +379,9 @@ export default function BulkBurnClose(props: any) {
             }
             await executeTransactions(batchtx, null);
         }
-    
-        fetchSolanaTokens();
+        
+        if (fetchSolanaTokens)
+            fetchSolanaTokens();
         try{
             clearSelectionModels();
         }catch(e){console.log("ERR: "+e)}
@@ -399,8 +400,8 @@ export default function BulkBurnClose(props: any) {
     React.useEffect(() => {
         if (tokensSelected){
             const hSelected = new Array();
-            for (var x of tokensSelected){
-                for (var y of solanaHoldingRows){
+            for (let x of tokensSelected){
+                for (let y of solanaHoldingRows){
                     if (y.id === x){
                         hSelected.push(y);
                     }
@@ -408,7 +409,7 @@ export default function BulkBurnClose(props: any) {
             }
             setHoldingsSelected(hSelected);
         }
-    }, [tokensSelected]);
+    }, [tokensSelected, solanaHoldingRows]);
 
     return (
         <div>
@@ -455,8 +456,8 @@ export default function BulkBurnClose(props: any) {
                                     </Alert>
                                     <Typography>
                                         <List dense={true}>
-                                            {holdingsSelected.length > 0 && holdingsSelected.map((item: any) => (
-                                                <ListItem>
+                                            {holdingsSelected.length > 0 && holdingsSelected.map((item: any, key: number) => (
+                                                <ListItem key={key}>
                                                         <Tooltip title='View Token on Explorer'>
                                                             <ListItemButton
                                                                 href={`https://explorer.solana.com/address/${item.mint}`}
@@ -491,7 +492,7 @@ export default function BulkBurnClose(props: any) {
                                     {type === 0 ? 
                                         <>The balance of this asset will be burnt and will not be recoverable. Once burnt you can close those accounts.</>
                                     :
-                                        <>This asset is will be closed, if you are participating in SPL Governance, Staking, Farming, Streaming please make sure you close those accounts and withdraw positions prior to closing this token account.</>
+                                        <>This asset is will be closed, if you are participating in SPL Governance, Staking, Farming, Streaming please make sure you withdraw/close withdraw positions prior to closing this token account.</>
                                     }
                                     </Typography>
 

@@ -406,7 +406,7 @@ export default function ExplorerView(props:any){
             >
                 <Typography sx={{color:`${buttonColor}`,fontSize:`${fontSize}`,textAlign:'left'}}>
                     {title ?
-                        <>{title}</>
+                        <>{title.length > 30 ? trimAddress(title,5) : title }</>
                     :
                         <>
                             {!hideTitle &&
@@ -421,7 +421,7 @@ export default function ExplorerView(props:any){
                                     <>
                                     {(shorten && shorten > 0) ? 
                                         trimAddress(address,shorten) : address
-                                    } 
+                                    }
                                     </>
                                     }
                                 </>
@@ -583,13 +583,13 @@ export default function ExplorerView(props:any){
                     
                     <MenuItem 
                         component='a'
-                        href={`https://solana.fm/${type}/${address}`}
+                        href={`https://translator.shyft.to/${type === 'address' ? 'address' : 'tx'}/${address}`}
                         target='_blank'
                         onClick={handleClose}>
                             <ListItemIcon>
                                 <ExploreOutlinedIcon fontSize="small" />
                             </ListItemIcon>
-                            SolanaFM
+                            Shyft
                     </MenuItem>
                     <MenuItem 
                         component='a'
@@ -600,6 +600,16 @@ export default function ExplorerView(props:any){
                                 <ExploreOutlinedIcon fontSize="small" />
                             </ListItemIcon>
                             SolScan
+                    </MenuItem>
+                    <MenuItem 
+                        component='a'
+                        href={`https://solana.fm/${type}/${address}`}
+                        target='_blank'
+                        onClick={handleClose}>
+                            <ListItemIcon>
+                                <ExploreOutlinedIcon fontSize="small" />
+                            </ListItemIcon>
+                            SolanaFM
                     </MenuItem>
                     <MenuItem 
                         component='a'

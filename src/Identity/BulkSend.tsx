@@ -344,8 +344,9 @@ export default function BulkSend(props: any) {
             }
             await executeTransactions(batchtx, null);
         }
-    
-        fetchSolanaTokens()
+        
+        if (fetchSolanaTokens)
+            fetchSolanaTokens();
     }
 
     const getReverseDomainLookup = async (url: string) => {
@@ -421,7 +422,7 @@ export default function BulkSend(props: any) {
             }
             setHoldingsSelected(hSelected);
         }
-    }, [tokensSelected]);
+    }, [tokensSelected, solanaHoldingRows]);
 
     return (
         <div>

@@ -328,20 +328,29 @@ export default function MarketplaceView(props: any) {
             </Box>
 
             <Grid container sx={{mb:4}} spacing={1}>
-                {/*
+                
                 <Grid item xs={12} sm={6}>
                     <Box sx={{background:'rgba(0,0,0,0.1)',borderRadius:'17px',p:3}}>
 
-                        <Typography variant="h4">Explore Grape Governance</Typography>
-                        <Typography variant="body1">Building a DAO future on Grape <Button component={Link} to={`/identity`} variant="outlined" color="inherit" size="small" sx={{borderRadius:'17px',ml:1}}>Grape Governance <AccountBalanceWalletIcon sx={{ml:1}} /></Button></Typography>
+                        <Typography variant="h4">Realtime</Typography>
+                        <Typography variant="body1">View what is going on in realtime throughout the Solana DAO ecosystem, it's never been so easy to see and learn what is going on any time of the day and on any device, powered by the incredibly fast API developed by Grape <Button component="a" href={`https://governance.so`} variant="outlined" color="inherit" size="small" sx={{borderRadius:'17px',ml:1}}>Realtime <AccountBalanceIcon sx={{ml:1}} /></Button></Typography>
 
                     </Box>
                 </Grid>
-                */}
+                
+                <Grid item xs={12} sm={6}>
+                    <Box sx={{background:'rgba(0,0,0,0.1)',borderRadius:'17px',p:3}}>
+
+                        <Typography variant="h4">Governance</Typography>
+                        <Typography variant="body1">We are building the future of DAO Tooling on Solana, with a faster & more transparent experience to quickly explore and participate on any community DAO using SPL Governance powered by Grape <Button component="a" href={`https://governance.so`} variant="outlined" color="inherit" size="small" sx={{borderRadius:'17px',ml:1}}>Grape Governance <AccountBalanceIcon sx={{ml:1}} /></Button></Typography>
+
+                    </Box>
+                </Grid>
+                
                 <Grid item xs={12}>
                     <Box sx={{background:'rgba(0,0,0,0.1)',borderRadius:'17px',p:3,mb:4}}>
 
-                        <Typography variant="h4">Explore Grape Identity</Typography>
+                        <Typography variant="h4">Grape Identity</Typography>
                         <Typography variant="body1">Unlock greater possibilities with your wallet and explore a wide array of connected protocols supporting a multitude of exciting features, including full token closing &amp; burning, seamless integrated token swapping, staking, lending, domains, decentralized storage, streaming payments, multisig, and seamless governance integration on <Button component={Link} to={`/identity`} variant="outlined" color="inherit" size="small" sx={{borderRadius:'17px',ml:1}}>Grape Identity <AccountBalanceWalletIcon sx={{ml:1}} /></Button></Typography>
 
                     </Box>
