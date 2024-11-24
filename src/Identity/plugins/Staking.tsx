@@ -109,21 +109,26 @@ export function StakingView(props: any){
             console.log("Fetching staking data")
             setLoadingPosition("Fetching wallet staking");
 
-            const stakeAccounts = await connection.getParsedProgramAccounts(
-                STAKE_PROGRAM_PK, {
-                filters: [
-                    {
-                      dataSize: DATA_SIZE, // number of bytes
-                    },
-                    {
-                      memcmp: {
-                        offset: WALLET_OFFSET, // number of bytes
-                        bytes: pubkey, // base58 encoded string
-                      },
-                    },
-                  ]
-                }
-            );
+            try{
+
+                const stakeAccounts = await connection.getParsedProgramAccounts(
+                    STAKE_PROGRAM_PK, {
+                    filters: [
+                        {
+                        dataSize: DATA_SIZE, // number of bytes
+                        },
+                        {
+                        memcmp: {
+                            offset: WALLET_OFFSET, // number of bytes
+                            bytes: pubkey, // base58 encoded string
+                        },
+                        },
+                    ]
+                    }
+                );
+            } catch(e){
+                console.log("ERR: "+e);
+            }
 
             const staking: any[] = [];
             let cnt = 0;

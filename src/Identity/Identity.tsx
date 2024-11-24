@@ -1890,12 +1890,12 @@ export function IdentityView(props: any){
                                                             icon={<Hidden smUp><Badge badgeContent={solanaHoldings.length} color="primary"><AccountBalanceWalletIcon /></Badge></Hidden>}
                                                             label={<Hidden smDown><Badge badgeContent={solanaHoldings.length} color="primary"><Typography variant="h6">{t('Tokens')}</Typography></Badge></Hidden>
                                                         } value={NavPanel.Holdings.toString()}/>
-
+                                                        {/*
                                                         <Tab sx={{color:'white', textTransform:'none'}} 
                                                             icon={<Hidden smUp><SwapHorizIcon /></Hidden>}
                                                             label={<Hidden smDown><Typography variant="h6">{t('Transactions')}</Typography></Hidden>
                                                         } value={NavPanel.Transactions.toString()} />
-
+                                                        */}
                                                         {solanaClosableHoldings && solanaClosableHoldings.length > 0 &&
                                                             <Tab sx={{color:'white', textTransform:'none'}} 
                                                                 icon={<Hidden smUp><Badge badgeContent={solanaClosableHoldings.length} color="error"><DoNotDisturbIcon /></Badge></Hidden>}
