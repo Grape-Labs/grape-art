@@ -132,63 +132,64 @@ export function StakingView(props: any){
 
             const staking: any[] = [];
             let cnt = 0;
-            for (let item of stakeAccounts){
+            if (stakeAccounts && stakeAccounts.length > 0){
+                for (let item of stakeAccounts){
 
-                const epochStart = Number(item.account.data.parsed?.info.stake.delegation.activationEpoch);
-                const epochCurrent = Number(item.account.rentEpoch);
-                const epochAge = epochCurrent - epochStart;
+                    const epochStart = Number(item.account.data.parsed?.info.stake.delegation.activationEpoch);
+                    const epochCurrent = Number(item.account.rentEpoch);
+                    const epochAge = epochCurrent - epochStart;
 
-                let validatorInfo = null;
-                try{
-                    const url = 'https://api-production.solflare.com/api/v2/validators';
-                    const config = {
-                        headers:{
-                        accept: `application/json`,
-                        'content-type': `application/json`
+                    let validatorInfo = null;
+                    try{
+                        const url = 'https://api-production.solflare.com/api/v2/validators';
+                        const config = {
+                            headers:{
+                            accept: `application/json`,
+                            'content-type': `application/json`
+                            }
+                        };
+                        const data = {
+                            page: 0,
+                            pageSize: 20,
+                            network: "mainnet",
+                            validators: new PublicKey(item.account.data.parsed.info?.stake.delegation.voter).toBase58()
                         }
-                    };
-                    const data = {
-                        page: 0,
-                        pageSize: 20,
-                        network: "mainnet",
-                        validators: new PublicKey(item.account.data.parsed.info?.stake.delegation.voter).toBase58()
-                    }
-                    const stakeMeta = await axios.get(url+'?page='+data.page+'&pageSize='+data.pageSize+'&network='+data.network+'&validators='+data.validators); 
+                        const stakeMeta = await axios.get(url+'?page='+data.page+'&pageSize='+data.pageSize+'&network='+data.network+'&validators='+data.validators); 
 
-                    if (stakeMeta?.data?.data){
-                        //console.log("stakeMeta.data: "+JSON.stringify(stakeMeta.data.data));
-                        for (let validatorItem of stakeMeta.data.data){
-                            validatorInfo = {
-                                name: validatorItem.name,
-                                logo: validatorItem.image,
-                                details: validatorItem.details,
-                                commission: validatorItem.commission,
-                                stakePercentage: validatorItem.stakePercentage,
-                                website: validatorItem.website
+                        if (stakeMeta?.data?.data){
+                            //console.log("stakeMeta.data: "+JSON.stringify(stakeMeta.data.data));
+                            for (let validatorItem of stakeMeta.data.data){
+                                validatorInfo = {
+                                    name: validatorItem.name,
+                                    logo: validatorItem.image,
+                                    details: validatorItem.details,
+                                    commission: validatorItem.commission,
+                                    stakePercentage: validatorItem.stakePercentage,
+                                    website: validatorItem.website
+                                }
                             }
                         }
+                    } catch(e){
+                        console.log("ERR: "+e);
                     }
-                } catch(e){
-                    console.log("ERR: "+e);
+                    
+                    staking.push({
+                        id: cnt,
+                        voter: new PublicKey(item.account.data.parsed.info?.stake.delegation.voter).toBase58(),
+                        validator: validatorInfo,
+                        address: new PublicKey(item.pubkey).toBase58(),
+                        lamports: item.account.lamports,
+                        creditsObserved: item.account.data.parsed?.info.stake.creditsObserved,
+                        activationEpoch: item.account.data.parsed?.info.stake.delegation.activationEpoch,
+                        warmupCooldownRate: item.account.data.parsed?.info.stake.delegation.warmupCooldownRate,
+                        stake: item.account.data.parsed?.info.stake.delegation.stake,
+                        epochStart: epochStart,
+                        epochCurrent: epochCurrent,
+                        epochAge: epochAge,
+                    })
+                    cnt++;
                 }
-                
-                staking.push({
-                    id: cnt,
-                    voter: new PublicKey(item.account.data.parsed.info?.stake.delegation.voter).toBase58(),
-                    validator: validatorInfo,
-                    address: new PublicKey(item.pubkey).toBase58(),
-                    lamports: item.account.lamports,
-                    creditsObserved: item.account.data.parsed?.info.stake.creditsObserved,
-                    activationEpoch: item.account.data.parsed?.info.stake.delegation.activationEpoch,
-                    warmupCooldownRate: item.account.data.parsed?.info.stake.delegation.warmupCooldownRate,
-                    stake: item.account.data.parsed?.info.stake.delegation.stake,
-                    epochStart: epochStart,
-                    epochCurrent: epochCurrent,
-                    epochAge: epochAge,
-                })
-                cnt++;
             }
-
             setStakeAccounts(staking); 
         }
         setLoading(false);
