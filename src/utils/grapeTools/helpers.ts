@@ -153,7 +153,8 @@ export async function getTokenPrice(tokenIn:string,tokenOut:string) {
     id: tokenIn,
     vsToken: tokenOut
   }
-  const apiUrl = "https://price.jup.ag/v4/price?ids="+tokenIn+"&vsToken="+tokenOut;
+  const apiUrl = "https://api.jup.ag/price/v2?ids="+tokenIn+"&vsToken="+tokenOut;
+  //const apiUrl = "https://price.jup.ag/v4/price?ids="+tokenIn+"&vsToken="+tokenOut;
   const resp = await window.fetch(apiUrl, {
     //method:'GET',
     //body: JSON.stringify(body)

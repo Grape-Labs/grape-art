@@ -552,7 +552,7 @@ export default function SendToken(props: any) {
                     variant={buttonType}
                     //aria-controls={menuId}
                     color='inherit'
-                    title={`Send ${name}`}
+                    //title={`Send ${name}`}
                     onClick={handleClickOpen}
                     size={!buttonSize ? "small" : buttonSize}
                     //onClick={isConnected ? handleProfileMenuOpen : handleOpen}

@@ -500,8 +500,10 @@ export function IdentityView(props: any){
             else if (ticker?.last_price)
                 setSolanaUSDC(+ticker.last_price);
             */
-            setSolanaUSDC(converted.data["So11111111111111111111111111111111111111112"].price);
-            setSolanaBasicTicker(converted);
+           if (converted.data["So11111111111111111111111111111111111111112"]?.price)
+                setSolanaUSDC(converted.data["So11111111111111111111111111111111111111112"].price);
+            if (converted)
+                setSolanaBasicTicker(converted);
             setSolanaBalance(response);
         }catch(e){
             console.log("ERR: "+e);
@@ -1068,24 +1070,28 @@ export function IdentityView(props: any){
     
     const fetchSolanaDomain = async () => {
         setLoadingPosition('SNS Records');
-        const domain = await findDisplayName(connection, pubkey);
-        if (domain){
-            if (domain.toString()!==pubkey){
-                
-                let cnt = 0;
-                const domains = new Array();
-                for (const item of domain){
-                    domains.push({
-                        id:cnt,
-                        domain:item,
-                        type:item,
-                        manage:item,
-                    });
-                    cnt++;
+        try{
+            const domain = await findDisplayName(connection, pubkey);
+            if (domain){
+                if (domain.toString()!==pubkey){
+                    
+                    let cnt = 0;
+                    const domains = [];
+                    for (const item of domain){
+                        domains.push({
+                            id:cnt,
+                            domain:item,
+                            type:item,
+                            manage:item,
+                        });
+                        cnt++;
+                    }
+                    setSolanaDomainRows(domains);
+                    setSolanaDomain(domain);
                 }
-                setSolanaDomainRows(domains);
-                setSolanaDomain(domain);
             }
+        }catch(e){
+            console.log("ERR: "+e);
         }
     }
 
@@ -1613,11 +1619,15 @@ export function IdentityView(props: any){
                                                     <>
                                                         {solanaBasicTicker && 
                                                             <Typography variant='caption'>
-                                                                Rate: 1 SOL = {(+solanaBasicTicker.data["So11111111111111111111111111111111111111112"]["price"]).toFixed(2)} USDC
-                                                                <Typography variant='caption' sx={{color:'#999'}}>
-                                                                    <br/>
-                                                                    Timestamp: {moment(new Date()).format("YYYY-MM-DD HH:mm:ss")}
-                                                                </Typography>
+                                                                {solanaBasicTicker.data["So11111111111111111111111111111111111111112"]?.price &&
+                                                                    <>
+                                                                        Rate: 1 SOL = {(+solanaBasicTicker.data["So11111111111111111111111111111111111111112"]["price"]).toFixed(2)} USDC
+                                                                        <Typography variant='caption' sx={{color:'#999'}}>
+                                                                            <br/>
+                                                                            Timestamp: {moment(new Date()).format("YYYY-MM-DD HH:mm:ss")}
+                                                                        </Typography>
+                                                                    </>
+                                                                }
                                                             </Typography>
                                                         }
                                                     </>
