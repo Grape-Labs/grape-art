@@ -9,7 +9,7 @@ export const HELLO_MOON_ENDPOINT = HELLO_MOON_BEARER ? `https://rpc.hellomoon.io
 export const ALCHEMY_RPC_ENDPOINT = process.env.REACT_APP_API_ALCHEMY_API_KEY || `https://api.mainnet-beta.solana.com`;
 export const SHYFT_KEY = process.env.REACT_APP_API_SHYFT_KEY;
 export const SHYFT_RPC_ENDPOINT = SHYFT_KEY ? `https://rpc.shyft.to?api_key=${SHYFT_KEY}` : `https://api.mainnet-beta.solana.com`;
-export const RPC_ENDPOINT = SHYFT_RPC_ENDPOINT || HELLO_MOON_ENDPOINT || 'https://api.mainnet-beta.solana.com';
+export const RPC_ENDPOINT = HELLO_MOON_ENDPOINT || SHYFT_RPC_ENDPOINT || 'https://api.mainnet-beta.solana.com';
 
 /*
 export const RPC_CONNECTION = new Connection(
