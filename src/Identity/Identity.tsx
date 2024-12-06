@@ -111,6 +111,7 @@ import {
     HELLO_MOON_BEARER,
     SQUADS_API,
     SHYFT_KEY,
+    QUICKNODE_RPC_ENDPOINT
 } from '../utils/grapeTools/constants';
 import { ConstructionOutlined, DoNotDisturb, JavascriptRounded, LogoDevOutlined } from "@mui/icons-material";
 
@@ -582,8 +583,10 @@ export function IdentityView(props: any){
 
             let tokenMeta = null;
             let dasMeta = null;
-            if (SHYFT_KEY) {
 
+            let das_success = false;
+
+            if (SHYFT_KEY) {
                 try{
                     const uri = `https://api.shyft.to/sol/v1/wallet/all_tokens?network=mainnet-beta&wallet=${pubkey}`;
                 
@@ -610,38 +613,39 @@ export function IdentityView(props: any){
                 } catch(err){
                     console.log("AT API: Err")
                 }
-                
-                //if (!tokenMeta){
-                    try{
-                        const uri = `https://rpc.shyft.to/?api_key=${SHYFT_KEY}`;
-            
-                        const response = await fetch(uri, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
+            }
+
+            if (!das_success && QUICKNODE_RPC_ENDPOINT) {
+                try{
+                    const uri = QUICKNODE_RPC_ENDPOINT;
+                    
+                    const response = await fetch(uri, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept-Encoding': 'gzip, deflate, br'
+                        },
+                        body: JSON.stringify({
+                            jsonrpc: '2.0',
+                            id: '1',
+                            method: 'getAssetsByOwner',
+                            params: {
+                                ownerAddress: pubkey,
+                                page: 1, // Starts at 1
+                                limit: 1000
                             },
-                            body: JSON.stringify({
-                                jsonrpc: '2.0',
-                                id: 'rpc-id',
-                                method: 'getAssetsByOwner',
-                                params: {
-                                    ownerAddress: pubkey,
-                                    page: 1, // Starts at 1
-                                    limit: 1000
-                                },
-                            }),
-                        });
-                        const { result } = await response.json();
-                        dasMeta = result.items;
-                        /*
-                        console.log("Assets owned by a wallet: ", result.items);
-                        */
-                    } catch(err){
-                        console.log("DAS API: Err")
-                    }
-                //}
-            } else if (HELIUS_API){
-                
+                        }),
+                    });
+                    //dasMeta = result.items;
+                    das_success = true;
+                    const { result } = await response.json();
+                    dasMeta = result.items;
+                } catch(err){
+                    console.log("DAS: Err");
+                    das_success = false;
+                    //return null;
+                }
+            } else if (!das_success && HELIUS_API) {
                 try{
                     const uri = `https://mainnet.helius-rpc.com/?api-key=${HELIUS_API}`;
                     const response = await fetch(uri, {
@@ -658,13 +662,15 @@ export function IdentityView(props: any){
                         }
                         }),
                     });
+                    //dasMeta = result.items;
+                    das_success = true;
                     const { result } = await response.json();
-                    return result?.items;
+                    dasMeta = result.items;
                 } catch(err){
                     console.log("DAS: Err");
-                    return null;
+                    das_success = false;
+                    //return null;
                 }
-                
             }
 
             for (const item of resultValues){
