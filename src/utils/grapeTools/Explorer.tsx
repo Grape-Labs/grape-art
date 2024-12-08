@@ -632,6 +632,7 @@ export default function ExplorerView(props:any){
                         </ListItemIcon>
                         Explorer
                     </MenuItem>
+                    {/*
                     <MenuItem 
                         component='a'
                         href={`https://xray.helius.xyz/${type === 'address' ? 'account' : 'tx'}/${address}`}
@@ -642,7 +643,7 @@ export default function ExplorerView(props:any){
                             </ListItemIcon>
                             XRay
                     </MenuItem>
-
+                    */}
                    
 
                     {twitterRegistration &&
