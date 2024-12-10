@@ -827,6 +827,8 @@ export function IdentityView(props: any){
 
                 if ((name && name?.length <= 0) || (!name))
                     name = item.account.data.parsed.info.mint;
+                if (name === "Unknown Token")
+                    name = item.account.data.parsed.info.mint;
                 
                 solholdingrows.push({
                     id:cnt,
