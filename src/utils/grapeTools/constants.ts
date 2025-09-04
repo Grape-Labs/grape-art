@@ -55,7 +55,7 @@ export const GRAPE_TREASURY = 'GrapevviL94JZRiZwn2LjpWtmDacXU8QhAJvzpUMMFdL';
 
 export const SQUADS_API = process.env.REACT_APP_API_SQUADS_URL || null;
 
-export const MARKET_LOGO = "https://shdw-drive.genesysgo.net/5VhicqNTPgvJNVPHPp8PSH91YQ6KnVAeukW1K37GJEEV/grape_white_logo.svg";//STATIC_LOGO;
+export const MARKET_LOGO = "./public/grape_white_logo.svg";//STATIC_LOGO;
 
 export const TOKEN_VERIFICATION_ADDRESS = '8upjSpvjcdpuzhfR1zriwg5NXkwDruejqNE9WNbPRtyA';
 export const TOKEN_VERIFICATION_NAME = 'Grape';

@@ -229,7 +229,7 @@ function DashboardContent() {
                         name: 'GrapeArt',
                         description: 'Grape Art | Social. Stateless. Marketplace. on Solana',
                         url: 'https://grape.art',
-                        icons: ['https://shdw-drive.genesysgo.net/5pKmUSyh4VEpVhCCYon1kFf6fn5REtmk1rz4sGXyMrAZ/8upjSpvjc.logo.png'],
+                        icons: ['./public/grapedex.png'],
                     },
                 },
             }),
